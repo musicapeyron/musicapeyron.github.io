@@ -1,0 +1,8227 @@
+<!DOCTYPE html>
+
+<html lang="it">
+<head>
+
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Costruttore di Battute</title>
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@500;700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+<style>
+
+* {
+    box-sizing: border-box;
+}
+
+html,
+body {
+    width: 100%;
+    height: 100%;
+    margin: 0;
+    overflow: hidden;
+}
+
+:root {
+    --unit: 43px;
+    --measure-width: 172px;
+    --piece-height: 43px;
+    --beats: 4;
+
+    --font-ui: "Inter", "Manrope", Arial, Helvetica, sans-serif;
+    --font-display: "Manrope", "Inter", Arial, Helvetica, sans-serif;
+}
+
+body {
+    font-family: var(--font-ui);
+    letter-spacing: .1px;
+    color: #f5f8ff;
+
+    background:
+        radial-gradient(
+            circle at 8% 8%,
+            #245d91 0%,
+            transparent 28%
+        ),
+        radial-gradient(
+            circle at 92% 90%,
+            #1b3d83 0%,
+            transparent 34%
+        ),
+        linear-gradient(
+            135deg,
+            #061329,
+            #102c52 52%,
+            #174b78
+        );
+}
+
+.app {
+    width: 100%;
+    height: 100vh;
+
+    display: flex;
+    flex-direction: column;
+}
+
+
+/* =========================================================
+   HEADER
+========================================================= */
+
+header {
+    flex: 0 0 auto;
+
+    height: 58px;
+
+    padding: 8px 20px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    text-align: center;
+
+    background: rgba(3, 12, 28, .72);
+
+    backdrop-filter: blur(6px);
+
+    border-bottom:
+        1px solid rgba(255,255,255,.10);
+
+    box-shadow:
+        inset 0 1px 0 rgba(255,255,255,.06),
+        0 5px 20px rgba(0,0,0,.20);
+
+    position: relative;
+}
+
+header h1 {
+    margin: 0 0 2px;
+
+    font-family: var(--font-display);
+
+    font-size:
+        clamp(18px, 2.2vh, 27px);
+
+    font-weight: 800;
+
+    letter-spacing: .2px;
+}
+
+header p {
+    margin: 0;
+
+    color: #aebed5;
+
+    font-weight: 500;
+
+    letter-spacing: .15px;
+
+    font-size:
+        clamp(10px, 1.35vh, 13px);
+}
+
+
+/* =========================================================
+   CONTROLLI IN ALTO A SINISTRA
+========================================================= */
+
+.top-left-controls {
+    position: absolute;
+
+    left: 18px;
+    top: 50%;
+
+    transform:
+        translateY(-50%);
+
+    display: flex;
+
+    align-items: center;
+
+    gap: 8px;
+}
+
+.verify-button {
+    border: 1px solid rgba(255,255,255,.25);
+
+    border-radius: 9px;
+
+    background:
+        linear-gradient(
+            135deg,
+            #efb83f,
+            #db7b24
+        );
+
+    color: white;
+
+    padding: 8px 13px;
+
+    font-family: var(--font-ui);
+
+    font-size: 11px;
+
+    font-weight: 700;
+
+    letter-spacing: .4px;
+
+    text-transform: uppercase;
+
+    cursor: pointer;
+
+    box-shadow:
+        inset 0 1px 0 rgba(255,255,255,.35),
+        0 4px 10px rgba(0,0,0,.25);
+
+    transition:
+        transform .15s,
+        box-shadow .15s;
+}
+
+.verify-button:hover {
+    transform: translateY(-1px);
+
+    box-shadow:
+        inset 0 1px 0 rgba(255,255,255,.35),
+        0 6px 14px rgba(0,0,0,.30);
+}
+
+.verify-button.active {
+    background:
+        linear-gradient(
+            135deg,
+            #42c96a,
+            #258d52
+        );
+
+    cursor: default;
+}
+
+
+/* =========================================================
+   BADGE TEMPO (apre la scelta del tempo)
+========================================================= */
+
+.time-badge {
+    border: 1px solid rgba(255,255,255,.22);
+
+    border-radius: 8px;
+
+    background:
+        linear-gradient(
+            135deg,
+            #2474ae,
+            #3155a0
+        );
+
+    color: white;
+
+    padding: 8px 11px;
+
+    font-family: var(--font-ui);
+
+    font-size: 11px;
+
+    font-weight: 700;
+
+    letter-spacing: .3px;
+
+    cursor: pointer;
+
+    box-shadow:
+        inset 0 1px 0 rgba(255,255,255,.20),
+        0 4px 10px rgba(0,0,0,.20);
+
+    transition:
+        transform .15s,
+        box-shadow .15s;
+}
+
+.time-badge:hover {
+    transform: translateY(-1px);
+}
+
+.time-badge:disabled {
+    opacity: .5;
+
+    cursor: not-allowed;
+
+    transform: none;
+}
+
+
+/* =========================================================
+   BANNER LIVELLO
+========================================================= */
+
+.level-banner {
+    min-width: 125px;
+
+    padding: 8px 16px;
+
+    border-radius: 11px;
+
+    background:
+        linear-gradient(
+            135deg,
+            #3c9ee1,
+            #4757c8
+        );
+
+    border:
+        1px solid
+        rgba(255,255,255,.25);
+
+    box-shadow:
+        0 5px 16px
+        rgba(0,0,0,.28);
+
+    text-align: center;
+
+    font-family: var(--font-display);
+
+    font-weight: 800;
+
+    font-size: 16px;
+
+    letter-spacing: .3px;
+
+    text-transform: lowercase;
+
+    transition:
+        transform .25s,
+        box-shadow .25s;
+}
+
+.level-banner.level-change {
+    animation:
+        bannerPulse .7s ease-out;
+}
+
+@keyframes bannerPulse {
+
+    0% {
+        transform: scale(1);
+    }
+
+    45% {
+        transform: scale(1.10);
+    }
+
+    100% {
+        transform: scale(1);
+    }
+
+}
+
+
+/* =========================================================
+   SELETTORE LIVELLO
+========================================================= */
+
+.level-selector {
+    display: flex;
+
+    align-items: center;
+}
+
+.level-selector select {
+    appearance: none;
+
+    border:
+        1px solid
+        rgba(255,255,255,.22);
+
+    border-radius: 8px;
+
+    background:
+        linear-gradient(
+            135deg,
+            #2474ae,
+            #3155a0
+        );
+
+    color: white;
+
+    padding:
+        8px 27px 8px 11px;
+
+    font-family: var(--font-ui);
+
+    font-size: 11px;
+
+    font-weight: 600;
+
+    letter-spacing: .1px;
+
+    cursor: pointer;
+
+    outline: none;
+
+    box-shadow:
+        0 4px 10px rgba(0,0,0,.20);
+
+    background-image:
+        linear-gradient(
+            45deg,
+            transparent 50%,
+            white 50%
+        ),
+        linear-gradient(
+            135deg,
+            white 50%,
+            transparent 50%
+        ),
+        linear-gradient(
+            135deg,
+            #2474ae,
+            #3155a0
+        );
+
+    background-position:
+        calc(100% - 12px) 50%,
+        calc(100% - 8px) 50%,
+        0 0;
+
+    background-size:
+        5px 5px,
+        5px 5px,
+        100% 100%;
+
+    background-repeat: no-repeat;
+}
+
+.level-selector select option {
+    background: #102c52;
+    color: white;
+}
+
+.level-selector select:disabled {
+    opacity: .55;
+    cursor: not-allowed;
+}
+
+
+/* =========================================================
+   TIMER VERIFICA
+========================================================= */
+
+.verification-timer {
+    position: absolute;
+
+    right: 20px;
+    top: 50%;
+
+    transform:
+        translateY(-50%);
+
+    display: none;
+
+    min-width: 105px;
+
+    padding: 7px 12px;
+
+    border-radius: 9px;
+
+    background:
+        rgba(255,255,255,.08);
+
+    border:
+        1px solid
+        rgba(255,255,255,.16);
+
+    color: #ffe28b;
+
+    text-align: center;
+
+    box-shadow:
+        0 4px 14px rgba(0,0,0,.20);
+}
+
+.verification-timer.show {
+    display: block;
+}
+
+.timer-label {
+    font-size: 8px;
+
+    font-weight: 600;
+
+    text-transform: uppercase;
+
+    letter-spacing: 1.2px;
+
+    color: #aebed5;
+}
+
+.timer-value {
+    font-family: var(--font-display);
+
+    font-size: 18px;
+
+    font-weight: 800;
+
+    font-variant-numeric: tabular-nums;
+}
+
+
+/* =========================================================
+   LAYOUT
+========================================================= */
+
+.main {
+    flex: 1 1 auto;
+
+    min-height: 0;
+
+    display: grid;
+
+    grid-template-columns:
+        minmax(0, 1fr)
+        235px;
+
+    gap: 14px;
+
+    padding: 14px;
+}
+
+
+/* =========================================================
+   FOGLIO
+========================================================= */
+
+.music-panel {
+    min-width: 0;
+    min-height: 0;
+
+    background:
+        rgba(248,250,255,.97);
+
+    border-radius: 14px;
+
+    border: 1px solid rgba(255,255,255,.5);
+
+    color: #20252b;
+
+    padding: 12px;
+
+    box-shadow:
+        0 1px 0 rgba(255,255,255,.6) inset,
+        0 12px 35px rgba(0,0,0,.28);
+
+    display: flex;
+    flex-direction: column;
+
+    overflow: hidden;
+
+    position: relative;
+}
+
+.sheet-header {
+    flex: 0 0 auto;
+
+    display: flex;
+
+    align-items: center;
+    justify-content: space-between;
+
+    padding:
+        2px 7px 8px;
+
+    border-bottom:
+        1px solid #ddd;
+
+    margin-bottom: 8px;
+}
+
+.sheet-title {
+    font-family: var(--font-display);
+
+    font-size: 14px;
+
+    font-weight: 800;
+
+    letter-spacing: .1px;
+
+    color: #3d4650;
+}
+
+.progress {
+    font-size: 12.5px;
+
+    font-weight: 700;
+
+    letter-spacing: .1px;
+
+    color: #3974a5;
+
+    text-align: right;
+}
+
+.progress-bar {
+    width: 120px;
+
+    height: 5px;
+
+    border-radius: 5px;
+
+    background: #dfe4e8;
+
+    overflow: hidden;
+
+    margin-top: 4px;
+}
+
+.progress-fill {
+    height: 100%;
+
+    width: 0%;
+
+    background:
+        linear-gradient(
+            90deg,
+            #3aa0e8,
+            #55d66c
+        );
+
+    transition:
+        width .3s;
+}
+
+
+/* =========================================================
+   CONTENITORE SCROLLABILE DEL FOGLIO
+========================================================= */
+
+.staff-scroll {
+    flex: 1 1 auto;
+
+    min-height: 0;
+
+    overflow-y: auto;
+
+    overflow-x: hidden;
+
+    padding:
+        2px 7px 8px 2px;
+}
+
+.staff-scroll::-webkit-scrollbar {
+    width: 9px;
+}
+
+.staff-scroll::-webkit-scrollbar-track {
+    background: #e3e7eb;
+
+    border-radius: 10px;
+}
+
+.staff-scroll::-webkit-scrollbar-thumb {
+    background:
+        linear-gradient(
+            #559ed0,
+            #3c69ae
+        );
+
+    border-radius: 10px;
+
+    border:
+        2px solid #e3e7eb;
+}
+
+.staff-scroll::-webkit-scrollbar-thumb:hover {
+    background:
+        linear-gradient(
+            #65b5e8,
+            #4b78c3
+        );
+}
+
+
+/* =========================================================
+   BATTUTE
+========================================================= */
+
+.staff-container {
+    width: 100%;
+
+    display: grid;
+
+    grid-template-columns:
+        repeat(
+            5,
+            minmax(
+                150px,
+                1fr
+            )
+        );
+
+    grid-auto-rows:
+        minmax(
+            82px,
+            1fr
+        );
+
+    gap:
+        9px 5px;
+
+    padding:
+        2px 0 5px;
+}
+
+.measure-wrapper {
+    min-width: 0;
+
+    display: flex;
+
+    flex-direction: column;
+
+    align-items: center;
+}
+
+.measure {
+    position: relative;
+
+    width:
+        var(--measure-width);
+
+    max-width: 100%;
+
+    height:
+        calc(
+            var(--piece-height) * 1.65
+        );
+
+    border-left:
+        2px solid #353a40;
+
+    border-right:
+        2px solid #353a40;
+
+    background:
+        linear-gradient(
+            to bottom,
+            transparent 49%,
+            #c9cdd1 49%,
+            #c9cdd1 calc(49% + 2px),
+            transparent calc(49% + 2px)
+        );
+
+    overflow: hidden;
+
+    transition:
+        border-color .2s,
+        box-shadow .2s;
+}
+
+.measure.current {
+    border-color: #318bd1;
+
+    box-shadow:
+        0 0 0 3px
+        rgba(49,139,209,.18);
+
+    background-color:
+        rgba(225,242,255,.35);
+}
+
+.measure.completed {
+    border-color: #48a95c;
+}
+
+.measure-number {
+    position: absolute;
+
+    top: 1px;
+    left: 4px;
+
+    font-size: 9px;
+
+    color: #999;
+
+    font-weight: 700;
+
+    letter-spacing: .2px;
+
+    z-index: 20;
+
+    pointer-events: none;
+}
+
+
+/* =========================================================
+   GRIGLIA DEI TEMPI (4/4, 3/4, 2/4)
+========================================================= */
+
+.beat-grid {
+    position: absolute;
+
+    left: 0;
+    right: 0;
+
+    top: 8px;
+    bottom: 8px;
+
+    display: grid;
+
+    grid-template-columns:
+        repeat(var(--beats), 1fr);
+
+    pointer-events: none;
+
+    z-index: 1;
+}
+
+.beat-cell {
+    border-right:
+        1px dashed #d0d3d6;
+}
+
+.beat-cell:last-child {
+    border-right: none;
+}
+
+
+/* =========================================================
+   AREA PEZZI
+========================================================= */
+
+.pieces-area {
+    position: absolute;
+
+    left: 0;
+    top: 21%;
+
+    width: 100%;
+    height: 58%;
+
+    display: flex;
+
+    align-items: center;
+
+    z-index: 5;
+}
+
+
+/* =========================================================
+   MATTONCINI INSERITI
+========================================================= */
+
+.placed-piece {
+    height:
+        var(--piece-height);
+
+    flex-shrink: 0;
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    border-radius: 5px;
+
+    border:
+        2px solid rgba(0,0,0,.16);
+
+    box-shadow:
+        inset 0 3px 0
+        rgba(255,255,255,.25),
+
+        inset 0 -3px 0
+        rgba(0,0,0,.08),
+
+        0 2px 4px
+        rgba(0,0,0,.18);
+
+    position: relative;
+
+    animation:
+        pieceAppear .15s ease-out;
+}
+
+@keyframes pieceAppear {
+
+    from {
+        opacity: 0;
+        transform: scale(.85);
+    }
+
+    to {
+        opacity: 1;
+        transform: scale(1);
+    }
+
+}
+
+
+/*
+   LIVELLI 9 E 10:
+
+   il contenitore continua ad avere
+   la larghezza reale del valore ritmico,
+   ma il mattoncino diventa invisibile.
+*/
+
+.level-9-10 .placed-piece {
+    background: transparent !important;
+
+    border-color: transparent;
+
+    box-shadow: none;
+
+    border-radius: 0;
+}
+
+
+/* =========================================================
+   SIMBOLI
+========================================================= */
+
+.rhythm-symbol {
+    color: #17202c;
+
+    font-family:
+        "Times New Roman",
+        serif;
+
+    font-weight: bold;
+
+    font-size:
+        calc(
+            var(--piece-height) * .58
+        );
+
+    line-height: 1;
+
+    pointer-events: none;
+}
+
+.croma-symbol {
+    font-size:
+        calc(
+            var(--piece-height) * .50
+        );
+}
+
+.rest-symbol {
+    color: #17202c;
+
+    font-family:
+        "Times New Roman",
+        serif;
+
+    font-weight: bold;
+
+    font-size:
+        calc(
+            var(--piece-height) * .62
+        );
+
+    line-height: 1;
+
+    pointer-events: none;
+}
+
+
+/*
+    ALLINEAMENTO CON LA RIGA DELLA BATTUTA
+
+    Le figure musicali usate (caratteri Unicode)
+    non hanno il "corpo" della nota o della pausa
+    perfettamente centrato nel proprio riquadro:
+    senza correzione la riga della battuta non
+    taglia il simbolo nel punto giusto.
+
+    Questi piccoli spostamenti verticali
+    (calibrati a occhio sul rendering reale)
+    riallineano ogni figura in modo che la riga
+    la attraversi correttamente. Si applicano
+    solo alle figure già piazzate nelle battute,
+    non a quelle in palette o nel cursore.
+*/
+
+.placed-piece .rhythm-symbol {
+    transform:
+        translateY(-4.6px);
+}
+
+.placed-piece .rest-symbol.pausesemibreve {
+    transform:
+        translateY(5.9px);
+}
+
+.placed-piece .rest-symbol.pauseminima {
+    transform:
+        translateY(3.1px);
+}
+
+.placed-piece .rest-symbol.pausesemiminima {
+    transform:
+        translateY(1.6px);
+}
+
+.placed-piece .rest-symbol.pausacroma {
+    transform:
+        translateY(1.4px);
+}
+
+
+/* =========================================================
+   PANNELLO
+========================================================= */
+
+.control-panel {
+    min-height: 0;
+
+    background:
+        rgba(7,20,42,.78);
+
+    border:
+        1px solid
+        rgba(255,255,255,.12);
+
+    border-radius: 14px;
+
+    padding: 12px;
+
+    box-shadow:
+        0 1px 0 rgba(255,255,255,.06) inset,
+        0 12px 30px
+        rgba(0,0,0,.22);
+
+    display: flex;
+
+    flex-direction: column;
+
+    overflow: hidden;
+}
+
+.control-title {
+    flex: 0 0 auto;
+
+    font-family: var(--font-display);
+
+    font-size: 14px;
+
+    font-weight: 800;
+
+    letter-spacing: .3px;
+
+    text-align: center;
+
+    margin-bottom: 3px;
+}
+
+.control-subtitle {
+    flex: 0 0 auto;
+
+    color: #aebed5;
+
+    font-size: 10px;
+
+    font-weight: 500;
+
+    text-align: center;
+
+    line-height: 1.4;
+
+    margin-bottom: 8px;
+}
+
+
+/* =========================================================
+   PALETTE SCROLLABILE
+========================================================= */
+
+.palette-scroll {
+    flex: 1 1 auto;
+
+    min-height: 0;
+
+    overflow-y: auto;
+
+    overflow-x: hidden;
+
+    padding:
+        3px 8px 8px 3px;
+}
+
+.palette-scroll::-webkit-scrollbar {
+    width: 7px;
+}
+
+.palette-scroll::-webkit-scrollbar-track {
+    background:
+        rgba(255,255,255,.06);
+
+    border-radius: 8px;
+}
+
+.palette-scroll::-webkit-scrollbar-thumb {
+    background:
+        rgba(104,184,239,.55);
+
+    border-radius: 8px;
+}
+
+.palette-scroll::-webkit-scrollbar-thumb:hover {
+    background:
+        rgba(104,184,239,.8);
+}
+
+.palette {
+    width: 100%;
+
+    display: flex;
+
+    flex-direction: column;
+
+    align-items: center;
+
+    gap: 8px;
+}
+
+.piece-wrapper {
+    width: 100%;
+
+    display: flex;
+
+    flex-direction: column;
+
+    align-items: center;
+
+    gap: 2px;
+}
+
+
+/* =========================================================
+   MATTONCINI PALETTE
+========================================================= */
+
+.piece {
+    height:
+        var(--piece-height);
+
+    border-radius: 8px;
+
+    border:
+        1.5px solid
+        rgba(0,0,0,.20);
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    cursor: pointer;
+
+    user-select: none;
+
+    box-shadow:
+        inset 0 4px 0
+        rgba(255,255,255,.30),
+
+        inset 0 -3px 0
+        rgba(0,0,0,.10),
+
+        0 5px 10px
+        rgba(0,0,0,.22);
+
+    transition:
+        transform .14s,
+        box-shadow .14s,
+        outline .14s;
+}
+
+.piece:hover {
+    transform: translateY(-1px);
+}
+
+
+/*
+    PROPORZIONI:
+
+    semibreve          4
+    minima puntata     3
+    minima             2
+    semiminima puntata 1.5
+    semiminima         1
+    croma              0.5
+*/
+
+.piece.semibreve,
+.piece.pausesemibreve {
+    width:
+        calc(
+            var(--unit) * 4
+        );
+
+    background:
+        linear-gradient(
+            135deg,
+            #ff5757,
+            #d9364b
+        );
+}
+
+.piece.minima-puntata {
+    width:
+        calc(
+            var(--unit) * 3
+        );
+
+    background:
+        linear-gradient(
+            135deg,
+            #b76cff,
+            #7d42d9
+        );
+}
+
+.piece.minima,
+.piece.pauseminima {
+    width:
+        calc(
+            var(--unit) * 2
+        );
+
+    background:
+        linear-gradient(
+            135deg,
+            #4abaff,
+            #3974e8
+        );
+}
+
+.piece.semiminima-puntata {
+    width:
+        calc(
+            var(--unit) * 1.5
+        );
+
+    background:
+        linear-gradient(
+            135deg,
+            #ff8a4c,
+            #e45b29
+        );
+}
+
+.piece.semiminima,
+.piece.pausesemiminima {
+    width:
+        var(--unit);
+
+    background:
+        linear-gradient(
+            135deg,
+            #64df75,
+            #31a957
+        );
+}
+
+.piece.croma,
+.piece.pausacroma {
+    width:
+        calc(
+            var(--unit) * .5
+        );
+
+    background:
+        linear-gradient(
+            135deg,
+            #ffe064,
+            #efa817
+        );
+}
+
+
+/* =========================================================
+   LIVELLO 8 - BIANCO E NERO
+========================================================= */
+
+.level-8 .piece {
+    background:
+        linear-gradient(
+            135deg,
+            #ffffff,
+            #d8d8d8
+        ) !important;
+
+    border-color:
+        #555;
+
+    box-shadow:
+        inset 0 3px 0
+        rgba(255,255,255,.90),
+
+        inset 0 -3px 0
+        rgba(0,0,0,.08),
+
+        0 4px 8px
+        rgba(0,0,0,.28);
+}
+
+.level-8 .piece-label,
+.level-8 .piece-value {
+    color: #e8edf4;
+}
+
+
+/*
+   LIVELLO 8 - BIANCO E NERO
+   ANCHE SUI MATTONCINI GIA' PIAZZATI
+   NELLE BATTUTE.
+*/
+
+.level-8 .placed-piece {
+    background:
+        linear-gradient(
+            135deg,
+            #ffffff,
+            #d8d8d8
+        ) !important;
+
+    border-color:
+        #555;
+
+    box-shadow:
+        inset 0 3px 0
+        rgba(255,255,255,.90),
+
+        inset 0 -3px 0
+        rgba(0,0,0,.08),
+
+        0 2px 4px
+        rgba(0,0,0,.28);
+}
+
+
+/* =========================================================
+   LIVELLI 9 E 10 - QUADRATI UGUALI SOLO NELLA PALETTE
+========================================================= */
+
+.level-9-10 .piece {
+    width: 82px !important;
+
+    height: 43px;
+
+    background:
+        linear-gradient(
+            135deg,
+            #ffffff,
+            #dedede
+        ) !important;
+
+    border:
+        2px solid #707070;
+
+    box-shadow:
+        inset 0 3px 0
+        rgba(255,255,255,.90),
+
+        inset 0 -3px 0
+        rgba(0,0,0,.10),
+
+        0 4px 8px
+        rgba(0,0,0,.25);
+}
+
+
+/* =========================================================
+   SELEZIONE
+========================================================= */
+
+.piece.selected {
+    outline:
+        3px solid white;
+
+    outline-offset: 3px;
+
+    transform:
+        translateY(-3px);
+
+    box-shadow:
+        0 0 0 6px
+        rgba(100,190,255,.18),
+
+        inset 0 4px 0
+        rgba(255,255,255,.30),
+
+        0 8px 16px
+        rgba(0,0,0,.35);
+}
+
+
+/* =========================================================
+   ETICHETTE
+========================================================= */
+
+.piece-label {
+    font-size: 11px;
+
+    font-weight: 600;
+
+    color: #edf3fb;
+
+    text-align: center;
+}
+
+.piece-value {
+    color: #a9bdd5;
+
+    font-family: var(--font-display);
+
+    font-size: 12px;
+
+    font-weight: 700;
+
+    letter-spacing: .2px;
+
+    text-align: center;
+}
+
+
+/* =========================================================
+   LIMITE DI UTILIZZO (crome / pause di croma)
+========================================================= */
+
+.piece-limit {
+    margin-top: 3px;
+
+    padding: 2px 6px;
+
+    border-radius: 999px;
+
+    background: rgba(255,255,255,.08);
+
+    border: 1px solid rgba(255,255,255,.14);
+
+    color: #cfe0f2;
+
+    font-size: 9.5px;
+
+    font-weight: 600;
+
+    letter-spacing: .2px;
+
+    text-align: center;
+
+    white-space: nowrap;
+}
+
+.piece-limit.piece-limit-full {
+    background: rgba(255,92,99,.18);
+
+    border-color: rgba(255,92,99,.45);
+
+    color: #ffb3b7;
+}
+
+.piece.piece-disabled {
+    opacity: .4;
+
+    cursor: not-allowed;
+
+    filter: grayscale(.4);
+}
+
+
+/* =========================================================
+   INFO LIVELLO
+========================================================= */
+
+.level-info {
+    flex: 0 0 auto;
+
+    width: 100%;
+
+    margin-top: 7px;
+
+    padding: 7px;
+
+    border-radius: 9px;
+
+    background:
+        rgba(255,255,255,.06);
+
+    border:
+        1px solid
+        rgba(255,255,255,.08);
+
+    text-align: center;
+
+    color: #b8c8dc;
+
+    font-size: 9px;
+
+    font-weight: 500;
+
+    line-height: 1.45;
+}
+
+
+/* =========================================================
+   RISULTATO
+========================================================= */
+
+.result {
+    flex: 0 0 auto;
+
+    min-height: 25px;
+
+    padding:
+        5px 8px 0;
+
+    text-align: center;
+
+    font-size: 12px;
+
+    font-weight: 700;
+
+    letter-spacing: .1px;
+}
+
+
+/* =========================================================
+   ANTEPRIMA CURSORE
+========================================================= */
+
+.cursor-preview {
+    position: fixed;
+
+    pointer-events: none;
+
+    z-index: 9999;
+
+    height:
+        var(--piece-height);
+
+    opacity: .35;
+
+    border:
+        2px solid
+        rgba(255,255,255,.9);
+
+    border-radius: 6px;
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    transform:
+        translate(-50%, -50%);
+
+    box-shadow:
+        0 5px 14px
+        rgba(0,0,0,.25);
+}
+
+
+/* =========================================================
+   DUPLICATO
+========================================================= */
+
+@keyframes duplicateFlash {
+
+    0% {
+        background-color: white;
+        box-shadow: none;
+    }
+
+    10% {
+        background-color: #ffbcbc;
+
+        box-shadow:
+            0 0 0 6px
+            rgba(230,50,50,.55);
+    }
+
+    20% {
+        background-color: white;
+        box-shadow: none;
+    }
+
+    35% {
+        background-color: #ffbcbc;
+
+        box-shadow:
+            0 0 0 6px
+            rgba(230,50,50,.55);
+    }
+
+    45% {
+        background-color: white;
+        box-shadow: none;
+    }
+
+    60% {
+        background-color: #ffbcbc;
+
+        box-shadow:
+            0 0 0 6px
+            rgba(230,50,50,.55);
+    }
+
+    75% {
+        background-color: white;
+        box-shadow: none;
+    }
+
+    100% {
+        background-color: white;
+        box-shadow: none;
+    }
+}
+
+.duplicate-flash {
+    animation:
+        duplicateFlash 1.7s ease-in-out;
+}
+
+
+/* =========================================================
+   TRANSIZIONE LIVELLO
+========================================================= */
+
+/* =========================================================
+   SCHERMATA INIZIALE
+========================================================= */
+
+.start-screen {
+    position: fixed;
+
+    inset: 0;
+
+    z-index: 20000;
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    background:
+        radial-gradient(
+            circle at 8% 8%,
+            #245d91 0%,
+            transparent 28%
+        ),
+        radial-gradient(
+            circle at 92% 90%,
+            #1b3d83 0%,
+            transparent 34%
+        ),
+        linear-gradient(
+            135deg,
+            #061329,
+            #102c52 52%,
+            #174b78
+        );
+
+    opacity: 1;
+
+    pointer-events: auto;
+
+    transition:
+        opacity .3s;
+
+    overflow: hidden;
+}
+
+.start-screen.hide {
+    opacity: 0;
+
+    pointer-events: none;
+}
+
+.start-notes {
+    position: absolute;
+
+    inset: 0;
+
+    pointer-events: none;
+
+    overflow: hidden;
+}
+
+.start-notes span {
+    position: absolute;
+
+    bottom: -60px;
+
+    font-size: 34px;
+
+    color: rgba(255,255,255,.10);
+
+    animation:
+        startNoteFloat 14s linear infinite;
+}
+
+.start-notes span:nth-child(1) {
+    left: 8%;
+    animation-delay: 0s;
+}
+
+.start-notes span:nth-child(2) {
+    left: 26%;
+    animation-delay: 2.4s;
+    font-size: 26px;
+}
+
+.start-notes span:nth-child(3) {
+    left: 52%;
+    animation-delay: 5s;
+    font-size: 40px;
+}
+
+.start-notes span:nth-child(4) {
+    left: 71%;
+    animation-delay: 8s;
+    font-size: 28px;
+}
+
+.start-notes span:nth-child(5) {
+    left: 88%;
+    animation-delay: 3.4s;
+    font-size: 30px;
+}
+
+@keyframes startNoteFloat {
+
+    0% {
+        transform: translateY(0);
+        opacity: 0;
+    }
+
+    10% {
+        opacity: 1;
+    }
+
+    90% {
+        opacity: 1;
+    }
+
+    100% {
+        transform: translateY(-100vh);
+        opacity: 0;
+    }
+
+}
+
+.start-screen-content {
+    position: relative;
+
+    z-index: 1;
+
+    width:
+        min(
+            560px,
+            92vw
+        );
+
+    text-align: center;
+
+    animation:
+        startContentIn .7s
+        cubic-bezier(.2,.9,.25,1.1)
+        both;
+}
+
+@keyframes startContentIn {
+
+    from {
+        opacity: 0;
+
+        transform:
+            translateY(18px)
+            scale(.96);
+    }
+
+    to {
+        opacity: 1;
+
+        transform:
+            translateY(0)
+            scale(1);
+    }
+
+}
+
+.start-title {
+    font-family: var(--font-display);
+
+    font-size:
+        clamp(
+            24px,
+            4.2vw,
+            38px
+        );
+
+    font-weight: 800;
+
+    letter-spacing: .2px;
+
+    color: #f5f8ff;
+
+    text-shadow:
+        0 8px 30px
+        rgba(0,0,0,.35);
+}
+
+.start-subtitle {
+    margin-top: 8px;
+
+    color: #aebed5;
+
+    font-weight: 500;
+
+    letter-spacing: .1px;
+
+    font-size:
+        clamp(
+            12px,
+            1.6vw,
+            15px
+        );
+}
+
+.start-select-label {
+    margin-top: 30px;
+
+    color: #bfe3ff;
+
+    font-size: 11.5px;
+
+    font-weight: 700;
+
+    letter-spacing: 1.6px;
+
+    text-transform: uppercase;
+}
+
+
+/* =========================================================
+   SELEZIONE DEL TEMPO
+========================================================= */
+
+.time-select-grid {
+    margin-top: 28px;
+
+    display: flex;
+
+    align-items: stretch;
+
+    justify-content: center;
+
+    gap: 16px;
+
+    flex-wrap: wrap;
+}
+
+.time-select-btn {
+    display: flex;
+
+    flex-direction: column;
+
+    align-items: center;
+
+    justify-content: center;
+
+    gap: 7px;
+
+    min-width: 130px;
+
+    padding: 24px 20px;
+
+    border-radius: 14px;
+
+    border:
+        1px solid
+        rgba(255,255,255,.16);
+
+    background:
+        linear-gradient(
+            160deg,
+            rgba(255,255,255,.10),
+            rgba(255,255,255,.03)
+        );
+
+    color: #f5f8ff;
+
+    font-family: var(--font-display);
+
+    font-size: 27px;
+
+    font-weight: 800;
+
+    letter-spacing: .3px;
+
+    cursor: pointer;
+
+    box-shadow:
+        0 8px 22px rgba(0,0,0,.22);
+
+    transition:
+        background .18s,
+        border-color .18s,
+        transform .18s,
+        box-shadow .18s;
+}
+
+.time-select-btn:hover {
+    transform: translateY(-3px);
+
+    border-color:
+        rgba(120,190,255,.55);
+
+    background:
+        linear-gradient(
+            160deg,
+            rgba(255,255,255,.16),
+            rgba(255,255,255,.05)
+        );
+
+    box-shadow:
+        0 12px 28px rgba(0,0,0,.3);
+}
+
+.time-select-sub {
+    font-family: var(--font-ui);
+
+    font-size: 10.5px;
+
+    font-weight: 600;
+
+    letter-spacing: .8px;
+
+    text-transform: uppercase;
+
+    color: #9fc8ea;
+}
+
+.start-level-grid {
+    margin-top: 14px;
+
+    display: grid;
+
+    grid-template-columns:
+        repeat(5, 1fr);
+
+    gap: 10px;
+}
+
+.start-level-btn {
+    padding: 14px 0;
+
+    border-radius: 10px;
+
+    border:
+        1px solid
+        rgba(255,255,255,.16);
+
+    background:
+        rgba(255,255,255,.06);
+
+    color: #f5f8ff;
+
+    font-family: var(--font-display);
+
+    font-size: 17px;
+
+    font-weight: 800;
+
+    cursor: pointer;
+
+    transition:
+        background .15s,
+        transform .15s,
+        border-color .15s;
+}
+
+.start-level-btn:hover {
+    background:
+        rgba(255,255,255,.14);
+
+    border-color:
+        rgba(255,255,255,.35);
+
+    transform:
+        translateY(-2px);
+}
+
+.start-verify-button {
+    margin-top: 18px;
+
+    width: 100%;
+
+    padding: 13px 0;
+
+    border-radius: 10px;
+
+    border:
+        1px solid
+        rgba(255,193,72,.45);
+
+    background:
+        rgba(255,193,72,.14);
+
+    color: #ffd98b;
+
+    font-family: var(--font-ui);
+
+    font-size: 13px;
+
+    font-weight: 700;
+
+    letter-spacing: 1px;
+
+    text-transform: uppercase;
+
+    cursor: pointer;
+
+    transition:
+        background .15s,
+        transform .15s;
+}
+
+.start-verify-button:hover {
+    background:
+        rgba(255,193,72,.24);
+
+    transform:
+        translateY(-2px);
+}
+
+
+/* =========================================================
+   SCHEMA DEL LIVELLO
+========================================================= */
+
+.level-diagram {
+    position: fixed;
+
+    inset: 0;
+
+    z-index: 10000;
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    background:
+        radial-gradient(
+            circle at center,
+            rgba(39,116,190,.94),
+            rgba(4,14,35,.98)
+        );
+
+    opacity: 0;
+
+    pointer-events: none;
+
+    transition:
+        opacity .25s;
+}
+
+.level-diagram.show {
+    opacity: 1;
+
+    pointer-events: auto;
+}
+
+.level-diagram-content {
+    width:
+        min(
+            560px,
+            92vw
+        );
+
+    text-align: center;
+
+    transform: scale(.9);
+
+    opacity: 0;
+
+    transition:
+        transform .4s
+        cubic-bezier(.2,.9,.25,1.15),
+
+        opacity .3s;
+}
+
+.level-diagram.show
+.level-diagram-content {
+    transform: scale(1);
+
+    opacity: 1;
+}
+
+.level-diagram-title {
+    font-family: var(--font-display);
+
+    font-size:
+        clamp(
+            20px,
+            3vw,
+            28px
+        );
+
+    font-weight: 800;
+
+    letter-spacing: .2px;
+
+    color: white;
+}
+
+.level-diagram-subtitle {
+    margin-top: 6px;
+
+    margin-bottom: 22px;
+
+    color: #bfe3ff;
+
+    font-weight: 500;
+
+    font-size: 13px;
+}
+
+.diagram-bars {
+    display: flex;
+
+    flex-direction: column;
+
+    align-items: flex-start;
+
+    gap: 9px;
+
+    max-height: 46vh;
+
+    overflow-y: auto;
+
+    padding: 2px 4px;
+}
+
+.diagram-row {
+    display: flex;
+
+    align-items: center;
+
+    gap: 12px;
+
+    width: 100%;
+}
+
+.diagram-bar {
+    flex-shrink: 0;
+
+    height: 38px;
+
+    min-width: 38px;
+
+    border-radius: 7px;
+
+    border:
+        2px solid rgba(0,0,0,.18);
+
+    box-shadow:
+        inset 0 3px 0
+        rgba(255,255,255,.25),
+
+        inset 0 -3px 0
+        rgba(0,0,0,.10),
+
+        0 3px 8px
+        rgba(0,0,0,.25);
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: center;
+}
+
+.diagram-label {
+    text-align: left;
+
+    color: #e8edf4;
+
+    font-size: 13px;
+
+    font-weight: 600;
+
+    white-space: nowrap;
+}
+
+
+/* =========================================================
+   TRANSIZIONE LIVELLO
+========================================================= */
+
+.level-transition {
+    position: fixed;
+
+    inset: 0;
+
+    z-index: 10000;
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    background:
+        radial-gradient(
+            circle at center,
+            rgba(39,116,190,.94),
+            rgba(4,14,35,.98)
+        );
+
+    opacity: 0;
+
+    pointer-events: none;
+
+    transition:
+        opacity .25s;
+}
+
+.level-transition.show {
+    opacity: 1;
+
+    pointer-events: auto;
+}
+
+.level-transition-content {
+    width:
+        min(
+            900px,
+            92vw
+        );
+
+    text-align: center;
+
+    transform:
+        scale(.65);
+
+    opacity: 0;
+
+    transition:
+        transform .55s
+        cubic-bezier(.2,.9,.25,1.2),
+
+        opacity .35s;
+}
+
+.level-transition.show
+.level-transition-content {
+    transform: scale(1);
+
+    opacity: 1;
+}
+
+.level-transition-small {
+    font-size: 14px;
+
+    font-weight: 600;
+
+    text-transform: uppercase;
+
+    letter-spacing: 5px;
+
+    color: #a8d8ff;
+}
+
+.level-transition-number {
+    font-family: var(--font-display);
+
+    font-size:
+        clamp(
+            65px,
+            11vw,
+            120px
+        );
+
+    font-weight: 800;
+
+    line-height: .9;
+
+    color: white;
+
+    text-shadow:
+        0 10px 40px
+        rgba(0,0,0,.4);
+}
+
+.level-transition-text {
+    font-family: var(--font-display);
+
+    font-size:
+        clamp(
+            17px,
+            2.5vw,
+            28px
+        );
+
+    font-weight: 700;
+
+    margin-top: 12px;
+}
+
+
+/* =========================================================
+   NUOVI MATTONCINI SBLOCCATI
+========================================================= */
+
+.unlocked-title {
+    margin-top: 13px;
+
+    margin-bottom: 10px;
+
+    color: #bfe3ff;
+
+    font-size: 12px;
+
+    font-weight: 700;
+
+    letter-spacing: 1.6px;
+
+    text-transform: uppercase;
+}
+
+.unlocked-pieces {
+    display: flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    gap: 20px;
+
+    flex-wrap: wrap;
+
+    min-height: 105px;
+}
+
+.unlock-item {
+    display: flex;
+
+    flex-direction: column;
+
+    align-items: center;
+
+    gap: 5px;
+
+    animation:
+        unlockPiece .6s
+        cubic-bezier(.2,.9,.25,1.3)
+        both;
+}
+
+.unlock-piece {
+    height:
+        64px;
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    border-radius: 9px;
+
+    border:
+        2px solid
+        rgba(0,0,0,.18);
+
+    box-shadow:
+        inset 0 4px 0
+        rgba(255,255,255,.30),
+
+        inset 0 -4px 0
+        rgba(0,0,0,.10),
+
+        0 7px 16px
+        rgba(0,0,0,.35);
+
+    transform-origin: center;
+}
+
+.unlock-name {
+    font-size: 11px;
+
+    font-weight: 600;
+
+    color: white;
+
+    max-width: 150px;
+}
+
+.unlock-value {
+    font-size: 11px;
+
+    color: #b9d8ef;
+}
+
+@keyframes unlockPiece {
+
+    0% {
+        opacity: 0;
+
+        transform:
+            translateY(35px)
+            scale(.65);
+    }
+
+    70% {
+        opacity: 1;
+
+        transform:
+            translateY(-5px)
+            scale(1.05);
+    }
+
+    100% {
+        opacity: 1;
+
+        transform:
+            translateY(0)
+            scale(1);
+    }
+
+}
+
+
+/* =========================================================
+   CONTINUA
+========================================================= */
+
+.continue-prompt {
+    margin-top: 22px;
+
+    font-size: 12.5px;
+
+    font-weight: 700;
+
+    color: white;
+
+    letter-spacing: 2px;
+
+    text-transform: uppercase;
+
+    animation:
+        continuePulse 1.2s ease-in-out infinite;
+}
+
+@keyframes continuePulse {
+
+    0%,
+    100% {
+        opacity: .55;
+    }
+
+    50% {
+        opacity: 1;
+    }
+
+}
+
+
+/* =========================================================
+   CONFETTI
+========================================================= */
+
+.complete-burst {
+    position: absolute;
+
+    inset: 0;
+
+    pointer-events: none;
+
+    z-index: 999;
+}
+
+.confetti {
+    position: absolute;
+
+    width: 8px;
+    height: 14px;
+
+    border-radius: 2px;
+
+    animation:
+        confettiFall 900ms
+        ease-out forwards;
+}
+
+@keyframes confettiFall {
+
+    0% {
+        opacity: 1;
+
+        transform:
+            translate(0,0)
+            rotate(0deg);
+    }
+
+    100% {
+        opacity: 0;
+
+        transform:
+            translate(
+                var(--dx),
+                var(--dy)
+            )
+            rotate(
+                var(--rotation)
+            );
+    }
+}
+
+
+/* =========================================================
+   FINE GIOCO
+========================================================= */
+
+.final-message {
+    position: fixed;
+
+    inset: 0;
+
+    z-index: 11000;
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    background:
+        radial-gradient(
+            circle,
+            rgba(30,150,91,.75),
+            rgba(4,14,35,.97)
+        );
+
+    opacity: 0;
+
+    pointer-events: none;
+
+    transition:
+        opacity .4s;
+}
+
+.final-message.show {
+    opacity: 1;
+
+    pointer-events: auto;
+}
+
+.final-card {
+    text-align: center;
+
+    padding:
+        35px 50px;
+
+    border-radius: 22px;
+
+    background:
+        rgba(255,255,255,.10);
+
+    border:
+        1px solid
+        rgba(255,255,255,.20);
+
+    backdrop-filter: blur(18px);
+
+    box-shadow:
+        inset 0 1px 0 rgba(255,255,255,.25),
+        0 20px 60px
+        rgba(0,0,0,.4);
+
+    transform:
+        scale(.7);
+
+    transition:
+        transform .5s
+        cubic-bezier(.2,.9,.25,1.2);
+}
+
+.final-message.show
+.final-card {
+    transform: scale(1);
+}
+
+.final-card h2 {
+    margin:
+        0 0 10px;
+
+    font-family: var(--font-display);
+
+    font-weight: 800;
+
+    letter-spacing: .2px;
+
+    font-size:
+        clamp(
+            28px,
+            5vw,
+            55px
+        );
+}
+
+.final-card p {
+    margin: 0;
+
+    color: #cce8d7;
+
+    font-weight: 500;
+}
+
+.final-time {
+    margin-top: 12px;
+
+    font-family: var(--font-display);
+
+    font-size: 22px;
+
+    font-weight: 800;
+
+    color: #ffe18b;
+}
+
+.final-grade {
+    margin-top: 8px;
+
+    font-family: var(--font-display);
+
+    font-size: 26px;
+
+    font-weight: 800;
+
+    color: #8affa0;
+}
+
+.final-errors {
+    margin-top: 8px;
+
+    font-size: 16px;
+
+    font-weight: 600;
+
+    color: #ffb5b5;
+}
+
+
+/* =========================================================
+   RESPONSIVE
+========================================================= */
+
+@media(max-height: 650px) {
+
+    header {
+        height: 50px;
+
+        padding:
+            5px 15px;
+    }
+
+    .main {
+        padding: 9px;
+
+        gap: 9px;
+    }
+
+    .control-panel {
+        padding: 8px;
+    }
+
+    .palette {
+        gap: 5px;
+    }
+
+    .level-info {
+        font-size: 8px;
+    }
+
+    .piece-label {
+        font-size: 9px;
+    }
+
+    .piece-value {
+        font-size: 10px;
+    }
+
+    .level-banner {
+        min-width: 105px;
+
+        padding:
+            6px 10px;
+
+        font-size: 14px;
+    }
+
+    .top-left-controls {
+        left: 10px;
+
+        gap: 5px;
+    }
+
+    .level-selector select {
+        padding:
+            6px 22px 6px 7px;
+    }
+
+    .verify-button {
+        padding:
+            6px 8px;
+    }
+
+}
+
+
+@media(max-width: 850px) {
+
+    .main {
+        grid-template-columns:
+            minmax(0, 1fr)
+            195px;
+    }
+
+    .top-left-controls {
+        left: 10px;
+    }
+
+}
+
+
+@media(max-width: 650px) {
+
+    .main {
+        grid-template-columns:
+            minmax(0, 1fr)
+            155px;
+    }
+
+    header h1,
+    header p {
+        display: none;
+    }
+
+    .level-banner {
+        min-width: 92px;
+
+        padding:
+            6px 8px;
+
+        font-size: 12px;
+    }
+
+    .top-left-controls {
+        left: 7px;
+
+        gap: 4px;
+    }
+
+    .level-selector select {
+        font-size: 9px;
+
+        padding:
+            6px 21px 6px 6px;
+    }
+
+    .control-title {
+        font-size: 12px;
+    }
+
+    .control-subtitle {
+        font-size: 8px;
+    }
+
+    .piece-label {
+        font-size: 7px;
+    }
+
+    .piece-value {
+        font-size: 8px;
+    }
+
+    .verification-timer {
+        right: 7px;
+
+        min-width: 85px;
+
+        padding: 5px 7px;
+    }
+
+    .timer-value {
+        font-size: 14px;
+    }
+
+}
+
+
+/* =========================================================
+   MOBILE / FOGLIO STRETTO
+========================================================= */
+
+@media(max-width: 500px) {
+
+    .staff-container {
+        grid-template-columns:
+            repeat(
+                3,
+                minmax(
+                    135px,
+                    1fr
+                )
+            );
+    }
+
+}
+
+
+/* =========================================================
+   NASCONDI TESTI SUPERFLUI
+========================================================= */
+
+.measure-status {
+    display: none;
+}
+
+</style>
+
+</head>
+
+<body>
+
+<div class="app">
+
+<header>
+
+<div class="top-left-controls">
+
+    <button
+        id="verifyButton"
+        class="verify-button"
+    >
+        verifica
+    </button>
+
+    <button
+        id="timeBadge"
+        class="time-badge"
+        type="button"
+        title="Cambia il tempo delle battute"
+    >
+        4/4
+    </button>
+
+    <div
+        id="levelBanner"
+        class="level-banner"
+    >
+        livello 1
+    </div>
+
+    <div class="level-selector">
+
+        <select
+            id="levelSelect"
+            aria-label="Seleziona livello"
+        >
+
+            <option value="1">Livello 1</option>
+            <option value="2">Livello 2</option>
+            <option value="3">Livello 3</option>
+            <option value="4">Livello 4</option>
+            <option value="5">Livello 5</option>
+            <option value="6">Livello 6</option>
+            <option value="7">Livello 7</option>
+            <option value="8">Livello 8</option>
+            <option value="9">Livello 9</option>
+            <option value="10">Livello 10</option>
+
+        </select>
+
+    </div>
+
+</div>
+
+
+<div>
+
+    <h1>
+        Costruttore di Battute
+    </h1>
+
+    <p id="headerSubtitle">
+        Costruisci le battute in 4/4
+        e supera tutti i livelli
+    </p>
+
+</div>
+
+
+<div
+    id="verificationTimer"
+    class="verification-timer"
+>
+
+    <div class="timer-label">
+        tempo
+    </div>
+
+    <div
+        id="timerValue"
+        class="timer-value"
+    >
+        00:00.0
+    </div>
+
+</div>
+
+</header>
+
+
+<div class="main">
+
+<section class="music-panel">
+
+<div class="sheet-header">
+
+    <div class="sheet-title">
+        Le tue battute
+    </div>
+
+    <div>
+
+        <div
+            id="progressText"
+            class="progress"
+        >
+            Battuta 1 di 6
+        </div>
+
+        <div class="progress-bar">
+
+            <div
+                id="progressFill"
+                class="progress-fill"
+            ></div>
+
+        </div>
+
+    </div>
+
+</div>
+
+
+<div class="staff-scroll">
+
+    <div
+        id="staffContainer"
+        class="staff-container"
+    ></div>
+
+</div>
+
+
+<div
+    id="result"
+    class="result"
+></div>
+
+</section>
+
+
+<aside class="control-panel">
+
+<div class="control-title">
+    Mattoncini
+</div>
+
+<div class="control-subtitle">
+    Scegli un mattoncino,
+    poi clicca nella battuta.
+</div>
+
+
+<div class="palette-scroll">
+
+    <div
+        id="palette"
+        class="palette"
+    ></div>
+
+</div>
+
+
+<div
+    id="levelInfo"
+    class="level-info"
+>
+    Livello 1:
+    semibreve, minima
+    e semiminima.
+</div>
+
+</aside>
+
+</div>
+
+</div>
+
+
+<!-- ANTEPRIMA CURSORE -->
+
+<div
+    id="cursorPreview"
+    class="cursor-preview"
+    style="display:none;"
+></div>
+
+
+<!-- SCHERMATA SCELTA DEL TEMPO -->
+
+<div
+    id="timeScreen"
+    class="start-screen"
+>
+
+<div class="start-notes">
+    <span>♪</span>
+    <span>♫</span>
+    <span>♩</span>
+    <span>♬</span>
+    <span>𝅗𝅥</span>
+</div>
+
+<div class="start-screen-content">
+
+    <div class="start-title">
+        Costruttore di Battute
+    </div>
+
+    <div class="start-subtitle">
+        Seleziona il tempo delle battute
+    </div>
+
+    <div
+        id="timeSelectGrid"
+        class="time-select-grid"
+    >
+
+        <button
+            class="time-select-btn"
+            type="button"
+            data-time="4"
+        >
+            4/4
+            <span class="time-select-sub">
+                quattro quarti
+            </span>
+        </button>
+
+        <button
+            class="time-select-btn"
+            type="button"
+            data-time="3"
+        >
+            3/4
+            <span class="time-select-sub">
+                tre quarti
+            </span>
+        </button>
+
+        <button
+            class="time-select-btn"
+            type="button"
+            data-time="2"
+        >
+            2/4
+            <span class="time-select-sub">
+                due quarti
+            </span>
+        </button>
+
+    </div>
+
+</div>
+
+</div>
+
+
+<!-- SCHERMATA INIZIALE -->
+
+<div
+    id="startScreen"
+    class="start-screen hide"
+>
+
+<div class="start-notes">
+    <span>♪</span>
+    <span>♫</span>
+    <span>♩</span>
+    <span>♬</span>
+    <span>𝅗𝅥</span>
+</div>
+
+<div class="start-screen-content">
+
+    <div class="start-title">
+        Costruttore di Battute
+    </div>
+
+    <div
+        id="startSubtitle"
+        class="start-subtitle"
+    >
+        Costruisci le battute in 4/4 e supera tutti i livelli
+    </div>
+
+    <div class="start-select-label">
+        Scegli da dove cominciare
+    </div>
+
+    <div
+        id="startLevelGrid"
+        class="start-level-grid"
+    ></div>
+
+    <button
+        id="startVerifyButton"
+        class="start-verify-button"
+        type="button"
+    >
+        Verifica
+    </button>
+
+</div>
+
+</div>
+
+
+<!-- SCHEMA DEL LIVELLO -->
+
+<div
+    id="levelDiagram"
+    class="level-diagram"
+>
+
+<div class="level-diagram-content">
+
+    <div
+        id="diagramTitle"
+        class="level-diagram-title"
+    >
+        Schema del livello 1
+    </div>
+
+    <div
+        id="diagramSubtitle"
+        class="level-diagram-subtitle"
+    >
+        Ecco le proporzioni tra le figure disponibili.
+    </div>
+
+    <div
+        id="diagramBars"
+        class="diagram-bars"
+    ></div>
+
+    <div class="continue-prompt">
+        Clicca per continuare
+    </div>
+
+</div>
+
+</div>
+
+
+<!-- TRANSIZIONE LIVELLO -->
+
+<div
+    id="levelTransition"
+    class="level-transition"
+>
+
+<div class="level-transition-content">
+
+    <div class="level-transition-small">
+        Hai raggiunto
+    </div>
+
+    <div
+        id="transitionNumber"
+        class="level-transition-number"
+    >
+        2
+    </div>
+
+    <div
+        id="transitionText"
+        class="level-transition-text"
+    >
+        Nuove possibilità!
+    </div>
+
+    <div
+        id="unlockedTitle"
+        class="unlocked-title"
+    >
+        Nuovi mattoncini sbloccati
+    </div>
+
+    <div
+        id="unlockedPieces"
+        class="unlocked-pieces"
+    ></div>
+
+    <div
+        id="continuePrompt"
+        class="continue-prompt"
+    >
+        Clicca per continuare
+    </div>
+
+</div>
+
+</div>
+
+
+<!-- FINE GIOCO -->
+
+<div
+    id="finalMessage"
+    class="final-message"
+>
+
+<div class="final-card">
+
+    <h2 id="finalTitle">
+        Complimenti!
+    </h2>
+
+    <p id="finalText">
+        Hai completato tutti i livelli!
+    </p>
+
+    <div
+        id="finalTime"
+        class="final-time"
+        style="display:none;"
+    ></div>
+
+    <div
+        id="finalGrade"
+        class="final-grade"
+        style="display:none;"
+    ></div>
+
+    <div
+        id="finalErrors"
+        class="final-errors"
+        style="display:none;"
+    ></div>
+
+</div>
+
+</div>
+
+
+<script>
+
+
+/* =========================================================
+   LIVELLI
+========================================================= */
+
+const LEVELS_4_4 = {
+
+    1: {
+        measures: 6,
+
+        pieces: [
+            "semibreve",
+            "minima",
+            "semiminima"
+        ],
+
+        description:
+            "Semibreve, minima e semiminima."
+    },
+
+
+    2: {
+        measures: 15,
+
+        pieces: [
+            "semibreve",
+            "minima",
+            "semiminima",
+            "croma"
+        ],
+
+        description:
+            "Ora puoi usare anche la croma."
+    },
+
+
+    3: {
+        measures: 25,
+
+        pieces: [
+            "semibreve",
+            "minima-puntata",
+            "minima",
+            "semiminima",
+            "croma"
+        ],
+
+        description:
+            "Hai a disposizione anche la minima puntata."
+    },
+
+
+    4: {
+        measures: 30,
+
+        pieces: [
+            "semibreve",
+            "minima-puntata",
+            "minima",
+            "semiminima-puntata",
+            "semiminima",
+            "croma"
+        ],
+
+        description:
+            "Ora puoi usare anche la semiminima puntata."
+    },
+
+
+    5: {
+        measures: 35,
+
+        pieces: [
+            "semibreve",
+            "pausesemibreve",
+            "minima-puntata",
+            "minima",
+            "pauseminima",
+            "semiminima-puntata",
+            "semiminima",
+            "croma"
+        ],
+
+        description:
+            "Hai a disposizione anche le pause di semibreve e minima."
+    },
+
+
+    6: {
+        measures: 35,
+
+        pieces: [
+            "semibreve",
+            "pausesemibreve",
+            "minima-puntata",
+            "minima",
+            "pauseminima",
+            "semiminima-puntata",
+            "semiminima",
+            "pausesemiminima",
+            "croma"
+        ],
+
+        description:
+            "Hai sbloccato anche la pausa di semiminima."
+    },
+
+
+    7: {
+        measures: 40,
+
+        pieces: [
+            "semibreve",
+            "pausesemibreve",
+            "minima-puntata",
+            "minima",
+            "pauseminima",
+            "semiminima-puntata",
+            "semiminima",
+            "pausesemiminima",
+            "croma",
+            "pausacroma"
+        ],
+
+        description:
+            "Hai sbloccato anche la pausa di croma."
+    },
+
+
+    8: {
+        measures: 50,
+
+        pieces: [
+            "semibreve",
+            "pausesemibreve",
+            "minima-puntata",
+            "minima",
+            "pauseminima",
+            "semiminima-puntata",
+            "semiminima",
+            "pausesemiminima",
+            "croma",
+            "pausacroma"
+        ],
+
+        description:
+            "Ora i mattoncini sono in bianco e nero."
+    },
+
+
+    9: {
+        measures: 50,
+
+        pieces: [
+            "semibreve",
+            "pausesemibreve",
+            "minima-puntata",
+            "minima",
+            "pauseminima",
+            "semiminima-puntata",
+            "semiminima",
+            "pausesemiminima",
+            "croma",
+            "pausacroma"
+        ],
+
+        description:
+            "Ora devi riconoscere il valore delle figure senza l'aiuto dei mattoncini."
+    },
+
+
+    10: {
+        measures: 50,
+
+        pieces: [
+            "semibreve",
+            "pausesemibreve",
+            "minima-puntata",
+            "minima",
+            "pauseminima",
+            "semiminima-puntata",
+            "semiminima",
+            "pausesemiminima",
+            "croma",
+            "pausacroma"
+        ],
+
+        description:
+            "Nessuna suddivisione interna: costruisci le battute contando mentalmente."
+    }
+
+};
+
+
+/* =========================================================
+   LIVELLI - TEMPO 3/4
+
+   In 3/4 non esiste la semibreve (dura 4/4,
+   più di un'intera battuta): la figura che
+   riempie da sola la battuta è la minima
+   puntata (3/4). Il numero di battute per
+   livello è calibrato sul numero di
+   combinazioni realmente costruibili con
+   le figure disponibili in quel livello.
+========================================================= */
+
+const LEVELS_3_4 = {
+
+    1: {
+        measures: 4,
+
+        pieces: [
+            "minima-puntata",
+            "minima",
+            "semiminima"
+        ],
+
+        description:
+            "Minima puntata, minima e semiminima."
+    },
+
+
+    2: {
+        measures: 12,
+
+        pieces: [
+            "minima-puntata",
+            "minima",
+            "semiminima",
+            "croma"
+        ],
+
+        description:
+            "Ora puoi usare anche la croma."
+    },
+
+
+    3: {
+        measures: 20,
+
+        pieces: [
+            "minima-puntata",
+            "minima",
+            "semiminima-puntata",
+            "semiminima",
+            "croma"
+        ],
+
+        description:
+            "Hai a disposizione anche la semiminima puntata."
+    },
+
+
+    4: {
+        measures: 25,
+
+        pieces: [
+            "minima-puntata",
+            "minima",
+            "pauseminima",
+            "semiminima-puntata",
+            "semiminima",
+            "croma"
+        ],
+
+        description:
+            "Ora puoi usare anche la pausa di minima."
+    },
+
+
+    5: {
+        measures: 35,
+
+        pieces: [
+            "minima-puntata",
+            "minima",
+            "pauseminima",
+            "semiminima-puntata",
+            "semiminima",
+            "pausesemiminima",
+            "croma"
+        ],
+
+        description:
+            "Hai sbloccato anche la pausa di semiminima."
+    },
+
+
+    6: {
+        measures: 40,
+
+        pieces: [
+            "minima-puntata",
+            "minima",
+            "pauseminima",
+            "semiminima-puntata",
+            "semiminima",
+            "pausesemiminima",
+            "croma",
+            "pausacroma"
+        ],
+
+        description:
+            "Hai sbloccato anche la pausa di croma."
+    },
+
+
+    7: {
+        measures: 45,
+
+        pieces: [
+            "minima-puntata",
+            "minima",
+            "pauseminima",
+            "semiminima-puntata",
+            "semiminima",
+            "pausesemiminima",
+            "croma",
+            "pausacroma"
+        ],
+
+        description:
+            "Ora crome e pause di croma sono limitate."
+    },
+
+
+    8: {
+        measures: 45,
+
+        pieces: [
+            "minima-puntata",
+            "minima",
+            "pauseminima",
+            "semiminima-puntata",
+            "semiminima",
+            "pausesemiminima",
+            "croma",
+            "pausacroma"
+        ],
+
+        description:
+            "Ora i mattoncini sono in bianco e nero."
+    },
+
+
+    9: {
+        measures: 45,
+
+        pieces: [
+            "minima-puntata",
+            "minima",
+            "pauseminima",
+            "semiminima-puntata",
+            "semiminima",
+            "pausesemiminima",
+            "croma",
+            "pausacroma"
+        ],
+
+        description:
+            "Ora devi riconoscere il valore delle figure senza l'aiuto dei mattoncini."
+    },
+
+
+    10: {
+        measures: 45,
+
+        pieces: [
+            "minima-puntata",
+            "minima",
+            "pauseminima",
+            "semiminima-puntata",
+            "semiminima",
+            "pausesemiminima",
+            "croma",
+            "pausacroma"
+        ],
+
+        description:
+            "Nessuna suddivisione interna: costruisci le battute contando mentalmente."
+    }
+
+};
+
+
+/* =========================================================
+   LIVELLI - TEMPO 2/4
+
+   In 2/4 la battuta dura solo due quarti:
+   niente semibreve né minima puntata (sono
+   già più lunghe di un'intera battuta).
+   Con così poco spazio le combinazioni
+   possibili sono molte meno: i livelli
+   hanno di conseguenza meno battute.
+========================================================= */
+
+const LEVELS_2_4 = {
+
+    1: {
+        measures: 2,
+
+        pieces: [
+            "minima",
+            "semiminima"
+        ],
+
+        description:
+            "Minima e semiminima."
+    },
+
+
+    2: {
+        measures: 4,
+
+        pieces: [
+            "minima",
+            "semiminima",
+            "croma"
+        ],
+
+        description:
+            "Ora puoi usare anche la croma."
+    },
+
+
+    3: {
+        measures: 6,
+
+        pieces: [
+            "minima",
+            "semiminima-puntata",
+            "semiminima",
+            "croma"
+        ],
+
+        description:
+            "Hai a disposizione anche la semiminima puntata."
+    },
+
+
+    4: {
+        measures: 7,
+
+        pieces: [
+            "minima",
+            "pauseminima",
+            "semiminima-puntata",
+            "semiminima",
+            "croma"
+        ],
+
+        description:
+            "Ora puoi usare anche la pausa di minima."
+    },
+
+
+    5: {
+        measures: 10,
+
+        pieces: [
+            "minima",
+            "pauseminima",
+            "semiminima-puntata",
+            "semiminima",
+            "pausesemiminima",
+            "croma"
+        ],
+
+        description:
+            "Hai sbloccato anche la pausa di semiminima."
+    },
+
+
+    6: {
+        measures: 25,
+
+        pieces: [
+            "minima",
+            "pauseminima",
+            "semiminima-puntata",
+            "semiminima",
+            "pausesemiminima",
+            "croma",
+            "pausacroma"
+        ],
+
+        description:
+            "Hai sbloccato anche la pausa di croma."
+    },
+
+
+    7: {
+        measures: 30,
+
+        pieces: [
+            "minima",
+            "pauseminima",
+            "semiminima-puntata",
+            "semiminima",
+            "pausesemiminima",
+            "croma",
+            "pausacroma"
+        ],
+
+        description:
+            "Ora crome e pause di croma sono limitate."
+    },
+
+
+    8: {
+        measures: 30,
+
+        pieces: [
+            "minima",
+            "pauseminima",
+            "semiminima-puntata",
+            "semiminima",
+            "pausesemiminima",
+            "croma",
+            "pausacroma"
+        ],
+
+        description:
+            "Ora i mattoncini sono in bianco e nero."
+    },
+
+
+    9: {
+        measures: 30,
+
+        pieces: [
+            "minima",
+            "pauseminima",
+            "semiminima-puntata",
+            "semiminima",
+            "pausesemiminima",
+            "croma",
+            "pausacroma"
+        ],
+
+        description:
+            "Ora devi riconoscere il valore delle figure senza l'aiuto dei mattoncini."
+    },
+
+
+    10: {
+        measures: 30,
+
+        pieces: [
+            "minima",
+            "pauseminima",
+            "semiminima-puntata",
+            "semiminima",
+            "pausesemiminima",
+            "croma",
+            "pausacroma"
+        ],
+
+        description:
+            "Nessuna suddivisione interna: costruisci le battute contando mentalmente."
+    }
+
+};
+
+
+/* =========================================================
+   TEMPO ATTIVO
+
+   LEVELS punta sempre all'insieme di livelli
+   del tempo attualmente selezionato.
+   beatsPerMeasure è il numero di quarti che
+   riempiono una battuta (4, 3 o 2).
+========================================================= */
+
+const LEVEL_SETS = {
+    4: LEVELS_4_4,
+    3: LEVELS_3_4,
+    2: LEVELS_2_4
+};
+
+let beatsPerMeasure = 4;
+
+let LEVELS = LEVELS_4_4;
+
+
+/* =========================================================
+   VALORI
+========================================================= */
+
+const VALUES = {
+
+    semibreve: 4,
+
+    pausesemibreve: 4,
+
+    "minima-puntata": 3,
+
+    minima: 2,
+
+    pauseminima: 2,
+
+    "semiminima-puntata": 1.5,
+
+    semiminima: 1,
+
+    pausesemiminima: 1,
+
+    croma: .5,
+
+    pausacroma: .5
+
+};
+
+
+/* =========================================================
+   LIMITI DI UTILIZZO
+
+   Dal livello 7 in poi lo studente ha un
+   numero massimo di crome e pause di croma
+   che può usare in totale.
+========================================================= */
+
+const PIECE_LIMITS = {
+
+    croma: 25,
+
+    pausacroma: 25
+
+};
+
+
+const LIMIT_LABELS_PLURAL = {
+
+    croma: "crome",
+
+    pausacroma: "pause di croma"
+
+};
+
+
+let pieceUsage = {
+
+    croma: 0,
+
+    pausacroma: 0
+
+};
+
+
+function isLimitedType(type) {
+
+    return (
+        level >= 7 &&
+        PIECE_LIMITS.hasOwnProperty(type)
+    );
+
+}
+
+
+function remainingCount(type) {
+
+    return (
+        PIECE_LIMITS[type] -
+        pieceUsage[type]
+    );
+
+}
+
+
+function resetPieceUsage() {
+
+    pieceUsage = {
+
+        croma: 0,
+
+        pausacroma: 0
+
+    };
+
+}
+
+
+function buildLimitText(type) {
+
+    const used =
+        pieceUsage[type];
+
+    const total =
+        PIECE_LIMITS[type];
+
+    const remaining =
+        remainingCount(type);
+
+    return (
+        "Usate " +
+        used +
+        "/" +
+        total +
+        " · Restano " +
+        remaining
+    );
+
+}
+
+
+function updatePieceLimitsUI() {
+
+    document
+        .querySelectorAll(
+            ".piece-limit"
+        )
+        .forEach(
+            el => {
+
+                const type =
+                    el.dataset.limitType;
+
+                el.textContent =
+                    buildLimitText(type);
+
+
+                const full =
+                    pieceUsage[type] >=
+                    PIECE_LIMITS[type];
+
+
+                el.classList.toggle(
+                    "piece-limit-full",
+                    full
+                );
+
+
+                const piece =
+                    document.querySelector(
+                        `.piece[data-type="${type}"]`
+                    );
+
+
+                if (piece) {
+
+                    piece.classList.toggle(
+                        "piece-disabled",
+                        full
+                    );
+
+                }
+
+            }
+        );
+
+}
+
+
+/* =========================================================
+   COLORI
+========================================================= */
+
+const COLORS = {
+
+    semibreve: "#df4050",
+
+    pausesemibreve: "#df4050",
+
+    "minima-puntata": "#8a50d8",
+
+    minima: "#3974e8",
+
+    pauseminima: "#3974e8",
+
+    "semiminima-puntata": "#e96935",
+
+    semiminima: "#39b85b",
+
+    pausesemiminima: "#39b85b",
+
+    croma: "#f2b629",
+
+    pausacroma: "#f2b629"
+
+};
+
+
+/* =========================================================
+   SIMBOLI
+========================================================= */
+
+const SYMBOLS = {
+
+    semibreve: "𝅝",
+
+    "minima-puntata": "𝅗𝅥.",
+
+    minima: "𝅗𝅥",
+
+    "semiminima-puntata": "♩.",
+
+    semiminima: "♩",
+
+    croma: "♪"
+
+};
+
+
+/* =========================================================
+   PAUSE
+========================================================= */
+
+const REST_SYMBOLS = {
+
+    pausesemibreve: "𝄻",
+
+    pauseminima: "𝄼",
+
+    pausesemiminima: "𝄽",
+
+    pausacroma: "𝄾"
+
+};
+
+
+/* =========================================================
+   NOMI
+========================================================= */
+
+const LABELS = {
+
+    semibreve:
+        "Semibreve",
+
+    pausesemibreve:
+        "Pausa di semibreve",
+
+    "minima-puntata":
+        "Minima puntata",
+
+    minima:
+        "Minima",
+
+    pauseminima:
+        "Pausa di minima",
+
+    "semiminima-puntata":
+        "Semiminima puntata",
+
+    semiminima:
+        "Semiminima",
+
+    pausesemiminima:
+        "Pausa di semiminima",
+
+    croma:
+        "Croma",
+
+    pausacroma:
+        "Pausa di croma"
+
+};
+
+
+/* =========================================================
+   FRAZIONI
+========================================================= */
+
+const FRACTIONS = {
+
+    semibreve:
+        "4/4",
+
+    pausesemibreve:
+        "4/4",
+
+    "minima-puntata":
+        "3/4",
+
+    minima:
+        "2/4",
+
+    pauseminima:
+        "2/4",
+
+    "semiminima-puntata":
+        "1/4 + 1/8",
+
+    semiminima:
+        "1/4",
+
+    pausesemiminima:
+        "1/4",
+
+    croma:
+        "1/8",
+
+    pausacroma:
+        "1/8"
+
+};
+
+
+/* =========================================================
+   STATO
+========================================================= */
+
+let level = 1;
+
+let currentMeasure = 0;
+
+let measures = [];
+
+let selectedType = null;
+
+let hoveredMeasure = null;
+
+
+/* =========================================================
+   MODALITÀ VERIFICA
+========================================================= */
+
+let verificationMode = false;
+
+let verificationStarted = false;
+
+let verificationStartTime = null;
+
+let verificationTimerInterval = null;
+
+let verificationErrors = 0;
+
+
+/* =========================================================
+   AUDIO
+========================================================= */
+
+let audioContext = null;
+
+
+/*
+    Unico suono del gioco:
+    jingle vittorioso al passaggio di livello.
+*/
+
+function playVictoryJingle() {
+
+    try {
+
+        if (!audioContext) {
+
+            audioContext =
+                new (
+                    window.AudioContext ||
+                    window.webkitAudioContext
+                )();
+
+        }
+
+
+        if (
+            audioContext.state === "suspended"
+        ) {
+
+            audioContext.resume();
+
+        }
+
+
+        const now =
+            audioContext.currentTime;
+
+
+        const notes = [
+            {
+                frequency: 523.25,
+                time: 0,
+                duration: .18
+            },
+            {
+                frequency: 659.25,
+                time: .13,
+                duration: .18
+            },
+            {
+                frequency: 783.99,
+                time: .26,
+                duration: .28
+            },
+            {
+                frequency: 1046.50,
+                time: .43,
+                duration: .42
+            }
+        ];
+
+
+        notes.forEach(
+            note => {
+
+                const oscillator =
+                    audioContext.createOscillator();
+
+                const gain =
+                    audioContext.createGain();
+
+
+                oscillator.type =
+                    "sine";
+
+
+                oscillator.frequency.setValueAtTime(
+                    note.frequency,
+                    now + note.time
+                );
+
+
+                gain.gain.setValueAtTime(
+                    0,
+                    now + note.time
+                );
+
+
+                gain.gain.linearRampToValueAtTime(
+                    .13,
+                    now + note.time + .025
+                );
+
+
+                gain.gain.exponentialRampToValueAtTime(
+                    .001,
+                    now + note.time + note.duration
+                );
+
+
+                oscillator.connect(gain);
+
+                gain.connect(
+                    audioContext.destination
+                );
+
+
+                oscillator.start(
+                    now + note.time
+                );
+
+
+                oscillator.stop(
+                    now +
+                    note.time +
+                    note.duration +
+                    .02
+                );
+
+            }
+        );
+
+    }
+    catch(error) {
+
+        /*
+            L'audio è solo un effetto:
+            se il browser lo blocca,
+            il gioco continua normalmente.
+        */
+
+    }
+
+}
+
+
+/* =========================================================
+   RESET
+========================================================= */
+
+function resetLevel() {
+
+    const amount =
+        LEVELS[level].measures;
+
+
+    measures =
+        Array.from(
+            {
+                length: amount
+            },
+            () => []
+        );
+
+
+    currentMeasure = 0;
+
+    selectedType = null;
+
+    hoveredMeasure = null;
+
+    resetPieceUsage();
+
+
+    createMeasures();
+
+    createPalette();
+
+    updateLevelInterface();
+
+    updateAllMeasureStates();
+
+    updateProgress();
+
+    hideCursorPreview();
+
+    removeMeasurePreview();
+
+    clearResult();
+
+
+    document.getElementById(
+        "levelSelect"
+    ).value = level;
+
+
+    const scroll =
+        document.querySelector(
+            ".staff-scroll"
+        );
+
+
+    if (scroll) {
+
+        scroll.scrollTop = 0;
+
+    }
+
+}
+
+
+/* =========================================================
+   SELETTORE LIVELLO
+========================================================= */
+
+document
+    .getElementById(
+        "levelSelect"
+    )
+    .addEventListener(
+        "change",
+        function() {
+
+            if (
+                verificationMode
+            ) {
+
+                this.value = 10;
+
+                return;
+
+            }
+
+
+            const chosenLevel =
+                Number(this.value);
+
+
+            if (
+                chosenLevel === level
+            ) {
+
+                return;
+
+            }
+
+
+            level =
+                chosenLevel;
+
+
+            document
+                .getElementById(
+                    "finalMessage"
+                )
+                .classList.remove(
+                    "show"
+                );
+
+
+            resetLevel();
+
+
+            setResult(
+                "Livello " +
+                level +
+                " selezionato.",
+                "#3996d1"
+            );
+
+        }
+    );
+
+
+/* =========================================================
+   VERIFICA
+========================================================= */
+
+document
+    .getElementById(
+        "verifyButton"
+    )
+    .addEventListener(
+        "click",
+        startVerification
+    );
+
+
+function startVerification() {
+
+    if (
+        verificationMode
+    ) {
+
+        return;
+
+    }
+
+
+    verificationMode = true;
+
+    verificationStarted = false;
+
+    verificationStartTime = null;
+
+    verificationErrors = 0;
+
+
+    level = 10;
+
+
+    document
+        .getElementById(
+            "levelSelect"
+        )
+        .value = 10;
+
+
+    document
+        .getElementById(
+            "levelSelect"
+        )
+        .disabled = true;
+
+
+    document
+        .getElementById(
+            "timeBadge"
+        )
+        .disabled = true;
+
+
+    const button =
+        document.getElementById(
+            "verifyButton"
+        );
+
+
+    button.textContent =
+        "verifica attiva";
+
+
+    button.classList.add(
+        "active"
+    );
+
+
+    document
+        .getElementById(
+            "verificationTimer"
+        )
+        .classList.add(
+            "show"
+        );
+
+
+    resetLevel();
+
+
+    setResult(
+        "Modalità verifica: completa tutte le " +
+        LEVELS[10].measures +
+        " battute.",
+        "#d88900"
+    );
+
+}
+
+
+/* =========================================================
+   TIMER
+========================================================= */
+
+function startVerificationTimer() {
+
+    if (
+        !verificationMode ||
+        verificationStarted
+    ) {
+
+        return;
+
+    }
+
+
+    verificationStarted = true;
+
+    verificationStartTime =
+        performance.now();
+
+
+    verificationTimerInterval =
+        setInterval(
+            updateVerificationTimer,
+            100
+        );
+
+
+    updateVerificationTimer();
+
+}
+
+
+function updateVerificationTimer() {
+
+    if (
+        !verificationStartTime
+    ) {
+
+        return;
+
+    }
+
+
+    const elapsed =
+        performance.now() -
+        verificationStartTime;
+
+
+    document.getElementById(
+        "timerValue"
+    ).textContent =
+        formatTime(
+            elapsed
+        );
+
+}
+
+
+function stopVerificationTimer() {
+
+    if (
+        verificationTimerInterval
+    ) {
+
+        clearInterval(
+            verificationTimerInterval
+        );
+
+        verificationTimerInterval =
+            null;
+
+    }
+
+}
+
+
+function formatTime(milliseconds) {
+
+    const totalSeconds =
+        milliseconds / 1000;
+
+
+    const minutes =
+        Math.floor(
+            totalSeconds / 60
+        );
+
+
+    const seconds =
+        Math.floor(
+            totalSeconds % 60
+        );
+
+
+    const tenths =
+        Math.floor(
+            (totalSeconds % 1) * 10
+        );
+
+
+    return (
+        String(minutes).padStart(2, "0") +
+        ":" +
+        String(seconds).padStart(2, "0") +
+        "." +
+        tenths
+    );
+
+}
+
+
+/* =========================================================
+   VOTO VERIFICA
+
+   0 errori   -> 10
+   1-2 errori -> 9,5
+   3-4 errori -> 9
+   5-6 errori -> 8,5
+   ... -0,5 ogni 2 errori in più.
+========================================================= */
+
+function calculateGrade(errors) {
+
+    return (
+        10 -
+        .5 *
+        Math.ceil(
+            errors / 2
+        )
+    );
+
+}
+
+
+function formatGrade(grade) {
+
+    if (
+        Number.isInteger(grade)
+    ) {
+
+        return String(grade);
+
+    }
+
+
+    return grade
+        .toFixed(1)
+        .replace(".", ",");
+
+}
+
+
+/* =========================================================
+   DIMENSIONI
+========================================================= */
+
+function calculateDimensions() {
+
+    const panel =
+        document.querySelector(
+            ".music-panel"
+        );
+
+
+    if (!panel) {
+        return;
+    }
+
+
+    const panelWidth =
+        panel.clientWidth;
+
+
+    const panelHeight =
+        panel.clientHeight;
+
+
+    const horizontalSpace =
+        panelWidth - 38;
+
+
+    const verticalSpace =
+        Math.max(
+            150,
+            panelHeight - 112
+        );
+
+
+    const cellWidth =
+        horizontalSpace / 5;
+
+
+    const cellHeight =
+        Math.max(
+            82,
+            verticalSpace / 5
+        );
+
+
+    const unitFromWidth =
+        (cellWidth - 7) / beatsPerMeasure;
+
+
+    const unitFromHeight =
+        (cellHeight - 23) / 1.65;
+
+
+    let unit =
+        Math.min(
+            unitFromWidth,
+            unitFromHeight
+        );
+
+
+    unit =
+        Math.max(
+            23,
+            Math.min(
+                unit,
+                60
+            )
+        );
+
+
+    document.documentElement.style
+        .setProperty(
+            "--unit",
+            unit + "px"
+        );
+
+
+    document.documentElement.style
+        .setProperty(
+            "--measure-width",
+            (unit * beatsPerMeasure) + "px"
+        );
+
+
+    document.documentElement.style
+        .setProperty(
+            "--beats",
+            beatsPerMeasure
+        );
+
+
+    document.documentElement.style
+        .setProperty(
+            "--piece-height",
+            unit + "px"
+        );
+
+
+    updateCursorPreview();
+
+}
+
+
+/* =========================================================
+   CREA BATTUTE
+========================================================= */
+
+function createMeasures() {
+
+    const container =
+        document.getElementById(
+            "staffContainer"
+        );
+
+
+    container.innerHTML = "";
+
+
+    const amount =
+        LEVELS[level].measures;
+
+
+    for (
+        let i = 0;
+        i < amount;
+        i++
+    ) {
+
+        container.appendChild(
+            createMeasure(i)
+        );
+
+    }
+
+
+    calculateDimensions();
+
+}
+
+
+/* =========================================================
+   CREA BATTUTA
+========================================================= */
+
+function createMeasure(index) {
+
+    const wrapper =
+        document.createElement(
+            "div"
+        );
+
+
+    wrapper.className =
+        "measure-wrapper";
+
+
+    const measure =
+        document.createElement(
+            "div"
+        );
+
+
+    measure.className =
+        "measure";
+
+
+    measure.dataset.index =
+        index;
+
+
+    const number =
+        document.createElement(
+            "div"
+        );
+
+
+    number.className =
+        "measure-number";
+
+
+    number.textContent =
+        index + 1;
+
+
+    measure.appendChild(
+        number
+    );
+
+
+    /*
+        Livello 10:
+        le suddivisioni interne NON vengono
+        mostrate graficamente.
+    */
+
+    if (
+        level !== 10
+    ) {
+
+        const grid =
+            document.createElement(
+                "div"
+            );
+
+
+        grid.className =
+            "beat-grid";
+
+
+        for (
+            let i = 0;
+            i < beatsPerMeasure;
+            i++
+        ) {
+
+            const cell =
+                document.createElement(
+                    "div"
+                );
+
+
+            cell.className =
+                "beat-cell";
+
+
+            grid.appendChild(
+                cell
+            );
+
+        }
+
+
+        measure.appendChild(
+            grid
+        );
+
+    }
+
+
+    const area =
+        document.createElement(
+            "div"
+        );
+
+
+    area.className =
+        "pieces-area";
+
+
+    area.dataset.index =
+        index;
+
+
+    area.addEventListener(
+        "mouseenter",
+        () => {
+
+            hoveredMeasure =
+                index;
+
+
+            /*
+                LIVELLI 9 E 10:
+                nessuna anteprima tratteggiata
+                dentro la battuta, ma il
+                mattoncino resta impresso
+                nel cursore anche qui.
+            */
+
+            if (
+                level >= 9
+            ) {
+
+                return;
+
+            }
+
+
+            if (
+                selectedType &&
+                index === currentMeasure
+            ) {
+
+                showMeasurePreview();
+
+            }
+
+        }
+    );
+
+
+    area.addEventListener(
+        "mouseleave",
+        () => {
+
+            hoveredMeasure =
+                null;
+
+
+            removeMeasurePreview();
+
+        }
+    );
+
+
+    area.addEventListener(
+        "mousemove",
+        () => {
+
+            /*
+                LIVELLI 9 E 10:
+                nessuna anteprima.
+            */
+
+            if (
+                level >= 9
+            ) {
+
+                return;
+
+            }
+
+
+            if (
+                selectedType &&
+                index === currentMeasure
+            ) {
+
+                showMeasurePreview();
+
+            }
+
+        }
+    );
+
+
+    area.addEventListener(
+        "click",
+        event => {
+
+            event.stopPropagation();
+
+
+            if (
+                index !== currentMeasure
+            ) {
+
+                return;
+
+            }
+
+
+            if (!selectedType) {
+
+                setResult(
+                    "Prima scegli una figura.",
+                    "#d88900"
+                );
+
+                return;
+
+            }
+
+
+            addPiece(
+                index,
+                selectedType
+            );
+
+        }
+    );
+
+
+    measure.appendChild(
+        area
+    );
+
+
+    const status =
+        document.createElement(
+            "div"
+        );
+
+
+    status.className =
+        "measure-status";
+
+
+    wrapper.appendChild(
+        measure
+    );
+
+
+    wrapper.appendChild(
+        status
+    );
+
+
+    return wrapper;
+
+}
+
+
+/* =========================================================
+   PALETTE
+========================================================= */
+
+function createPalette() {
+
+    const palette =
+        document.getElementById(
+            "palette"
+        );
+
+
+    palette.innerHTML = "";
+
+
+    LEVELS[level].pieces.forEach(
+        type => {
+
+            const wrapper =
+                document.createElement(
+                    "div"
+                );
+
+
+            wrapper.className =
+                "piece-wrapper";
+
+
+            const piece =
+                document.createElement(
+                    "div"
+                );
+
+
+            piece.className =
+                "piece " +
+                type;
+
+
+            piece.dataset.type =
+                type;
+
+
+            /*
+                Simbolo nota
+            */
+
+            if (
+                SYMBOLS[type]
+            ) {
+
+                const symbol =
+                    document.createElement(
+                        "span"
+                    );
+
+
+                symbol.className =
+                    "rhythm-symbol";
+
+
+                if (
+                    type === "croma"
+                ) {
+
+                    symbol.classList.add(
+                        "croma-symbol"
+                    );
+
+                }
+
+
+                symbol.textContent =
+                    SYMBOLS[type];
+
+
+                piece.appendChild(
+                    symbol
+                );
+
+            }
+
+
+            /*
+                Simbolo pausa
+            */
+
+            if (
+                REST_SYMBOLS[type]
+            ) {
+
+                const symbol =
+                    document.createElement(
+                        "span"
+                    );
+
+
+                symbol.className =
+                    "rest-symbol";
+
+
+                symbol.textContent =
+                    REST_SYMBOLS[type];
+
+
+                piece.appendChild(
+                    symbol
+                );
+
+            }
+
+
+            piece.addEventListener(
+                "click",
+                event => {
+
+                    event.stopPropagation();
+
+
+                    if (
+                        isLimitedType(type) &&
+                        pieceUsage[type] >=
+                        PIECE_LIMITS[type]
+                    ) {
+
+                        setResult(
+                            "Hai esaurito le " +
+                            LIMIT_LABELS_PLURAL[type] +
+                            " disponibili (" +
+                            PIECE_LIMITS[type] +
+                            "/" +
+                            PIECE_LIMITS[type] +
+                            ").",
+                            "#d88900"
+                        );
+
+                        return;
+
+                    }
+
+
+                    selectPiece(type);
+
+                }
+            );
+
+
+            const label =
+                document.createElement(
+                    "div"
+                );
+
+
+            label.className =
+                "piece-label";
+
+
+            label.textContent =
+                LABELS[type];
+
+
+            const value =
+                document.createElement(
+                    "div"
+                );
+
+
+            value.className =
+                "piece-value";
+
+
+            value.textContent =
+                FRACTIONS[type];
+
+
+            wrapper.appendChild(
+                piece
+            );
+
+
+            wrapper.appendChild(
+                label
+            );
+
+
+            wrapper.appendChild(
+                value
+            );
+
+
+            /*
+                LIMITE DI UTILIZZO
+
+                Solo per crome e pause di croma,
+                dal livello 7 in poi: mostra
+                quante ne sono state usate e
+                quante ne restano.
+            */
+
+            if (
+                isLimitedType(type)
+            ) {
+
+                const limit =
+                    document.createElement(
+                        "div"
+                    );
+
+
+                limit.className =
+                    "piece-limit";
+
+
+                limit.dataset.limitType =
+                    type;
+
+
+                limit.textContent =
+                    buildLimitText(type);
+
+
+                wrapper.appendChild(
+                    limit
+                );
+
+
+                piece.classList.toggle(
+                    "piece-disabled",
+                    pieceUsage[type] >=
+                    PIECE_LIMITS[type]
+                );
+
+            }
+
+
+            palette.appendChild(
+                wrapper
+            );
+
+        }
+    );
+
+}
+
+
+/* =========================================================
+   SELEZIONE
+========================================================= */
+
+function deselectPiece() {
+
+    selectedType = null;
+
+
+    document
+        .querySelectorAll(
+            ".piece"
+        )
+        .forEach(
+            p => {
+
+                p.classList.remove(
+                    "selected"
+                );
+
+            }
+        );
+
+
+    hideCursorPreview();
+
+    removeMeasurePreview();
+
+}
+
+
+function selectPiece(type) {
+
+    /*
+        Il timer della verifica parte
+        dal primo gesto del giocatore.
+    */
+
+    if (
+        verificationMode
+    ) {
+
+        startVerificationTimer();
+
+    }
+
+
+    if (
+        selectedType === type
+    ) {
+
+        deselectPiece();
+
+        return;
+
+    }
+
+
+    selectedType =
+        type;
+
+
+    document
+        .querySelectorAll(
+            ".piece"
+        )
+        .forEach(
+            p => {
+
+                p.classList.toggle(
+                    "selected",
+                    p.dataset.type === type
+                );
+
+            }
+        );
+
+
+    /*
+        LIVELLI 9 E 10:
+        niente anteprima DENTRO la battuta,
+        ma il cursore afferra comunque
+        un mattoncino di lunghezza uniforme
+        e lo mantiene anche sopra la battuta.
+    */
+
+    if (
+        level >= 9
+    ) {
+
+        removeMeasurePreview();
+
+        showCursorPreview();
+
+        return;
+
+    }
+
+
+    showCursorPreview();
+
+
+    if (
+        hoveredMeasure ===
+        currentMeasure
+    ) {
+
+        showMeasurePreview();
+
+    }
+
+}
+
+
+/* =========================================================
+   CURSORE
+========================================================= */
+
+document.addEventListener(
+    "mousemove",
+    event => {
+
+        if (
+            !selectedType
+        ) {
+
+            return;
+
+        }
+
+
+        const preview =
+            document.getElementById(
+                "cursorPreview"
+            );
+
+
+        preview.style.left =
+            event.clientX + "px";
+
+
+        preview.style.top =
+            event.clientY + "px";
+
+    }
+);
+
+
+function showCursorPreview() {
+
+    /*
+        LIVELLI 9 E 10:
+        il cursore afferra comunque
+        un mattoncino (di lunghezza
+        uniforme, vedi updateCursorPreview),
+        anche quando si trova sopra
+        la battuta: solo l'anteprima
+        tratteggiata dentro la battuta
+        resta disabilitata.
+    */
+
+    const preview =
+        document.getElementById(
+            "cursorPreview"
+        );
+
+
+    if (!selectedType) {
+        return;
+    }
+
+
+    preview.style.display =
+        "flex";
+
+
+    updateCursorPreview();
+
+}
+
+
+function updateCursorPreview() {
+
+    const preview =
+        document.getElementById(
+            "cursorPreview"
+        );
+
+
+    if (
+        !preview ||
+        !selectedType
+    ) {
+
+        if (preview) {
+
+            preview.style.display =
+                "none";
+
+        }
+
+        return;
+
+    }
+
+
+    /*
+        LIVELLI 9 E 10:
+
+        il cursore afferra un mattoncino
+        di lunghezza UNIFORME, identica
+        a quella mostrata nella tabella
+        di selezione a destra (82px),
+        invece della reale durata musicale.
+    */
+
+    preview.style.width =
+        (
+            level >= 9
+                ? 82
+                : getPieceWidth(selectedType)
+        ) + "px";
+
+
+    preview.style.height =
+        "var(--piece-height)";
+
+
+    /*
+        LIVELLO 8:
+        mattoncino afferrato in bianco e nero,
+        non con il colore della figura.
+
+        LIVELLI 9 E 10:
+        stesso trattamento bianco/grigio
+        dei quadrati mostrati in palette.
+    */
+
+    preview.style.background =
+        (
+            level === 8 ||
+            level >= 9
+        )
+            ? "linear-gradient(135deg, #ffffff, #d8d8d8)"
+            : COLORS[selectedType];
+
+
+    if (
+        REST_SYMBOLS[selectedType]
+    ) {
+
+        preview.innerHTML =
+            `<span class="rest-symbol">
+                ${REST_SYMBOLS[selectedType]}
+            </span>`;
+
+    }
+    else {
+
+        preview.innerHTML =
+            `<span class="rhythm-symbol">
+                ${SYMBOLS[selectedType]}
+            </span>`;
+
+    }
+
+}
+
+
+function hideCursorPreview() {
+
+    const preview =
+        document.getElementById(
+            "cursorPreview"
+        );
+
+
+    preview.style.display =
+        "none";
+
+}
+
+
+/* =========================================================
+   LARGHEZZA
+========================================================= */
+
+function getPieceWidth(type) {
+
+    const unit =
+        parseFloat(
+            getComputedStyle(
+                document.documentElement
+            )
+            .getPropertyValue(
+                "--unit"
+            )
+        );
+
+
+    return (
+        VALUES[type] *
+        unit
+    );
+
+}
+
+
+/* =========================================================
+   PREVIEW BATTUTA
+========================================================= */
+
+function showMeasurePreview() {
+
+    /*
+        Nei livelli 9 e 10 è completamente
+        disabilitata.
+    */
+
+    if (
+        level >= 9
+    ) {
+
+        return;
+
+    }
+
+
+    removeMeasurePreview();
+
+
+    if (!selectedType) {
+        return;
+    }
+
+
+    if (
+        hoveredMeasure !==
+        currentMeasure
+    ) {
+
+        return;
+
+    }
+
+
+    if (
+        !canFitPiece(
+            currentMeasure,
+            selectedType
+        )
+    ) {
+
+        return;
+
+    }
+
+
+    const measure =
+        document.querySelector(
+            `.measure[data-index="${currentMeasure}"]`
+        );
+
+
+    if (!measure) {
+        return;
+    }
+
+
+    const area =
+        measure.querySelector(
+            ".pieces-area"
+        );
+
+
+    const preview =
+        document.createElement(
+            "div"
+        );
+
+
+    preview.className =
+        "measure-preview";
+
+
+    preview.style.position =
+        "absolute";
+
+
+    preview.style.top =
+        "0";
+
+
+    preview.style.left =
+        getMeasureWidthUsed(
+            currentMeasure
+        ) + "px";
+
+
+    preview.style.width =
+        getPieceWidth(
+            selectedType
+        ) + "px";
+
+
+    preview.style.height =
+        "var(--piece-height)";
+
+
+    /*
+        LIVELLO 8:
+        anteprima sulla battuta in bianco
+        e nero, identica a quella impressa
+        nel cursore (non il colore della
+        figura).
+    */
+
+    preview.style.background =
+        level === 8
+            ? "linear-gradient(135deg, #ffffff, #d8d8d8)"
+            : COLORS[selectedType];
+
+
+    preview.style.opacity =
+        ".30";
+
+
+    preview.style.border =
+        "2px dashed rgba(30,50,70,.55)";
+
+
+    preview.style.borderRadius =
+        "5px";
+
+
+    preview.style.display =
+        "flex";
+
+
+    preview.style.alignItems =
+        "center";
+
+
+    preview.style.justifyContent =
+        "center";
+
+
+    if (
+        REST_SYMBOLS[selectedType]
+    ) {
+
+        preview.innerHTML =
+            `<span class="rest-symbol">
+                ${REST_SYMBOLS[selectedType]}
+            </span>`;
+
+    }
+    else {
+
+        preview.innerHTML =
+            `<span class="rhythm-symbol">
+                ${SYMBOLS[selectedType]}
+            </span>`;
+
+    }
+
+
+    area.appendChild(
+        preview
+    );
+
+}
+
+
+function removeMeasurePreview() {
+
+    document
+        .querySelectorAll(
+            ".measure-preview"
+        )
+        .forEach(
+            preview => {
+
+                preview.remove();
+
+            }
+        );
+
+}
+
+
+/* =========================================================
+   AGGIUNGI
+========================================================= */
+
+function addPiece(index, type) {
+
+    if (
+        index !== currentMeasure
+    ) {
+
+        return;
+
+    }
+
+
+    if (
+        verificationMode
+    ) {
+
+        startVerificationTimer();
+
+    }
+
+
+    if (
+        !canFitPiece(
+            index,
+            type
+        )
+    ) {
+
+        setResult(
+            "Non c'è abbastanza spazio: la battuta deve essere " +
+            beatsPerMeasure +
+            "/4.",
+            "#d88900"
+        );
+
+        return;
+
+    }
+
+
+    if (
+        isLimitedType(type) &&
+        pieceUsage[type] >=
+        PIECE_LIMITS[type]
+    ) {
+
+        setResult(
+            "Hai esaurito le " +
+            LIMIT_LABELS_PLURAL[type] +
+            " disponibili (" +
+            PIECE_LIMITS[type] +
+            "/" +
+            PIECE_LIMITS[type] +
+            ").",
+            "#d88900"
+        );
+
+        return;
+
+    }
+
+
+    measures[index].push(type);
+
+
+    if (
+        isLimitedType(type)
+    ) {
+
+        pieceUsage[type]++;
+
+        updatePieceLimitsUI();
+
+
+        if (
+            pieceUsage[type] >=
+            PIECE_LIMITS[type]
+        ) {
+
+            deselectPiece();
+
+        }
+
+    }
+
+
+    renderMeasure(index);
+
+
+    removeMeasurePreview();
+
+
+    if (
+        getMeasureValue(index) === beatsPerMeasure
+    ) {
+
+        checkCompletedMeasure(index);
+
+    }
+
+}
+
+
+/* =========================================================
+   CONTROLLO SPAZIO
+========================================================= */
+
+function canFitPiece(index, type) {
+
+    return (
+        getMeasureValue(index) +
+        VALUES[type]
+        <= beatsPerMeasure
+    );
+
+}
+
+
+/* =========================================================
+   VALORE
+========================================================= */
+
+function getMeasureValue(index) {
+
+    return measures[index].reduce(
+        (
+            total,
+            type
+        ) => {
+
+            return (
+                total +
+                VALUES[type]
+            );
+
+        },
+        0
+    );
+
+}
+
+
+/* =========================================================
+   LARGHEZZA USATA
+========================================================= */
+
+function getMeasureWidthUsed(index) {
+
+    return measures[index].reduce(
+        (
+            total,
+            type
+        ) => {
+
+            return (
+                total +
+                getPieceWidth(type)
+            );
+
+        },
+        0
+    );
+
+}
+
+
+/* =========================================================
+   FIRMA BATTUTA
+========================================================= */
+
+function getSignature(index) {
+
+    return measures[index].join("-");
+
+}
+
+
+/* =========================================================
+   CERCA DUPLICATO
+========================================================= */
+
+function findPreviousDuplicate(index) {
+
+    const signature =
+        getSignature(index);
+
+
+    for (
+        let i = 0;
+        i < index;
+        i++
+    ) {
+
+        if (
+            getMeasureValue(i) !== beatsPerMeasure
+        ) {
+
+            continue;
+
+        }
+
+
+        if (
+            getSignature(i) ===
+            signature
+        ) {
+
+            return i;
+
+        }
+
+    }
+
+
+    return null;
+
+}
+
+
+/* =========================================================
+   BATTUTA COMPLETA
+========================================================= */
+
+function checkCompletedMeasure(index) {
+
+    const duplicate =
+        findPreviousDuplicate(index);
+
+
+    /*
+        MODALITÀ VERIFICA:
+
+        il duplicato NON viene segnalato.
+        La battuta resta comunque un errore
+        e viene registrata nel conteggio finale.
+    */
+
+    if (
+        duplicate !== null
+    ) {
+
+        if (
+            verificationMode
+        ) {
+
+            verificationErrors++;
+
+            celebrateMeasure(index);
+
+            setTimeout(
+                () => {
+
+                    completeCurrentMeasure();
+
+                },
+                500
+            );
+
+            return;
+
+        }
+
+
+        /*
+            Le eventuali crome / pause di croma
+            contenute nella battuta cancellata
+            tornano disponibili.
+        */
+
+        measures[index].forEach(
+            pieceType => {
+
+                if (
+                    isLimitedType(pieceType) &&
+                    pieceUsage[pieceType] > 0
+                ) {
+
+                    pieceUsage[pieceType]--;
+
+                }
+
+            }
+        );
+
+
+        measures[index] = [];
+
+
+        renderMeasure(index);
+
+
+        updatePieceLimitsUI();
+
+
+        flashPreviousMeasure(
+            duplicate
+        );
+
+
+        setResult(
+            "Hai già costruito questa battuta. La nuova è stata cancellata.",
+            "#ff5c63"
+        );
+
+
+        return;
+
+    }
+
+
+    celebrateMeasure(index);
+
+
+    setTimeout(
+        () => {
+
+            completeCurrentMeasure();
+
+        },
+        500
+    );
+
+}
+
+
+/* =========================================================
+   PASSA ALLA BATTUTA SUCCESSIVA
+========================================================= */
+
+function completeCurrentMeasure() {
+
+    currentMeasure++;
+
+
+    selectedType = null;
+
+
+    document
+        .querySelectorAll(
+            ".piece"
+        )
+        .forEach(
+            p => {
+
+                p.classList.remove(
+                    "selected"
+                );
+
+            }
+        );
+
+
+    hideCursorPreview();
+
+
+    removeMeasurePreview();
+
+
+    updateAllMeasureStates();
+
+
+    updateProgress();
+
+
+    if (
+        currentMeasure >=
+        LEVELS[level].measures
+    ) {
+
+        finishLevel();
+
+        return;
+
+    }
+
+
+    scrollToCurrentMeasure();
+
+
+    setResult(
+        "",
+        "#3996d1"
+    );
+
+}
+
+
+/* =========================================================
+   SCROLL AUTOMATICO
+========================================================= */
+
+function scrollToCurrentMeasure() {
+
+    const measure =
+        document.querySelector(
+            `.measure[data-index="${currentMeasure}"]`
+        );
+
+
+    if (!measure) {
+        return;
+    }
+
+
+    measure.scrollIntoView({
+        behavior: "smooth",
+        block: "center",
+        inline: "center"
+    });
+
+}
+
+
+/* =========================================================
+   RENDER
+========================================================= */
+
+function renderMeasure(index) {
+
+    const measure =
+        document.querySelector(
+            `.measure[data-index="${index}"]`
+        );
+
+
+    if (!measure) {
+        return;
+    }
+
+
+    const area =
+        measure.querySelector(
+            ".pieces-area"
+        );
+
+
+    area.innerHTML = "";
+
+
+    measures[index].forEach(
+        type => {
+
+            area.appendChild(
+                createPlacedPiece(type)
+            );
+
+        }
+    );
+
+
+    updateMeasureStatus(index);
+
+}
+
+
+/* =========================================================
+   CREA PEZZO INSERITO
+========================================================= */
+
+function createPlacedPiece(type) {
+
+    const piece =
+        document.createElement(
+            "div"
+        );
+
+
+    piece.className =
+        "placed-piece";
+
+
+    /*
+        La larghezza rimane SEMPRE quella
+        determinata dal valore musicale.
+
+        Nei livelli 9 e 10 il contenitore
+        diventa trasparente, ma conserva
+        questa larghezza invisibile.
+    */
+
+    piece.style.width =
+        getPieceWidth(type) +
+        "px";
+
+
+    piece.style.background =
+        COLORS[type];
+
+
+    if (
+        REST_SYMBOLS[type]
+    ) {
+
+        const symbol =
+            document.createElement(
+                "span"
+            );
+
+
+        symbol.className =
+            "rest-symbol";
+
+
+        /*
+            Classe specifica sul tipo di pausa,
+            usata per correggere la posizione
+            verticale di ciascun simbolo in modo
+            che risulti tagliato correttamente
+            dalla riga della battuta.
+        */
+
+        symbol.classList.add(
+            type
+        );
+
+
+        symbol.textContent =
+            REST_SYMBOLS[type];
+
+
+        piece.appendChild(
+            symbol
+        );
+
+    }
+    else {
+
+        const symbol =
+            document.createElement(
+                "span"
+            );
+
+
+        symbol.className =
+            "rhythm-symbol";
+
+
+        if (
+            type === "croma"
+        ) {
+
+            symbol.classList.add(
+                "croma-symbol"
+            );
+
+        }
+
+
+        symbol.textContent =
+            SYMBOLS[type];
+
+
+        piece.appendChild(
+            symbol
+        );
+
+    }
+
+
+    /*
+        Nei livelli 9 e 10 rendiamo
+        esplicitamente invisibile il mattoncino
+        tramite una classe sul contenitore.
+    */
+
+    if (
+        level >= 9
+    ) {
+
+        piece.classList.add(
+            "invisible-piece"
+        );
+
+    }
+
+
+    return piece;
+
+}
+
+
+/* =========================================================
+   STATI
+========================================================= */
+
+function updateAllMeasureStates() {
+
+    document
+        .querySelectorAll(
+            ".measure"
+        )
+        .forEach(
+            measure => {
+
+                const index =
+                    Number(
+                        measure.dataset.index
+                    );
+
+
+                measure.classList.remove(
+                    "current",
+                    "completed"
+                );
+
+
+                if (
+                    index === currentMeasure &&
+                    currentMeasure <
+                    LEVELS[level].measures
+                ) {
+
+                    measure.classList.add(
+                        "current"
+                    );
+
+                }
+
+
+                if (
+                    index < currentMeasure
+                ) {
+
+                    measure.classList.add(
+                        "completed"
+                    );
+
+                }
+
+            }
+        );
+
+
+    /*
+        Classi globali per il tipo di livello.
+    */
+
+    const staff =
+        document.getElementById(
+            "staffContainer"
+        );
+
+
+    staff.classList.remove(
+        "level-8",
+        "level-9-10"
+    );
+
+
+    if (
+        level === 8
+    ) {
+
+        staff.classList.add(
+            "level-8"
+        );
+
+    }
+
+
+    if (
+        level >= 9
+    ) {
+
+        staff.classList.add(
+            "level-9-10"
+        );
+
+    }
+
+
+    for (
+        let i = 0;
+        i < LEVELS[level].measures;
+        i++
+    ) {
+
+        updateMeasureStatus(i);
+
+    }
+
+}
+
+
+/* =========================================================
+   STATUS
+========================================================= */
+
+function updateMeasureStatus(index) {
+
+    const measure =
+        document.querySelector(
+            `.measure[data-index="${index}"]`
+        );
+
+
+    if (!measure) {
+        return;
+    }
+
+
+    const wrapper =
+        measure.parentElement;
+
+
+    const status =
+        wrapper.querySelector(
+            ".measure-status"
+        );
+
+
+    status.textContent = "";
+
+}
+
+
+/* =========================================================
+   PROGRESSO
+========================================================= */
+
+function updateProgress() {
+
+    const text =
+        document.getElementById(
+            "progressText"
+        );
+
+
+    const fill =
+        document.getElementById(
+            "progressFill"
+        );
+
+
+    const total =
+        LEVELS[level].measures;
+
+
+    if (
+        currentMeasure >= total
+    ) {
+
+        text.textContent =
+            "Battute completate: " +
+            total;
+
+
+        fill.style.width =
+            "100%";
+
+
+        return;
+
+    }
+
+
+    text.textContent =
+        "Battuta " +
+        (currentMeasure + 1) +
+        " di " +
+        total;
+
+
+    fill.style.width =
+        (
+            currentMeasure /
+            total *
+            100
+        ) + "%";
+
+}
+
+
+/* =========================================================
+   FLASH DUPLICATO
+========================================================= */
+
+function flashPreviousMeasure(index) {
+
+    const measure =
+        document.querySelector(
+            `.measure[data-index="${index}"]`
+        );
+
+
+    if (!measure) {
+        return;
+
+    }
+
+
+    measure.scrollIntoView({
+        behavior: "smooth",
+        block: "center"
+    });
+
+
+    measure.classList.remove(
+        "duplicate-flash"
+    );
+
+
+    void measure.offsetWidth;
+
+
+    measure.classList.add(
+        "duplicate-flash"
+    );
+
+
+    measure.addEventListener(
+        "animationend",
+        () => {
+
+            measure.classList.remove(
+                "duplicate-flash"
+            );
+
+        },
+        {
+            once: true
+        }
+    );
+
+}
+
+
+/* =========================================================
+   FESTEGGIAMENTO BATTUTA
+========================================================= */
+
+function celebrateMeasure(index) {
+
+    const measure =
+        document.querySelector(
+            `.measure[data-index="${index}"]`
+        );
+
+
+    if (!measure) {
+        return;
+    }
+
+
+    const burst =
+        document.createElement(
+            "div"
+        );
+
+
+    burst.className =
+        "complete-burst";
+
+
+    const colors = [
+        "#42d66b",
+        "#42b8ff",
+        "#ffd34d",
+        "#ff6870",
+        "#b66cff"
+    ];
+
+
+    for (
+        let i = 0;
+        i < 12;
+        i++
+    ) {
+
+        const confetti =
+            document.createElement(
+                "div"
+            );
+
+
+        confetti.className =
+            "confetti";
+
+
+        confetti.style.background =
+            colors[
+                i % colors.length
+            ];
+
+
+        confetti.style.left =
+            "50%";
+
+
+        confetti.style.top =
+            "50%";
+
+
+        const angle =
+            (
+                Math.PI * 2 * i
+            ) / 12;
+
+
+        const distance =
+            35 +
+            Math.random() * 50;
+
+
+        confetti.style.setProperty(
+            "--dx",
+            (
+                Math.cos(angle) *
+                distance
+            ) + "px"
+        );
+
+
+        confetti.style.setProperty(
+            "--dy",
+            (
+                Math.sin(angle) *
+                distance
+            ) + "px"
+        );
+
+
+        confetti.style.setProperty(
+            "--rotation",
+            (
+                Math.random() *
+                500
+            ) + "deg"
+        );
+
+
+        burst.appendChild(
+            confetti
+        );
+
+    }
+
+
+    measure.appendChild(
+        burst
+    );
+
+
+    setTimeout(
+        () => {
+
+            burst.remove();
+
+        },
+        1000
+    );
+
+}
+
+
+/* =========================================================
+   CALCOLA MATTONCINI SBLOCCATI
+========================================================= */
+
+function getUnlockedPieces(
+    oldLevel,
+    newLevel
+) {
+
+    const oldPieces =
+        LEVELS[oldLevel].pieces;
+
+
+    const newPieces =
+        LEVELS[newLevel].pieces;
+
+
+    return newPieces.filter(
+        type =>
+            !oldPieces.includes(
+                type
+            )
+    );
+
+}
+
+
+/* =========================================================
+   CREA VISUALIZZAZIONE SBLOCCATI
+========================================================= */
+
+function showUnlockedPieces(
+    pieces
+) {
+
+    const container =
+        document.getElementById(
+            "unlockedPieces"
+        );
+
+
+    container.innerHTML = "";
+
+
+    pieces.forEach(
+        (
+            type,
+            index
+        ) => {
+
+            const item =
+                document.createElement(
+                    "div"
+                );
+
+
+            item.className =
+                "unlock-item";
+
+
+            item.style.animationDelay =
+                (
+                    index * .12
+                ) + "s";
+
+
+            const piece =
+                document.createElement(
+                    "div"
+                );
+
+
+            piece.className =
+                "unlock-piece";
+
+
+            piece.style.width =
+                Math.max(
+                    52,
+                    Math.min(
+                        220,
+                        getUnlockPieceWidth(
+                            type
+                        )
+                    )
+                ) + "px";
+
+
+            /*
+                Nel passaggio al livello 8
+                i mattoncini sbloccati sono
+                mostrati in bianco e nero.
+            */
+
+            if (
+                level + 1 >= 8
+            ) {
+
+                piece.style.background =
+                    "linear-gradient(135deg,#ffffff,#d8d8d8)";
+
+                piece.style.borderColor =
+                    "#555";
+
+            }
+            else {
+
+                piece.style.background =
+                    COLORS[type];
+
+            }
+
+
+            if (
+                REST_SYMBOLS[type]
+            ) {
+
+                piece.innerHTML =
+                    `<span class="rest-symbol">
+                        ${REST_SYMBOLS[type]}
+                    </span>`;
+
+            }
+            else {
+
+                piece.innerHTML =
+                    `<span class="rhythm-symbol">
+                        ${SYMBOLS[type]}
+                    </span>`;
+
+            }
+
+
+            const name =
+                document.createElement(
+                    "div"
+                );
+
+
+            name.className =
+                "unlock-name";
+
+
+            name.textContent =
+                LABELS[type];
+
+
+            const value =
+                document.createElement(
+                    "div"
+                );
+
+
+            value.className =
+                "unlock-value";
+
+
+            value.textContent =
+                FRACTIONS[type];
+
+
+            item.appendChild(
+                piece
+            );
+
+
+            item.appendChild(
+                name
+            );
+
+
+            item.appendChild(
+                value
+            );
+
+
+            container.appendChild(
+                item
+            );
+
+        }
+    );
+
+}
+
+
+/* =========================================================
+   DIMENSIONE VISUALE SBLOCCO
+========================================================= */
+
+function getUnlockPieceWidth(type) {
+
+    const base = 45;
+
+
+    return (
+        VALUES[type] *
+        base
+    );
+
+}
+
+
+/* =========================================================
+   CAMBIO LIVELLO
+========================================================= */
+
+function finishLevel() {
+
+    if (
+        verificationMode
+    ) {
+
+        finishVerification();
+
+        return;
+
+    }
+
+
+    if (
+        level >= 10
+    ) {
+
+        showFinalMessage();
+
+        return;
+
+    }
+
+
+    const oldLevel =
+        level;
+
+
+    const nextLevel =
+        level + 1;
+
+
+    const unlocked =
+        getUnlockedPieces(
+            oldLevel,
+            nextLevel
+        );
+
+
+    playVictoryJingle();
+
+
+    showLevelTransition(
+        nextLevel,
+        unlocked
+    );
+
+}
+
+
+/* =========================================================
+   TRANSIZIONE
+========================================================= */
+
+let transitionContinueHandler = null;
+
+let transitionNextLevel = null;
+
+
+function showLevelTransition(
+    nextLevel,
+    unlocked
+) {
+
+    const overlay =
+        document.getElementById(
+            "levelTransition"
+        );
+
+
+    const number =
+        document.getElementById(
+            "transitionNumber"
+        );
+
+
+    const text =
+        document.getElementById(
+            "transitionText"
+        );
+
+
+    const prompt =
+        document.getElementById(
+            "continuePrompt"
+        );
+
+
+    number.textContent =
+        nextLevel;
+
+
+    if (
+        nextLevel === 8
+    ) {
+
+        text.textContent =
+            "Da qui in poi cambia la sfida!";
+
+    }
+    else if (
+        nextLevel === 9
+    ) {
+
+        text.textContent =
+            "Ora sparisce l'aiuto dei mattoncini!";
+
+    }
+    else if (
+        nextLevel === 10
+    ) {
+
+        text.textContent =
+            "Ora spariscono anche le suddivisioni!";
+
+    }
+    else if (
+        nextLevel === 7
+    ) {
+
+        text.textContent =
+            unlocked.length > 0
+                ? (
+                    "Nuova figura: " +
+                    LABELS[unlocked[0]] +
+                    "! Da qui in poi crome e pause di croma sono limitate."
+                )
+                : "Da qui in poi crome e pause di croma sono limitate.";
+
+    }
+    else if (
+        unlocked.length === 1
+    ) {
+
+        text.textContent =
+            "Nuova figura: " +
+            LABELS[unlocked[0]] +
+            "!";
+
+    }
+    else if (
+        unlocked.length > 1
+    ) {
+
+        text.textContent =
+            "Nuove figure sbloccate!";
+
+    }
+    else {
+
+        text.textContent =
+            "Si cambia livello!";
+
+    }
+
+
+    showUnlockedPieces(
+        unlocked
+    );
+
+
+    if (
+        unlocked.length === 0
+    ) {
+
+        document.getElementById(
+            "unlockedTitle"
+        ).textContent =
+            "Nuova modalità di gioco";
+
+    }
+    else {
+
+        document.getElementById(
+            "unlockedTitle"
+        ).textContent =
+            "Nuovi mattoncini sbloccati";
+
+    }
+
+
+    prompt.textContent =
+        "Clicca per continuare";
+
+
+    transitionNextLevel =
+        nextLevel;
+
+
+    if (
+        transitionContinueHandler
+    ) {
+
+        overlay.removeEventListener(
+            "click",
+            transitionContinueHandler
+        );
+
+    }
+
+
+    transitionContinueHandler =
+        () => {
+
+            continueLevelTransition();
+
+        };
+
+
+    overlay.addEventListener(
+        "click",
+        transitionContinueHandler
+    );
+
+
+    overlay.classList.add(
+        "show"
+    );
+
+}
+
+
+/* =========================================================
+   CONTINUA TRANSIZIONE
+========================================================= */
+
+function continueLevelTransition() {
+
+    const overlay =
+        document.getElementById(
+            "levelTransition"
+        );
+
+
+    const nextLevel =
+        transitionNextLevel;
+
+
+    if (!nextLevel) {
+
+        return;
+
+    }
+
+
+    transitionNextLevel =
+        null;
+
+
+    if (
+        transitionContinueHandler
+    ) {
+
+        overlay.removeEventListener(
+            "click",
+            transitionContinueHandler
+        );
+
+        transitionContinueHandler =
+            null;
+
+    }
+
+
+    overlay.classList.remove(
+        "show"
+    );
+
+
+    /*
+        Livelli 1-7: prima di entrare nel
+        livello mostriamo lo schema delle
+        proporzioni tra le figure disponibili.
+        Livelli 8, 9, 10: si entra subito,
+        come già avveniva.
+    */
+
+    if (
+        nextLevel >= 1 &&
+        nextLevel <= 7
+    ) {
+
+        showLevelDiagram(
+            nextLevel,
+            () => {
+
+                level =
+                    nextLevel;
+
+
+                resetLevel();
+
+            }
+        );
+
+        return;
+
+    }
+
+
+    level =
+        nextLevel;
+
+
+    resetLevel();
+
+}
+
+
+/* =========================================================
+   SCHEMA DEL LIVELLO (proporzioni tra le figure)
+========================================================= */
+
+let diagramContinueHandler = null;
+
+
+function showLevelDiagram(
+    lvl,
+    onContinue
+) {
+
+    const overlay =
+        document.getElementById(
+            "levelDiagram"
+        );
+
+
+    const title =
+        document.getElementById(
+            "diagramTitle"
+        );
+
+
+    const subtitle =
+        document.getElementById(
+            "diagramSubtitle"
+        );
+
+
+    title.textContent =
+        "Schema del livello " +
+        lvl;
+
+
+    subtitle.textContent =
+        "Ecco le proporzioni tra le figure disponibili.";
+
+
+    buildDiagramBars(
+        lvl
+    );
+
+
+    if (
+        diagramContinueHandler
+    ) {
+
+        overlay.removeEventListener(
+            "click",
+            diagramContinueHandler
+        );
+
+        diagramContinueHandler =
+            null;
+
+    }
+
+
+    diagramContinueHandler =
+        () => {
+
+            overlay.removeEventListener(
+                "click",
+                diagramContinueHandler
+            );
+
+            diagramContinueHandler =
+                null;
+
+            overlay.classList.remove(
+                "show"
+            );
+
+            onContinue();
+
+        };
+
+
+    overlay.addEventListener(
+        "click",
+        diagramContinueHandler
+    );
+
+
+    overlay.classList.add(
+        "show"
+    );
+
+}
+
+
+function buildDiagramBars(lvl) {
+
+    const container =
+        document.getElementById(
+            "diagramBars"
+        );
+
+
+    container.innerHTML = "";
+
+
+    const pieces =
+        LEVELS[lvl].pieces
+            .slice()
+            .sort(
+                (a, b) =>
+                    VALUES[b] -
+                    VALUES[a]
+            );
+
+
+    const maxValue =
+        Math.max(
+            ...pieces.map(
+                t => VALUES[t]
+            )
+        );
+
+
+    const maxWidth = 320;
+
+
+    pieces.forEach(
+        type => {
+
+            const row =
+                document.createElement(
+                    "div"
+                );
+
+
+            row.className =
+                "diagram-row";
+
+
+            const bar =
+                document.createElement(
+                    "div"
+                );
+
+
+            bar.className =
+                "diagram-bar";
+
+
+            bar.style.width =
+                Math.max(
+                    38,
+                    (
+                        VALUES[type] /
+                        maxValue
+                    ) * maxWidth
+                ) + "px";
+
+
+            bar.style.background =
+                COLORS[type];
+
+
+            const symbol =
+                document.createElement(
+                    "span"
+                );
+
+
+            if (
+                REST_SYMBOLS[type]
+            ) {
+
+                symbol.className =
+                    "rest-symbol";
+
+
+                symbol.textContent =
+                    REST_SYMBOLS[type];
+
+            }
+            else {
+
+                symbol.className =
+                    "rhythm-symbol";
+
+
+                if (
+                    type === "croma"
+                ) {
+
+                    symbol.classList.add(
+                        "croma-symbol"
+                    );
+
+                }
+
+
+                symbol.textContent =
+                    SYMBOLS[type];
+
+            }
+
+
+            bar.appendChild(
+                symbol
+            );
+
+
+            const label =
+                document.createElement(
+                    "div"
+                );
+
+
+            label.className =
+                "diagram-label";
+
+
+            label.textContent =
+                LABELS[type] +
+                " · " +
+                FRACTIONS[type];
+
+
+            row.appendChild(
+                bar
+            );
+
+
+            row.appendChild(
+                label
+            );
+
+
+            container.appendChild(
+                row
+            );
+
+        }
+    );
+
+}
+
+
+/* =========================================================
+   SCHERMATA INIZIALE
+========================================================= */
+
+function chooseStartLevel(n) {
+
+    hideStartScreen();
+
+
+    if (
+        n >= 1 &&
+        n <= 7
+    ) {
+
+        showLevelDiagram(
+            n,
+            () => {
+
+                level = n;
+
+
+                resetLevel();
+
+            }
+        );
+
+
+        return;
+
+    }
+
+
+    level = n;
+
+
+    resetLevel();
+
+}
+
+
+function hideStartScreen() {
+
+    document
+        .getElementById(
+            "startScreen"
+        )
+        .classList.add(
+            "hide"
+        );
+
+}
+
+
+/* =========================================================
+   SELEZIONE DEL TEMPO (4/4, 3/4, 2/4)
+========================================================= */
+
+function selectTimeSignature(ts) {
+
+    beatsPerMeasure = ts;
+
+    LEVELS =
+        LEVEL_SETS[ts];
+
+
+    level = 1;
+
+
+    document
+        .getElementById(
+            "timeScreen"
+        )
+        .classList.add(
+            "hide"
+        );
+
+
+    document
+        .getElementById(
+            "startScreen"
+        )
+        .classList.remove(
+            "hide"
+        );
+
+
+    document.getElementById(
+        "startSubtitle"
+    ).textContent =
+        "Costruisci le battute in " +
+        beatsPerMeasure +
+        "/4 e supera tutti i livelli";
+
+
+    resetLevel();
+
+}
+
+
+function openTimeScreen() {
+
+    if (
+        verificationMode
+    ) {
+
+        return;
+
+    }
+
+
+    document
+        .getElementById(
+            "timeScreen"
+        )
+        .classList.remove(
+            "hide"
+        );
+
+}
+
+
+function initTimeScreen() {
+
+    document
+        .querySelectorAll(
+            ".time-select-btn"
+        )
+        .forEach(
+            btn => {
+
+                btn.addEventListener(
+                    "click",
+                    () => {
+
+                        selectTimeSignature(
+                            Number(
+                                btn.dataset.time
+                            )
+                        );
+
+                    }
+                );
+
+            }
+        );
+
+
+    document
+        .getElementById(
+            "timeBadge"
+        )
+        .addEventListener(
+            "click",
+            openTimeScreen
+        );
+
+}
+
+
+function initStartScreen() {
+
+    const grid =
+        document.getElementById(
+            "startLevelGrid"
+        );
+
+
+    grid.innerHTML = "";
+
+
+    for (
+        let n = 1;
+        n <= 10;
+        n++
+    ) {
+
+        const btn =
+            document.createElement(
+                "button"
+            );
+
+
+        btn.className =
+            "start-level-btn";
+
+
+        btn.type =
+            "button";
+
+
+        btn.textContent =
+            n;
+
+
+        btn.addEventListener(
+            "click",
+            () => {
+
+                chooseStartLevel(n);
+
+            }
+        );
+
+
+        grid.appendChild(
+            btn
+        );
+
+    }
+
+
+    document
+        .getElementById(
+            "startVerifyButton"
+        )
+        .addEventListener(
+            "click",
+            () => {
+
+                hideStartScreen();
+
+                startVerification();
+
+            }
+        );
+
+}
+
+
+/* =========================================================
+   INTERFACCIA LIVELLO
+========================================================= */
+
+function updateLevelInterface() {
+
+    document.getElementById(
+        "levelBanner"
+    ).textContent =
+        "livello " +
+        level +
+        " · " +
+        beatsPerMeasure +
+        "/4";
+
+
+    document.getElementById(
+        "timeBadge"
+    ).textContent =
+        beatsPerMeasure +
+        "/4";
+
+
+    document.getElementById(
+        "headerSubtitle"
+    ).textContent =
+        "Costruisci le battute in " +
+        beatsPerMeasure +
+        "/4 e supera tutti i livelli";
+
+
+    document.getElementById(
+        "levelSelect"
+    ).value =
+        level;
+
+
+    document.getElementById(
+        "levelInfo"
+    ).textContent =
+        "Livello " +
+        level +
+        ": " +
+        LEVELS[level].description;
+
+
+    const banner =
+        document.getElementById(
+            "levelBanner"
+        );
+
+
+    banner.classList.remove(
+        "level-change"
+    );
+
+
+    void banner.offsetWidth;
+
+
+    banner.classList.add(
+        "level-change"
+    );
+
+
+    /*
+        Classi sul pannello per distinguere
+        visivamente i livelli 8, 9 e 10.
+    */
+
+    const panel =
+        document.querySelector(
+            ".control-panel"
+        );
+
+
+    panel.classList.remove(
+        "level-8",
+        "level-9-10"
+    );
+
+
+    if (
+        level === 8
+    ) {
+
+        panel.classList.add(
+            "level-8"
+        );
+
+    }
+
+
+    if (
+        level >= 9
+    ) {
+
+        panel.classList.add(
+            "level-9-10"
+        );
+
+    }
+
+
+    /*
+        Nei livelli 9 e 10 la scritta
+        continua a dire "Mattoncini" solo
+        come nome del pannello, ma il giocatore
+        vede quadrati uguali.
+    */
+
+    if (
+        level >= 9
+    ) {
+
+        document.querySelector(
+            ".control-title"
+        ).textContent =
+            "Figure";
+
+        document.querySelector(
+            ".control-subtitle"
+        ).textContent =
+            "Scegli una figura, poi clicca nella battuta.";
+
+    }
+    else {
+
+        document.querySelector(
+            ".control-title"
+        ).textContent =
+            "Mattoncini";
+
+        document.querySelector(
+            ".control-subtitle"
+        ).textContent =
+            "Scegli un mattoncino, poi clicca nella battuta.";
+
+    }
+
+
+    /*
+        Livello 10:
+        nascondiamo graficamente le linee
+        di suddivisione tramite classe.
+    */
+
+    const staff =
+        document.getElementById(
+            "staffContainer"
+        );
+
+
+    staff.classList.remove(
+        "level-8",
+        "level-9-10"
+    );
+
+
+    if (
+        level === 8
+    ) {
+
+        staff.classList.add(
+            "level-8"
+        );
+
+    }
+
+
+    if (
+        level >= 9
+    ) {
+
+        staff.classList.add(
+            "level-9-10"
+        );
+
+    }
+
+}
+
+
+/* =========================================================
+   MESSAGGI
+========================================================= */
+
+function setResult(
+    text,
+    color
+) {
+
+    const result =
+        document.getElementById(
+            "result"
+        );
+
+
+    result.textContent =
+        text;
+
+
+    result.style.color =
+        color;
+
+}
+
+
+function clearResult() {
+
+    const result =
+        document.getElementById(
+            "result"
+        );
+
+
+    result.textContent =
+        "";
+
+}
+
+
+/* =========================================================
+   FINE VERIFICA
+========================================================= */
+
+function finishVerification() {
+
+    stopVerificationTimer();
+
+
+    const elapsed =
+        verificationStartTime
+            ? performance.now() -
+              verificationStartTime
+            : 0;
+
+
+    showFinalMessage(
+        elapsed,
+        verificationErrors
+    );
+
+}
+
+
+/* =========================================================
+   FINE GIOCO
+========================================================= */
+
+function showFinalMessage(
+    verificationTime = null,
+    errors = null
+) {
+
+    const overlay =
+        document.getElementById(
+            "finalMessage"
+        );
+
+
+    const title =
+        document.getElementById(
+            "finalTitle"
+        );
+
+
+    const text =
+        document.getElementById(
+            "finalText"
+        );
+
+
+    const time =
+        document.getElementById(
+            "finalTime"
+        );
+
+
+    const errorText =
+        document.getElementById(
+            "finalErrors"
+        );
+
+
+    const gradeText =
+        document.getElementById(
+            "finalGrade"
+        );
+
+
+    if (
+        verificationMode
+    ) {
+
+        title.textContent =
+            "Verifica completata!";
+
+
+        text.textContent =
+            "Hai completato tutte le " +
+            LEVELS[10].measures +
+            " battute.";
+
+
+        time.style.display =
+            "block";
+
+
+        time.textContent =
+            "Tempo: " +
+            formatTime(
+                verificationTime || 0
+            );
+
+
+        errorText.style.display =
+            "block";
+
+
+        errorText.textContent =
+            "Errori: " +
+            errors;
+
+
+        /*
+            VOTO:
+
+            se il voto scende sotto 6,
+            non viene mostrato, solo
+            gli errori.
+        */
+
+        const grade =
+            calculateGrade(
+                errors || 0
+            );
+
+
+        if (
+            grade >= 6
+        ) {
+
+            gradeText.style.display =
+                "block";
+
+
+            gradeText.textContent =
+                "Voto: " +
+                formatGrade(grade);
+
+        }
+        else {
+
+            gradeText.style.display =
+                "none";
+
+        }
+
+    }
+    else {
+
+        title.textContent =
+            "Complimenti!";
+
+
+        text.textContent =
+            "Hai completato tutti e 10 i livelli!";
+
+
+        time.style.display =
+            "none";
+
+
+        gradeText.style.display =
+            "none";
+
+
+        errorText.style.display =
+            "none";
+
+    }
+
+
+    overlay.classList.add(
+        "show"
+    );
+
+}
+
+
+/* =========================================================
+   RESIZE
+========================================================= */
+
+let resizeTimer;
+
+
+window.addEventListener(
+    "resize",
+    () => {
+
+        clearTimeout(
+            resizeTimer
+        );
+
+
+        resizeTimer =
+            setTimeout(
+                () => {
+
+                    calculateDimensions();
+
+
+                    for (
+                        let i = 0;
+                        i < measures.length;
+                        i++
+                    ) {
+
+                        renderMeasure(i);
+
+                    }
+
+
+                    updateAllMeasureStates();
+
+                    updateProgress();
+
+                },
+                100
+            );
+
+    }
+);
+
+
+/* =========================================================
+   AVVIO
+========================================================= */
+
+resetLevel();
+
+initTimeScreen();
+
+initStartScreen();
+
+</script>
+
+</body>
+</html>
