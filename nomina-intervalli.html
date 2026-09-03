@@ -203,6 +203,32 @@ h1 {
 
 .confetti-layer { position: absolute; inset: 0; pointer-events: none; overflow: hidden; }
 
+.play-button {
+    display: block;
+    margin: 14px auto 20px;
+    width: 52px;
+    height: 52px;
+    border-radius: 50%;
+    border: 1px solid rgba(255,255,255,0.18);
+    background: linear-gradient(180deg, rgba(255,255,255,0.14), rgba(255,255,255,0.05));
+    color: #e2e8f0;
+    font-size: 1.35rem;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 1px 0 rgba(255,255,255,0.2) inset, 0 8px 18px rgba(0,0,0,0.3);
+    transition: transform 0.15s var(--ease-spring), background 0.15s, box-shadow 0.15s;
+}
+.play-button:hover { background: linear-gradient(180deg, rgba(255,255,255,0.22), rgba(255,255,255,0.08)); transform: translateY(-2px); }
+.play-button:active { transform: scale(0.92); }
+.play-button.playing { animation: playButtonPulse 0.4s var(--ease-spring); }
+@keyframes playButtonPulse {
+    0% { transform: scale(1); }
+    40% { transform: scale(1.18); }
+    100% { transform: scale(1); }
+}
+
 .confetti-piece {
     position: absolute; top: 45%; left: 50%;
     width: 8px; height: 8px; border-radius: 2px; opacity: 1;
@@ -721,6 +747,8 @@ h1 {
         </div>
     </div>
 
+    <button class="play-button" id="playButton" title="Ascolta l'intervallo">🔊</button>
+
     <div class="answer-section">
         <div class="answer-section-title">Qualità</div>
         <div class="choice-row quality-row" id="qualityRow"></div>
@@ -945,6 +973,7 @@ const siteHomeButton = document.getElementById("siteHomeButton");
 const homeMenuButton = document.getElementById("homeMenuButton");
 
 const staffInner = document.getElementById("staffInner");
+const playButton = document.getElementById("playButton");
 const confettiLayer = document.getElementById("confettiLayer");
 const qualityRow = document.getElementById("qualityRow");
 const numberSection = document.getElementById("numberSection");
@@ -1720,6 +1749,14 @@ selectStartButton.addEventListener("click", () => {
     startTheme("custom");
 });
 siteHomeButton.addEventListener("click", () => {});
+
+playButton.addEventListener("click", () => {
+    if (!currentQuestion) return;
+    playButton.classList.remove("playing");
+    void playButton.offsetWidth;
+    playButton.classList.add("playing");
+    playIntervalSound(currentQuestion);
+});
 
 finishButton.addEventListener("click", () => confirmOverlay.classList.add("show"));
 cancelFinish.addEventListener("click", () => confirmOverlay.classList.remove("show"));
