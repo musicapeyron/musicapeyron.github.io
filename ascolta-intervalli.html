@@ -3,9 +3,9 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Nomina gli intervalli</title>
-<meta name="description" content="Un esercizio interattivo per imparare a riconoscere e nominare gli intervalli musicali sul pentagramma, ispirato agli esercizi di teoria di GNU Solfege.">
-<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='.9em' font-size='90'%3E%F0%9F%8E%BC%3C/text%3E%3C/svg%3E">
+<title>Ascolta gli intervalli</title>
+<meta name="description" content="Un esercizio di ear training per imparare a riconoscere a orecchio gli intervalli musicali, in senso ascendente o discendente.">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='.9em' font-size='90'%3E%F0%9F%8E%A7%3C/text%3E%3C/svg%3E">
 
 <!-- Font di sistema come fallback: senza connessione i Google
      Fonts non si caricano comunque, quindi non serve più
@@ -67,12 +67,17 @@ body::before {
     mix-blend-mode: overlay;
 }
 
-.game {
+.game, .menu-screen {
     position: relative;
     z-index: 1;
     width: min(900px, 100%);
     max-width: 100%;
     text-align: center;
+}
+.menu-screen { width: min(560px, 100%); animation: menuScreenIn 0.5s var(--ease-out-soft); }
+@keyframes menuScreenIn {
+    from { opacity: 0; transform: translateY(14px); }
+    to { opacity: 1; transform: translateY(0); }
 }
 
 h1 {
@@ -176,12 +181,12 @@ h1 {
 .level-intervals-info.hidden { display: none; }
 .level-intervals-info b { color: #bfdbfe; }
 
-/* PENTAGRAMMA */
+/* PENTAGRAMMA (nascosto durante la domanda, rivelato a risposta giusta) */
 .staff-row {
     display: flex;
     justify-content: center;
     align-items: stretch;
-    margin: 0 auto 22px;
+    margin: 0 auto 18px;
     max-width: 100%;
 }
 
@@ -197,48 +202,31 @@ h1 {
     display: flex;
     justify-content: center;
     align-items: center;
-    min-height: 260px;
+    min-height: 220px;
+    width: min(320px, 100%);
     line-height: 0;
 }
+
+.staff-placeholder {
+    line-height: 1.6;
+    font-family: "Sora", "Inter", Arial, sans-serif;
+    font-weight: 700;
+    font-size: 1rem;
+    color: #94a3b8;
+    text-align: center;
+}
+.staff-placeholder .staff-placeholder-emoji { font-size: 2.4rem; display: block; margin-bottom: 6px; }
 
 .staff-inner {
     display: flex;
     justify-content: center;
     align-items: center;
-    transition: transform 0.32s var(--ease-out-soft), opacity 0.32s ease;
+    opacity: 0;
+    transition: opacity 0.35s ease;
 }
-
-.staff-inner.slide-out { opacity: 0; transform: scale(0.85); }
-.staff-inner.slide-in-start { transition: none; opacity: 0; transform: translateX(-130%); }
-.staff-inner.slide-in { opacity: 1; transform: translateX(0); }
+.staff-inner.show { opacity: 1; }
 
 .confetti-layer { position: absolute; inset: 0; pointer-events: none; overflow: hidden; }
-
-.play-button {
-    display: block;
-    margin: 14px auto 20px;
-    width: 52px;
-    height: 52px;
-    border-radius: 50%;
-    border: 1px solid rgba(255,255,255,0.18);
-    background: linear-gradient(180deg, rgba(255,255,255,0.14), rgba(255,255,255,0.05));
-    color: #e2e8f0;
-    font-size: 1.35rem;
-    cursor: pointer;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    box-shadow: 0 1px 0 rgba(255,255,255,0.2) inset, 0 8px 18px rgba(0,0,0,0.3);
-    transition: transform 0.15s var(--ease-spring), background 0.15s, box-shadow 0.15s;
-}
-.play-button:hover { background: linear-gradient(180deg, rgba(255,255,255,0.22), rgba(255,255,255,0.08)); transform: translateY(-2px); }
-.play-button:active { transform: scale(0.92); }
-.play-button.playing { animation: playButtonPulse 0.4s var(--ease-spring); }
-@keyframes playButtonPulse {
-    0% { transform: scale(1); }
-    40% { transform: scale(1.18); }
-    100% { transform: scale(1); }
-}
 
 .confetti-piece {
     position: absolute; top: 45%; left: 50%;
@@ -251,26 +239,48 @@ h1 {
     100% { transform: translate(calc(-50% + var(--dx)), calc(-50% + var(--dy))) rotate(var(--rot)); opacity: 0; }
 }
 
-/* SCELTA QUALITA' / NUMERO */
-.answer-section { margin: 0 auto 14px; max-width: 620px; }
-.answer-section-title {
-    font-size: 0.68rem; font-weight: 700; letter-spacing: 0.6px; text-transform: uppercase;
-    color: #a5b4fc; opacity: 0.85; margin-bottom: 8px; text-align: center;
+/* PULSANTE ASCOLTA */
+.play-button {
+    display: block;
+    margin: 4px auto 20px;
+    width: 64px;
+    height: 64px;
+    border-radius: 50%;
+    border: 1px solid rgba(255,255,255,0.2);
+    background: linear-gradient(180deg, rgba(255,255,255,0.16), rgba(255,255,255,0.06));
+    color: #e2e8f0;
+    font-size: 1.7rem;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 1px 0 rgba(255,255,255,0.22) inset, 0 10px 22px rgba(0,0,0,0.35);
+    transition: transform 0.15s var(--ease-spring), background 0.15s, box-shadow 0.15s;
+}
+.play-button:hover { background: linear-gradient(180deg, rgba(255,255,255,0.24), rgba(255,255,255,0.09)); transform: translateY(-2px); }
+.play-button:active { transform: scale(0.92); }
+.play-button.playing { animation: playButtonPulse 0.4s var(--ease-spring); }
+@keyframes playButtonPulse {
+    0% { transform: scale(1); }
+    40% { transform: scale(1.18); }
+    100% { transform: scale(1); }
 }
 
+/* RISPOSTE (un pulsante per intervallo, qualita'+numero insieme) */
+.answer-section { margin: 0 auto 14px; max-width: 680px; }
 .choice-row {
     display: flex;
     flex-wrap: wrap;
     justify-content: center;
     gap: 8px;
-    margin-bottom: 16px;
+    margin-bottom: 10px;
 }
 
 .choice-btn {
     flex: 0 0 auto;
-    min-width: 78px;
+    min-width: 108px;
     border: 1px solid rgba(255,255,255,0.16);
-    padding: 12px 14px;
+    padding: 13px 16px;
     border-radius: 12px;
     background: rgba(255,255,255,0.07);
     color: #e2e8f0;
@@ -283,18 +293,10 @@ h1 {
 }
 .choice-btn:hover { background: rgba(255,255,255,0.13); transform: translateY(-2px); }
 .choice-btn:active { transform: translateY(1px); }
-.choice-btn.locked { display: none; }
-
-.choice-btn.selected {
-    background: linear-gradient(135deg, #6366f1, #4338ca);
-    border-color: rgba(255,255,255,0.35);
-    box-shadow: 0 4px 12px rgba(79,70,229,0.45), inset 0 0 0 2px rgba(255,255,255,0.18);
-}
-.quality-row .choice-btn.selected { background: linear-gradient(135deg, #a855f7, #7c3aed); box-shadow: 0 4px 12px rgba(124,58,237,0.45), inset 0 0 0 2px rgba(255,255,255,0.18); }
-.number-row .choice-btn.selected { background: linear-gradient(135deg, #0ea5e9, #0369a1); box-shadow: 0 4px 12px rgba(3,105,161,0.45), inset 0 0 0 2px rgba(255,255,255,0.18); }
 
 .choice-btn.correct-flash { background: linear-gradient(135deg, #22c55e, #15803d) !important; animation: correctPulse 0.5s var(--ease-spring); }
 .choice-btn.wrong-flash { background: linear-gradient(135deg, #ef4444, #b91c1c) !important; animation: buttonShake 0.4s ease-in-out; }
+.choice-btn:disabled { opacity: 0.55; cursor: not-allowed; }
 
 @keyframes correctPulse {
     0% { transform: scale(1); }
@@ -311,37 +313,10 @@ h1 {
 }
 
 .message { min-height: 34px; font-size: 1.1rem; font-weight: 700; letter-spacing: 0.1px; }
-
-.submit-button {
-    display: block;
-    margin: 4px auto 10px;
-    border: none;
-    padding: 13px 34px;
-    border-radius: 12px;
-    background: linear-gradient(135deg, #22c55e, #15803d);
-    color: white;
-    font-family: "Sora", "Inter", Arial, sans-serif;
-    font-size: 0.95rem;
-    font-weight: 800;
-    letter-spacing: 0.2px;
-    cursor: pointer;
-    box-shadow: 0 1px 0 rgba(255,255,255,0.25) inset, 0 8px 18px rgba(21,128,61,0.4);
-    transition: transform 0.15s var(--ease-out-soft), filter 0.15s, box-shadow 0.15s, opacity 0.15s;
-}
-.submit-button:hover:not(:disabled) { transform: translateY(-2px); filter: brightness(1.08); }
-.submit-button:active:not(:disabled) { transform: translateY(1px); }
-.submit-button:disabled {
-    background: rgba(255,255,255,0.08);
-    color: rgba(226,232,240,0.4);
-    box-shadow: none;
-    cursor: not-allowed;
-}
-.submit-button.hidden { display: none; }
 .correct-message { color: #86efac; }
 .wrong-message { color: #fca5a5; }
-.info-message { color: #94a3b8; font-weight: 600; }
 
-/* PULSANTI */
+/* PULSANTI DI GIOCO */
 .game-buttons { display: flex; justify-content: center; align-items: center; gap: 10px; margin-top: 6px; flex-wrap: wrap; }
 
 .menu-button, .finish-button, .new-game {
@@ -366,93 +341,20 @@ h1 {
 
 /* BARRA STRUMENTI */
 .toolbar { display: flex; align-items: center; justify-content: center; gap: 14px; margin: 20px auto 0; }
-
 .volume-control { display: flex; align-items: center; gap: 8px; }
 .volume-icon { font-size: 1.05rem; }
 .volume-slider {
-    width: 120px; height: 6px;
+    width: 130px; height: 6px;
     -webkit-appearance: none; appearance: none;
-    background: linear-gradient(90deg, #a855f7, #7c3aed);
+    background: linear-gradient(90deg, #06b6d4, #0369a1);
     border-radius: 999px; outline: none; cursor: pointer;
 }
 .volume-slider::-webkit-slider-thumb {
     -webkit-appearance: none; width: 16px; height: 16px; border-radius: 50%;
-    background: #f5f3ff; border: 2px solid #a855f7; cursor: pointer;
+    background: #ecfeff; border: 2px solid #06b6d4; cursor: pointer;
 }
 
-.toolbar-button {
-    width: 42px; height: 42px; border-radius: 50%;
-    border: 1px solid rgba(255,255,255,0.18);
-    background: linear-gradient(180deg, rgba(255,255,255,0.1), rgba(255,255,255,0.04));
-    color: #e2e8f0; font-size: 1.1rem;
-    display: flex; align-items: center; justify-content: center;
-    cursor: pointer; box-shadow: 0 4px 10px rgba(0,0,0,0.3);
-    transition: transform 0.12s var(--ease-out-soft), background 0.15s;
-}
-.toolbar-button:hover { background: linear-gradient(180deg, rgba(255,255,255,0.2), rgba(255,255,255,0.08)); }
-.toolbar-button.bump { animation: toolbarBump 0.25s var(--ease-spring); }
-.options-choice.bump { animation: toolbarBump 0.25s var(--ease-spring); }
-@keyframes toolbarBump { 0% { transform: scale(1); } 45% { transform: scale(0.82); } 100% { transform: scale(1); } }
-
-/* PANNELLO OPZIONI */
-.options-panel {
-    position: fixed;
-    top: 50%;
-    left: 50%;
-    z-index: 250;
-    width: 300px;
-    max-width: calc(100vw - 32px);
-    padding: 18px;
-    background: linear-gradient(180deg, rgba(49,46,129,0.72), rgba(15,23,42,0.75));
-    border: 1px solid rgba(255,255,255,0.2);
-    border-radius: 16px;
-    box-shadow: 0 20px 45px rgba(0,0,0,0.45);
-    backdrop-filter: blur(10px) saturate(140%);
-    opacity: 0;
-    transform: translate(-50%, -50%) scale(0.95);
-    pointer-events: none;
-    transition: opacity 0.2s ease, transform 0.2s var(--ease-out-soft);
-}
-.options-panel.show { opacity: 1; transform: translate(-50%, -50%) scale(1); pointer-events: auto; }
-
-.options-panel-title {
-    font-size: 0.82rem; font-weight: 700; letter-spacing: 0.5px; text-transform: uppercase;
-    color: #fef3c7; opacity: 0.9; margin-bottom: 14px; text-align: center;
-}
-
-.options-group-title {
-    font-size: 0.66rem; font-weight: 700; letter-spacing: 0.5px; text-transform: uppercase;
-    color: #a5b4fc; opacity: 0.85; margin: 16px 0 8px; text-align: left;
-}
-.options-group-title:first-of-type { margin-top: 0; }
-
-.options-pair {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 10px;
-}
-
-.options-choice {
-    padding: 12px 8px;
-    border-radius: 10px;
-    border: 1px solid rgba(255,255,255,0.16);
-    background: rgba(255,255,255,0.06);
-    color: #e2e8f0;
-    font-family: "Sora", "Inter", Arial, sans-serif;
-    font-weight: 700;
-    font-size: 0.82rem;
-    cursor: pointer;
-    transition: background 0.15s, box-shadow 0.15s;
-}
-.options-choice:hover { background: rgba(255,255,255,0.12); }
-.options-choice.active {
-    background: linear-gradient(135deg, #22c55e, #15803d);
-    border-color: rgba(255,255,255,0.35);
-    box-shadow: 0 4px 12px rgba(34,197,94,0.4), inset 0 0 0 2px rgba(255,255,255,0.2);
-}
-.options-choice.options-full { width: 100%; }
-
-/* OVERLAY CONFERMA / SCHERMATA FINALE */
+/* OVERLAY */
 .overlay {
     position: fixed; inset: 0; z-index: 300;
     background: rgba(2,6,23,0.72);
@@ -472,10 +374,8 @@ h1 {
     box-shadow: 0 24px 60px rgba(0,0,0,0.5);
     text-align: center;
 }
-
 .overlay-card h2 { margin: 0 0 8px; font-family: "Sora", Arial, sans-serif; font-size: 1.5rem; }
 .overlay-card p { color: #cbd5e1; margin: 0 0 20px; }
-
 .overlay-buttons { display: flex; justify-content: center; gap: 10px; }
 
 .final-stats { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin: 0 0 22px; text-align: left; }
@@ -483,96 +383,22 @@ h1 {
 .final-stat span { display: block; font-size: 0.65rem; text-transform: uppercase; color: #94a3b8; margin-bottom: 3px; }
 .final-stat strong { font-family: "Sora", Arial, sans-serif; font-size: 1.15rem; }
 
-/* SCHERMATA INIZIALE */
-.menu-screen {
-    position: relative;
-    z-index: 1;
-    width: min(520px, 100%);
-    text-align: center;
-    animation: menuScreenIn 0.5s var(--ease-out-soft);
-}
-
-@keyframes menuScreenIn {
-    from { opacity: 0; transform: translateY(14px); }
-    to { opacity: 1; transform: translateY(0); }
-}
-
+/* SCHERMATA INIZIALE / SELEZIONE */
 .hero-badge {
     width: 76px; height: 76px; margin: 0 auto 16px; border-radius: 50%;
     display: flex; align-items: center; justify-content: center;
     font-size: 2.1rem;
-    background: linear-gradient(145deg, #4f46e5, #7c3aed);
-    box-shadow: 0 1px 0 rgba(255,255,255,0.3) inset, 0 14px 30px rgba(79,70,229,0.45);
+    background: linear-gradient(145deg, #0891b2, #155e75);
+    box-shadow: 0 1px 0 rgba(255,255,255,0.3) inset, 0 14px 30px rgba(8,145,178,0.45);
     animation: heroBadgeFloat 3.2s ease-in-out infinite;
 }
-
 @keyframes heroBadgeFloat {
     0%, 100% { transform: translateY(0); }
     50% { transform: translateY(-6px); }
 }
 
 .mode-grid { display: flex; flex-direction: column; gap: 14px; margin-top: 28px; }
-
-.theme-grid {
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    gap: 10px;
-    margin-top: 26px;
-}
-
-.theme-tile {
-    border: none;
-    padding: 18px 8px;
-    border-radius: 14px;
-    color: white;
-    font-family: "Sora", "Inter", Arial, sans-serif;
-    font-size: 0.92rem;
-    font-weight: 800;
-    cursor: pointer;
-    box-shadow: 0 1px 0 rgba(255,255,255,0.22) inset, 0 8px 18px rgba(0,0,0,0.28);
-    transition: transform 0.15s var(--ease-out-soft), filter 0.15s, box-shadow 0.15s;
-}
-.theme-tile:hover { transform: translateY(-3px); filter: brightness(1.08); }
-.theme-tile:active { transform: translateY(1px); }
-.theme-tile.wide { grid-column: 1 / -1; padding: 16px; }
-
-.theme-tile.n1 { background: linear-gradient(135deg, #ef4444, #b91c1c); }
-.theme-tile.n2 { background: linear-gradient(135deg, #f97316, #c2410c); }
-.theme-tile.n3 { background: linear-gradient(135deg, #eab308, #a16207); }
-.theme-tile.n4 { background: linear-gradient(135deg, #22c55e, #15803d); }
-.theme-tile.n5 { background: linear-gradient(135deg, #06b6d4, #0e7490); }
-.theme-tile.n6 { background: linear-gradient(135deg, #3b82f6, #1d4ed8); }
-.theme-tile.n7 { background: linear-gradient(135deg, #8b5cf6, #6d28d9); }
-.theme-tile.n8 { background: linear-gradient(135deg, #6366f1, #4338ca); }
-.theme-tile.nall { background: linear-gradient(135deg, #f59e0b, #b45309); }
-
 .mode-divider { margin: 22px 0 4px; border: none; border-top: 1px solid var(--border-soft); }
-
-#numberSection.hidden { display: none; }
-
-.theory-toast {
-    position: fixed;
-    top: 18px;
-    left: 50%;
-    z-index: 400;
-    max-width: min(440px, calc(100vw - 32px));
-    padding: 14px 22px;
-    border-radius: 14px;
-    background: linear-gradient(135deg, rgba(59,130,246,0.95), rgba(30,58,138,0.95));
-    border: 1px solid rgba(255,255,255,0.25);
-    box-shadow: 0 14px 34px rgba(0,0,0,0.4);
-    color: white;
-    font-family: "Inter", Arial, sans-serif;
-    font-size: 0.92rem;
-    font-weight: 600;
-    line-height: 1.4;
-    text-align: center;
-    opacity: 0;
-    pointer-events: none;
-    transform: translate(-50%, -16px);
-    transition: opacity 0.25s ease, transform 0.25s var(--ease-out-soft);
-}
-.theory-toast.show { opacity: 1; transform: translate(-50%, 0); }
 
 .mode-button {
     border: none;
@@ -594,20 +420,52 @@ h1 {
 .mode-button:hover { transform: translateY(-3px); filter: brightness(1.08); box-shadow: 0 1px 0 rgba(255,255,255,0.25) inset, 0 16px 30px rgba(0,0,0,0.35); }
 .mode-button:active { transform: translateY(1px); }
 .mode-button:disabled, .mode-button:disabled:hover {
-    opacity: 0.4;
-    cursor: not-allowed;
-    transform: none;
-    filter: none;
+    opacity: 0.4; cursor: not-allowed; transform: none; filter: none;
     box-shadow: 0 1px 0 rgba(255,255,255,0.1) inset, 0 6px 14px rgba(0,0,0,0.2);
 }
-
 .mode-button-title { font-size: 1.08rem; font-weight: 800; }
 .mode-button-desc { font-size: 0.78rem; font-weight: 500; opacity: 0.85; letter-spacing: 0.1px; }
 
-.mode-button.start { background: linear-gradient(135deg, #6366f1, #4338ca); }
+.mode-button.up { background: linear-gradient(135deg, #22c55e, #15803d); }
+.mode-button.down { background: linear-gradient(135deg, #f97316, #c2410c); }
+.mode-button.mixed { background: linear-gradient(135deg, #6366f1, #4338ca); }
 .mode-button.verifica { background: linear-gradient(135deg, #ec4899, #a21caf); }
-.mode-button.custom { background: linear-gradient(135deg, #14b8a6, #0f766e); }
 
+/* GRIGLIA GRUPPI DI INTERVALLI */
+.theme-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 10px;
+    margin-top: 26px;
+}
+.theme-tile {
+    border: none;
+    padding: 18px 10px;
+    border-radius: 14px;
+    color: white;
+    font-family: "Sora", "Inter", Arial, sans-serif;
+    font-size: 0.92rem;
+    font-weight: 800;
+    cursor: pointer;
+    box-shadow: 0 1px 0 rgba(255,255,255,0.22) inset, 0 8px 18px rgba(0,0,0,0.28);
+    transition: transform 0.15s var(--ease-out-soft), filter 0.15s, box-shadow 0.15s;
+}
+.theme-tile:hover { transform: translateY(-3px); filter: brightness(1.08); }
+.theme-tile:active { transform: translateY(1px); }
+.theme-tile.wide { grid-column: 1 / -1; }
+
+.theme-tile.t1 { background: linear-gradient(135deg, #f97316, #c2410c); }
+.theme-tile.t2 { background: linear-gradient(135deg, #eab308, #a16207); }
+.theme-tile.t3 { background: linear-gradient(135deg, #22c55e, #15803d); }
+.theme-tile.t4 { background: linear-gradient(135deg, #3b82f6, #1d4ed8); }
+.theme-tile.t5 { background: linear-gradient(135deg, #8b5cf6, #6d28d9); }
+.theme-tile.t6 { background: linear-gradient(135deg, #06b6d4, #0e7490); }
+.theme-tile.t7 { background: linear-gradient(135deg, #ec4899, #be185d); }
+.theme-tile.t8 { background: linear-gradient(135deg, #6366f1, #4338ca); }
+.theme-tile.tall { background: linear-gradient(135deg, #f59e0b, #b45309); }
+.theme-tile.tcustom { background: linear-gradient(135deg, #14b8a6, #0f766e); }
+
+/* GRIGLIA SPUNTE (selezione personalizzata) */
 .check-grid {
     display: grid;
     grid-template-columns: repeat(2, 1fr);
@@ -615,14 +473,14 @@ h1 {
     margin-top: 26px;
 }
 .check-tile {
-    padding: 16px 10px;
+    padding: 14px 12px;
     border-radius: 14px;
     border: 1px solid rgba(255,255,255,0.16);
     background: rgba(255,255,255,0.06);
     color: #e2e8f0;
     font-family: "Sora", "Inter", Arial, sans-serif;
     font-weight: 800;
-    font-size: 0.92rem;
+    font-size: 0.88rem;
     cursor: pointer;
     text-align: left;
     display: flex;
@@ -644,24 +502,14 @@ h1 {
 }
 .check-tile.checked .check-mark { background: rgba(255,255,255,0.25); border-color: rgba(255,255,255,0.6); }
 
-/* PULSANTE HOME (verso il sito che ospita il gioco) */
 .site-home-button {
-    position: fixed;
-    top: 18px;
-    left: 18px;
-    z-index: 50;
-    width: 44px;
-    height: 44px;
-    border-radius: 50%;
+    position: fixed; top: 18px; left: 18px; z-index: 50;
+    width: 44px; height: 44px; border-radius: 50%;
     border: 1px solid rgba(255,255,255,0.18);
     background: linear-gradient(180deg, rgba(255,255,255,0.1), rgba(255,255,255,0.04));
-    color: #e2e8f0;
-    font-size: 1.15rem;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    cursor: pointer;
-    box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+    color: #e2e8f0; font-size: 1.15rem;
+    display: flex; align-items: center; justify-content: center;
+    cursor: pointer; box-shadow: 0 4px 12px rgba(0,0,0,0.3);
     transition: transform 0.15s var(--ease-out-soft), background 0.15s;
 }
 .site-home-button:hover { background: linear-gradient(180deg, rgba(255,255,255,0.2), rgba(255,255,255,0.08)); transform: translateY(-2px); }
@@ -673,7 +521,7 @@ h1 {
     .stats { grid-template-columns: repeat(5, 1fr); gap: 6px; }
     .stat { padding: 10px 4px; }
     .stat-value { font-size: 1.05rem; }
-    .choice-btn { min-width: 66px; padding: 10px 8px; font-size: 0.78rem; }
+    .choice-btn { min-width: 92px; padding: 11px 12px; font-size: 0.8rem; }
 }
 </style>
 </head>
@@ -681,45 +529,65 @@ h1 {
 
 <button class="site-home-button" id="siteHomeButton" title="Torna al sito">🏠</button>
 
-<div class="theory-toast" id="theoryToast"></div>
-
-<!-- SCHERMATA INIZIALE -->
+<!-- SCHERMATA 1: scelta della direzione -->
 <div class="menu-screen" id="homeScreen">
-    <div class="hero-badge">🎼</div>
-    <h1>Nomina gli intervalli</h1>
-    <p class="subtitle">Scegli su cosa fare pratica, oppure mettiti alla prova nella Verifica.</p>
-    <div class="theme-grid">
-        <button class="theme-tile n1" data-number="1">Unisoni</button>
-        <button class="theme-tile n2" data-number="2">Seconde</button>
-        <button class="theme-tile n3" data-number="3">Terze</button>
-        <button class="theme-tile n4" data-number="4">Quarte</button>
-        <button class="theme-tile n5" data-number="5">Quinte</button>
-        <button class="theme-tile n6" data-number="6">Seste</button>
-        <button class="theme-tile n7" data-number="7">Settime</button>
-        <button class="theme-tile n8" data-number="8">Ottave</button>
-        <button class="theme-tile nall wide" data-number="all">Tutti gli intervalli</button>
+    <div class="hero-badge">🎧</div>
+    <h1>Ascolta gli intervalli</h1>
+    <p class="subtitle">Ascolta l'intervallo e indovinalo a orecchio.</p>
+    <div class="mode-grid">
+        <button class="mode-button up" data-direction="up">
+            <span class="mode-button-title">🔼 Ascendenti</span>
+            <span class="mode-button-desc">L'intervallo sale dalla prima alla seconda nota</span>
+        </button>
+        <button class="mode-button down" data-direction="down">
+            <span class="mode-button-title">🔽 Discendenti</span>
+            <span class="mode-button-desc">L'intervallo scende dalla prima alla seconda nota</span>
+        </button>
+        <button class="mode-button mixed" data-direction="mixed">
+            <span class="mode-button-title">🔀 Ascendenti e discendenti</span>
+            <span class="mode-button-desc">Si alternano a caso, uno per domanda</span>
+        </button>
     </div>
     <hr class="mode-divider">
     <div class="mode-grid">
-        <button class="mode-button custom" id="customButton">
-            <span class="mode-button-title">🎯 Scegli intervalli</span>
-            <span class="mode-button-desc">Seleziona tu quali numeri di intervallo vuoi allenare</span>
-        </button>
         <button class="mode-button verifica" id="verificaButton">
             <span class="mode-button-title">📝 Verifica</span>
-            <span class="mode-button-desc">14 livelli, dagli intervalli più semplici a tutti quelli alterati: scopri il tuo voto finale</span>
+            <span class="mode-button-desc">Scegli gli intervalli da includere e scopri il tuo voto finale</span>
         </button>
     </div>
 </div>
 
+<!-- SCHERMATA 2: scelta del gruppo di intervalli (dopo aver scelto la direzione) -->
+<div class="menu-screen" id="groupScreen" style="display: none;">
+    <div class="hero-badge">🎯</div>
+    <h1>Su cosa fai pratica?</h1>
+    <p class="subtitle" id="groupSubtitle">Scegli un gruppo di intervalli.</p>
+    <div class="theme-grid">
+        <button class="theme-tile t1" data-group="g2">Seconda</button>
+        <button class="theme-tile t2" data-group="g3">Terza</button>
+        <button class="theme-tile t3" data-group="g45">Quarta e quinta</button>
+        <button class="theme-tile t4" data-group="g6">Sesta</button>
+        <button class="theme-tile t5" data-group="g7">Settima</button>
+        <button class="theme-tile t6" data-group="g458">Quarta, quinta e ottava</button>
+        <button class="theme-tile t7" data-group="g23">Seconda e terza</button>
+        <button class="theme-tile t8" data-group="g67">Sesta e settima</button>
+        <button class="theme-tile tall wide" data-group="gall">Dalla seconda all'ottava (tutti)</button>
+        <button class="theme-tile tcustom wide" id="customButton">🎯 Scegli intervalli</button>
+    </div>
+    <div class="mode-grid" style="margin-top: 20px;">
+        <button class="menu-button" id="groupBackButton">⬅️ Indietro</button>
+    </div>
+</div>
+
+<!-- SCHERMATA 3: selezione personalizzata a spunte (per "Scegli intervalli" e per "Verifica") -->
 <div class="menu-screen" id="selectScreen" style="display: none;">
     <div class="hero-badge">🎯</div>
     <h1>Scegli gli intervalli</h1>
-    <p class="subtitle">Seleziona quali numeri di intervallo vuoi allenare, poi premi Inizia.</p>
+    <p class="subtitle">Seleziona quali intervalli vuoi allenare, poi premi Inizia.</p>
     <div class="check-grid" id="checkGrid"></div>
     <div class="mode-grid" style="margin-top: 22px;">
         <button class="menu-button" id="selectBackButton">⬅️ Indietro</button>
-        <button class="mode-button start" id="selectStartButton" disabled>
+        <button class="mode-button mixed" id="selectStartButton" disabled>
             <span class="mode-button-title">▶️ Inizia</span>
         </button>
     </div>
@@ -728,8 +596,8 @@ h1 {
 <!-- SCHERMATA DI GIOCO -->
 <div class="game" id="gameContainer" style="display: none;">
 
-    <h1>🎼 Nomina gli intervalli</h1>
-    <p class="subtitle" id="gameSubtitle">Clicca la qualità e il numero dell'intervallo mostrato.</p>
+    <h1 id="gameTitle">🎧 Ascolta gli intervalli</h1>
+    <p class="subtitle" id="gameSubtitle">Ascolta e indovina l'intervallo.</p>
 
     <div class="stats">
         <div class="stat total"><span class="stat-label">Risposte</span><span class="stat-value" id="total">0</span></div>
@@ -742,11 +610,11 @@ h1 {
     <div class="level-box" id="levelBox">
         <div class="level-header">
             <span class="level-title">⭐ Livello</span>
-            <span class="level-number" id="levelNumber">1 / 17</span>
+            <span class="level-number" id="levelNumber">1 / 10</span>
         </div>
         <div class="progress-bar"><div class="progress-fill" id="progressFill"></div></div>
         <div class="level-footer">
-            <span class="level-info" id="levelInfo">0 / 2 intervalli di questo livello</span>
+            <span class="level-info" id="levelInfo">0 / 100 risposte corrette</span>
             <span class="level-name" id="levelName"></span>
         </div>
         <div class="level-intervals-info hidden" id="levelIntervalsInfo"></div>
@@ -754,6 +622,7 @@ h1 {
 
     <div class="staff-row" id="staffRow">
         <div class="staff-card">
+            <div class="staff-placeholder" id="staffPlaceholder"><span class="staff-placeholder-emoji">🎧</span>Ascolta e indovina</div>
             <div class="staff-inner" id="staffInner"></div>
             <div class="confetti-layer" id="confettiLayer"></div>
         </div>
@@ -762,15 +631,8 @@ h1 {
     <button class="play-button" id="playButton" title="Ascolta l'intervallo">🔊</button>
 
     <div class="answer-section">
-        <div class="answer-section-title">Qualità</div>
-        <div class="choice-row quality-row" id="qualityRow"></div>
-        <div id="numberSection">
-            <div class="answer-section-title">Numero</div>
-            <div class="choice-row number-row" id="numberRow"></div>
-        </div>
+        <div class="choice-row" id="answerRow"></div>
     </div>
-
-    <button class="submit-button" id="submitButton" disabled>Invia ✅</button>
 
     <div class="message" id="message"></div>
 
@@ -785,21 +647,8 @@ h1 {
             <span class="volume-icon">🔊</span>
             <input type="range" class="volume-slider" id="volumeSlider" min="0" max="100" value="75">
         </div>
-        <button class="toolbar-button" id="optionsButton" title="Opzioni">⚙️</button>
     </div>
 
-</div>
-
-<!-- PANNELLO OPZIONI -->
-<div class="options-panel" id="optionsPanel">
-    <div class="options-panel-title">Opzioni</div>
-    <div class="options-group-title">Chiave</div>
-    <div class="options-pair">
-        <button class="options-choice active" id="trebleClefButton" data-clef="treble">Chiave di violino</button>
-        <button class="options-choice" id="bassClefButton" data-clef="bass">Chiave di basso</button>
-    </div>
-    <div class="options-group-title">Modalità di risposta</div>
-    <button class="options-choice options-full active" id="submitModeToggle">✅ Pulsante "Invia"</button>
 </div>
 
 <!-- CONFERMA FINE PARTITA -->
@@ -836,22 +685,14 @@ h1 {
 <script>
 
 /* =========================================================
-   TEORIA: intervalli, note, ortografia (letter + alterazione)
+   TEORIA: stessa base del gioco "Nomina gli intervalli"
+   (lettera + alterazione + ottava, generazione teoricamente
+   corretta rispettando un limite di alterazioni per nota)
    ========================================================= */
 
 const LETTERS = ["C", "D", "E", "F", "G", "A", "B"];
-const NATURAL_OFFSET = [0, 2, 4, 5, 7, 9, 11]; // semitoni da C, per ciascuna lettera
+const NATURAL_OFFSET = [0, 2, 4, 5, 7, 9, 11];
 const PERFECT_NUMBERS = [1, 4, 5, 8];
-
-// nomi ufficiali usati anche nella traduzione italiana di GNU Solfege
-const NUMBER_NAMES = { 1: "Unisono", 2: "Seconda", 3: "Terza", 4: "Quarta", 5: "Quinta", 6: "Sesta", 7: "Settima", 8: "Ottava" };
-const QUALITY_NAMES = { d: "Diminuito", m: "Minore", M: "Maggiore", p: "Perfetto", a: "Aumentato" };
-const QUALITY_NAMES_FEM = { d: "diminuita", m: "minore", M: "maggiore", p: "perfetta", a: "aumentata" };
-const QUALITY_ORDER = ["d", "m", "M", "p", "a"];
-const NUMBER_ORDER = [1, 2, 3, 4, 5, 6, 7, 8];
-
-// semitoni dell'intervallo "base" (maggiore per i numeri imperfetti,
-// perfetto per 1/4/5/8), poi si applica la qualità richiesta
 const BASE_SEMITONES = { 1: 0, 2: 2, 3: 4, 4: 5, 5: 7, 6: 9, 7: 11, 8: 12 };
 
 function intervalSemitones(number, quality) {
@@ -868,18 +709,12 @@ function intervalSemitones(number, quality) {
     }
 }
 
-// posizione MIDI assoluta (c/4 = 60, come in VexFlow e nel motore audio)
 function naturalMidi(letterIdx, octave) {
     return (octave + 1) * 12 + NATURAL_OFFSET[letterIdx];
 }
 function noteMidi(note) {
     return naturalMidi(note.letter, note.octave) + note.acc;
 }
-
-/*
-   Costruisce una chiave VexFlow ("c/4", "cs/4"->no, VexFlow vuole "c#/4")
-   a partire da lettera+alterazione+ottava.
-*/
 function accidentalSuffix(acc) {
     if (acc === 0) return "";
     if (acc === 1) return "#";
@@ -892,21 +727,13 @@ function vexKey(note) {
     return LETTERS[note.letter].toLowerCase() + accidentalSuffix(note.acc) + "/" + note.octave;
 }
 
-/*
-   Genera una coppia di note (fondamentale + nota superiore) che
-   realizzano esattamente l'intervallo richiesto (qualità + numero),
-   rispettando il range di note consentito e il numero massimo di
-   alterazioni per nota (di default 1, come in GNU Solfege). Riprova
-   con una fondamentale diversa finché non trova una soluzione valida:
-   la stessa identica logica usata da Solfege in utils.py/nameinterval.py.
-*/
 function tryGenerateQuestion(spec, lowMidi, highMidi, maxAcc) {
     const semis = intervalSemitones(spec.n, spec.q);
     for (let attempt = 0; attempt < 400; attempt++) {
         const rootLetter = Math.floor(Math.random() * 7);
         const accPool = [-1, 0, 0, 1];
         const rootAcc = accPool[Math.floor(Math.random() * accPool.length)];
-        const octave = 2 + Math.floor(Math.random() * 5); // 2..6, filtrato poi dal range reale
+        const octave = 2 + Math.floor(Math.random() * 5);
 
         const rootMidi = naturalMidi(rootLetter, octave) + rootAcc;
         if (rootMidi < lowMidi || rootMidi > highMidi) continue;
@@ -935,64 +762,72 @@ function tryGenerateQuestion(spec, lowMidi, highMidi, maxAcc) {
 }
 
 /* =========================================================
-   LIVELLI: introduzione progressiva dei tipi di intervallo
-   (stesso raggruppamento usato dai file lezione di Solfege:
-   i primi 7 livelli corrispondono a "Many intervals", i
-   successivi 7 aggiungono le alterazioni fino ad "All intervals")
+   GLI 11 INTERVALLI DISPONIBILI IN QUESTO ESERCIZIO
+   (nessun unisono, nessun tritono: solo gli intervalli
+   "classici" da riconoscere a orecchio)
    ========================================================= */
 
-const levelIntroductions = [
-    { specs: [{ q: "p", n: 1 }, { q: "p", n: 8 }], label: "Unisono e ottava" },
-    { specs: [{ q: "p", n: 5 }, { q: "p", n: 4 }], label: "+ Quarta e quinta giuste" },
-    { specs: [{ q: "a", n: 4 }, { q: "d", n: 5 }], label: "+ Tritono (4ª ecc. / 5ª dim.)" },
-    { specs: [{ q: "M", n: 2 }, { q: "m", n: 2 }], label: "+ Seconde" },
-    { specs: [{ q: "M", n: 3 }, { q: "m", n: 3 }], label: "+ Terze" },
-    { specs: [{ q: "M", n: 6 }, { q: "m", n: 6 }], label: "+ Seste" },
-    { specs: [{ q: "M", n: 7 }, { q: "m", n: 7 }], label: "+ Settime" },
-    { specs: [{ q: "a", n: 1 }, { q: "d", n: 8 }, { q: "a", n: 8 }], label: "+ Unisono ecc. / Ottava dim. e ecc." },
-    { specs: [{ q: "a", n: 2 }, { q: "d", n: 3 }], label: "+ Seconda ecc. / Terza dim." },
-    { specs: [{ q: "a", n: 3 }, { q: "d", n: 4 }], label: "+ Terza ecc. / Quarta dim." },
-    { specs: [{ q: "a", n: 5 }, { q: "d", n: 6 }], label: "+ Quinta ecc. / Sesta dim." },
-    { specs: [{ q: "a", n: 6 }, { q: "d", n: 7 }], label: "+ Sesta ecc. / Settima dim." },
-    { specs: [{ q: "a", n: 7 }, { q: "d", n: 2 }], label: "+ Settima ecc. / Seconda dim." }
+const INTERVAL_DEFS = [
+    { key: "m2", q: "m", n: 2, label: "Seconda minore" },
+    { key: "M2", q: "M", n: 2, label: "Seconda maggiore" },
+    { key: "m3", q: "m", n: 3, label: "Terza minore" },
+    { key: "M3", q: "M", n: 3, label: "Terza maggiore" },
+    { key: "p4", q: "p", n: 4, label: "Quarta perfetta" },
+    { key: "p5", q: "p", n: 5, label: "Quinta perfetta" },
+    { key: "m6", q: "m", n: 6, label: "Sesta minore" },
+    { key: "M6", q: "M", n: 6, label: "Sesta maggiore" },
+    { key: "m7", q: "m", n: 7, label: "Settima minore" },
+    { key: "M7", q: "M", n: 7, label: "Settima maggiore" },
+    { key: "p8", q: "p", n: 8, label: "Ottava perfetta" }
 ];
-const totalLevels = levelIntroductions.length;
+const DEF_BY_KEY = {};
+INTERVAL_DEFS.forEach(d => { DEF_BY_KEY[d.key] = d; });
 
-// range di note per chiave (MIDI, c/4 = Do centrale = 60)
-const CLEF_RANGE = {
-    treble: { low: 59, high: 79 },  // Si3 - Sol5 (come il default di Solfege: b .. g'')
-    bass:   { low: 40, high: 60 }   // Mi2 - Do4
+const GROUPS = {
+    g2:   { label: "Seconda",                    keys: ["m2", "M2"] },
+    g3:   { label: "Terza",                      keys: ["m3", "M3"] },
+    g45:  { label: "Quarta e quinta",             keys: ["p4", "p5"] },
+    g6:   { label: "Sesta",                      keys: ["m6", "M6"] },
+    g7:   { label: "Settima",                    keys: ["m7", "M7"] },
+    g458: { label: "Quarta, quinta e ottava",     keys: ["p4", "p5", "p8"] },
+    g23:  { label: "Seconda e terza",             keys: ["m2", "M2", "m3", "M3"] },
+    g67:  { label: "Sesta e settima",             keys: ["m6", "M6", "m7", "M7"] },
+    gall: { label: "Dalla seconda all'ottava",    keys: INTERVAL_DEFS.map(d => d.key) }
 };
-const MAX_ACCIDENTALS = 1;
 
-let clef = "treble";
-let useSubmitButton = true;
+const NOTE_RANGE = { low: 55, high: 84 }; // Sol3 - Do6: margine comodo anche per l'ottava
+const MAX_ACCIDENTALS = 1;
+const CLEF = "treble";
+
+const DIRECTION_LABELS = { up: "Ascendenti", down: "Discendenti", mixed: "Ascendenti e discendenti" };
 
 /* =========================================================
    ELEMENTI DOM
    ========================================================= */
 
 const homeScreen = document.getElementById("homeScreen");
-const gameContainer = document.getElementById("gameContainer");
-const verificaButton = document.getElementById("verificaButton");
-const customButton = document.getElementById("customButton");
+const groupScreen = document.getElementById("groupScreen");
+const groupSubtitle = document.getElementById("groupSubtitle");
 const selectScreen = document.getElementById("selectScreen");
 const checkGrid = document.getElementById("checkGrid");
 const selectBackButton = document.getElementById("selectBackButton");
 const selectStartButton = document.getElementById("selectStartButton");
-const gameSubtitle = document.getElementById("gameSubtitle");
+const groupBackButton = document.getElementById("groupBackButton");
+const gameContainer = document.getElementById("gameContainer");
+const verificaButton = document.getElementById("verificaButton");
+const customButton = document.getElementById("customButton");
 const siteHomeButton = document.getElementById("siteHomeButton");
 const homeMenuButton = document.getElementById("homeMenuButton");
+const gameTitle = document.getElementById("gameTitle");
+const gameSubtitle = document.getElementById("gameSubtitle");
 
+const staffRow = document.getElementById("staffRow");
 const staffInner = document.getElementById("staffInner");
-const playButton = document.getElementById("playButton");
+const staffPlaceholder = document.getElementById("staffPlaceholder");
 const confettiLayer = document.getElementById("confettiLayer");
-const qualityRow = document.getElementById("qualityRow");
-const numberSection = document.getElementById("numberSection");
-const numberRow = document.getElementById("numberRow");
-const submitButton = document.getElementById("submitButton");
+const playButton = document.getElementById("playButton");
+const answerRow = document.getElementById("answerRow");
 const message = document.getElementById("message");
-const theoryToast = document.getElementById("theoryToast");
 
 const totalEl = document.getElementById("total");
 const correctEl = document.getElementById("correct");
@@ -1021,18 +856,15 @@ const finalLevel = document.getElementById("finalLevel");
 const finalAccuracy = document.getElementById("finalAccuracy");
 const finalCorrect = document.getElementById("finalCorrect");
 const finalErrors = document.getElementById("finalErrors");
+const finalGradeBox = document.getElementById("finalGradeBox");
+const finalGrade = document.getElementById("finalGrade");
 const finalMenuButton = document.getElementById("finalMenuButton");
 const playAgainButton = document.getElementById("playAgainButton");
 
 const volumeSlider = document.getElementById("volumeSlider");
-const optionsButton = document.getElementById("optionsButton");
-const optionsPanel = document.getElementById("optionsPanel");
-const trebleClefButton = document.getElementById("trebleClefButton");
-const bassClefButton = document.getElementById("bassClefButton");
-const submitModeToggle = document.getElementById("submitModeToggle");
 
 /* =========================================================
-   AUDIO (stessi toni sintetizzati via WebAudio)
+   AUDIO
    ========================================================= */
 
 let audioContext = null;
@@ -1137,9 +969,13 @@ function playPianoNote(midi, delay) {
     });
 }
 
+// suona le due note nell'ordine corretto: se l'intervallo e'
+// discendente, si parte dalla nota piu' acuta
 function playIntervalSound(question) {
-    playPianoNote(noteMidi(question.root), 0);
-    playPianoNote(noteMidi(question.target), 0.8);
+    const first = question.direction === "down" ? question.target : question.root;
+    const second = question.direction === "down" ? question.root : question.target;
+    playPianoNote(noteMidi(first), 0);
+    playPianoNote(noteMidi(second), 0.85);
 }
 
 function playWrongSound() { tone(180, 0.22, "sawtooth", 0); }
@@ -1157,39 +993,54 @@ function playVictorySound() {
 }
 
 /* =========================================================
-   PENTAGRAMMA (VexFlow): due note, come nell'esercizio
-   originale (root + nota superiore, gambo in su)
+   PENTAGRAMMA: disegna le due note nell'ORDINE in cui sono
+   state suonate (se discendente, la piu' acuta per prima)
    ========================================================= */
 
-function drawInterval(question, container) {
+function drawOrderedNotes(orderedNotes, container) {
     if (typeof Vex === "undefined") return;
     const { Renderer, Stave, StaveNote, Accidental, Voice, Formatter } = Vex.Flow;
 
     container.innerHTML = "";
 
     const renderer = new Renderer(container, Renderer.Backends.SVG);
-    renderer.resize(300, 260);
+    renderer.resize(280, 240);
     const context = renderer.getContext();
 
-    const stave = new Stave(6, 30, 270, { spacing_between_lines_px: 14 });
-    stave.addClef(clef);
+    const stave = new Stave(6, 20, 250, { spacing_between_lines_px: 13 });
+    stave.addClef(CLEF);
     stave.setContext(context).draw();
 
     function makeNote(note) {
-        const sn = new StaveNote({ keys: [vexKey(note)], duration: "q", clef: clef, stem_direction: 1 });
+        const sn = new StaveNote({ keys: [vexKey(note)], duration: "q", clef: CLEF, stem_direction: 1 });
         if (note.acc !== 0) {
             sn.addModifier(new Accidental(accidentalSuffix(note.acc)), 0);
         }
         return sn;
     }
 
-    const notes = [makeNote(question.root), makeNote(question.target)];
+    const notes = orderedNotes.map(makeNote);
     const voice = new Voice({ num_beats: 2, beat_value: 4 });
     voice.setMode(Voice.Mode.SOFT);
     voice.addTickables(notes);
 
-    new Formatter().joinVoices([voice]).format([voice], 190);
+    new Formatter().joinVoices([voice]).format([voice], 175);
     voice.draw(context, stave);
+}
+
+function orderedNotesFor(question) {
+    return question.direction === "down" ? [question.target, question.root] : [question.root, question.target];
+}
+
+function revealStaff(question) {
+    drawOrderedNotes(orderedNotesFor(question), staffInner);
+    staffPlaceholder.style.display = "none";
+    requestAnimationFrame(() => staffInner.classList.add("show"));
+}
+function hideStaff() {
+    staffInner.classList.remove("show");
+    staffInner.innerHTML = "";
+    staffPlaceholder.style.display = "";
 }
 
 const confettiColors = ["#f59e0b", "#22c55e", "#3b82f6", "#ec4899", "#a855f7", "#facc15", "#06b6d4"];
@@ -1214,241 +1065,120 @@ function spawnConfetti() {
     }
 }
 
-function animateNewQuestion(question, onDone) {
-    staffInner.classList.add("slide-out");
-    setTimeout(() => {
-        drawInterval(question, staffInner);
-        staffInner.classList.remove("slide-out");
-        staffInner.classList.add("slide-in-start");
-        requestAnimationFrame(() => {
-            requestAnimationFrame(() => {
-                staffInner.classList.remove("slide-in-start");
-                staffInner.classList.add("slide-in");
-                setTimeout(() => {
-                    staffInner.classList.remove("slide-in");
-                    if (onDone) onDone();
-                }, 350);
-            });
-        });
-    }, 220);
-}
-
-/* =========================================================
-   MODALITA': quali qualita' hanno senso per ciascun numero
-   (rispecchia esattamente i file lezione di GNU Solfege:
-   l'unisono non ammette la qualita' diminuita, che non esiste
-   in pratica; i numeri "perfetti" 4/5/8 ammettono diminuito/
-   giusto/eccedente; i numeri "imperfetti" 2/3/6/7 ammettono
-   diminuito/minore/maggiore/eccedente)
-   ========================================================= */
-
-function validQualitiesForNumber(n) {
-    if (n === 1) return ["p", "a"];
-    if (PERFECT_NUMBERS.includes(n)) return ["d", "p", "a"];
-    return ["d", "m", "M", "a"];
-}
-
-function theoryImpossibleMessage(number) {
-    const names = validQualitiesForNumber(number).map(q => QUALITY_NAMES_FEM[q]);
-    const list = names.length > 1
-        ? names.slice(0, -1).join(", ") + " o " + names[names.length - 1]
-        : names[0];
-    return "Gli intervalli di " + NUMBER_NAMES[number].toLowerCase() + " possono essere solo di qualità " + list + ".";
-}
-
-const NUMBER_MODE_META = {
-    1: { title: "Unisoni", subtitle: "Riconosci se è un unisono perfetto o aumentato." },
-    2: { title: "Seconde", subtitle: "Riconosci se è diminuita, minore, maggiore o aumentata." },
-    3: { title: "Terze", subtitle: "Riconosci se è diminuita, minore, maggiore o aumentata." },
-    4: { title: "Quarte", subtitle: "Riconosci se è diminuita, giusta o aumentata." },
-    5: { title: "Quinte", subtitle: "Riconosci se è diminuita, giusta o aumentata." },
-    6: { title: "Seste", subtitle: "Riconosci se è diminuita, minore, maggiore o aumentata." },
-    7: { title: "Settime", subtitle: "Riconosci se è diminuita, minore, maggiore o aumentata." },
-    8: { title: "Ottave", subtitle: "Riconosci se è diminuita, giusta o aumentata." },
-    all: { title: "Tutti gli intervalli", subtitle: "Riconosci qualità e numero di qualsiasi intervallo." },
-    verifica: { title: "Verifica", subtitle: "Completa tutti i livelli per scoprire il tuo voto finale." }
-};
-
-let customNumbers = new Set();
-let selectFlow = "theme"; // "theme" | "verifica": a cosa serve la schermata di selezione a spunte
-
-function buildThemePool(numberOrAll) {
-    if (numberOrAll === "all") {
-        const specs = [];
-        levelIntroductions.forEach(intro => intro.specs.forEach(s => specs.push(s)));
-        return specs;
-    }
-    if (numberOrAll === "custom") {
-        const specs = [];
-        customNumbers.forEach(n => validQualitiesForNumber(n).forEach(q => specs.push({ q: q, n: n })));
-        return specs;
-    }
-    return validQualitiesForNumber(numberOrAll).map(q => ({ q: q, n: numberOrAll }));
-}
-
 /* =========================================================
    STATO DI GIOCO
    ========================================================= */
 
-let mode = "theme"; // "theme" | "verifica"
-let themeNumber = null; // 1-8 oppure "all", solo per mode === "theme"
+let mode = "theme";           // "theme" | "verifica"
+let direction = "mixed";      // "up" | "down" | "mixed" (fisso "mixed" in Verifica)
+let currentPool = [];         // array di INTERVAL_DEFS (fissato per l'intera sessione)
+let currentGroupLabel = "";
 
-// comuni a entrambe le modalita'
-let total = 0;
-let correct = 0;
-let errors = 0;
-let streak = 0;
-let record = 0;
-let finished = false;
-let answering = true;
+let total = 0, correct = 0, errors = 0, streak = 0, record = 0;
+let finished = false, answering = true;
 let currentQuestion = null;
 
-let selectedQuality = null;
-let selectedNumber = null;
-
-// pool fisso della sessione corrente (sia in "Verifica" sia nelle
-// modalità tematiche: 100 domande, un livello ogni 10 risposte corrette)
-let sessionPool = [];
 let progress = 0;
 const SESSION_TARGET = 100;
 const QUESTIONS_PER_LEVEL = 10;
 const THEME_LEVELS = SESSION_TARGET / QUESTIONS_PER_LEVEL;
 
-function shuffle(array) {
-    const copy = [...array];
-    for (let i = copy.length - 1; i > 0; i--) {
-        const j = Math.floor(Math.random() * (i + 1));
-        [copy[i], copy[j]] = [copy[j], copy[i]];
-    }
-    return copy;
+let customNumbers = null; // riservato: non usato qui, la selezione custom è per intervallo intero
+let pendingDirectionForCustom = "mixed";
+let selectFlow = "theme"; // "theme" | "verifica" — a cosa serve la schermata di selezione a spunte
+let selectedCustomKeys = new Set();
+
+function generateQuestionForDef(def) {
+    const actualDirection = direction === "mixed" ? (Math.random() < 0.5 ? "up" : "down") : direction;
+    let q = tryGenerateQuestion(def, NOTE_RANGE.low, NOTE_RANGE.high, MAX_ACCIDENTALS)
+        || tryGenerateQuestion(def, NOTE_RANGE.low - 5, NOTE_RANGE.high + 5, MAX_ACCIDENTALS);
+    q.key = def.key;
+    q.label = def.label;
+    q.direction = actualDirection;
+    return q;
 }
 
-function generateQuestionForSpec(spec) {
-    const range = CLEF_RANGE[clef];
-    return tryGenerateQuestion(spec, range.low, range.high, MAX_ACCIDENTALS)
-        || tryGenerateQuestion(spec, range.low - 5, range.high + 5, MAX_ACCIDENTALS);
-}
-
-/* ---- Pulsanti di risposta (comune, dipende dalla modalita') ---- */
-
-function renderChoiceButtons() {
-    let qualities, numbers, showNumbers;
-
-    if (mode === "verifica") {
-        qualities = QUALITY_ORDER; // tutte le qualità e tutti i numeri sono
-        numbers = NUMBER_ORDER;    // sempre selezionabili, a prescindere dagli intervalli scelti
-        showNumbers = true;
-    } else {
-        const specQualities = new Set(sessionPool.map(s => s.q));
-        const specNumbers = new Set(sessionPool.map(s => s.n));
-        qualities = QUALITY_ORDER.filter(q => specQualities.has(q));
-        showNumbers = themeNumber === "all" || themeNumber === "custom";
-        numbers = showNumbers ? NUMBER_ORDER.filter(n => specNumbers.has(n)) : [];
-    }
-
-    qualityRow.innerHTML = "";
-    qualities.forEach(q => {
+function renderAnswerButtons() {
+    answerRow.innerHTML = "";
+    currentPool.forEach(def => {
         const btn = document.createElement("button");
         btn.className = "choice-btn";
-        btn.textContent = QUALITY_NAMES[q];
-        btn.dataset.quality = q;
-        btn.addEventListener("click", () => onQualityClicked(q, btn));
-        qualityRow.appendChild(btn);
-    });
-
-    numberSection.classList.toggle("hidden", !showNumbers);
-    numberRow.innerHTML = "";
-    numbers.forEach(n => {
-        const btn = document.createElement("button");
-        btn.className = "choice-btn";
-        btn.textContent = NUMBER_NAMES[n];
-        btn.dataset.number = n;
-        btn.addEventListener("click", () => onNumberClicked(n, btn));
-        numberRow.appendChild(btn);
+        btn.textContent = def.label;
+        btn.dataset.key = def.key;
+        btn.addEventListener("click", () => onAnswerClicked(def.key, btn));
+        answerRow.appendChild(btn);
     });
 }
 
-function clearSelectionVisuals() {
-    qualityRow.querySelectorAll(".choice-btn").forEach(b => b.classList.remove("selected", "correct-flash", "wrong-flash"));
-    numberRow.querySelectorAll(".choice-btn").forEach(b => b.classList.remove("selected", "correct-flash", "wrong-flash"));
+function setAnswerButtonsDisabled(disabled) {
+    answerRow.querySelectorAll(".choice-btn").forEach(b => { b.disabled = disabled; });
 }
 
-function presentQuestion(question, animated) {
-    currentQuestion = question;
-    selectedQuality = null;
-    selectedNumber = (mode === "theme" && themeNumber !== "all" && themeNumber !== "custom") ? themeNumber : null;
-    lastWrongKey = null;
-    clearSelectionVisuals();
+function presentQuestion(animated) {
+    currentQuestion = generateQuestionForDef(currentPool[Math.floor(Math.random() * currentPool.length)]);
+    hideStaff();
+    answerRow.querySelectorAll(".choice-btn").forEach(b => b.classList.remove("correct-flash", "wrong-flash"));
     message.textContent = "";
     message.className = "message";
     answering = true;
-    submitButton.disabled = true;
-    if (animated) {
-        animateNewQuestion(question, () => {});
-    } else {
-        drawInterval(question, staffInner);
-    }
+    setAnswerButtonsDisabled(false);
+    setTimeout(() => playIntervalSound(currentQuestion), 350);
 }
 
-/* ---- Avvio delle due modalita' ---- */
+/* ---- Avvio delle modalita' ---- */
 
-function startVerifica(pool) {
-    mode = "verifica";
-    themeNumber = null;
+function startTheme(pool, dir, groupLabel) {
+    mode = "theme";
+    direction = dir;
+    currentPool = pool;
+    currentGroupLabel = groupLabel;
     total = 0; correct = 0; errors = 0; streak = 0; record = 0; finished = false;
     progress = 0;
-    sessionPool = pool;
-    renderChoiceButtons();
-    presentQuestion(generateQuestionForSpec(sessionPool[Math.floor(Math.random() * sessionPool.length)]), false);
+    renderAnswerButtons();
     updatePageHeading();
+    levelIntervalsInfo.classList.add("hidden");
+    presentQuestion(false);
     updateStats();
 }
 
-function startTheme(numberOrAll) {
-    mode = "theme";
-    themeNumber = numberOrAll;
+function startVerifica(pool) {
+    mode = "verifica";
+    direction = "mixed";
+    currentPool = pool;
+    currentGroupLabel = "Verifica";
     total = 0; correct = 0; errors = 0; streak = 0; record = 0; finished = false;
     progress = 0;
-    sessionPool = buildThemePool(numberOrAll);
-    renderChoiceButtons();
-    presentQuestion(generateQuestionForSpec(sessionPool[Math.floor(Math.random() * sessionPool.length)]), false);
+    renderAnswerButtons();
     updatePageHeading();
+    levelIntervalsInfo.classList.remove("hidden");
+    levelIntervalsInfo.innerHTML = "<b>Intervalli in verifica:</b> " + pool.map(d => d.label).join(", ");
+    presentQuestion(false);
     updateStats();
 }
 
 function restartCurrent() {
     if (mode === "verifica") {
-        startVerifica(sessionPool);
+        startVerifica(currentPool);
     } else {
-        startTheme(themeNumber);
+        startTheme(currentPool, direction, currentGroupLabel);
     }
-}
-
-function themeModeMeta() {
-    if (mode === "verifica") return NUMBER_MODE_META.verifica;
-    if (themeNumber === "custom") {
-        const names = [...customNumbers].sort((a, b) => a - b).map(n => NUMBER_NAMES[n]);
-        const title = names.length ? names.join(", ") : "Intervalli personalizzati";
-        return { title: title, subtitle: "Riconosci qualità e numero tra gli intervalli scelti." };
-    }
-    return NUMBER_MODE_META[themeNumber];
 }
 
 function updatePageHeading() {
-    const meta = themeModeMeta();
-    gameSubtitle.textContent = meta ? meta.subtitle : "";
+    if (mode === "verifica") {
+        gameSubtitle.textContent = "Ascolta l'intervallo e indovinalo: qualità e numero insieme.";
+    } else {
+        const dirLabel = DIRECTION_LABELS[direction] || "";
+        gameSubtitle.textContent = dirLabel + " — " + currentGroupLabel;
+    }
 }
 
-/* ---- Statistiche e progresso ---- */
+/* ---- Statistiche / livello ---- */
 
 function animateStat(el, className) {
     el.classList.remove(className);
     void el.offsetWidth;
     el.classList.add(className);
-}
-
-function formatIntervalLabel(spec) {
-    return NUMBER_NAMES[spec.n] + " " + QUALITY_NAMES_FEM[spec.q];
 }
 
 function updateStats() {
@@ -1463,131 +1193,33 @@ function updateStats() {
     progressFill.style.width = pct + "%";
     levelNumber.textContent = themeLevel + " / " + THEME_LEVELS;
     levelInfo.textContent = progress + " / " + SESSION_TARGET + " risposte corrette";
-    levelName.textContent = themeModeMeta() ? themeModeMeta().title : "";
-
-    if (mode === "verifica") {
-        levelIntervalsInfo.classList.remove("hidden");
-        levelIntervalsInfo.innerHTML = "<b>Intervalli in verifica:</b> " + sessionPool.map(formatIntervalLabel).join(", ");
-    } else {
-        levelIntervalsInfo.classList.add("hidden");
-    }
+    levelName.textContent = mode === "verifica" ? "Verifica" : currentGroupLabel;
 }
 
-/* ---- Selezione risposta (con pulsante "Invia") ---- */
+/* ---- Risposta (un solo click, niente pulsante Invia) ---- */
 
-let theoryToastTimeout = null;
-function showTheoryToast(text) {
-    theoryToast.textContent = text;
-    theoryToast.classList.add("show");
-    clearTimeout(theoryToastTimeout);
-    theoryToastTimeout = setTimeout(() => theoryToast.classList.remove("show"), 3200);
-}
-
-let lastWrongKey = null; // combinazione gia' inviata e risultata sbagliata: va cambiata prima di poter reinviare
-
-function numberIsRequired() {
-    return mode === "verifica" || themeNumber === "all" || themeNumber === "custom";
-}
-
-function currentSelectionKey() {
-    return (selectedQuality || "-") + "|" + (selectedNumber || "-");
-}
-
-function refreshSubmitState() {
-    const complete = selectedQuality !== null && (!numberIsRequired() || selectedNumber !== null);
-    const unchanged = currentSelectionKey() === lastWrongKey;
-    submitButton.disabled = !answering || finished || !complete || unchanged;
-    if (useSubmitButton) return;
-    // modalita' rapida (senza pulsante Invia): si invia in automatico
-    // non appena la risposta e' completa e diversa dall'ultimo tentativo
-    if (!submitButton.disabled) submitAnswer();
-}
-
-function onQualityClicked(q, btnEl) {
+function onAnswerClicked(key, btnEl) {
     if (!answering || finished) return;
-    if (btnEl.classList.contains("selected")) {
-        // ripremendo lo stesso pulsante lo si deseleziona
-        selectedQuality = null;
-        btnEl.classList.remove("selected");
-    } else {
-        selectedQuality = q;
-        qualityRow.querySelectorAll(".choice-btn").forEach(b => b.classList.remove("selected"));
-        btnEl.classList.add("selected");
-    }
-    refreshSubmitState();
-}
-
-function onNumberClicked(n, btnEl) {
-    if (!answering || finished) return;
-    if (btnEl.classList.contains("selected")) {
-        selectedNumber = null;
-        btnEl.classList.remove("selected");
-    } else {
-        selectedNumber = n;
-        numberRow.querySelectorAll(".choice-btn").forEach(b => b.classList.remove("selected"));
-        btnEl.classList.add("selected");
-    }
-    refreshSubmitState();
-}
-
-function selectedQualityBtn() {
-    return qualityRow.querySelector('.choice-btn[data-quality="' + selectedQuality + '"]');
-}
-function selectedNumberBtn() {
-    return numberRow.querySelector('.choice-btn[data-number="' + selectedNumber + '"]');
-}
-
-function submitAnswer() {
-    if (submitButton.disabled) return;
-    if (!answering || finished) return;
-
-    const qBtn = selectedQualityBtn();
-    const nBtn = selectedNumberBtn();
-
-    // prima si controlla se la coppia scelta dal giocatore (qualita' +
-    // numero selezionati) ha senso a livello teorico, indipendentemente
-    // da quale sia la risposta corretta
-    const allowedQualities = validQualitiesForNumber(selectedNumber);
-    if (!allowedQualities.includes(selectedQuality)) {
-        total++;
-        errors++;
-        streak = 0;
-        playWrongSound();
-        animateStat(errorsBox, "bump");
-        if (qBtn) qBtn.classList.add("wrong-flash");
-        if (nBtn) nBtn.classList.add("wrong-flash");
-        setTimeout(() => {
-            if (qBtn) qBtn.classList.remove("wrong-flash");
-            if (nBtn) nBtn.classList.remove("wrong-flash");
-        }, 400);
-        showTheoryToast(theoryImpossibleMessage(selectedNumber));
-        lastWrongKey = currentSelectionKey();
-        refreshSubmitState();
-        updateStats();
-        return;
-    }
+    answering = false;
+    setAnswerButtonsDisabled(true);
 
     total++;
-    const wasCorrect = selectedQuality === currentQuestion.quality && selectedNumber === currentQuestion.number;
+    const wasCorrect = key === currentQuestion.key;
 
     if (wasCorrect) {
-        answering = false;
-        submitButton.disabled = true;
         correct++;
         streak++;
         if (streak > record) record = streak;
 
-        playIntervalSound(currentQuestion);
         animateStat(correctBox, "bump");
-        if (qBtn) qBtn.classList.add("correct-flash");
-        if (nBtn) nBtn.classList.add("correct-flash");
-        message.textContent = "Corretto!";
+        btnEl.classList.add("correct-flash");
+        message.textContent = "Corretto! " + currentQuestion.label;
         message.className = "message correct-message";
+        revealStaff(currentQuestion);
 
-        // sia in "Verifica" sia nelle modalità tematiche si avanza allo
-        // stesso modo: 100 domande, un livello ogni 10 risposte corrette
         progress++;
         const justLeveledUp = progress % QUESTIONS_PER_LEVEL === 0 && progress < SESSION_TARGET;
+
         setTimeout(() => {
             if (progress >= SESSION_TARGET) {
                 updateStats();
@@ -1600,35 +1232,29 @@ function submitAnswer() {
                 playLevelUpSound();
                 animateStat(levelBox, "bump");
             }
-            const nextSpec = sessionPool[Math.floor(Math.random() * sessionPool.length)];
-            presentQuestion(generateQuestionForSpec(nextSpec), justLeveledUp);
+            presentQuestion(false);
             updateStats();
-        }, 650);
+        }, 1900);
 
     } else {
         errors++;
         streak = 0;
         playWrongSound();
         animateStat(errorsBox, "bump");
-        if (qBtn) qBtn.classList.add("wrong-flash");
-        if (nBtn) nBtn.classList.add("wrong-flash");
+        btnEl.classList.add("wrong-flash");
         message.textContent = "Sbagliato, riprova";
         message.className = "message wrong-message";
         setTimeout(() => {
-            if (qBtn) qBtn.classList.remove("wrong-flash");
-            if (nBtn) nBtn.classList.remove("wrong-flash");
-        }, 400);
-        lastWrongKey = currentSelectionKey();
-        refreshSubmitState();
+            btnEl.classList.remove("wrong-flash");
+            answering = true;
+            setAnswerButtonsDisabled(false);
+        }, 500);
     }
     updateStats();
 }
 
 /* =========================================================
    VOTO (solo modalita' Verifica)
-
-   Voto in decimi da 4 a 10, con mezzi voti, calcolato in modo
-   lineare sull'accuratezza. Mostrato solo se sufficiente (>= 6).
    ========================================================= */
 
 function computeGrade() {
@@ -1642,19 +1268,15 @@ function formatGrade(grade) {
     return Number.isInteger(grade) ? String(grade) : grade.toFixed(1).replace(".", ",");
 }
 
-/* =========================================================
-   SCHERMATA FINALE / RIAVVIO
-   ========================================================= */
+/* ---- Schermata finale ---- */
 
 function showFinalScreen() {
     finished = true;
-    const meta = themeModeMeta();
     const completedAll = progress >= SESSION_TARGET;
 
     if (mode === "verifica") {
         resultTitle.textContent = completedAll ? "🎉 Verifica completata!" : "Verifica interrotta";
         resultSubtitle.textContent = "Ecco il tuo riepilogo.";
-
         const grade = computeGrade();
         if (grade >= 6) {
             finalGrade.textContent = formatGrade(grade);
@@ -1664,7 +1286,7 @@ function showFinalScreen() {
         }
     } else {
         resultTitle.textContent = completedAll ? "🎉 Sessione completata!" : "Sessione interrotta";
-        resultSubtitle.textContent = (meta ? meta.title : "") + " — ecco il tuo riepilogo.";
+        resultSubtitle.textContent = currentGroupLabel + " — ecco il tuo riepilogo.";
         finalGradeBox.style.display = "none";
     }
 
@@ -1676,71 +1298,93 @@ function showFinalScreen() {
 }
 
 /* =========================================================
-   NAVIGAZIONE SCHERMATE E OPZIONI
+   NAVIGAZIONE SCHERMATE
    ========================================================= */
 
-function showGame() {
-    homeScreen.style.display = "none";
-    selectScreen.style.display = "none";
-    gameContainer.style.display = "block";
+function showScreen(el) {
+    [homeScreen, groupScreen, selectScreen, gameContainer].forEach(s => { s.style.display = "none"; });
+    el.style.display = "block";
 }
 
 function goHome() {
-    gameContainer.style.display = "none";
-    selectScreen.style.display = "none";
-    homeScreen.style.display = "block";
-    optionsPanel.classList.remove("show");
+    showScreen(homeScreen);
+    optionsCleanup();
+}
+function optionsCleanup() {
+    confirmOverlay.classList.remove("show");
     gameOver.classList.remove("show");
+}
+
+function showGroupScreen(dir) {
+    pendingDirectionForCustom = dir;
+    groupSubtitle.textContent = "Modalità: " + DIRECTION_LABELS[dir];
+    showScreen(groupScreen);
 }
 
 function showSelectScreen(flow) {
     selectFlow = flow;
-    homeScreen.style.display = "none";
-    selectScreen.style.display = "block";
-    customNumbers.clear();
+    selectedCustomKeys.clear();
     selectStartButton.disabled = true;
-    checkGrid.querySelectorAll(".check-tile").forEach(t => t.classList.remove("checked"));
+    checkGrid.innerHTML = "";
+    INTERVAL_DEFS.forEach(def => {
+        const tile = document.createElement("button");
+        tile.className = "check-tile";
+        tile.innerHTML = '<span class="check-mark">✓</span><span>' + def.label + "</span>";
+        tile.addEventListener("click", () => {
+            if (selectedCustomKeys.has(def.key)) {
+                selectedCustomKeys.delete(def.key);
+                tile.classList.remove("checked");
+            } else {
+                selectedCustomKeys.add(def.key);
+                tile.classList.add("checked");
+            }
+            selectStartButton.disabled = selectedCustomKeys.size === 0;
+        });
+        checkGrid.appendChild(tile);
+    });
+    showScreen(selectScreen);
 }
 
-// popola la griglia di spunte una sola volta
-NUMBER_ORDER.forEach(n => {
-    const tile = document.createElement("button");
-    tile.className = "check-tile";
-    tile.dataset.number = n;
-    tile.innerHTML = '<span class="check-mark">✓</span><span>' + NUMBER_NAMES[n] + "</span>";
-    tile.addEventListener("click", () => {
-        if (customNumbers.has(n)) {
-            customNumbers.delete(n);
-            tile.classList.remove("checked");
-        } else {
-            customNumbers.add(n);
-            tile.classList.add("checked");
-        }
-        selectStartButton.disabled = customNumbers.size === 0;
-    });
-    checkGrid.appendChild(tile);
+/* ---- Griglia direzione (home) ---- */
+document.querySelectorAll(".mode-button[data-direction]").forEach(btn => {
+    btn.addEventListener("click", () => showGroupScreen(btn.dataset.direction));
 });
 
-document.querySelectorAll(".theme-tile").forEach(tile => {
+/* ---- Griglia gruppi ---- */
+document.querySelectorAll(".theme-tile[data-group]").forEach(tile => {
     tile.addEventListener("click", () => {
-        const raw = tile.dataset.number;
-        const numberOrAll = raw === "all" ? "all" : parseInt(raw, 10);
-        showGame();
-        startTheme(numberOrAll);
+        const group = GROUPS[tile.dataset.group];
+        const pool = group.keys.map(k => DEF_BY_KEY[k]);
+        showScreen(gameContainer);
+        startTheme(pool, pendingDirectionForCustom, group.label);
     });
 });
-verificaButton.addEventListener("click", () => showSelectScreen("verifica"));
 customButton.addEventListener("click", () => showSelectScreen("theme"));
-selectBackButton.addEventListener("click", goHome);
-selectStartButton.addEventListener("click", () => {
-    if (customNumbers.size === 0) return;
-    showGame();
+groupBackButton.addEventListener("click", goHome);
+
+/* ---- Verifica (dalla home, salta direttamente alla selezione) ---- */
+verificaButton.addEventListener("click", () => showSelectScreen("verifica"));
+
+/* ---- Schermata di selezione a spunte ---- */
+selectBackButton.addEventListener("click", () => {
     if (selectFlow === "verifica") {
-        startVerifica(buildThemePool("custom"));
+        goHome();
     } else {
-        startTheme("custom");
+        showScreen(groupScreen);
     }
 });
+selectStartButton.addEventListener("click", () => {
+    if (selectedCustomKeys.size === 0) return;
+    const pool = INTERVAL_DEFS.filter(d => selectedCustomKeys.has(d.key));
+    showScreen(gameContainer);
+    if (selectFlow === "verifica") {
+        startVerifica(pool);
+    } else {
+        startTheme(pool, pendingDirectionForCustom, "Intervalli scelti");
+    }
+});
+
+/* ---- Pulsanti di gioco ---- */
 siteHomeButton.addEventListener("click", () => {});
 
 playButton.addEventListener("click", () => {
@@ -1761,7 +1405,6 @@ confirmOverlay.addEventListener("click", e => {
     if (e.target === confirmOverlay) confirmOverlay.classList.remove("show");
 });
 
-submitButton.addEventListener("click", submitAnswer);
 restartButton.addEventListener("click", restartCurrent);
 playAgainButton.addEventListener("click", restartCurrent);
 finalMenuButton.addEventListener("click", () => {
@@ -1772,53 +1415,6 @@ finalMenuButton.addEventListener("click", () => {
 volumeSlider.addEventListener("input", () => {
     masterVolume = volumeSlider.value / 100;
     if (masterGain) masterGain.gain.value = masterVolume;
-});
-
-function bumpButton(btn) {
-    btn.classList.remove("bump");
-    void btn.offsetWidth;
-    btn.classList.add("bump");
-}
-
-optionsButton.addEventListener("click", e => {
-    e.stopPropagation();
-    bumpButton(optionsButton);
-    optionsPanel.classList.toggle("show");
-});
-document.addEventListener("click", e => {
-    if (!optionsPanel.contains(e.target) && e.target !== optionsButton) {
-        optionsPanel.classList.remove("show");
-    }
-});
-
-function refreshQuestionForClefChange() {
-    if (!currentQuestion || finished) return;
-    const spec = { q: currentQuestion.quality, n: currentQuestion.number };
-    presentQuestion(generateQuestionForSpec(spec), false);
-}
-
-function setClef(newClef) {
-    clef = newClef;
-    trebleClefButton.classList.toggle("active", clef === "treble");
-    bassClefButton.classList.toggle("active", clef === "bass");
-    if (gameContainer.style.display !== "none") {
-        refreshQuestionForClefChange();
-    }
-}
-trebleClefButton.addEventListener("click", () => { bumpButton(trebleClefButton); setClef("treble"); });
-bassClefButton.addEventListener("click", () => { bumpButton(bassClefButton); setClef("bass"); });
-
-function setSubmitButtonMode(enabled) {
-    useSubmitButton = enabled;
-    submitModeToggle.classList.toggle("active", enabled);
-    submitButton.classList.toggle("hidden", !enabled);
-    if (gameContainer.style.display !== "none" && !finished) {
-        refreshSubmitState();
-    }
-}
-submitModeToggle.addEventListener("click", () => {
-    bumpButton(submitModeToggle);
-    setSubmitButtonMode(!useSubmitButton);
 });
 
 /* =========================================================
