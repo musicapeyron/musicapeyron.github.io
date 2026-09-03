@@ -55,6 +55,40 @@
     margin:0 0 14px 0;
   }
 
+  .select-wrap{ position:relative; }
+  .select-wrap::after{
+    content:"▾";
+    position:absolute;
+    right:1px; top:5px;
+    font-size:11px;
+    color:var(--ink-soft);
+    pointer-events:none;
+  }
+  .meta-field select{
+    width:100%;
+    border:none;
+    border-bottom:1.4px solid var(--ink);
+    background:transparent;
+    font-size:14.5px;
+    padding:4px 14px 4px 2px;
+    color:var(--ink);
+    font-family: Georgia, serif;
+    appearance:none;
+    -webkit-appearance:none;
+    border-radius:0;
+  }
+  .meta-field select:focus{ outline:none; border-bottom-color:var(--gold); }
+  .meta-field select:disabled{ opacity:0.5; cursor:not-allowed; }
+  .select-wrap.locked::after{ content:"🔒"; font-size:9px; }
+  .lock-hint{
+    font-size:9.5px;
+    color:var(--danger);
+    margin-top:2px;
+    display:none;
+    line-height:1.3;
+  }
+  .lock-hint.show{ display:block; }
+
   /* ---------- REGISTER SWITCHER ---------- */
   .register-bar{
     display:flex;
@@ -178,7 +212,7 @@
 
 <header class="top">
   <h1>Registro Attività</h1>
-  <p class="sub">Educazione Musicale · Classe Prima</p>
+  <p class="sub">Educazione Musicale</p>
 
   <div class="register-bar">
     <select id="register-select"></select>
@@ -189,7 +223,14 @@
   <div class="meta-row">
     <div class="meta-field">
       <label>Classe</label>
-      <input type="text" id="meta-classe" placeholder="es. 1ª">
+      <div class="select-wrap">
+        <select id="meta-classe">
+          <option value="Prima">Prima</option>
+          <option value="Seconda">Seconda</option>
+          <option value="Terza">Terza</option>
+        </select>
+      </div>
+      <div class="lock-hint" id="classe-lock-hint"></div>
     </div>
     <div class="meta-field">
       <label>Sezione</label>
@@ -220,35 +261,103 @@
 const STORAGE_KEY = "registro-musica-app-v2";
 const OLD_STORAGE_KEY = "registro-musica-classe-prima-v1"; // versione precedente, mono-registro
 
-const TOPICS = [
-  {n:1, t:"Lezione introduttiva"},
-  {n:2, t:"Test d'ingresso"},
-  {n:3, t:"Lettura in chiave di violino e basso; concetto generale di setticlavio; trascrizione sul pentagramma delle note sulle righe e sugli spazi"},
-  {n:4, t:"Le figure ritmiche: trascrizione sul pentagramma delle figure, delle relative pause e dei valori"},
-  {n:5, t:"Solfeggio ritmico per imitazione e lettura in 4/4, 3/4, 2/4 (da ripetere all'inizio di ogni lezione da qui in poi)", star:{count:10, label:"7 video YouTube + 3 esercizi Musicca"}},
-  {n:6, t:"Allenamento in aula informatica su identificazione note in chiave di violino/basso e figure ritmiche"},
-  {n:7, t:"Prova di verifica in aula informatica"},
-  {n:8, t:"Verifica in aula informatica"},
-  {n:9, t:"Le alterazioni; concetto di tono e semitono"},
-  {n:10, t:"Punto e doppio punto di valore, legatura di valore: trascrizione di definizioni e figure sul quaderno pentagrammato; esempi pratici con MuseScore e trascrizione delle battute di esempio"},
-  {n:11, t:"Solfeggio ritmico per imitazione e lettura con punto di valore, legatura di valore ed entrambi (da ripetere all'inizio di ogni lezione)", star:{count:3, label:"3 esercizi Musicca"}},
-  {n:12, t:"Le note sulla tastiera del pianoforte: spiegazione in classe, propedeutica al concetto di intervallo"},
-  {n:13, t:"Allenamento in aula informatica su identificazione note sulla tastiera del pianoforte"},
-  {n:14, t:"Prova di verifica in aula informatica"},
-  {n:15, t:"Verifica in aula informatica"},
-  {n:16, t:"I tempi semplici (4/4, 3/4, 2/4); breve propedeutica ai tempi composti"},
-  {n:17, t:"Costruzione di battute in 4/4: spiegazione in classe"},
-  {n:18, t:"Allenamento in aula informatica su costruzione di battute in 4/4"},
-  {n:19, t:"Prova di verifica in aula informatica"},
-  {n:20, t:"Verifica in aula informatica"},
-  {n:21, t:"Verifica in classe su quaderno pentagrammato"},
-  {n:22, t:"Esercizi propedeutici al dettato ritmico (da ripetere ogni lezione da qui in poi)", star:{count:20, label:"20 esercizi"}},
-  {n:23, t:"Caratteristiche del suono: altezza, intensità, timbro; concetto di suoni armonici"},
-  {n:24, t:"Esercizi propedeutici per il solfeggio cantato", star:{count:10, label:"10 esercizi"}},
-  {n:25, t:"Ear training: identificazione suoni uguali, discriminazione suoni, memoria melodica"},
-  {n:26, t:"La musica nella preistoria"},
-  {n:27, t:"Gli strumenti musicali: attività di ascolto e identificazione strumenti"},
-];
+const CLASSE_OPTIONS = ["Prima","Seconda","Terza"];
+
+const PROGRAMS = {
+  Prima: [
+    {n:1, t:"Lezione introduttiva"},
+    {n:2, t:"Test d'ingresso"},
+    {n:3, t:"Lettura in chiave di violino e basso; concetto generale di setticlavio; trascrizione sul pentagramma delle note sulle righe e sugli spazi"},
+    {n:4, t:"Le figure ritmiche: trascrizione sul pentagramma delle figure, delle relative pause e dei valori"},
+    {n:5, t:"Solfeggio ritmico per imitazione e lettura in 4/4, 3/4, 2/4 (da ripetere all'inizio di ogni lezione da qui in poi)", star:{count:10, label:"7 video YouTube + 3 esercizi Musicca"}},
+    {n:6, t:"Allenamento in aula informatica su identificazione note in chiave di violino/basso e figure ritmiche"},
+    {n:7, t:"Prova di verifica in aula informatica"},
+    {n:8, t:"Verifica in aula informatica"},
+    {n:9, t:"Le alterazioni; concetto di tono e semitono"},
+    {n:10, t:"Punto e doppio punto di valore, legatura di valore: trascrizione di definizioni e figure sul quaderno pentagrammato; esempi pratici con MuseScore e trascrizione delle battute di esempio"},
+    {n:11, t:"Solfeggio ritmico per imitazione e lettura con punto di valore, legatura di valore ed entrambi (da ripetere all'inizio di ogni lezione)", star:{count:3, label:"3 esercizi Musicca"}},
+    {n:12, t:"Le note sulla tastiera del pianoforte: spiegazione in classe, propedeutica al concetto di intervallo"},
+    {n:13, t:"Allenamento in aula informatica su identificazione note sulla tastiera del pianoforte"},
+    {n:14, t:"Prova di verifica in aula informatica"},
+    {n:15, t:"Verifica in aula informatica"},
+    {n:16, t:"I tempi semplici (4/4, 3/4, 2/4); breve propedeutica ai tempi composti"},
+    {n:17, t:"Costruzione di battute in 4/4: spiegazione in classe"},
+    {n:18, t:"Allenamento in aula informatica su costruzione di battute in 4/4"},
+    {n:19, t:"Prova di verifica in aula informatica"},
+    {n:20, t:"Verifica in aula informatica"},
+    {n:21, t:"Verifica in classe su quaderno pentagrammato"},
+    {n:22, t:"Esercizi propedeutici al dettato ritmico (da ripetere ogni lezione da qui in poi)", star:{count:20, label:"20 esercizi"}},
+    {n:23, t:"Caratteristiche del suono: altezza, intensità, timbro; concetto di suoni armonici"},
+    {n:24, t:"Esercizi propedeutici per il solfeggio cantato", star:{count:10, label:"10 esercizi"}},
+    {n:25, t:"Ear training: identificazione suoni uguali, discriminazione suoni, memoria melodica"},
+    {n:26, t:"La musica nella preistoria"},
+    {n:27, t:"Gli strumenti musicali: attività di ascolto e identificazione strumenti"},
+  ],
+  Seconda: [
+    {n:1, t:"Solfeggio ritmico per imitazione e lettura con sedicesimi (da ripetere ogni lezione)", star:{count:4, label:"4 esercizi"}},
+    {n:2, t:"Dettato ritmico di facile e media difficoltà (da ripetere ogni lezione)", star:{count:20, label:"20 esercizi"}},
+    {n:3, t:"Sincope e contrattempo: spiegazione, trascrizione della definizione sul pentagramma, esempi in classe con MuseScore e trascrizione degli esempi"},
+    {n:4, t:"La terzina: spiegazione, trascrizione della definizione sul pentagramma, esempi in classe con MuseScore e trascrizione degli esempi"},
+    {n:5, t:"Solfeggio ritmico per imitazione e lettura con terzine", star:{count:3, label:"3 esercizi"}},
+    {n:6, t:"I tempi composti: spiegazione, trascrizione della definizione sul pentagramma, esempi in classe con MuseScore e trascrizione degli esempi"},
+    {n:7, t:"Costruzione di battute in 4/4, 3/4, 2/4 e 6/8: spiegazione ed esempi in classe"},
+    {n:8, t:"Allenamento in aula informatica su costruzione di battute in 4/4, 3/4 e 6/8"},
+    {n:9, t:"Prova di verifica in aula informatica"},
+    {n:10, t:"Verifica in aula informatica"},
+    {n:11, t:"Verifica in classe su quaderno pentagrammato"},
+    {n:12, t:"Approfondimento sugli intervalli: identificazione grafica ed ear training su intervalli di seconda (ascendenti e discendenti), terza (soprattutto ascendenti) e quarta"},
+    {n:13, t:"Allenamento in aula informatica su intervalli di seconda e terza", star:{count:4, label:"4 esercizi"}},
+    {n:14, t:"La scala maggiore e minore: costruzione di scale in tonalità semplici, spiegazione in classe e trascrizione sul quaderno"},
+    {n:15, t:"Ear training su scala maggiore e minore: spiegazione in classe"},
+    {n:16, t:"Ear training in aula informatica su scala maggiore e minore", star:{count:4, label:"4 esercizi"}},
+    {n:17, t:"Caratteristiche del suono: battimenti e consonanza, inviluppo ADSR, riverbero ed eco, effetto Doppler"},
+    {n:18, t:"Solfeggio cantato su frammenti melodici", star:{count:30, label:"30 frammenti"}},
+    {n:19, t:"Il Medioevo: la nascita del sistema di notazione musicale"},
+    {n:20, t:"Il Medioevo, musica sacra: il canto gregoriano"},
+    {n:21, t:"Il Medioevo, musica sacra: la polifonia, Leonino e Perotino"},
+    {n:22, t:"Il Medioevo, musica profana: ascolto di vari autori e strumenti"},
+    {n:23, t:"Lettura, solfeggio ed esecuzione a più voci di semplici brani medievali, con approfondimento su \"In Taberna Quando Sumus\""},
+    {n:24, t:"Il Rinascimento: Roma e Venezia"},
+    {n:25, t:"Il Rinascimento: ascolto in classe di vari autori e strumenti"},
+    {n:26, t:"Il Rinascimento: approfondimento sul madrigale"},
+    {n:27, t:"Esecuzione a più voci di semplici brani rinascimentali, con approfondimento su \"Schiaranzula Maranzula\""},
+    {n:28, t:"Ascolto e analisi dell'opera \"Orfeo\" di Claudio Monteverdi"},
+  ],
+  Terza: [
+    {n:1, t:"Dettato melodico a una voce (da ripetere ogni lezione)", star:{count:20, label:"20 esercizi"}},
+    {n:2, t:"Dettati ritmici di media difficoltà e difficili (da ripetere ogni lezione)", star:{count:15, label:"15 esercizi"}},
+    {n:3, t:"Gli intervalli di seconda e terza: ripasso, spiegazione ed esempi in classe"},
+    {n:4, t:"Allenamento in aula informatica su intervalli di seconda e terza", star:{count:2, label:"2 esercizi"}},
+    {n:5, t:"Prova di verifica in aula informatica"},
+    {n:6, t:"Verifica in aula informatica"},
+    {n:7, t:"Gli intervalli di quarta, quinta e ottava: spiegazione ed esempi in classe"},
+    {n:8, t:"Allenamento in aula informatica su intervalli di quarta, quinta e ottava", star:{count:2, label:"2 esercizi"}},
+    {n:9, t:"Prova di verifica in aula informatica"},
+    {n:10, t:"Verifica in aula informatica"},
+    {n:11, t:"Gli intervalli di sesta e settima: spiegazione ed esempi in classe"},
+    {n:12, t:"Allenamento in aula informatica su intervalli di sesta e settima", star:{count:2, label:"2 esercizi"}},
+    {n:13, t:"Prova di verifica in aula informatica"},
+    {n:14, t:"Verifica in aula informatica"},
+    {n:15, t:"Ripasso scala maggiore e minore in diverse tonalità, spiegazione in classe e trascrizione sul quaderno; il circolo delle quinte"},
+    {n:16, t:"La triade maggiore e minore: spiegazione ed esempi in classe con trascrizione sul quaderno"},
+    {n:17, t:"Costruzione delle triadi sui gradi della scala in aula informatica"},
+    {n:18, t:"Costruzione di accordi maggiori e minori: spiegazione ed esempi in classe con trascrizione sul quaderno; fondamenti base di armonia funzionale"},
+    {n:19, t:"Costruzione degli accordi maggiori e minori in aula informatica"},
+    {n:20, t:"Identificazione grafica ed ear training dell'accordo maggiore e minore: spiegazione in classe"},
+    {n:21, t:"Identificazione grafica ed ear training dell'accordo maggiore e minore in aula informatica"},
+    {n:22, t:"Facili solfeggi cantati", star:{count:20, label:"20 esercizi"}},
+    {n:23, t:"Il Barocco: approfondimento sugli strumenti musicali del periodo, ascolto dei principali compositori (Vivaldi, Bach, Händel)"},
+    {n:24, t:"Approfondimento sulla fuga: ascolto e analisi in classe della Fuga in sol minore, BWV 578"},
+    {n:25, t:"Il Classicismo: caratteri stilistici, approfondimento dei principali compositori (Mozart, Haydn, Beethoven)"},
+    {n:26, t:"Approfondimento sulla forma sonata: ascolto e analisi in classe di varie sonate per pianoforte di Mozart e Haydn"},
+    {n:27, t:"Ascolto guidato della Quinta Sinfonia di Beethoven"},
+    {n:28, t:"Il Romanticismo: contesto storico, nuovi linguaggi e strumenti, nuovo ruolo del compositore; ascolto e discussione di alcuni compositori (Rossini, Chopin, Paganini, Liszt)"},
+    {n:29, t:"Ascolto e analisi in classe dell'opera \"La Cenerentola\" di Rossini", star:{count:5, label:"5 esercizi"}},
+    {n:30, t:"Ascolto e analisi in classe del Concerto n.1 per violino e orchestra di Niccolò Paganini"},
+    {n:31, t:"La musica del '900: approfondimento su Stravinskij"},
+    {n:32, t:"Il jazz: spiegazione e ascolto guidato dei vari stili"},
+  ],
+};
 
 const STATUS_KEYS = [
   {key:"iniziato", label:"Iniziato"},
@@ -261,26 +370,32 @@ function makeId(){
   return Date.now().toString(36) + Math.random().toString(36).slice(2,7);
 }
 
-function defaultTopics(){
+function programFor(classe){
+  return PROGRAMS[classe] || PROGRAMS["Prima"];
+}
+
+function defaultTopicsForProgram(classe){
   const topics = {};
-  TOPICS.forEach(top => {
+  programFor(classe).forEach(top => {
     topics[top.n] = { iniziato:false, incorso:false, finito:false, verifica:false, note:"" };
     if(top.star){ topics[top.n].progress = new Array(top.star.count).fill(false); }
   });
   return topics;
 }
 
-function newRegister(){
-  return { meta:{classe:"", sezione:"", anno:""}, topics: defaultTopics() };
+function newRegister(classe){
+  const c = CLASSE_OPTIONS.includes(classe) ? classe : "Prima";
+  return { meta:{classe:c, sezione:"", anno:""}, topics: defaultTopicsForProgram(c) };
 }
 
-function mergeTopics(rawTopics){
-  const base = defaultTopics();
+function mergeTopicsForProgram(classe, rawTopics){
+  const base = defaultTopicsForProgram(classe);
+  const list = programFor(classe);
   if(rawTopics){
     Object.keys(base).forEach(k=>{
       if(rawTopics[k]){
         Object.assign(base[k], rawTopics[k]);
-        const top = TOPICS.find(t=>String(t.n)===String(k));
+        const top = list.find(t=>String(t.n)===String(k));
         if(top && top.star && Array.isArray(rawTopics[k].progress)){
           const arr = new Array(top.star.count).fill(false);
           rawTopics[k].progress.forEach((v,i)=>{ if(i<arr.length) arr[i]=!!v; });
@@ -292,10 +407,24 @@ function mergeTopics(rawTopics){
   return base;
 }
 
+function hasAnyData(reg){
+  return Object.values(reg.topics).some(s=>{
+    if(s.iniziato || s.incorso || s.finito || s.verifica) return true;
+    if(s.note && s.note.trim()) return true;
+    if(Array.isArray(s.progress) && s.progress.some(Boolean)) return true;
+    return false;
+  });
+}
+
 function mergeRegister(raw){
-  const reg = newRegister();
-  if(raw && raw.meta) Object.assign(reg.meta, raw.meta);
-  if(raw && raw.topics) reg.topics = mergeTopics(raw.topics);
+  let classe = (raw && raw.meta && raw.meta.classe) || "Prima";
+  if(!CLASSE_OPTIONS.includes(classe)) classe = "Prima"; // migrazione da versioni precedenti (solo Prima esisteva)
+  const reg = { meta:{classe, sezione:"", anno:""}, topics: defaultTopicsForProgram(classe) };
+  if(raw && raw.meta){
+    reg.meta.sezione = raw.meta.sezione || "";
+    reg.meta.anno = raw.meta.anno || "";
+  }
+  if(raw && raw.topics) reg.topics = mergeTopicsForProgram(classe, raw.topics);
   return reg;
 }
 
@@ -380,13 +509,32 @@ function renderMeta(){
   document.getElementById("meta-classe").value = reg.meta.classe || "";
   document.getElementById("meta-sezione").value = reg.meta.sezione || "";
   document.getElementById("meta-anno").value = reg.meta.anno || "";
+  updateClasseLock();
+}
+
+function updateClasseLock(){
+  const reg = activeRegister();
+  const sel = document.getElementById("meta-classe");
+  const wrap = sel.closest(".select-wrap");
+  const hint = document.getElementById("classe-lock-hint");
+  const locked = hasAnyData(reg);
+  sel.disabled = locked;
+  if(wrap) wrap.classList.toggle("locked", locked);
+  if(locked){
+    hint.textContent = "Bloccato: questo registro ha già dei dati. Per cambiare classe usa \"+ Nuovo\" oppure \"Elimina\" questo registro.";
+    hint.classList.add("show");
+  } else {
+    hint.textContent = "";
+    hint.classList.remove("show");
+  }
 }
 
 function renderSummary(){
   const reg = activeRegister();
-  const total = TOPICS.length;
+  const topicsList = programFor(reg.meta.classe);
+  const total = topicsList.length;
   let finiti = 0, incorso = 0, iniziati=0;
-  TOPICS.forEach(t=>{
+  topicsList.forEach(t=>{
     const s = reg.topics[t.n];
     if(s.finito) finiti++;
     else if(s.incorso) incorso++;
@@ -401,9 +549,10 @@ function renderSummary(){
 
 function renderList(){
   const reg = activeRegister();
+  const topicsList = programFor(reg.meta.classe);
   const list = document.getElementById("list");
   list.innerHTML = "";
-  TOPICS.forEach(top=>{
+  topicsList.forEach(top=>{
     const s = reg.topics[top.n];
     const card = document.createElement("div");
     card.className = "card" + (s.finito ? " completed" : "");
@@ -449,6 +598,7 @@ function renderList(){
       scheduleSave();
       renderList();
       renderSummary();
+      updateClasseLock();
     });
   });
 
@@ -460,6 +610,7 @@ function renderList(){
       reg.topics[topicN].progress[idx] = !reg.topics[topicN].progress[idx];
       scheduleSave();
       renderList();
+      updateClasseLock();
     });
   });
 
@@ -468,6 +619,7 @@ function renderList(){
       const topicN = ta.dataset.topic;
       activeRegister().topics[topicN].note = ta.value;
       scheduleSave();
+      updateClasseLock();
     });
   });
 }
@@ -479,13 +631,35 @@ function renderAll(){
   renderSummary();
 }
 
-// meta fields -> aggiornano il registro attivo e la sua label nel selettore
-["classe","sezione","anno"].forEach(field=>{
+// campi sezione/anno -> aggiornano il registro attivo e la sua label nel selettore
+["sezione","anno"].forEach(field=>{
   document.getElementById("meta-"+field).addEventListener("input", (e)=>{
     activeRegister().meta[field] = e.target.value;
     scheduleSave();
     renderRegisterSelect();
   });
+});
+
+// cambio classe -> carica la programmazione corrispondente; se il registro ha già dati, chiede conferma
+document.getElementById("meta-classe").addEventListener("change", (e)=>{
+  const reg = activeRegister();
+  const newClasse = e.target.value;
+  if(newClasse === reg.meta.classe) return;
+
+  if(hasAnyData(reg)){
+    const ok = confirm(`Cambiare la classe da "${reg.meta.classe}" a "${newClasse}" azzererà spunte, note e progressi già inseriti in questo registro, perché ogni classe ha una programmazione diversa. Continuare?`);
+    if(!ok){
+      e.target.value = reg.meta.classe; // ripristina la selezione precedente
+      return;
+    }
+  }
+
+  reg.meta.classe = newClasse;
+  reg.topics = defaultTopicsForProgram(newClasse);
+  scheduleSave();
+  renderRegisterSelect();
+  renderList();
+  renderSummary();
 });
 
 // cambio registro attivo
@@ -497,15 +671,16 @@ document.getElementById("register-select").addEventListener("change", (e)=>{
   renderSummary();
 });
 
-// nuovo registro
+// nuovo registro (eredita la stessa classe del registro attualmente attivo, comodo per più sezioni della stessa annata)
 document.getElementById("btn-new-register").addEventListener("click", ()=>{
+  const currentClasse = activeRegister() ? activeRegister().meta.classe : "Prima";
   const id = makeId();
-  state.registers[id] = newRegister();
+  state.registers[id] = newRegister(currentClasse);
   state.order.push(id);
   state.activeId = id;
   saveAll();
   renderAll();
-  document.getElementById("meta-classe").focus();
+  document.getElementById("meta-sezione").focus();
 });
 
 // elimina registro attivo
@@ -573,10 +748,11 @@ document.getElementById("btn-reset").addEventListener("click", ()=>{
   const reg = activeRegister();
   const label = labelForRegister(reg);
   if(confirm(`Azzerare spunte, note e progressi del registro "${label}"? Classe/Sezione/Anno restano invariati. Questa azione non è reversibile (esporta prima un backup se serve).`)){
-    reg.topics = defaultTopics();
+    reg.topics = defaultTopicsForProgram(reg.meta.classe);
     saveAll();
     renderList();
     renderSummary();
+    updateClasseLock();
   }
 });
 
