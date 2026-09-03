@@ -1,0 +1,588 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Registro">
+<meta name="theme-color" content="#12182b">
+<title>Registro Attività — Educazione Musicale</title>
+<style>
+  :root{
+    --ink:#12182b;
+    --ink-soft:#3a4262;
+    --paper:#f6f3ec;
+    --paper-card:#fffdf8;
+    --line:#ddd6c4;
+    --gold:#a8823d;
+    --done:#2f6b4f;
+    --done-soft:#e3ede7;
+    --progress:#a8823d;
+    --danger:#a3402f;
+  }
+  *{box-sizing:border-box;}
+  html,body{
+    margin:0;
+    padding:0;
+    background:var(--paper);
+    color:var(--ink);
+    font-family:-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    -webkit-tap-highlight-color: transparent;
+  }
+  body{ padding-bottom:96px; }
+  .app{ max-width:560px; margin:0 auto; padding:0 14px; }
+
+  header.top{
+    padding:20px 14px 14px 14px;
+    max-width:560px;
+    margin:0 auto;
+    border-bottom:1.5px solid var(--ink);
+  }
+  header.top h1{
+    font-family: Georgia, 'Iowan Old Style', 'Times New Roman', serif;
+    font-size:22px;
+    font-weight:700;
+    margin:0 0 2px 0;
+    color:var(--ink);
+    letter-spacing:0.2px;
+  }
+  header.top .sub{
+    font-family: Georgia, serif;
+    font-style:italic;
+    font-size:12.5px;
+    color:var(--ink-soft);
+    margin:0 0 14px 0;
+  }
+
+  /* ---------- REGISTER SWITCHER ---------- */
+  .register-bar{
+    display:flex;
+    gap:7px;
+    margin-bottom:14px;
+  }
+  .register-bar select{
+    flex:1;
+    min-width:0;
+    border:1.4px solid var(--ink);
+    background:#fff;
+    border-radius:9px;
+    padding:9px 8px;
+    font-size:14px;
+    font-family: Georgia, serif;
+    color:var(--ink);
+  }
+  .register-bar button{
+    flex:0 0 auto;
+    border:1.4px solid var(--ink);
+    background:#fff;
+    color:var(--ink);
+    border-radius:9px;
+    padding:0 12px;
+    font-size:13px;
+    font-weight:600;
+    font-family:-apple-system, sans-serif;
+  }
+  .register-bar button.danger{
+    border-color:var(--danger);
+    color:var(--danger);
+  }
+
+  .meta-row{ display:flex; flex-wrap:wrap; gap:10px; }
+  .meta-field{ flex:1 1 140px; display:flex; flex-direction:column; gap:2px; }
+  .meta-field label{
+    font-size:10px; text-transform:uppercase; letter-spacing:0.6px; color:var(--ink-soft);
+  }
+  .meta-field input{
+    border:none; border-bottom:1.4px solid var(--ink); background:transparent;
+    font-size:14.5px; padding:4px 2px; color:var(--ink); font-family: Georgia, serif;
+  }
+  .meta-field input:focus{ outline:none; border-bottom-color:var(--gold); }
+
+  .summary{ display:flex; gap:8px; padding:12px 0 4px 0; max-width:560px; margin:0 auto; }
+  .summary .pill{
+    flex:1; background:var(--paper-card); border:1px solid var(--line);
+    border-radius:10px; padding:8px 6px; text-align:center;
+  }
+  .summary .pill .n{ font-family: Georgia, serif; font-size:17px; font-weight:700; color:var(--ink); }
+  .summary .pill .l{ font-size:9.5px; color:var(--ink-soft); text-transform:uppercase; letter-spacing:0.4px; margin-top:1px; }
+
+  .list{ display:flex; flex-direction:column; gap:10px; margin-top:12px; }
+  .card{ background:var(--paper-card); border:1px solid var(--line); border-radius:12px; padding:12px 13px 13px 13px; }
+  .card .head{ display:flex; align-items:flex-start; gap:9px; }
+  .card .numtab{
+    flex:0 0 auto; width:26px; height:26px; border-radius:7px; background:var(--ink);
+    color:#fff; font-family:Georgia, serif; font-weight:700; font-size:12.5px;
+    display:flex; align-items:center; justify-content:center;
+  }
+  .card.completed .numtab{ background:var(--done); }
+  .card .title{ flex:1; font-size:14px; line-height:1.35; padding-top:2px; }
+  .card .title .star{ color:var(--danger); font-weight:800; }
+
+  .chips{ display:grid; grid-template-columns:1fr 1fr; gap:6px; margin-top:10px; }
+  .chip{
+    display:flex; align-items:center; gap:7px; border:1.3px solid var(--line);
+    background:#fff; border-radius:9px; padding:8px 9px; font-size:12.5px;
+    color:var(--ink-soft); user-select:none;
+  }
+  .chip .box{ width:16px; height:16px; border-radius:4px; border:1.4px solid var(--ink-soft); flex:0 0 auto; position:relative; }
+  .chip.on{ background:var(--done-soft); border-color:var(--done); color:var(--ink); font-weight:600; }
+  .chip.on .box{ background:var(--done); border-color:var(--done); }
+  .chip.on .box::after{
+    content:""; position:absolute; left:4px; top:1px; width:4px; height:8px;
+    border:solid #fff; border-width:0 2px 2px 0; transform:rotate(40deg);
+  }
+
+  .progress-block{ margin-top:10px; padding-top:9px; border-top:1px dashed var(--line); }
+  .progress-block .plabel{ font-size:11px; color:var(--ink-soft); margin-bottom:6px; display:flex; justify-content:space-between; }
+  .progress-block .plabel b{ color:var(--ink); }
+  .dots{ display:flex; flex-wrap:wrap; gap:5px; }
+  .dot{ width:20px; height:20px; border-radius:6px; border:1.4px solid var(--progress); background:#fff; flex:0 0 auto; }
+  .dot.on{ background:var(--progress); }
+
+  .note-block{ margin-top:10px; }
+  .note-block textarea{
+    width:100%; min-height:38px; resize:vertical; border:1px solid var(--line);
+    border-radius:8px; background:#fbf9f3; font-family:-apple-system, sans-serif;
+    font-size:13px; padding:8px 9px; color:var(--ink);
+  }
+  .note-block textarea:focus{ outline:none; border-color:var(--gold); background:#fff; }
+  .note-block textarea::placeholder{ color:#a49f8f; }
+
+  .footer-bar{
+    position:fixed; bottom:0; left:0; right:0;
+    background:rgba(246,243,236,0.96); backdrop-filter: blur(6px);
+    border-top:1px solid var(--line);
+    padding:10px 14px calc(10px + env(safe-area-inset-bottom)) 14px;
+    display:flex; gap:8px; max-width:560px; margin:0 auto;
+  }
+  .footer-bar button{
+    flex:1; border:none; border-radius:10px; padding:12px 6px;
+    font-size:13px; font-weight:600; font-family:-apple-system, sans-serif;
+  }
+  .btn-export{ background:var(--ink); color:#fff; }
+  .btn-import{ background:#fff; color:var(--ink); border:1.4px solid var(--ink) !important; }
+  .btn-reset{ background:#fff; color:var(--danger); border:1.4px solid var(--danger) !important; flex:0 0 46px; }
+
+  .save-toast{
+    position:fixed; top:10px; left:50%; transform:translateX(-50%) translateY(-40px);
+    background:var(--ink); color:#fff; font-size:12px; padding:7px 14px; border-radius:20px;
+    opacity:0; transition:opacity .25s ease, transform .25s ease; z-index:50; pointer-events:none;
+  }
+  .save-toast.show{ opacity:1; transform:translateX(-50%) translateY(0); }
+
+  #file-input{ display:none; }
+</style>
+</head>
+<body>
+
+<header class="top">
+  <h1>Registro Attività</h1>
+  <p class="sub">Educazione Musicale · Classe Prima</p>
+
+  <div class="register-bar">
+    <select id="register-select"></select>
+    <button id="btn-new-register">+ Nuovo</button>
+    <button id="btn-delete-register" class="danger">Elimina</button>
+  </div>
+
+  <div class="meta-row">
+    <div class="meta-field">
+      <label>Classe</label>
+      <input type="text" id="meta-classe" placeholder="es. 1ª">
+    </div>
+    <div class="meta-field">
+      <label>Sezione</label>
+      <input type="text" id="meta-sezione" placeholder="es. B">
+    </div>
+    <div class="meta-field">
+      <label>Anno Scolastico</label>
+      <input type="text" id="meta-anno" placeholder="es. 2026/2027">
+    </div>
+  </div>
+</header>
+
+<div class="app">
+  <div class="summary" id="summary"></div>
+  <div class="list" id="list"></div>
+</div>
+
+<div class="footer-bar">
+  <button class="btn-export" id="btn-export">Esporta tutto</button>
+  <button class="btn-import" id="btn-import">Importa</button>
+  <button class="btn-reset" id="btn-reset" title="Azzera questo registro">↺</button>
+</div>
+<input type="file" id="file-input" accept="application/json">
+
+<div class="save-toast" id="toast">Salvato</div>
+
+<script>
+const STORAGE_KEY = "registro-musica-app-v2";
+const OLD_STORAGE_KEY = "registro-musica-classe-prima-v1"; // versione precedente, mono-registro
+
+const TOPICS = [
+  {n:1, t:"Lezione introduttiva"},
+  {n:2, t:"Test d'ingresso"},
+  {n:3, t:"Lettura in chiave di violino e basso; concetto generale di setticlavio; trascrizione sul pentagramma delle note sulle righe e sugli spazi"},
+  {n:4, t:"Le figure ritmiche: trascrizione sul pentagramma delle figure, delle relative pause e dei valori"},
+  {n:5, t:"Solfeggio ritmico per imitazione e lettura in 4/4, 3/4, 2/4 (da ripetere all'inizio di ogni lezione da qui in poi)", star:{count:10, label:"7 video YouTube + 3 esercizi Musicca"}},
+  {n:6, t:"Allenamento in aula informatica su identificazione note in chiave di violino/basso e figure ritmiche"},
+  {n:7, t:"Prova di verifica in aula informatica"},
+  {n:8, t:"Verifica in aula informatica"},
+  {n:9, t:"Le alterazioni; concetto di tono e semitono"},
+  {n:10, t:"Punto e doppio punto di valore, legatura di valore: trascrizione di definizioni e figure sul quaderno pentagrammato; esempi pratici con MuseScore e trascrizione delle battute di esempio"},
+  {n:11, t:"Solfeggio ritmico per imitazione e lettura con punto di valore, legatura di valore ed entrambi (da ripetere all'inizio di ogni lezione)", star:{count:3, label:"3 esercizi Musicca"}},
+  {n:12, t:"Le note sulla tastiera del pianoforte: spiegazione in classe, propedeutica al concetto di intervallo"},
+  {n:13, t:"Allenamento in aula informatica su identificazione note sulla tastiera del pianoforte"},
+  {n:14, t:"Prova di verifica in aula informatica"},
+  {n:15, t:"Verifica in aula informatica"},
+  {n:16, t:"I tempi semplici (4/4, 3/4, 2/4); breve propedeutica ai tempi composti"},
+  {n:17, t:"Costruzione di battute in 4/4: spiegazione in classe"},
+  {n:18, t:"Allenamento in aula informatica su costruzione di battute in 4/4"},
+  {n:19, t:"Prova di verifica in aula informatica"},
+  {n:20, t:"Verifica in aula informatica"},
+  {n:21, t:"Verifica in classe su quaderno pentagrammato"},
+  {n:22, t:"Esercizi propedeutici al dettato ritmico (da ripetere ogni lezione da qui in poi)", star:{count:20, label:"20 esercizi"}},
+  {n:23, t:"Caratteristiche del suono: altezza, intensità, timbro; concetto di suoni armonici"},
+  {n:24, t:"Esercizi propedeutici per il solfeggio cantato", star:{count:10, label:"10 esercizi"}},
+  {n:25, t:"Ear training: identificazione suoni uguali, discriminazione suoni, memoria melodica"},
+  {n:26, t:"La musica nella preistoria"},
+  {n:27, t:"Gli strumenti musicali: attività di ascolto e identificazione strumenti"},
+];
+
+const STATUS_KEYS = [
+  {key:"iniziato", label:"Iniziato"},
+  {key:"incorso", label:"In corso"},
+  {key:"finito", label:"Finito"},
+  {key:"verifica", label:"Verifica"},
+];
+
+function makeId(){
+  return Date.now().toString(36) + Math.random().toString(36).slice(2,7);
+}
+
+function defaultTopics(){
+  const topics = {};
+  TOPICS.forEach(top => {
+    topics[top.n] = { iniziato:false, incorso:false, finito:false, verifica:false, note:"" };
+    if(top.star){ topics[top.n].progress = new Array(top.star.count).fill(false); }
+  });
+  return topics;
+}
+
+function newRegister(){
+  return { meta:{classe:"", sezione:"", anno:""}, topics: defaultTopics() };
+}
+
+function mergeTopics(rawTopics){
+  const base = defaultTopics();
+  if(rawTopics){
+    Object.keys(base).forEach(k=>{
+      if(rawTopics[k]){
+        Object.assign(base[k], rawTopics[k]);
+        const top = TOPICS.find(t=>String(t.n)===String(k));
+        if(top && top.star && Array.isArray(rawTopics[k].progress)){
+          const arr = new Array(top.star.count).fill(false);
+          rawTopics[k].progress.forEach((v,i)=>{ if(i<arr.length) arr[i]=!!v; });
+          base[k].progress = arr;
+        }
+      }
+    });
+  }
+  return base;
+}
+
+function mergeRegister(raw){
+  const reg = newRegister();
+  if(raw && raw.meta) Object.assign(reg.meta, raw.meta);
+  if(raw && raw.topics) reg.topics = mergeTopics(raw.topics);
+  return reg;
+}
+
+function loadAll(){
+  try{
+    const raw = localStorage.getItem(STORAGE_KEY);
+    if(raw){
+      const parsed = JSON.parse(raw);
+      const registers = {};
+      const order = Array.isArray(parsed.order) ? parsed.order : Object.keys(parsed.registers || {});
+      order.forEach(id=>{
+        if(parsed.registers && parsed.registers[id]){
+          registers[id] = mergeRegister(parsed.registers[id]);
+        }
+      });
+      if(Object.keys(registers).length === 0){
+        const id = makeId();
+        registers[id] = newRegister();
+        return { registers, order:[id], activeId:id };
+      }
+      const activeId = (parsed.activeId && registers[parsed.activeId]) ? parsed.activeId : order[0];
+      return { registers, order, activeId };
+    }
+
+    // migrazione dalla versione mono-registro precedente
+    const oldRaw = localStorage.getItem(OLD_STORAGE_KEY);
+    if(oldRaw){
+      const oldParsed = JSON.parse(oldRaw);
+      const id = makeId();
+      const reg = mergeRegister(oldParsed);
+      return { registers:{[id]:reg}, order:[id], activeId:id };
+    }
+  }catch(e){
+    console.error("Errore caricamento dati:", e);
+  }
+  const id = makeId();
+  return { registers:{[id]:newRegister()}, order:[id], activeId:id };
+}
+
+let state = loadAll();
+let saveTimer = null;
+
+function saveAll(){
+  localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+  showToast();
+}
+function scheduleSave(){
+  clearTimeout(saveTimer);
+  saveTimer = setTimeout(saveAll, 250);
+}
+function showToast(){
+  const el = document.getElementById("toast");
+  el.classList.add("show");
+  clearTimeout(showToast._t);
+  showToast._t = setTimeout(()=> el.classList.remove("show"), 900);
+}
+
+function activeRegister(){ return state.registers[state.activeId]; }
+
+function labelForRegister(reg){
+  const parts = [reg.meta.classe, reg.meta.sezione].map(s=>(s||"").trim()).filter(Boolean);
+  let label = parts.join(" ");
+  if(reg.meta.anno && reg.meta.anno.trim()) label = label ? `${label} · ${reg.meta.anno.trim()}` : reg.meta.anno.trim();
+  return label || "Registro senza nome";
+}
+
+function renderRegisterSelect(){
+  const sel = document.getElementById("register-select");
+  sel.innerHTML = "";
+  state.order.forEach(id=>{
+    if(!state.registers[id]) return;
+    const opt = document.createElement("option");
+    opt.value = id;
+    opt.textContent = labelForRegister(state.registers[id]);
+    sel.appendChild(opt);
+  });
+  sel.value = state.activeId;
+}
+
+function renderMeta(){
+  const reg = activeRegister();
+  document.getElementById("meta-classe").value = reg.meta.classe || "";
+  document.getElementById("meta-sezione").value = reg.meta.sezione || "";
+  document.getElementById("meta-anno").value = reg.meta.anno || "";
+}
+
+function renderSummary(){
+  const reg = activeRegister();
+  const total = TOPICS.length;
+  let finiti = 0, incorso = 0, iniziati=0;
+  TOPICS.forEach(t=>{
+    const s = reg.topics[t.n];
+    if(s.finito) finiti++;
+    else if(s.incorso) incorso++;
+    else if(s.iniziato) iniziati++;
+  });
+  document.getElementById("summary").innerHTML = `
+    <div class="pill"><div class="n">${finiti}/${total}</div><div class="l">Finiti</div></div>
+    <div class="pill"><div class="n">${incorso}</div><div class="l">In corso</div></div>
+    <div class="pill"><div class="n">${iniziati}</div><div class="l">Iniziati</div></div>
+  `;
+}
+
+function renderList(){
+  const reg = activeRegister();
+  const list = document.getElementById("list");
+  list.innerHTML = "";
+  TOPICS.forEach(top=>{
+    const s = reg.topics[top.n];
+    const card = document.createElement("div");
+    card.className = "card" + (s.finito ? " completed" : "");
+
+    const chipsHtml = STATUS_KEYS.map(sk => `
+      <div class="chip ${s[sk.key] ? "on" : ""}" data-topic="${top.n}" data-key="${sk.key}">
+        <span class="box"></span>${sk.label}
+      </div>
+    `).join("");
+
+    let progressHtml = "";
+    if(top.star){
+      const doneCount = s.progress.filter(Boolean).length;
+      const dots = s.progress.map((v,i)=>`<div class="dot ${v?"on":""}" data-topic="${top.n}" data-idx="${i}"></div>`).join("");
+      progressHtml = `
+        <div class="progress-block">
+          <div class="plabel"><span>${top.star.label}</span><b>${doneCount}/${top.star.count}</b></div>
+          <div class="dots">${dots}</div>
+        </div>
+      `;
+    }
+
+    card.innerHTML = `
+      <div class="head">
+        <div class="numtab">${top.n}</div>
+        <div class="title">${top.t}${top.star ? ' <span class="star">*</span>' : ''}</div>
+      </div>
+      <div class="chips">${chipsHtml}</div>
+      ${progressHtml}
+      <div class="note-block">
+        <textarea placeholder="Note..." data-topic="${top.n}">${s.note || ""}</textarea>
+      </div>
+    `;
+    list.appendChild(card);
+  });
+
+  list.querySelectorAll(".chip").forEach(chip=>{
+    chip.addEventListener("click", ()=>{
+      const topicN = chip.dataset.topic;
+      const key = chip.dataset.key;
+      const reg = activeRegister();
+      reg.topics[topicN][key] = !reg.topics[topicN][key];
+      scheduleSave();
+      renderList();
+      renderSummary();
+    });
+  });
+
+  list.querySelectorAll(".dot").forEach(dot=>{
+    dot.addEventListener("click", ()=>{
+      const topicN = dot.dataset.topic;
+      const idx = parseInt(dot.dataset.idx,10);
+      const reg = activeRegister();
+      reg.topics[topicN].progress[idx] = !reg.topics[topicN].progress[idx];
+      scheduleSave();
+      renderList();
+    });
+  });
+
+  list.querySelectorAll("textarea").forEach(ta=>{
+    ta.addEventListener("input", ()=>{
+      const topicN = ta.dataset.topic;
+      activeRegister().topics[topicN].note = ta.value;
+      scheduleSave();
+    });
+  });
+}
+
+function renderAll(){
+  renderRegisterSelect();
+  renderMeta();
+  renderList();
+  renderSummary();
+}
+
+// meta fields -> aggiornano il registro attivo e la sua label nel selettore
+["classe","sezione","anno"].forEach(field=>{
+  document.getElementById("meta-"+field).addEventListener("input", (e)=>{
+    activeRegister().meta[field] = e.target.value;
+    scheduleSave();
+    renderRegisterSelect();
+  });
+});
+
+// cambio registro attivo
+document.getElementById("register-select").addEventListener("change", (e)=>{
+  state.activeId = e.target.value;
+  saveAll();
+  renderMeta();
+  renderList();
+  renderSummary();
+});
+
+// nuovo registro
+document.getElementById("btn-new-register").addEventListener("click", ()=>{
+  const id = makeId();
+  state.registers[id] = newRegister();
+  state.order.push(id);
+  state.activeId = id;
+  saveAll();
+  renderAll();
+  document.getElementById("meta-classe").focus();
+});
+
+// elimina registro attivo
+document.getElementById("btn-delete-register").addEventListener("click", ()=>{
+  const reg = activeRegister();
+  const label = labelForRegister(reg);
+  if(!confirm(`Eliminare il registro "${label}" e tutti i suoi dati (spunte, note, progressi)? Questa azione non è reversibile.`)) return;
+
+  delete state.registers[state.activeId];
+  state.order = state.order.filter(id => id !== state.activeId);
+
+  if(state.order.length === 0){
+    const id = makeId();
+    state.registers[id] = newRegister();
+    state.order = [id];
+    state.activeId = id;
+  } else {
+    state.activeId = state.order[0];
+  }
+  saveAll();
+  renderAll();
+});
+
+// esporta tutto (tutti i registri, tutte le classi)
+document.getElementById("btn-export").addEventListener("click", ()=>{
+  const dataStr = JSON.stringify(state, null, 2);
+  const blob = new Blob([dataStr], {type:"application/json"});
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement("a");
+  const dateTag = new Date().toISOString().slice(0,10);
+  a.href = url;
+  a.download = `registro-musica-backup-${dateTag}.json`;
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+  setTimeout(()=>URL.revokeObjectURL(url), 2000);
+});
+
+// importa tutto (sostituisce TUTTI i registri con quelli del backup)
+document.getElementById("btn-import").addEventListener("click", ()=>{
+  document.getElementById("file-input").click();
+});
+document.getElementById("file-input").addEventListener("change", (e)=>{
+  const file = e.target.files[0];
+  if(!file) return;
+  const reader = new FileReader();
+  reader.onload = (evt)=>{
+    try{
+      const parsed = JSON.parse(evt.target.result);
+      if(!confirm("Importare questo backup sostituirà TUTTI i registri attualmente salvati (tutte le classi). Continuare?")) return;
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(parsed));
+      state = loadAll();
+      renderAll();
+      showToast();
+    }catch(err){
+      alert("Il file selezionato non è un backup valido.");
+    }
+  };
+  reader.readAsText(file);
+  e.target.value = "";
+});
+
+// azzera SOLO il registro attivo (spunte, note, progressi) — non tocca classe/sezione/anno né gli altri registri
+document.getElementById("btn-reset").addEventListener("click", ()=>{
+  const reg = activeRegister();
+  const label = labelForRegister(reg);
+  if(confirm(`Azzerare spunte, note e progressi del registro "${label}"? Classe/Sezione/Anno restano invariati. Questa azione non è reversibile (esporta prima un backup se serve).`)){
+    reg.topics = defaultTopics();
+    saveAll();
+    renderList();
+    renderSummary();
+  }
+});
+
+// init
+renderAll();
+</script>
+
+</body>
+</html>
