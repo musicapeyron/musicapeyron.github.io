@@ -1,0 +1,2374 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Le qualità del suono</title>
+<meta name="description" content="Un'app interattiva per esplorare altezza, intensità, timbro e armoniche del suono, e vedere come viaggia un'onda sonora.">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='.9em' font-size='90'%3E%F0%9F%94%8A%3C/text%3E%3C/svg%3E">
+
+<!-- Font di sistema come fallback: nessuna connessione richiesta,
+     tutto funziona anche offline. Audio generato dal vivo con la
+     Web Audio API nativa del browser: nessuna libreria esterna. -->
+
+<style>
+*, *::before, *::after { box-sizing: border-box; }
+
+:root {
+    --ease-out-soft: cubic-bezier(0.16, 1, 0.3, 1);
+    --ease-spring: cubic-bezier(.34, 1.56, .64, 1);
+    --border-soft: rgba(255,255,255,0.10);
+    --border-softer: rgba(255,255,255,0.06);
+}
+
+html, body { margin: 0; padding: 0; min-height: 100%; }
+
+body {
+    min-height: 100vh;
+    padding: 40px 18px 60px;
+    font-family: "Inter", "Segoe UI", Arial, Helvetica, sans-serif;
+    font-size: 15px;
+    line-height: 1.55;
+    -webkit-font-smoothing: antialiased;
+    color: white;
+    background:
+        radial-gradient(circle at 50% 0%, #3730a3 0%, transparent 45%),
+        linear-gradient(135deg, #0f172a, #1e1b4b);
+    background-attachment: fixed;
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+    overflow-x: hidden;
+    position: relative;
+}
+
+body::before {
+    content: "";
+    position: fixed;
+    inset: 0;
+    z-index: 0;
+    pointer-events: none;
+    opacity: 0.5;
+    background-image: radial-gradient(rgba(255,255,255,0.035) 1px, transparent 1px);
+    background-size: 3px 3px;
+    mix-blend-mode: overlay;
+}
+
+.app {
+    position: relative;
+    z-index: 1;
+    width: min(760px, 100%);
+    text-align: center;
+    transition: width 0.25s var(--ease-out-soft);
+}
+.app.wide { width: min(1180px, 100%); }
+
+h1 {
+    margin: 0;
+    font-family: "Sora", "Inter", Arial, sans-serif;
+    font-size: 1.9rem;
+    font-weight: 700;
+    letter-spacing: -0.02em;
+    text-shadow: 0 3px 10px rgba(0,0,0,0.35);
+}
+
+.subtitle {
+    margin: 10px auto 0;
+    max-width: 540px;
+    color: #cbd5e1;
+    font-size: 0.98rem;
+    opacity: 0.9;
+}
+
+/* =========================================================
+   SCHERMATE
+========================================================= */
+.screen { display: none; }
+.screen.active { display: block; animation: screenIn 0.45s var(--ease-out-soft); }
+
+@keyframes screenIn {
+    from { opacity: 0; transform: translateY(14px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .screen.active { animation: none; }
+    * { animation-duration: 0.001ms !important; animation-iteration-count: 1 !important; }
+}
+
+/* HOME */
+.hero-badge {
+    width: 78px;
+    height: 78px;
+    margin: 0 auto 16px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 2.2rem;
+    background: linear-gradient(145deg, #4f46e5, #7c3aed);
+    box-shadow: 0 1px 0 rgba(255,255,255,0.3) inset, 0 14px 30px rgba(79,70,229,0.45);
+    animation: heroFloat 3.2s ease-in-out infinite;
+}
+@keyframes heroFloat { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-6px); } }
+
+.mode-grid { display: flex; flex-direction: column; gap: 14px; margin-top: 30px; }
+.mode-divider { margin: 8px 0 2px; border: none; border-top: 1px solid var(--border-soft); }
+
+.mode-button {
+    border: none;
+    padding: 20px 22px;
+    border-radius: 16px;
+    color: white;
+    font-family: "Sora", "Inter", Arial, sans-serif;
+    text-align: left;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    box-shadow: 0 1px 0 rgba(255,255,255,0.22) inset, 0 10px 22px rgba(0,0,0,0.3);
+    transition: transform 0.15s var(--ease-out-soft), filter 0.15s, box-shadow 0.15s;
+}
+.mode-button:hover { transform: translateY(-3px); filter: brightness(1.08); box-shadow: 0 1px 0 rgba(255,255,255,0.25) inset, 0 16px 30px rgba(0,0,0,0.35); }
+.mode-button:active { transform: translateY(1px); }
+
+.mode-icon { font-size: 1.8rem; flex: 0 0 auto; width: 44px; text-align: center; }
+.mode-text { display: flex; flex-direction: column; gap: 3px; }
+.mode-button-title { font-size: 1.08rem; font-weight: 800; }
+.mode-button-desc { font-size: 0.8rem; font-weight: 500; opacity: 0.88; letter-spacing: 0.1px; }
+
+.mode-button.m-pitch     { background: linear-gradient(135deg, #0ea5e9, #0369a1); }
+.mode-button.m-loudness  { background: linear-gradient(135deg, #ec4899, #a21caf); }
+.mode-button.m-timbre    { background: linear-gradient(135deg, #6366f1, #4338ca); }
+.mode-button.m-harmonics { background: linear-gradient(135deg, #f59e0b, #b45309); }
+.mode-button.m-waves     { background: linear-gradient(135deg, #06b6d4, #0e7490); }
+.mode-button.m-recap     { background: linear-gradient(135deg, #64748b, #334155); }
+.mode-button.m-beats     { background: linear-gradient(135deg, #10b981, #047857); }
+.mode-button.m-adsr      { background: linear-gradient(135deg, #f43f5e, #9f1239); }
+.mode-button.m-reverb    { background: linear-gradient(135deg, #8b5cf6, #5b21b6); }
+.mode-button.m-doppler   { background: linear-gradient(135deg, #fb923c, #c2410c); }
+
+/* PULSANTE HOME FISSO */
+.home-button {
+    position: fixed;
+    top: 18px;
+    left: 18px;
+    z-index: 50;
+    width: 44px;
+    height: 44px;
+    border-radius: 50%;
+    border: 1px solid rgba(255,255,255,0.18);
+    background: linear-gradient(180deg, rgba(255,255,255,0.1), rgba(255,255,255,0.04));
+    color: #e2e8f0;
+    font-size: 1.15rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+    transition: transform 0.15s var(--ease-out-soft), background 0.15s, opacity 0.15s;
+}
+.home-button:hover { background: linear-gradient(180deg, rgba(255,255,255,0.2), rgba(255,255,255,0.08)); transform: translateY(-2px); }
+.home-button.hidden { opacity: 0; pointer-events: none; }
+
+/* VOLUME GLOBALE */
+.master-volume {
+    position: fixed;
+    top: 18px;
+    right: 18px;
+    z-index: 50;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 8px 14px 8px 12px;
+    border-radius: 999px;
+    border: 1px solid rgba(255,255,255,0.18);
+    background: linear-gradient(180deg, rgba(255,255,255,0.1), rgba(255,255,255,0.04));
+    box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+    transition: opacity 0.15s;
+}
+.master-volume.hidden { opacity: 0; pointer-events: none; }
+.master-volume .icon { font-size: 1rem; }
+.master-volume input[type="range"] { width: 84px; }
+
+/* SLIDER GENERICO (riuso stile "volume-slider" del progetto originale) */
+input[type="range"] {
+    -webkit-appearance: none; appearance: none;
+    height: 6px;
+    border-radius: 999px;
+    outline: none;
+    cursor: pointer;
+    background: linear-gradient(90deg, #a855f7, #7c3aed);
+}
+input[type="range"]::-webkit-slider-thumb {
+    -webkit-appearance: none; width: 18px; height: 18px; border-radius: 50%;
+    background: #f5f3ff; border: 2px solid #a855f7; cursor: pointer;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.35);
+}
+input[type="range"]::-moz-range-thumb {
+    width: 16px; height: 16px; border-radius: 50%;
+    background: #f5f3ff; border: 2px solid #a855f7; cursor: pointer;
+}
+
+/* SCHERMATE DI LEZIONE */
+.lesson-screen h1 { font-size: 1.6rem; }
+.back-button {
+    display: inline-block;
+    margin-bottom: 18px;
+    border: 1px solid rgba(255,255,255,0.18);
+    padding: 10px 18px;
+    border-radius: 12px;
+    background: rgba(255,255,255,0.06);
+    color: #e2e8f0;
+    font-family: "Sora", "Inter", Arial, sans-serif;
+    font-size: 0.84rem;
+    font-weight: 700;
+    cursor: pointer;
+    transition: transform 0.15s var(--ease-out-soft), background 0.15s;
+}
+.back-button:hover { background: rgba(255,255,255,0.12); transform: translateY(-2px); }
+
+/* PANNELLO (vetro) che contiene i controlli */
+.panel {
+    margin: 22px auto 0;
+    padding: 20px 20px 22px;
+    background: linear-gradient(180deg, rgba(255,255,255,0.09), rgba(255,255,255,0.05));
+    border: 1px solid var(--border-soft);
+    border-radius: 18px;
+    box-shadow: 0 1px 0 rgba(255,255,255,0.06) inset, 0 14px 34px rgba(0,0,0,0.24);
+    backdrop-filter: blur(14px) saturate(130%);
+    text-align: left;
+}
+
+.control-row { display: flex; flex-direction: column; gap: 8px; margin-bottom: 18px; }
+.control-row:last-child { margin-bottom: 0; }
+.control-label { display: flex; justify-content: space-between; align-items: baseline; font-family: "Sora", "Inter", Arial, sans-serif; font-size: 0.82rem; font-weight: 700; color: #e2e8f0; }
+.control-label .readout { font-weight: 800; color: #fde68a; font-variant-numeric: tabular-nums; }
+.control-hint { font-size: 0.74rem; color: #94a3b8; }
+
+/* OSCILLOSCOPIO / VISUALE (cartoncino chiaro come il pentagramma) */
+.scope-card {
+    position: relative;
+    margin: 18px 0;
+    padding: 14px;
+    background: linear-gradient(180deg, #fdfaf3, #f2e9d8);
+    border-radius: 16px;
+    box-shadow: 0 1px 0 rgba(255,255,255,0.4) inset, 0 16px 34px rgba(0,0,0,0.35);
+    line-height: 0;
+}
+.scope-card canvas { display: block; width: 100%; height: 190px; border-radius: 8px; }
+
+/* PULSANTI DI RISPOSTA / SCELTA (riuso stile "answer") */
+.choice-row { display: flex; flex-wrap: wrap; gap: 10px; margin: 4px 0 4px; }
+.choice-btn {
+    position: relative;
+    overflow: hidden;
+    border: none;
+    border-radius: 12px;
+    padding: 12px 16px;
+    color: white;
+    font-family: "Sora", "Inter", Arial, sans-serif;
+    font-size: 0.86rem;
+    font-weight: 800;
+    cursor: pointer;
+    box-shadow: 0 1px 0 rgba(255,255,255,0.28) inset, 0 5px 0 rgba(0,0,0,0.25), 0 8px 16px rgba(0,0,0,0.28);
+    transition: transform 0.12s var(--ease-out-soft), filter 0.15s, box-shadow 0.12s;
+    opacity: 0.55;
+}
+.choice-btn::after { content: ""; position: absolute; inset: 0; background: linear-gradient(180deg, rgba(255,255,255,0.22), rgba(255,255,255,0) 55%); pointer-events: none; }
+.choice-btn:hover { filter: brightness(1.1); transform: translateY(-2px); }
+.choice-btn:active { transform: translateY(2px); }
+.choice-btn.active { opacity: 1; box-shadow: 0 1px 0 rgba(255,255,255,0.28) inset, 0 5px 0 rgba(0,0,0,0.25), 0 8px 16px rgba(0,0,0,0.28), 0 0 0 2px rgba(255,255,255,0.55); }
+
+.choice-btn.c1 { background: #0ea5e9; }
+.choice-btn.c2 { background: #ec4899; }
+.choice-btn.c3 { background: #f59e0b; }
+.choice-btn.c4 { background: #22c55e; }
+.choice-btn.c5 { background: #8b5cf6; }
+
+/* PULSANTE PLAY/STOP GRANDE (riuso stile "new-game") */
+.play-button {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    border: none;
+    padding: 14px 26px;
+    border-radius: 12px;
+    background: linear-gradient(135deg, #ffffff, #e2e8f0);
+    color: #312e81;
+    font-family: "Sora", "Inter", Arial, sans-serif;
+    font-size: 0.92rem;
+    font-weight: 800;
+    cursor: pointer;
+    box-shadow: 0 6px 16px rgba(0,0,0,0.18);
+    transition: transform 0.15s var(--ease-out-soft), box-shadow 0.15s;
+}
+.play-button:hover { transform: translateY(-2px); box-shadow: 0 10px 22px rgba(0,0,0,0.22); }
+.play-button:active { transform: translateY(1px); }
+.play-button.playing { background: linear-gradient(135deg, #fecaca, #fca5a5); }
+
+.actions-row { display: flex; justify-content: center; margin-top: 20px; }
+
+.footnote { margin: 16px auto 0; max-width: 560px; font-size: 0.82rem; color: #94a3b8; line-height: 1.6; }
+.footnote strong { color: #cbd5e1; }
+
+/* SPECIALE: MEGAFONO PER INTENSITÀ */
+.speaker-visual { display: flex; justify-content: center; align-items: center; margin: 6px 0 14px; height: 70px; }
+.speaker-visual .icon { font-size: 2rem; transform-origin: center; transition: transform 0.08s linear, opacity 0.08s linear; }
+
+/* SPECIALE: GRIGLIA ARMONICHE (equalizzatore verticale) */
+.harmonics-grid { display: flex; justify-content: space-between; gap: 8px; margin: 6px 0 6px; }
+.harmonic-col { display: flex; flex-direction: column; align-items: center; gap: 8px; flex: 1 1 0; }
+.harmonic-col input[type="range"] {
+    -webkit-appearance: slider-vertical;
+    writing-mode: vertical-lr;
+    direction: rtl;
+    width: 8px;
+    height: 110px;
+}
+.harmonic-col .h-label { font-size: 0.68rem; font-weight: 700; color: #cbd5e1; }
+.harmonic-col .h-value { font-size: 0.68rem; font-weight: 700; color: #fde68a; font-variant-numeric: tabular-nums; }
+.harmonic-col input[type="range"]:disabled { opacity: 0.28; cursor: not-allowed; }
+.harmonic-col.disabled .h-value { opacity: 0.4; }
+.h-toggle {
+    width: 18px; height: 18px;
+    border-radius: 5px;
+    accent-color: #f59e0b;
+    cursor: pointer;
+}
+
+.preset-row { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 16px; }
+.preset-btn {
+    border: 1px solid rgba(255,255,255,0.16);
+    background: rgba(255,255,255,0.06);
+    color: #e2e8f0;
+    font-family: "Sora", "Inter", Arial, sans-serif;
+    font-size: 0.76rem;
+    font-weight: 700;
+    padding: 8px 12px;
+    border-radius: 10px;
+    cursor: pointer;
+    transition: background 0.15s, transform 0.12s var(--ease-out-soft);
+}
+.preset-btn:hover { background: rgba(255,255,255,0.12); transform: translateY(-1px); }
+
+/* SPECIALE: TOGGLE VISTA ONDE */
+.view-toggle { display: flex; gap: 8px; margin-bottom: 14px; }
+.view-toggle button {
+    flex: 1 1 0;
+    border: 1px solid rgba(255,255,255,0.16);
+    background: rgba(255,255,255,0.06);
+    color: #e2e8f0;
+    font-family: "Sora", "Inter", Arial, sans-serif;
+    font-size: 0.82rem;
+    font-weight: 700;
+    padding: 10px 8px;
+    border-radius: 10px;
+    cursor: pointer;
+    transition: background 0.15s, box-shadow 0.15s;
+}
+.view-toggle button.active {
+    background: linear-gradient(135deg, #06b6d4, #0e7490);
+    box-shadow: 0 4px 12px rgba(6,182,212,0.4), inset 0 0 0 2px rgba(255,255,255,0.2);
+}
+
+/* SPECIALE: RICAPITOLANDO */
+.recap-screen .app-wide { width: min(1180px, 100%); }
+.recap-layout {
+    display: grid;
+    grid-template-columns: 300px 1fr;
+    gap: 16px;
+    align-items: start;
+    text-align: left;
+}
+.recap-controls {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+.recap-panel {
+    padding: 14px 16px 16px;
+    background: linear-gradient(180deg, rgba(255,255,255,0.09), rgba(255,255,255,0.05));
+    border: 1px solid var(--border-soft);
+    border-radius: 14px;
+    box-shadow: 0 1px 0 rgba(255,255,255,0.06) inset, 0 10px 22px rgba(0,0,0,0.2);
+}
+.recap-panel-title { font-family: "Sora", "Inter", Arial, sans-serif; font-size: 0.72rem; font-weight: 700; letter-spacing: 0.5px; text-transform: uppercase; color: #a5b4fc; margin-bottom: 10px; }
+.recap-controls .control-row { margin-bottom: 12px; }
+.recap-controls .control-row:last-child { margin-bottom: 0; }
+.recap-controls .control-label { font-size: 0.76rem; }
+.recap-controls .choice-row { gap: 6px; }
+.recap-controls .choice-btn { padding: 8px 10px; font-size: 0.74rem; }
+.recap-harmonics-grid { display: flex; justify-content: space-between; gap: 4px; }
+.recap-harmonics-grid .harmonic-col input[type="range"] { height: 70px; }
+.recap-harmonics-grid .h-label { font-size: 0.6rem; }
+.recap-harmonics-grid .h-value { font-size: 0.6rem; }
+.recap-preset-row { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 10px; }
+.recap-preset-row .preset-btn { font-size: 0.7rem; padding: 6px 9px; }
+
+.recap-visuals { display: flex; flex-direction: column; gap: 14px; }
+.recap-scope-card { margin: 0; }
+.recap-scope-card canvas { height: 150px; }
+.recap-particles-card canvas { height: 190px; }
+.recap-scope-label { font-family: "Sora", "Inter", Arial, sans-serif; font-size: 0.72rem; font-weight: 700; letter-spacing: 0.4px; text-transform: uppercase; color: #a5b4fc; margin: 0 0 8px; }
+.recap-play-row { display: flex; gap: 10px; flex-wrap: wrap; justify-content: center; margin-top: 4px; }
+.recap-play-row .play-button { font-size: 0.82rem; padding: 11px 18px; }
+
+@media (max-width: 900px) {
+    .recap-layout { grid-template-columns: 1fr; }
+}
+
+/* SPECIALE: BATTIMENTI E CONSONANZA */
+.tag-consonant { color: #86efac; font-weight: 800; }
+.tag-beat { color: #fde68a; font-weight: 800; }
+.tag-rough { color: #fca5a5; font-weight: 800; }
+
+/* SPECIALE: INVILUPPO ADSR */
+.adsr-scope canvas { height: 220px; }
+.hold-button { user-select: none; -webkit-user-select: none; touch-action: none; }
+.hold-button.playing { background: linear-gradient(135deg, #fecdd3, #fda4af); }
+.phase-label { margin-top: 10px; font-family: "Sora", "Inter", Arial, sans-serif; font-size: 0.82rem; font-weight: 700; color: #fde68a; text-align: center; }
+
+/* SPECIALE: RIVERBERO / ECO */
+.reverb-mode-group { display: none; }
+.reverb-mode-group.active { display: block; }
+
+/* SPECIALE: DOPPLER */
+.doppler-scope canvas { height: 220px; }
+.doppler-readouts { display: flex; justify-content: space-between; align-items: center; margin-top: 10px; font-family: "Sora", "Inter", Arial, sans-serif; font-size: 0.84rem; }
+.doppler-readouts .freq { font-weight: 800; color: #fde68a; }
+.doppler-readouts .state { color: #cbd5e1; font-weight: 600; }
+
+@media (max-width: 480px) {
+    h1 { font-size: 1.5rem; }
+    .master-volume input[type="range"] { width: 60px; }
+    .harmonic-col input[type="range"] { height: 84px; }
+}
+</style>
+</head>
+<body>
+
+<button class="home-button hidden" id="homeButton" aria-label="Torna alla home" title="Torna alla home">🏠</button>
+<div class="master-volume hidden" id="masterVolumeBox">
+    <span class="icon">🔈</span>
+    <input type="range" id="masterVolume" min="0" max="100" value="55" aria-label="Volume generale">
+</div>
+
+<div class="app">
+
+    <!-- ============================= HOME ============================= -->
+    <section class="screen active" id="screen-home">
+        <div class="hero-badge">🌊</div>
+        <h1>Le qualità del suono</h1>
+        <p class="subtitle">Tocca, trascina e ascolta: scopri come nasce un suono e cosa lo rende grave, acuto, forte, debole o riconoscibile.</p>
+        <div class="mode-grid">
+            <button class="mode-button m-pitch" data-goto="pitch">
+                <span class="mode-icon">📈</span>
+                <span class="mode-text">
+                    <span class="mode-button-title">Altezza</span>
+                    <span class="mode-button-desc">Grave o acuto: la frequenza del suono</span>
+                </span>
+            </button>
+            <button class="mode-button m-loudness" data-goto="loudness">
+                <span class="mode-icon">🔊</span>
+                <span class="mode-text">
+                    <span class="mode-button-title">Intensità</span>
+                    <span class="mode-button-desc">Piano o forte: l'ampiezza della vibrazione</span>
+                </span>
+            </button>
+            <button class="mode-button m-timbre" data-goto="timbre">
+                <span class="mode-icon">🎻</span>
+                <span class="mode-text">
+                    <span class="mode-button-title">Timbro</span>
+                    <span class="mode-button-desc">Stessa nota, colori diversi</span>
+                </span>
+            </button>
+            <button class="mode-button m-harmonics" data-goto="harmonics">
+                <span class="mode-icon">🎹</span>
+                <span class="mode-text">
+                    <span class="mode-button-title">Armoniche</span>
+                    <span class="mode-button-desc">Costruisci un suono sommando vibrazioni</span>
+                </span>
+            </button>
+            <button class="mode-button m-waves" data-goto="waves">
+                <span class="mode-icon">🌬️</span>
+                <span class="mode-text">
+                    <span class="mode-button-title">Propagazione del suono</span>
+                    <span class="mode-button-desc">Come il suono viaggia nell'aria</span>
+                </span>
+            </button>
+            <button class="mode-button m-recap" data-goto="recap">
+                <span class="mode-icon">🧭</span>
+                <span class="mode-text">
+                    <span class="mode-button-title">Ricapitolando</span>
+                    <span class="mode-button-desc">Tutti i controlli insieme, in un'unica schermata</span>
+                </span>
+            </button>
+            <hr class="mode-divider">
+            <button class="mode-button m-beats" data-goto="beats">
+                <span class="mode-icon">〰️</span>
+                <span class="mode-text">
+                    <span class="mode-button-title">Battimenti e consonanza</span>
+                    <span class="mode-button-desc">Perché certi suoni insieme sono dolci e altri stonati</span>
+                </span>
+            </button>
+            <button class="mode-button m-adsr" data-goto="adsr">
+                <span class="mode-icon">🎛️</span>
+                <span class="mode-text">
+                    <span class="mode-button-title">Inviluppo ADSR</span>
+                    <span class="mode-button-desc">Come nasce, dura e si spegne un suono nel tempo</span>
+                </span>
+            </button>
+            <button class="mode-button m-reverb" data-goto="reverb">
+                <span class="mode-icon">🏛️</span>
+                <span class="mode-text">
+                    <span class="mode-button-title">Riverbero ed eco</span>
+                    <span class="mode-button-desc">Come lo spazio intorno cambia il suono</span>
+                </span>
+            </button>
+            <button class="mode-button m-doppler" data-goto="doppler">
+                <span class="mode-icon">🚑</span>
+                <span class="mode-text">
+                    <span class="mode-button-title">Effetto Doppler</span>
+                    <span class="mode-button-desc">Perché il tono cambia quando una sirena passa vicino</span>
+                </span>
+            </button>
+        </div>
+    </section>
+
+    <!-- ============================= ALTEZZA ============================= -->
+    <section class="screen lesson-screen" id="screen-pitch">
+        <button class="back-button" data-back>← Home</button>
+        <h1>📈 Altezza del suono</h1>
+        <p class="subtitle">L'altezza distingue un suono grave da uno acuto. Dipende dalla <strong>frequenza</strong> della vibrazione: più le oscillazioni sono veloci, più il suono sembra acuto. Si misura in Hertz (Hz), cioè vibrazioni al secondo.</p>
+
+        <div class="panel">
+            <div class="control-row">
+                <div class="control-label">
+                    <span>Frequenza</span>
+                    <span class="readout" id="pitchReadout">440 Hz</span>
+                </div>
+                <input type="range" id="pitchSlider" min="110" max="1568" value="440" step="1">
+                <div class="control-hint">Nota più vicina: <span id="pitchNote">La4</span> — trascina verso destra per un suono più acuto</div>
+            </div>
+
+            <div class="scope-card"><canvas id="pitchCanvas"></canvas></div>
+
+            <div class="actions-row">
+                <button class="play-button" id="pitchPlay">▶ <span>Ascolta</span></button>
+            </div>
+        </div>
+        <p class="footnote">Nota: qui la <strong>quantità</strong> del suono (il volume) resta fissa. Solo la frequenza cambia: è l'altezza, non l'intensità, ad aumentare.</p>
+    </section>
+
+    <!-- ============================= INTENSITÀ ============================= -->
+    <section class="screen lesson-screen" id="screen-loudness">
+        <button class="back-button" data-back>← Home</button>
+        <h1>🔊 Intensità del suono</h1>
+        <p class="subtitle">L'intensità distingue un suono forte da uno debole. Dipende dall'<strong>ampiezza</strong> della vibrazione: un'oscillazione più ampia produce più energia e un suono più intenso — anche se l'altezza resta esattamente la stessa.</p>
+
+        <div class="panel">
+            <div class="speaker-visual"><span class="icon" id="speakerIcon">🔈</span></div>
+            <div class="control-row">
+                <div class="control-label">
+                    <span>Volume</span>
+                    <span class="readout" id="loudnessReadout">60% (≈ −4 dB)</span>
+                </div>
+                <input type="range" id="loudnessSlider" min="0" max="100" value="60" step="1">
+                <div class="control-hint">La frequenza resta fissa: 440 Hz, la nota La</div>
+            </div>
+
+            <div class="scope-card"><canvas id="loudnessCanvas"></canvas></div>
+
+            <div class="actions-row">
+                <button class="play-button" id="loudnessPlay">▶ <span>Ascolta</span></button>
+            </div>
+        </div>
+        <p class="footnote">Guarda l'onda: quando alzi il volume, la sua <strong>altezza grafica</strong> (l'ampiezza) cresce, ma il numero di oscillazioni al secondo non cambia.</p>
+    </section>
+
+    <!-- ============================= TIMBRO ============================= -->
+    <section class="screen lesson-screen" id="screen-timbre">
+        <button class="back-button" data-back>← Home</button>
+        <h1>🎻 Timbro</h1>
+        <p class="subtitle">Un violino e un flauto possono suonare la stessa nota, alla stessa intensità, eppure li riconosci subito: quello che cambia è il <strong>timbro</strong>. Dipende dalla forma dell'onda, cioè da quali armoniche si sovrappongono al suono fondamentale.</p>
+
+        <div class="panel">
+            <div class="control-row">
+                <div class="control-label"><span>Forma d'onda</span></div>
+                <div class="choice-row">
+                    <button class="choice-btn c1 active" data-wave="sine">Sinusoidale</button>
+                    <button class="choice-btn c2" data-wave="triangle">Triangolare</button>
+                    <button class="choice-btn c3" data-wave="sawtooth">Dente</button>
+                    <button class="choice-btn c4" data-wave="square">Quadra</button>
+                </div>
+                <div class="control-hint" id="timbreHint">Onda pura: nessuna armonica, solo la frequenza fondamentale.</div>
+            </div>
+
+            <div class="scope-card"><canvas id="timbreCanvas"></canvas></div>
+
+            <div class="actions-row">
+                <button class="play-button" id="timbrePlay">▶ <span>Ascolta</span></button>
+            </div>
+        </div>
+        <p class="footnote">Tutte e quattro le onde vibrano a <strong>440 Hz</strong> con lo stesso volume: la nota percepita è sempre "La", ma il colore del suono cambia completamente.</p>
+    </section>
+
+    <!-- ============================= ARMONICHE ============================= -->
+    <section class="screen lesson-screen" id="screen-harmonics">
+        <button class="back-button" data-back>← Home</button>
+        <h1>🎹 Armoniche</h1>
+        <p class="subtitle">Quasi nessun suono reale è puro: è la somma di una <strong>fondamentale</strong> (che dà l'altezza percepita) e di <strong>armoniche</strong>, vibrazioni più veloci a multipli interi di quella frequenza (2×, 3×, 4×...). Quanto ciascuna armonica è presente decide il timbro del suono.</p>
+
+        <div class="panel">
+            <div class="harmonics-grid" id="harmonicsGrid"><!-- generato via JS --></div>
+
+            <div class="scope-card"><canvas id="harmonicsCanvas"></canvas></div>
+
+            <div class="preset-row">
+                <button class="preset-btn" data-preset="pure">Solo fondamentale</button>
+                <button class="preset-btn" data-preset="square">Onda quadra</button>
+                <button class="preset-btn" data-preset="saw">Dente</button>
+                <button class="preset-btn" data-preset="bell">Suono metallico</button>
+            </div>
+
+            <div class="actions-row">
+                <button class="play-button" id="harmonicsPlay">▶ <span>Ascolta</span></button>
+            </div>
+        </div>
+        <p class="footnote">Ogni cursore controlla quanto è presente l'armonica corrispondente (1ª = fondamentale). Sommale in proporzioni diverse per creare timbri nuovi.</p>
+    </section>
+
+    <!-- ============================= ONDE SONORE ============================= -->
+    <section class="screen lesson-screen" id="screen-waves">
+        <button class="back-button" data-back>← Home</button>
+        <h1>🌬️ Propagazione del suono</h1>
+        <p class="subtitle">Il suono si propaga nell'aria come un'<strong>onda di pressione</strong>: le molecole d'aria non viaggiano lontano, ma vibrano avanti e indietro, creando zone di compressione e di rarefazione che si spostano nello spazio.</p>
+
+        <div class="panel">
+            <div class="view-toggle">
+                <button class="active" data-view="transverse">Onda nel tempo</button>
+                <button data-view="particles">Particelle d'aria</button>
+            </div>
+
+            <div class="control-row">
+                <div class="control-label">
+                    <span>Frequenza (visualizzazione)</span>
+                    <span class="readout" id="waveFreqReadout">1.2 Hz</span>
+                </div>
+                <input type="range" id="waveFreqSlider" min="30" max="300" value="120" step="1">
+            </div>
+            <div class="control-row">
+                <div class="control-label">
+                    <span>Ampiezza</span>
+                    <span class="readout" id="waveAmpReadout">60%</span>
+                </div>
+                <input type="range" id="waveAmpSlider" min="10" max="100" value="60" step="1">
+            </div>
+
+            <div class="scope-card"><canvas id="wavesCanvas"></canvas></div>
+
+            <div class="actions-row">
+                <button class="play-button" id="wavesPlay">🔊 <span>Ascolta la frequenza reale</span></button>
+            </div>
+        </div>
+        <p class="footnote">Per poterla vedere a occhio nudo, qui l'onda è rallentata moltissimo: un vero suono vibra da decine a migliaia di volte al secondo. Il pulsante "ascolta" riproduce comunque una nota vera, proporzionale alla frequenza scelta.</p>
+    </section>
+
+    <!-- ============================= RICAPITOLANDO ============================= -->
+    <section class="screen lesson-screen recap-screen" id="screen-recap">
+        <button class="back-button" data-back>← Home</button>
+        <h1>🧭 Ricapitolando</h1>
+        <p class="subtitle">Tutti i controlli in una sola schermata: cambia altezza, intensità, timbro e armoniche, e guarda subito l'effetto sull'onda e sulle particelle d'aria.</p>
+
+        <div class="recap-layout">
+            <div class="recap-controls">
+
+                <div class="recap-panel">
+                    <div class="recap-panel-title">Altezza e intensità</div>
+                    <div class="control-row">
+                        <div class="control-label"><span>Frequenza</span><span class="readout" id="recapPitchReadout">440 Hz</span></div>
+                        <input type="range" id="recapPitchSlider" min="110" max="1568" value="440" step="1">
+                        <div class="control-hint">Nota: <span id="recapPitchNote">La4</span></div>
+                    </div>
+                    <div class="control-row">
+                        <div class="control-label"><span>Volume</span><span class="readout" id="recapLoudnessReadout">60%</span></div>
+                        <input type="range" id="recapLoudnessSlider" min="0" max="100" value="60" step="1">
+                    </div>
+                </div>
+
+                <div class="recap-panel">
+                    <div class="recap-panel-title">Timbro</div>
+                    <div class="choice-row">
+                        <button class="choice-btn c1 active" data-recap-wave="sine">Sinusoidale</button>
+                        <button class="choice-btn c2" data-recap-wave="triangle">Triangolare</button>
+                        <button class="choice-btn c3" data-recap-wave="sawtooth">Dente</button>
+                        <button class="choice-btn c4" data-recap-wave="square">Quadra</button>
+                        <button class="choice-btn c5" data-recap-wave="custom">Armoniche ↓</button>
+                    </div>
+                </div>
+
+                <div class="recap-panel">
+                    <div class="recap-panel-title">Armoniche personalizzate</div>
+                    <div class="recap-harmonics-grid" id="recapHarmonicsGrid"><!-- generato via JS --></div>
+                    <div class="recap-preset-row">
+                        <button class="preset-btn" data-recap-preset="pure">Fondamentale</button>
+                        <button class="preset-btn" data-recap-preset="square">Quadra</button>
+                        <button class="preset-btn" data-recap-preset="saw">Dente</button>
+                        <button class="preset-btn" data-recap-preset="bell">Metallico</button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="recap-visuals">
+                <div>
+                    <div class="recap-scope-label">Onda nel tempo</div>
+                    <div class="scope-card recap-scope-card"><canvas id="recapWaveCanvas"></canvas></div>
+                </div>
+                <div>
+                    <div class="recap-scope-label">Particelle d'aria (propagazione)</div>
+                    <div class="scope-card recap-particles-card"><canvas id="recapParticlesCanvas"></canvas></div>
+                </div>
+                <div class="recap-play-row">
+                    <button class="play-button" id="recapPlay">▶ <span>Ascolta</span></button>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ============================= BATTIMENTI E CONSONANZA ============================= -->
+    <section class="screen lesson-screen" id="screen-beats">
+        <button class="back-button" data-back>← Home</button>
+        <h1>〰️ Battimenti e consonanza</h1>
+        <p class="subtitle">Due suoni quasi identici, suonati insieme, non restano fermi: il volume <strong>pulsa</strong> — sono i <strong>battimenti</strong>. Se allontani le due frequenze abbastanza, i battimenti diventano troppo veloci per essere sentiti come pulsazioni e il suono diventa "ruvido": è la <strong>dissonanza</strong>. Quando invece le due frequenze formano un rapporto semplice (come 3:2 o 2:1), il suono torna pulito: è la <strong>consonanza</strong>.</p>
+
+        <div class="panel">
+            <div class="control-row">
+                <div class="control-label">
+                    <span>Seconda frequenza (la prima è fissa a 220 Hz)</span>
+                    <span class="readout" id="beatsReadout">224.0 Hz</span>
+                </div>
+                <input type="range" id="beatsSlider" min="220" max="451" value="224" step="0.5">
+                <div class="control-hint" id="beatsHint">Battimento lento: circa 4 pulsazioni al secondo</div>
+            </div>
+
+            <div class="control-row">
+                <div class="control-label"><span>Intervalli musicali (rapporti semplici)</span></div>
+                <div class="choice-row">
+                    <button class="preset-btn" data-beats-ratio="1">Unisono</button>
+                    <button class="preset-btn" data-beats-ratio="1.0667">Semitono</button>
+                    <button class="preset-btn" data-beats-ratio="1.2">Terza min.</button>
+                    <button class="preset-btn" data-beats-ratio="1.25">Terza magg.</button>
+                    <button class="preset-btn" data-beats-ratio="1.3333">Quarta</button>
+                    <button class="preset-btn" data-beats-ratio="1.5">Quinta</button>
+                    <button class="preset-btn" data-beats-ratio="1.6667">Sesta magg.</button>
+                    <button class="preset-btn" data-beats-ratio="2">Ottava</button>
+                </div>
+            </div>
+
+            <div class="scope-card"><canvas id="beatsCanvas"></canvas></div>
+
+            <div class="actions-row">
+                <button class="play-button" id="beatsPlay">▶ <span>Ascolta</span></button>
+            </div>
+        </div>
+        <p class="footnote">Il grafico mostra la <strong>somma</strong> delle due onde: vicino ai rapporti semplici la somma è quasi regolare (consonanza), vicino all'unisono ondeggia lentamente (battimento), altrove diventa complessa e irregolare (dissonanza).</p>
+    </section>
+
+    <!-- ============================= INVILUPPO ADSR ============================= -->
+    <section class="screen lesson-screen" id="screen-adsr">
+        <button class="back-button" data-back>← Home</button>
+        <h1>🎛️ Inviluppo ADSR</h1>
+        <p class="subtitle">Due strumenti possono avere lo stesso timbro "statico" ed essere comunque riconoscibili, perché il loro volume nasce, si stabilizza e si spegne in modo diverso nel tempo. Questa evoluzione si chiama <strong>inviluppo</strong> ed è descritta da quattro fasi: <strong>Attacco</strong>, <strong>Decadimento</strong>, <strong>Sostegno</strong>, <strong>Rilascio</strong> (ADSR).</p>
+
+        <div class="panel">
+            <div class="control-row">
+                <div class="control-label"><span>Attacco</span><span class="readout" id="adsrAttackReadout">10 ms</span></div>
+                <input type="range" id="adsrAttack" min="5" max="800" value="10" step="5">
+            </div>
+            <div class="control-row">
+                <div class="control-label"><span>Decadimento</span><span class="readout" id="adsrDecayReadout">150 ms</span></div>
+                <input type="range" id="adsrDecay" min="5" max="800" value="150" step="5">
+            </div>
+            <div class="control-row">
+                <div class="control-label"><span>Sostegno</span><span class="readout" id="adsrSustainReadout">60%</span></div>
+                <input type="range" id="adsrSustain" min="0" max="100" value="60" step="1">
+            </div>
+            <div class="control-row">
+                <div class="control-label"><span>Rilascio</span><span class="readout" id="adsrReleaseReadout">300 ms</span></div>
+                <input type="range" id="adsrRelease" min="20" max="1500" value="300" step="10">
+            </div>
+
+            <div class="preset-row">
+                <button class="preset-btn" data-adsr-preset="pizzicato">Pizzicato</button>
+                <button class="preset-btn" data-adsr-preset="organo">Organo</button>
+                <button class="preset-btn" data-adsr-preset="percussione">Percussione</button>
+                <button class="preset-btn" data-adsr-preset="archi">Archi</button>
+            </div>
+            <div class="control-hint">Ogni preset cambia anche il timbro (non solo l'inviluppo) per imitare meglio lo strumento. Organo e archi hanno un vero sostegno: tienili premuti. Pizzicato e percussione bastano un clic.</div>
+
+            <div class="scope-card adsr-scope"><canvas id="adsrCanvas"></canvas></div>
+            <div class="phase-label" id="adsrPhaseLabel">Fase: inattivo — tieni premuto il pulsante</div>
+
+            <div class="actions-row">
+                <button class="play-button hold-button" id="adsrTrigger">▶ <span>Tieni premuto per suonare</span></button>
+            </div>
+        </div>
+        <p class="footnote">Tieni premuto il pulsante per attivare attacco, decadimento e sostegno; rilascialo per far partire il rilascio. Il pallino sul grafico segue la fase in corso.</p>
+    </section>
+
+    <!-- ============================= RIVERBERO ED ECO ============================= -->
+    <section class="screen lesson-screen" id="screen-reverb">
+        <button class="back-button" data-back>← Home</button>
+        <h1>🏛️ Riverbero ed eco</h1>
+        <p class="subtitle">Un suono che si propaga in uno spazio incontra ostacoli — pareti, montagne — e torna indietro riflesso. Se le riflessioni sono poche e distanti nel tempo, le senti separate: è l'<strong>eco</strong> (come in una valle). Se sono moltissime e ravvicinate, si fondono in una coda continua: è il <strong>riverbero</strong> (come in una chiesa o in una stanza).</p>
+
+        <div class="panel">
+            <div class="view-toggle">
+                <button class="active" data-reverb-mode="echo">Eco</button>
+                <button data-reverb-mode="hall">Riverbero</button>
+            </div>
+
+            <div class="control-row">
+                <div class="control-label"><span>Quantità (mix)</span><span class="readout" id="reverbMixReadout">60%</span></div>
+                <input type="range" id="reverbMixSlider" min="0" max="100" value="60" step="1">
+            </div>
+
+            <div class="reverb-mode-group active" id="echoControls">
+                <div class="control-row">
+                    <div class="control-label"><span>Ritardo tra le ripetizioni</span><span class="readout" id="reverbDelayReadout">300 ms</span></div>
+                    <input type="range" id="reverbDelaySlider" min="80" max="600" value="300" step="10">
+                </div>
+                <div class="control-row">
+                    <div class="control-label"><span>Ripetizioni (feedback)</span><span class="readout" id="reverbFeedbackReadout">55%</span></div>
+                    <input type="range" id="reverbFeedbackSlider" min="0" max="85" value="55" step="1">
+                </div>
+            </div>
+
+            <div class="reverb-mode-group" id="hallControls">
+                <div class="control-row">
+                    <div class="control-label"><span>Dimensione dello spazio</span><span class="readout" id="reverbSizeReadout">2.0 s</span></div>
+                    <input type="range" id="reverbSizeSlider" min="0.3" max="4" value="2" step="0.1">
+                    <div class="control-hint">Stanza piccola → coda breve. Cattedrale → coda lunga.</div>
+                </div>
+            </div>
+
+            <div class="scope-card"><canvas id="reverbCanvas"></canvas></div>
+
+            <div class="actions-row">
+                <button class="play-button" id="reverbTrigger">🔔 <span>Suona una nota di prova</span></button>
+            </div>
+        </div>
+        <p class="footnote">Il grafico mostra come si spegne nel tempo l'energia delle riflessioni: a scatti e separate per l'eco, come una coda continua e liscia per il riverbero.</p>
+    </section>
+
+    <!-- ============================= EFFETTO DOPPLER ============================= -->
+    <section class="screen lesson-screen" id="screen-doppler">
+        <button class="back-button" data-back>← Home</button>
+        <h1>🚑 Effetto Doppler</h1>
+        <p class="subtitle">Quando un'ambulanza si avvicina, la sirena sembra più acuta; quando si allontana, più grave — anche se la sirena emette sempre la stessa nota, senza mai cambiarla. Il motivo non è la sirena: è il <strong>movimento</strong>.</p>
+
+        <div class="panel">
+            <div class="control-row">
+                <div class="control-label"><span>Perché succede</span></div>
+                <div class="control-hint">Immagina che la sirena emetta una "cresta" dell'onda a intervalli regolarissimi, come un cuore che batte. Se la sorgente è ferma, ogni cresta parte dallo stesso punto: le creste formano cerchi concentrici, tutti equidistanti tra loro — un'onda regolare, una nota costante.</div>
+                <div class="control-hint">Se la sorgente si <strong>muove</strong>, ogni cresta successiva parte da una posizione leggermente diversa. Nella direzione verso cui si sta muovendo, ogni nuova cresta parte più vicina alla precedente: i cerchi si <strong>accalcano</strong>, l'onda si accorcia, e un'onda più corta significa una frequenza più <strong>alta</strong> — un suono più acuto. Dietro di lei succede il contrario: i cerchi si <strong>allargano</strong>, l'onda si allunga, e la frequenza percepita scende — un suono più <strong>grave</strong>.</div>
+                <div class="control-hint">Guarda i cerchi azzurri nel disegno qui sotto: sono proprio queste creste. Nota come restano vicini davanti all'ambulanza e si allargano dietro di lei.</div>
+            </div>
+
+            <div class="control-row">
+                <div class="control-label"><span>Velocità della sorgente</span><span class="readout" id="dopplerSpeedReadout">60 km/h</span></div>
+                <input type="range" id="dopplerSpeedSlider" min="20" max="150" value="60" step="5">
+                <div class="control-hint">Più veloce si muove la sorgente, più i cerchi si accalcano e più forte è il cambio di tono che senti al suo passaggio.</div>
+            </div>
+            <div class="control-row">
+                <div class="control-label"><span>Frequenza emessa</span><span class="readout" id="dopplerFreqReadout">450 Hz</span></div>
+                <input type="range" id="dopplerFreqSlider" min="200" max="700" value="450" step="10">
+                <div class="control-hint">È la nota che l'ambulanza "crede" di emettere sempre uguale — quella che sentirebbe chi le sta seduto sopra.</div>
+            </div>
+
+            <div class="scope-card doppler-scope"><canvas id="dopplerCanvas"></canvas></div>
+
+            <div class="doppler-readouts">
+                <span class="state" id="dopplerStateLabel">Premi Avvia per mettere in moto la sorgente</span>
+                <span class="freq" id="dopplerFreqPerceived">450 Hz</span>
+            </div>
+
+            <div class="actions-row">
+                <button class="play-button" id="dopplerPlay">▶ <span>Avvia</span></button>
+            </div>
+        </div>
+        <p class="footnote">Il valore a destra è la frequenza che sentiresti tu, fermo nel punto indicato dall'omino: sale mentre la sorgente si avvicina, scende non appena inizia ad allontanarsi, ed è più marcato quanto più la sorgente è veloce. Per motivi di visibilità i cerchi rappresentano impulsi periodici stilizzati, non le vere migliaia di oscillazioni al secondo di un suono reale.</p>
+    </section>
+
+</div>
+
+<script>
+/* =========================================================
+   NAVIGAZIONE FRA SCHERMATE
+========================================================= */
+const screens = document.querySelectorAll(".screen");
+const homeButton = document.getElementById("homeButton");
+const masterVolumeBox = document.getElementById("masterVolumeBox");
+
+const appEl = document.querySelector(".app");
+function showScreen(id) {
+    stopAllTones();
+    screens.forEach(s => s.classList.toggle("active", s.id === "screen-" + id));
+    homeButton.classList.toggle("hidden", id === "home");
+    masterVolumeBox.classList.toggle("hidden", id === "home");
+    appEl.classList.toggle("wide", id === "recap");
+    window.scrollTo({ top: 0, behavior: "smooth" });
+    activeScreen = id;
+}
+
+document.querySelectorAll("[data-goto]").forEach(btn => {
+    btn.addEventListener("click", () => showScreen(btn.dataset.goto));
+});
+document.querySelectorAll("[data-back]").forEach(btn => {
+    btn.addEventListener("click", () => showScreen("home"));
+});
+homeButton.addEventListener("click", () => showScreen("home"));
+
+let activeScreen = "home";
+
+/* =========================================================
+   MOTORE AUDIO (Web Audio API nativa, nessuna libreria)
+========================================================= */
+let audioCtx = null;
+let masterGain = null;
+const voice = { osc: null, gain: null, playing: false };
+
+function ensureAudio() {
+    if (!audioCtx) {
+        audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+        masterGain = audioCtx.createGain();
+        masterGain.gain.value = document.getElementById("masterVolume").value / 100;
+        masterGain.connect(audioCtx.destination);
+    }
+    if (audioCtx.state === "suspended") audioCtx.resume();
+    return audioCtx;
+}
+
+document.getElementById("masterVolume").addEventListener("input", e => {
+    if (masterGain) masterGain.gain.value = e.target.value / 100;
+});
+
+// Avvia un tono continuo. opts: { freq, type, periodicWave, gain }
+function playTone(opts) {
+    const ctx = ensureAudio();
+    stopAllTones(true);
+    const osc = ctx.createOscillator();
+    const gain = ctx.createGain();
+    if (opts.periodicWave) osc.setPeriodicWave(opts.periodicWave);
+    else osc.type = opts.type || "sine";
+    osc.frequency.value = opts.freq || 440;
+    gain.gain.value = 0;
+    osc.connect(gain).connect(masterGain);
+    osc.start();
+    gain.gain.linearRampToValueAtTime(opts.gain != null ? opts.gain : 0.2, ctx.currentTime + 0.04);
+    voice.osc = osc;
+    voice.gain = gain;
+    voice.playing = true;
+}
+
+const extraStopFns = [];
+function registerStopFn(fn) { extraStopFns.push(fn); }
+
+function stopAllTones(instant) {
+    if (voice.osc) {
+        try {
+            const ctx = audioCtx;
+            const g = voice.gain, o = voice.osc;
+            const t = ctx.currentTime;
+            g.gain.cancelScheduledValues(t);
+            g.gain.setValueAtTime(g.gain.value, t);
+            g.gain.linearRampToValueAtTime(0, t + (instant ? 0.015 : 0.05));
+            setTimeout(() => { try { o.stop(); o.disconnect(); g.disconnect(); } catch (e) {} }, instant ? 30 : 80);
+        } catch (e) {}
+    }
+    voice.osc = null;
+    voice.gain = null;
+    voice.playing = false;
+    extraStopFns.forEach(fn => { try { fn(instant); } catch (e) {} });
+    document.querySelectorAll(".play-button.playing, .hold-button.playing").forEach(b => b.classList.remove("playing"));
+}
+
+function liveSetFreq(f) {
+    if (voice.osc) voice.osc.frequency.setTargetAtTime(f, audioCtx.currentTime, 0.01);
+}
+function liveSetGain(g) {
+    if (voice.gain) voice.gain.gain.setTargetAtTime(g, audioCtx.currentTime, 0.01);
+}
+
+function setPlayButtonState(btn, playing, labelPlay, labelStop) {
+    btn.classList.toggle("playing", playing);
+    btn.innerHTML = playing ? "⏸ <span>" + labelStop + "</span>" : "▶ <span>" + labelPlay + "</span>";
+}
+
+/* =========================================================
+   UTILITÀ DI DISEGNO (canvas ad alta definizione)
+========================================================= */
+function fitCanvas(canvas) {
+    const dpr = window.devicePixelRatio || 1;
+    const rect = canvas.getBoundingClientRect();
+    canvas.width = Math.round(rect.width * dpr);
+    canvas.height = Math.round(rect.height * dpr);
+    const ctx = canvas.getContext("2d");
+    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+    return { ctx, w: rect.width, h: rect.height };
+}
+
+function drawGrid(ctx, w, h) {
+    ctx.strokeStyle = "rgba(15,23,42,0.08)";
+    ctx.lineWidth = 1;
+    for (let x = 0; x <= w; x += w / 8) {
+        ctx.beginPath(); ctx.moveTo(x, 0); ctx.lineTo(x, h); ctx.stroke();
+    }
+    ctx.strokeStyle = "rgba(15,23,42,0.16)";
+    ctx.beginPath(); ctx.moveTo(0, h / 2); ctx.lineTo(w, h / 2); ctx.stroke();
+}
+
+function strokeWave(ctx, points, color) {
+    ctx.strokeStyle = color;
+    ctx.lineWidth = 2.5;
+    ctx.lineJoin = "round";
+    ctx.lineCap = "round";
+    ctx.beginPath();
+    points.forEach((p, i) => { i === 0 ? ctx.moveTo(p[0], p[1]) : ctx.lineTo(p[0], p[1]); });
+    ctx.stroke();
+}
+
+let globalPhase = 0; // per far "scorrere" dolcemente le onde disegnate, come un vero oscilloscopio
+
+/* =========================================================
+   1) ALTEZZA
+========================================================= */
+const pitchCanvas = document.getElementById("pitchCanvas");
+const pitchSlider = document.getElementById("pitchSlider");
+const pitchReadout = document.getElementById("pitchReadout");
+const pitchNote = document.getElementById("pitchNote");
+const pitchPlay = document.getElementById("pitchPlay");
+
+function freqToNote(f) {
+    const midi = Math.round(69 + 12 * Math.log2(f / 440));
+    const names = ["Do","Do#","Re","Re#","Mi","Fa","Fa#","Sol","Sol#","La","La#","Si"];
+    const name = names[((midi % 12) + 12) % 12];
+    const octave = Math.floor(midi / 12) - 1;
+    return name + octave;
+}
+
+function updatePitchUI() {
+    const f = Number(pitchSlider.value);
+    pitchReadout.textContent = f + " Hz";
+    pitchNote.textContent = freqToNote(f);
+    if (voice.playing) liveSetFreq(f);
+}
+pitchSlider.addEventListener("input", updatePitchUI);
+
+function drawPitch(t) {
+    const { ctx, w, h } = fitCanvas(pitchCanvas);
+    ctx.clearRect(0, 0, w, h);
+    drawGrid(ctx, w, h);
+    const f = Number(pitchSlider.value);
+    const windowSec = 0.015; // finestra fissa: a f più alta si vedono più cicli
+    const amp = h * 0.34;
+    const pts = [];
+    const n = 360;
+    for (let i = 0; i <= n; i++) {
+        const time = (i / n) * windowSec;
+        const x = (i / n) * w;
+        const y = h / 2 - Math.sin(2 * Math.PI * f * time - t * 2) * amp;
+        pts.push([x, y]);
+    }
+    strokeWave(ctx, pts, "#0369a1");
+}
+
+pitchPlay.addEventListener("click", () => {
+    if (voice.playing) { stopAllTones(); setPlayButtonState(pitchPlay, false, "Ascolta", "Stop"); }
+    else { playTone({ freq: Number(pitchSlider.value), type: "sine", gain: 0.22 }); setPlayButtonState(pitchPlay, true, "Ascolta", "Stop"); }
+});
+
+/* =========================================================
+   2) INTENSITÀ
+========================================================= */
+const loudnessCanvas = document.getElementById("loudnessCanvas");
+const loudnessSlider = document.getElementById("loudnessSlider");
+const loudnessReadout = document.getElementById("loudnessReadout");
+const loudnessPlay = document.getElementById("loudnessPlay");
+const speakerIcon = document.getElementById("speakerIcon");
+
+function updateLoudnessUI() {
+    const v = Number(loudnessSlider.value);
+    const frac = v / 100;
+    const db = v === 0 ? "−∞" : (20 * Math.log10(frac)).toFixed(0);
+    loudnessReadout.textContent = v + "% (≈ " + db + " dB)";
+    speakerIcon.textContent = v === 0 ? "🔇" : v < 34 ? "🔈" : v < 67 ? "🔉" : "🔊";
+    speakerIcon.style.transform = "scale(" + (0.85 + frac * 0.55) + ")";
+    speakerIcon.style.opacity = String(0.55 + frac * 0.45);
+    if (voice.playing) liveSetGain(frac * 0.3);
+}
+loudnessSlider.addEventListener("input", updateLoudnessUI);
+
+function drawLoudness(t) {
+    const { ctx, w, h } = fitCanvas(loudnessCanvas);
+    ctx.clearRect(0, 0, w, h);
+    drawGrid(ctx, w, h);
+    const frac = Number(loudnessSlider.value) / 100;
+    const f = 440;
+    const windowSec = 0.008;
+    const amp = h * 0.4 * frac;
+    const pts = [];
+    const n = 300;
+    for (let i = 0; i <= n; i++) {
+        const time = (i / n) * windowSec;
+        const x = (i / n) * w;
+        const y = h / 2 - Math.sin(2 * Math.PI * f * time - t * 2) * amp;
+        pts.push([x, y]);
+    }
+    strokeWave(ctx, pts, "#a21caf");
+}
+
+loudnessPlay.addEventListener("click", () => {
+    if (voice.playing) { stopAllTones(); setPlayButtonState(loudnessPlay, false, "Ascolta", "Stop"); }
+    else { playTone({ freq: 440, type: "sine", gain: (Number(loudnessSlider.value) / 100) * 0.3 }); setPlayButtonState(loudnessPlay, true, "Ascolta", "Stop"); }
+});
+
+/* =========================================================
+   3) TIMBRO
+========================================================= */
+const timbreCanvas = document.getElementById("timbreCanvas");
+const timbrePlay = document.getElementById("timbrePlay");
+const timbreHint = document.getElementById("timbreHint");
+let currentWave = "sine";
+
+const timbreHints = {
+    sine: "Onda pura: nessuna armonica, solo la frequenza fondamentale.",
+    triangle: "Solo armoniche dispari (3ª, 5ª, 7ª...), molto attenuate: suono morbido.",
+    sawtooth: "Tutte le armoniche (2ª, 3ª, 4ª...), via via più deboli: suono ricco e pungente.",
+    square: "Solo armoniche dispari (3ª, 5ª, 7ª...), poco attenuate: suono cavo e nasale."
+};
+
+document.querySelectorAll("[data-wave]").forEach(btn => {
+    btn.addEventListener("click", () => {
+        document.querySelectorAll("[data-wave]").forEach(b => b.classList.remove("active"));
+        btn.classList.add("active");
+        currentWave = btn.dataset.wave;
+        timbreHint.textContent = timbreHints[currentWave];
+        if (voice.playing) { playTone({ freq: 440, type: currentWave, gain: 0.16 }); setPlayButtonState(timbrePlay, true, "Ascolta", "Stop"); }
+    });
+});
+
+function waveShape(type, theta) {
+    switch (type) {
+        case "square": return Math.sign(Math.sin(theta)) || 1;
+        case "sawtooth": {
+            const x = theta / (2 * Math.PI);
+            return 2 * (x - Math.floor(x + 0.5));
+        }
+        case "triangle": return (2 / Math.PI) * Math.asin(Math.sin(theta));
+        default: return Math.sin(theta);
+    }
+}
+
+function drawTimbre(t) {
+    const { ctx, w, h } = fitCanvas(timbreCanvas);
+    ctx.clearRect(0, 0, w, h);
+    drawGrid(ctx, w, h);
+    const amp = h * 0.36;
+    const cycles = 3;
+    const pts = [];
+    const n = 400;
+    for (let i = 0; i <= n; i++) {
+        const theta = (i / n) * cycles * 2 * Math.PI - t * 2;
+        const x = (i / n) * w;
+        const y = h / 2 - waveShape(currentWave, theta) * amp;
+        pts.push([x, y]);
+    }
+    strokeWave(ctx, pts, "#4338ca");
+}
+
+timbrePlay.addEventListener("click", () => {
+    if (voice.playing) { stopAllTones(); setPlayButtonState(timbrePlay, false, "Ascolta", "Stop"); }
+    else { playTone({ freq: 440, type: currentWave, gain: 0.16 }); setPlayButtonState(timbrePlay, true, "Ascolta", "Stop"); }
+});
+
+/* =========================================================
+   4) ARMONICHE (sintesi additiva)
+========================================================= */
+const NUM_HARM = 8;
+const harmValues = [100, 0, 0, 0, 0, 0, 0, 0]; // valore "salvato" del cursore, indipendente dall'attivazione
+const harmEnabled = [true, true, true, true, true, true, true, true];
+const harmonicsGrid = document.getElementById("harmonicsGrid");
+const harmonicsCanvas = document.getElementById("harmonicsCanvas");
+const harmonicsPlay = document.getElementById("harmonicsPlay");
+
+for (let i = 0; i < NUM_HARM; i++) {
+    const col = document.createElement("div");
+    col.className = "harmonic-col";
+    col.innerHTML =
+        '<input type="checkbox" class="h-toggle" id="htoggle' + i + '" checked title="Attiva/disattiva questa armonica">' +
+        '<span class="h-value" id="hval' + i + '">' + harmValues[i] + '%</span>' +
+        '<input type="range" min="0" max="100" value="' + harmValues[i] + '" id="hrange' + i + '">' +
+        '<span class="h-label">' + (i + 1) + (i === 0 ? "ª (fond.)" : "ª") + '</span>';
+    harmonicsGrid.appendChild(col);
+}
+
+// il valore "effettivo" usato per audio/grafico: 0 se disattivata, altrimenti il valore dello slider
+function effectiveHarm(i) { return harmEnabled[i] ? harmValues[i] : 0; }
+
+let harmUpdatePending = false;
+function scheduleHarmUpdate() {
+    if (voice.playing && !harmUpdatePending) {
+        harmUpdatePending = true;
+        requestAnimationFrame(() => { updateHarmonicsAudio(); harmUpdatePending = false; });
+    }
+}
+function onHarmonicInput(i, val) {
+    harmValues[i] = val;
+    document.getElementById("hval" + i).textContent = val + "%";
+    scheduleHarmUpdate();
+}
+for (let i = 0; i < NUM_HARM; i++) {
+    document.getElementById("hrange" + i).addEventListener("input", e => onHarmonicInput(i, Number(e.target.value)));
+    document.getElementById("htoggle" + i).addEventListener("change", e => {
+        harmEnabled[i] = e.target.checked;
+        const col = document.getElementById("hrange" + i).closest(".harmonic-col");
+        document.getElementById("hrange" + i).disabled = !e.target.checked;
+        col.classList.toggle("disabled", !e.target.checked);
+        scheduleHarmUpdate();
+    });
+}
+
+function buildPeriodicWave() {
+    const ctx = ensureAudio();
+    const real = new Float32Array(NUM_HARM + 1);
+    const imag = new Float32Array(NUM_HARM + 1);
+    for (let i = 0; i < NUM_HARM; i++) imag[i + 1] = effectiveHarm(i) / 100;
+    return ctx.createPeriodicWave(real, imag, { disableNormalization: false });
+}
+
+function updateHarmonicsAudio() {
+    if (!voice.playing) return;
+    const wave = buildPeriodicWave();
+    voice.osc.setPeriodicWave(wave);
+}
+
+function setHarmonics(values) {
+    for (let i = 0; i < NUM_HARM; i++) {
+        harmValues[i] = values[i];
+        harmEnabled[i] = true;
+        document.getElementById("hrange" + i).value = values[i];
+        document.getElementById("hrange" + i).disabled = false;
+        document.getElementById("hval" + i).textContent = values[i] + "%";
+        document.getElementById("htoggle" + i).checked = true;
+        document.getElementById("hrange" + i).closest(".harmonic-col").classList.remove("disabled");
+    }
+    if (voice.playing) updateHarmonicsAudio();
+}
+
+document.querySelectorAll("[data-preset]").forEach(btn => {
+    btn.addEventListener("click", () => {
+        const p = btn.dataset.preset;
+        if (p === "pure") setHarmonics([100, 0, 0, 0, 0, 0, 0, 0]);
+        if (p === "square") setHarmonics([100, 0, 33, 0, 20, 0, 14, 0]);
+        if (p === "saw") setHarmonics([100, 50, 33, 25, 20, 17, 14, 12]);
+        if (p === "bell") setHarmonics([60, 90, 40, 100, 30, 80, 45, 65]);
+    });
+});
+
+function drawHarmonics(t) {
+    const { ctx, w, h } = fitCanvas(harmonicsCanvas);
+    ctx.clearRect(0, 0, w, h);
+    drawGrid(ctx, w, h);
+    const n = 400;
+    const cycles = 2;
+    const raw = [];
+    let maxAbs = 0.0001;
+    for (let i = 0; i <= n; i++) {
+        const theta = (i / n) * cycles * 2 * Math.PI - t * 2;
+        let y = 0;
+        for (let k = 0; k < NUM_HARM; k++) y += (effectiveHarm(k) / 100) * Math.sin((k + 1) * theta);
+        raw.push(y);
+        if (Math.abs(y) > maxAbs) maxAbs = Math.abs(y);
+    }
+    const amp = h * 0.4;
+    const pts = raw.map((y, i) => [(i / n) * w, h / 2 - (y / maxAbs) * amp]);
+    strokeWave(ctx, pts, "#b45309");
+}
+
+harmonicsPlay.addEventListener("click", () => {
+    if (voice.playing) { stopAllTones(); setPlayButtonState(harmonicsPlay, false, "Ascolta", "Stop"); }
+    else { playTone({ freq: 220, periodicWave: buildPeriodicWave(), gain: 0.18 }); setPlayButtonState(harmonicsPlay, true, "Ascolta", "Stop"); }
+});
+
+/* =========================================================
+   5) ONDE SONORE
+========================================================= */
+const wavesCanvas = document.getElementById("wavesCanvas");
+const waveFreqSlider = document.getElementById("waveFreqSlider");
+const waveAmpSlider = document.getElementById("waveAmpSlider");
+const waveFreqReadout = document.getElementById("waveFreqReadout");
+const waveAmpReadout = document.getElementById("waveAmpReadout");
+const wavesPlay = document.getElementById("wavesPlay");
+let waveView = "transverse";
+
+document.querySelectorAll("[data-view]").forEach(btn => {
+    btn.addEventListener("click", () => {
+        document.querySelectorAll("[data-view]").forEach(b => b.classList.remove("active"));
+        btn.classList.add("active");
+        waveView = btn.dataset.view;
+    });
+});
+
+function updateWaveUI() {
+    const raw = Number(waveFreqSlider.value);
+    const fVisual = raw / 100; // 0.3 - 3.0 Hz visivi
+    waveFreqReadout.textContent = fVisual.toFixed(1) + " Hz";
+    waveAmpReadout.textContent = waveAmpSlider.value + "%";
+}
+waveFreqSlider.addEventListener("input", updateWaveUI);
+waveAmpSlider.addEventListener("input", updateWaveUI);
+
+const waveClock = { t: 0, last: null };
+
+function drawWaves(now) {
+    const { ctx, w, h } = fitCanvas(wavesCanvas);
+    ctx.clearRect(0, 0, w, h);
+
+    if (waveClock.last == null) waveClock.last = now;
+    const dt = Math.min(0.05, (now - waveClock.last) / 1000);
+    waveClock.last = now;
+    waveClock.t += dt;
+
+    const fVisual = Number(waveFreqSlider.value) / 100; // Hz
+    const ampFrac = Number(waveAmpSlider.value) / 100;
+    const waveSpeed = 90; // px/s, "velocità del suono" visiva costante
+    const wavelength = waveSpeed / fVisual;
+    const k = (2 * Math.PI) / wavelength;
+    const omega = 2 * Math.PI * fVisual;
+
+    if (waveView === "transverse") {
+        drawGrid(ctx, w, h);
+        const amp = h * 0.36 * ampFrac;
+        const pts = [];
+        const n = 300;
+        for (let i = 0; i <= n; i++) {
+            const x = (i / n) * w;
+            const y = h / 2 - Math.sin(k * x - omega * waveClock.t) * amp;
+            pts.push([x, y]);
+        }
+        strokeWave(ctx, pts, "#0e7490");
+    } else {
+        // vista particelle: righe di puntini che vibrano orizzontalmente
+        const rows = 6, cols = 34;
+        const marginX = 22, marginY = 18;
+        const spacingX = (w - marginX * 2) / (cols - 1);
+        const spacingY = (h - marginY * 2) / (rows - 1);
+        const dispAmp = spacingX * 0.9 * ampFrac;
+        for (let r = 0; r < rows; r++) {
+            const y = marginY + r * spacingY;
+            for (let c = 0; c < cols; c++) {
+                const x0 = marginX + c * spacingX;
+                const dx = dispAmp * Math.sin(k * x0 - omega * waveClock.t);
+                const density = 0.5 + 0.5 * Math.cos(k * x0 - omega * waveClock.t); // 1 = compressione
+                const radius = 2.4 + density * 2.4;
+                ctx.beginPath();
+                ctx.arc(x0 + dx, y, radius, 0, Math.PI * 2);
+                ctx.fillStyle = "rgba(14, 116, 144, " + (0.35 + density * 0.55) + ")";
+                ctx.fill();
+            }
+        }
+    }
+}
+
+wavesPlay.addEventListener("click", () => {
+    if (voice.playing) { stopAllTones(); setPlayButtonState(wavesPlay, false, "Ascolta la frequenza reale", "Stop"); }
+    else {
+        const fVisual = Number(waveFreqSlider.value) / 100; // 0.3 - 3.0
+        const audible = 200 + ((fVisual - 0.3) / (3.0 - 0.3)) * 700; // mappa a 200-900 Hz udibili
+        playTone({ freq: audible, type: "sine", gain: (Number(waveAmpSlider.value) / 100) * 0.25 });
+        setPlayButtonState(wavesPlay, true, "Ascolta la frequenza reale", "Stop");
+    }
+});
+
+/* =========================================================
+   6) RICAPITOLANDO (tutti i controlli insieme)
+========================================================= */
+const recapPitchSlider = document.getElementById("recapPitchSlider");
+const recapPitchReadout = document.getElementById("recapPitchReadout");
+const recapPitchNote = document.getElementById("recapPitchNote");
+const recapLoudnessSlider = document.getElementById("recapLoudnessSlider");
+const recapLoudnessReadout = document.getElementById("recapLoudnessReadout");
+const recapWaveCanvas = document.getElementById("recapWaveCanvas");
+const recapParticlesCanvas = document.getElementById("recapParticlesCanvas");
+const recapHarmonicsGrid = document.getElementById("recapHarmonicsGrid");
+const recapPlay = document.getElementById("recapPlay");
+
+let recapWaveType = "sine"; // "sine" | "triangle" | "sawtooth" | "square" | "custom"
+const recapHarmValues = [100, 0, 0, 0, 0, 0, 0, 0];
+const recapHarmEnabled = [true, true, true, true, true, true, true, true];
+
+for (let i = 0; i < NUM_HARM; i++) {
+    const col = document.createElement("div");
+    col.className = "harmonic-col";
+    col.innerHTML =
+        '<input type="checkbox" class="h-toggle" id="rhtoggle' + i + '" checked title="Attiva/disattiva questa armonica">' +
+        '<span class="h-value" id="rhval' + i + '">' + recapHarmValues[i] + '%</span>' +
+        '<input type="range" min="0" max="100" value="' + recapHarmValues[i] + '" id="rhrange' + i + '">' +
+        '<span class="h-label">' + (i + 1) + 'ª</span>';
+    recapHarmonicsGrid.appendChild(col);
+}
+
+function recapEffectiveHarm(i) { return recapHarmEnabled[i] ? recapHarmValues[i] : 0; }
+
+function switchToCustomWave() {
+    recapWaveType = "custom";
+    document.querySelectorAll("[data-recap-wave]").forEach(b => b.classList.toggle("active", b.dataset.recapWave === "custom"));
+    if (voice.playing) updateRecapAudio();
+}
+
+let recapHarmUpdatePending = false;
+function scheduleRecapHarmUpdate() {
+    switchToCustomWave();
+    if (voice.playing && !recapHarmUpdatePending) {
+        recapHarmUpdatePending = true;
+        requestAnimationFrame(() => { updateRecapAudio(); recapHarmUpdatePending = false; });
+    }
+}
+
+for (let i = 0; i < NUM_HARM; i++) {
+    document.getElementById("rhrange" + i).addEventListener("input", e => {
+        recapHarmValues[i] = Number(e.target.value);
+        document.getElementById("rhval" + i).textContent = e.target.value + "%";
+        scheduleRecapHarmUpdate();
+    });
+    document.getElementById("rhtoggle" + i).addEventListener("change", e => {
+        recapHarmEnabled[i] = e.target.checked;
+        const range = document.getElementById("rhrange" + i);
+        range.disabled = !e.target.checked;
+        range.closest(".harmonic-col").classList.toggle("disabled", !e.target.checked);
+        scheduleRecapHarmUpdate();
+    });
+}
+
+function setRecapHarmonics(values) {
+    for (let i = 0; i < NUM_HARM; i++) {
+        recapHarmValues[i] = values[i];
+        recapHarmEnabled[i] = true;
+        document.getElementById("rhrange" + i).value = values[i];
+        document.getElementById("rhrange" + i).disabled = false;
+        document.getElementById("rhval" + i).textContent = values[i] + "%";
+        document.getElementById("rhtoggle" + i).checked = true;
+        document.getElementById("rhrange" + i).closest(".harmonic-col").classList.remove("disabled");
+    }
+    switchToCustomWave();
+    if (voice.playing) updateRecapAudio();
+}
+
+document.querySelectorAll("[data-recap-preset]").forEach(btn => {
+    btn.addEventListener("click", () => {
+        const p = btn.dataset.recapPreset;
+        if (p === "pure") setRecapHarmonics([100, 0, 0, 0, 0, 0, 0, 0]);
+        if (p === "square") setRecapHarmonics([100, 0, 33, 0, 20, 0, 14, 0]);
+        if (p === "saw") setRecapHarmonics([100, 50, 33, 25, 20, 17, 14, 12]);
+        if (p === "bell") setRecapHarmonics([60, 90, 40, 100, 30, 80, 45, 65]);
+    });
+});
+
+document.querySelectorAll("[data-recap-wave]").forEach(btn => {
+    btn.addEventListener("click", () => {
+        recapWaveType = btn.dataset.recapWave;
+        document.querySelectorAll("[data-recap-wave]").forEach(b => b.classList.remove("active"));
+        btn.classList.add("active");
+        if (voice.playing) updateRecapAudio();
+    });
+});
+
+function updateRecapUI() {
+    const f = Number(recapPitchSlider.value);
+    recapPitchReadout.textContent = f + " Hz";
+    recapPitchNote.textContent = freqToNote(f);
+    if (voice.playing) liveSetFreq(f);
+}
+recapPitchSlider.addEventListener("input", updateRecapUI);
+
+function updateRecapLoudnessUI() {
+    const v = Number(recapLoudnessSlider.value);
+    recapLoudnessReadout.textContent = v + "%";
+    if (voice.playing) liveSetGain((v / 100) * 0.28);
+}
+recapLoudnessSlider.addEventListener("input", updateRecapLoudnessUI);
+
+function buildRecapPeriodicWave() {
+    const ctx = ensureAudio();
+    const real = new Float32Array(NUM_HARM + 1);
+    const imag = new Float32Array(NUM_HARM + 1);
+    for (let i = 0; i < NUM_HARM; i++) imag[i + 1] = recapEffectiveHarm(i) / 100;
+    return ctx.createPeriodicWave(real, imag, { disableNormalization: false });
+}
+
+function updateRecapAudio() {
+    if (!voice.playing) return;
+    if (recapWaveType === "custom") voice.osc.setPeriodicWave(buildRecapPeriodicWave());
+    else voice.osc.type = recapWaveType;
+}
+
+recapPlay.addEventListener("click", () => {
+    if (voice.playing) { stopAllTones(); setPlayButtonState(recapPlay, false, "Ascolta", "Stop"); }
+    else {
+        const freq = Number(recapPitchSlider.value);
+        const gain = (Number(recapLoudnessSlider.value) / 100) * 0.28;
+        if (recapWaveType === "custom") playTone({ freq, periodicWave: buildRecapPeriodicWave(), gain });
+        else playTone({ freq, type: recapWaveType, gain });
+        setPlayButtonState(recapPlay, true, "Ascolta", "Stop");
+    }
+});
+
+function recapWaveShapeAt(theta) {
+    if (recapWaveType === "custom") {
+        let y = 0;
+        for (let k = 0; k < NUM_HARM; k++) y += (recapEffectiveHarm(k) / 100) * Math.sin((k + 1) * theta);
+        return y;
+    }
+    return waveShape(recapWaveType, theta);
+}
+
+const recapClock = { t: 0, last: null };
+
+function drawRecap(now) {
+    if (recapClock.last == null) recapClock.last = now;
+    const dt = Math.min(0.05, (now - recapClock.last) / 1000);
+    recapClock.last = now;
+    recapClock.t += dt;
+
+    // -- pannello 1: onda nel tempo, dipende insieme da altezza, intensità e timbro --
+    {
+        const { ctx, w, h } = fitCanvas(recapWaveCanvas);
+        ctx.clearRect(0, 0, w, h);
+        drawGrid(ctx, w, h);
+        const f = Number(recapPitchSlider.value);
+        const ampFrac = Number(recapLoudnessSlider.value) / 100;
+        const amp = h * 0.38 * Math.max(0.06, ampFrac);
+        const windowSec = 0.018; // finestra fissa: più la frequenza è alta, più cicli entrano in vista
+        const n = 400;
+        const raw = [];
+        let maxAbs = 0.0001;
+        for (let i = 0; i <= n; i++) {
+            const time = (i / n) * windowSec;
+            const theta = 2 * Math.PI * f * time - now / 500;
+            const y = recapWaveShapeAt(theta);
+            raw.push(y);
+            if (Math.abs(y) > maxAbs) maxAbs = Math.abs(y);
+        }
+        const pts = raw.map((y, i) => [(i / n) * w, h / 2 - (y / maxAbs) * amp]);
+        strokeWave(ctx, pts, "#334155");
+    }
+
+    // -- pannello 2: particelle d'aria, densità = volume, spaziatura = altezza --
+    {
+        const { ctx, w, h } = fitCanvas(recapParticlesCanvas);
+        ctx.clearRect(0, 0, w, h);
+        const f = Number(recapPitchSlider.value);
+        const ampFrac = Number(recapLoudnessSlider.value) / 100;
+        const waveSpeed = 26000; // px/s scalati per rendere visibile lo spostamento anche ad alte frequenze
+        const fVisual = 0.4 + (f - 110) / (1568 - 110) * 2.6; // rimappa la frequenza reale in un range visibile
+        const wavelength = waveSpeed / (f); // usa f reale per la spaziatura: più acuto = bande più strette
+        const k = (2 * Math.PI) / Math.max(18, wavelength);
+        const omega = 2 * Math.PI * fVisual;
+
+        const rows = 5, cols = 30;
+        const marginX = 20, marginY = 16;
+        const spacingX = (w - marginX * 2) / (cols - 1);
+        const spacingY = (h - marginY * 2) / (rows - 1);
+        const dispAmp = spacingX * 0.85 * Math.max(0.08, ampFrac);
+        for (let r = 0; r < rows; r++) {
+            const y = marginY + r * spacingY;
+            for (let c = 0; c < cols; c++) {
+                const x0 = marginX + c * spacingX;
+                const phase = k * x0 - omega * recapClock.t;
+                const dx = dispAmp * Math.sin(phase);
+                const density = 0.5 + 0.5 * Math.cos(phase);
+                const radius = 2.2 + density * 2.2;
+                ctx.beginPath();
+                ctx.arc(x0 + dx, y, radius, 0, Math.PI * 2);
+                ctx.fillStyle = "rgba(51, 65, 85, " + (0.3 + density * 0.55) + ")";
+                ctx.fill();
+            }
+        }
+    }
+}
+
+/* =========================================================
+   7) BATTIMENTI E CONSONANZA
+========================================================= */
+const beatsSlider = document.getElementById("beatsSlider");
+const beatsReadout = document.getElementById("beatsReadout");
+const beatsHint = document.getElementById("beatsHint");
+const beatsCanvas = document.getElementById("beatsCanvas");
+const beatsPlay = document.getElementById("beatsPlay");
+const BEATS_F1 = 220;
+
+const beatsVoice = { oscA: null, gainA: null, oscB: null, gainB: null, playing: false };
+
+const knownRatios = [
+    { name: "Unisono", num: 1, den: 1 },
+    { name: "Semitono", num: 16, den: 15 },
+    { name: "Seconda maggiore", num: 9, den: 8 },
+    { name: "Terza minore", num: 6, den: 5 },
+    { name: "Terza maggiore", num: 5, den: 4 },
+    { name: "Quarta giusta", num: 4, den: 3 },
+    { name: "Quinta giusta", num: 3, den: 2 },
+    { name: "Sesta minore", num: 8, den: 5 },
+    { name: "Sesta maggiore", num: 5, den: 3 },
+    { name: "Settima maggiore", num: 15, den: 8 },
+    { name: "Ottava", num: 2, den: 1 }
+];
+
+function classifyInterval(ratio) {
+    let best = knownRatios[0], bestDiff = Infinity;
+    knownRatios.forEach(r => {
+        const diff = Math.abs(ratio - r.num / r.den);
+        if (diff < bestDiff) { bestDiff = diff; best = r; }
+    });
+    return { best, diff: bestDiff };
+}
+
+function updateBeatsUI() {
+    const f2 = Number(beatsSlider.value);
+    const ratio = f2 / BEATS_F1;
+    const beatFreq = Math.abs(f2 - BEATS_F1);
+    const { best, diff } = classifyInterval(ratio);
+    beatsReadout.textContent = f2.toFixed(1) + " Hz";
+    if (diff < 0.008) {
+        beatsHint.innerHTML = "Rapporto " + best.num + ":" + best.den + " — <span class=\"tag-consonant\">" + best.name + ", molto consonante</span>";
+    } else if (beatFreq < 12) {
+        beatsHint.innerHTML = "<span class=\"tag-beat\">Battimento lento</span>: circa " + beatFreq.toFixed(1) + " pulsazioni al secondo";
+    } else {
+        beatsHint.innerHTML = "<span class=\"tag-rough\">Dissonanza</span>: battimento troppo veloce per essere sentito come pulsazione — il suono diventa ruvido";
+    }
+    if (beatsVoice.playing) {
+        beatsVoice.oscB.frequency.setTargetAtTime(f2, audioCtx.currentTime, 0.01);
+    }
+}
+beatsSlider.addEventListener("input", updateBeatsUI);
+
+document.querySelectorAll("[data-beats-ratio]").forEach(btn => {
+    btn.addEventListener("click", () => {
+        const ratio = Number(btn.dataset.beatsRatio);
+        beatsSlider.value = Math.min(Number(beatsSlider.max), BEATS_F1 * ratio).toFixed(1);
+        updateBeatsUI();
+    });
+});
+
+function playBeats() {
+    stopAllTones(true);
+    const ctx = ensureAudio();
+    const oscA = ctx.createOscillator(), gainA = ctx.createGain();
+    const oscB = ctx.createOscillator(), gainB = ctx.createGain();
+    oscA.type = "sine"; oscA.frequency.value = BEATS_F1;
+    oscB.type = "sine"; oscB.frequency.value = Number(beatsSlider.value);
+    gainA.gain.value = 0; gainB.gain.value = 0;
+    oscA.connect(gainA).connect(masterGain);
+    oscB.connect(gainB).connect(masterGain);
+    oscA.start(); oscB.start();
+    gainA.gain.linearRampToValueAtTime(0.15, ctx.currentTime + 0.05);
+    gainB.gain.linearRampToValueAtTime(0.15, ctx.currentTime + 0.05);
+    beatsVoice.oscA = oscA; beatsVoice.gainA = gainA;
+    beatsVoice.oscB = oscB; beatsVoice.gainB = gainB;
+    beatsVoice.playing = true;
+}
+
+function stopBeatsAudio(instant) {
+    if (beatsVoice.playing) {
+        try {
+            const ctx = audioCtx, t = ctx.currentTime;
+            [beatsVoice.gainA, beatsVoice.gainB].forEach(g => {
+                g.gain.cancelScheduledValues(t);
+                g.gain.setValueAtTime(g.gain.value, t);
+                g.gain.linearRampToValueAtTime(0, t + (instant ? 0.015 : 0.05));
+            });
+            const oa = beatsVoice.oscA, ob = beatsVoice.oscB, ga = beatsVoice.gainA, gb = beatsVoice.gainB;
+            setTimeout(() => { try { oa.stop(); oa.disconnect(); ga.disconnect(); ob.stop(); ob.disconnect(); gb.disconnect(); } catch (e) {} }, instant ? 30 : 80);
+        } catch (e) {}
+    }
+    beatsVoice.oscA = null; beatsVoice.gainA = null;
+    beatsVoice.oscB = null; beatsVoice.gainB = null;
+    beatsVoice.playing = false;
+}
+registerStopFn(stopBeatsAudio);
+
+beatsPlay.addEventListener("click", () => {
+    if (beatsVoice.playing) { stopAllTones(); setPlayButtonState(beatsPlay, false, "Ascolta", "Stop"); }
+    else { playBeats(); setPlayButtonState(beatsPlay, true, "Ascolta", "Stop"); }
+});
+
+function drawBeats(now) {
+    const { ctx, w, h } = fitCanvas(beatsCanvas);
+    ctx.clearRect(0, 0, w, h);
+    drawGrid(ctx, w, h);
+    const f2 = Number(beatsSlider.value);
+    const windowSec = 0.9;
+    const n = 700;
+    const pts = [];
+    let maxAbs = 0.0001;
+    const raw = [];
+    for (let i = 0; i <= n; i++) {
+        const time = (i / n) * windowSec;
+        const y = Math.sin(2 * Math.PI * BEATS_F1 * time) + Math.sin(2 * Math.PI * f2 * time);
+        raw.push(y);
+        if (Math.abs(y) > maxAbs) maxAbs = Math.abs(y);
+    }
+    const amp = h * 0.4;
+    raw.forEach((y, i) => pts.push([(i / n) * w, h / 2 - (y / maxAbs) * amp]));
+    strokeWave(ctx, pts, "#047857");
+}
+
+/* =========================================================
+   8) INVILUPPO ADSR
+========================================================= */
+const adsrAttackSlider = document.getElementById("adsrAttack");
+const adsrDecaySlider = document.getElementById("adsrDecay");
+const adsrSustainSlider = document.getElementById("adsrSustain");
+const adsrReleaseSlider = document.getElementById("adsrRelease");
+const adsrAttackReadout = document.getElementById("adsrAttackReadout");
+const adsrDecayReadout = document.getElementById("adsrDecayReadout");
+const adsrSustainReadout = document.getElementById("adsrSustainReadout");
+const adsrReleaseReadout = document.getElementById("adsrReleaseReadout");
+const adsrCanvas = document.getElementById("adsrCanvas");
+const adsrTrigger = document.getElementById("adsrTrigger");
+const adsrPhaseLabel = document.getElementById("adsrPhaseLabel");
+
+let adsrOsc = null, adsrGainNode = null;
+let adsrVoiceNodes = [];
+let adsrTimbre = "pizzicato";
+let adsrPhase = "idle";
+let adsrPhaseStartMs = 0;
+let adsrTimers = [];
+
+function getAdsrParams() {
+    return {
+        A: Number(adsrAttackSlider.value) / 1000,
+        D: Number(adsrDecaySlider.value) / 1000,
+        S: Number(adsrSustainSlider.value) / 100,
+        R: Number(adsrReleaseSlider.value) / 1000
+    };
+}
+
+function updateAdsrReadouts() {
+    adsrAttackReadout.textContent = adsrAttackSlider.value + " ms";
+    adsrDecayReadout.textContent = adsrDecaySlider.value + " ms";
+    adsrSustainReadout.textContent = adsrSustainSlider.value + "%";
+    adsrReleaseReadout.textContent = adsrReleaseSlider.value + " ms";
+}
+[adsrAttackSlider, adsrDecaySlider, adsrSustainSlider, adsrReleaseSlider].forEach(s => s.addEventListener("input", updateAdsrReadouts));
+
+const adsrPhaseNames = { idle: "inattivo — tieni premuto il pulsante", attack: "attacco", decay: "decadimento", sustain: "sostegno (tieni premuto)", release: "rilascio" };
+function updateAdsrPhaseLabel() {
+    adsrPhaseLabel.textContent = "Fase: " + adsrPhaseNames[adsrPhase];
+}
+
+function clearAdsrTimers() { adsrTimers.forEach(id => clearTimeout(id)); adsrTimers = []; }
+
+// Crea la "voce" sonora per il timbro scelto: un nodo di uscita già collegato
+// alla sorgente giusta (oscillatore semplice, onda additiva d'organo, sega con
+// vibrato per gli archi, o rumore filtrato per la percussione). L'inviluppo
+// ADSR viene applicato sempre dopo, allo stesso modo, sul gainNode esterno.
+function createAdsrVoice(ctx, timbre) {
+    const output = ctx.createGain();
+    output.gain.value = 1;
+    const nodes = [];
+    if (timbre === "organo") {
+        // organo elettromeccanico: molte armoniche quasi tutte presenti
+        const real = new Float32Array(9);
+        const imag = new Float32Array(9);
+        [1, 0.65, 0.55, 0.4, 0.3, 0.22, 0.16, 0.1].forEach((v, i) => { imag[i + 1] = v; });
+        const wave = ctx.createPeriodicWave(real, imag, { disableNormalization: false });
+        const osc = ctx.createOscillator();
+        osc.setPeriodicWave(wave);
+        osc.frequency.value = 330;
+        osc.connect(output);
+        osc.start();
+        nodes.push(osc);
+    } else if (timbre === "archi") {
+        // archi: onda a dente di sega (ricca di armoniche) con un leggero vibrato
+        const osc = ctx.createOscillator();
+        osc.type = "sawtooth";
+        osc.frequency.value = 330;
+        const lfo = ctx.createOscillator();
+        lfo.type = "sine";
+        lfo.frequency.value = 5.4;
+        const lfoGain = ctx.createGain();
+        lfoGain.gain.value = 2.6;
+        lfo.connect(lfoGain).connect(osc.frequency);
+        const lowpass = ctx.createBiquadFilter();
+        lowpass.type = "lowpass";
+        lowpass.frequency.value = 2600;
+        osc.connect(lowpass).connect(output);
+        osc.start(); lfo.start();
+        nodes.push(osc, lfo);
+    } else if (timbre === "percussione") {
+        // percussione: rumore filtrato, nessuna intonazione precisa
+        const dur = 1.6;
+        const buffer = ctx.createBuffer(1, Math.floor(ctx.sampleRate * dur), ctx.sampleRate);
+        const data = buffer.getChannelData(0);
+        for (let i = 0; i < data.length; i++) data[i] = Math.random() * 2 - 1;
+        const src = ctx.createBufferSource();
+        src.buffer = buffer;
+        src.loop = true;
+        const bandpass = ctx.createBiquadFilter();
+        bandpass.type = "bandpass";
+        bandpass.frequency.value = 200;
+        bandpass.Q.value = 0.8;
+        src.connect(bandpass).connect(output);
+        src.start();
+        nodes.push(src);
+    } else {
+        // pizzicato / predefinito: tono semplice e secco
+        const osc = ctx.createOscillator();
+        osc.type = "sine";
+        osc.frequency.value = 440;
+        osc.connect(output);
+        osc.start();
+        nodes.push(osc);
+    }
+    return { output, nodes };
+}
+
+function stopAdsrVoiceNodes(nodes, instant) {
+    nodes.forEach(n => { try { n.stop(); n.disconnect(); } catch (e) {} });
+}
+
+function adsrNoteOn() {
+    stopAllTones(true);
+    const ctx = ensureAudio();
+    const { A, D, S } = getAdsrParams();
+    const voice = createAdsrVoice(ctx, adsrTimbre);
+    const gain = ctx.createGain(); gain.gain.value = 0;
+    voice.output.connect(gain).connect(masterGain);
+    const t0 = ctx.currentTime;
+    const aTime = Math.max(0.005, A), dTime = Math.max(0.005, D);
+    gain.gain.linearRampToValueAtTime(0.3, t0 + aTime);
+    gain.gain.linearRampToValueAtTime(0.3 * S, t0 + aTime + dTime);
+    adsrGainNode = gain;
+    adsrVoiceNodes = voice.nodes;
+    adsrOsc = voice.output; // usato solo come "flag" di presenza voce attiva
+    adsrPhase = "attack"; adsrPhaseStartMs = performance.now();
+    updateAdsrPhaseLabel();
+    adsrTimers.push(setTimeout(() => { adsrPhase = "decay"; adsrPhaseStartMs = performance.now(); updateAdsrPhaseLabel(); }, aTime * 1000));
+    adsrTimers.push(setTimeout(() => { adsrPhase = "sustain"; adsrPhaseStartMs = performance.now(); updateAdsrPhaseLabel(); }, (aTime + dTime) * 1000));
+    adsrTrigger.classList.add("playing");
+}
+
+function adsrNoteOff() {
+    if (!adsrOsc) return;
+    clearAdsrTimers();
+    const ctx = audioCtx;
+    const { R } = getAdsrParams();
+    const rTime = Math.max(0.02, R);
+    const t0 = ctx.currentTime;
+    const currentVal = adsrGainNode.gain.value;
+    adsrGainNode.gain.cancelScheduledValues(t0);
+    adsrGainNode.gain.setValueAtTime(currentVal, t0);
+    adsrGainNode.gain.linearRampToValueAtTime(0, t0 + rTime);
+    adsrPhase = "release"; adsrPhaseStartMs = performance.now();
+    updateAdsrPhaseLabel();
+    const g = adsrGainNode, nodesToStop = adsrVoiceNodes;
+    adsrTimers.push(setTimeout(() => {
+        try { g.disconnect(); } catch (e) {}
+        stopAdsrVoiceNodes(nodesToStop);
+        adsrOsc = null; adsrGainNode = null; adsrVoiceNodes = []; adsrPhase = "idle"; updateAdsrPhaseLabel();
+    }, rTime * 1000 + 60));
+    adsrTrigger.classList.remove("playing");
+}
+
+function stopAdsrAudio(instant) {
+    clearAdsrTimers();
+    if (adsrOsc) {
+        try {
+            const ctx = audioCtx, t = ctx.currentTime;
+            adsrGainNode.gain.cancelScheduledValues(t);
+            adsrGainNode.gain.setValueAtTime(adsrGainNode.gain.value, t);
+            adsrGainNode.gain.linearRampToValueAtTime(0, t + (instant ? 0.015 : 0.03));
+            const g = adsrGainNode, nodesToStop = adsrVoiceNodes;
+            setTimeout(() => { try { g.disconnect(); } catch (e) {} stopAdsrVoiceNodes(nodesToStop); }, instant ? 30 : 60);
+        } catch (e) {}
+    }
+    adsrOsc = null; adsrGainNode = null; adsrVoiceNodes = [];
+    adsrPhase = "idle";
+    adsrTrigger.classList.remove("playing");
+    updateAdsrPhaseLabel();
+}
+registerStopFn(stopAdsrAudio);
+
+// Organo e archi hanno un vero sostegno da "sentire": si suonano tenendo
+// premuto. Pizzicato e percussione non hanno sostegno significativo: basta
+// un clic, la nota si spegne da sola dopo attacco+decadimento.
+function isAdsrHoldTimbre() { return adsrTimbre === "organo" || adsrTimbre === "archi"; }
+
+const adsrTriggerLabel = adsrTrigger.querySelector("span");
+function updateAdsrTriggerLabel() {
+    adsrTriggerLabel.textContent = isAdsrHoldTimbre() ? "Tieni premuto per suonare" : "Clicca per suonare";
+}
+
+function adsrPointerDown(e) {
+    e.preventDefault();
+    adsrNoteOn();
+    if (!isAdsrHoldTimbre()) {
+        const { A, D } = getAdsrParams();
+        const holdMs = Math.max(60, (A + D) * 1000) + 20;
+        adsrTimers.push(setTimeout(() => adsrNoteOff(), holdMs));
+    }
+}
+function adsrPointerUp() {
+    if (isAdsrHoldTimbre()) adsrNoteOff();
+}
+
+["mousedown", "touchstart"].forEach(evt => adsrTrigger.addEventListener(evt, adsrPointerDown));
+["mouseup", "mouseleave", "touchend", "touchcancel"].forEach(evt => adsrTrigger.addEventListener(evt, adsrPointerUp));
+
+document.querySelectorAll("[data-adsr-preset]").forEach(btn => {
+    btn.addEventListener("click", () => {
+        const p = btn.dataset.adsrPreset;
+        const presets = {
+            pizzicato: { adsr: [5, 80, 20, 80], timbre: "pizzicato" },
+            organo: { adsr: [200, 50, 90, 250], timbre: "organo" },
+            percussione: { adsr: [2, 250, 0, 100], timbre: "percussione" },
+            archi: { adsr: [300, 100, 80, 400], timbre: "archi" }
+        };
+        const cfg = presets[p];
+        const [a, d, s, r] = cfg.adsr;
+        adsrAttackSlider.value = a; adsrDecaySlider.value = d; adsrSustainSlider.value = s; adsrReleaseSlider.value = r;
+        updateAdsrReadouts();
+        adsrTimbre = cfg.timbre;
+        updateAdsrTriggerLabel();
+    });
+});
+
+function drawAdsr(now) {
+    const { ctx, w, h } = fitCanvas(adsrCanvas);
+    ctx.clearRect(0, 0, w, h);
+    drawGrid(ctx, w, h);
+    const { A, D, S, R } = getAdsrParams();
+    const nominalSustain = 0.6;
+    const total = A + D + nominalSustain + R || 1;
+    const xA = (A / total) * w;
+    const xD = xA + (D / total) * w;
+    const xS = xD + (nominalSustain / total) * w;
+    const xR = w;
+    const yTop = h * 0.14, yBase = h * 0.72;
+    const ySustain = yBase - (yBase - yTop) * S;
+
+    ctx.strokeStyle = "#9f1239"; ctx.lineWidth = 2.5; ctx.lineJoin = "round"; ctx.lineCap = "round";
+    ctx.beginPath();
+    ctx.moveTo(0, yBase);
+    ctx.lineTo(xA, yTop);
+    ctx.lineTo(xD, ySustain);
+    ctx.lineTo(xS, ySustain);
+    ctx.lineTo(xR, yBase);
+    ctx.stroke();
+    ctx.lineTo(0, yBase);
+    ctx.closePath();
+    ctx.fillStyle = "rgba(159,18,57,0.08)";
+    ctx.fill();
+
+    ctx.fillStyle = "rgba(15,23,42,0.55)";
+    ctx.font = "11px Inter, Arial, sans-serif";
+    ctx.textAlign = "center";
+    ctx.fillText("Attacco", Math.max(24, xA / 2), h - 8);
+    ctx.fillText("Decad.", (xA + xD) / 2, h - 8);
+    ctx.fillText("Sostegno", (xD + xS) / 2, h - 8);
+    ctx.fillText("Rilascio", (xS + xR) / 2, h - 8);
+
+    if (adsrPhase !== "idle") {
+        const elapsed = (performance.now() - adsrPhaseStartMs) / 1000;
+        let px = 0, py = yBase;
+        if (adsrPhase === "attack") { const frac = Math.min(1, elapsed / Math.max(0.005, A)); px = frac * xA; py = yBase + (yTop - yBase) * frac; }
+        else if (adsrPhase === "decay") { const frac = Math.min(1, elapsed / Math.max(0.005, D)); px = xA + frac * (xD - xA); py = yTop + (ySustain - yTop) * frac; }
+        else if (adsrPhase === "sustain") { px = (xD + xS) / 2; py = ySustain; }
+        else if (adsrPhase === "release") { const frac = Math.min(1, elapsed / Math.max(0.02, R)); px = xS + frac * (xR - xS); py = ySustain + (yBase - ySustain) * frac; }
+        ctx.beginPath(); ctx.arc(px, py, 5, 0, Math.PI * 2);
+        ctx.fillStyle = "#9f1239"; ctx.fill();
+        ctx.strokeStyle = "white"; ctx.lineWidth = 1.5; ctx.stroke();
+    }
+}
+
+/* =========================================================
+   9) RIVERBERO ED ECO
+========================================================= */
+const reverbMixSlider = document.getElementById("reverbMixSlider");
+const reverbMixReadout = document.getElementById("reverbMixReadout");
+const reverbDelaySlider = document.getElementById("reverbDelaySlider");
+const reverbDelayReadout = document.getElementById("reverbDelayReadout");
+const reverbFeedbackSlider = document.getElementById("reverbFeedbackSlider");
+const reverbFeedbackReadout = document.getElementById("reverbFeedbackReadout");
+const reverbSizeSlider = document.getElementById("reverbSizeSlider");
+const reverbSizeReadout = document.getElementById("reverbSizeReadout");
+const reverbCanvas = document.getElementById("reverbCanvas");
+const reverbTrigger = document.getElementById("reverbTrigger");
+const echoControls = document.getElementById("echoControls");
+const hallControls = document.getElementById("hallControls");
+
+let currentReverbMode = "echo";
+let reverbNodes = null;
+let reverbActiveNote = null;
+
+function makeImpulseResponse(ctx, seconds, decay) {
+    const rate = ctx.sampleRate;
+    const length = Math.max(1, Math.floor(rate * seconds));
+    const impulse = ctx.createBuffer(2, length, rate);
+    for (let ch = 0; ch < 2; ch++) {
+        const data = impulse.getChannelData(ch);
+        let prev = 0;
+        for (let i = 0; i < length; i++) {
+            const white = Math.random() * 2 - 1;
+            prev = prev * 0.72 + white * 0.28; // leggero filtro passa-basso: coda più morbida, meno "fruscio"
+            data[i] = prev * Math.pow(1 - i / length, decay);
+        }
+    }
+    return impulse;
+}
+
+function ensureReverbNodes() {
+    const ctx = ensureAudio();
+    if (!reverbNodes) {
+        const convolver = ctx.createConvolver();
+        const delay = ctx.createDelay(2.0);
+        const feedback = ctx.createGain();
+        const wetGain = ctx.createGain();
+        const dryGain = ctx.createGain();
+        delay.connect(feedback); feedback.connect(delay);
+        convolver.connect(wetGain);
+        delay.connect(wetGain);
+        wetGain.connect(masterGain);
+        dryGain.connect(masterGain);
+        reverbNodes = { convolver, delay, feedback, wetGain, dryGain };
+        reverbNodes.convolver.buffer = makeImpulseResponse(ctx, Number(reverbSizeSlider.value), 2.5);
+    }
+    return reverbNodes;
+}
+
+document.querySelectorAll("[data-reverb-mode]").forEach(btn => {
+    btn.addEventListener("click", () => {
+        currentReverbMode = btn.dataset.reverbMode;
+        document.querySelectorAll("[data-reverb-mode]").forEach(b => b.classList.remove("active"));
+        btn.classList.add("active");
+        echoControls.classList.toggle("active", currentReverbMode === "echo");
+        hallControls.classList.toggle("active", currentReverbMode === "hall");
+    });
+});
+
+function updateReverbUI() {
+    reverbMixReadout.textContent = reverbMixSlider.value + "%";
+    reverbDelayReadout.textContent = reverbDelaySlider.value + " ms";
+    reverbFeedbackReadout.textContent = reverbFeedbackSlider.value + "%";
+    reverbSizeReadout.textContent = Number(reverbSizeSlider.value).toFixed(1) + " s";
+}
+[reverbMixSlider, reverbDelaySlider, reverbFeedbackSlider, reverbSizeSlider].forEach(s => s.addEventListener("input", updateReverbUI));
+
+// Ferma subito ogni nota di prova ancora in corso, invece di lasciarla
+// spegnersi da sola: altrimenti, cliccando due volte di seguito in fretta,
+// la nota vecchia e quella nuova restano entrambe attive e si accavallano.
+function stopReverbNoteImmediate() {
+    if (reverbActiveNote) {
+        const { osc1, osc2, noteGain, g2 } = reverbActiveNote;
+        try { osc1.stop(); } catch (e) {}
+        try { osc2.stop(); } catch (e) {}
+        try { osc1.disconnect(); osc2.disconnect(); noteGain.disconnect(); g2.disconnect(); } catch (e) {}
+        reverbActiveNote = null;
+    }
+}
+
+function playReverbImpulseSound() {
+    stopAllTones(true);
+    stopReverbNoteImmediate();
+    const ctx = ensureAudio();
+    const nodes = ensureReverbNodes();
+    const now = ctx.currentTime;
+    const mix = Number(reverbMixSlider.value) / 100;
+
+    // annulla qualunque automazione residua (es. la dissolvenza a 0 lasciata
+    // da uno stop precedente) prima di fissare i nuovi valori: altrimenti le
+    // due rampe si sovrappongono e producono scatti/silenzi imprevedibili.
+    nodes.wetGain.gain.cancelScheduledValues(now);
+    nodes.wetGain.gain.setValueAtTime(mix, now);
+    nodes.dryGain.gain.cancelScheduledValues(now);
+    nodes.dryGain.gain.setValueAtTime(1 - mix, now);
+    nodes.feedback.gain.cancelScheduledValues(now);
+
+    if (currentReverbMode === "echo") {
+        nodes.delay.delayTime.value = Number(reverbDelaySlider.value) / 1000;
+        nodes.feedback.gain.setValueAtTime(Math.min(0.85, Number(reverbFeedbackSlider.value) / 100), now);
+    } else {
+        nodes.feedback.gain.setValueAtTime(0, now);
+        nodes.convolver.buffer = makeImpulseResponse(ctx, Number(reverbSizeSlider.value), 2.5);
+    }
+
+    // suono di prova: un colpetto "a campana" (fondamentale + un parziale
+    // acuto che si spegne prima, come nelle vere campane) che si esaurisce
+    // da solo in mezzo secondo, lasciando emergere bene la coda di eco/riverbero.
+    const t0 = now;
+    const noteGain = ctx.createGain();
+    noteGain.gain.value = 0;
+    const osc1 = ctx.createOscillator(); osc1.type = "sine"; osc1.frequency.value = 523.25; // Do5
+    const osc2 = ctx.createOscillator(); osc2.type = "sine"; osc2.frequency.value = 523.25 * 3.005; // parziale inarmonico, tipico timbro di campana
+    const g2 = ctx.createGain(); g2.gain.value = 0.28;
+    osc1.connect(noteGain);
+    osc2.connect(g2).connect(noteGain);
+    noteGain.connect(nodes.dryGain);
+    if (currentReverbMode === "echo") noteGain.connect(nodes.delay); else noteGain.connect(nodes.convolver);
+    noteGain.gain.linearRampToValueAtTime(0.5, t0 + 0.008);
+    noteGain.gain.exponentialRampToValueAtTime(0.001, t0 + 0.55);
+    g2.gain.setValueAtTime(0.28, t0);
+    g2.gain.exponentialRampToValueAtTime(0.0005, t0 + 0.22);
+    osc1.start(t0); osc2.start(t0);
+    osc1.stop(t0 + 0.6); osc2.stop(t0 + 0.6);
+
+    reverbActiveNote = { osc1, osc2, noteGain, g2 };
+    const noteRef = reverbActiveNote;
+    setTimeout(() => {
+        try { noteGain.disconnect(); g2.disconnect(); } catch (e) {}
+        if (reverbActiveNote === noteRef) reverbActiveNote = null;
+    }, 650);
+
+    reverbTrigger.classList.add("playing");
+    setTimeout(() => reverbTrigger.classList.remove("playing"), 250);
+}
+
+function stopReverbAudio(instant) {
+    stopReverbNoteImmediate();
+    if (!reverbNodes) return;
+    try {
+        const ctx = audioCtx, t = ctx.currentTime;
+        [reverbNodes.wetGain, reverbNodes.dryGain].forEach(g => {
+            g.gain.cancelScheduledValues(t);
+            g.gain.setValueAtTime(g.gain.value, t);
+            g.gain.linearRampToValueAtTime(0, t + (instant ? 0.02 : 0.05));
+        });
+        reverbNodes.feedback.gain.cancelScheduledValues(t);
+        reverbNodes.feedback.gain.setValueAtTime(0, t);
+    } catch (e) {}
+}
+registerStopFn(stopReverbAudio);
+
+reverbTrigger.addEventListener("click", playReverbImpulseSound);
+
+function drawReverb(now) {
+    const { ctx, w, h } = fitCanvas(reverbCanvas);
+    ctx.clearRect(0, 0, w, h);
+    drawGrid(ctx, w, h);
+    const mix = Number(reverbMixSlider.value) / 100;
+    if (currentReverbMode === "echo") {
+        const delayMs = Number(reverbDelaySlider.value);
+        const fb = Math.min(0.85, Number(reverbFeedbackSlider.value) / 100);
+        const windowMs = 2400;
+        const baseX = 14, rightX = w - 14;
+        ctx.fillStyle = "#5b21b6";
+        let amp = 1, ms = 0, k = 0;
+        while (ms <= windowMs && amp > 0.03 && k < 40) {
+            const x = baseX + (ms / windowMs) * (rightX - baseX);
+            const barH = h * 0.52 * amp * Math.max(0.15, mix);
+            ctx.fillRect(x - 3, h * 0.7 - barH, 6, barH);
+            amp *= fb; ms += delayMs; k++;
+        }
+    } else {
+        const seconds = Math.max(0.3, Number(reverbSizeSlider.value));
+        const windowSec = 3.2;
+        const n = 200;
+        const tau = seconds / 2.2;
+        const pts = [];
+        for (let i = 0; i <= n; i++) {
+            const t = (i / n) * windowSec;
+            const env = Math.exp(-t / tau) * Math.max(0.1, mix);
+            pts.push([14 + (i / n) * (w - 28), h * 0.7 - env * h * 0.52]);
+        }
+        strokeWave(ctx, pts, "#5b21b6");
+    }
+}
+
+/* =========================================================
+   10) EFFETTO DOPPLER
+========================================================= */
+const dopplerSpeedSlider = document.getElementById("dopplerSpeedSlider");
+const dopplerSpeedReadout = document.getElementById("dopplerSpeedReadout");
+const dopplerFreqSlider = document.getElementById("dopplerFreqSlider");
+const dopplerFreqReadout = document.getElementById("dopplerFreqReadout");
+const dopplerCanvas = document.getElementById("dopplerCanvas");
+const dopplerPlay = document.getElementById("dopplerPlay");
+const dopplerStateLabel = document.getElementById("dopplerStateLabel");
+const dopplerFreqPerceived = document.getElementById("dopplerFreqPerceived");
+
+let dopplerOsc = null, dopplerGain = null, dopplerPlaying = false;
+let dopplerPrevDist = null, dopplerSmoothedVRadial = 0;
+let dopplerWavefronts = [];
+let dopplerLastEmit = 0;
+const dopplerClock = { t: 0, last: null };
+const DOPPLER_VSOUND_PX = 260;      // "velocità del suono" visiva, fissa
+const DOPPLER_SPEED_FACTOR = 1.2;   // converte km/h dello slider in px/s, restando sempre sotto DOPPLER_VSOUND_PX
+const DOPPLER_EMIT_INTERVAL = 0.32; // secondi tra un fronte d'onda disegnato e il successivo
+
+function updateDopplerSliderUI() {
+    dopplerSpeedReadout.textContent = dopplerSpeedSlider.value + " km/h";
+    dopplerFreqReadout.textContent = dopplerFreqSlider.value + " Hz";
+    if (!dopplerPlaying) dopplerFreqPerceived.textContent = dopplerFreqSlider.value + " Hz";
+}
+dopplerSpeedSlider.addEventListener("input", updateDopplerSliderUI);
+dopplerFreqSlider.addEventListener("input", updateDopplerSliderUI);
+
+function startDoppler() {
+    stopAllTones(true);
+    const ctx = ensureAudio();
+    const osc = ctx.createOscillator(); osc.type = "sine";
+    const gain = ctx.createGain(); gain.gain.value = 0;
+    osc.frequency.value = Number(dopplerFreqSlider.value);
+    osc.connect(gain).connect(masterGain);
+    osc.start();
+    gain.gain.linearRampToValueAtTime(0.22, ctx.currentTime + 0.05);
+    dopplerOsc = osc; dopplerGain = gain; dopplerPlaying = true;
+    dopplerPrevDist = null; dopplerSmoothedVRadial = 0;
+    dopplerWavefronts = []; dopplerLastEmit = 0;
+    dopplerClock.t = 0; dopplerClock.last = null;
+}
+
+function stopDopplerAudio(instant) {
+    if (dopplerOsc) {
+        try {
+            const ctx = audioCtx, t = ctx.currentTime;
+            dopplerGain.gain.cancelScheduledValues(t);
+            dopplerGain.gain.setValueAtTime(dopplerGain.gain.value, t);
+            dopplerGain.gain.linearRampToValueAtTime(0, t + (instant ? 0.02 : 0.05));
+            const o = dopplerOsc, g = dopplerGain;
+            setTimeout(() => { try { o.stop(); o.disconnect(); g.disconnect(); } catch (e) {} }, instant ? 30 : 80);
+        } catch (e) {}
+    }
+    dopplerOsc = null; dopplerGain = null; dopplerPlaying = false;
+    dopplerWavefronts = [];
+    dopplerStateLabel.textContent = "Premi Avvia per mettere in moto la sorgente";
+}
+registerStopFn(stopDopplerAudio);
+
+dopplerPlay.addEventListener("click", () => {
+    if (dopplerPlaying) { stopAllTones(); setPlayButtonState(dopplerPlay, false, "Avvia", "Ferma"); }
+    else { startDoppler(); setPlayButtonState(dopplerPlay, true, "Avvia", "Ferma"); }
+});
+
+function drawDoppler(now) {
+    const { ctx, w, h } = fitCanvas(dopplerCanvas);
+    ctx.clearRect(0, 0, w, h);
+
+    const roadY = h * 0.4, observerX = w / 2, observerY = h * 0.86;
+
+    if (dopplerClock.last == null) dopplerClock.last = now;
+    const dt = Math.min(0.05, (now - dopplerClock.last) / 1000);
+    dopplerClock.last = now;
+
+    let carX;
+    if (dopplerPlaying) {
+        dopplerClock.t += dt;
+        const speedKmh = Number(dopplerSpeedSlider.value);
+        const pxPerSec = speedKmh * DOPPLER_SPEED_FACTOR;
+        carX = -80 + (dopplerClock.t * pxPerSec) % (w + 160);
+
+        // emette un nuovo fronte d'onda (cerchio) a intervalli regolari,
+        // dalla posizione attuale della sorgente
+        if (dopplerClock.t - dopplerLastEmit >= DOPPLER_EMIT_INTERVAL) {
+            dopplerWavefronts.push({ x: carX, y: roadY, t0: dopplerClock.t });
+            dopplerLastEmit = dopplerClock.t;
+        }
+
+        const dx = observerX - carX, dy = observerY - roadY;
+        const dist = Math.sqrt(dx * dx + dy * dy);
+        if (dopplerPrevDist == null) dopplerPrevDist = dist;
+        const drdt = dt > 0 ? (dist - dopplerPrevDist) / dt : 0;
+        dopplerPrevDist = dist;
+        const vRadial = -drdt;
+        dopplerSmoothedVRadial += (vRadial - dopplerSmoothedVRadial) * 0.15;
+        const fSource = Number(dopplerFreqSlider.value);
+        const clampedV = Math.max(-DOPPLER_VSOUND_PX * 0.9, Math.min(DOPPLER_VSOUND_PX * 0.9, dopplerSmoothedVRadial));
+        const fObs = fSource * DOPPLER_VSOUND_PX / (DOPPLER_VSOUND_PX - clampedV);
+
+        dopplerFreqPerceived.textContent = Math.round(fObs) + " Hz";
+        dopplerStateLabel.textContent = clampedV > 8 ? "In avvicinamento — il suono sale di tono" : clampedV < -8 ? "In allontanamento — il suono scende di tono" : "Nel punto più vicino";
+        if (dopplerOsc) dopplerOsc.frequency.setTargetAtTime(fObs, audioCtx.currentTime, 0.05);
+    } else {
+        carX = w * 0.18;
+    }
+
+    // disegna i fronti d'onda: cerchi che si espandono a velocità costante,
+    // sfumando man mano che si allontanano dal punto in cui sono nati
+    const maxRadius = Math.max(w, h) * 0.85;
+    dopplerWavefronts = dopplerWavefronts.filter(wf => (dopplerClock.t - wf.t0) * DOPPLER_VSOUND_PX < maxRadius);
+    ctx.lineWidth = 1.6;
+    dopplerWavefronts.forEach(wf => {
+        const radius = (dopplerClock.t - wf.t0) * DOPPLER_VSOUND_PX;
+        const alpha = Math.max(0, 1 - radius / maxRadius);
+        ctx.strokeStyle = "rgba(194, 65, 12, " + (alpha * 0.55) + ")";
+        ctx.beginPath();
+        ctx.arc(wf.x, wf.y, radius, 0, Math.PI * 2);
+        ctx.stroke();
+    });
+
+    // strada
+    ctx.strokeStyle = "rgba(15,23,42,0.25)";
+    ctx.lineWidth = 2;
+    ctx.setLineDash([8, 8]);
+    ctx.beginPath(); ctx.moveTo(0, roadY); ctx.lineTo(w, roadY); ctx.stroke();
+    ctx.setLineDash([]);
+
+    // osservatore
+    ctx.font = "26px serif";
+    ctx.textAlign = "center";
+    ctx.textBaseline = "middle";
+    ctx.fillText("🧑", observerX, observerY);
+
+    // sorgente
+    ctx.font = "30px serif";
+    ctx.fillText("🚑", carX, roadY - 4);
+}
+
+/* =========================================================
+   CICLO DI RENDER UNICO
+========================================================= */
+function render(now) {
+    const t = now / 1000;
+    globalPhase = t;
+    switch (activeScreen) {
+        case "pitch": drawPitch(t); break;
+        case "loudness": drawLoudness(t); break;
+        case "timbre": drawTimbre(t); break;
+        case "harmonics": drawHarmonics(t); break;
+        case "waves": drawWaves(now); break;
+        case "recap": drawRecap(now); break;
+        case "beats": drawBeats(now); break;
+        case "adsr": drawAdsr(now); break;
+        case "reverb": drawReverb(now); break;
+        case "doppler": drawDoppler(now); break;
+    }
+    requestAnimationFrame(render);
+}
+requestAnimationFrame(render);
+
+window.addEventListener("resize", () => { /* i canvas si ridimensionano ad ogni frame renderizzato */ });
+
+/* =========================================================
+   INIZIALIZZAZIONE VALORI VISIBILI
+========================================================= */
+updatePitchUI();
+updateLoudnessUI();
+updateWaveUI();
+updateRecapUI();
+updateRecapLoudnessUI();
+updateBeatsUI();
+updateAdsrReadouts();
+updateAdsrPhaseLabel();
+updateAdsrTriggerLabel();
+updateReverbUI();
+updateDopplerSliderUI();
+
+/* =========================================================
+   AVVIO
+========================================================= */
+showScreen("home");
+</script>
+</body>
+</html>
