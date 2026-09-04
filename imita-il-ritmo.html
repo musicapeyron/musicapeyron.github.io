@@ -339,21 +339,33 @@
   }
 
   /* TAP-PAD: bersaglio grande per il tocco, alternativa alla barra
-     spaziatrice. Nascosto su schermi larghi, dove la tastiera basta. */
+     spaziatrice. E' un figlio flessibile della riga delle battute: il
+     flexbox lo mette da solo nello spazio rimasto sull'ultima riga (a
+     destra, dopo l'ultima battuta), alto quanto le battute stesse.
+     Nascosto su schermi larghi, dove la tastiera basta. */
   #tapPad{
     display:none;
-    width:100%;
-    margin-top:16px;
-    padding:26px 20px;
-    font-size:1.1rem;
-    letter-spacing:0.5px;
-    border-radius:16px;
+    flex: 1 1 130px;
+    max-width: 240px;
+    align-self: stretch;
+    align-items:center;
+    justify-content:center;
+    text-align:center;
+    line-height:1.25;
+    padding:10px;
+    font-size:0.85rem;
+    font-weight:700;
+    letter-spacing:0.4px;
+    border-radius:14px;
+    border:none;
+    color:#fff;
     background: linear-gradient(160deg, #22c55e, #16a34a);
     -webkit-tap-highlight-color: transparent;
     user-select:none;
     touch-action: manipulation;
   }
   #tapPad:active{ transform:scale(0.97); filter:brightness(1.15); }
+  #tapPad:disabled{ opacity:0.45; filter:grayscale(0.3); }
 
   @media (max-width: 700px){
     body{ padding: 20px 12px 40px; }
@@ -371,7 +383,8 @@
     .popup-title{ font-size:1.6rem; }
     .popup-card.grand .popup-title{ font-size:1.8rem; }
     #score-wrap{ padding:14px 6px 6px; }
-    #tapPad{ display:block; }
+    #tapPad{ display:flex; }
+    #btnPlay{ display:none; } /* su mobile la sua funzione la fa il tap-pad */
   }
 </style>
 </head>
@@ -430,9 +443,7 @@
 
   <p class="status-line" id="status">Premi "Nuovo esercizio" per generare delle battute casuali.</p>
 
-  <div id="score-wrap"><div class="measure-row" id="measures"></div></div>
-
-  <button id="tapPad">TOCCA QUI A TEMPO</button>
+  <div id="score-wrap"><div class="measure-row" id="measures"><button id="tapPad" disabled>GENERA UN ESERCIZIO</button></div></div>
 
   <div class="result-panel" id="results">
     <p class="result-score" id="resultScore">—</p>
@@ -898,6 +909,11 @@ function renderScore(measures, colorMap){
     tuplets.forEach(t => t.setContext(ctx).draw());
     ties.forEach(t => t.setContext(ctx).draw());
   });
+
+  // Il tap-pad e' un figlio flessibile della riga: va riattaccato in coda
+  // ad ogni ricostruzione (innerHTML='' lo avrebbe altrimenti cancellato),
+  // cosi' il flexbox lo posiziona da solo nello spazio libero dell'ultima riga.
+  container.appendChild(el.tapPad);
 }
 
 /* =========================================================================
@@ -1162,6 +1178,9 @@ function newExercise(){
   el.results.classList.remove('show');
   el.btnListen.disabled = false;
   el.btnPlay.disabled = false;
+  el.tapPad.disabled = false;
+  currentPhase = null;
+  updateTapPadLabel();
   setStatus(playMode==='training'
     ? `Pronto: ${numMeasures} battute a ${bpm} bpm. Ascolta o premi INIZIA.`
     : `Pronto: ${numMeasures} battute a ${bpm} bpm. Ascolta o vai direttamente a registrare.`);
@@ -1187,6 +1206,18 @@ function clearPhaseTimeouts(){
 let countdownTimerId = null;
 let currentPhase = null; // 'listen' | 'record' | null
 
+function updateTapPadLabel(){
+  if(!currentMeasures || !currentMeasures.length){
+    el.tapPad.textContent = 'GENERA UN ESERCIZIO';
+  } else if(currentPhase === 'record'){
+    el.tapPad.textContent = 'TOCCA A TEMPO!';
+  } else if(currentPhase === 'listen'){
+    el.tapPad.textContent = 'IN ASCOLTO…';
+  } else {
+    el.tapPad.textContent = 'TOCCA PER INIZIARE';
+  }
+}
+
 function beginPhaseUI(){
   setDisabled(true);
   el.btnStop.style.display = 'inline-block';
@@ -1199,6 +1230,7 @@ function endPhaseUI(){
   currentPhase = null;
   el.btnStop.style.display = 'none';
   setDisabled(false);
+  updateTapPadLabel();
 }
 
 // Fa scorrere la battuta in riproduzione al centro della vista: essenziale
@@ -1215,6 +1247,7 @@ function scheduleMeasureFollow(ctx, goTime){
 function listen(){
   beginPhaseUI();
   currentPhase = 'listen';
+  updateTapPadLabel();
   const ctx = getAudioCtx();
   ctx.resume().then(() => {
     if(currentPhase !== 'listen') return;
@@ -1272,6 +1305,7 @@ let expectedNotesLive = [];
 function startRecording(){
   beginPhaseUI();
   currentPhase = 'record';
+  updateTapPadLabel();
   userPresses = [];
   expectedNotesLive = schedule.events.filter(ev => !ev.isRest)
     .map(ev => ({ time: ev.time, colorKeys: ev.colorKeys, matched:false }));
@@ -1359,7 +1393,12 @@ function evaluate(){
   const total = expectedNotesLive.length;
   const hits = expectedNotesLive.filter(e=>e.matched).length;
   const extra = Math.max(0, userPresses.length - hits);
-  const scorePct = total>0 ? Math.round(100*hits/total) : 0;
+  // Le pressioni "a vuoto" pesano sul punteggio: premere a raffica facendo
+  // tante pressioni inutili (anche azzeccando ogni nota) fa crescere il
+  // denominatore senza far crescere le note colpite, quindi il punteggio
+  // scende. Un paio di pressioni di troppo pesano poco; tamburellare a
+  // caso viene penalizzato rapidamente.
+  const scorePct = total>0 ? Math.round(100*hits/(total+extra)) : 0;
 
   expectedNotesLive.forEach(exp => {
     if(!exp.matched) exp.colorKeys.forEach(k => liveColorMap[k] = COLOR_BAD);
@@ -1369,7 +1408,7 @@ function evaluate(){
   el.resultScore.innerHTML = scorePct + '<span class="unit"> / 100</span>';
   el.resultDetail.textContent = `${hits} di ${total} note colpite nel tempo (tolleranza ±${Math.round(TOLERANCE*1000)} ms).`;
   el.resultExtra.textContent = extra>0
-    ? `${extra} pressioni in più, senza nota corrispondente.`
+    ? `${extra} pressioni in più, senza nota corrispondente (penalizzano il punteggio).`
     : 'Nessuna pressione di troppo.';
   el.results.classList.add('show');
 
@@ -1540,14 +1579,25 @@ el.btnPopupContinue.addEventListener('click', () => {
   if(action) action();
 });
 
-// Tap-pad per il tocco: stessa logica della barra spaziatrice. Il
-// preventDefault sul touchstart evita che il browser generi anche un
-// evento "click" sintetico subito dopo (che farebbe registrare due colpi).
+// Tap-pad per il tocco: su mobile fa DOPPIO lavoro, cosi' non serve
+// scorrere avanti e indietro tra "INIZIA" e il punto dove toccare. Il primo
+// tocco (quando non e' gia' in corso una fase) avvia la registrazione,
+// esattamente come il bottone INIZIA; ogni tocco prova anche a registrare
+// un colpo, ma registerHit() non fa nulla finche' "recording" non e'
+// davvero attivo (cioe' finche' il conteggio iniziale non e' finito).
+function tapPadPrimaryAction(){
+  if(!currentPhase && !el.btnPlay.disabled){
+    startRecording();
+  }
+  registerHit();
+}
+// Il preventDefault sul touchstart evita che il browser generi anche un
+// evento "click" sintetico subito dopo (che farebbe scattare l'azione due volte).
 el.tapPad.addEventListener('touchstart', (e) => {
   e.preventDefault();
-  registerHit();
+  tapPadPrimaryAction();
 });
-el.tapPad.addEventListener('click', registerHit);
+el.tapPad.addEventListener('click', tapPadPrimaryAction);
 
 // Se cambia la fascia di larghezza (rotazione dello schermo, resize della
 // finestra) e la scala della notazione ne risente, ridisegna la battuta
