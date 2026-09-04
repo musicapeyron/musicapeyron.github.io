@@ -1,0 +1,1569 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Imita il ritmo</title>
+<script src="vexflow.js"></script>
+<style>
+  *, *::before, *::after{ box-sizing:border-box; }
+  :root{
+    --ink:#e2e8f0;
+    --good:#16a34a;
+    --bad:#dc2626;
+    --rest:#0284c7;
+  }
+  html, body{ margin:0; padding:0; min-height:100%; }
+  body{
+    min-height:100vh;
+    padding: 40px 24px 56px;
+    font-family: "Inter","Segoe UI", Arial, Helvetica, sans-serif;
+    font-size:15px;
+    line-height:1.5;
+    -webkit-font-smoothing:antialiased;
+    color:var(--ink);
+    background:
+      radial-gradient(circle at 50% 0%, #3730a3 0%, transparent 45%),
+      linear-gradient(135deg, #0f172a, #1e1b4b);
+    background-attachment:fixed;
+    display:flex;
+    justify-content:center;
+    position:relative;
+  }
+  body::before{
+    content:"";
+    position:fixed;
+    inset:0;
+    z-index:0;
+    pointer-events:none;
+    opacity:0.5;
+    background-image: radial-gradient(rgba(255,255,255,0.035) 1px, transparent 1px);
+    background-size:3px 3px;
+    mix-blend-mode:overlay;
+  }
+  .sheet{
+    position:relative;
+    z-index:1;
+    width:100%;
+    max-width:1600px;
+  }
+  h1{
+    font-family:"Sora","Inter",Arial,sans-serif;
+    font-size:2.1rem;
+    font-weight:700;
+    letter-spacing:-0.01em;
+    margin:0 0 6px;
+    text-shadow: 0 3px 10px rgba(0,0,0,0.35);
+  }
+  .subtitle{
+    margin:0 0 26px;
+    color:#cbd5e1;
+    opacity:0.85;
+    font-size:1.0rem;
+    max-width:70ch;
+  }
+  .controls{
+    display:flex;
+    flex-wrap:wrap;
+    gap:14px 22px;
+    align-items:flex-end;
+    background: linear-gradient(180deg, rgba(255,255,255,0.08), rgba(255,255,255,0.045));
+    border:1px solid rgba(255,255,255,0.10);
+    border-radius:16px;
+    box-shadow: 0 1px 0 rgba(255,255,255,0.05) inset, 0 10px 24px rgba(0,0,0,0.20);
+    backdrop-filter: blur(14px) saturate(130%);
+    padding:18px 20px;
+    margin-bottom:22px;
+  }
+  .field{
+    display:flex;
+    flex-direction:column;
+    gap:5px;
+    font-size:0.78rem;
+    font-weight:600;
+    letter-spacing:0.2px;
+    color:#94a3b8;
+  }
+  .field-group{ display:flex; gap:14px; }
+  .field input[type=number]{
+    font-family: inherit;
+    font-size:1rem;
+    padding:7px 9px;
+    border:1px solid rgba(255,255,255,0.14);
+    border-radius:8px;
+    width:80px;
+    background: rgba(15,23,42,0.55);
+    color:var(--ink);
+  }
+  button{
+    font-family:"Sora","Inter",Arial,sans-serif;
+    font-size:0.88rem;
+    font-weight:700;
+    padding:11px 20px;
+    border-radius:12px;
+    border:1px solid rgba(255,255,255,0.18);
+    background: rgba(255,255,255,0.06);
+    color:#e2e8f0;
+    cursor:pointer;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.25);
+    transition: transform 0.15s cubic-bezier(0.16,1,0.3,1), background 0.15s, box-shadow 0.15s;
+  }
+  button:hover{ background: rgba(255,255,255,0.12); transform: translateY(-2px); }
+  button:active{ transform: translateY(0px); }
+  button:disabled{
+    opacity:0.4;
+    cursor:default;
+    transform:none;
+  }
+  /* Bottoni azione colorati, come le note del gioco "Leggi la nota" */
+  .action-btn{
+    border:none;
+    color:#fff;
+    position:relative;
+    overflow:hidden;
+    box-shadow: 0 1px 0 rgba(255,255,255,0.28) inset, 0 5px 0 rgba(0,0,0,0.25), 0 8px 16px rgba(0,0,0,0.28);
+    text-shadow:
+      -1px -1px 0 rgba(0,0,0,0.5), 1px -1px 0 rgba(0,0,0,0.5),
+      -1px 1px 0 rgba(0,0,0,0.5), 1px 1px 0 rgba(0,0,0,0.5),
+      0 2px 5px rgba(0,0,0,0.4);
+  }
+  .action-btn::after{ content:""; position:absolute; inset:0; background:linear-gradient(180deg, rgba(255,255,255,0.22), rgba(255,255,255,0) 55%); pointer-events:none; }
+  .action-btn:hover{ background:inherit; filter:brightness(1.12); transform:translateY(-3px); }
+  .action-btn:active{ transform:translateY(2px); box-shadow: 0 1px 0 rgba(255,255,255,.28) inset, 0 2px 0 rgba(0,0,0,.25), 0 4px 10px rgba(0,0,0,.28); }
+  #btnNew{ background:#06b6d4; }
+  #btnListen{ background:#3b82f6; }
+  #btnPlay{ background:#22c55e; }
+  #btnOptions{ background:#8b5cf6; }
+  #btnTraining{ background:#f97316; }
+  button.stop{
+    border-color: rgba(248,113,113,0.35);
+    background: rgba(127,29,29,0.25);
+    color:#fca5a5;
+  }
+  button.stop:hover{ background: rgba(127,29,29,0.4); }
+  .options-panel{
+    display:none;
+    flex-direction:column;
+    gap:12px;
+    background: linear-gradient(180deg, rgba(255,255,255,0.08), rgba(255,255,255,0.045));
+    border:1px solid rgba(255,255,255,0.10);
+    border-radius:16px;
+    box-shadow: 0 1px 0 rgba(255,255,255,0.05) inset, 0 10px 24px rgba(0,0,0,0.20);
+    backdrop-filter: blur(14px) saturate(130%);
+    padding:16px 20px;
+    margin:-10px 0 22px;
+  }
+  .options-panel.show{ display:flex; }
+  .slider-row, .number-row{
+    display:grid;
+    grid-template-columns: 140px 1fr 46px;
+    align-items:center;
+    gap:12px;
+    font-size:0.88rem;
+    font-weight:600;
+    color:#cbd5e1;
+  }
+  .number-row{ grid-template-columns: 140px 1fr; }
+  .number-row input[type=number]{
+    font-family: inherit;
+    font-size:1rem;
+    padding:7px 9px;
+    border:1px solid rgba(255,255,255,0.14);
+    border-radius:8px;
+    width:90px;
+    background: rgba(15,23,42,0.55);
+    color:var(--ink);
+  }
+  .slider-row input[type=range]{
+    width:100%;
+    height:6px;
+    -webkit-appearance:none;
+    appearance:none;
+    background: linear-gradient(90deg, #a855f7, #7c3aed);
+    border-radius:999px;
+    outline:none;
+    cursor:pointer;
+  }
+  .slider-row input[type=range]::-webkit-slider-thumb{
+    -webkit-appearance:none;
+    width:16px; height:16px; border-radius:50%;
+    background:#f5f3ff; border:2px solid #a855f7; cursor:pointer;
+  }
+  .slider-val{ text-align:right; font-variant-numeric: tabular-nums; color:#e2e8f0; }
+  .status-line{
+    min-height: 1.4em;
+    font-size:0.96rem;
+    color:#94a3b8;
+    margin: 6px 2px 18px;
+  }
+  .status-line.live{ color:#fde68a; font-weight:700; }
+  #score-wrap{
+    background: linear-gradient(180deg, #fdfaf3, #f2e9d8);
+    border:none;
+    border-radius:18px;
+    box-shadow: 0 1px 0 rgba(255,255,255,0.4) inset, 0 16px 34px rgba(0,0,0,0.35);
+    padding: 20px 8px 8px;
+    overflow-x:auto;
+  }
+  .measure-row{
+    display:flex;
+    flex-wrap:wrap;
+  }
+  .measure{
+    position:relative;
+  }
+  .result-panel{
+    margin-top:22px;
+    background: linear-gradient(180deg, rgba(255,255,255,0.09), rgba(255,255,255,0.05));
+    border:1px solid rgba(255,255,255,0.10);
+    border-radius:16px;
+    box-shadow: 0 1px 0 rgba(255,255,255,0.06) inset, 0 14px 34px rgba(0,0,0,0.24);
+    backdrop-filter: blur(14px) saturate(130%);
+    padding:18px 22px;
+    display:none;
+  }
+  .result-panel.show{ display:block; }
+  .result-score{
+    font-family:"Sora","Inter",Arial,sans-serif;
+    font-size:2.2rem;
+    font-weight:700;
+    color:#fde68a;
+    margin:0 0 4px;
+  }
+  .result-score .unit{ font-size:1.1rem; color:#94a3b8; font-weight:400; }
+  .result-detail{
+    font-size:0.92rem;
+    color:#cbd5e1;
+    margin:2px 0;
+  }
+  .legend{
+    display:flex;
+    gap:18px;
+    font-size:0.85rem;
+    color:#94a3b8;
+    margin-top:14px;
+  }
+  .legend span{ display:inline-flex; align-items:center; gap:6px; }
+  .swatch{ width:12px; height:12px; border-radius:3px; display:inline-block; }
+  kbd{
+    background: rgba(255,255,255,0.10);
+    border:1px solid rgba(255,255,255,0.18);
+    border-radius:5px;
+    padding:1px 8px;
+    font-family: inherit;
+    color:#f1f5f9;
+  }
+
+  /* ALLENAMENTO */
+  .training-bar{
+    background: linear-gradient(180deg, rgba(255,255,255,0.09), rgba(255,255,255,0.05));
+    border:1px solid rgba(255,255,255,0.10);
+    border-radius:16px;
+    padding:14px 20px 16px;
+    margin-bottom:22px;
+    backdrop-filter: blur(14px) saturate(130%);
+  }
+  .training-bar-info{ display:flex; justify-content:space-between; align-items:center; margin-bottom:10px; gap:14px; flex-wrap:wrap; }
+  .training-bar-info .name{ font-family:"Sora","Inter",Arial,sans-serif; font-weight:700; color:#fde68a; font-size:0.95rem; }
+  .training-bar-info .level{ font-family:"Sora","Inter",Arial,sans-serif; font-weight:700; color:#e2e8f0; font-size:0.88rem; }
+  .progress-bar{ position:relative; width:100%; height:12px; background:rgba(15,23,42,0.85); border-radius:999px; overflow:hidden; border:1px solid rgba(255,255,255,0.07); box-shadow: inset 0 2px 5px rgba(0,0,0,0.45); }
+  .progress-fill{ height:100%; width:0%; border-radius:999px; background: linear-gradient(90deg,#f59e0b,#facc15,#fde68a); box-shadow: 0 0 12px rgba(250,204,21,0.55); transition: width 0.4s cubic-bezier(0.16,1,0.3,1); }
+  .training-bar-bottom{ display:flex; justify-content:flex-end; margin-top:12px; }
+
+  .difficulty-row{ display:flex; gap:12px; flex-wrap:wrap; margin-bottom:26px; }
+  .diff-btn{ flex:1 1 170px; }
+  .diff-btn.selected{ outline:3px solid #fde68a; outline-offset:2px; }
+  .challenge-grid{ display:grid; grid-template-columns:repeat(2, 1fr); gap:14px; margin-bottom:28px; }
+  .challenge-card{
+    text-align:left;
+    background: linear-gradient(180deg, rgba(255,255,255,0.08), rgba(255,255,255,0.045));
+    border:1px solid rgba(255,255,255,0.10);
+    border-radius:14px;
+    padding:16px 18px;
+    cursor:pointer;
+    color:#e2e8f0;
+    font-family:"Inter","Segoe UI",Arial,sans-serif;
+    transition: transform 0.15s, background 0.15s;
+  }
+  .challenge-card:hover{ background: rgba(255,255,255,0.14); transform:translateY(-2px); }
+  .challenge-card .num{ font-family:"Sora","Inter",Arial,sans-serif; font-size:0.72rem; font-weight:700; text-transform:uppercase; letter-spacing:0.5px; color:#94a3b8; margin-bottom:4px; }
+  .challenge-card .name{ font-family:"Sora","Inter",Arial,sans-serif; font-size:1.0rem; font-weight:700; }
+
+  /* POPUP DI VITTORIA */
+  .popup-overlay{
+    position:fixed; inset:0; z-index:500;
+    background: rgba(15,23,42,0.6);
+    backdrop-filter: blur(3px);
+    display:flex; align-items:center; justify-content:center;
+    opacity:0; pointer-events:none;
+    transition: opacity 0.25s ease;
+  }
+  .popup-overlay.show{ opacity:1; pointer-events:auto; }
+  .popup-card{
+    position:relative;
+    overflow:hidden;
+    background: linear-gradient(160deg, #4c1d95, #1e1b4b 75%);
+    border:1px solid rgba(255,255,255,0.25);
+    border-radius:22px;
+    padding:40px 52px;
+    text-align:center;
+    box-shadow: 0 30px 70px rgba(0,0,0,0.55);
+    transform: scale(0.8);
+    transition: transform 0.32s cubic-bezier(.34,1.56,.64,1);
+    max-width:min(480px, 90vw);
+  }
+  .popup-overlay.show .popup-card{ transform:scale(1); }
+  .popup-title{
+    font-family:"Sora","Inter",Arial,sans-serif;
+    font-size:2.1rem;
+    font-weight:800;
+    color:#fde68a;
+    text-shadow: 0 4px 14px rgba(0,0,0,0.4);
+    margin-bottom:12px;
+  }
+  .popup-card.grand .popup-title{
+    background: linear-gradient(90deg, #f59e0b, #fde047, #f472b6, #a855f7, #f59e0b);
+    -webkit-background-clip:text; background-clip:text; color:transparent;
+    font-size:2.3rem;
+  }
+  .popup-subtitle{ color:#e2e8f0; font-size:1.02rem; margin-bottom:28px; }
+  .popup-card button{ background: linear-gradient(135deg,#ffffff,#e2e8f0); color:#312e81; border:none; padding:12px 28px; }
+  .confetti-piece{
+    position:absolute; top:38%; left:50%; width:9px; height:9px; border-radius:2px;
+    opacity:1;
+    animation: confettiBurst 0.95s ease-out forwards;
+  }
+  @keyframes confettiBurst{
+    0%{ transform:translate(-50%,-50%) rotate(0deg); opacity:1; }
+    100%{ transform:translate(calc(-50% + var(--dx)), calc(-50% + var(--dy))) rotate(var(--rot)); opacity:0; }
+  }
+
+  /* TAP-PAD: bersaglio grande per il tocco, alternativa alla barra
+     spaziatrice. Nascosto su schermi larghi, dove la tastiera basta. */
+  #tapPad{
+    display:none;
+    width:100%;
+    margin-top:16px;
+    padding:26px 20px;
+    font-size:1.1rem;
+    letter-spacing:0.5px;
+    border-radius:16px;
+    background: linear-gradient(160deg, #22c55e, #16a34a);
+    -webkit-tap-highlight-color: transparent;
+    user-select:none;
+    touch-action: manipulation;
+  }
+  #tapPad:active{ transform:scale(0.97); filter:brightness(1.15); }
+
+  @media (max-width: 700px){
+    body{ padding: 20px 12px 40px; }
+    h1{ font-size:1.6rem; }
+    .subtitle{ font-size:0.9rem; margin-bottom:18px; }
+    .controls{ padding:14px; gap:10px; }
+    .controls > button{ flex:1 1 auto; }
+    .field-group{ width:100%; }
+    .field-group .field{ flex:1; }
+    .field input[type=number]{ width:100%; }
+    .number-row, .slider-row{ grid-template-columns: 110px 1fr 40px; }
+    .challenge-grid{ grid-template-columns: 1fr; }
+    .difficulty-row{ flex-direction:column; }
+    .popup-card{ padding:28px 22px; }
+    .popup-title{ font-size:1.6rem; }
+    .popup-card.grand .popup-title{ font-size:1.8rem; }
+    #score-wrap{ padding:14px 6px 6px; }
+    #tapPad{ display:block; }
+  }
+</style>
+</head>
+<body>
+
+<div class="sheet" id="screenMain">
+  <h1>Imita il ritmo</h1>
+  <p class="subtitle">Ascolta le battute, poi riproducile premendo <kbd>spazio</kbd> (o toccando lo schermo su mobile) a tempo.</p>
+
+  <div class="controls">
+    <div class="field-group" id="freeRangeFields">
+      <div class="field">
+        <label for="minM">Battute (min)</label>
+        <input type="number" id="minM" value="4" min="1" max="10">
+      </div>
+      <div class="field">
+        <label for="maxM">Battute (max)</label>
+        <input type="number" id="maxM" value="10" min="1" max="10">
+      </div>
+    </div>
+    <button id="btnNew" class="action-btn">Nuovo esercizio</button>
+    <button id="btnListen" class="action-btn" disabled>Ascolta</button>
+    <button id="btnPlay" class="action-btn" disabled>INIZIA</button>
+    <button id="btnStop" class="stop" style="display:none">Interrompi</button>
+    <button id="btnOptions" class="action-btn">Opzioni</button>
+    <button id="btnTraining" class="action-btn">Allenamento</button>
+  </div>
+
+  <div class="training-bar" id="trainingBar" style="display:none">
+    <div class="training-bar-info">
+      <span class="name" id="trainingChallengeName">Sfida 1</span>
+      <span class="level" id="trainingLevelLabel">Livello 1/5</span>
+    </div>
+    <div class="progress-bar"><div class="progress-fill" id="trainingProgressFill"></div></div>
+    <div class="training-bar-bottom">
+      <button id="btnExitTraining" class="stop">Torna al menu</button>
+    </div>
+  </div>
+
+  <div class="options-panel" id="optionsPanel">
+    <div class="number-row">
+      <label for="bpm">Tempo (bpm)</label>
+      <input type="number" id="bpm" value="80" min="40" max="160" step="4">
+    </div>
+    <div class="slider-row">
+      <label for="volMetro">Metronomo</label>
+      <input type="range" id="volMetro" min="0" max="150" value="90">
+      <span class="slider-val" id="volMetroVal">90%</span>
+    </div>
+    <div class="slider-row">
+      <label for="volRitmo">Suono del ritmo</label>
+      <input type="range" id="volRitmo" min="0" max="150" value="110">
+      <span class="slider-val" id="volRitmoVal">110%</span>
+    </div>
+  </div>
+
+  <p class="status-line" id="status">Premi "Nuovo esercizio" per generare delle battute casuali.</p>
+
+  <div id="score-wrap"><div class="measure-row" id="measures"></div></div>
+
+  <button id="tapPad">TOCCA QUI A TEMPO</button>
+
+  <div class="result-panel" id="results">
+    <p class="result-score" id="resultScore">—</p>
+    <p class="result-detail" id="resultDetail"></p>
+    <p class="result-detail" id="resultExtra"></p>
+    <div class="legend">
+      <span><span class="swatch" style="background:var(--good)"></span> nel tempo</span>
+      <span><span class="swatch" style="background:var(--bad)"></span> mancata</span>
+      <span><span class="swatch" style="background:var(--rest)"></span> pausa</span>
+      <span><span class="swatch" style="background:var(--ink)"></span> non ancora colpita</span>
+    </div>
+  </div>
+</div>
+
+<div class="sheet" id="screenTrainingSelect" style="display:none">
+  <h1>Allenamento</h1>
+  <p class="subtitle">Scegli la difficoltà (quante battute per livello) e la sfida da cui iniziare.</p>
+
+  <div class="difficulty-row" id="difficultyRow">
+    <button class="diff-btn action-btn" data-diff="facile" style="background:#06b6d4">Facile — 2 battute</button>
+    <button class="diff-btn action-btn" data-diff="medio" style="background:#3b82f6">Medio — 4 battute</button>
+    <button class="diff-btn action-btn" data-diff="difficile" style="background:#f97316">Difficile — 8 battute</button>
+    <button class="diff-btn action-btn" data-diff="leggenda" style="background:#dc2626">Leggenda — 10 battute</button>
+  </div>
+
+  <div class="challenge-grid" id="challengeGrid"></div>
+
+  <button id="btnBackFromSelect" class="stop">Torna al menu</button>
+</div>
+
+<div class="popup-overlay" id="popupOverlay">
+  <div class="popup-card" id="popupCard">
+    <div class="popup-title" id="popupTitle">Nuovo livello!</div>
+    <div class="popup-subtitle" id="popupSubtitle"></div>
+    <button id="btnPopupContinue">Continua</button>
+  </div>
+</div>
+
+<script>
+const VF = Vex.Flow;
+
+// Colori delle note, coordinati con le variabili CSS --good/--bad/--rest:
+// tonalita' piene e sature, leggibili sul cartoncino chiaro del pentagramma.
+const COLOR_GOOD = '#16a34a';
+const COLOR_BAD  = '#dc2626';
+const COLOR_REST = '#0284c7';
+
+/* =========================================================================
+   1. MOTORE DI GENERAZIONE RITMICA
+   Unita' interna = sedicesimo (valore intero). Ogni "cella" di una battuta
+   e' o una figura semplice {value, isRest, tieToNext} oppure una terzina
+   {kind:'triplet', items:[{isRest},{isRest},{isRest}]} che occupa un intero
+   movimento (4 sedicesimi) suddiviso pero' in 3 parti uguali.
+   ========================================================================= */
+
+const SIMPLE_DUR = {16:'w', 12:'hd', 8:'h', 6:'qd', 4:'q', 3:'8d', 2:'8', 1:'16'};
+const DOTTED_VALUES = new Set([12,6,3]);
+
+function pickWeightedId(candidates){
+  const total = candidates.reduce((s,c)=>s+c.w,0);
+  let r = Math.random()*total;
+  for(const c of candidates){ if((r-=c.w)<=0) return c.id; }
+  return candidates[candidates.length-1].id;
+}
+
+const REST_PROB = 0.22;
+const REST_PROB_DOTTED = 0.20;
+
+function tiedPairVariants(pos, remaining, allowedTieVariants){
+  const out = [];
+  if(pos%4===0 && remaining>=8) out.push('QQ');
+  if(pos%2===0 && remaining>=6) out.push('EQ');
+  if(pos%4===0 && remaining>=6) out.push('QE');
+  if(pos%4===0 && remaining>=12) out.push('HQ');
+  return allowedTieVariants ? out.filter(v => allowedTieVariants.includes(v)) : out;
+}
+
+function buildGenerator(id, pos, remaining, lastCell, noRestGenerators, allowedTieVariants){
+  const suppressed = (gid) => noRestGenerators && noRestGenerators.includes(gid);
+  switch(id){
+    case 'WHOLE': {
+      const cell = { value:16, isRest: !suppressed('WHOLE') && Math.random()<REST_PROB, tieToNext:false };
+      return { cells:[cell], consumed:16, lastCell:cell };
+    }
+    case 'HALF': {
+      const cell = { value:8, isRest: !suppressed('HALF') && Math.random()<REST_PROB, tieToNext:false };
+      return { cells:[cell], consumed:8, lastCell:cell };
+    }
+    case 'DOTTED_HALF': {
+      const cell = { value:12, isRest: !suppressed('DOTTED_HALF') && Math.random()<REST_PROB_DOTTED, tieToNext:false };
+      return { cells:[cell], consumed:12, lastCell:cell };
+    }
+    case 'QUARTER': {
+      const cell = { value:4, isRest: !suppressed('QUARTER') && Math.random()<REST_PROB, tieToNext:false };
+      return { cells:[cell], consumed:4, lastCell:cell };
+    }
+    case 'DOTTED_QUARTER_PLUS_EIGHTH': {
+      const dq = { value:6, isRest: !suppressed('DOTTED_QUARTER_PLUS_EIGHTH') && Math.random()<REST_PROB_DOTTED, tieToNext:false };
+      const e  = { value:2, isRest:false, tieToNext:false }; // sempre una croma "vera"
+      return { cells:[dq,e], consumed:8, lastCell:e };
+    }
+    case 'EIGHTH': {
+      const isRest = !suppressed('EIGHTH') && Math.random() < REST_PROB;
+      if(isRest && lastCell && lastCell.value===2 && lastCell.isRest && !lastCell.tieToNext){
+        lastCell.value = 4; // mai due crome di pausa assieme: fondi in un quarto
+        return { cells:[], consumed:2, lastCell };
+      }
+      const cell = { value:2, isRest, tieToNext:false };
+      return { cells:[cell], consumed:2, lastCell:cell };
+    }
+    case 'TIED_PAIR': {
+      const variants = tiedPairVariants(pos, remaining, allowedTieVariants);
+      const v = variants[Math.floor(Math.random()*variants.length)];
+      const pair = { QQ:[4,4], EQ:[2,4], QE:[4,2], HQ:[8,4] }[v];
+      const a = { value:pair[0], isRest:false, tieToNext:true };
+      const b = { value:pair[1], isRest:false, tieToNext:false };
+      return { cells:[a,b], consumed:pair[0]+pair[1], lastCell:b };
+    }
+    case 'FOUR_SIXTEENTHS': {
+      // Quattro semicrome unite in travatura: mai in pausa, per restare semplici.
+      const cells = [1,1,1,1].map(v => ({ value:v, isRest:false, tieToNext:false }));
+      return { cells, consumed:4, lastCell:cells[3] };
+    }
+    case 'TWO_SIXTEENTHS': {
+      // Due semicrome unite in travatura: occupano meta' movimento, mai in
+      // pausa; l'altra meta' del movimento viene riempita separatamente
+      // dalla normale scelta per quella posizione (es. una croma).
+      const cells = [1,1].map(v => ({ value:v, isRest:false, tieToNext:false }));
+      return { cells, consumed:2, lastCell:cells[1] };
+    }
+    case 'TRIPLET': {
+      // La terzina e' SEMPRE e SOLO tre crome suonate, mai pause, mai
+      // mescolata con altre figure al suo interno: cosi' resta sempre
+      // un'unica travatura netta di tre note.
+      const items = [{ isRest:false }, { isRest:false }, { isRest:false }];
+      return { cells:[{ kind:'triplet', items }], consumed:4, lastCell:null };
+    }
+    default:
+      throw new Error('generatore sconosciuto: '+id);
+  }
+}
+
+// Scandisce l'intera battuta e fonde qualunque coppia di crome di pausa
+// adiacenti (indipendentemente da quale generatore le abbia prodotte),
+// perche' in musica non si scrivono mai due crome di pausa una via l'altra.
+function enforceNoDoubleEighthRest(cells){
+  for(let i=0;i<cells.length-1;i++){
+    const a = cells[i], b = cells[i+1];
+    if(a && b && a.kind!=='triplet' && b.kind!=='triplet' &&
+       a.value===2 && a.isRest && !a.tieToNext &&
+       b.value===2 && b.isRest && !b.tieToNext){
+      a.value = 4;
+      cells.splice(i+1,1);
+      i--;
+    }
+  }
+  return cells;
+}
+
+function generateMeasureV2(profile, allowWhole, noRestGenerators, allowedTieVariants){
+  const cells = [];
+  let pos = 0;
+  let lastCell = null;
+  let guard = 0;
+  while(pos < 16){
+    if(++guard > 300) throw new Error('loop infinito nella generazione ritmica');
+    const remaining = 16 - pos;
+    const candidates = [];
+    const add = (id, w) => { if(w>0) candidates.push({id,w}); };
+
+    if(pos===0 && remaining===16 && allowWhole) add('WHOLE', profile.WHOLE||0);
+    if(pos%4===0 && remaining>=8) add('HALF', profile.HALF||0);
+    if(pos%4===0 && remaining>=12) add('DOTTED_HALF', profile.DOTTED_HALF||0);
+    if(pos%4===0 && remaining>=4) add('QUARTER', profile.QUARTER||0);
+    if(pos%4===0 && remaining>=8) add('DOTTED_QUARTER_PLUS_EIGHTH', profile.DOTTED_QUARTER_PLUS_EIGHTH||0);
+    if(pos%2===0 && remaining>=2) add('EIGHTH', profile.EIGHTH||0);
+    if((profile.TIED_PAIR||0)>0 && tiedPairVariants(pos,remaining,allowedTieVariants).length>0) add('TIED_PAIR', profile.TIED_PAIR);
+    if(pos%4===0 && remaining>=4) add('FOUR_SIXTEENTHS', profile.FOUR_SIXTEENTHS||0);
+    if(pos%2===0 && remaining>=2) add('TWO_SIXTEENTHS', profile.TWO_SIXTEENTHS||0);
+    if(pos%4===0 && remaining>=4) add('TRIPLET', profile.TRIPLET||0);
+
+    if(candidates.length===0) add('EIGHTH', 1);
+
+    const id = pickWeightedId(candidates);
+    const built = buildGenerator(id, pos, remaining, lastCell, noRestGenerators, allowedTieVariants);
+    built.cells.forEach(c => cells.push(c));
+    lastCell = built.lastCell;
+    pos += built.consumed;
+  }
+  return enforceNoDoubleEighthRest(cells);
+}
+
+function measureSignature(cells){
+  return cells.map(c => c.kind==='triplet'
+    ? 'T:'+c.items.map(it=>it.isRest?'r':'n').join('')
+    : c.value+(c.isRest?'r':'n')+(c.tieToNext?'t':'')
+  ).join(',');
+}
+
+function isWholeMeasureCell(cells){
+  return cells.length===1 && cells[0].kind!=='triplet' && cells[0].value===16;
+}
+
+// Regole dell'esercizio: mai due battute identiche, al massimo una battuta
+// di semibreve (nota o pausa) per esercizio.
+function generateExerciseV2(profile, numMeasures, noRestGenerators, allowedTieVariants){
+  const measures = [];
+  const signatures = new Set();
+  let usedWhole = false;
+  for(let i=0;i<numMeasures;i++){
+    let cells, sig, tries = 0;
+    do{
+      cells = generateMeasureV2(profile, !usedWhole, noRestGenerators, allowedTieVariants);
+      sig = measureSignature(cells);
+      tries++;
+    } while(signatures.has(sig) && tries<60);
+    signatures.add(sig);
+    if(isWholeMeasureCell(cells)) usedWhole = true;
+    measures.push(cells);
+  }
+  return measures;
+}
+
+/* =========================================================================
+   2. PROFILI DELLE SFIDE E LIBRERIA GENERALE (modalita' libera)
+   ========================================================================= */
+
+const FREE_PROFILE = { WHOLE:1, HALF:3, QUARTER:4, EIGHTH:4 };
+
+const DIFF_MEASURES = { facile:2, medio:4, difficile:8, leggenda:10 };
+
+const CHALLENGES = [
+  { name:'Semibreve, minima e semiminima',
+    profile:{ WHOLE:1, HALF:3, QUARTER:5 } },
+  { name:'Croma',
+    profile:{ WHOLE:0.4, HALF:1, QUARTER:2, EIGHTH:8 } },
+  { name:'Semibreve, minima, semiminima e croma',
+    profile:{ WHOLE:1, HALF:3, QUARTER:4, EIGHTH:4 } },
+  { name:'Le note puntate',
+    profile:{ WHOLE:0.4, HALF:2, QUARTER:3, EIGHTH:3, DOTTED_HALF:3, DOTTED_QUARTER_PLUS_EIGHTH:5 } },
+  { name:'Le note legate',
+    profile:{ WHOLE:0.4, HALF:2, QUARTER:3, EIGHTH:3, TIED_PAIR:5 } },
+  { name:'Semibreve, minima, semiminima, croma, puntate e legate',
+    profile:{ WHOLE:0.4, HALF:2, QUARTER:3, EIGHTH:3, DOTTED_HALF:1, DOTTED_QUARTER_PLUS_EIGHTH:2, TIED_PAIR:2 } },
+  { name:'La semicroma — parte 1',
+    profile:{ WHOLE:0.3, HALF:1, QUARTER:3, EIGHTH:3, FOUR_SIXTEENTHS:5 } },
+  { name:'La semicroma — parte 2',
+    profile:{ HALF:1, QUARTER:3, EIGHTH:4, FOUR_SIXTEENTHS:3, TWO_SIXTEENTHS:4 } },
+  { name:'La semicroma — parte 3',
+    profile:{ HALF:1, QUARTER:2, EIGHTH:3, FOUR_SIXTEENTHS:2, TWO_SIXTEENTHS:3,
+              DOTTED_QUARTER_PLUS_EIGHTH:2, TIED_PAIR:2 } },
+  { name:'La terzina',
+    profile:{ WHOLE:0.4, HALF:2, QUARTER:4, EIGHTH:3, TRIPLET:5 } },
+];
+
+// Leggero aumento di difficolta' nei 5 livelli di una sfida: rinforza il
+// peso delle figure "protagoniste" della sfida mano a mano che si sale.
+const SIGNATURE_KEYS = {
+  0:['HALF','QUARTER'], 1:['EIGHTH'], 2:['EIGHTH'],
+  3:['DOTTED_QUARTER_PLUS_EIGHTH','DOTTED_HALF'], 4:['TIED_PAIR'],
+  5:['DOTTED_QUARTER_PLUS_EIGHTH','TIED_PAIR'],
+  6:['FOUR_SIXTEENTHS'], 7:['TWO_SIXTEENTHS'],
+  8:['TWO_SIXTEENTHS','DOTTED_QUARTER_PLUS_EIGHTH','TIED_PAIR'], 9:['TRIPLET'],
+};
+
+function profileForLevel(challengeIndex, level){
+  const base = CHALLENGES[challengeIndex].profile;
+  const sig = SIGNATURE_KEYS[challengeIndex] || [];
+  const factor = 0.6 + 0.8 * ((level-1)/4); // 0.6 -> 1.4 dal livello 1 al 5
+  const out = {};
+  for(const k in base){
+    out[k] = sig.includes(k) ? base[k]*factor : base[k];
+  }
+  return out;
+}
+
+// Sfide che, se non specificato altrimenti, ai livelli 1-2 evitano le pause
+// di croma: nei livelli introduttivi la figura nuova deve emergere chiara,
+// senza la complessita' ritmica che nasce da pause brevi in mezzo.
+const PLAIN_EIGHTH_EARLY_LEVELS = [6, 7, 9]; // Sfida 7, 8, 10 (indici 0-based)
+
+// Configurazione di generazione per una data sfida/livello: profilo dei pesi,
+// eventuali generatori a cui e' vietato produrre una pausa, ed eventuali
+// varianti di legatura ammesse. Nei primi due livelli di ogni sfida si tiene
+// la figura nuova il piu' possibile "pulita", introducendo gradualmente le
+// combinazioni piu' complesse (che spesso nascono da pause brevi) solo dal
+// terzo livello in poi.
+function getLevelConfig(challengeIndex, level){
+  let profile = profileForLevel(challengeIndex, level);
+  let noRestGenerators = [];
+  let allowedTieVariants = null;
+
+  if(challengeIndex === 1 && level <= 2){
+    // Sfida 2 "Croma": solo semplici combinazioni di semiminime e crome,
+    // niente semibreve/minima, e mai una pausa di croma.
+    profile = { QUARTER:4, EIGHTH:6 };
+    noRestGenerators = ['EIGHTH'];
+  }
+
+  if(challengeIndex === 3){
+    // Sfida 4 "Le note puntate": mai una pausa puntata nei primi due
+    // livelli; il livello 1 e' quasi solo semiminima puntata + croma, con
+    // qualche semiminima "liscia" di respiro.
+    if(level === 1){
+      profile = { QUARTER:3, DOTTED_QUARTER_PLUS_EIGHTH:7 };
+      noRestGenerators = ['DOTTED_QUARTER_PLUS_EIGHTH'];
+    } else if(level === 2){
+      profile = { QUARTER:2, EIGHTH:2, HALF:1, DOTTED_QUARTER_PLUS_EIGHTH:5 };
+      noRestGenerators = ['DOTTED_QUARTER_PLUS_EIGHTH', 'EIGHTH'];
+    }
+  }
+
+  if(challengeIndex === 4){
+    // Sfida 5 "Le note legate": si comincia legando solo minima+semiminima,
+    // poi solo semiminima+semiminima, e solo dal livello 3 si aggiungono le
+    // legature con la croma (sincopi).
+    if(level === 1) allowedTieVariants = ['HQ'];
+    else if(level === 2) allowedTieVariants = ['QQ'];
+    if(level <= 2) noRestGenerators = ['EIGHTH'];
+  }
+
+  if(challengeIndex === 8 && level <= 2){
+    // Sfida 9 (semicrome + puntate + legature insieme): nei primi due
+    // livelli niente pause di croma o di semiminima puntata, e legature
+    // limitate a minima/semiminima (senza sincopi con la croma).
+    noRestGenerators = ['EIGHTH', 'DOTTED_QUARTER_PLUS_EIGHTH'];
+    allowedTieVariants = ['QQ', 'HQ'];
+  }
+
+  if(PLAIN_EIGHTH_EARLY_LEVELS.includes(challengeIndex) && level <= 2 && noRestGenerators.length===0){
+    noRestGenerators = ['EIGHTH'];
+  }
+
+  return { profile, noRestGenerators, allowedTieVariants };
+}
+
+// Sfide con le semicrome (7, 8, 9 - indici 0-based 6,7,8): tempo fissato a
+// 50 bpm in ogni esercizio, perche' a tempo normale sono troppo veloci per
+// essere lette con calma la prima volta.
+const FORCED_SLOW_BPM = 50;
+const SIXTEENTH_CHALLENGES = [6, 7, 8];
+
+/* =========================================================================
+   3. NOTAZIONE (VexFlow)
+   ========================================================================= */
+
+let currentMeasures = [];
+let FIXED_NOTES_WIDTH = null;
+
+function getFixedNotesWidth(){
+  if(FIXED_NOTES_WIDTH !== null) return FIXED_NOTES_WIDTH;
+  const probeNotes = ['16','16','16','16'].map(d => new VF.StaveNote({ keys:['b/4'], duration: d }));
+  const probeVoice = new VF.Voice({ num_beats: 4, beat_value: 4 });
+  probeVoice.setStrict(false);
+  probeVoice.addTickables(probeNotes);
+  const probeFormatter = new VF.Formatter().joinVoices([probeVoice]);
+  probeFormatter.preCalculateMinTotalWidth([probeVoice]);
+  FIXED_NOTES_WIDTH = probeFormatter.getMinTotalWidth() * 4;
+  return FIXED_NOTES_WIDTH;
+}
+
+function measureTotalWidth(withClefTime){
+  const probe = new VF.Stave(0, 0, 10);
+  if(withClefTime){ probe.addClef('treble'); probe.addTimeSignature('4/4'); }
+  const leftMargin = probe.getNoteStartX() - probe.getX();
+  const rightPadding = 24;
+  return leftMargin + getFixedNotesWidth() + rightPadding;
+}
+
+// Fattore di riduzione della notazione su schermi stretti: la matematica di
+// layout di VexFlow resta quella "normale" (nessuna sovrapposizione), viene
+// solo disegnata piu' piccola sullo schermo tramite lo scale del contesto.
+function getRenderScale(){
+  const w = window.innerWidth;
+  if(w < 480) return 0.56;
+  if(w < 700) return 0.68;
+  return 1;
+}
+
+function renderScore(measures, colorMap){
+  const container = document.getElementById('measures');
+  container.innerHTML = '';
+
+  const staveHeight = 130;
+  const scale = getRenderScale();
+
+  measures.forEach((measure, mIdx) => {
+    const withClefTime = (mIdx === 0);
+
+    const staveNotes = [];
+    const cellRefs = []; // { ci, notes:[...], isTuplet }
+    measure.forEach((cell, ci) => {
+      if(cell.kind === 'triplet'){
+        const notes = cell.items.map((it, ii) => {
+          const sn = new VF.StaveNote({ keys:['b/4'], duration: it.isRest ? '8r' : '8' });
+          const colorKey = `${mIdx}-${ci}-${ii}`;
+          if(colorMap && colorMap[colorKey]) sn.setStyle({ fillStyle:colorMap[colorKey], strokeStyle:colorMap[colorKey] });
+          return sn;
+        });
+        staveNotes.push(...notes);
+        cellRefs.push({ ci, notes, isTuplet:true });
+      } else {
+        const dur = SIMPLE_DUR[cell.value] + (cell.isRest ? 'r' : '');
+        const sn = new VF.StaveNote({ keys: ['b/4'], duration: dur });
+        if(DOTTED_VALUES.has(cell.value)) VF.Dot.buildAndAttach([sn], { all:true });
+        const colorKey = `${mIdx}-${ci}`;
+        if(colorMap && colorMap[colorKey]) sn.setStyle({ fillStyle:colorMap[colorKey], strokeStyle:colorMap[colorKey] });
+        staveNotes.push(sn);
+        cellRefs.push({ ci, notes:[sn], isTuplet:false });
+      }
+    });
+
+    const measureWidth = measureTotalWidth(withClefTime); // larghezza "logica" (layout VexFlow)
+
+    const div = document.createElement('div');
+    div.className = 'measure';
+    div.dataset.measureIndex = mIdx;
+    div.style.width = (measureWidth*scale) + 'px';
+    div.style.height = (staveHeight*scale) + 'px';
+    container.appendChild(div);
+
+    const renderer = new VF.Renderer(div, VF.Renderer.Backends.SVG);
+    renderer.resize(measureWidth*scale, staveHeight*scale); // dimensione reale a schermo
+    const ctx = renderer.getContext();
+    if(scale !== 1) ctx.scale(scale, scale); // il resto del disegno usa ancora coordinate "logiche"
+
+    const stave = new VF.Stave(0, 20, measureWidth);
+    if(withClefTime){
+      stave.addClef('treble');
+      stave.addTimeSignature('4/4');
+    }
+    stave.setContext(ctx).draw();
+
+    // IMPORTANTE, due motivi per cui l'ordine qui conta:
+    // 1) il Tuplet riduce i "tick" delle note della terzina (rapporto 3:2);
+    //    Beam.generateBeams usa proprio i tick per capire dove finisce un
+    //    movimento, quindi va chiamato DOPO aver creato il Tuplet, altrimenti
+    //    conta le tre crome come 1.5 movimenti invece di 1 e sbaglia i
+    //    raggruppamenti (anche quelli successivi alla terzina).
+    // 2) beam/tuplet vanno comunque creati PRIMA di disegnare le note
+    //    (voice.draw): StaveNote sopprime il gambetto individuale di una
+    //    croma solo se la nota ha gia' una beam associata al momento del
+    //    disegno, altrimenti il gambetto resta visibile sotto la travatura.
+    const tuplets = cellRefs.filter(r => r.isTuplet).map(r => new VF.Tuplet(r.notes));
+    const beams = VF.Beam.generateBeams(staveNotes);
+
+    const ties = [];
+    for(let i=0;i<measure.length-1;i++){
+      if(measure[i].kind!=='triplet' && measure[i].tieToNext){
+        const noteA = cellRefs[i].notes[0];
+        const noteB = cellRefs[i+1].notes[0];
+        ties.push(new VF.StaveTie({ first_note:noteA, last_note:noteB, first_indices:[0], last_indices:[0] }));
+      }
+    }
+
+    const voice = new VF.Voice({ num_beats: 4, beat_value: 4 });
+    voice.setStrict(false);
+    voice.addTickables(staveNotes);
+    new VF.Formatter().joinVoices([voice]).formatToStave([voice], stave);
+
+    voice.draw(ctx, stave);
+    beams.forEach(b => b.setContext(ctx).draw());
+    tuplets.forEach(t => t.setContext(ctx).draw());
+    ties.forEach(t => t.setContext(ctx).draw());
+  });
+}
+
+/* =========================================================================
+   4. TEMPO / SCHEDULE
+   Ogni evento riproducibile ha uno o piu' "colorKeys": per una nota
+   semplice e' una sola chiave; per una catena di note legate sono tutte le
+   chiavi della catena (si valuta/colora insieme, una sola pressione basta);
+   per una terzina ogni parte e' un evento indipendente.
+   ========================================================================= */
+
+function buildSchedule(measures, bpm){
+  const quarterSec = 60 / bpm;
+  const sixteenthSec = quarterSec / 4;
+  let t = 0;
+  const events = [];
+  const measureStartTimes = [];
+
+  measures.forEach((measure, mIdx) => {
+    measureStartTimes.push(t);
+    let pendingTie = null; // { time, colorKeys:[] }
+    measure.forEach((cell, ci) => {
+      if(cell.kind === 'triplet'){
+        const itemDur = quarterSec / 3;
+        cell.items.forEach((it, ii) => {
+          events.push({ time:t, isRest: it.isRest, colorKeys:[`${mIdx}-${ci}-${ii}`] });
+          t += itemDur;
+        });
+        return;
+      }
+      const dur = cell.value * sixteenthSec;
+      const colorKey = `${mIdx}-${ci}`;
+      if(cell.tieToNext){
+        if(!pendingTie) pendingTie = { time:t, colorKeys:[colorKey] };
+        else pendingTie.colorKeys.push(colorKey);
+      } else if(pendingTie){
+        pendingTie.colorKeys.push(colorKey);
+        events.push({ time: pendingTie.time, isRest:false, colorKeys: pendingTie.colorKeys });
+        pendingTie = null;
+      } else {
+        events.push({ time:t, isRest: cell.isRest, colorKeys:[colorKey] });
+      }
+      t += dur;
+    });
+  });
+
+  const totalBeats = Math.round(t / quarterSec);
+  return { events, totalDuration:t, quarterSec, totalBeats, measureStartTimes };
+}
+
+/* =========================================================================
+   5. AUDIO
+   ========================================================================= */
+
+let audioCtx = null;
+let clapBuffer = null;
+let metroGainNode = null;
+let ritmoGainNode = null;
+let activeNodes = [];
+
+function getAudioCtx(){
+  if(!audioCtx){
+    audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+    metroGainNode = audioCtx.createGain();
+    metroGainNode.gain.value = (parseInt(el.volMetro.value,10)||90) / 100;
+    metroGainNode.connect(audioCtx.destination);
+
+    ritmoGainNode = audioCtx.createGain();
+    ritmoGainNode.gain.value = (parseInt(el.volRitmo.value,10)||110) / 100;
+    ritmoGainNode.connect(audioCtx.destination);
+  }
+  return audioCtx;
+}
+
+function trackNode(node){
+  activeNodes.push(node);
+  node.addEventListener('ended', () => {
+    const i = activeNodes.indexOf(node);
+    if(i>=0) activeNodes.splice(i,1);
+  });
+}
+
+function stopAllAudioNodes(){
+  activeNodes.forEach(node => { try{ node.stop(0); } catch(err){} });
+  activeNodes = [];
+}
+
+function getClapBuffer(){
+  const ctx = getAudioCtx();
+  if(clapBuffer) return clapBuffer;
+  const dur = 0.18;
+  const len = Math.floor(ctx.sampleRate * dur);
+  const buf = ctx.createBuffer(1, len, ctx.sampleRate);
+  const data = buf.getChannelData(0);
+  for(let i=0;i<len;i++){
+    const env = Math.exp(-i / (len*0.12));
+    data[i] = (Math.random()*2-1) * env;
+  }
+  clapBuffer = buf;
+  return buf;
+}
+
+function playClap(time, gainPeak=1.1){
+  const ctx = getAudioCtx();
+  const src = ctx.createBufferSource();
+  src.buffer = getClapBuffer();
+
+  const bandpass = ctx.createBiquadFilter();
+  bandpass.type = 'bandpass';
+  bandpass.frequency.value = 1800;
+  bandpass.Q.value = 0.9;
+
+  const highpass = ctx.createBiquadFilter();
+  highpass.type = 'highpass';
+  highpass.frequency.value = 800;
+
+  const gain = ctx.createGain();
+  gain.gain.setValueAtTime(gainPeak, time);
+  gain.gain.exponentialRampToValueAtTime(0.001, time + 0.16);
+
+  src.connect(bandpass).connect(highpass).connect(gain).connect(ritmoGainNode);
+  trackNode(src);
+  src.start(time);
+  src.stop(time + 0.2);
+}
+
+function playMetronomeTick(time, accented){
+  const ctx = getAudioCtx();
+  const osc = ctx.createOscillator();
+  const gain = ctx.createGain();
+  osc.type = 'triangle';
+  osc.frequency.value = accented ? 1500 : 1000;
+  const peak = accented ? 0.22 : 0.13;
+  gain.gain.setValueAtTime(0, time);
+  gain.gain.linearRampToValueAtTime(peak, time + 0.003);
+  gain.gain.exponentialRampToValueAtTime(0.001, time + 0.05);
+  osc.connect(gain).connect(metroGainNode);
+  trackNode(osc);
+  osc.start(time);
+  osc.stop(time + 0.07);
+}
+
+function scheduleCountIn(fromTime, quarterSec, beats=4){
+  for(let i=0;i<beats;i++) playMetronomeTick(fromTime + i*quarterSec, i===0);
+  return fromTime + beats*quarterSec;
+}
+
+function scheduleContinuousMetronome(goTime, quarterSec, totalBeats){
+  for(let i=0;i<totalBeats;i++) playMetronomeTick(goTime + i*quarterSec, i % 4 === 0);
+}
+
+// Piccolo jingle di vittoria: arpeggio ascendente con inviluppo campanato.
+function playVictoryJingle(){
+  const ctx = getAudioCtx();
+  const start = ctx.currentTime + 0.05;
+  const notes = [523.25, 659.25, 783.99, 1046.50]; // do-mi-sol-do
+  notes.forEach((freq, i) => {
+    const t = start + i*0.11;
+    const osc = ctx.createOscillator();
+    const gain = ctx.createGain();
+    osc.type = 'sine';
+    osc.frequency.value = freq;
+    gain.gain.setValueAtTime(0, t);
+    gain.gain.linearRampToValueAtTime(0.4, t + 0.01);
+    gain.gain.exponentialRampToValueAtTime(0.001, t + 0.5);
+    osc.connect(gain).connect(ctx.destination);
+    trackNode(osc);
+    osc.start(t);
+    osc.stop(t + 0.55);
+  });
+}
+
+/* =========================================================================
+   6. STATO DEL GIOCO
+   ========================================================================= */
+
+let schedule = null;
+let bpm = 80;
+let bpmWasForced = false; // true se l'ultimo bpm e' stato impostato automaticamente (semicrome)
+let playMode = 'free'; // 'free' | 'training'
+let training = { difficulty:'facile', challengeIndex:0, level:1 };
+let selectedDifficulty = 'facile';
+
+const el = {
+  minM: document.getElementById('minM'),
+  maxM: document.getElementById('maxM'),
+  freeRangeFields: document.getElementById('freeRangeFields'),
+  bpm: document.getElementById('bpm'),
+  btnNew: document.getElementById('btnNew'),
+  btnListen: document.getElementById('btnListen'),
+  btnPlay: document.getElementById('btnPlay'),
+  btnStop: document.getElementById('btnStop'),
+  btnOptions: document.getElementById('btnOptions'),
+  btnTraining: document.getElementById('btnTraining'),
+  optionsPanel: document.getElementById('optionsPanel'),
+  volMetro: document.getElementById('volMetro'),
+  volMetroVal: document.getElementById('volMetroVal'),
+  volRitmo: document.getElementById('volRitmo'),
+  volRitmoVal: document.getElementById('volRitmoVal'),
+  status: document.getElementById('status'),
+  results: document.getElementById('results'),
+  resultScore: document.getElementById('resultScore'),
+  resultDetail: document.getElementById('resultDetail'),
+  resultExtra: document.getElementById('resultExtra'),
+  trainingBar: document.getElementById('trainingBar'),
+  trainingChallengeName: document.getElementById('trainingChallengeName'),
+  trainingLevelLabel: document.getElementById('trainingLevelLabel'),
+  trainingProgressFill: document.getElementById('trainingProgressFill'),
+  btnExitTraining: document.getElementById('btnExitTraining'),
+  screenMain: document.getElementById('screenMain'),
+  screenTrainingSelect: document.getElementById('screenTrainingSelect'),
+  difficultyRow: document.getElementById('difficultyRow'),
+  challengeGrid: document.getElementById('challengeGrid'),
+  btnBackFromSelect: document.getElementById('btnBackFromSelect'),
+  popupOverlay: document.getElementById('popupOverlay'),
+  popupCard: document.getElementById('popupCard'),
+  popupTitle: document.getElementById('popupTitle'),
+  popupSubtitle: document.getElementById('popupSubtitle'),
+  btnPopupContinue: document.getElementById('btnPopupContinue'),
+  tapPad: document.getElementById('tapPad'),
+};
+
+function setStatus(text, live){
+  el.status.textContent = text;
+  el.status.classList.toggle('live', !!live);
+}
+
+let liveColorMap = {};
+
+function newExercise(){
+  let numMeasures, profile, noRestGenerators, allowedTieVariants;
+
+  if(playMode === 'training'){
+    if(SIXTEENTH_CHALLENGES.includes(training.challengeIndex)){
+      el.bpm.value = FORCED_SLOW_BPM; // le semicrome si leggono meglio piu' lente
+      bpmWasForced = true;
+    } else if(bpmWasForced){
+      el.bpm.value = 80; // usciti dalle semicrome, si torna al tempo normale
+      bpmWasForced = false;
+    }
+    numMeasures = DIFF_MEASURES[training.difficulty];
+    const cfg = getLevelConfig(training.challengeIndex, training.level);
+    profile = cfg.profile;
+    noRestGenerators = cfg.noRestGenerators;
+    allowedTieVariants = cfg.allowedTieVariants;
+  } else {
+    if(bpmWasForced){
+      el.bpm.value = 80;
+      bpmWasForced = false;
+    }
+    let minM = Math.max(1, parseInt(el.minM.value,10)||4);
+    let maxM = Math.max(minM, parseInt(el.maxM.value,10)||10);
+    numMeasures = minM + Math.floor(Math.random()*(maxM-minM+1));
+    profile = FREE_PROFILE;
+  }
+
+  bpm = parseInt(el.bpm.value, 10) || 80;
+  currentMeasures = generateExerciseV2(profile, numMeasures, noRestGenerators, allowedTieVariants);
+  liveColorMap = {};
+  renderScore(currentMeasures);
+  schedule = buildSchedule(currentMeasures, bpm);
+
+  el.results.classList.remove('show');
+  el.btnListen.disabled = false;
+  el.btnPlay.disabled = false;
+  setStatus(playMode==='training'
+    ? `Pronto: ${numMeasures} battute a ${bpm} bpm. Ascolta o premi INIZIA.`
+    : `Pronto: ${numMeasures} battute a ${bpm} bpm. Ascolta o vai direttamente a registrare.`);
+}
+
+function setDisabled(v){
+  el.btnNew.disabled = v;
+  el.btnListen.disabled = v;
+  el.btnPlay.disabled = v;
+}
+
+let phaseTimeouts = [];
+function scheduleAt(delaySec, fn){
+  const id = setTimeout(fn, Math.max(0, delaySec*1000));
+  phaseTimeouts.push(id);
+  return id;
+}
+function clearPhaseTimeouts(){
+  phaseTimeouts.forEach(id => clearTimeout(id));
+  phaseTimeouts = [];
+}
+
+let countdownTimerId = null;
+let currentPhase = null; // 'listen' | 'record' | null
+
+function beginPhaseUI(){
+  setDisabled(true);
+  el.btnStop.style.display = 'inline-block';
+  el.results.classList.remove('show');
+  liveColorMap = {};
+  renderScore(currentMeasures, liveColorMap);
+}
+
+function endPhaseUI(){
+  currentPhase = null;
+  el.btnStop.style.display = 'none';
+  setDisabled(false);
+}
+
+// Fa scorrere la battuta in riproduzione al centro della vista: essenziale
+// su schermi stretti dove non tutte le battute stanno a video insieme.
+function scheduleMeasureFollow(ctx, goTime){
+  schedule.measureStartTimes.forEach((startT, mIdx) => {
+    scheduleAt(goTime + startT - ctx.currentTime, () => {
+      const div = document.querySelector(`.measure[data-measure-index="${mIdx}"]`);
+      if(div) div.scrollIntoView({ behavior:'smooth', inline:'center', block:'nearest' });
+    });
+  });
+}
+
+function listen(){
+  beginPhaseUI();
+  currentPhase = 'listen';
+  const ctx = getAudioCtx();
+  ctx.resume().then(() => {
+    if(currentPhase !== 'listen') return;
+    const quarterSec = schedule.quarterSec;
+    const startTime = ctx.currentTime + 0.15;
+
+    setStatus('Preparati…', true);
+    let countdown = 4;
+    countdownTimerId = setInterval(() => {
+      countdown--;
+      if(countdown > 0) setStatus('Preparati… ' + countdown, true);
+      else clearInterval(countdownTimerId);
+    }, quarterSec*1000);
+
+    const goTime = scheduleCountIn(startTime, quarterSec, 4);
+    scheduleContinuousMetronome(goTime, quarterSec, schedule.totalBeats);
+    scheduleMeasureFollow(ctx, goTime);
+
+    schedule.events.forEach(ev => {
+      if(ev.isRest){
+        scheduleAt(goTime + ev.time - ctx.currentTime, () => {
+          liveColorMap[ev.colorKeys[0]] = COLOR_REST;
+          renderScore(currentMeasures, liveColorMap);
+        });
+      } else {
+        playClap(goTime + ev.time);
+        scheduleAt(goTime + ev.time - ctx.currentTime, () => {
+          ev.colorKeys.forEach(k => liveColorMap[k] = COLOR_GOOD);
+          renderScore(currentMeasures, liveColorMap);
+        });
+      }
+    });
+
+    scheduleAt(goTime - ctx.currentTime, () => {
+      if(currentPhase === 'listen') setStatus('In ascolto…', true);
+    });
+
+    scheduleAt(goTime + schedule.totalDuration - ctx.currentTime, () => {
+      endPhaseUI();
+      setStatus('Fine ascolto. Premi "INIZIA" per riprodurre il ritmo.');
+    });
+  });
+}
+
+/* =========================================================================
+   7. REGISTRAZIONE E VALUTAZIONE
+   ========================================================================= */
+
+let recording = false;
+let recordCtx = null;
+let recordGoTime = 0;
+let userPresses = [];
+let expectedNotesLive = [];
+
+function startRecording(){
+  beginPhaseUI();
+  currentPhase = 'record';
+  userPresses = [];
+  expectedNotesLive = schedule.events.filter(ev => !ev.isRest)
+    .map(ev => ({ time: ev.time, colorKeys: ev.colorKeys, matched:false }));
+
+  const ctx = getAudioCtx();
+  recordCtx = ctx;
+  ctx.resume().then(() => {
+    if(currentPhase !== 'record') return;
+    const quarterSec = schedule.quarterSec;
+    const startTime = ctx.currentTime + 0.15;
+
+    setStatus('Preparati…', true);
+    let countdown = 4;
+    countdownTimerId = setInterval(() => {
+      countdown--;
+      if(countdown > 0){
+        setStatus('Preparati… ' + countdown, true);
+      } else {
+        clearInterval(countdownTimerId);
+        if(currentPhase === 'record') setStatus('Vai! Riproduci il ritmo con la barra spaziatrice (o toccando lo schermo).', true);
+      }
+    }, quarterSec*1000);
+
+    const goTime = scheduleCountIn(startTime, quarterSec, 4);
+    scheduleContinuousMetronome(goTime, quarterSec, schedule.totalBeats);
+    scheduleMeasureFollow(ctx, goTime);
+    recordGoTime = goTime;
+    recording = true;
+
+    schedule.events.filter(ev => ev.isRest).forEach(ev => {
+      scheduleAt(goTime + ev.time - ctx.currentTime, () => {
+        liveColorMap[ev.colorKeys[0]] = COLOR_REST;
+        renderScore(currentMeasures, liveColorMap);
+      });
+    });
+
+    scheduleAt(goTime + schedule.totalDuration - ctx.currentTime, () => {
+      recording = false;
+      endPhaseUI();
+      evaluate();
+    });
+  });
+}
+
+function stopPlayback(){
+  if(!currentPhase) return;
+  clearPhaseTimeouts();
+  clearInterval(countdownTimerId);
+  stopAllAudioNodes();
+  recording = false;
+  const wasListening = currentPhase === 'listen';
+  endPhaseUI();
+  setStatus(wasListening ? 'Ascolto interrotto.' : 'Registrazione interrotta.');
+}
+
+const TOLERANCE = 0.18; // secondi
+
+function registerHit(){
+  if(!recording) return;
+  const t = recordCtx.currentTime - recordGoTime;
+  userPresses.push(t);
+  playClap(recordCtx.currentTime + 0.001, 0.5);
+
+  let bestIdx = -1, bestDelta = Infinity;
+  expectedNotesLive.forEach((exp, idx) => {
+    if(exp.matched) return;
+    const delta = Math.abs(exp.time - t);
+    if(delta <= TOLERANCE && delta < bestDelta){ bestDelta = delta; bestIdx = idx; }
+  });
+  if(bestIdx >= 0){
+    expectedNotesLive[bestIdx].matched = true;
+    expectedNotesLive[bestIdx].colorKeys.forEach(k => liveColorMap[k] = COLOR_GOOD);
+    renderScore(currentMeasures, liveColorMap);
+  }
+}
+
+function onKeydown(e){
+  if(e.code !== 'Space') return;
+  e.preventDefault();
+  registerHit();
+}
+window.addEventListener('keydown', onKeydown);
+
+function evaluate(){
+  const total = expectedNotesLive.length;
+  const hits = expectedNotesLive.filter(e=>e.matched).length;
+  const extra = Math.max(0, userPresses.length - hits);
+  const scorePct = total>0 ? Math.round(100*hits/total) : 0;
+
+  expectedNotesLive.forEach(exp => {
+    if(!exp.matched) exp.colorKeys.forEach(k => liveColorMap[k] = COLOR_BAD);
+  });
+  renderScore(currentMeasures, liveColorMap);
+
+  el.resultScore.innerHTML = scorePct + '<span class="unit"> / 100</span>';
+  el.resultDetail.textContent = `${hits} di ${total} note colpite nel tempo (tolleranza ±${Math.round(TOLERANCE*1000)} ms).`;
+  el.resultExtra.textContent = extra>0
+    ? `${extra} pressioni in più, senza nota corrispondente.`
+    : 'Nessuna pressione di troppo.';
+  el.results.classList.add('show');
+
+  if(scorePct >= 90){
+    playVictoryJingle();
+    if(playMode === 'training'){
+      handleTrainingPass();
+      return;
+    }
+  }
+  setStatus('Valutazione completata. Genera un nuovo esercizio o riprova ad ascoltare.');
+}
+
+/* =========================================================================
+   8. ALLENAMENTO: navigazione, progressione, popup
+   ========================================================================= */
+
+function showScreen(name){
+  el.screenMain.style.display = (name==='main') ? '' : 'none';
+  el.screenTrainingSelect.style.display = (name==='trainingSelect') ? '' : 'none';
+}
+
+function updateTrainingBar(){
+  const chal = CHALLENGES[training.challengeIndex];
+  el.trainingChallengeName.textContent = `Sfida ${training.challengeIndex+1}: ${chal.name}`;
+  el.trainingLevelLabel.textContent = `Livello ${training.level}/5`;
+  el.trainingProgressFill.style.width = ((training.level-1)/5*100) + '%';
+}
+
+function populateChallengeGrid(){
+  el.challengeGrid.innerHTML = '';
+  CHALLENGES.forEach((chal, idx) => {
+    const card = document.createElement('button');
+    card.className = 'challenge-card';
+    card.innerHTML = `<div class="num">Sfida ${idx+1}</div><div class="name">${chal.name}</div>`;
+    card.addEventListener('click', () => startTraining(selectedDifficulty, idx));
+    el.challengeGrid.appendChild(card);
+  });
+}
+
+function startTraining(difficulty, challengeIndex){
+  training = { difficulty, challengeIndex, level:1 };
+  playMode = 'training';
+  el.freeRangeFields.style.display = 'none';
+  el.trainingBar.style.display = 'block';
+  showScreen('main');
+  updateTrainingBar();
+  newExercise();
+}
+
+function exitTraining(){
+  playMode = 'free';
+  el.freeRangeFields.style.display = '';
+  el.trainingBar.style.display = 'none';
+  showScreen('main');
+}
+
+let popupContinueAction = null;
+
+function spawnConfetti(count){
+  const colors = ['#f59e0b','#fde047','#22c55e','#3b82f6','#a855f7','#ef4444','#06b6d4'];
+  const layer = document.createElement('div');
+  layer.style.position = 'absolute';
+  layer.style.inset = '0';
+  layer.style.overflow = 'hidden';
+  layer.style.pointerEvents = 'none';
+  for(let i=0;i<count;i++){
+    const p = document.createElement('div');
+    p.className = 'confetti-piece';
+    const angle = Math.random()*Math.PI*2;
+    const dist = 80 + Math.random()*160;
+    p.style.setProperty('--dx', Math.cos(angle)*dist+'px');
+    p.style.setProperty('--dy', Math.sin(angle)*dist+'px');
+    p.style.setProperty('--rot', (Math.random()*720-360)+'deg');
+    p.style.background = colors[Math.floor(Math.random()*colors.length)];
+    p.style.animationDelay = (Math.random()*0.15)+'s';
+    layer.appendChild(p);
+  }
+  el.popupCard.appendChild(layer);
+  setTimeout(() => layer.remove(), 1300);
+}
+
+function showPopup(title, subtitle, variant){
+  el.popupTitle.textContent = title;
+  el.popupSubtitle.textContent = subtitle;
+  el.popupCard.classList.remove('level','challenge','grand');
+  el.popupCard.classList.add(variant);
+  el.popupOverlay.classList.add('show');
+  spawnConfetti(variant==='grand' ? 70 : variant==='challenge' ? 40 : 24);
+}
+
+function hidePopup(){
+  el.popupOverlay.classList.remove('show');
+}
+
+function handleTrainingPass(){
+  const chal = CHALLENGES[training.challengeIndex];
+  if(training.level < 5){
+    training.level++;
+    updateTrainingBar();
+    popupContinueAction = () => newExercise();
+    showPopup('Nuovo livello!', `${chal.name} — Livello ${training.level}/5`, 'level');
+  } else if(training.challengeIndex < CHALLENGES.length-1){
+    training.challengeIndex++;
+    training.level = 1;
+    updateTrainingBar();
+    const nextChal = CHALLENGES[training.challengeIndex];
+    popupContinueAction = () => newExercise();
+    showPopup('Nuova sfida!', `Sfida ${training.challengeIndex+1}: ${nextChal.name}`, 'challenge');
+  } else {
+    training.level = 5;
+    updateTrainingBar();
+    popupContinueAction = () => exitTraining();
+    showPopup('SFIDE COMPLETATE!', 'Hai portato a termine tutte e dieci le sfide di questo allenamento.', 'grand');
+  }
+}
+
+/* =========================================================================
+   9. WIRING
+   ========================================================================= */
+
+el.btnNew.addEventListener('click', newExercise);
+el.btnListen.addEventListener('click', listen);
+el.btnPlay.addEventListener('click', startRecording);
+el.btnStop.addEventListener('click', stopPlayback);
+
+el.btnOptions.addEventListener('click', () => {
+  el.optionsPanel.classList.toggle('show');
+});
+el.bpm.addEventListener('change', () => {
+  bpm = parseInt(el.bpm.value, 10) || 80;
+  // Ricostruisce subito la schedule sul tempo nuovo, cosi' "Ascolta"/"INIZIA"
+  // usano il bpm aggiornato senza dover generare un nuovo esercizio: prima
+  // il cambio veniva letto solo alla generazione successiva.
+  if(currentMeasures && currentMeasures.length){
+    schedule = buildSchedule(currentMeasures, bpm);
+  }
+});
+el.volMetro.addEventListener('input', () => {
+  el.volMetroVal.textContent = el.volMetro.value + '%';
+  if(metroGainNode) metroGainNode.gain.value = el.volMetro.value / 100;
+});
+el.volRitmo.addEventListener('input', () => {
+  el.volRitmoVal.textContent = el.volRitmo.value + '%';
+  if(ritmoGainNode) ritmoGainNode.gain.value = el.volRitmo.value / 100;
+});
+
+el.btnTraining.addEventListener('click', () => {
+  populateChallengeGrid();
+  showScreen('trainingSelect');
+});
+el.btnBackFromSelect.addEventListener('click', () => showScreen('main'));
+el.btnExitTraining.addEventListener('click', exitTraining);
+
+el.difficultyRow.querySelectorAll('.diff-btn').forEach(btn => {
+  btn.addEventListener('click', () => {
+    selectedDifficulty = btn.dataset.diff;
+    el.difficultyRow.querySelectorAll('.diff-btn').forEach(b => b.classList.remove('selected'));
+    btn.classList.add('selected');
+  });
+});
+el.difficultyRow.querySelector(`[data-diff="${selectedDifficulty}"]`).classList.add('selected');
+
+el.btnPopupContinue.addEventListener('click', () => {
+  hidePopup();
+  const action = popupContinueAction;
+  popupContinueAction = null;
+  if(action) action();
+});
+
+// Tap-pad per il tocco: stessa logica della barra spaziatrice. Il
+// preventDefault sul touchstart evita che il browser generi anche un
+// evento "click" sintetico subito dopo (che farebbe registrare due colpi).
+el.tapPad.addEventListener('touchstart', (e) => {
+  e.preventDefault();
+  registerHit();
+});
+el.tapPad.addEventListener('click', registerHit);
+
+// Se cambia la fascia di larghezza (rotazione dello schermo, resize della
+// finestra) e la scala della notazione ne risente, ridisegna la battuta
+// corrente cosi' resta leggibile alla dimensione giusta.
+let lastRenderScale = getRenderScale();
+window.addEventListener('resize', () => {
+  const s = getRenderScale();
+  if(s !== lastRenderScale){
+    lastRenderScale = s;
+    if(currentMeasures && currentMeasures.length){
+      renderScore(currentMeasures, liveColorMap);
+    }
+  }
+});
+
+setStatus('Premi "Nuovo esercizio" per generare delle battute casuali.');
+</script>
+</body>
+</html>
