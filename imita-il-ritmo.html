@@ -276,6 +276,23 @@
   .challenge-card .num{ font-family:"Sora","Inter",Arial,sans-serif; font-size:0.72rem; font-weight:700; text-transform:uppercase; letter-spacing:0.5px; color:#94a3b8; margin-bottom:4px; }
   .challenge-card .name{ font-family:"Sora","Inter",Arial,sans-serif; font-size:1.0rem; font-weight:700; }
 
+  /* Sfida finale: piu' grande, colorata, occupa tutta la riga della griglia */
+  .challenge-card-final{
+    grid-column: 1 / -1;
+    text-align:center;
+    padding:22px 20px;
+    border:none;
+    background: linear-gradient(120deg, #dc2626, #f97316, #facc15);
+    box-shadow: 0 1px 0 rgba(255,255,255,0.28) inset, 0 6px 18px rgba(0,0,0,0.35);
+  }
+  .challenge-card-final:hover{ background: linear-gradient(120deg, #dc2626, #f97316, #facc15); filter:brightness(1.08); transform:translateY(-3px); }
+  .challenge-card-final .num{ color:rgba(255,255,255,0.85); }
+  .challenge-card-final .name{
+    color:#fff;
+    font-size:1.25rem;
+    text-shadow: 0 2px 8px rgba(0,0,0,0.4);
+  }
+
   /* POPUP DI VITTORIA */
   .popup-overlay{
     position:fixed; inset:0; z-index:500;
@@ -555,17 +572,18 @@ function pickWeightedId(candidates){
 
 const REST_PROB = 0.22;
 const REST_PROB_DOTTED = 0.20;
+const REST_PROB_SIXTEENTH = 0.15; // usata solo dove allowSixteenthRests e' attivo
 
 function tiedPairVariants(pos, remaining, allowedTieVariants){
   const out = [];
   if(pos%4===0 && remaining>=8) out.push('QQ');
-  if(pos%2===0 && remaining>=6) out.push('EQ');
+  if(pos%4===0 && remaining>=6) out.push('EQ'); // solo sul movimento: la sincope vera ha il suo generatore dedicato
   if(pos%4===0 && remaining>=6) out.push('QE');
   if(pos%4===0 && remaining>=12) out.push('HQ');
   return allowedTieVariants ? out.filter(v => allowedTieVariants.includes(v)) : out;
 }
 
-function buildGenerator(id, pos, remaining, lastCell, noRestGenerators, allowedTieVariants){
+function buildGenerator(id, pos, remaining, lastCell, noRestGenerators, allowedTieVariants, allowSixteenthRests){
   const suppressed = (gid) => noRestGenerators && noRestGenerators.includes(gid);
   switch(id){
     case 'WHOLE': {
@@ -607,15 +625,19 @@ function buildGenerator(id, pos, remaining, lastCell, noRestGenerators, allowedT
       return { cells:[a,b], consumed:pair[0]+pair[1], lastCell:b };
     }
     case 'FOUR_SIXTEENTHS': {
-      // Quattro semicrome unite in travatura: mai in pausa, per restare semplici.
-      const cells = [1,1,1,1].map(v => ({ value:v, isRest:false, tieToNext:false }));
+      // Quattro semicrome unite in travatura: mai in pausa di default (per
+      // restare semplici nelle sfide dedicate alle semicrome); l'unica
+      // eccezione e' la Sfida finale, che le abilita esplicitamente.
+      let cells = [1,1,1,1].map(v => ({ value:v, isRest: allowSixteenthRests && Math.random()<REST_PROB_SIXTEENTH, tieToNext:false }));
+      if(cells.every(c=>c.isRest)) cells[3].isRest = false;
       return { cells, consumed:4, lastCell:cells[3] };
     }
     case 'TWO_SIXTEENTHS': {
-      // Due semicrome unite in travatura: occupano meta' movimento, mai in
-      // pausa; l'altra meta' del movimento viene riempita separatamente
-      // dalla normale scelta per quella posizione (es. una croma).
-      const cells = [1,1].map(v => ({ value:v, isRest:false, tieToNext:false }));
+      // Due semicrome unite in travatura: occupano meta' movimento;
+      // l'altra meta' del movimento viene riempita separatamente dalla
+      // normale scelta per quella posizione (es. una croma).
+      let cells = [1,1].map(v => ({ value:v, isRest: allowSixteenthRests && Math.random()<REST_PROB_SIXTEENTH, tieToNext:false }));
+      if(cells.every(c=>c.isRest)) cells[1].isRest = false;
       return { cells, consumed:2, lastCell:cells[1] };
     }
     case 'TRIPLET': {
@@ -625,9 +647,45 @@ function buildGenerator(id, pos, remaining, lastCell, noRestGenerators, allowedT
       const items = [{ isRest:false }, { isRest:false }, { isRest:false }];
       return { cells:[{ kind:'triplet', items }], consumed:4, lastCell:null };
     }
+    case 'OFFBEAT_EIGHTH': {
+      // CONTRATTEMPO: pausa di croma sul movimento + croma suonata sul
+      // levare, senza legatura. La pausa e' fissa (e' proprio la figura,
+      // non una scelta casuale) e non si estende oltre il movimento.
+      const restCell = { value:2, isRest:true, tieToNext:false };
+      const noteCell = { value:2, isRest:false, tieToNext:false };
+      return { cells:[restCell, noteCell], consumed:4, lastCell:noteCell };
+    }
+    case 'SYNCOPE_EQ': {
+      // SINCOPE: croma sul levare legata al quarto successivo, spostando
+      // l'accento sul tempo debole. Valida solo se parte esattamente sul
+      // levare (lo garantisce la condizione pos%4===2 nel chiamante).
+      const a = { value:2, isRest:false, tieToNext:true };
+      const b = { value:4, isRest:false, tieToNext:false };
+      return { cells:[a,b], consumed:6, lastCell:b };
+    }
     default:
       throw new Error('generatore sconosciuto: '+id);
   }
+}
+
+// Neutralizza il pattern "croma di pausa sul movimento + croma suonata sul
+// levare" quando compare per puro caso (due EIGHTH indipendenti scelte in
+// fila) nelle sfide PRIMA di quella dedicata al contrattempo: silenzia
+// anche la nota (diventa un banale quarto di pausa), cosi' l'effetto non
+// viene anticipato prima di essere stato insegnato.
+function suppressOffbeatFigures(cells){
+  let pos = 0;
+  for(let i=0;i<cells.length-1;i++){
+    const a = cells[i], b = cells[i+1];
+    const aLen = a.kind==='triplet' ? 4 : a.value;
+    if(a.kind!=='triplet' && b.kind!=='triplet' &&
+       pos%4===0 && a.value===2 && a.isRest && !a.tieToNext &&
+       b.value===2 && !b.isRest && !b.tieToNext){
+      b.isRest = true;
+    }
+    pos += aLen;
+  }
+  return enforceNoDoubleEighthRest(cells);
 }
 
 // Scandisce l'intera battuta e fonde qualunque coppia di crome di pausa
@@ -647,7 +705,7 @@ function enforceNoDoubleEighthRest(cells){
   return cells;
 }
 
-function generateMeasureV2(profile, allowWhole, noRestGenerators, allowedTieVariants){
+function generateMeasureV2(profile, allowWhole, noRestGenerators, allowedTieVariants, avoidOffbeatFigures, allowSixteenthRests){
   const cells = [];
   let pos = 0;
   let lastCell = null;
@@ -668,16 +726,20 @@ function generateMeasureV2(profile, allowWhole, noRestGenerators, allowedTieVari
     if(pos%4===0 && remaining>=4) add('FOUR_SIXTEENTHS', profile.FOUR_SIXTEENTHS||0);
     if(pos%2===0 && remaining>=2) add('TWO_SIXTEENTHS', profile.TWO_SIXTEENTHS||0);
     if(pos%4===0 && remaining>=4) add('TRIPLET', profile.TRIPLET||0);
+    if(pos%4===0 && remaining>=4) add('OFFBEAT_EIGHTH', profile.OFFBEAT_EIGHTH||0);
+    if(pos%4===2 && remaining>=6) add('SYNCOPE_EQ', profile.SYNCOPE_EQ||0);
 
     if(candidates.length===0) add('EIGHTH', 1);
 
     const id = pickWeightedId(candidates);
-    const built = buildGenerator(id, pos, remaining, lastCell, noRestGenerators, allowedTieVariants);
+    const built = buildGenerator(id, pos, remaining, lastCell, noRestGenerators, allowedTieVariants, allowSixteenthRests);
     built.cells.forEach(c => cells.push(c));
     lastCell = built.lastCell;
     pos += built.consumed;
   }
-  return enforceNoDoubleEighthRest(cells);
+  let result = enforceNoDoubleEighthRest(cells);
+  if(avoidOffbeatFigures) result = suppressOffbeatFigures(result);
+  return result;
 }
 
 function measureSignature(cells){
@@ -693,14 +755,14 @@ function isWholeMeasureCell(cells){
 
 // Regole dell'esercizio: mai due battute identiche, al massimo una battuta
 // di semibreve (nota o pausa) per esercizio.
-function generateExerciseV2(profile, numMeasures, noRestGenerators, allowedTieVariants){
+function generateExerciseV2(profile, numMeasures, noRestGenerators, allowedTieVariants, avoidOffbeatFigures, allowSixteenthRests){
   const measures = [];
   const signatures = new Set();
   let usedWhole = false;
   for(let i=0;i<numMeasures;i++){
     let cells, sig, tries = 0;
     do{
-      cells = generateMeasureV2(profile, !usedWhole, noRestGenerators, allowedTieVariants);
+      cells = generateMeasureV2(profile, !usedWhole, noRestGenerators, allowedTieVariants, avoidOffbeatFigures, allowSixteenthRests);
       sig = measureSignature(cells);
       tries++;
     } while(signatures.has(sig) && tries<60);
@@ -732,6 +794,10 @@ const CHALLENGES = [
     profile:{ WHOLE:0.4, HALF:2, QUARTER:3, EIGHTH:3, TIED_PAIR:5 } },
   { name:'Semibreve, minima, semiminima, croma, puntate e legate',
     profile:{ WHOLE:0.4, HALF:2, QUARTER:3, EIGHTH:3, DOTTED_HALF:1, DOTTED_QUARTER_PLUS_EIGHTH:2, TIED_PAIR:2 } },
+  { name:'Contrattempo',
+    profile:{ QUARTER:3, HALF:1, EIGHTH:3, OFFBEAT_EIGHTH:5 } },
+  { name:'Sincope',
+    profile:{ QUARTER:2, HALF:1, EIGHTH:4, SYNCOPE_EQ:5 } },
   { name:'La semicroma — parte 1',
     profile:{ WHOLE:0.3, HALF:1, QUARTER:3, EIGHTH:3, FOUR_SIXTEENTHS:5 } },
   { name:'La semicroma — parte 2',
@@ -741,16 +807,24 @@ const CHALLENGES = [
               DOTTED_QUARTER_PLUS_EIGHTH:2, TIED_PAIR:2 } },
   { name:'La terzina',
     profile:{ WHOLE:0.4, HALF:2, QUARTER:4, EIGHTH:3, TRIPLET:5 } },
+  { name:'Sfida finale', final:true, levels:10,
+    profile:null }, // il profilo di questa sfida e' calcolato a parte, livello per livello (vedi getFinalChallengeConfig)
 ];
 
 // Leggero aumento di difficolta' nei 5 livelli di una sfida: rinforza il
 // peso delle figure "protagoniste" della sfida mano a mano che si sale.
+// L'ultima sfida ("Sfida finale") ha una logica di generazione tutta sua
+// (10 livelli invece di 5, profilo calcolato ad hoc): la individuiamo per
+// indice invece di ripeterlo a mano ovunque.
+const FINAL_CHALLENGE_INDEX = CHALLENGES.length - 1;
+
 const SIGNATURE_KEYS = {
   0:['HALF','QUARTER'], 1:['EIGHTH'], 2:['EIGHTH'],
   3:['DOTTED_QUARTER_PLUS_EIGHTH','DOTTED_HALF'], 4:['TIED_PAIR'],
   5:['DOTTED_QUARTER_PLUS_EIGHTH','TIED_PAIR'],
-  6:['FOUR_SIXTEENTHS'], 7:['TWO_SIXTEENTHS'],
-  8:['TWO_SIXTEENTHS','DOTTED_QUARTER_PLUS_EIGHTH','TIED_PAIR'], 9:['TRIPLET'],
+  6:['OFFBEAT_EIGHTH'], 7:['SYNCOPE_EQ'],
+  8:['FOUR_SIXTEENTHS'], 9:['TWO_SIXTEENTHS'],
+  10:['TWO_SIXTEENTHS','DOTTED_QUARTER_PLUS_EIGHTH','TIED_PAIR'], 11:['TRIPLET'],
 };
 
 function profileForLevel(challengeIndex, level){
@@ -764,10 +838,52 @@ function profileForLevel(challengeIndex, level){
   return out;
 }
 
+// Sfide dove, oltre a evitare pause impreviste, non si vogliono ANCORA
+// sincopi e contrattempi (compaiono solo dalla sfida dedicata in poi):
+// evita che l'effetto emerga "per sbaglio" dalle sole crome/legature.
+const AVOID_OFFBEAT_FIGURES_CHALLENGES = [0, 1, 2, 3, 4, 5];
+
 // Sfide che, se non specificato altrimenti, ai livelli 1-2 evitano le pause
 // di croma: nei livelli introduttivi la figura nuova deve emergere chiara,
 // senza la complessita' ritmica che nasce da pause brevi in mezzo.
-const PLAIN_EIGHTH_EARLY_LEVELS = [6, 7, 9]; // Sfida 7, 8, 10 (indici 0-based)
+const PLAIN_EIGHTH_EARLY_LEVELS = [8, 9, 11]; // Sfida 9, 10, 12 (indici 0-based)
+
+// SFIDA FINALE: unisce tutti gli elementi incontrati nel gioco (comprese
+// sincope, contrattempo, semicrome con le loro pause, terzine), su 10
+// livelli invece di 5. Parte comunque piu' impegnativa delle sfide normali
+// (e' la sfida di sintesi), ma resta progressiva al suo interno:
+// - livelli 1-3: niente pause di semicroma, pause di croma ridotte al
+//   minimo (mai, per restare semplici mentre si assimila la combinazione).
+// - livelli 4-10: tutto abilitato, intensita' via via crescente.
+// Le terzine restano SEMPRE tre crome senza pause (regola valida in tutto
+// il gioco, non solo qui).
+const FINAL_CHALLENGE_START_PROFILE = {
+  QUARTER:5, EIGHTH:4, HALF:2, DOTTED_QUARTER_PLUS_EIGHTH:1, TIED_PAIR:1,
+  OFFBEAT_EIGHTH:1, SYNCOPE_EQ:1, FOUR_SIXTEENTHS:1, TWO_SIXTEENTHS:1, TRIPLET:1,
+};
+const FINAL_CHALLENGE_END_PROFILE = {
+  WHOLE:0.3, HALF:1.5, QUARTER:3, EIGHTH:4, DOTTED_HALF:1,
+  DOTTED_QUARTER_PLUS_EIGHTH:2, TIED_PAIR:2, OFFBEAT_EIGHTH:2.5, SYNCOPE_EQ:2.5,
+  FOUR_SIXTEENTHS:2, TWO_SIXTEENTHS:2, TRIPLET:2.5,
+};
+
+function getFinalChallengeConfig(level){
+  const t = (level-1) / (CHALLENGES[FINAL_CHALLENGE_INDEX].levels - 1); // 0 al livello 1, 1 all'ultimo
+  const keys = new Set([...Object.keys(FINAL_CHALLENGE_START_PROFILE), ...Object.keys(FINAL_CHALLENGE_END_PROFILE)]);
+  const profile = {};
+  keys.forEach(k => {
+    const a = FINAL_CHALLENGE_START_PROFILE[k] || 0;
+    const b = FINAL_CHALLENGE_END_PROFILE[k] || 0;
+    profile[k] = a + (b-a)*t;
+  });
+  return {
+    profile,
+    noRestGenerators: level <= 3 ? ['EIGHTH'] : [],
+    allowedTieVariants: null,
+    avoidOffbeatFigures: false,
+    allowSixteenthRests: level >= 4,
+  };
+}
 
 // Configurazione di generazione per una data sfida/livello: profilo dei pesi,
 // eventuali generatori a cui e' vietato produrre una pausa, ed eventuali
@@ -776,6 +892,8 @@ const PLAIN_EIGHTH_EARLY_LEVELS = [6, 7, 9]; // Sfida 7, 8, 10 (indici 0-based)
 // combinazioni piu' complesse (che spesso nascono da pause brevi) solo dal
 // terzo livello in poi.
 function getLevelConfig(challengeIndex, level){
+  if(challengeIndex === FINAL_CHALLENGE_INDEX) return getFinalChallengeConfig(level);
+
   let profile = profileForLevel(challengeIndex, level);
   let noRestGenerators = [];
   let allowedTieVariants = null;
@@ -802,17 +920,43 @@ function getLevelConfig(challengeIndex, level){
 
   if(challengeIndex === 4){
     // Sfida 5 "Le note legate": si comincia legando solo minima+semiminima,
-    // poi solo semiminima+semiminima, e solo dal livello 3 si aggiungono le
-    // legature con la croma (sincopi).
+    // poi solo semiminima+semiminima, e solo dal livello 3 si aggiungono
+    // anche le combinazioni con la croma (sempre sul movimento, non sul
+    // levare: la vera sincope ha la sua sfida dedicata piu' avanti).
     if(level === 1) allowedTieVariants = ['HQ'];
     else if(level === 2) allowedTieVariants = ['QQ'];
     if(level <= 2) noRestGenerators = ['EIGHTH'];
   }
 
-  if(challengeIndex === 8 && level <= 2){
-    // Sfida 9 (semicrome + puntate + legature insieme): nei primi due
+  if(challengeIndex === 6){
+    // Sfida 7 "Contrattempo": livello 1 quasi solo la figura pausa+croma
+    // sul levare, per farla riconoscere bene isolata; livello 2 aggiunge
+    // un po' di minima per respiro, sempre senza crome "libere" che
+    // potrebbero confondersi con la figura del contrattempo.
+    if(level === 1){
+      profile = { QUARTER:4, OFFBEAT_EIGHTH:6 };
+    } else if(level === 2){
+      profile = { QUARTER:3, HALF:2, OFFBEAT_EIGHTH:6 };
+    }
+  }
+
+  if(challengeIndex === 7){
+    // Sfida 8 "Sincope": la croma che prepara il levare deve essere
+    // sempre suonata (mai pausa) nei primi due livelli, per sentire bene
+    // il movimento "pieno" prima della nota che lega spostando l'accento.
+    if(level === 1){
+      profile = { QUARTER:2, EIGHTH:5, SYNCOPE_EQ:6 };
+      noRestGenerators = ['EIGHTH'];
+    } else if(level === 2){
+      profile = { QUARTER:2, HALF:1, EIGHTH:4, SYNCOPE_EQ:6 };
+      noRestGenerators = ['EIGHTH'];
+    }
+  }
+
+  if(challengeIndex === 10 && level <= 2){
+    // Sfida 11 (semicrome + puntate + legature insieme): nei primi due
     // livelli niente pause di croma o di semiminima puntata, e legature
-    // limitate a minima/semiminima (senza sincopi con la croma).
+    // limitate a minima/semiminima (senza le combinazioni con la croma).
     noRestGenerators = ['EIGHTH', 'DOTTED_QUARTER_PLUS_EIGHTH'];
     allowedTieVariants = ['QQ', 'HQ'];
   }
@@ -821,7 +965,9 @@ function getLevelConfig(challengeIndex, level){
     noRestGenerators = ['EIGHTH'];
   }
 
-  return { profile, noRestGenerators, allowedTieVariants };
+  const avoidOffbeatFigures = AVOID_OFFBEAT_FIGURES_CHALLENGES.includes(challengeIndex);
+
+  return { profile, noRestGenerators, allowedTieVariants, avoidOffbeatFigures };
 }
 
 // Se l'esercizio generato contiene davvero delle semicrome, il tempo viene
@@ -1185,7 +1331,7 @@ function setStatus(text, live){
 let liveColorMap = {};
 
 function newExercise(){
-  let numMeasures, profile, noRestGenerators, allowedTieVariants;
+  let numMeasures, profile, noRestGenerators, allowedTieVariants, avoidOffbeatFigures, allowSixteenthRests;
 
   if(playMode === 'training'){
     numMeasures = DIFF_MEASURES[training.difficulty];
@@ -1193,14 +1339,17 @@ function newExercise(){
     profile = cfg.profile;
     noRestGenerators = cfg.noRestGenerators;
     allowedTieVariants = cfg.allowedTieVariants;
+    avoidOffbeatFigures = cfg.avoidOffbeatFigures;
+    allowSixteenthRests = cfg.allowSixteenthRests;
   } else {
     let minM = Math.max(1, parseInt(el.minM.value,10)||4);
     let maxM = Math.max(minM, parseInt(el.maxM.value,10)||10);
     numMeasures = minM + Math.floor(Math.random()*(maxM-minM+1));
     profile = FREE_PROFILE;
+    avoidOffbeatFigures = true; // modalita' libera: stessa prudenza delle sfide di base
   }
 
-  currentMeasures = generateExerciseV2(profile, numMeasures, noRestGenerators, allowedTieVariants);
+  currentMeasures = generateExerciseV2(profile, numMeasures, noRestGenerators, allowedTieVariants, avoidOffbeatFigures, allowSixteenthRests);
 
   if(exerciseHasSixteenths(currentMeasures)){
     el.bpm.value = FORCED_SLOW_BPM;
@@ -1554,23 +1703,26 @@ function showScreen(name){
 
 function updateTrainingBar(){
   const chal = CHALLENGES[training.challengeIndex];
+  const totalLevels = chal.levels || 5;
   el.trainingChallengeName.textContent = `Sfida ${training.challengeIndex+1}: ${chal.name}`;
-  el.trainingLevelLabel.textContent = `Livello ${training.level}/5`;
-  el.trainingProgressFill.style.width = ((training.level-1)/5*100) + '%';
+  el.trainingLevelLabel.textContent = `Livello ${training.level}/${totalLevels}`;
+  el.trainingProgressFill.style.width = ((training.level-1)/totalLevels*100) + '%';
 }
 
 function populateChallengeGrid(){
   el.challengeGrid.innerHTML = '';
   CHALLENGES.forEach((chal, idx) => {
     const card = document.createElement('button');
-    card.className = 'challenge-card';
-    card.innerHTML = `<div class="num">Sfida ${idx+1}</div><div class="name">${chal.name}</div>`;
+    card.className = chal.final ? 'challenge-card challenge-card-final' : 'challenge-card';
+    const label = chal.final ? `Sfida finale — ${chal.levels} livelli` : chal.name;
+    card.innerHTML = `<div class="num">Sfida ${idx+1}</div><div class="name">${label}</div>`;
     card.addEventListener('click', () => startTraining(selectedDifficulty, idx));
     el.challengeGrid.appendChild(card);
   });
 }
 
 function startTraining(difficulty, challengeIndex){
+  if(currentPhase) stopPlayback();
   training = { difficulty, challengeIndex, level:1 };
   playMode = 'training';
   el.freeRangeFields.style.display = 'none';
@@ -1581,6 +1733,7 @@ function startTraining(difficulty, challengeIndex){
 }
 
 function exitTraining(){
+  if(currentPhase) stopPlayback();
   playMode = 'free';
   el.freeRangeFields.style.display = '';
   el.trainingBar.style.display = 'none';
@@ -1630,11 +1783,12 @@ function hidePopup(){
 
 function handleTrainingPass(statsHTML){
   const chal = CHALLENGES[training.challengeIndex];
-  if(training.level < 5){
+  const totalLevels = chal.levels || 5;
+  if(training.level < totalLevels){
     training.level++;
     updateTrainingBar();
     popupContinueAction = () => newExercise();
-    showPopup('Nuovo livello!', `${chal.name} — Livello ${training.level}/5`, statsHTML, 'level');
+    showPopup('Nuovo livello!', `${chal.name} — Livello ${training.level}/${totalLevels}`, statsHTML, 'level');
   } else if(training.challengeIndex < CHALLENGES.length-1){
     training.challengeIndex++;
     training.level = 1;
@@ -1643,10 +1797,10 @@ function handleTrainingPass(statsHTML){
     popupContinueAction = () => newExercise();
     showPopup('Nuova sfida!', `Sfida ${training.challengeIndex+1}: ${nextChal.name}`, statsHTML, 'challenge');
   } else {
-    training.level = 5;
+    training.level = totalLevels;
     updateTrainingBar();
     popupContinueAction = () => exitTraining();
-    showPopup('SFIDE COMPLETATE!', 'Hai portato a termine tutte e dieci le sfide di questo allenamento.', statsHTML, 'grand');
+    showPopup('SFIDE COMPLETATE!', `Hai portato a termine tutte e ${CHALLENGES.length} le sfide di questo allenamento.`, statsHTML, 'grand');
   }
 }
 
@@ -1681,10 +1835,14 @@ el.volRitmo.addEventListener('input', () => {
 });
 
 el.btnTraining.addEventListener('click', () => {
+  if(currentPhase) stopPlayback();
   populateChallengeGrid();
   showScreen('trainingSelect');
 });
-el.btnBackFromSelect.addEventListener('click', () => showScreen('main'));
+el.btnBackFromSelect.addEventListener('click', () => {
+  if(currentPhase) stopPlayback();
+  showScreen('main');
+});
 el.btnExitTraining.addEventListener('click', exitTraining);
 
 el.difficultyRow.querySelectorAll('.diff-btn').forEach(btn => {
