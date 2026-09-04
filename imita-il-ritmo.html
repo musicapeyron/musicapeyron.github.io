@@ -214,36 +214,21 @@
   .measure{
     position:relative;
   }
-  .result-panel{
-    margin-top:22px;
+  .legend-panel{
+    margin-top:18px;
     background: linear-gradient(180deg, rgba(255,255,255,0.09), rgba(255,255,255,0.05));
     border:1px solid rgba(255,255,255,0.10);
     border-radius:16px;
     box-shadow: 0 1px 0 rgba(255,255,255,0.06) inset, 0 14px 34px rgba(0,0,0,0.24);
     backdrop-filter: blur(14px) saturate(130%);
-    padding:18px 22px;
-    display:none;
-  }
-  .result-panel.show{ display:block; }
-  .result-score{
-    font-family:"Sora","Inter",Arial,sans-serif;
-    font-size:2.2rem;
-    font-weight:700;
-    color:#fde68a;
-    margin:0 0 4px;
-  }
-  .result-score .unit{ font-size:1.1rem; color:#94a3b8; font-weight:400; }
-  .result-detail{
-    font-size:0.92rem;
-    color:#cbd5e1;
-    margin:2px 0;
+    padding:14px 22px;
   }
   .legend{
     display:flex;
+    flex-wrap:wrap;
     gap:18px;
     font-size:0.85rem;
     color:#94a3b8;
-    margin-top:14px;
   }
   .legend span{ display:inline-flex; align-items:center; gap:6px; }
   .swatch{ width:12px; height:12px; border-radius:3px; display:inline-block; }
@@ -328,7 +313,27 @@
     -webkit-background-clip:text; background-clip:text; color:transparent;
     font-size:2.3rem;
   }
-  .popup-subtitle{ color:#e2e8f0; font-size:1.02rem; margin-bottom:28px; }
+  .popup-card.retry .popup-title{ color:#fca5a5; }
+  .popup-card.success .popup-title{ color:#86efac; }
+  .popup-subtitle{ color:#e2e8f0; font-size:1.02rem; margin-bottom:14px; }
+  .popup-stats{
+    display:flex;
+    flex-direction:column;
+    gap:7px;
+    margin: 0 0 24px;
+    padding:14px 18px;
+    background: rgba(0,0,0,0.20);
+    border-radius:12px;
+    text-align:left;
+  }
+  .popup-stat{
+    display:flex;
+    justify-content:space-between;
+    gap:16px;
+    font-size:0.92rem;
+    color:#e2e8f0;
+  }
+  .popup-stat b{ color:#fde68a; font-weight:700; text-align:right; }
   .popup-card button{ background: linear-gradient(135deg,#ffffff,#e2e8f0); color:#312e81; border:none; padding:12px 28px; }
   .confetti-piece{
     position:absolute; top:38%; left:50%; width:9px; height:9px; border-radius:2px;
@@ -486,10 +491,7 @@
     <div class="measure-row" id="measures"></div>
   </div>
 
-  <div class="result-panel" id="results">
-    <p class="result-score" id="resultScore">—</p>
-    <p class="result-detail" id="resultDetail"></p>
-    <p class="result-detail" id="resultExtra"></p>
+  <div class="legend-panel">
     <div class="legend">
       <span><span class="swatch" style="background:var(--good)"></span> nel tempo</span>
       <span><span class="swatch" style="background:var(--bad)"></span> mancata</span>
@@ -519,6 +521,7 @@
   <div class="popup-card" id="popupCard">
     <div class="popup-title" id="popupTitle">Nuovo livello!</div>
     <div class="popup-subtitle" id="popupSubtitle"></div>
+    <div class="popup-stats" id="popupStats"></div>
     <button id="btnPopupContinue">Continua</button>
   </div>
 </div>
@@ -1153,10 +1156,7 @@ const el = {
   volRitmo: document.getElementById('volRitmo'),
   volRitmoVal: document.getElementById('volRitmoVal'),
   status: document.getElementById('status'),
-  results: document.getElementById('results'),
-  resultScore: document.getElementById('resultScore'),
-  resultDetail: document.getElementById('resultDetail'),
-  resultExtra: document.getElementById('resultExtra'),
+  popupStats: document.getElementById('popupStats'),
   trainingBar: document.getElementById('trainingBar'),
   trainingChallengeName: document.getElementById('trainingChallengeName'),
   trainingLevelLabel: document.getElementById('trainingLevelLabel'),
@@ -1215,7 +1215,6 @@ function newExercise(){
   renderScore(currentMeasures);
   schedule = buildSchedule(currentMeasures, bpm);
 
-  el.results.classList.remove('show');
   el.btnListen.disabled = false;
   el.btnPlay.disabled = false;
   currentPhase = null;
@@ -1266,7 +1265,6 @@ function hideTapOverlay(){
 function beginPhaseUI(){
   setDisabled(true);
   el.btnStop.style.display = 'inline-block';
-  el.results.classList.remove('show');
   liveColorMap = {};
   renderScore(currentMeasures, liveColorMap);
 }
@@ -1278,21 +1276,20 @@ function endPhaseUI(){
   updateTapOverlay();
 }
 
-// Fa scorrere la battuta in riproduzione al centro della vista: essenziale
-// su schermi stretti dove non tutte le battute stanno a video insieme.
-function scheduleMeasureFollow(ctx, goTime){
-  schedule.measureStartTimes.forEach((startT, mIdx) => {
-    scheduleAt(goTime + startT - ctx.currentTime, () => {
-      const div = document.querySelector(`.measure[data-measure-index="${mIdx}"]`);
-      if(div) div.scrollIntoView({ behavior:'smooth', inline:'center', block:'nearest' });
-    });
-  });
+// Approssimazione semplice ma sufficiente: stessa soglia della media query
+// CSS usata per il resto dell'interfaccia mobile, cosi' il comportamento in
+// JS resta coerente con l'aspetto che l'utente vede.
+function isNarrowViewport(){
+  return window.innerWidth < 700;
 }
 
 function listen(){
   beginPhaseUI();
   currentPhase = 'listen';
   updateTapOverlay();
+  if(isNarrowViewport()){
+    el.scoreWrap.scrollIntoView({ behavior:'smooth', block:'start' });
+  }
   const ctx = getAudioCtx();
   ctx.resume().then(() => {
     if(currentPhase !== 'listen') return;
@@ -1309,7 +1306,6 @@ function listen(){
 
     const goTime = scheduleCountIn(startTime, quarterSec, 4);
     scheduleContinuousMetronome(goTime, quarterSec, schedule.totalBeats);
-    scheduleMeasureFollow(ctx, goTime);
 
     schedule.events.forEach(ev => {
       if(ev.isRest){
@@ -1351,6 +1347,9 @@ function startRecording(){
   beginPhaseUI();
   currentPhase = 'record';
   showCountInOverlay();
+  if(isNarrowViewport()){
+    el.scoreWrap.scrollIntoView({ behavior:'smooth', block:'start' });
+  }
   userPresses = [];
   expectedNotesLive = schedule.events.filter(ev => !ev.isRest)
     .map(ev => ({ time: ev.time, colorKeys: ev.colorKeys, matched:false }));
@@ -1377,7 +1376,6 @@ function startRecording(){
 
     const goTime = scheduleCountIn(startTime, quarterSec, 4);
     scheduleContinuousMetronome(goTime, quarterSec, schedule.totalBeats);
-    scheduleMeasureFollow(ctx, goTime);
     recordGoTime = goTime;
     recording = true;
 
@@ -1385,6 +1383,19 @@ function startRecording(){
       scheduleAt(goTime + ev.time - ctx.currentTime, () => {
         liveColorMap[ev.colorKeys[0]] = COLOR_REST;
         renderScore(currentMeasures, liveColorMap);
+      });
+    });
+
+    // Appena la finestra di tolleranza di una nota si chiude senza essere
+    // stata colpita, non puo' piu' essere presa da nessuna pressione
+    // futura (il delta puo' solo crescere): la coloriamo di rosso subito,
+    // invece di aspettare la fine dell'esercizio.
+    expectedNotesLive.forEach(exp => {
+      scheduleAt(goTime + exp.time + TOLERANCE - ctx.currentTime, () => {
+        if(!exp.matched){
+          exp.colorKeys.forEach(k => liveColorMap[k] = COLOR_BAD);
+          renderScore(currentMeasures, liveColorMap);
+        }
       });
     });
 
@@ -1408,6 +1419,23 @@ function stopPlayback(){
 }
 
 const TOLERANCE = 0.18; // secondi
+const PASS_THRESHOLD = 90;
+
+// Il punteggio massimo raggiungibile da qui in poi, ipotizzando (nella
+// migliore delle ipotesi) che TUTTE le note ancora da colpire vengano
+// azzeccate perfettamente. Usa la stessa identica formula di evaluate():
+// se anche questo scenario ottimistico non basta a superare la soglia,
+// continuare non serve piu' a nulla ai fini del superamento.
+function bestPossibleScore(){
+  const total = expectedNotesLive.length;
+  if(total === 0) return 100;
+  const hits = expectedNotesLive.filter(e=>e.matched).length;
+  const extra = Math.max(0, userPresses.length - hits);
+  const numMeasures = currentMeasures.length;
+  const freeAllowance = Math.max(1, Math.round(numMeasures/2));
+  const penalizedExtra = Math.max(0, extra - freeAllowance);
+  return Math.round(100*total/(total+penalizedExtra));
+}
 
 function registerHit(){
   if(!recording) return;
@@ -1425,15 +1453,57 @@ function registerHit(){
     expectedNotesLive[bestIdx].matched = true;
     expectedNotesLive[bestIdx].colorKeys.forEach(k => liveColorMap[k] = COLOR_GOOD);
     renderScore(currentMeasures, liveColorMap);
+  } else if(bestPossibleScore() < PASS_THRESHOLD){
+    // Anche azzeccando perfettamente tutto il resto non si arriverebbe piu'
+    // alla soglia: che sia spam deliberato o solo troppe pressioni a vuoto,
+    // continuare non ha piu' senso ai fini del superamento.
+    abortForSpam();
   }
+}
+
+// Interrompe subito l'esercizio quando il superamento non e' piu'
+// matematicamente possibile, mostrando le statistiche raccolte fino a
+// quel momento nello stesso popup usato per un normale mancato superamento.
+function abortForSpam(){
+  clearPhaseTimeouts();
+  clearInterval(countdownTimerId);
+  stopAllAudioNodes();
+  recording = false;
+  endPhaseUI();
+
+  const total = expectedNotesLive.length;
+  const hits = expectedNotesLive.filter(e=>e.matched).length;
+  const extra = Math.max(0, userPresses.length - hits);
+  const numMeasures = currentMeasures.length;
+  const freeAllowance = Math.max(1, Math.round(numMeasures/2));
+  const penalizedExtra = Math.max(0, extra - freeAllowance);
+  const scorePct = total>0 ? Math.round(100*hits/(total+penalizedExtra)) : 0;
+  const statsHTML = buildStatsHTML(hits, total, extra, penalizedExtra, scorePct);
+
+  popupContinueAction = () => newExercise();
+  showPopup('Riprova!', 'Esercizio interrotto: troppe pressioni a vuoto di fila.', statsHTML, 'retry');
 }
 
 function onKeydown(e){
   if(e.code !== 'Space') return;
   e.preventDefault();
-  registerHit();
+  scoreTapPrimaryAction();
 }
 window.addEventListener('keydown', onKeydown);
+
+function buildStatsHTML(hits, total, extra, penalizedExtra, scorePct){
+  const accuracyPct = total>0 ? Math.round(100*hits/total) : 0;
+  const rows = [
+    ['Punteggio finale', scorePct + '%'],
+    ['Precisione (senza penalità)', accuracyPct + '%'],
+    ['Note colpite', `${hits} / ${total}`],
+    ['Tolleranza', `±${Math.round(TOLERANCE*1000)} ms`],
+    ['Pressioni in più', extra + (penalizedExtra>0 ? ' (penalizzano il punteggio)' : '')],
+  ];
+  return rows.map(([label, value]) =>
+    `<div class="popup-stat"><span>${label}</span><b>${value}</b></div>`
+  ).join('');
+}
 
 function evaluate(){
   const total = expectedNotesLive.length;
@@ -1456,21 +1526,21 @@ function evaluate(){
   });
   renderScore(currentMeasures, liveColorMap);
 
-  el.resultScore.innerHTML = scorePct + '<span class="unit"> / 100</span>';
-  el.resultDetail.textContent = `${hits} di ${total} note colpite nel tempo (tolleranza ±${Math.round(TOLERANCE*1000)} ms).`;
-  el.resultExtra.textContent = extra>0
-    ? `${extra} pressioni in più, senza nota corrispondente${penalizedExtra>0 ? ' (penalizzano il punteggio)' : ''}.`
-    : 'Nessuna pressione di troppo.';
-  el.results.classList.add('show');
+  const statsHTML = buildStatsHTML(hits, total, extra, penalizedExtra, scorePct);
 
-  if(scorePct >= 90){
+  if(scorePct >= PASS_THRESHOLD){
     playVictoryJingle();
     if(playMode === 'training'){
-      handleTrainingPass();
+      handleTrainingPass(statsHTML);
       return;
     }
+    popupContinueAction = () => newExercise();
+    showPopup('Esercizio superato!', 'Bel lavoro — puoi generarne subito un altro.', statsHTML, 'success');
+  } else {
+    popupContinueAction = () => newExercise();
+    showPopup('Riprova!', 'Non ce l\'hai fatta questa volta: ritenta con un nuovo esercizio.', statsHTML, 'retry');
   }
-  setStatus('Valutazione completata. Genera un nuovo esercizio o riprova ad ascoltare.');
+  setStatus('Valutazione completata.');
 }
 
 /* =========================================================================
@@ -1543,38 +1613,40 @@ function spawnConfetti(count){
   setTimeout(() => layer.remove(), 1300);
 }
 
-function showPopup(title, subtitle, variant){
+function showPopup(title, subtitle, statsHTML, variant){
   el.popupTitle.textContent = title;
   el.popupSubtitle.textContent = subtitle;
-  el.popupCard.classList.remove('level','challenge','grand');
+  el.popupStats.innerHTML = statsHTML || '';
+  el.popupStats.style.display = statsHTML ? '' : 'none';
+  el.popupCard.classList.remove('level','challenge','grand','retry','success');
   el.popupCard.classList.add(variant);
   el.popupOverlay.classList.add('show');
-  spawnConfetti(variant==='grand' ? 70 : variant==='challenge' ? 40 : 24);
+  spawnConfetti(variant==='grand' ? 70 : variant==='challenge' ? 40 : variant==='level' ? 24 : 0);
 }
 
 function hidePopup(){
   el.popupOverlay.classList.remove('show');
 }
 
-function handleTrainingPass(){
+function handleTrainingPass(statsHTML){
   const chal = CHALLENGES[training.challengeIndex];
   if(training.level < 5){
     training.level++;
     updateTrainingBar();
     popupContinueAction = () => newExercise();
-    showPopup('Nuovo livello!', `${chal.name} — Livello ${training.level}/5`, 'level');
+    showPopup('Nuovo livello!', `${chal.name} — Livello ${training.level}/5`, statsHTML, 'level');
   } else if(training.challengeIndex < CHALLENGES.length-1){
     training.challengeIndex++;
     training.level = 1;
     updateTrainingBar();
     const nextChal = CHALLENGES[training.challengeIndex];
     popupContinueAction = () => newExercise();
-    showPopup('Nuova sfida!', `Sfida ${training.challengeIndex+1}: ${nextChal.name}`, 'challenge');
+    showPopup('Nuova sfida!', `Sfida ${training.challengeIndex+1}: ${nextChal.name}`, statsHTML, 'challenge');
   } else {
     training.level = 5;
     updateTrainingBar();
     popupContinueAction = () => exitTraining();
-    showPopup('SFIDE COMPLETATE!', 'Hai portato a termine tutte e dieci le sfide di questo allenamento.', 'grand');
+    showPopup('SFIDE COMPLETATE!', 'Hai portato a termine tutte e dieci le sfide di questo allenamento.', statsHTML, 'grand');
   }
 }
 
