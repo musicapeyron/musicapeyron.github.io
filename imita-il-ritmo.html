@@ -786,6 +786,12 @@ function generateMeasureV2(profile, allowWhole, noRestGenerators, allowedTieVari
   let pos = 0;
   let lastCell = null;
   let guard = 0;
+  // Tiene traccia di cosa ha riempito la PRIMA meta' del movimento corrente
+  // (una croma o una coppia di semicrome): se una meta' e' fatta di
+  // semicrome, l'altra meta' deve restarlo anche lei, altrimenti VexFlow
+  // le travature insieme senza punto di valore sulla croma (scorretto: in
+  // notazione, una croma travata con semicrome va sempre puntata).
+  let beatFirstHalfKind = null;
   while(pos < 16){
     if(++guard > 300) throw new Error('loop infinito nella generazione ritmica');
     const remaining = 16 - pos;
@@ -797,13 +803,13 @@ function generateMeasureV2(profile, allowWhole, noRestGenerators, allowedTieVari
     if(pos%4===0 && remaining>=12) add('DOTTED_HALF', profile.DOTTED_HALF||0);
     if(pos%4===0 && remaining>=4) add('QUARTER', profile.QUARTER||0);
     if(pos%4===0 && remaining>=8) add('DOTTED_QUARTER_PLUS_EIGHTH', profile.DOTTED_QUARTER_PLUS_EIGHTH||0);
-    if(pos%2===0 && remaining>=2) add('EIGHTH', profile.EIGHTH||0);
+    if(pos%2===0 && remaining>=2 && !(pos%4===2 && beatFirstHalfKind==='sixteenths')) add('EIGHTH', profile.EIGHTH||0);
     if((profile.TIED_PAIR||0)>0 && tiedPairVariants(pos,remaining,allowedTieVariants).length>0) add('TIED_PAIR', profile.TIED_PAIR);
     if(pos%4===0 && remaining>=4) add('FOUR_SIXTEENTHS', profile.FOUR_SIXTEENTHS||0);
-    if(pos%2===0 && remaining>=2) add('TWO_SIXTEENTHS', profile.TWO_SIXTEENTHS||0);
+    if(pos%2===0 && remaining>=2 && !(pos%4===2 && beatFirstHalfKind==='eighth')) add('TWO_SIXTEENTHS', profile.TWO_SIXTEENTHS||0);
     if(pos%4===0 && remaining>=4) add('TRIPLET', profile.TRIPLET||0);
     if(pos%4===0 && remaining>=4) add('OFFBEAT_EIGHTH', profile.OFFBEAT_EIGHTH||0);
-    if(pos%4===2 && remaining>=6) add('SYNCOPE_EQ', profile.SYNCOPE_EQ||0);
+    if(pos%4===2 && remaining>=6 && beatFirstHalfKind!=='sixteenths') add('SYNCOPE_EQ', profile.SYNCOPE_EQ||0);
 
     if(candidates.length===0) add('EIGHTH', 1);
 
@@ -811,6 +817,9 @@ function generateMeasureV2(profile, allowWhole, noRestGenerators, allowedTieVari
     const built = buildGenerator(id, pos, remaining, lastCell, noRestGenerators, allowedTieVariants, sixteenthRestMode);
     built.cells.forEach(c => cells.push(c));
     lastCell = built.lastCell;
+    if(pos%4===0 && id==='EIGHTH') beatFirstHalfKind = 'eighth';
+    else if(pos%4===0 && id==='TWO_SIXTEENTHS') beatFirstHalfKind = 'sixteenths';
+    else beatFirstHalfKind = null;
     pos += built.consumed;
   }
   let result = enforceNoDoubleEighthRest(enforceNoDoubleSixteenthRest(cells));
@@ -830,8 +839,40 @@ function isWholeMeasureCell(cells){
   return cells.length===1 && cells[0].kind!=='triplet' && cells[0].value===16;
 }
 
+// Verifica reale (con VexFlow) se la battuta produce una travatura che
+// mescola una croma liscia (non puntata) con delle semicrome. L'algoritmo
+// di raggruppamento di VexFlow tiene un "resto" frazionario che si propaga
+// da una figura all'altra (es. dopo un quarto, una minima, una terzina, o
+// la coda di una legatura), quindi non e' praticamente possibile prevedere
+// con certezza ogni caso solo dalla posizione: si verifica direttamente il
+// risultato vero, come gia' si fa per evitare le battute duplicate.
+function hasMixedEighthSixteenthBeam(cells){
+  const notes = [];
+  const tupletGroups = [];
+  cells.forEach(cell => {
+    if(cell.kind === 'triplet'){
+      const items = cell.items.map(it => new VF.StaveNote({ keys:['b/4'], duration: it.isRest ? '8r' : '8' }));
+      notes.push(...items);
+      tupletGroups.push(items);
+    } else {
+      const dur = SIMPLE_DUR[cell.value] + (cell.isRest ? 'r' : '');
+      notes.push(new VF.StaveNote({ keys:['b/4'], duration: dur }));
+    }
+  });
+  // I Tuplet vanno creati PRIMA di generateBeams, altrimenti i tick delle
+  // terzine non sono ancora ridotti quando l'algoritmo calcola i gruppi.
+  tupletGroups.forEach(items => new VF.Tuplet(items));
+  const beams = VF.Beam.generateBeams(notes);
+  return beams.some(b => {
+    const has8 = b.notes.some(n => n.getDuration() === '8');
+    const has16 = b.notes.some(n => n.getDuration() === '16');
+    return has8 && has16;
+  });
+}
+
 // Regole dell'esercizio: mai due battute identiche, al massimo una battuta
-// di semibreve (nota o pausa) per esercizio.
+// di semibreve (nota o pausa) per esercizio, mai una croma liscia travata
+// insieme a delle semicrome.
 function generateExerciseV2(profile, numMeasures, noRestGenerators, allowedTieVariants, avoidOffbeatFigures, sixteenthRestMode){
   const measures = [];
   const signatures = new Set();
@@ -842,7 +883,7 @@ function generateExerciseV2(profile, numMeasures, noRestGenerators, allowedTieVa
       cells = generateMeasureV2(profile, !usedWhole, noRestGenerators, allowedTieVariants, avoidOffbeatFigures, sixteenthRestMode);
       sig = measureSignature(cells);
       tries++;
-    } while(signatures.has(sig) && tries<60);
+    } while((signatures.has(sig) || hasMixedEighthSixteenthBeam(cells)) && tries<60);
     signatures.add(sig);
     if(isWholeMeasureCell(cells)) usedWhole = true;
     measures.push(cells);
