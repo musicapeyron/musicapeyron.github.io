@@ -198,12 +198,14 @@
   }
   .status-line.live{ color:#fde68a; font-weight:700; }
   #score-wrap{
+    position:relative;
     background: linear-gradient(180deg, #fdfaf3, #f2e9d8);
     border:none;
     border-radius:18px;
     box-shadow: 0 1px 0 rgba(255,255,255,0.4) inset, 0 16px 34px rgba(0,0,0,0.35);
     padding: 20px 8px 8px;
     overflow-x:auto;
+    touch-action: manipulation;
   }
   .measure-row{
     display:flex;
@@ -338,61 +340,94 @@
     100%{ transform:translate(calc(-50% + var(--dx)), calc(-50% + var(--dy))) rotate(var(--rot)); opacity:0; }
   }
 
-  /* TAP-PAD: bersaglio grande per il tocco, alternativa alla barra
-     spaziatrice. E' un figlio flessibile della riga delle battute: il
-     flexbox lo mette da solo nello spazio rimasto sull'ultima riga (a
-     destra, dopo l'ultima battuta), alto quanto le battute stesse.
-     Nascosto su schermi larghi, dove la tastiera basta. */
-  #tapPad{
+  /* OVERLAY DI TOCCO: copre il pentagramma solo quando serve (prima di
+     iniziare, e durante il conteggio), per far capire che si puo' toccare
+     ovunque nel riquadro. pointer-events:none lascia passare il tocco fino
+     a #score-wrap, che e' il vero gestore dell'evento. Nascosto su schermi
+     larghi, dove la tastiera basta. */
+  .tap-overlay{
     display:none;
-    flex: 1 1 130px;
-    max-width: 240px;
-    align-self: stretch;
+    position:absolute;
+    inset:0;
+    z-index:5;
+    flex-direction:column;
     align-items:center;
     justify-content:center;
+    gap:10px;
+    background: rgba(15,23,42,0.45);
+    border-radius:18px;
+    pointer-events:none;
     text-align:center;
-    line-height:1.25;
-    padding:10px;
-    font-size:0.85rem;
-    font-weight:700;
-    letter-spacing:0.4px;
-    border-radius:14px;
-    border:none;
-    color:#fff;
-    background: linear-gradient(160deg, #22c55e, #16a34a);
-    -webkit-tap-highlight-color: transparent;
-    user-select:none;
-    touch-action: manipulation;
+    padding:20px;
   }
-  #tapPad:active{ transform:scale(0.97); filter:brightness(1.15); }
-  #tapPad:disabled{ opacity:0.45; filter:grayscale(0.3); }
+  .tap-overlay.show{ display:flex; }
+  .tap-overlay-icon{
+    font-size:2.6rem;
+    animation: tapPulse 1.1s ease-in-out infinite;
+    filter: drop-shadow(0 4px 10px rgba(0,0,0,0.5));
+  }
+  .tap-overlay-text{
+    font-family:"Sora","Inter",Arial,sans-serif;
+    font-weight:800;
+    font-size:1.25rem;
+    letter-spacing:0.3px;
+    color:#fff;
+    text-shadow: 0 3px 10px rgba(0,0,0,0.6);
+  }
+  @keyframes tapPulse{
+    0%,100%{ transform:scale(1); opacity:0.85; }
+    50%{ transform:scale(1.2); opacity:1; }
+  }
 
   @media (max-width: 700px){
-    body{ padding: 20px 12px 40px; }
-    h1{ font-size:1.6rem; }
-    .subtitle{ font-size:0.9rem; margin-bottom:18px; }
+    body{ padding: 16px 10px 32px; }
+    h1{ font-size:1.5rem; margin-bottom:2px; }
+    .subtitle{ display:none; }
     .controls{ padding:14px; gap:10px; }
     .controls > button{ flex:1 1 auto; }
     .field-group{ width:100%; }
     .field-group .field{ flex:1; }
     .field input[type=number]{ width:100%; }
     .number-row, .slider-row{ grid-template-columns: 110px 1fr 40px; }
-    .challenge-grid{ grid-template-columns: 1fr; }
-    .difficulty-row{ flex-direction:column; }
     .popup-card{ padding:28px 22px; }
     .popup-title{ font-size:1.6rem; }
     .popup-card.grand .popup-title{ font-size:1.8rem; }
     #score-wrap{ padding:14px 6px 6px; }
-    #tapPad{ display:flex; }
-    #btnPlay{ display:none; } /* su mobile la sua funzione la fa il tap-pad */
+    #btnPlay{ display:none; } /* su mobile si tocca il pentagramma */
+
+    /* Schermata Allenamento: deve stare tutta a video, niente pulsanti
+       giganteschi ne' 10 righe di sfide una sotto l'altra. */
+    #screenTrainingSelect h1{ font-size:1.35rem; margin-bottom:10px; }
+    .difficulty-row{
+      display:grid;
+      grid-template-columns:1fr 1fr;
+      gap:8px;
+      margin-bottom:14px;
+    }
+    .diff-btn{
+      padding:9px 6px;
+      font-size:0.72rem;
+      border-radius:9px;
+    }
+    .challenge-grid{
+      grid-template-columns:1fr 1fr;
+      gap:8px;
+      margin-bottom:16px;
+    }
+    .challenge-card{
+      padding:9px 10px;
+      border-radius:10px;
+    }
+    .challenge-card .num{ font-size:0.6rem; margin-bottom:1px; }
+    .challenge-card .name{ font-size:0.78rem; line-height:1.2; }
   }
 </style>
 </head>
 <body>
 
-<div class="sheet" id="screenMain">
+<div class="sheet" id="screenMain" style="display:none">
   <h1>Imita il ritmo</h1>
-  <p class="subtitle">Ascolta le battute, poi riproducile premendo <kbd>spazio</kbd> (o toccando lo schermo su mobile) a tempo.</p>
+  <p class="subtitle">Ascolta le battute, poi riproducile premendo <kbd>spazio</kbd> o cliccando/toccando il pentagramma, a tempo.</p>
 
   <div class="controls">
     <div class="field-group" id="freeRangeFields">
@@ -443,7 +478,13 @@
 
   <p class="status-line" id="status">Premi "Nuovo esercizio" per generare delle battute casuali.</p>
 
-  <div id="score-wrap"><div class="measure-row" id="measures"><button id="tapPad" disabled>GENERA UN ESERCIZIO</button></div></div>
+  <div id="score-wrap">
+    <div class="tap-overlay" id="tapOverlay">
+      <div class="tap-overlay-icon">👆</div>
+      <div class="tap-overlay-text" id="tapOverlayText">TOCCA PER INIZIARE</div>
+    </div>
+    <div class="measure-row" id="measures"></div>
+  </div>
 
   <div class="result-panel" id="results">
     <p class="result-score" id="resultScore">—</p>
@@ -458,7 +499,7 @@
   </div>
 </div>
 
-<div class="sheet" id="screenTrainingSelect" style="display:none">
+<div class="sheet" id="screenTrainingSelect">
   <h1>Allenamento</h1>
   <p class="subtitle">Scegli la difficoltà (quante battute per livello) e la sfida da cui iniziare.</p>
 
@@ -471,7 +512,7 @@
 
   <div class="challenge-grid" id="challengeGrid"></div>
 
-  <button id="btnBackFromSelect" class="stop">Torna al menu</button>
+  <button id="btnBackFromSelect" class="stop">Modalità libera</button>
 </div>
 
 <div class="popup-overlay" id="popupOverlay">
@@ -780,11 +821,15 @@ function getLevelConfig(challengeIndex, level){
   return { profile, noRestGenerators, allowedTieVariants };
 }
 
-// Sfide con le semicrome (7, 8, 9 - indici 0-based 6,7,8): tempo fissato a
-// 50 bpm in ogni esercizio, perche' a tempo normale sono troppo veloci per
-// essere lette con calma la prima volta.
-const FORCED_SLOW_BPM = 50;
-const SIXTEENTH_CHALLENGES = [6, 7, 8];
+// Se l'esercizio generato contiene davvero delle semicrome, il tempo viene
+// rallentato a 60 bpm (troppo veloci a tempo normale la prima volta che si
+// leggono); il controllo e' sul contenuto vero, non sulla sfida in se',
+// cosi' funziona correttamente sia in allenamento sia in modalita' libera.
+const FORCED_SLOW_BPM = 60;
+
+function exerciseHasSixteenths(measures){
+  return measures.some(m => m.some(c => c.kind !== 'triplet' && c.value === 1));
+}
 
 /* =========================================================================
    3. NOTAZIONE (VexFlow)
@@ -909,11 +954,6 @@ function renderScore(measures, colorMap){
     tuplets.forEach(t => t.setContext(ctx).draw());
     ties.forEach(t => t.setContext(ctx).draw());
   });
-
-  // Il tap-pad e' un figlio flessibile della riga: va riattaccato in coda
-  // ad ogni ricostruzione (innerHTML='' lo avrebbe altrimenti cancellato),
-  // cosi' il flexbox lo posiziona da solo nello spazio libero dell'ultima riga.
-  container.appendChild(el.tapPad);
 }
 
 /* =========================================================================
@@ -1132,7 +1172,9 @@ const el = {
   popupTitle: document.getElementById('popupTitle'),
   popupSubtitle: document.getElementById('popupSubtitle'),
   btnPopupContinue: document.getElementById('btnPopupContinue'),
-  tapPad: document.getElementById('tapPad'),
+  tapOverlay: document.getElementById('tapOverlay'),
+  tapOverlayText: document.getElementById('tapOverlayText'),
+  scoreWrap: document.getElementById('score-wrap'),
 };
 
 function setStatus(text, live){
@@ -1146,31 +1188,29 @@ function newExercise(){
   let numMeasures, profile, noRestGenerators, allowedTieVariants;
 
   if(playMode === 'training'){
-    if(SIXTEENTH_CHALLENGES.includes(training.challengeIndex)){
-      el.bpm.value = FORCED_SLOW_BPM; // le semicrome si leggono meglio piu' lente
-      bpmWasForced = true;
-    } else if(bpmWasForced){
-      el.bpm.value = 80; // usciti dalle semicrome, si torna al tempo normale
-      bpmWasForced = false;
-    }
     numMeasures = DIFF_MEASURES[training.difficulty];
     const cfg = getLevelConfig(training.challengeIndex, training.level);
     profile = cfg.profile;
     noRestGenerators = cfg.noRestGenerators;
     allowedTieVariants = cfg.allowedTieVariants;
   } else {
-    if(bpmWasForced){
-      el.bpm.value = 80;
-      bpmWasForced = false;
-    }
     let minM = Math.max(1, parseInt(el.minM.value,10)||4);
     let maxM = Math.max(minM, parseInt(el.maxM.value,10)||10);
     numMeasures = minM + Math.floor(Math.random()*(maxM-minM+1));
     profile = FREE_PROFILE;
   }
 
-  bpm = parseInt(el.bpm.value, 10) || 80;
   currentMeasures = generateExerciseV2(profile, numMeasures, noRestGenerators, allowedTieVariants);
+
+  if(exerciseHasSixteenths(currentMeasures)){
+    el.bpm.value = FORCED_SLOW_BPM;
+    bpmWasForced = true;
+  } else if(bpmWasForced){
+    el.bpm.value = 80; // niente semicrome in questo esercizio: torna al tempo normale
+    bpmWasForced = false;
+  }
+
+  bpm = parseInt(el.bpm.value, 10) || 80;
   liveColorMap = {};
   renderScore(currentMeasures);
   schedule = buildSchedule(currentMeasures, bpm);
@@ -1178,9 +1218,8 @@ function newExercise(){
   el.results.classList.remove('show');
   el.btnListen.disabled = false;
   el.btnPlay.disabled = false;
-  el.tapPad.disabled = false;
   currentPhase = null;
-  updateTapPadLabel();
+  updateTapOverlay();
   setStatus(playMode==='training'
     ? `Pronto: ${numMeasures} battute a ${bpm} bpm. Ascolta o premi INIZIA.`
     : `Pronto: ${numMeasures} battute a ${bpm} bpm. Ascolta o vai direttamente a registrare.`);
@@ -1206,16 +1245,22 @@ function clearPhaseTimeouts(){
 let countdownTimerId = null;
 let currentPhase = null; // 'listen' | 'record' | null
 
-function updateTapPadLabel(){
-  if(!currentMeasures || !currentMeasures.length){
-    el.tapPad.textContent = 'GENERA UN ESERCIZIO';
-  } else if(currentPhase === 'record'){
-    el.tapPad.textContent = 'TOCCA A TEMPO!';
-  } else if(currentPhase === 'listen'){
-    el.tapPad.textContent = 'IN ASCOLTO…';
-  } else {
-    el.tapPad.textContent = 'TOCCA PER INIZIARE';
+function updateTapOverlay(){
+  if(!currentMeasures || !currentMeasures.length || currentPhase){
+    el.tapOverlay.classList.remove('show');
+    return;
   }
+  el.tapOverlayText.textContent = 'TOCCA PER INIZIARE';
+  el.tapOverlay.classList.add('show');
+}
+
+function showCountInOverlay(){
+  el.tapOverlayText.textContent = 'TOCCA A TEMPO!';
+  el.tapOverlay.classList.add('show');
+}
+
+function hideTapOverlay(){
+  el.tapOverlay.classList.remove('show');
 }
 
 function beginPhaseUI(){
@@ -1230,7 +1275,7 @@ function endPhaseUI(){
   currentPhase = null;
   el.btnStop.style.display = 'none';
   setDisabled(false);
-  updateTapPadLabel();
+  updateTapOverlay();
 }
 
 // Fa scorrere la battuta in riproduzione al centro della vista: essenziale
@@ -1247,7 +1292,7 @@ function scheduleMeasureFollow(ctx, goTime){
 function listen(){
   beginPhaseUI();
   currentPhase = 'listen';
-  updateTapPadLabel();
+  updateTapOverlay();
   const ctx = getAudioCtx();
   ctx.resume().then(() => {
     if(currentPhase !== 'listen') return;
@@ -1305,7 +1350,7 @@ let expectedNotesLive = [];
 function startRecording(){
   beginPhaseUI();
   currentPhase = 'record';
-  updateTapPadLabel();
+  showCountInOverlay();
   userPresses = [];
   expectedNotesLive = schedule.events.filter(ev => !ev.isRest)
     .map(ev => ({ time: ev.time, colorKeys: ev.colorKeys, matched:false }));
@@ -1325,7 +1370,8 @@ function startRecording(){
         setStatus('Preparati… ' + countdown, true);
       } else {
         clearInterval(countdownTimerId);
-        if(currentPhase === 'record') setStatus('Vai! Riproduci il ritmo con la barra spaziatrice (o toccando lo schermo).', true);
+        hideTapOverlay(); // il conteggio e' finito, l'overlay non deve coprire la lettura
+        if(currentPhase === 'record') setStatus('Vai! Riproduci il ritmo con la barra spaziatrice o cliccando/toccando il pentagramma.', true);
       }
     }, quarterSec*1000);
 
@@ -1393,12 +1439,17 @@ function evaluate(){
   const total = expectedNotesLive.length;
   const hits = expectedNotesLive.filter(e=>e.matched).length;
   const extra = Math.max(0, userPresses.length - hits);
-  // Le pressioni "a vuoto" pesano sul punteggio: premere a raffica facendo
-  // tante pressioni inutili (anche azzeccando ogni nota) fa crescere il
-  // denominatore senza far crescere le note colpite, quindi il punteggio
-  // scende. Un paio di pressioni di troppo pesano poco; tamburellare a
-  // caso viene penalizzato rapidamente.
-  const scorePct = total>0 ? Math.round(100*hits/(total+extra)) : 0;
+  // Un po' di tolleranza sulle pressioni "a vuoto", proporzionata alla
+  // lunghezza dell'esercizio: su poche battute anche solo una pressione
+  // doppia per sbaglio non deve rovinare tutto, ma su un pezzo lungo ci
+  // sta un margine leggermente maggiore (piu' battute = piu' occasioni
+  // fisiche di un doppio tocco accidentale). Oltre quella soglia, ogni
+  // pressione in eccesso pesa sul punteggio: tamburellare a raffica viene
+  // penalizzato rapidamente.
+  const numMeasures = currentMeasures.length;
+  const freeAllowance = Math.max(1, Math.round(numMeasures/2));
+  const penalizedExtra = Math.max(0, extra - freeAllowance);
+  const scorePct = total>0 ? Math.round(100*hits/(total+penalizedExtra)) : 0;
 
   expectedNotesLive.forEach(exp => {
     if(!exp.matched) exp.colorKeys.forEach(k => liveColorMap[k] = COLOR_BAD);
@@ -1408,7 +1459,7 @@ function evaluate(){
   el.resultScore.innerHTML = scorePct + '<span class="unit"> / 100</span>';
   el.resultDetail.textContent = `${hits} di ${total} note colpite nel tempo (tolleranza ±${Math.round(TOLERANCE*1000)} ms).`;
   el.resultExtra.textContent = extra>0
-    ? `${extra} pressioni in più, senza nota corrispondente (penalizzano il punteggio).`
+    ? `${extra} pressioni in più, senza nota corrispondente${penalizedExtra>0 ? ' (penalizzano il punteggio)' : ''}.`
     : 'Nessuna pressione di troppo.';
   el.results.classList.add('show');
 
@@ -1463,7 +1514,8 @@ function exitTraining(){
   playMode = 'free';
   el.freeRangeFields.style.display = '';
   el.trainingBar.style.display = 'none';
-  showScreen('main');
+  populateChallengeGrid();
+  showScreen('trainingSelect');
 }
 
 let popupContinueAction = null;
@@ -1579,25 +1631,43 @@ el.btnPopupContinue.addEventListener('click', () => {
   if(action) action();
 });
 
-// Tap-pad per il tocco: su mobile fa DOPPIO lavoro, cosi' non serve
-// scorrere avanti e indietro tra "INIZIA" e il punto dove toccare. Il primo
-// tocco (quando non e' gia' in corso una fase) avvia la registrazione,
-// esattamente come il bottone INIZIA; ogni tocco prova anche a registrare
-// un colpo, ma registerHit() non fa nulla finche' "recording" non e'
-// davvero attivo (cioe' finche' il conteggio iniziale non e' finito).
-function tapPadPrimaryAction(){
+// Tocco su tutto il riquadro del pentagramma: niente piu' un bottone
+// dedicato. Il primo tocco (quando non e' gia' in corso una fase) avvia la
+// registrazione, esattamente come il bottone INIZIA; ogni tocco prova anche
+// a registrare un colpo, ma registerHit() non fa nulla finche' "recording"
+// non e' davvero attivo.
+function scoreTapPrimaryAction(){
   if(!currentPhase && !el.btnPlay.disabled){
     startRecording();
   }
   registerHit();
 }
-// Il preventDefault sul touchstart evita che il browser generi anche un
-// evento "click" sintetico subito dopo (che farebbe scattare l'azione due volte).
-el.tapPad.addEventListener('touchstart', (e) => {
-  e.preventDefault();
-  tapPadPrimaryAction();
+// Durante l'esecuzione vera e propria usiamo touchstart/mousedown per la
+// minima latenza possibile (lo scorrimento manuale non serve in quel
+// momento, ci pensa gia' lo scorrimento automatico); PRIMA di iniziare
+// invece NON blocchiamo il touch, cosi' resta libero lo swipe per scorrere
+// le battute in anteprima, e l'avvio arriva dal "click" (che il browser
+// genera solo per un vero tocco/clic fermo, non per uno swipe o un trascinamento).
+el.scoreWrap.addEventListener('touchstart', (e) => {
+  if(currentPhase === 'record'){
+    e.preventDefault();
+    scoreTapPrimaryAction();
+  }
+}, { passive:false });
+el.scoreWrap.addEventListener('mousedown', () => {
+  // mousedown e' l'equivalente "immediato" del touchstart per il mouse: lo
+  // usiamo solo mentre si sta gia' eseguendo, per la stessa precisione di
+  // tempismo del tocco. Il preventDefault sul touchstart evita che i
+  // dispositivi touch generino ANCHE un mousedown sintetico qui sotto.
+  if(currentPhase === 'record'){
+    scoreTapPrimaryAction();
+  }
 });
-el.tapPad.addEventListener('click', tapPadPrimaryAction);
+el.scoreWrap.addEventListener('click', () => {
+  if(currentPhase !== 'record'){
+    scoreTapPrimaryAction();
+  }
+});
 
 // Se cambia la fascia di larghezza (rotazione dello schermo, resize della
 // finestra) e la scala della notazione ne risente, ridisegna la battuta
@@ -1613,6 +1683,7 @@ window.addEventListener('resize', () => {
   }
 });
 
+populateChallengeGrid();
 setStatus('Premi "Nuovo esercizio" per generare delle battute casuali.');
 </script>
 </body>
