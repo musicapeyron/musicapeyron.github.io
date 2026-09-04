@@ -293,6 +293,23 @@
     text-shadow: 0 2px 8px rgba(0,0,0,0.4);
   }
 
+  /* Sfida leggendaria: ancora piu' drammatica, nero/viola/oro */
+  .challenge-card-legendary{
+    grid-column: 1 / -1;
+    text-align:center;
+    padding:24px 20px;
+    border:1px solid rgba(250,204,21,0.4);
+    background: linear-gradient(120deg, #000000, #4c1d95, #7c3aed, #facc15);
+    box-shadow: 0 1px 0 rgba(250,204,21,0.35) inset, 0 8px 22px rgba(0,0,0,0.5);
+  }
+  .challenge-card-legendary:hover{ filter:brightness(1.12); transform:translateY(-3px); }
+  .challenge-card-legendary .num{ color:#fde68a; }
+  .challenge-card-legendary .name{
+    color:#fff;
+    font-size:1.3rem;
+    text-shadow: 0 2px 10px rgba(0,0,0,0.6);
+  }
+
   /* POPUP DI VITTORIA */
   .popup-overlay{
     position:fixed; inset:0; z-index:500;
@@ -530,8 +547,6 @@
   </div>
 
   <div class="challenge-grid" id="challengeGrid"></div>
-
-  <button id="btnBackFromSelect" class="stop">Modalità libera</button>
 </div>
 
 <div class="popup-overlay" id="popupOverlay">
@@ -572,7 +587,8 @@ function pickWeightedId(candidates){
 
 const REST_PROB = 0.22;
 const REST_PROB_DOTTED = 0.20;
-const REST_PROB_SIXTEENTH = 0.15; // usata solo dove allowSixteenthRests e' attivo
+const REST_PROB_SIXTEENTH_SIMPLE = 0.14; // "La semicroma - parte 2": solo nel gruppo di 4, con parsimonia
+const REST_PROB_SIXTEENTH_FULL = 0.20;   // "parte 3" e Sfida finale: in entrambi i gruppi
 
 function tiedPairVariants(pos, remaining, allowedTieVariants){
   const out = [];
@@ -583,7 +599,7 @@ function tiedPairVariants(pos, remaining, allowedTieVariants){
   return allowedTieVariants ? out.filter(v => allowedTieVariants.includes(v)) : out;
 }
 
-function buildGenerator(id, pos, remaining, lastCell, noRestGenerators, allowedTieVariants, allowSixteenthRests){
+function buildGenerator(id, pos, remaining, lastCell, noRestGenerators, allowedTieVariants, sixteenthRestMode){
   const suppressed = (gid) => noRestGenerators && noRestGenerators.includes(gid);
   switch(id){
     case 'WHOLE': {
@@ -625,18 +641,25 @@ function buildGenerator(id, pos, remaining, lastCell, noRestGenerators, allowedT
       return { cells:[a,b], consumed:pair[0]+pair[1], lastCell:b };
     }
     case 'FOUR_SIXTEENTHS': {
-      // Quattro semicrome unite in travatura: mai in pausa di default (per
-      // restare semplici nelle sfide dedicate alle semicrome); l'unica
-      // eccezione e' la Sfida finale, che le abilita esplicitamente.
-      let cells = [1,1,1,1].map(v => ({ value:v, isRest: allowSixteenthRests && Math.random()<REST_PROB_SIXTEENTH, tieToNext:false }));
+      // Quattro semicrome unite in travatura: mai in pausa di default. Con
+      // sixteenthRestMode 'simple' (Sfida "semicroma parte 2") o 'full'
+      // (parte 3 e Sfida finale) possono comparire pause, ma mai due di
+      // fila (ci pensa enforceNoDoubleSixteenthRest dopo la generazione).
+      const p = sixteenthRestMode==='simple' ? REST_PROB_SIXTEENTH_SIMPLE
+              : sixteenthRestMode==='full' ? REST_PROB_SIXTEENTH_FULL : 0;
+      let cells = [1,1,1,1].map(v => ({ value:v, isRest: Math.random()<p, tieToNext:false }));
       if(cells.every(c=>c.isRest)) cells[3].isRest = false;
       return { cells, consumed:4, lastCell:cells[3] };
     }
     case 'TWO_SIXTEENTHS': {
       // Due semicrome unite in travatura: occupano meta' movimento;
       // l'altra meta' del movimento viene riempita separatamente dalla
-      // normale scelta per quella posizione (es. una croma).
-      let cells = [1,1].map(v => ({ value:v, isRest: allowSixteenthRests && Math.random()<REST_PROB_SIXTEENTH, tieToNext:false }));
+      // normale scelta per quella posizione (es. una croma). Le pause qui
+      // compaiono solo in modalita' 'full' (parte 3 e Sfida finale): in
+      // 'simple' (parte 2) restano confinate al gruppo di quattro, per
+      // tenere l'introduzione del concetto piu' semplice da leggere.
+      const p = sixteenthRestMode==='full' ? REST_PROB_SIXTEENTH_FULL : 0;
+      let cells = [1,1].map(v => ({ value:v, isRest: Math.random()<p, tieToNext:false }));
       if(cells.every(c=>c.isRest)) cells[1].isRest = false;
       return { cells, consumed:2, lastCell:cells[1] };
     }
@@ -705,7 +728,60 @@ function enforceNoDoubleEighthRest(cells){
   return cells;
 }
 
-function generateMeasureV2(profile, allowWhole, noRestGenerators, allowedTieVariants, avoidOffbeatFigures, allowSixteenthRests){
+// Stessa idea, ma per le semicrome: due pause di semicroma di fila non si
+// scrivono mai, si fondono in una pausa di croma. Si applica dopo la
+// generazione, indipendentemente da quale gruppo (di quattro o di due) le
+// abbia prodotte.
+function enforceNoDoubleSixteenthRest(cells){
+  for(let i=0;i<cells.length-1;i++){
+    const a = cells[i], b = cells[i+1];
+    if(a && b && a.kind!=='triplet' && b.kind!=='triplet' &&
+       a.value===1 && a.isRest && !a.tieToNext &&
+       b.value===1 && b.isRest && !b.tieToNext){
+      a.value = 2;
+      cells.splice(i+1,1);
+      i--;
+    }
+  }
+  return cells;
+}
+
+// Se un intero movimento risulta silenzioso ma frammentato in piu' figure
+// diverse (es. una pausa di croma + due pause di semicroma), lo sostituisce
+// con un'unica pausa di semiminima: scrivere piu' pause piccole per coprire
+// un movimento del tutto silenzioso non ha senso quando basta una pausa
+// sola. Non tocca pattern come il contrattempo (pausa+NOTA), solo veri
+// tratti interamente silenziosi.
+function collapseFullySilentBeats(cells){
+  const result = [];
+  let i = 0, pos = 0;
+  while(i < cells.length){
+    const c = cells[i];
+    const cLen = c.kind==='triplet' ? 4 : c.value;
+    const beatStart = pos - (pos % 4);
+    if(pos === beatStart && c.kind!=='triplet' && c.isRest && !c.tieToNext && c.value < 4){
+      let j = i, sum = 0, allRest = true;
+      while(j < cells.length && sum < 4){
+        const cc = cells[j];
+        if(cc.kind==='triplet' || cc.tieToNext || !cc.isRest){ allRest = false; break; }
+        sum += cc.value;
+        j++;
+      }
+      if(allRest && sum === 4){
+        result.push({ value:4, isRest:true, tieToNext:false });
+        pos += 4;
+        i = j;
+        continue;
+      }
+    }
+    result.push(c);
+    pos += cLen;
+    i++;
+  }
+  return result;
+}
+
+function generateMeasureV2(profile, allowWhole, noRestGenerators, allowedTieVariants, avoidOffbeatFigures, sixteenthRestMode){
   const cells = [];
   let pos = 0;
   let lastCell = null;
@@ -732,12 +808,13 @@ function generateMeasureV2(profile, allowWhole, noRestGenerators, allowedTieVari
     if(candidates.length===0) add('EIGHTH', 1);
 
     const id = pickWeightedId(candidates);
-    const built = buildGenerator(id, pos, remaining, lastCell, noRestGenerators, allowedTieVariants, allowSixteenthRests);
+    const built = buildGenerator(id, pos, remaining, lastCell, noRestGenerators, allowedTieVariants, sixteenthRestMode);
     built.cells.forEach(c => cells.push(c));
     lastCell = built.lastCell;
     pos += built.consumed;
   }
-  let result = enforceNoDoubleEighthRest(cells);
+  let result = enforceNoDoubleEighthRest(enforceNoDoubleSixteenthRest(cells));
+  result = collapseFullySilentBeats(result);
   if(avoidOffbeatFigures) result = suppressOffbeatFigures(result);
   return result;
 }
@@ -755,14 +832,14 @@ function isWholeMeasureCell(cells){
 
 // Regole dell'esercizio: mai due battute identiche, al massimo una battuta
 // di semibreve (nota o pausa) per esercizio.
-function generateExerciseV2(profile, numMeasures, noRestGenerators, allowedTieVariants, avoidOffbeatFigures, allowSixteenthRests){
+function generateExerciseV2(profile, numMeasures, noRestGenerators, allowedTieVariants, avoidOffbeatFigures, sixteenthRestMode){
   const measures = [];
   const signatures = new Set();
   let usedWhole = false;
   for(let i=0;i<numMeasures;i++){
     let cells, sig, tries = 0;
     do{
-      cells = generateMeasureV2(profile, !usedWhole, noRestGenerators, allowedTieVariants, avoidOffbeatFigures, allowSixteenthRests);
+      cells = generateMeasureV2(profile, !usedWhole, noRestGenerators, allowedTieVariants, avoidOffbeatFigures, sixteenthRestMode);
       sig = measureSignature(cells);
       tries++;
     } while(signatures.has(sig) && tries<60);
@@ -809,14 +886,18 @@ const CHALLENGES = [
     profile:{ WHOLE:0.4, HALF:2, QUARTER:4, EIGHTH:3, TRIPLET:5 } },
   { name:'Sfida finale', final:true, levels:10,
     profile:null }, // il profilo di questa sfida e' calcolato a parte, livello per livello (vedi getFinalChallengeConfig)
+  { name:'Sfida leggendaria', legendary:true, levels:20,
+    profile:null }, // vedi getLegendaryChallengeConfig
 ];
 
 // Leggero aumento di difficolta' nei 5 livelli di una sfida: rinforza il
 // peso delle figure "protagoniste" della sfida mano a mano che si sale.
-// L'ultima sfida ("Sfida finale") ha una logica di generazione tutta sua
-// (10 livelli invece di 5, profilo calcolato ad hoc): la individuiamo per
-// indice invece di ripeterlo a mano ovunque.
-const FINAL_CHALLENGE_INDEX = CHALLENGES.length - 1;
+// "Sfida finale" e "Sfida leggendaria" hanno una logica di generazione
+// tutta loro (10 e 20 livelli invece di 5, profilo calcolato ad hoc): le
+// individuiamo cercando il marcatore invece di fissare un indice numerico,
+// cosi' non si rompe se in futuro si aggiungono altre sfide in mezzo.
+const FINAL_CHALLENGE_INDEX = CHALLENGES.findIndex(c => c.final);
+const LEGENDARY_CHALLENGE_INDEX = CHALLENGES.findIndex(c => c.legendary);
 
 const SIGNATURE_KEYS = {
   0:['HALF','QUARTER'], 1:['EIGHTH'], 2:['EIGHTH'],
@@ -881,7 +962,58 @@ function getFinalChallengeConfig(level){
     noRestGenerators: level <= 3 ? ['EIGHTH'] : [],
     allowedTieVariants: null,
     avoidOffbeatFigures: false,
-    allowSixteenthRests: level >= 4,
+    sixteenthRestMode: level >= 4 ? 'full' : null,
+  };
+}
+
+// Piccolo aiuto condiviso: interpola linearmente due profili di pesi.
+function interpolateProfiles(a, b, t){
+  const keys = new Set([...Object.keys(a), ...Object.keys(b)]);
+  const out = {};
+  keys.forEach(k => { out[k] = (a[k]||0) + ((b[k]||0)-(a[k]||0))*t; });
+  return out;
+}
+
+// SFIDA LEGGENDARIA: la sintesi piu' impegnativa, 20 livelli. Niente
+// semibreve e niente minima puntata, in nessun livello. Due fasi nette:
+// - livelli 1-5: la minima e' ancora presente ma va scemando;
+// - livelli 6-20: la minima sparisce del tutto (nota compresa, non solo la
+//   pausa), la scrittura diventa fitta e dominata da sincope, contrattempo,
+//   legature e sedicesimi, sempre piu' intensa fino al ventesimo livello.
+const LEGENDARY_PHASE1_START = { // livello 1
+  QUARTER:2, HALF:1, EIGHTH:4, DOTTED_QUARTER_PLUS_EIGHTH:2,
+  TIED_PAIR:2, OFFBEAT_EIGHTH:2, SYNCOPE_EQ:2, FOUR_SIXTEENTHS:2.5, TWO_SIXTEENTHS:2.5, TRIPLET:2,
+};
+const LEGENDARY_PHASE1_END = { // livello 5
+  QUARTER:1.5, HALF:0.5, EIGHTH:4, DOTTED_QUARTER_PLUS_EIGHTH:2.5,
+  TIED_PAIR:2.5, OFFBEAT_EIGHTH:2.5, SYNCOPE_EQ:2.5, FOUR_SIXTEENTHS:3, TWO_SIXTEENTHS:3, TRIPLET:2.5,
+};
+const LEGENDARY_PHASE2_START = { // livello 6: minima gia' sparita del tutto
+  QUARTER:1.5, EIGHTH:3, DOTTED_QUARTER_PLUS_EIGHTH:2.5,
+  TIED_PAIR:3.5, OFFBEAT_EIGHTH:3.5, SYNCOPE_EQ:3.5, FOUR_SIXTEENTHS:3.5, TWO_SIXTEENTHS:3.5, TRIPLET:3,
+};
+const LEGENDARY_PHASE2_END = { // livello 20: il massimo
+  QUARTER:1, EIGHTH:2.5, DOTTED_QUARTER_PLUS_EIGHTH:3,
+  TIED_PAIR:4.5, OFFBEAT_EIGHTH:4.5, SYNCOPE_EQ:4.5, FOUR_SIXTEENTHS:4.5, TWO_SIXTEENTHS:4.5, TRIPLET:4,
+};
+
+function getLegendaryChallengeConfig(level){
+  const totalLevels = CHALLENGES[LEGENDARY_CHALLENGE_INDEX].levels;
+  let profile;
+  if(level <= 5){
+    profile = interpolateProfiles(LEGENDARY_PHASE1_START, LEGENDARY_PHASE1_END, (level-1)/4);
+  } else {
+    profile = interpolateProfiles(LEGENDARY_PHASE2_START, LEGENDARY_PHASE2_END, (level-6)/(totalLevels-6));
+  }
+  return {
+    profile,
+    noRestGenerators: ['HALF'], // mai una pausa di minima, in nessun livello
+    // Dal livello 6 la minima deve sparire del tutto: anche la variante di
+    // legatura HQ (minima legata al quarto) va esclusa, altrimenti
+    // ricomparirebbe come nota anche a profilo HALF=0.
+    allowedTieVariants: level <= 5 ? null : ['QQ','EQ','QE'],
+    avoidOffbeatFigures: false,
+    sixteenthRestMode: 'full', // tutte le pause possibili gia' dal livello 1
   };
 }
 
@@ -893,6 +1025,7 @@ function getFinalChallengeConfig(level){
 // terzo livello in poi.
 function getLevelConfig(challengeIndex, level){
   if(challengeIndex === FINAL_CHALLENGE_INDEX) return getFinalChallengeConfig(level);
+  if(challengeIndex === LEGENDARY_CHALLENGE_INDEX) return getLegendaryChallengeConfig(level);
 
   let profile = profileForLevel(challengeIndex, level);
   let noRestGenerators = [];
@@ -953,12 +1086,27 @@ function getLevelConfig(challengeIndex, level){
     }
   }
 
+  let sixteenthRestMode = null;
+
+  if(challengeIndex === 9){
+    // Sfida 10 "La semicroma — parte 2": introduzione semplice delle pause
+    // di semicroma, solo nel gruppo di quattro (mai due di fila, se ne
+    // occupa il motore), cosi' l'idea si vede chiara senza confondersi con
+    // troppe combinazioni diverse.
+    sixteenthRestMode = 'simple';
+  }
+
   if(challengeIndex === 10 && level <= 2){
     // Sfida 11 (semicrome + puntate + legature insieme): nei primi due
     // livelli niente pause di croma o di semiminima puntata, e legature
     // limitate a minima/semiminima (senza le combinazioni con la croma).
     noRestGenerators = ['EIGHTH', 'DOTTED_QUARTER_PLUS_EIGHTH'];
     allowedTieVariants = ['QQ', 'HQ'];
+  }
+  if(challengeIndex === 10){
+    // Stessa sfida, un po' piu' articolata: pause di semicroma anche nel
+    // gruppo di due, non solo in quello di quattro.
+    sixteenthRestMode = 'full';
   }
 
   if(PLAIN_EIGHTH_EARLY_LEVELS.includes(challengeIndex) && level <= 2 && noRestGenerators.length===0){
@@ -967,7 +1115,7 @@ function getLevelConfig(challengeIndex, level){
 
   const avoidOffbeatFigures = AVOID_OFFBEAT_FIGURES_CHALLENGES.includes(challengeIndex);
 
-  return { profile, noRestGenerators, allowedTieVariants, avoidOffbeatFigures };
+  return { profile, noRestGenerators, allowedTieVariants, avoidOffbeatFigures, sixteenthRestMode };
 }
 
 // Se l'esercizio generato contiene davvero delle semicrome, il tempo viene
@@ -1281,6 +1429,7 @@ function playVictoryJingle(){
 let schedule = null;
 let bpm = 80;
 let bpmWasForced = false; // true se l'ultimo bpm e' stato impostato automaticamente (semicrome)
+let bpmManuallySetByUser = false; // true se il giocatore ha cambiato il tempo di persona durante la sfida corrente
 let playMode = 'free'; // 'free' | 'training'
 let training = { difficulty:'facile', challengeIndex:0, level:1 };
 let selectedDifficulty = 'facile';
@@ -1312,7 +1461,6 @@ const el = {
   screenTrainingSelect: document.getElementById('screenTrainingSelect'),
   difficultyRow: document.getElementById('difficultyRow'),
   challengeGrid: document.getElementById('challengeGrid'),
-  btnBackFromSelect: document.getElementById('btnBackFromSelect'),
   popupOverlay: document.getElementById('popupOverlay'),
   popupCard: document.getElementById('popupCard'),
   popupTitle: document.getElementById('popupTitle'),
@@ -1331,16 +1479,18 @@ function setStatus(text, live){
 let liveColorMap = {};
 
 function newExercise(){
-  let numMeasures, profile, noRestGenerators, allowedTieVariants, avoidOffbeatFigures, allowSixteenthRests;
+  let numMeasures, profile, noRestGenerators, allowedTieVariants, avoidOffbeatFigures, sixteenthRestMode;
 
   if(playMode === 'training'){
-    numMeasures = DIFF_MEASURES[training.difficulty];
+    numMeasures = (training.challengeIndex === FINAL_CHALLENGE_INDEX || training.challengeIndex === LEGENDARY_CHALLENGE_INDEX)
+      ? 10 // Sfida finale e Sfida leggendaria usano sempre 10 battute per livello, a prescindere dalla difficolta' scelta
+      : DIFF_MEASURES[training.difficulty];
     const cfg = getLevelConfig(training.challengeIndex, training.level);
     profile = cfg.profile;
     noRestGenerators = cfg.noRestGenerators;
     allowedTieVariants = cfg.allowedTieVariants;
     avoidOffbeatFigures = cfg.avoidOffbeatFigures;
-    allowSixteenthRests = cfg.allowSixteenthRests;
+    sixteenthRestMode = cfg.sixteenthRestMode;
   } else {
     let minM = Math.max(1, parseInt(el.minM.value,10)||4);
     let maxM = Math.max(minM, parseInt(el.maxM.value,10)||10);
@@ -1349,14 +1499,16 @@ function newExercise(){
     avoidOffbeatFigures = true; // modalita' libera: stessa prudenza delle sfide di base
   }
 
-  currentMeasures = generateExerciseV2(profile, numMeasures, noRestGenerators, allowedTieVariants, avoidOffbeatFigures, allowSixteenthRests);
+  currentMeasures = generateExerciseV2(profile, numMeasures, noRestGenerators, allowedTieVariants, avoidOffbeatFigures, sixteenthRestMode);
 
-  if(exerciseHasSixteenths(currentMeasures)){
-    el.bpm.value = FORCED_SLOW_BPM;
-    bpmWasForced = true;
-  } else if(bpmWasForced){
-    el.bpm.value = 80; // niente semicrome in questo esercizio: torna al tempo normale
-    bpmWasForced = false;
+  if(!bpmManuallySetByUser){
+    if(exerciseHasSixteenths(currentMeasures)){
+      el.bpm.value = FORCED_SLOW_BPM;
+      bpmWasForced = true;
+    } else if(bpmWasForced){
+      el.bpm.value = 80; // niente semicrome in questo esercizio: torna al tempo normale
+      bpmWasForced = false;
+    }
   }
 
   bpm = parseInt(el.bpm.value, 10) || 80;
@@ -1557,14 +1709,14 @@ function startRecording(){
 }
 
 function stopPlayback(){
-  if(!currentPhase) return;
+  const wasActive = !!currentPhase;
+  const wasListening = currentPhase === 'listen';
   clearPhaseTimeouts();
   clearInterval(countdownTimerId);
   stopAllAudioNodes();
   recording = false;
-  const wasListening = currentPhase === 'listen';
   endPhaseUI();
-  setStatus(wasListening ? 'Ascolto interrotto.' : 'Registrazione interrotta.');
+  if(wasActive) setStatus(wasListening ? 'Ascolto interrotto.' : 'Registrazione interrotta.');
 }
 
 const TOLERANCE = 0.18; // secondi
@@ -1635,6 +1787,8 @@ function abortForSpam(){
 
 function onKeydown(e){
   if(e.code !== 'Space') return;
+  const tag = e.target.tagName;
+  if(tag === 'INPUT' || tag === 'SELECT' || tag === 'TEXTAREA' || tag === 'BUTTON') return;
   e.preventDefault();
   scoreTapPrimaryAction();
 }
@@ -1712,9 +1866,12 @@ function updateTrainingBar(){
 function populateChallengeGrid(){
   el.challengeGrid.innerHTML = '';
   CHALLENGES.forEach((chal, idx) => {
+    let extraClass = '';
+    let label = chal.name;
+    if(chal.final){ extraClass = ' challenge-card-final'; label = `Sfida finale — ${chal.levels} livelli`; }
+    if(chal.legendary){ extraClass = ' challenge-card-legendary'; label = `Sfida leggendaria — ${chal.levels} livelli`; }
     const card = document.createElement('button');
-    card.className = chal.final ? 'challenge-card challenge-card-final' : 'challenge-card';
-    const label = chal.final ? `Sfida finale — ${chal.levels} livelli` : chal.name;
+    card.className = 'challenge-card' + extraClass;
     card.innerHTML = `<div class="num">Sfida ${idx+1}</div><div class="name">${label}</div>`;
     card.addEventListener('click', () => startTraining(selectedDifficulty, idx));
     el.challengeGrid.appendChild(card);
@@ -1725,6 +1882,7 @@ function startTraining(difficulty, challengeIndex){
   if(currentPhase) stopPlayback();
   training = { difficulty, challengeIndex, level:1 };
   playMode = 'training';
+  bpmManuallySetByUser = false; // nuova sfida: si riparte con la logica automatica del tempo
   el.freeRangeFields.style.display = 'none';
   el.trainingBar.style.display = 'block';
   showScreen('main');
@@ -1735,6 +1893,7 @@ function startTraining(difficulty, challengeIndex){
 function exitTraining(){
   if(currentPhase) stopPlayback();
   playMode = 'free';
+  bpmManuallySetByUser = false;
   el.freeRangeFields.style.display = '';
   el.trainingBar.style.display = 'none';
   populateChallengeGrid();
@@ -1792,6 +1951,7 @@ function handleTrainingPass(statsHTML){
   } else if(training.challengeIndex < CHALLENGES.length-1){
     training.challengeIndex++;
     training.level = 1;
+    bpmManuallySetByUser = false; // sfida diversa: il tempo torna a essere gestito in automatico
     updateTrainingBar();
     const nextChal = CHALLENGES[training.challengeIndex];
     popupContinueAction = () => newExercise();
@@ -1818,6 +1978,7 @@ el.btnOptions.addEventListener('click', () => {
 });
 el.bpm.addEventListener('change', () => {
   bpm = parseInt(el.bpm.value, 10) || 80;
+  bpmManuallySetByUser = true; // rispettato per tutta la sfida, anche con semicrome, finche' non la cambia
   // Ricostruisce subito la schedule sul tempo nuovo, cosi' "Ascolta"/"INIZIA"
   // usano il bpm aggiornato senza dover generare un nuovo esercizio: prima
   // il cambio veniva letto solo alla generazione successiva.
@@ -1838,10 +1999,6 @@ el.btnTraining.addEventListener('click', () => {
   if(currentPhase) stopPlayback();
   populateChallengeGrid();
   showScreen('trainingSelect');
-});
-el.btnBackFromSelect.addEventListener('click', () => {
-  if(currentPhase) stopPlayback();
-  showScreen('main');
 });
 el.btnExitTraining.addEventListener('click', exitTraining);
 
@@ -1867,6 +2024,7 @@ el.btnPopupContinue.addEventListener('click', () => {
 // a registrare un colpo, ma registerHit() non fa nulla finche' "recording"
 // non e' davvero attivo.
 function scoreTapPrimaryAction(){
+  if(el.popupOverlay.classList.contains('show')) return; // il popup va chiuso prima di poter agire
   if(!currentPhase && !el.btnPlay.disabled){
     startRecording();
   }
