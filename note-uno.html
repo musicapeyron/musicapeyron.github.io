@@ -29,6 +29,42 @@
     --black-card-2:#1e293b;
     --gold:#facc15;
     --gold-2:#f59e0b;
+    --card-w:88px;
+    --card-h:126px;
+    --oval-w:70px;
+    --oval-h:96px;
+    --staff-scale:0.62;
+    --avatar-size:60px;
+  }
+
+  /* Schermi alti (desktop/tablet): carte più grandi, si legge meglio la nota */
+  @media (min-height:700px){
+    :root{
+      --card-w:102px; --card-h:146px;
+      --oval-w:81px; --oval-h:111px;
+      --staff-scale:0.72;
+      --avatar-size:46px;
+    }
+  }
+
+  /* --- Adattamento a viewport basse (telefono in orizzontale) ---
+     Tutto si rimpicciolisce in proporzione così la mano resta
+     sempre visibile senza uscire dallo schermo. */
+  @media (max-height:560px){
+    :root{
+      --card-w:70px; --card-h:100px;
+      --oval-w:56px; --oval-h:76px;
+      --staff-scale:0.49;
+      --avatar-size:40px;
+    }
+  }
+  @media (max-height:440px){
+    :root{
+      --card-w:60px; --card-h:86px;
+      --oval-w:48px; --oval-h:65px;
+      --staff-scale:0.42;
+      --avatar-size:32px;
+    }
   }
   *{box-sizing:border-box;}
   html,body{
@@ -42,11 +78,13 @@
   }
   #app{
     position:relative; width:100vw; height:100vh;
+    height:100dvh; /* usa l'altezza reale su mobile, escludendo le barre del browser */
     background:
       radial-gradient(circle at 50% 0%, var(--bg-glow) 0%, transparent 45%),
       linear-gradient(135deg, var(--bg-1), var(--bg-2));
     display:flex; flex-direction:column; align-items:center; justify-content:flex-start;
-    padding:12px 12px 0 12px; gap:8px;
+    padding:12px 12px 6px 12px; gap:8px;
+    overflow:hidden;
   }
   #app::before{
     content:""; position:fixed; inset:0; z-index:0; pointer-events:none; opacity:.5;
@@ -71,73 +109,135 @@
 
   /* ---------- board (glass panel, rectangular — nothing ever overlaps) ---------- */
   .board{
-    position:relative; z-index:1; flex:0 0 auto;
+    position:relative; z-index:1;
+    flex:1 1 auto; min-height:0; /* si espande e riempie lo spazio disponibile */
     width:min(98vw, 1400px);
     background:linear-gradient(180deg, rgba(255,255,255,0.07), rgba(255,255,255,0.03));
     border:1px solid var(--glass-border);
     border-radius:22px;
     box-shadow:0 1px 0 rgba(255,255,255,0.06) inset, 0 20px 50px rgba(0,0,0,0.45);
     backdrop-filter:blur(16px) saturate(140%);
-    padding:14px 18px 18px;
-    display:flex; flex-direction:column; gap:12px;
+    padding:12px 16px 14px;
+    display:flex; flex-direction:column; gap:10px;
+  }
+  @media (max-height:560px){
+    .board{ padding:8px 12px 10px; gap:6px; border-radius:16px; }
   }
 
-  .topbar{ display:flex; align-items:center; justify-content:space-between; gap:12px; flex-wrap:wrap; }
+  .topbar{
+    display:flex; align-items:center; justify-content:space-between;
+    gap:10px; flex-wrap:nowrap; min-width:0;
+  }
 
   .status-bar{
-    background:var(--glass-strong); padding:8px 20px; border-radius:20px;
-    font-family:"Sora","Inter",sans-serif; font-weight:700; font-size:14px;
+    background:var(--glass-strong); padding:7px 16px; border-radius:20px;
+    font-family:"Sora","Inter",sans-serif; font-weight:700; font-size:13px;
     letter-spacing:.2px; white-space:nowrap; border:1px solid var(--glass-border);
+    flex:0 0 auto; transition:background .2s ease, color .2s ease;
+  }
+  .status-bar.hidden{ visibility:hidden; }
+  /* Lampeggio quando tocca al giocatore */
+  .status-bar.your-turn{
+    background:rgba(250,204,21,0.16);
+    border-color:rgba(250,204,21,0.55);
+    color:#fde68a;
+    animation:turnPulse 1.15s ease-in-out infinite;
+  }
+  @keyframes turnPulse{
+    0%,100%{ box-shadow:0 0 0 0 rgba(250,204,21,0.5); opacity:1; }
+    50%{ box-shadow:0 0 0 7px rgba(250,204,21,0); opacity:.72; }
+  }
+  @media (prefers-reduced-motion:reduce){
+    .status-bar.your-turn{ animation:none; box-shadow:0 0 0 2px rgba(250,204,21,0.6); }
   }
 
   .brand{
-    font-family:"Sora","Inter",sans-serif; font-weight:800; font-size:19px; color:var(--gold);
-    text-shadow:0 2px 8px rgba(0,0,0,0.35);
+    font-family:"Sora","Inter",sans-serif; font-weight:800; font-size:18px; color:var(--gold);
+    text-shadow:0 2px 8px rgba(0,0,0,0.35); white-space:nowrap; flex:0 0 auto;
   }
 
-  /* ---------- bots: a normal flex row, own glass cards — can never cover the board ---------- */
-  .bots-row{ display:flex; align-items:stretch; justify-content:center; gap:12px; }
+  /* ---------- bots: compact horizontal chips in the topbar ----------
+     Occupano solo una riga sottile in alto: il centro del tavolo resta libero. */
+  .bots-row{
+    display:flex; align-items:center; justify-content:center;
+    gap:8px; flex:1 1 auto; min-width:0; flex-wrap:nowrap;
+  }
   .bot{
-    position:relative; display:flex; flex-direction:column; align-items:center; gap:5px;
-    flex:1 1 0; min-width:0; max-width:220px;
-    background:var(--glass); border:1px solid var(--glass-border); border-radius:16px;
-    padding:10px 10px 12px; transition:box-shadow .2s ease, background .2s ease;
+    position:relative; display:flex; flex-direction:row; align-items:center; gap:7px;
+    flex:0 1 auto; min-width:0;
+    background:var(--glass); border:1px solid var(--glass-border); border-radius:999px;
+    padding:4px 12px 4px 4px; transition:box-shadow .2s ease, background .2s ease;
   }
   .bot.active{
-    background:rgba(250,204,21,0.08);
-    box-shadow:0 0 0 2px var(--gold), 0 10px 22px rgba(0,0,0,0.3);
+    background:rgba(250,204,21,0.10);
+    animation:botPulse 1.15s ease-in-out infinite;
+  }
+  @keyframes botPulse{
+    0%,100%{ box-shadow:0 0 0 2px var(--gold), 0 0 0 0 rgba(250,204,21,0.45); }
+    50%{ box-shadow:0 0 0 2px rgba(250,204,21,0.55), 0 0 0 8px rgba(250,204,21,0); }
+  }
+  @media (prefers-reduced-motion:reduce){
+    .bot.active{ animation:none; box-shadow:0 0 0 2px var(--gold); }
   }
 
   .avatar{
-    width:60px; height:60px; border-radius:50%;
+    width:var(--avatar-size); height:var(--avatar-size); border-radius:50%;
     display:flex; align-items:center; justify-content:center;
-    box-shadow:0 4px 10px rgba(0,0,0,0.35);
-    position:relative; border:3px solid rgba(255,255,255,0.2);
+    box-shadow:0 2px 6px rgba(0,0,0,0.35);
+    position:relative; border:2px solid rgba(255,255,255,0.2);
+    flex:0 0 auto; overflow:hidden;
   }
-  .bot-name{ font-family:"Sora","Inter",sans-serif; font-weight:700; font-size:13px; color:var(--ink-light);}
-  .bot-cardcount{ font-size:11px; color:var(--muted); margin-top:-3px;}
-  .bot-hand{ display:flex; margin-top:2px; }
+  .avatar svg{ width:100%; height:100%; display:block; }
+
+  .bot-info{ display:flex; flex-direction:column; align-items:flex-start; gap:1px; min-width:0; }
+  .bot-name{
+    font-family:"Sora","Inter",sans-serif; font-weight:700; font-size:12px;
+    color:var(--ink-light); line-height:1.1; white-space:nowrap;
+  }
+  .bot-count{
+    font-family:"Sora","Inter",sans-serif; font-weight:800; font-size:13px;
+    color:var(--gold); background:rgba(15,23,42,0.5); border:1px solid var(--glass-border);
+    border-radius:999px; min-width:24px; height:24px; padding:0 6px;
+    display:flex; align-items:center; justify-content:center; flex:0 0 auto;
+  }
+  .bot-hand{ display:flex; }
   .bot-hand .minicard{
-    width:20px; height:29px; background:linear-gradient(135deg,var(--black-card-1),var(--black-card-2));
-    border-radius:4px; margin-left:-11px; border:1px solid rgba(255,255,255,0.2);
-    box-shadow:0 2px 4px rgba(0,0,0,0.4);
+    width:9px; height:13px; background:linear-gradient(135deg,var(--black-card-1),var(--black-card-2));
+    border-radius:2px; margin-left:-5px; border:1px solid rgba(255,255,255,0.18);
   }
   .bot-hand .minicard:first-child{ margin-left:0; }
   .bot-bubble{
-    position:absolute; top:-14px; left:50%; transform:translateX(-50%);
+    position:absolute; bottom:-24px; left:50%; transform:translateX(-50%);
     background:#fff; color:#1e293b; font-size:11px; font-weight:800;
-    padding:4px 10px; border-radius:10px; font-family:"Sora","Inter",sans-serif;
+    padding:3px 10px; border-radius:10px; font-family:"Sora","Inter",sans-serif;
     opacity:0; transition:opacity .25s; white-space:nowrap; z-index:5;
     box-shadow:0 4px 10px rgba(0,0,0,0.3);
   }
   .bot-bubble.show{ opacity:1; }
 
-  /* ---------- center area (deck + discard) ---------- */
+  @media (max-width:900px){
+    .brand{ font-size:0; }
+    .brand::before{ content:"🎵"; font-size:20px; }
+  }
+  @media (max-height:560px){
+    .bots-row{ gap:6px; }
+    .bot{ padding:3px 9px 3px 3px; gap:5px; }
+    .bot-name{ font-size:10px; }
+    .bot-count{ font-size:11px; min-width:20px; height:20px; }
+    .bot-hand .minicard{ width:7px; height:10px; margin-left:-4px; }
+    .status-bar{ font-size:11px; padding:5px 12px; }
+  }
+
+  /* ---------- center area (deck + discard): always centred and clear ---------- */
   .center-area{
     position:relative; display:flex; align-items:center; justify-content:center;
-    gap:26px; padding:14px 0 6px;
+    gap:26px; flex:1 1 auto; min-height:0; margin:0;
   }
-  .deck, .discard-slot{ position:relative; width:88px; height:126px; }
+  @media (max-height:560px){
+    .center-area{ gap:18px; }
+    .deck-label{ font-size:9px; bottom:4px; padding:1px 6px; }
+  }
+  .deck, .discard-slot{ position:relative; width:var(--card-w); height:var(--card-h); }
   .deck .cardback, .discard-slot .card{ position:absolute; inset:0; }
   .deck .cardback{
     background:linear-gradient(135deg,var(--black-card-1),var(--black-card-2));
@@ -150,11 +250,19 @@
   .deck .cardback::after{
     content:"♪"; color:var(--gold); font-size:34px; text-shadow:0 0 10px rgba(250,204,21,0.5);
   }
-  .deck-label{ position:absolute; bottom:-22px; width:100%; text-align:center; font-size:11px; color:var(--muted);}
+  /* Etichetta conteggio mazzo: dentro la carta, così non sfora mai
+     fuori dal pannello andando a sovrapporsi alla mano. */
+  .deck-label{
+    position:absolute; bottom:6px; left:50%; transform:translateX(-50%);
+    padding:2px 8px; border-radius:8px; white-space:nowrap;
+    background:rgba(15,23,42,0.75); border:1px solid var(--glass-border);
+    text-align:center; font-size:10px; color:var(--ink-light); z-index:2;
+    pointer-events:none;
+  }
 
   /* ---------- cards ---------- */
   .card{
-    width:88px; height:126px; border-radius:12px; position:relative;
+    width:var(--card-w); height:var(--card-h); border-radius:12px; position:relative;
     display:flex; flex-direction:column; align-items:center; justify-content:center;
     box-shadow:0 1px 0 rgba(255,255,255,0.25) inset, 0 5px 0 rgba(0,0,0,0.2), 0 10px 18px rgba(0,0,0,0.35);
     border:none; color:#fff; overflow:hidden;
@@ -170,7 +278,7 @@
   .card.black{ background:linear-gradient(160deg,var(--black-card-1),var(--black-card-2)); }
 
   .card .oval{
-    width:70px; height:96px; background:linear-gradient(180deg,var(--cream),var(--cream-2));
+    width:var(--oval-w); height:var(--oval-h); background:linear-gradient(180deg,var(--cream),var(--cream-2));
     border-radius:50%/40%;
     display:flex; align-items:center; justify-content:center; position:relative;
     box-shadow:inset 0 0 0 2px rgba(0,0,0,0.06);
@@ -184,7 +292,7 @@
   .card .corner.tl{ top:6px; left:7px; }
   .card .corner.br{ bottom:6px; right:7px; transform:rotate(180deg); }
 
-  .card .staff-svg{ transform:scale(0.62); }
+  .card .staff-svg{ transform:scale(var(--staff-scale)); }
   .card .staff-svg svg{ overflow:visible; }
 
   .card .symbol{ font-size:30px; font-family:"Sora","Inter",sans-serif; font-weight:800; color:var(--ink); }
@@ -196,9 +304,11 @@
     content:"♪"; font-size:34px; color:#fff; text-shadow:0 0 6px rgba(0,0,0,0.5), 0 0 2px #000;
   }
 
+  /* Nessuna evidenziazione delle carte giocabili: tutte identiche,
+     sta al giocatore riconoscere quali può giocare. */
   .card.playable{ cursor:grab; touch-action:none; }
   .card.playable:hover{ transform:translateY(-14px) scale(1.04); box-shadow:0 1px 0 rgba(255,255,255,0.25) inset, 0 14px 22px rgba(0,0,0,0.45);}
-  .card.unplayable{ filter:brightness(0.6) saturate(0.7); cursor:not-allowed; }
+  .card.notyourturn{ cursor:default; }
   .card.selected{
     box-shadow:0 0 0 4px var(--gold), 0 12px 22px rgba(0,0,0,0.5) !important;
     transform:translateY(-20px) scale(1.08) !important;
@@ -215,34 +325,49 @@
   }
   .center-area.drop-active .drop-hint{ opacity:1; }
 
-  /* ---------- player hand (own strip below the board, never overlapped) ---------- */
+  /* ---------- player hand (own strip below the board, never overlapped) ----------
+     flex:0 0 auto + altezza derivata dalla carta = la mano è "prenotata" per prima
+     e non può mai essere spinta fuori schermo dal pannello di gioco. */
   .hand-strip{
-    position:relative; z-index:1; flex:1 1 auto; width:100%; max-width:1400px;
-    display:flex; flex-direction:column; align-items:center; justify-content:flex-start;
-    padding-top:4px; min-height:170px;
+    position:relative; z-index:1; flex:0 0 auto; width:100%; max-width:1400px;
+    display:block;
+    height:calc(var(--card-h) + 26px);
+    padding-top:8px;
   }
-  .hand-toolbar{
-    display:flex; align-items:center; justify-content:center; gap:14px;
-    margin-bottom:8px; flex-wrap:wrap;
-  }
-  .player-label{
-    font-family:"Sora","Inter",sans-serif; font-weight:700; font-size:13px;
-    color:var(--muted); text-transform:uppercase; letter-spacing:.5px;
+  /* Comandi ancorati a destra: le carte non li raggiungono mai (vedi calcolo in JS) */
+  .hand-side{
+    position:absolute; right:6px; top:50%; transform:translateY(-50%);
+    display:flex; align-items:center; gap:8px; z-index:40;
   }
   .pass-btn{
-    font-family:"Sora","Inter",sans-serif; font-weight:700; font-size:13px;
-    border:1px solid var(--glass-border); background:var(--glass); color:var(--ink-light);
-    padding:8px 18px; border-radius:12px; cursor:pointer;
+    font-family:"Sora","Inter",sans-serif; font-weight:700; font-size:14px;
+    border:1px solid var(--glass-border); background:var(--glass-strong); color:var(--ink-light);
+    padding:11px 22px; border-radius:12px; cursor:pointer; white-space:nowrap;
     transition:transform .15s ease, background .15s ease;
   }
-  .pass-btn:hover{ background:var(--glass-strong); transform:translateY(-2px); }
-  .pass-btn:disabled{ opacity:.35; cursor:not-allowed; transform:none; }
+  .pass-btn:hover{ background:rgba(255,255,255,0.18); transform:translateY(-2px); }
+  .pass-btn:disabled{ opacity:.3; cursor:not-allowed; transform:none; }
+  .icon-btn{
+    width:38px; height:38px; border-radius:50%; font-size:16px;
+    border:1px solid var(--glass-border); background:var(--glass); color:var(--ink-light);
+    cursor:pointer; display:flex; align-items:center; justify-content:center;
+    transition:background .15s ease;
+  }
+  .icon-btn:hover{ background:var(--glass-strong); }
+  .icon-btn.muted{ opacity:.45; }
+
+  @media (max-height:560px){
+    .hand-strip{ height:calc(var(--card-h) + 18px); padding-top:5px; }
+    .pass-btn{ font-size:12px; padding:8px 16px; border-radius:10px; }
+    .icon-btn{ width:32px; height:32px; font-size:14px; }
+    .hand-side{ gap:6px; right:4px; }
+  }
 
   .player-zone{
-    position:relative; width:100%; flex:1 1 auto;
-    display:flex; align-items:flex-start; justify-content:center;
+    position:absolute; inset:0;
+    display:block;
   }
-  .player-zone .card{ position:absolute; top:0; transition:transform .25s ease, filter .2s ease, box-shadow .2s ease; transform-origin:top center; }
+  .player-zone .card{ position:absolute; top:8px; transition:transform .25s ease, filter .2s ease, box-shadow .2s ease; transform-origin:top center; }
 
   /* ---------- overlays (fixed = always cover everything) ---------- */
   .overlay{
@@ -268,11 +393,11 @@
   .btn-main:hover{ transform:translateY(-2px); }
 
   .toast{
-    position:fixed; top:18px; left:50%; transform:translateX(-50%);
-    background:rgba(15,23,42,0.85); border:1px solid var(--glass-border);
+    position:fixed; bottom:calc(var(--card-h) + 46px); left:50%; transform:translateX(-50%);
+    background:rgba(15,23,42,0.9); border:1px solid var(--glass-border);
     padding:8px 20px; border-radius:14px; font-weight:700;
     font-family:"Sora","Inter",sans-serif; font-size:13px; z-index:50; opacity:0; transition:opacity .3s;
-    pointer-events:none;
+    pointer-events:none; box-shadow:0 8px 20px rgba(0,0,0,0.4);
   }
   .toast.show{ opacity:1; }
 </style>
@@ -289,33 +414,40 @@
   <div class="board" id="board">
     <div class="topbar">
       <div class="brand">🎵 Note-UNO</div>
+
+      <div class="bots-row">
+        <div class="bot" id="bot-bach">
+          <div class="bot-bubble" id="bubble-bach"></div>
+          <div class="avatar" id="avatar-bach"></div>
+          <div class="bot-info">
+            <div class="bot-name">Bach</div>
+            <div class="bot-hand" id="hand-bach"></div>
+          </div>
+          <div class="bot-count" id="count-bach">7</div>
+        </div>
+
+        <div class="bot" id="bot-mozart">
+          <div class="bot-bubble" id="bubble-mozart"></div>
+          <div class="avatar" id="avatar-mozart"></div>
+          <div class="bot-info">
+            <div class="bot-name">Mozart</div>
+            <div class="bot-hand" id="hand-mozart"></div>
+          </div>
+          <div class="bot-count" id="count-mozart">7</div>
+        </div>
+
+        <div class="bot" id="bot-beethoven">
+          <div class="bot-bubble" id="bubble-beethoven"></div>
+          <div class="avatar" id="avatar-beethoven"></div>
+          <div class="bot-info">
+            <div class="bot-name">Beethoven</div>
+            <div class="bot-hand" id="hand-beethoven"></div>
+          </div>
+          <div class="bot-count" id="count-beethoven">7</div>
+        </div>
+      </div>
+
       <div class="status-bar" id="statusBar">Preparazione tavolo…</div>
-    </div>
-
-    <div class="bots-row">
-      <div class="bot" id="bot-bach">
-        <div class="bot-bubble" id="bubble-bach"></div>
-        <div class="avatar" id="avatar-bach"></div>
-        <div class="bot-name">Bach</div>
-        <div class="bot-cardcount" id="count-bach">7 carte</div>
-        <div class="bot-hand" id="hand-bach"></div>
-      </div>
-
-      <div class="bot" id="bot-mozart">
-        <div class="bot-bubble" id="bubble-mozart"></div>
-        <div class="avatar" id="avatar-mozart"></div>
-        <div class="bot-name">Mozart</div>
-        <div class="bot-cardcount" id="count-mozart">7 carte</div>
-        <div class="bot-hand" id="hand-mozart"></div>
-      </div>
-
-      <div class="bot" id="bot-beethoven">
-        <div class="bot-bubble" id="bubble-beethoven"></div>
-        <div class="avatar" id="avatar-beethoven"></div>
-        <div class="bot-name">Beethoven</div>
-        <div class="bot-cardcount" id="count-beethoven">7 carte</div>
-        <div class="bot-hand" id="hand-beethoven"></div>
-      </div>
     </div>
 
     <div class="center-area" id="dropZone">
@@ -329,11 +461,11 @@
   </div>
 
   <div class="hand-strip">
-    <div class="hand-toolbar">
-      <div class="player-label">Le tue carte</div>
-      <button class="pass-btn" id="passBtn">Passa turno</button>
-    </div>
     <div class="player-zone" id="playerHand"></div>
+    <div class="hand-side">
+      <button class="icon-btn" id="soundBtn" title="Attiva/disattiva audio">🔊</button>
+      <button class="pass-btn" id="passBtn">Passa</button>
+    </div>
   </div>
 
   <div class="toast" id="toast"></div>
@@ -19082,6 +19214,97 @@ global.VexFlow = VexflowNS.default || VexflowNS;
   const BASS_ZERO = "a/2";
   const SOLFEGE = {c:"Do", d:"Re", e:"Mi", f:"Fa", g:"Sol", a:"La", b:"Si"};
 
+  /* ============ AUDIO ============
+     Sintesi via Web Audio API: nessun file audio esterno, funziona offline.
+     Ogni carta-nota suona la propria altezza reale. */
+  const SEMITONE = { c:0, d:2, e:4, f:5, g:7, a:9, b:11 };
+  let audioCtx = null;
+  let soundOn = true;
+
+  function ensureAudio(){
+    if(audioCtx) return audioCtx;
+    try{
+      const AC = window.AudioContext || window.webkitAudioContext;
+      if(!AC) return null;
+      audioCtx = new AC();
+    }catch(e){ return null; }
+    return audioCtx;
+  }
+
+  function freqFromKey(key){
+    // key nel formato VexFlow "b/3" => nota B, ottava 3
+    const parts = key.split("/");
+    const letter = parts[0].toLowerCase();
+    const octave = parseInt(parts[1], 10);
+    if(!(letter in SEMITONE) || isNaN(octave)) return null;
+    const midi = (octave + 1) * 12 + SEMITONE[letter];
+    return 440 * Math.pow(2, (midi - 69) / 12);
+  }
+
+  // Nota "di pianoforte" semplificata: fondamentale + armoniche, con decadimento
+  function playTone(freq, when, duration, gainPeak){
+    const ctx = ensureAudio();
+    if(!ctx || !freq) return;
+    const t0 = (when === undefined ? ctx.currentTime : when);
+    const dur = duration || 1.1;
+    const peak = gainPeak === undefined ? 0.22 : gainPeak;
+
+    const master = ctx.createGain();
+    master.connect(ctx.destination);
+    master.gain.setValueAtTime(0.0001, t0);
+    master.gain.exponentialRampToValueAtTime(peak, t0 + 0.012);
+    master.gain.exponentialRampToValueAtTime(0.0001, t0 + dur);
+
+    // fondamentale + due armoniche più deboli danno un timbro più "musicale"
+    const partials = [
+      { mult: 1,   gain: 1.0,  type: "triangle" },
+      { mult: 2,   gain: 0.35, type: "sine" },
+      { mult: 3,   gain: 0.14, type: "sine" }
+    ];
+    partials.forEach(p=>{
+      const osc = ctx.createOscillator();
+      const g = ctx.createGain();
+      osc.type = p.type;
+      osc.frequency.setValueAtTime(freq * p.mult, t0);
+      g.gain.setValueAtTime(p.gain, t0);
+      osc.connect(g); g.connect(master);
+      osc.start(t0);
+      osc.stop(t0 + dur + 0.05);
+    });
+  }
+
+  // Suono per le carte azione: breve motivo riconoscibile, non una nota del mazzo
+  function playActionSound(type){
+    const ctx = ensureAudio();
+    if(!ctx) return;
+    const t = ctx.currentTime;
+    if(type === "skip"){
+      playTone(330, t, 0.18, 0.16); playTone(233, t + 0.13, 0.3, 0.16);
+    } else if(type === "reverse"){
+      playTone(392, t, 0.16, 0.15); playTone(494, t + 0.11, 0.16, 0.15); playTone(392, t + 0.22, 0.26, 0.15);
+    } else if(type === "draw2"){
+      playTone(294, t, 0.14, 0.16); playTone(247, t + 0.12, 0.32, 0.16);
+    } else if(type === "wild"){
+      [262, 330, 392, 523].forEach((f,i)=> playTone(f, t + i*0.075, 0.35, 0.13));
+    } else if(type === "wild4"){
+      [523, 392, 330, 262].forEach((f,i)=> playTone(f, t + i*0.075, 0.4, 0.14));
+    }
+  }
+
+  // Suona la carta appena giocata (vale per il giocatore e per i bot)
+  function playCardSound(card){
+    if(!soundOn) return;
+    const ctx = ensureAudio();
+    if(!ctx) return;
+    if(ctx.state === "suspended") ctx.resume();
+    if(card.type === "note"){
+      const f = freqFromKey(card.key);
+      if(f) playTone(f, ctx.currentTime, 1.2, 0.24);
+    } else {
+      playActionSound(card.type);
+    }
+  }
+
   function solfegeFromKey(key){
     const letter = key[0];
     return SOLFEGE[letter] || letter.toUpperCase();
@@ -19276,7 +19499,7 @@ global.VexFlow = VexflowNS.default || VexflowNS;
       hasDrawnThisTurn: false
     };
     render(true);
-    setStatus(NAMES[PLAYERS[0]] + ", tocca a te!");
+    setStatus("Tocca a te!");
     maybeAdvanceBot();
   }
 
@@ -19330,6 +19553,9 @@ global.VexFlow = VexflowNS.default || VexflowNS;
     state.discard.push(card);
     state.currentColor = (card.color === "black") ? chosenColor : card.color;
 
+    // La carta giocata suona la propria nota, sia per il giocatore che per i bot
+    playCardSound(card);
+
     let skipNext = false;
     let drawNext = 0;
 
@@ -19361,7 +19587,7 @@ global.VexFlow = VexflowNS.default || VexflowNS;
     state.turn = nextIdx;
     state.hasDrawnThisTurn = false;
     render(true);
-    setStatus(NAMES[currentPlayer()] + (currentPlayer()==="you" ? ", tocca a te!" : " sta pensando…"));
+    setStatus(currentPlayer()==="you" ? "Tocca a te!" : "");
     maybeAdvanceBot();
   }
 
@@ -19372,7 +19598,7 @@ global.VexFlow = VexflowNS.default || VexflowNS;
     if(state.hasDrawnThisTurn){
       // Ha già pescato in questo turno (con carta giocabile ma ha scelto di non giocarla):
       // un secondo "Passa" chiude semplicemente il turno, senza pescare di nuovo.
-      setStatus(NAMES[PLAYERS[nextTurnIndex(state.turn,state.direction,1)]] + " sta pensando…");
+      setStatus("");
       state.turn = nextTurnIndex(state.turn, state.direction, 1);
       state.hasDrawnThisTurn = false;
       render(true);
@@ -19383,16 +19609,10 @@ global.VexFlow = VexflowNS.default || VexflowNS;
     const drawn = drawCard("you",1);
     state.hasDrawnThisTurn = true;
     render(true);
-    if(drawn.length && canPlay(drawn[0])){
-      setStatus("Carta pescata giocabile: giocala o premi ancora Passa per chiudere il turno.");
-      showToast("Carta pescata: giocabile!");
-    } else {
-      setStatus(NAMES[PLAYERS[nextTurnIndex(state.turn,state.direction,1)]] + " sta pensando…");
-      state.turn = nextTurnIndex(state.turn, state.direction, 1);
-      state.hasDrawnThisTurn = false;
-      render(true);
-      maybeAdvanceBot();
-    }
+    // Il turno NON passa mai da solo: se passasse automaticamente solo quando la
+    // carta pescata non è giocabile, il gioco rivelerebbe l'informazione.
+    // Decide sempre il giocatore, premendo di nuovo "Passa".
+    setStatus("Hai pescato. Gioca una carta oppure premi ancora Passa per chiudere il turno.");
   }
 
   /* ---------- bot AI ---------- */
@@ -19420,7 +19640,7 @@ global.VexFlow = VexflowNS.default || VexflowNS;
       state.turn = nextTurnIndex(state.turn, state.direction, 1);
       state.hasDrawnThisTurn = false;
       render(true);
-      setStatus(NAMES[currentPlayer()] + (currentPlayer()==="you" ? ", tocca a te!" : " sta pensando…"));
+      setStatus(currentPlayer()==="you" ? "Tocca a te!" : "");
       maybeAdvanceBot();
       return;
     }
@@ -19468,7 +19688,13 @@ global.VexFlow = VexflowNS.default || VexflowNS;
   }
 
   function setStatus(msg){
-    document.getElementById("statusBar").textContent = msg;
+    const el = document.getElementById("statusBar");
+    el.textContent = msg;
+    // Barra nascosta quando non c'è nulla da dire (turni dei bot):
+    // è il loro riquadro a pulsare per indicare di chi è il turno.
+    el.classList.toggle("hidden", !msg);
+    const yourTurn = !!state && !state.gameOver && currentPlayer() === "you";
+    el.classList.toggle("your-turn", yourTurn);
   }
 
   function showToast(msg){
@@ -19499,10 +19725,10 @@ global.VexFlow = VexflowNS.default || VexflowNS;
     // bots
     ["bach","mozart","beethoven"].forEach(p=>{
       document.getElementById("bot-"+p).classList.toggle("active", currentPlayer()===p);
-      document.getElementById("count-"+p).textContent = state.hands[p].length + (state.hands[p].length===1 ? " carta" : " carte");
+      document.getElementById("count-"+p).textContent = state.hands[p].length;
       const handEl = document.getElementById("hand-"+p);
       handEl.innerHTML = "";
-      const n = Math.min(state.hands[p].length, 10);
+      const n = Math.min(state.hands[p].length, 7);
       for(let i=0;i<n;i++){
         const mc = document.createElement("div");
         mc.className = "minicard";
@@ -19535,18 +19761,41 @@ global.VexFlow = VexflowNS.default || VexflowNS;
     const hand = state.hands.you;
     const isYourTurn = currentPlayer() === "you" && !state.gameOver;
     document.getElementById("passBtn").disabled = !isYourTurn;
+    document.getElementById("statusBar").classList.toggle("your-turn", isYourTurn);
     const count = hand.length;
-    const spread = Math.min(46, 480/Math.max(count,1));
+
+    // Ventaglio responsive: usa TUTTA la larghezza libera a sinistra dei comandi,
+    // riservando spazio solo a destra (Passa / audio). Con molte carte in mano
+    // il ventaglio si allarga verso sinistra invece di ammassarsi al centro.
+    const cs = getComputedStyle(document.documentElement);
+    const cardW = parseFloat(cs.getPropertyValue("--card-w")) || 88;
+    const sideEl = document.querySelector(".hand-side");
+    const reserve = sideEl ? sideEl.getBoundingClientRect().width + 28 : 0;
+
+    const padLeft = 10;
+    const regionLeft = padLeft;
+    const regionRight = Math.max(handWrap.clientWidth - reserve, regionLeft + cardW);
+    const regionW = regionRight - regionLeft;
+    const regionCenter = regionLeft + regionW / 2;
+
+    const maxSpread = cardW * 0.62;
+    const spread = count > 1
+      ? Math.min(maxSpread, (regionW - cardW) / (count - 1))
+      : 0;
+    const rotStep = spread < 18 ? 2 : 4;
+    const baseLeft = regionCenter - cardW / 2;
+
     hand.forEach((card, i)=>{
       const el = buildCardEl(card);
       const offset = (i - (count-1)/2) * spread;
-      const rot = (i - (count-1)/2) * 4;
-      el.style.left = "calc(50% - 44px)";
+      const rot = (i - (count-1)/2) * rotStep;
+      el.style.left = `${baseLeft}px`;
       el.style.transform = `translateX(${offset}px) rotate(${rot}deg)`;
       el.style.zIndex = i;
-      const playable = isYourTurn && canPlay(card);
-      el.classList.add(playable ? "playable" : "unplayable");
-      if(playable){
+      // Tutte le carte si comportano allo stesso modo: nessun indizio visivo su
+      // quali siano giocabili. La validità viene controllata solo al rilascio.
+      el.classList.add(isYourTurn ? "playable" : "notyourturn");
+      if(isYourTurn){
         attachDragAndSelect(el, card);
       }
       handWrap.appendChild(el);
@@ -19600,6 +19849,9 @@ global.VexFlow = VexflowNS.default || VexflowNS;
             el.classList.remove("dragging");
             onHumanPlay(card);
           } else {
+            // Riscontro solo *dopo* il tentativo: il gioco non anticipa mai
+            // quali carte siano giocabili.
+            if(overTable) showToast("Mossa non valida");
             el.style.transition = "left .22s ease, top .22s ease";
             el.style.left = origRect.left + "px";
             el.style.top = origRect.top + "px";
@@ -19646,13 +19898,44 @@ global.VexFlow = VexflowNS.default || VexflowNS;
 
   document.getElementById("deckBtn").addEventListener("click", humanDraw);
   document.getElementById("passBtn").addEventListener("click", humanDraw);
+
+  const soundBtn = document.getElementById("soundBtn");
+  soundBtn.addEventListener("click", ()=>{
+    soundOn = !soundOn;
+    soundBtn.textContent = soundOn ? "🔊" : "🔇";
+    soundBtn.classList.toggle("muted", !soundOn);
+    if(soundOn){
+      // piccolo riscontro sonoro alla riattivazione
+      const ctx = ensureAudio();
+      if(ctx){
+        if(ctx.state === "suspended") ctx.resume();
+        playTone(523.25, ctx.currentTime, 0.35, 0.16);
+      }
+    }
+  });
+
   document.getElementById("startBtn").addEventListener("click", ()=>{
+    // iOS/Safari richiedono che l'audio parta da un gesto dell'utente:
+    // il tocco su "Inizia partita" sblocca il contesto audio.
+    const ctx = ensureAudio();
+    if(ctx && ctx.state === "suspended") ctx.resume();
     document.getElementById("startOverlay").classList.remove("show");
     newGame();
   });
   document.getElementById("restartBtn").addEventListener("click", ()=>{
     document.getElementById("endOverlay").classList.remove("show");
     newGame();
+  });
+
+  // Ridisegna la mano quando cambia orientamento o dimensione della finestra,
+  // così il ventaglio si ricalcola sulle nuove dimensioni disponibili.
+  let resizeTimer = null;
+  window.addEventListener("resize", ()=>{
+    clearTimeout(resizeTimer);
+    resizeTimer = setTimeout(()=>{ if(state) render(true); }, 150);
+  });
+  window.addEventListener("orientationchange", ()=>{
+    setTimeout(()=>{ if(state) render(true); }, 250);
   });
 
   renderAvatars();
