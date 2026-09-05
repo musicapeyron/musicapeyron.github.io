@@ -124,10 +124,15 @@
     .board{ padding:8px 12px 10px; gap:6px; border-radius:16px; }
   }
 
+  /* Topbar a griglia: le colonne laterali hanno larghezza fissa, così i riquadri
+     dei bot restano sempre nella stessa posizione anche quando la barra di stato
+     compare o sparisce. */
   .topbar{
-    display:flex; align-items:center; justify-content:space-between;
-    gap:10px; flex-wrap:nowrap; min-width:0;
+    display:grid; grid-template-columns:150px 1fr 150px;
+    align-items:center; gap:10px; min-width:0;
   }
+  .topbar .brand{ justify-self:start; }
+  .topbar .status-bar{ justify-self:end; }
 
   .status-bar{
     background:var(--glass-strong); padding:7px 16px; border-radius:20px;
@@ -135,6 +140,79 @@
     letter-spacing:.2px; white-space:nowrap; border:1px solid var(--glass-border);
     flex:0 0 auto; transition:background .2s ease, color .2s ease;
   }
+  /* ---------- quiz "Che nota hai giocato?" (a sinistra, dentro l'area di gioco) ----------
+     Sta dentro .center-area, quindi resta sempre sotto la riga dei bot. */
+  .quiz{
+    position:absolute; left:0; top:50%; transform:translateY(-50%) scale(.94);
+    width:min(280px, 30%);
+    background:linear-gradient(180deg, rgba(255,255,255,0.10), rgba(255,255,255,0.05));
+    border:1px solid var(--glass-border); border-radius:18px;
+    padding:14px 14px 12px; z-index:45;
+    box-shadow:0 1px 0 rgba(255,255,255,0.07) inset, 0 16px 34px rgba(0,0,0,0.35);
+    opacity:0; pointer-events:none; visibility:hidden;
+    transition:opacity .2s ease, transform .25s cubic-bezier(.34,1.3,.64,1);
+  }
+  .quiz.show{ opacity:1; pointer-events:auto; visibility:visible; transform:translateY(-50%) scale(1); }
+  .quiz-title{
+    font-family:"Sora","Inter",sans-serif; font-weight:700; font-size:14px;
+    margin-bottom:10px; color:var(--ink-light); text-align:center;
+  }
+  .quiz-buttons{ display:flex; flex-wrap:wrap; gap:7px; justify-content:center; }
+  .note-btn{
+    position:relative; overflow:hidden; border-radius:11px;
+    padding:11px 4px; width:calc(33.333% - 5px); cursor:pointer;
+    font-family:"Sora","Inter",sans-serif; font-weight:800; font-size:15px;
+    background:var(--glass-strong); border:1px solid var(--glass-border);
+    color:var(--ink-light);
+    box-shadow:0 1px 0 rgba(255,255,255,0.08) inset, 0 4px 10px rgba(0,0,0,0.25);
+    transition:transform .12s ease, background .15s ease, border-color .15s ease;
+  }
+  .note-btn:hover{
+    background:rgba(255,255,255,0.18); border-color:rgba(255,255,255,0.3);
+    transform:translateY(-3px);
+  }
+  .note-btn:active{ transform:translateY(2px); }
+  .note-btn.correct{
+    animation:btnCorrect .5s cubic-bezier(.34,1.56,.64,1);
+    background:rgba(34,197,94,0.35); border-color:#86efac; color:#eafff1;
+  }
+  .note-btn.wrong{
+    animation:btnWrong .45s ease-in-out;
+    background:rgba(239,68,68,0.35); border-color:#fca5a5; color:#fff1f1;
+  }
+  @keyframes btnCorrect{
+    0%{ transform:scale(1); } 35%{ transform:scale(1.16) translateY(-5px); } 100%{ transform:scale(1); }
+  }
+  @keyframes btnWrong{
+    0%,100%{ transform:translateX(0); }
+    20%{ transform:translateX(-6px); } 40%{ transform:translateX(6px); }
+    60%{ transform:translateX(-4px); } 80%{ transform:translateX(3px); }
+  }
+  .quiz-feedback{
+    min-height:18px; margin-top:9px; text-align:center;
+    font-family:"Sora","Inter",sans-serif; font-weight:700; font-size:13px;
+  }
+  .quiz-feedback.ok{ color:#86efac; }
+  .quiz-feedback.ko{ color:#fca5a5; }
+  @media (prefers-reduced-motion:reduce){
+    .note-btn.correct, .note-btn.wrong{ animation:none; }
+  }
+  @media (max-height:560px){
+    .quiz{ left:0; width:min(230px, 30%); padding:10px 10px 9px; border-radius:14px; }
+    .quiz-title{ font-size:12px; margin-bottom:7px; }
+    .note-btn{ padding:8px 3px; font-size:13px; border-radius:9px; }
+    .quiz-feedback{ font-size:11px; margin-top:7px; }
+  }
+
+  .card.landing{ animation:cardLand .28s ease-out; }
+  @keyframes cardLand{
+    0%{ transform:scale(1.14) rotate(-4deg); }
+    100%{ transform:scale(1) rotate(0deg); }
+  }
+  @media (prefers-reduced-motion:reduce){
+    .card.landing{ animation:none; }
+  }
+
   .status-bar.hidden{ visibility:hidden; }
   /* Lampeggio quando tocca al giocatore */
   .status-bar.your-turn{
@@ -218,6 +296,7 @@
   @media (max-width:900px){
     .brand{ font-size:0; }
     .brand::before{ content:"🎵"; font-size:20px; }
+    .topbar{ grid-template-columns:40px 1fr 130px; }
   }
   @media (max-height:560px){
     .bots-row{ gap:6px; }
@@ -309,10 +388,14 @@
   .card.playable{ cursor:grab; touch-action:none; }
   .card.playable:hover{ transform:translateY(-14px) scale(1.04); box-shadow:0 1px 0 rgba(255,255,255,0.25) inset, 0 14px 22px rgba(0,0,0,0.45);}
   .card.notyourturn{ cursor:default; }
+  /* Carta selezionata: si stacca dal ventaglio, si raddrizza e si ingrandisce
+     per poter leggere bene la nota. La trasformazione è applicata via JS,
+     così conserva la posizione della carta nel ventaglio. */
   .card.selected{
-    box-shadow:0 0 0 4px var(--gold), 0 12px 22px rgba(0,0,0,0.5) !important;
-    transform:translateY(-20px) scale(1.08) !important;
+    box-shadow:0 0 0 4px var(--gold), 0 18px 34px rgba(0,0,0,0.55) !important;
     z-index:80 !important;
+    /* cresce verso l'alto, verso il tavolo, invece che oltre il bordo inferiore */
+    transform-origin:center bottom !important;
   }
   .card.dragging{
     box-shadow:0 16px 30px rgba(0,0,0,0.6) !important;
@@ -447,7 +530,7 @@
         </div>
       </div>
 
-      <div class="status-bar" id="statusBar">Preparazione tavolo…</div>
+      <div class="status-bar hidden" id="statusBar"></div>
     </div>
 
     <div class="center-area" id="dropZone">
@@ -457,6 +540,12 @@
         <div class="deck-label" id="deckCount">Mazzo: 0</div>
       </div>
       <div class="discard-slot" id="discardSlot"></div>
+
+      <div class="quiz" id="quiz">
+        <div class="quiz-title" id="quizTitle">Che nota hai giocato?</div>
+        <div class="quiz-buttons" id="quizButtons"></div>
+        <div class="quiz-feedback" id="quizFeedback"></div>
+      </div>
     </div>
   </div>
 
@@ -19305,6 +19394,38 @@ global.VexFlow = VexflowNS.default || VexflowNS;
     }
   }
 
+  // Jingle di fine partita: fanfara allegra se vinci, cadenza discendente se perdi
+  function playEndJingle(won){
+    if(!soundOn) return;
+    const ctx = ensureAudio();
+    if(!ctx) return;
+    if(ctx.state === "suspended") ctx.resume();
+    const t = ctx.currentTime + 0.08;
+
+    if(won){
+      // Do - Mi - Sol - Do(alto), poi accordo finale di Do maggiore
+      const mel = [
+        { f: 523.25, at: 0.00, d: 0.20 },
+        { f: 659.25, at: 0.16, d: 0.20 },
+        { f: 783.99, at: 0.32, d: 0.22 },
+        { f: 1046.50, at: 0.50, d: 0.55 }
+      ];
+      mel.forEach(n => playTone(n.f, t + n.at, n.d, 0.22));
+      [523.25, 659.25, 783.99, 1046.50].forEach(f =>
+        playTone(f, t + 0.86, 1.5, 0.13));
+    } else {
+      // cadenza discendente, più sommessa
+      const mel = [
+        { f: 587.33, at: 0.00, d: 0.22 },
+        { f: 493.88, at: 0.18, d: 0.22 },
+        { f: 392.00, at: 0.36, d: 0.60 }
+      ];
+      mel.forEach(n => playTone(n.f, t + n.at, n.d, 0.16));
+      [261.63, 311.13, 392.00].forEach(f =>
+        playTone(f, t + 0.70, 1.2, 0.10));
+    }
+  }
+
   function solfegeFromKey(key){
     const letter = key[0];
     return SOLFEGE[letter] || letter.toUpperCase();
@@ -19381,7 +19502,22 @@ global.VexFlow = VexflowNS.default || VexflowNS;
 
   function makeNoteCard(color, value, id){
     const {clef, key} = noteForColorValue(color, value);
-    return { id, color, type:"note", value, clef, key };
+    // noteName = nome della nota (Do, Re, Mi…), indipendente da ottava e chiave:
+    // è questo che determina se due carte si possono abbinare.
+    // midi = altezza reale, usata solo per far suonare la nota giusta.
+    return {
+      id, color, type:"note", value, clef, key,
+      noteName: key.split("/")[0].toLowerCase(),
+      midi: midiFromKey(key)
+    };
+  }
+
+  function midiFromKey(key){
+    const parts = key.split("/");
+    const letter = parts[0].toLowerCase();
+    const octave = parseInt(parts[1], 10);
+    if(!(letter in SEMITONE) || isNaN(octave)) return null;
+    return (octave + 1) * 12 + SEMITONE[letter];
   }
 
   function shuffle(arr){
@@ -19474,6 +19610,7 @@ global.VexFlow = VexflowNS.default || VexflowNS;
   const NAMES = {you:"Tu", mozart:"Mozart", bach:"Bach", beethoven:"Beethoven"};
 
   let state = null;
+  let lastDiscardId = null; // per animare solo quando la carta in cima cambia davvero
 
   function newGame(){
     let deck = shuffle(buildDeck());
@@ -19496,11 +19633,14 @@ global.VexFlow = VexflowNS.default || VexflowNS;
       currentColor: startCard.color,
       gameOver: false,
       pendingMessage: "",
-      hasDrawnThisTurn: false
+      hasDrawnThisTurn: false,
+      skipYourNextTurn: false,   // penalità: risposta sbagliata al quiz
+      quizPending: false         // turno sospeso in attesa della risposta
     };
+    hideQuiz();
     render(true);
     setStatus("Tocca a te!");
-    maybeAdvanceBot();
+    afterTurnChange();
   }
 
   function currentPlayer(){ return PLAYERS[state.turn]; }
@@ -19520,7 +19660,10 @@ global.VexFlow = VexflowNS.default || VexflowNS;
     const top = topDiscard();
     if(card.color === "black") return true;
     if(card.color === state.currentColor) return true;
-    if(top.type === "note" && card.type === "note" && card.value === top.value) return true;
+    // Le note si abbinano per NOME (Do su Do, Re su Re…), indipendentemente
+    // da colore, chiave e ottava: è il riconoscimento della nota che conta.
+    if(top.type === "note" && card.type === "note" &&
+       card.noteName && card.noteName === top.noteName) return true;
     if(top.type !== "note" && card.type === top.type) return true;
     return false;
   }
@@ -19567,7 +19710,10 @@ global.VexFlow = VexflowNS.default || VexflowNS;
     if(hand.length === 0){
       state.gameOver = true;
       render(true);
-      showEnd(NAMES[playerKey] + " ha vinto la partita! 🎉");
+      showEnd(playerKey === "you"
+        ? "Hai vinto! 🎉"
+        : NAMES[playerKey] + " ha vinto la partita");
+      playEndJingle(playerKey === "you");
       return;
     }
     if(hand.length === 1){
@@ -19588,7 +19734,11 @@ global.VexFlow = VexflowNS.default || VexflowNS;
     state.hasDrawnThisTurn = false;
     render(true);
     setStatus(currentPlayer()==="you" ? "Tocca a te!" : "");
-    maybeAdvanceBot();
+
+    // Se il giocatore ha appena giocato una nota, il gioco resta in pausa
+    // finché non risponde al quiz: i bot non si muovono nel frattempo.
+    if(state.quizPending) return;
+    afterTurnChange();
   }
 
   function humanDraw(){
@@ -19602,7 +19752,7 @@ global.VexFlow = VexflowNS.default || VexflowNS;
       state.turn = nextTurnIndex(state.turn, state.direction, 1);
       state.hasDrawnThisTurn = false;
       render(true);
-      maybeAdvanceBot();
+      afterTurnChange();
       return;
     }
 
@@ -19623,6 +19773,23 @@ global.VexFlow = VexflowNS.default || VexflowNS;
     setTimeout(()=>botTurn(p), 850);
   }
 
+  // Chiamata dopo ogni cambio di turno: gestisce l'eventuale turno saltato
+  // del giocatore (penalità per risposta sbagliata al quiz).
+  function afterTurnChange(){
+    if(state.gameOver) return;
+    if(currentPlayer() === "you" && state.skipYourNextTurn){
+      state.skipYourNextTurn = false;
+      showToast("Turno saltato");
+      state.turn = nextTurnIndex(state.turn, state.direction, 1);
+      state.hasDrawnThisTurn = false;
+      render(true);
+      setStatus(currentPlayer()==="you" ? "Tocca a te!" : "");
+      afterTurnChange();
+      return;
+    }
+    maybeAdvanceBot();
+  }
+
   function botTurn(p){
     if(state.gameOver) return;
     const hand = state.hands[p];
@@ -19641,7 +19808,7 @@ global.VexFlow = VexflowNS.default || VexflowNS;
       state.hasDrawnThisTurn = false;
       render(true);
       setStatus(currentPlayer()==="you" ? "Tocca a te!" : "");
-      maybeAdvanceBot();
+      afterTurnChange();
       return;
     }
     const chosen = candidates[Math.floor(Math.random()*candidates.length)];
@@ -19664,7 +19831,52 @@ global.VexFlow = VexflowNS.default || VexflowNS;
     else if(card.type === "draw2") showBubble(p, "+2");
     else if(card.type === "wild") showBubble(p, "Cambio colore!");
     else if(card.type === "wild4") showBubble(p, "+4!");
-    playCard(p, card, chosenColor);
+
+    // La carta "vola" dal riquadro del bot fino alla pila degli scarti,
+    // poi la giocata viene applicata al termine dell'animazione.
+    flyCardToDiscard(card, "bot-" + p, ()=> playCard(p, card, chosenColor));
+  }
+
+  /* ---------- animazione: una carta vola da un punto alla pila degli scarti ---------- */
+  function flyCardToDiscard(card, fromElementId, done){
+    const fromEl = document.getElementById(fromElementId);
+    const slot = document.getElementById("discardSlot");
+    if(!fromEl || !slot){ done(); return; }
+
+    const from = fromEl.getBoundingClientRect();
+    const to = slot.getBoundingClientRect();
+
+    const ghost = buildCardEl(card);
+    ghost.style.position = "fixed";
+    ghost.style.margin = "0";
+    ghost.style.zIndex = "90";
+    ghost.style.width = to.width + "px";
+    ghost.style.height = to.height + "px";
+    ghost.style.left = (from.left + from.width/2 - to.width/2) + "px";
+    ghost.style.top = (from.top + from.height/2 - to.height/2) + "px";
+    ghost.style.transform = "scale(0.35) rotate(-12deg)";
+    ghost.style.opacity = "0.9";
+    ghost.style.pointerEvents = "none";
+    ghost.style.transition = "left .42s cubic-bezier(.34,1.2,.64,1), top .42s cubic-bezier(.34,1.2,.64,1), transform .42s cubic-bezier(.34,1.2,.64,1), opacity .42s ease";
+    document.body.appendChild(ghost);
+
+    // forza il layout, poi avvia la transizione verso la pila
+    void ghost.offsetWidth;
+    ghost.style.left = to.left + "px";
+    ghost.style.top = to.top + "px";
+    ghost.style.transform = "scale(1) rotate(0deg)";
+    ghost.style.opacity = "1";
+
+    let finished = false;
+    const finish = ()=>{
+      if(finished) return;
+      finished = true;
+      ghost.remove();
+      done();
+    };
+    ghost.addEventListener("transitionend", finish, { once:true });
+    // rete di sicurezza: se la transizione non scatta, procedi comunque
+    setTimeout(finish, 520);
   }
 
   function colorNameIt(c){
@@ -19744,6 +19956,11 @@ global.VexFlow = VexflowNS.default || VexflowNS;
     discardSlot.innerHTML = "";
     const top = topDiscard();
     const topEl = buildCardEl(top);
+    // piccolo "atterraggio" quando cambia la carta in cima alla pila
+    if(lastDiscardId !== top.id){
+      topEl.classList.add("landing");
+      lastDiscardId = top.id;
+    }
     discardSlot.appendChild(topEl);
     if(top.color === "black"){
       const ring = document.createElement("div");
@@ -19791,6 +20008,10 @@ global.VexFlow = VexflowNS.default || VexflowNS;
       const rot = (i - (count-1)/2) * rotStep;
       el.style.left = `${baseLeft}px`;
       el.style.transform = `translateX(${offset}px) rotate(${rot}deg)`;
+      // memorizzo la posizione nel ventaglio per poterla ripristinare
+      // dopo che la carta è stata selezionata/ingrandita
+      el.dataset.offset = offset;
+      el.dataset.rot = rot;
       el.style.zIndex = i;
       // Tutte le carte si comportano allo stesso modo: nessun indizio visivo su
       // quali siano giocabili. La validità viene controllata solo al rilascio.
@@ -19816,7 +20037,7 @@ global.VexFlow = VexflowNS.default || VexflowNS;
         const dx = ev.clientX - startX, dy = ev.clientY - startY;
         if(!dragging && Math.hypot(dx, dy) > 8){
           dragging = true;
-          document.querySelectorAll(".player-zone .card.selected").forEach(c=>c.classList.remove("selected"));
+          deselectAllCards();
           el.classList.add("dragging");
           el.style.transform = "none";
           el.style.position = "fixed";
@@ -19863,8 +20084,8 @@ global.VexFlow = VexflowNS.default || VexflowNS;
           }
         } else {
           const wasSelected = el.classList.contains("selected");
-          document.querySelectorAll(".player-zone .card.selected").forEach(c=>c.classList.remove("selected"));
-          if(!wasSelected) el.classList.add("selected");
+          deselectAllCards();
+          if(!wasSelected) selectCard(el);
         }
       }
 
@@ -19878,8 +20099,31 @@ global.VexFlow = VexflowNS.default || VexflowNS;
     return {red:"#c0392b", green:"#1f8a5f", blue:"#2c5f9e", yellow:"#e8b23d"}[c] || "#fff";
   }
 
+  /* ---------- selezione carta: si stacca dal ventaglio e si ingrandisce ---------- */
+  function selectCard(el){
+    const offset = parseFloat(el.dataset.offset || 0);
+    const big = window.innerHeight <= 560 ? 1.35 : 1.45;
+    const lift = window.innerHeight <= 560 ? 8 : 12;
+    el.classList.add("selected");
+    // raddrizzo la carta (rotate 0) e la ingrandisco, mantenendo la sua
+    // posizione orizzontale nel ventaglio
+    el.style.transform = `translateX(${offset}px) translateY(-${lift}px) scale(${big}) rotate(0deg)`;
+  }
+
+  function deselectAllCards(){
+    document.querySelectorAll(".player-zone .card.selected").forEach(c=>{
+      c.classList.remove("selected");
+      const offset = parseFloat(c.dataset.offset || 0);
+      const rot = parseFloat(c.dataset.rot || 0);
+      c.style.transform = `translateX(${offset}px) rotate(${rot}deg)`;
+    });
+  }
+
   function onHumanPlay(card){
     if(state.gameOver) return;
+    // Solo le carte-nota fanno scattare la domanda: sulle carte azione
+    // non c'è nessuna nota da riconoscere.
+    const askQuiz = card.type === "note";
     if(card.color === "black"){
       const overlay = document.getElementById("colorOverlay");
       overlay.classList.add("show");
@@ -19888,11 +20132,93 @@ global.VexFlow = VexflowNS.default || VexflowNS;
         if(!btn) return;
         overlay.classList.remove("show");
         overlay.removeEventListener("click", handler);
+        state.quizPending = askQuiz;
         playCard("you", card, btn.dataset.color);
+        if(askQuiz && !state.gameOver) showQuiz(card);
+        else state.quizPending = false;
       };
       overlay.addEventListener("click", handler);
     } else {
+      state.quizPending = askQuiz;
       playCard("you", card, null);
+      if(askQuiz && !state.gameOver) showQuiz(card);
+      else state.quizPending = false;
+    }
+  }
+
+  /* ============ QUIZ: "Che nota hai giocato?" ============ */
+  const NOTE_ORDER = ["do","re","mi","fa","sol","la","si"];
+  const LETTER_TO_SOLFA = { c:"do", d:"re", e:"mi", f:"fa", g:"sol", a:"la", b:"si" };
+
+  function showQuiz(card){
+    const quiz = document.getElementById("quiz");
+    const btns = document.getElementById("quizButtons");
+    const feedback = document.getElementById("quizFeedback");
+    const correct = LETTER_TO_SOLFA[card.noteName];
+
+    feedback.textContent = "";
+    feedback.className = "quiz-feedback";
+    btns.innerHTML = "";
+
+    let answered = false;
+    NOTE_ORDER.forEach(n=>{
+      const b = document.createElement("button");
+      b.className = "note-btn " + n;
+      b.textContent = n.toUpperCase();
+      b.addEventListener("click", ()=>{
+        if(answered) return;
+        answered = true;
+        if(n === correct){
+          b.classList.add("correct");
+          feedback.textContent = "Esatto!";
+          feedback.className = "quiz-feedback ok";
+          playQuizSound(true);
+          setTimeout(()=>{
+            hideQuiz();
+            state.quizPending = false;
+            afterTurnChange();
+          }, 620);
+        } else {
+          b.classList.add("wrong");
+          feedback.textContent = "Sbagliato, era " + correct.toUpperCase() + "!";
+          feedback.className = "quiz-feedback ko";
+          playQuizSound(false);
+          // Penalità: la carta resta giocata, ma peschi una carta e salti il turno
+          drawCard("you", 1);
+          state.skipYourNextTurn = true;
+          render(true);
+          setTimeout(()=>{
+            hideQuiz();
+            state.quizPending = false;
+            showToast("Peschi una carta e salti il turno");
+            afterTurnChange();
+          }, 1500);
+        }
+      });
+      btns.appendChild(b);
+    });
+
+    quiz.classList.add("show");
+  }
+
+  function hideQuiz(){
+    const quiz = document.getElementById("quiz");
+    if(quiz) quiz.classList.remove("show");
+  }
+
+  function playQuizSound(ok){
+    if(!soundOn) return;
+    const ctx = ensureAudio();
+    if(!ctx) return;
+    if(ctx.state === "suspended") ctx.resume();
+    const t = ctx.currentTime;
+    if(ok){
+      playTone(783.99, t, 0.14, 0.16);
+      playTone(1046.50, t + 0.10, 0.28, 0.16);
+    } else {
+      // suono di errore: due note basse e stridule
+      playTone(196.00, t, 0.20, 0.18);
+      playTone(185.00, t + 0.14, 0.36, 0.18);
     }
   }
 
