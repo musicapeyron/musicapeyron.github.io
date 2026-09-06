@@ -140,6 +140,7 @@ h1 {
 .mode-button.m-pitch     { background: linear-gradient(135deg, #0ea5e9, #0369a1); }
 .mode-button.m-loudness  { background: linear-gradient(135deg, #ec4899, #a21caf); }
 .mode-button.m-timbre    { background: linear-gradient(135deg, #6366f1, #4338ca); }
+.mode-button.m-noise     { background: linear-gradient(135deg, #78716c, #44403c); }
 .mode-button.m-harmonics { background: linear-gradient(135deg, #f59e0b, #b45309); }
 .mode-button.m-waves     { background: linear-gradient(135deg, #06b6d4, #0e7490); }
 .mode-button.m-recap     { background: linear-gradient(135deg, #64748b, #334155); }
@@ -483,6 +484,13 @@ input[type="range"]::-moz-range-thumb {
                     <span class="mode-button-desc">Stessa nota, colori diversi</span>
                 </span>
             </button>
+            <button class="mode-button m-noise" data-goto="noise">
+                <span class="mode-icon">🔀</span>
+                <span class="mode-text">
+                    <span class="mode-button-title">Suono e rumore</span>
+                    <span class="mode-button-desc">Cosa distingue una nota da uno scroscio</span>
+                </span>
+            </button>
             <button class="mode-button m-harmonics" data-goto="harmonics">
                 <span class="mode-icon">🎹</span>
                 <span class="mode-text">
@@ -612,6 +620,37 @@ input[type="range"]::-moz-range-thumb {
             </div>
         </div>
         <p class="footnote">Tutte e quattro le onde vibrano a <strong>440 Hz</strong> con lo stesso volume: la nota percepita è sempre "La", ma il colore del suono cambia completamente.</p>
+    </section>
+
+    <!-- ============================= SUONO E RUMORE ============================= -->
+    <section class="screen lesson-screen" id="screen-noise">
+        <button class="back-button" data-back>← Home</button>
+        <h1>🔀 Suono e rumore</h1>
+        <p class="subtitle">Un suono musicale (un tono) e un rumore (uno scroscio, un fruscio, un "tst" di un applauso) sono entrambi vibrazioni dell'aria — ma con una differenza fondamentale: la <strong>regolarità</strong>. Un tono ripete sempre lo stesso identico schema, ciclo dopo ciclo: per questo l'orecchio gli riconosce un'altezza precisa. Il rumore invece non si ripete mai: la sua forma cambia in modo imprevedibile istante per istante, e per questo non ha una nota definita.</p>
+
+        <div class="panel">
+            <div class="control-row">
+                <div class="control-label">
+                    <span>Regolarità dell'onda</span>
+                    <span class="readout" id="noiseReadout">50% rumore</span>
+                </div>
+                <input type="range" id="noiseSlider" min="0" max="100" value="50" step="1">
+                <div class="control-hint" id="noiseHint">Un mix a metà: si intuisce una nota sotto, ma "sporcata" da un fruscio.</div>
+            </div>
+
+            <div class="choice-row">
+                <button class="preset-btn" data-noise-preset="0">Rumore puro</button>
+                <button class="preset-btn" data-noise-preset="50">Metà e metà</button>
+                <button class="preset-btn" data-noise-preset="100">Tono puro</button>
+            </div>
+
+            <div class="scope-card"><canvas id="noiseCanvas"></canvas></div>
+
+            <div class="actions-row">
+                <button class="play-button" id="noisePlay">▶ <span>Ascolta</span></button>
+            </div>
+        </div>
+        <p class="footnote">Guarda il grafico mentre ascolti: la parte "tono" disegna sempre la stessa onda liscia e ripetuta, mentre la parte "rumore" viene ridisegnata in modo diverso a ogni fotogramma — non si stabilizza mai, proprio perché non si ripete mai.</p>
     </section>
 
     <!-- ============================= ARMONICHE ============================= -->
@@ -1192,6 +1231,126 @@ timbrePlay.addEventListener("click", () => {
     if (voice.playing) { stopAllTones(); setPlayButtonState(timbrePlay, false, "Ascolta", "Stop"); }
     else { playTone({ freq: 440, type: currentWave, gain: 0.16 }); setPlayButtonState(timbrePlay, true, "Ascolta", "Stop"); }
 });
+
+/* =========================================================
+   SUONO E RUMORE (tono periodico vs rumore aperiodico)
+========================================================= */
+const noiseSlider = document.getElementById("noiseSlider");
+const noiseReadout = document.getElementById("noiseReadout");
+const noiseHint = document.getElementById("noiseHint");
+const noiseCanvas = document.getElementById("noiseCanvas");
+const noisePlay = document.getElementById("noisePlay");
+
+let sharedNoiseBuffer = null;
+function getSharedNoiseBuffer(ctx) {
+    if (!sharedNoiseBuffer) {
+        const dur = 2;
+        sharedNoiseBuffer = ctx.createBuffer(1, Math.floor(ctx.sampleRate * dur), ctx.sampleRate);
+        const data = sharedNoiseBuffer.getChannelData(0);
+        for (let i = 0; i < data.length; i++) data[i] = Math.random() * 2 - 1;
+    }
+    return sharedNoiseBuffer;
+}
+
+// crossfade a potenza costante: 100 = solo tono, 0 = solo rumore
+function computeNoiseMixGains(value) {
+    const angle = (value / 100) * (Math.PI / 2);
+    return { toneG: Math.sin(angle), noiseG: Math.cos(angle) };
+}
+
+const noiseVoice = { osc: null, toneGain: null, noiseSrc: null, noiseGain: null, playing: false };
+
+function updateNoiseUI() {
+    const value = Number(noiseSlider.value);
+    noiseReadout.textContent = value + "% regolare (" + (100 - value) + "% rumore)";
+    if (value >= 85) noiseHint.textContent = "Quasi un tono puro: si riconosce chiaramente una nota.";
+    else if (value <= 15) noiseHint.textContent = "Quasi rumore puro: nessuna nota riconoscibile, solo un fruscio.";
+    else noiseHint.textContent = "Un mix: si intuisce una nota sotto, ma \"sporcata\" da un fruscio.";
+    if (noiseVoice.playing) {
+        const { toneG, noiseG } = computeNoiseMixGains(value);
+        noiseVoice.toneGain.gain.setTargetAtTime(toneG * 0.22, audioCtx.currentTime, 0.02);
+        noiseVoice.noiseGain.gain.setTargetAtTime(noiseG * 0.22, audioCtx.currentTime, 0.02);
+    }
+}
+noiseSlider.addEventListener("input", updateNoiseUI);
+
+document.querySelectorAll("[data-noise-preset]").forEach(btn => {
+    btn.addEventListener("click", () => {
+        noiseSlider.value = btn.dataset.noisePreset;
+        updateNoiseUI();
+    });
+});
+
+function playNoiseMix() {
+    stopAllTones(true);
+    const ctx = ensureAudio();
+    const value = Number(noiseSlider.value);
+    const { toneG, noiseG } = computeNoiseMixGains(value);
+
+    const osc = ctx.createOscillator(); osc.type = "sine"; osc.frequency.value = 440;
+    const toneGain = ctx.createGain(); toneGain.gain.value = 0;
+    osc.connect(toneGain).connect(masterGain);
+    osc.start();
+    toneGain.gain.linearRampToValueAtTime(toneG * 0.22, ctx.currentTime + 0.05);
+
+    const noiseSrc = ctx.createBufferSource();
+    noiseSrc.buffer = getSharedNoiseBuffer(ctx);
+    noiseSrc.loop = true;
+    const noiseGain = ctx.createGain(); noiseGain.gain.value = 0;
+    noiseSrc.connect(noiseGain).connect(masterGain);
+    noiseSrc.start();
+    noiseGain.gain.linearRampToValueAtTime(noiseG * 0.22, ctx.currentTime + 0.05);
+
+    noiseVoice.osc = osc; noiseVoice.toneGain = toneGain;
+    noiseVoice.noiseSrc = noiseSrc; noiseVoice.noiseGain = noiseGain;
+    noiseVoice.playing = true;
+}
+
+function stopNoiseAudio(instant) {
+    if (noiseVoice.playing) {
+        try {
+            const ctx = audioCtx, t = ctx.currentTime;
+            [noiseVoice.toneGain, noiseVoice.noiseGain].forEach(g => {
+                g.gain.cancelScheduledValues(t);
+                g.gain.setValueAtTime(g.gain.value, t);
+                g.gain.linearRampToValueAtTime(0, t + (instant ? 0.015 : 0.05));
+            });
+            const o = noiseVoice.osc, ns = noiseVoice.noiseSrc, tg = noiseVoice.toneGain, ng = noiseVoice.noiseGain;
+            setTimeout(() => { try { o.stop(); o.disconnect(); tg.disconnect(); ns.stop(); ns.disconnect(); ng.disconnect(); } catch (e) {} }, instant ? 30 : 80);
+        } catch (e) {}
+    }
+    noiseVoice.osc = null; noiseVoice.toneGain = null; noiseVoice.noiseSrc = null; noiseVoice.noiseGain = null;
+    noiseVoice.playing = false;
+}
+registerStopFn(stopNoiseAudio);
+
+noisePlay.addEventListener("click", () => {
+    if (noiseVoice.playing) { stopAllTones(); setPlayButtonState(noisePlay, false, "Ascolta", "Stop"); }
+    else { playNoiseMix(); setPlayButtonState(noisePlay, true, "Ascolta", "Stop"); }
+});
+
+function drawNoise(now) {
+    const { ctx, w, h } = fitCanvas(noiseCanvas);
+    ctx.clearRect(0, 0, w, h);
+    drawGrid(ctx, w, h);
+    const value = Number(noiseSlider.value);
+    const { toneG, noiseG } = computeNoiseMixGains(value);
+    const n = 400;
+    const windowSec = 0.015;
+    const raw = [];
+    let maxAbs = 0.0001;
+    for (let i = 0; i <= n; i++) {
+        const time = (i / n) * windowSec;
+        const toneVal = Math.sin(2 * Math.PI * 440 * time - now / 500);
+        const noiseVal = Math.random() * 2 - 1; // rigenerato ad ogni fotogramma: non si ripete mai
+        const y = toneG * toneVal + noiseG * noiseVal;
+        raw.push(y);
+        if (Math.abs(y) > maxAbs) maxAbs = Math.abs(y);
+    }
+    const amp = h * 0.38;
+    const pts = raw.map((y, i) => [(i / n) * w, h / 2 - (y / maxAbs) * amp]);
+    strokeWave(ctx, pts, "#44403c");
+}
 
 /* =========================================================
    4) ARMONICHE (sintesi additiva)
@@ -2336,6 +2495,7 @@ function render(now) {
         case "pitch": drawPitch(t); break;
         case "loudness": drawLoudness(t); break;
         case "timbre": drawTimbre(t); break;
+        case "noise": drawNoise(now); break;
         case "harmonics": drawHarmonics(t); break;
         case "waves": drawWaves(now); break;
         case "recap": drawRecap(now); break;
@@ -2359,6 +2519,7 @@ updateWaveUI();
 updateRecapUI();
 updateRecapLoudnessUI();
 updateBeatsUI();
+updateNoiseUI();
 updateAdsrReadouts();
 updateAdsrPhaseLabel();
 updateAdsrTriggerLabel();
