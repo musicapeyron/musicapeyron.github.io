@@ -166,6 +166,7 @@
      Sta dentro .center-area, quindi resta sempre sotto la riga dei bot. */
   .quiz{
     position:absolute; left:0; top:50%; transform:translateY(-50%) scale(.94);
+    transform-origin:left center;
     width:min(280px, 30%);
     background:linear-gradient(180deg, rgba(255,255,255,0.10), rgba(255,255,255,0.05));
     border:1px solid var(--glass-border); border-radius:18px;
@@ -20383,6 +20384,33 @@ global.VexFlow = VexflowNS.default || VexflowNS;
     });
 
     quiz.classList.add("show");
+    fitQuiz();
+  }
+
+  /* Garantisce che il riquadro del quiz stia SEMPRE dentro l'area di gioco,
+     senza sconfinare né sopra (riga dei bot) né sotto, su qualunque schermo:
+     se non ci sta, viene rimpicciolito quel tanto che basta. */
+  function fitQuiz(){
+    const quiz = document.getElementById("quiz");
+    const area = document.getElementById("dropZone");
+    if(!quiz || !area || !quiz.classList.contains("show")) return;
+
+    // misuro l'ingombro NATURALE (senza scala) e poi lo riduco quel tanto
+    // che basta per stare dentro l'area di gioco
+    quiz.style.transform = "translateY(-50%) scale(1)";
+    const availH = area.clientHeight;
+    const availW = area.clientWidth;
+    const h = quiz.offsetHeight;
+    const w = quiz.offsetWidth;
+    if(!h || !w) return;
+
+    let scale = 1;
+    if(availH > 0 && availW > 0){
+      scale = Math.min(1, availH / h, availW / w);
+    }
+    // sotto una certa soglia diventerebbe illeggibile: meglio fermarsi
+    scale = Math.max(0.5, scale);
+    quiz.style.transform = `translateY(-50%) scale(${scale})`;
   }
 
   /* ---------- statistiche note ---------- */
@@ -20464,10 +20492,10 @@ global.VexFlow = VexflowNS.default || VexflowNS;
   let resizeTimer = null;
   window.addEventListener("resize", ()=>{
     clearTimeout(resizeTimer);
-    resizeTimer = setTimeout(()=>{ if(state) render(true); }, 150);
+    resizeTimer = setTimeout(()=>{ if(state){ render(true); fitQuiz(); } }, 150);
   });
   window.addEventListener("orientationchange", ()=>{
-    setTimeout(()=>{ if(state) render(true); }, 250);
+    setTimeout(()=>{ if(state){ render(true); fitQuiz(); } }, 250);
   });
 
   renderAvatars();
