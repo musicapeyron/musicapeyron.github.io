@@ -128,8 +128,8 @@
      dei bot restano sempre nella stessa posizione anche quando la barra di stato
      compare o sparisce. */
   .topbar{
-    display:grid; grid-template-columns:150px 1fr 150px;
-    align-items:center; gap:10px; min-width:0;
+    display:grid; grid-template-columns:110px 1fr 110px;
+    align-items:center; gap:8px; min-width:0;
   }
   .topbar .brand{ justify-self:start; }
   .topbar .topbar-spacer{ justify-self:end; }
@@ -233,11 +233,12 @@
      con barretta colorata in alto e animazione a ogni aggiornamento. */
   .stats{
     position:absolute; right:0; top:50%; transform:translateY(-50%);
-    display:flex; flex-direction:column; gap:9px;
-    width:min(132px, 18%); z-index:20; pointer-events:none;
+    transform-origin:right center;
+    display:flex; flex-direction:column; gap:6px;
+    width:min(118px, 17%); z-index:20; pointer-events:none;
   }
   .stat{
-    position:relative; padding:10px 8px 9px; border-radius:14px; overflow:hidden;
+    position:relative; padding:7px 8px 6px; border-radius:12px; overflow:hidden;
     background:linear-gradient(180deg, rgba(255,255,255,0.08), rgba(255,255,255,0.045));
     border:1px solid var(--glass-border);
     box-shadow:0 1px 0 rgba(255,255,255,0.05) inset, 0 10px 24px rgba(0,0,0,0.2);
@@ -248,18 +249,22 @@
   }
   .stat.correct::before{ background:#22c55e; }
   .stat.errors::before{ background:#ef4444; }
+  .stat.wins::before{ background:#facc15; }
+  .stat.losses::before{ background:#64748b; }
   .stat-label{
-    display:block; color:#cbd5e1; font-size:.62rem; font-weight:600;
-    text-transform:uppercase; letter-spacing:.5px; margin-bottom:4px;
+    display:block; color:#cbd5e1; font-size:.58rem; font-weight:600;
+    text-transform:uppercase; letter-spacing:.4px; margin-bottom:2px;
   }
   .stat-value{
-    font-family:"Sora","Inter",sans-serif; font-size:1.3rem; font-weight:700;
+    font-family:"Sora","Inter",sans-serif; font-size:1.1rem; font-weight:700;
     font-variant-numeric:tabular-nums; display:block; line-height:1;
   }
   .stat.correct .stat-value{ color:#86efac; }
   .stat.errors .stat-value{ color:#fca5a5; }
-  .stat.correct.bump{ animation:correctBounce .5s cubic-bezier(.34,1.56,.64,1); }
-  .stat.errors.bump{ animation:wrongShake .5s ease-in-out; }
+  .stat.wins .stat-value{ color:#fde68a; }
+  .stat.losses .stat-value{ color:#cbd5e1; }
+  .stat.correct.bump, .stat.wins.bump{ animation:correctBounce .5s cubic-bezier(.34,1.56,.64,1); }
+  .stat.errors.bump, .stat.losses.bump{ animation:wrongShake .5s ease-in-out; }
   @keyframes correctBounce{
     0%{ transform:scale(1) translateY(0); }
     30%{ transform:scale(1.06) translateY(-5px); }
@@ -274,10 +279,21 @@
     .stat.correct.bump, .stat.errors.bump{ animation:none; }
   }
   @media (max-height:560px){
-    .stats{ width:min(104px, 18%); gap:6px; }
-    .stat{ padding:7px 6px 6px; border-radius:11px; }
-    .stat-label{ font-size:.55rem; margin-bottom:2px; }
-    .stat-value{ font-size:1.05rem; }
+    .stats{ width:min(88px, 16%); gap:4px; }
+    .stat{ padding:5px 5px 4px; border-radius:9px; }
+    .stat-label{ font-size:.5rem; margin-bottom:1px; }
+    .stat-value{ font-size:.9rem; }
+  }
+
+  /* Dorso della carta usato nelle animazioni di pesca dei bot */
+  .card.cardback-ghost{
+    background:linear-gradient(135deg,var(--black-card-1),var(--black-card-2));
+    border:2px solid rgba(255,255,255,0.15);
+    display:flex; align-items:center; justify-content:center;
+  }
+  .card.cardback-ghost::after{
+    content:"♪"; color:var(--gold); font-size:34px;
+    text-shadow:0 0 10px rgba(250,204,21,0.5); background:none;
   }
 
   .card.landing{ animation:cardLand .28s ease-out; }
@@ -314,13 +330,18 @@
      Occupano solo una riga sottile in alto: il centro del tavolo resta libero. */
   .bots-row{
     display:flex; align-items:center; justify-content:center;
-    gap:8px; flex:1 1 auto; min-width:0; flex-wrap:nowrap;
+    gap:7px; flex:1 1 auto; min-width:0; flex-wrap:nowrap;
   }
   .bot{
-    position:relative; display:flex; flex-direction:row; align-items:center; gap:7px;
+    position:relative; display:flex; flex-direction:row; align-items:center; gap:6px;
     flex:0 1 auto; min-width:0;
     background:var(--glass); border:1px solid var(--glass-border); border-radius:999px;
-    padding:4px 12px 4px 4px; transition:box-shadow .2s ease, background .2s ease;
+    padding:4px 10px 4px 4px; transition:box-shadow .2s ease, background .2s ease;
+  }
+  /* Il riquadro del giocatore è leggermente distinto dagli altri */
+  .bot.is-you{
+    background:rgba(250,204,21,0.06);
+    border-color:rgba(250,204,21,0.28);
   }
   .bot.active{
     background:rgba(250,204,21,0.10);
@@ -372,7 +393,7 @@
   @media (max-width:900px){
     .brand{ font-size:0; }
     .brand::before{ content:"🎵"; font-size:20px; }
-    .topbar{ grid-template-columns:40px 1fr 130px; }
+    .topbar{ grid-template-columns:34px 1fr 34px; }
   }
   @media (max-height:560px){
     .bots-row{ gap:6px; }
@@ -569,15 +590,16 @@
     <div class="topbar">
       <div class="brand">🎵 Note-UNO</div>
 
+      <!-- Ordine dei riquadri = ordine dei turni: Tu, Mozart, Bach, Beethoven -->
       <div class="bots-row">
-        <div class="bot" id="bot-bach">
-          <div class="bot-bubble" id="bubble-bach"></div>
-          <div class="avatar" id="avatar-bach"></div>
+        <div class="bot is-you" id="bot-you">
+          <div class="bot-bubble" id="bubble-you"></div>
+          <div class="avatar" id="avatar-you"></div>
           <div class="bot-info">
-            <div class="bot-name">Bach</div>
-            <div class="bot-hand" id="hand-bach"></div>
+            <div class="bot-name">Tu</div>
+            <div class="bot-hand" id="hand-you"></div>
           </div>
-          <div class="bot-count" id="count-bach">7</div>
+          <div class="bot-count" id="count-you">7</div>
         </div>
 
         <div class="bot" id="bot-mozart">
@@ -588,6 +610,16 @@
             <div class="bot-hand" id="hand-mozart"></div>
           </div>
           <div class="bot-count" id="count-mozart">7</div>
+        </div>
+
+        <div class="bot" id="bot-bach">
+          <div class="bot-bubble" id="bubble-bach"></div>
+          <div class="avatar" id="avatar-bach"></div>
+          <div class="bot-info">
+            <div class="bot-name">Bach</div>
+            <div class="bot-hand" id="hand-bach"></div>
+          </div>
+          <div class="bot-count" id="count-bach">7</div>
         </div>
 
         <div class="bot" id="bot-beethoven">
@@ -624,8 +656,16 @@
           <span class="stat-value" id="statCorrect">0</span>
         </div>
         <div class="stat errors" id="statErrorsBox">
-          <span class="stat-label">Sbagliate</span>
+          <span class="stat-label">Errori</span>
           <span class="stat-value" id="statErrors">0</span>
+        </div>
+        <div class="stat wins" id="statWinsBox">
+          <span class="stat-label">Vinte</span>
+          <span class="stat-value" id="statWins">0</span>
+        </div>
+        <div class="stat losses" id="statLossesBox">
+          <span class="stat-label">Perse</span>
+          <span class="stat-value" id="statLosses">0</span>
         </div>
       </div>
     </div>
@@ -19464,6 +19504,74 @@ global.VexFlow = VexflowNS.default || VexflowNS;
     }
   }
 
+  // Fruscio di carta: rumore filtrato, breve. Usato per pescare/selezionare/spostare,
+  // MAI per giocare una carta (lì il protagonista è il suono della nota).
+  let noiseBuffer = null;
+  function getNoiseBuffer(ctx){
+    if(noiseBuffer) return noiseBuffer;
+    const len = Math.floor(ctx.sampleRate * 0.3);
+    noiseBuffer = ctx.createBuffer(1, len, ctx.sampleRate);
+    const data = noiseBuffer.getChannelData(0);
+    for(let i=0;i<len;i++) data[i] = Math.random()*2 - 1;
+    return noiseBuffer;
+  }
+
+  function playWhoosh(when, gain){
+    if(!soundOn) return;
+    const ctx = ensureAudio();
+    if(!ctx) return;
+    if(ctx.state === "suspended") ctx.resume();
+    const t0 = when === undefined ? ctx.currentTime : when;
+    const peak = gain === undefined ? 0.10 : gain;
+
+    const src = ctx.createBufferSource();
+    src.buffer = getNoiseBuffer(ctx);
+
+    const band = ctx.createBiquadFilter();
+    band.type = "bandpass";
+    band.frequency.setValueAtTime(1400, t0);
+    band.frequency.exponentialRampToValueAtTime(3200, t0 + 0.16);
+    band.Q.value = 0.9;
+
+    const g = ctx.createGain();
+    g.gain.setValueAtTime(0.0001, t0);
+    g.gain.exponentialRampToValueAtTime(peak, t0 + 0.02);
+    g.gain.exponentialRampToValueAtTime(0.0001, t0 + 0.20);
+
+    src.connect(band); band.connect(g); g.connect(ctx.destination);
+    src.start(t0);
+    src.stop(t0 + 0.26);
+  }
+
+  // Click secco per i pulsanti
+  function playClick(){
+    if(!soundOn) return;
+    const ctx = ensureAudio();
+    if(!ctx) return;
+    if(ctx.state === "suspended") ctx.resume();
+    const t0 = ctx.currentTime;
+
+    const src = ctx.createBufferSource();
+    src.buffer = getNoiseBuffer(ctx);
+    const hp = ctx.createBiquadFilter();
+    hp.type = "highpass";
+    hp.frequency.value = 1800;
+    const g = ctx.createGain();
+    g.gain.setValueAtTime(0.16, t0);
+    g.gain.exponentialRampToValueAtTime(0.0001, t0 + 0.045);
+    src.connect(hp); hp.connect(g); g.connect(ctx.destination);
+    src.start(t0); src.stop(t0 + 0.06);
+
+    const osc = ctx.createOscillator();
+    const og = ctx.createGain();
+    osc.type = "square";
+    osc.frequency.setValueAtTime(880, t0);
+    og.gain.setValueAtTime(0.05, t0);
+    og.gain.exponentialRampToValueAtTime(0.0001, t0 + 0.04);
+    osc.connect(og); og.connect(ctx.destination);
+    osc.start(t0); osc.stop(t0 + 0.05);
+  }
+
   // Suona la carta appena giocata (vale per il giocatore e per i bot)
   function playCardSound(card){
     if(!soundOn) return;
@@ -19722,7 +19830,7 @@ global.VexFlow = VexflowNS.default || VexflowNS;
       quizPending: false         // turno sospeso in attesa della risposta
     };
     hideQuiz();
-    stats = { correct: 0, errors: 0 };
+    stats.correct = 0; stats.errors = 0;  // vinte/perse restano
     renderStats();
     render(true);
     setStatus("Tocca a te!");
@@ -19764,7 +19872,78 @@ global.VexFlow = VexflowNS.default || VexflowNS;
       state.hands[playerKey].push(c);
       out.push(c);
     }
+    if(out.length) animateDraw(playerKey, out);
     return out;
+  }
+
+  /* ---------- animazione della pesca ----------
+     Dal mazzo verso chi pesca: a faccia in su e verso la mano se pesca il
+     giocatore, a faccia in giù e verso il proprio riquadro se pesca un bot.
+     Con più carte (pesca 2 / pesca 4) partono a cascata, una dopo l'altra. */
+  function animateDraw(playerKey, cards){
+    const deckEl = document.querySelector(".deck");
+    if(!deckEl) return;
+    const from = deckEl.getBoundingClientRect();
+
+    let to, faceUp;
+    if(playerKey === "you"){
+      faceUp = true;
+      // destinazione: lato destro del ventaglio, dove la carta si andrà a posizionare
+      const zone = document.getElementById("playerHand");
+      const cardsEls = zone ? zone.querySelectorAll(".card") : [];
+      if(cardsEls.length){
+        const last = cardsEls[cardsEls.length-1].getBoundingClientRect();
+        to = { left: last.left + last.width * 0.5, top: last.top, w: from.width, h: from.height };
+      } else if(zone){
+        const z = zone.getBoundingClientRect();
+        to = { left: z.left + z.width/2 - from.width/2, top: z.top + 8, w: from.width, h: from.height };
+      } else return;
+    } else {
+      faceUp = false;
+      const chip = document.getElementById("bot-" + playerKey);
+      if(!chip) return;
+      const c = chip.getBoundingClientRect();
+      to = { left: c.left + c.width/2 - from.width*0.18, top: c.top + c.height/2 - from.height*0.18,
+             w: from.width, h: from.height };
+    }
+
+    cards.forEach((card, i)=>{
+      const delay = i * 150;   // cascata: le carte partono una dopo l'altra
+      setTimeout(()=>{
+        playWhoosh(undefined, 0.09);
+        const ghost = faceUp ? buildCardEl(card) : buildCardBackEl();
+        ghost.style.position = "fixed";
+        ghost.style.margin = "0";
+        ghost.style.zIndex = "95";
+        ghost.style.width = from.width + "px";
+        ghost.style.height = from.height + "px";
+        ghost.style.left = from.left + "px";
+        ghost.style.top = from.top + "px";
+        ghost.style.pointerEvents = "none";
+        ghost.style.transform = "scale(1) rotate(0deg)";
+        ghost.style.opacity = "1";
+        ghost.style.transition = "left .44s cubic-bezier(.33,.9,.4,1), top .44s cubic-bezier(.33,.9,.4,1), transform .44s cubic-bezier(.33,.9,.4,1), opacity .44s ease";
+        document.body.appendChild(ghost);
+
+        void ghost.offsetWidth;
+        ghost.style.left = to.left + "px";
+        ghost.style.top = to.top + "px";
+        ghost.style.transform = faceUp ? "scale(1) rotate(0deg)" : "scale(0.32) rotate(10deg)";
+        ghost.style.opacity = faceUp ? "1" : "0.85";
+
+        let done = false;
+        const finish = ()=>{ if(done) return; done = true; ghost.remove(); };
+        ghost.addEventListener("transitionend", finish, { once:true });
+        setTimeout(finish, 560);
+      }, delay);
+    });
+  }
+
+  // Dorso della carta, per le pescate dei bot
+  function buildCardBackEl(){
+    const el = document.createElement("div");
+    el.className = "card cardback-ghost";
+    return el;
   }
 
   function reshuffleFromDiscard(){
@@ -19796,6 +19975,7 @@ global.VexFlow = VexflowNS.default || VexflowNS;
     if(hand.length === 0){
       state.gameOver = true;
       render(true);
+      addStat(playerKey === "you" ? "wins" : "losses");
       showEnd(playerKey === "you"
         ? "Hai vinto! 🎉"
         : NAMES[playerKey] + " ha vinto la partita");
@@ -19810,7 +19990,9 @@ global.VexFlow = VexflowNS.default || VexflowNS;
     if(drawNext > 0){
       const victim = PLAYERS[nextIdx];
       drawCard(victim, drawNext);
-      showToast(NAMES[victim] + " pesca " + drawNext + " carte");
+      showToast(victim === "you"
+        ? "Peschi " + drawNext + " carte"
+        : NAMES[victim] + " pesca " + drawNext + " carte");
       nextIdx = nextTurnIndex(nextIdx, state.direction, 1);
     } else if(skipNext){
       nextIdx = nextTurnIndex(nextIdx, state.direction, 1);
@@ -19973,10 +20155,13 @@ global.VexFlow = VexflowNS.default || VexflowNS;
   const AVATARS = {
     bach: `<svg viewBox="0 0 100 100" width="60" height="60"><circle cx="50" cy="55" r="34" fill="#e8c39e"/><path d="M14 46 Q10 10 50 12 Q90 10 86 46 Q88 30 74 26 Q76 40 62 34 Q60 44 50 36 Q40 44 38 34 Q24 40 26 26 Q12 30 14 46Z" fill="#f2f2f2"/><circle cx="38" cy="58" r="3.5" fill="#2b2b2b"/><circle cx="62" cy="58" r="3.5" fill="#2b2b2b"/><path d="M40 74 Q50 80 60 74" stroke="#5a3b28" stroke-width="3" fill="none" stroke-linecap="round"/></svg>`,
     mozart: `<svg viewBox="0 0 100 100" width="60" height="60"><circle cx="50" cy="55" r="34" fill="#f0cba0"/><path d="M16 50 Q10 14 50 14 Q90 14 84 50 Q84 34 50 32 Q16 34 16 50Z" fill="#f7f7f7"/><circle cx="24" cy="60" r="8" fill="#f7f7f7"/><circle cx="76" cy="60" r="8" fill="#f7f7f7"/><circle cx="38" cy="58" r="3.5" fill="#2b2b2b"/><circle cx="62" cy="58" r="3.5" fill="#2b2b2b"/><path d="M42 74 Q50 78 58 74" stroke="#5a3b28" stroke-width="3" fill="none" stroke-linecap="round"/></svg>`,
-    beethoven: `<svg viewBox="0 0 100 100" width="60" height="60"><circle cx="50" cy="55" r="34" fill="#d9a978"/><path d="M14 52 Q8 16 50 18 Q92 16 86 52 Q92 40 80 22 Q70 34 62 20 Q54 34 50 18 Q46 34 38 20 Q30 34 20 22 Q8 40 14 52Z" fill="#3a3a3a"/><circle cx="38" cy="58" r="3.5" fill="#1a1a1a"/><circle cx="62" cy="58" r="3.5" fill="#1a1a1a"/><path d="M38 76 Q50 68 62 76" stroke="#5a3b28" stroke-width="3" fill="none" stroke-linecap="round"/></svg>`
+    beethoven: `<svg viewBox="0 0 100 100" width="60" height="60"><circle cx="50" cy="55" r="34" fill="#d9a978"/><path d="M14 52 Q8 16 50 18 Q92 16 86 52 Q92 40 80 22 Q70 34 62 20 Q54 34 50 18 Q46 34 38 20 Q30 34 20 22 Q8 40 14 52Z" fill="#3a3a3a"/><circle cx="38" cy="58" r="3.5" fill="#1a1a1a"/><circle cx="62" cy="58" r="3.5" fill="#1a1a1a"/><path d="M38 76 Q50 68 62 76" stroke="#5a3b28" stroke-width="3" fill="none" stroke-linecap="round"/></svg>`,
+    you: `<svg viewBox="0 0 100 100" width="60" height="60"><circle cx="50" cy="50" r="46" fill="#4c3f8f"/><path d="M62 20 L62 60" stroke="#facc15" stroke-width="7" stroke-linecap="round"/><ellipse cx="49" cy="63" rx="15" ry="11" fill="#facc15" transform="rotate(-20 49 63)"/><path d="M62 20 Q80 26 80 40 Q74 30 62 32 Z" fill="#facc15"/></svg>`
   };
 
   function renderAvatars(){
+    document.getElementById("avatar-you").innerHTML = AVATARS.you;
+    document.getElementById("avatar-you").style.background = "#3b2f6b";
     document.getElementById("avatar-bach").innerHTML = AVATARS.bach;
     document.getElementById("avatar-bach").style.background = "#7a5230";
     document.getElementById("avatar-mozart").innerHTML = AVATARS.mozart;
@@ -20033,8 +20218,8 @@ global.VexFlow = VexflowNS.default || VexflowNS;
 
   function render(full){
     if(!state) return;
-    // bots
-    ["bach","mozart","beethoven"].forEach(p=>{
+    // riquadri dei turni (giocatore + bot), nell'ordine di gioco
+    ["you","bach","mozart","beethoven"].forEach(p=>{
       document.getElementById("bot-"+p).classList.toggle("active", currentPlayer()===p);
       document.getElementById("count-"+p).textContent = state.hands[p].length;
       const handEl = document.getElementById("hand-"+p);
@@ -20215,6 +20400,7 @@ global.VexFlow = VexflowNS.default || VexflowNS;
               hand.splice(cur, 1);
               hand.splice(target, 0, card);
               layoutHandPreview(card.id);
+              playWhoosh(undefined, 0.05);
             }
           }
         }
@@ -20244,7 +20430,10 @@ global.VexFlow = VexflowNS.default || VexflowNS;
           } else {
             // Riscontro solo *dopo* il tentativo: il gioco non anticipa mai
             // quali carte siano giocabili.
-            if(overTable && currentPlayer() === "you") showToast("Mossa non valida");
+            if(overTable && currentPlayer() === "you"){
+              showToast("Mossa non valida");
+              addStat("errors");
+            }
             el.style.transition = "left .22s ease, top .22s ease";
             el.style.left = origRect.left + "px";
             el.style.top = origRect.top + "px";
@@ -20283,6 +20472,7 @@ global.VexFlow = VexflowNS.default || VexflowNS;
     const big = window.innerHeight <= 560 ? 1.35 : 1.45;
     const lift = window.innerHeight <= 560 ? 8 : 12;
     el.classList.add("selected");
+    playWhoosh(undefined, 0.06);
     // raddrizzo la carta (rotate 0) e la ingrandisco, mantenendo la sua
     // posizione orizzontale nel ventaglio
     el.style.transform = `translateX(${offset}px) translateY(-${lift}px) scale(${big}) rotate(0deg)`;
@@ -20414,15 +20604,41 @@ global.VexFlow = VexflowNS.default || VexflowNS;
   }
 
   /* ---------- statistiche note ---------- */
-  let stats = { correct: 0, errors: 0 };
+  // corrette/errori si azzerano a ogni partita; vinte/perse restano per la sessione
+  let stats = { correct: 0, errors: 0, wins: 0, losses: 0 };
+  const STAT_BOX = {
+    correct: "statCorrectBox", errors: "statErrorsBox",
+    wins: "statWinsBox", losses: "statLossesBox"
+  };
+  const STAT_VAL = {
+    correct: "statCorrect", errors: "statErrors",
+    wins: "statWins", losses: "statLosses"
+  };
 
   function renderStats(){
-    document.getElementById("statCorrect").textContent = stats.correct;
-    document.getElementById("statErrors").textContent = stats.errors;
+    Object.keys(STAT_VAL).forEach(k=>{
+      const el = document.getElementById(STAT_VAL[k]);
+      if(el) el.textContent = stats[k];
+    });
+    fitStats();
+  }
+
+  /* Come il quiz: se i quattro riquadri non ci stanno in altezza,
+     vengono ridotti quel tanto che basta per restare dentro il tavolo. */
+  function fitStats(){
+    const box = document.getElementById("stats");
+    const area = document.getElementById("dropZone");
+    if(!box || !area) return;
+    box.style.transform = "translateY(-50%) scale(1)";
+    const availH = area.clientHeight;
+    const h = box.offsetHeight;
+    if(!h || availH <= 0) return;
+    const scale = Math.max(0.5, Math.min(1, availH / h));
+    box.style.transform = `translateY(-50%) scale(${scale})`;
   }
 
   function bumpStat(which){
-    const box = document.getElementById(which === "correct" ? "statCorrectBox" : "statErrorsBox");
+    const box = document.getElementById(STAT_BOX[which]);
     if(!box) return;
     box.classList.remove("bump");
     void box.offsetWidth;  // forza il riavvio dell'animazione
@@ -20456,8 +20672,8 @@ global.VexFlow = VexflowNS.default || VexflowNS;
     }
   }
 
-  document.getElementById("deckBtn").addEventListener("click", humanDraw);
-  document.getElementById("passBtn").addEventListener("click", humanDraw);
+  document.getElementById("deckBtn").addEventListener("click", ()=>{ playClick(); humanDraw(); });
+  document.getElementById("passBtn").addEventListener("click", ()=>{ playClick(); humanDraw(); });
 
   const soundBtn = document.getElementById("soundBtn");
   soundBtn.addEventListener("click", ()=>{
@@ -20492,10 +20708,10 @@ global.VexFlow = VexflowNS.default || VexflowNS;
   let resizeTimer = null;
   window.addEventListener("resize", ()=>{
     clearTimeout(resizeTimer);
-    resizeTimer = setTimeout(()=>{ if(state){ render(true); fitQuiz(); } }, 150);
+    resizeTimer = setTimeout(()=>{ if(state){ render(true); fitQuiz(); } fitStats(); }, 150);
   });
   window.addEventListener("orientationchange", ()=>{
-    setTimeout(()=>{ if(state){ render(true); fitQuiz(); } }, 250);
+    setTimeout(()=>{ if(state){ render(true); fitQuiz(); } fitStats(); }, 250);
   });
 
   renderAvatars();
