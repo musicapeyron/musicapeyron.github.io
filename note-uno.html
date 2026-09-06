@@ -285,6 +285,28 @@
     .stat-value{ font-size:.9rem; }
   }
 
+  /* Posto vuoto della pila scarti, mentre il tavolo si prepara */
+  .discard-empty{
+    position:absolute; inset:0; border-radius:12px;
+    border:2px dashed rgba(255,255,255,0.16);
+    background:rgba(255,255,255,0.03);
+  }
+
+  /* Mazzo che si mescola a inizio partita */
+  .deck .cardback.shuffling{ animation:deckShuffle .62s ease-in-out; }
+  @keyframes deckShuffle{
+    0%   { transform:translate(0,0) rotate(0deg); }
+    15%  { transform:translate(-7px,-4px) rotate(-6deg); }
+    30%  { transform:translate(6px,-2px) rotate(5deg); }
+    45%  { transform:translate(-5px,-5px) rotate(-4deg); }
+    60%  { transform:translate(5px,-1px) rotate(4deg); }
+    78%  { transform:translate(-3px,-3px) rotate(-2deg); }
+    100% { transform:translate(0,0) rotate(0deg); }
+  }
+  @media (prefers-reduced-motion:reduce){
+    .deck .cardback.shuffling{ animation:none; }
+  }
+
   /* Dorso della carta usato nelle animazioni di pesca dei bot */
   .card.cardback-ghost{
     background:linear-gradient(135deg,var(--black-card-1),var(--black-card-2));
@@ -575,6 +597,59 @@
   }
   .btn-main:hover{ transform:translateY(-2px); }
 
+  /* ---------- menu iniziale e opzioni ---------- */
+  .btn-ghost{
+    font-family:"Sora","Inter",sans-serif; font-weight:700; font-size:14px;
+    background:var(--glass-strong); color:var(--ink-light);
+    border:1px solid var(--glass-border);
+    padding:11px 26px; border-radius:14px; cursor:pointer;
+    transition:transform .15s ease, background .15s ease;
+  }
+  .btn-ghost:hover{ background:rgba(255,255,255,0.18); transform:translateY(-2px); }
+
+  .menu .menu-logo{
+    font-size:46px; line-height:1;
+    filter:drop-shadow(0 6px 18px rgba(250,204,21,0.35));
+    animation:menuFloat 3.2s ease-in-out infinite;
+  }
+  @keyframes menuFloat{
+    0%,100%{ transform:translateY(0) rotate(-4deg); }
+    50%{ transform:translateY(-8px) rotate(4deg); }
+  }
+  .menu-title{
+    font-family:"Sora","Inter",sans-serif; font-weight:800; font-size:34px;
+    margin:0; color:var(--gold); letter-spacing:.5px;
+    text-shadow:0 4px 20px rgba(250,204,21,0.25);
+  }
+  .menu-sub{ margin:0; color:var(--muted); font-size:14px; text-align:center; }
+  .menu-actions{ display:flex; gap:12px; align-items:center; flex-wrap:wrap; justify-content:center; }
+
+  .opt-list{ display:flex; flex-direction:column; gap:9px; width:min(340px, 86vw); }
+  .opt{
+    display:flex; flex-direction:column; gap:2px; text-align:left;
+    background:var(--glass); border:1px solid var(--glass-border);
+    border-radius:14px; padding:11px 14px; cursor:pointer; color:var(--ink-light);
+    transition:background .15s ease, border-color .15s ease, transform .12s ease;
+  }
+  .opt:hover{ background:var(--glass-strong); transform:translateY(-2px); }
+  .opt.selected{
+    background:rgba(250,204,21,0.12);
+    border-color:var(--gold);
+  }
+  .opt .opt-name{ font-family:"Sora","Inter",sans-serif; font-weight:700; font-size:14px; }
+  .opt .opt-desc{ font-size:11.5px; color:var(--muted); }
+  .opt.selected .opt-name::after{ content:" ✓"; color:var(--gold); }
+
+  @media (max-height:560px){
+    .menu .menu-logo{ font-size:32px; }
+    .menu-title{ font-size:24px; }
+    .menu-sub{ font-size:12px; }
+    .opt{ padding:8px 12px; border-radius:11px; }
+    .opt .opt-name{ font-size:12.5px; }
+    .opt .opt-desc{ font-size:10.5px; }
+    .overlay h2{ font-size:20px; }
+  }
+
 </style>
 </head>
 <body>
@@ -638,7 +713,7 @@
 
     <div class="center-area" id="dropZone">
       <div class="drop-hint"></div>
-      <div class="deck">
+      <div class="deck" id="deckAnchor">
         <div class="cardback" id="deckBtn"></div>
         <div class="deck-label" id="deckCount">Mazzo: 0</div>
       </div>
@@ -693,15 +768,42 @@
     </div>
   </div>
 
-  <div class="overlay" id="startOverlay">
-    <h2>🎵 Note-UNO</h2>
-    <p>Sfida Bach, Mozart e Beethoven! Le carte numeriche sono sostituite da note: rosso e verde in chiave di violino, giallo e blu in chiave di basso. Prototipo — regole classiche semplificate.</p>
-    <button class="btn-main" id="startBtn">Inizia partita</button>
+  <div class="overlay menu" id="startOverlay">
+    <div class="menu-logo">🎵</div>
+    <h2 class="menu-title">Note-UNO</h2>
+    <p class="menu-sub">Riconosci le note e batti Bach, Mozart e Beethoven</p>
+    <div class="menu-actions">
+      <button class="btn-main" id="startBtn">Nuovo Gioco</button>
+      <button class="btn-ghost" id="optionsBtn">Opzioni</button>
+    </div>
+  </div>
+
+  <div class="overlay" id="optionsOverlay">
+    <h2>Opzioni</h2>
+    <p>Quali chiavi vuoi usare durante la partita?</p>
+    <div class="opt-list" id="clefOptions">
+      <button class="opt" data-clef="both">
+        <span class="opt-name">Chiave di violino e basso</span>
+        <span class="opt-desc">Rosso e verde in violino, giallo e blu in basso</span>
+      </button>
+      <button class="opt" data-clef="treble">
+        <span class="opt-name">Solo chiave di violino</span>
+        <span class="opt-desc">Tutti e quattro i colori in chiave di violino</span>
+      </button>
+      <button class="opt" data-clef="bass">
+        <span class="opt-name">Solo chiave di basso</span>
+        <span class="opt-desc">Tutti e quattro i colori in chiave di basso</span>
+      </button>
+    </div>
+    <button class="btn-main" id="optionsBackBtn">Indietro</button>
   </div>
 
   <div class="overlay" id="endOverlay">
     <h2 id="endTitle">Fine partita</h2>
-    <button class="btn-main" id="restartBtn">Rigioca</button>
+    <div class="menu-actions">
+      <button class="btn-main" id="restartBtn">Rigioca</button>
+      <button class="btn-ghost" id="toMenuBtn">Torna al menù</button>
+    </div>
   </div>
 </div>
 
@@ -19522,25 +19624,32 @@ global.VexFlow = VexflowNS.default || VexflowNS;
     if(!ctx) return;
     if(ctx.state === "suspended") ctx.resume();
     const t0 = when === undefined ? ctx.currentTime : when;
-    const peak = gain === undefined ? 0.10 : gain;
+    const peak = gain === undefined ? 0.035 : gain;
 
     const src = ctx.createBufferSource();
     src.buffer = getNoiseBuffer(ctx);
 
-    const band = ctx.createBiquadFilter();
-    band.type = "bandpass";
-    band.frequency.setValueAtTime(1400, t0);
-    band.frequency.exponentialRampToValueAtTime(3200, t0 + 0.16);
-    band.Q.value = 0.9;
+    // Passa-basso con lieve discesa: timbro morbido, "di carta",
+    // senza le frequenze acute che rendevano il fruscio sibilante.
+    const lp = ctx.createBiquadFilter();
+    lp.type = "lowpass";
+    lp.frequency.setValueAtTime(2000, t0);
+    lp.frequency.exponentialRampToValueAtTime(900, t0 + 0.12);
+    lp.Q.value = 0.4;
+
+    // taglio anche il fondo, altrimenti risulta un tonfo
+    const hp = ctx.createBiquadFilter();
+    hp.type = "highpass";
+    hp.frequency.value = 500;
 
     const g = ctx.createGain();
     g.gain.setValueAtTime(0.0001, t0);
-    g.gain.exponentialRampToValueAtTime(peak, t0 + 0.02);
-    g.gain.exponentialRampToValueAtTime(0.0001, t0 + 0.20);
+    g.gain.exponentialRampToValueAtTime(peak, t0 + 0.015);
+    g.gain.exponentialRampToValueAtTime(0.0001, t0 + 0.13);
 
-    src.connect(band); band.connect(g); g.connect(ctx.destination);
+    src.connect(hp); hp.connect(lp); lp.connect(g); g.connect(ctx.destination);
     src.start(t0);
-    src.stop(t0 + 0.26);
+    src.stop(t0 + 0.18);
   }
 
   // Click secco per i pulsanti
@@ -19655,8 +19764,17 @@ global.VexFlow = VexflowNS.default || VexflowNS;
   /* ============ DECK CONSTRUCTION ============ */
   const COLORS = ["red","green","yellow","blue"];
 
+  // Modalità chiavi scelta dalle opzioni: "both" | "treble" | "bass"
+  let clefMode = "both";
+
   function noteForColorValue(color, value){
-    const treble = (color === "red" || color === "green");
+    // In "both" il colore decide la chiave; nelle altre modalità i colori
+    // restano quelli, ma tutte le carte usano la stessa chiave.
+    let treble;
+    if(clefMode === "treble") treble = true;
+    else if(clefMode === "bass") treble = false;
+    else treble = (color === "red" || color === "green");
+
     const clef = treble ? "treble" : "bass";
     let key;
     if(value === 0){
@@ -19806,20 +19924,21 @@ global.VexFlow = VexflowNS.default || VexflowNS;
 
   function newGame(){
     let deck = shuffle(buildDeck());
-    const hands = { you:[], mozart:[], bach:[], beethoven:[] };
+
+    // Preparo in anticipo la distribuzione, ma le carte arrivano in mano
+    // una alla volta durante l'animazione.
+    const dealPlan = [];
     for(let r=0;r<7;r++){
-      PLAYERS.forEach(p=>{ hands[p].push(deck.pop()); });
+      PLAYERS.forEach(p=>{ dealPlan.push({ player:p, card: deck.pop() }); });
     }
-    // find a starting card that's a plain note (avoid action complexities at start)
-    let discard = [];
+    // carta iniziale: una nota semplice, per non aprire con un'azione
     let idx = deck.length - 1;
     while(idx >= 0 && deck[idx].type !== "note"){ idx--; }
     if(idx < 0){ idx = deck.length -1; }
     const startCard = deck.splice(idx,1)[0];
-    discard.push(startCard);
 
     state = {
-      deck, discard, hands,
+      deck, discard: [], hands: { you:[], mozart:[], bach:[], beethoven:[] },
       turn: 0, // index into PLAYERS
       direction: 1,
       currentColor: startCard.color,
@@ -19827,14 +19946,145 @@ global.VexFlow = VexflowNS.default || VexflowNS;
       pendingMessage: "",
       hasDrawnThisTurn: false,
       skipYourNextTurn: false,   // penalità: risposta sbagliata al quiz
-      quizPending: false         // turno sospeso in attesa della risposta
+      quizPending: false,        // turno sospeso in attesa della risposta
+      dealing: true              // tavolo in preparazione: input e bot fermi
     };
     hideQuiz();
     stats.correct = 0; stats.errors = 0;  // vinte/perse restano
     renderStats();
+    lastDiscardId = null;
     render(true);
-    setStatus("Tocca a te!");
-    afterTurnChange();
+    runTableSetup(dealPlan, startCard);
+  }
+
+  /* ---------- preparazione del tavolo ----------
+     mescolata → distribuzione a tutti → carta iniziale scoperta. */
+  function runTableSetup(dealPlan, startCard){
+    setStatus("Preparo il tavolo…");
+    const deckEl = document.querySelector(".deck .cardback");
+
+    // 1) mescolata
+    if(deckEl){
+      deckEl.classList.remove("shuffling");
+      void deckEl.offsetWidth;
+      deckEl.classList.add("shuffling");
+    }
+    playShuffleSound();
+    riffleGhosts();
+
+    // 2) distribuzione, una carta alla volta
+    const DEAL_STEP = 42;      // ms fra una carta e l'altra
+    const SHUFFLE_MS = 620;
+    dealPlan.forEach((item, i)=>{
+      setTimeout(()=>{
+        state.hands[item.player].push(item.card);
+        render(true);
+        flyDealtCard(item.card, item.player);
+        if(i % 4 === 0) playWhoosh(undefined, 0.022);
+      }, SHUFFLE_MS + i * DEAL_STEP);
+    });
+
+    // 3) carta iniziale scoperta al centro
+    const afterDeal = SHUFFLE_MS + dealPlan.length * DEAL_STEP + 180;
+    setTimeout(()=>{
+      if(deckEl) deckEl.classList.remove("shuffling");
+      flyCardToDiscard(startCard, "deckAnchor", ()=>{
+        state.discard.push(startCard);
+        state.currentColor = startCard.color;
+        state.dealing = false;
+        render(true);
+        playCardSound(startCard);
+        setStatus("Tocca a te!");
+        afterTurnChange();
+      });
+    }, afterDeal);
+  }
+
+  // Carta che vola dal mazzo a chi la riceve durante la distribuzione
+  function flyDealtCard(card, playerKey){
+    const deckEl = document.querySelector(".deck");
+    if(!deckEl) return;
+    const from = deckEl.getBoundingClientRect();
+    const faceUp = playerKey === "you";
+    let to;
+
+    if(faceUp){
+      const zone = document.getElementById("playerHand");
+      const els = zone ? zone.querySelectorAll(".card") : [];
+      if(els.length){
+        const last = els[els.length-1].getBoundingClientRect();
+        to = { left:last.left, top:last.top };
+      } else if(zone){
+        const z = zone.getBoundingClientRect();
+        to = { left:z.left + z.width/2 - from.width/2, top:z.top + 8 };
+      } else return;
+    } else {
+      const chip = document.getElementById("bot-" + playerKey);
+      if(!chip) return;
+      const c = chip.getBoundingClientRect();
+      to = { left:c.left + c.width/2 - from.width*0.18, top:c.top + c.height/2 - from.height*0.18 };
+    }
+
+    const ghost = faceUp ? buildCardEl(card) : buildCardBackEl();
+    ghost.style.position = "fixed";
+    ghost.style.margin = "0";
+    ghost.style.zIndex = "95";
+    ghost.style.width = from.width + "px";
+    ghost.style.height = from.height + "px";
+    ghost.style.left = from.left + "px";
+    ghost.style.top = from.top + "px";
+    ghost.style.pointerEvents = "none";
+    ghost.style.transition = "left .34s cubic-bezier(.3,.85,.4,1), top .34s cubic-bezier(.3,.85,.4,1), transform .34s cubic-bezier(.3,.85,.4,1), opacity .34s ease";
+    document.body.appendChild(ghost);
+
+    void ghost.offsetWidth;
+    ghost.style.left = to.left + "px";
+    ghost.style.top = to.top + "px";
+    ghost.style.transform = faceUp ? "scale(1) rotate(0deg)" : "scale(0.3) rotate(8deg)";
+    ghost.style.opacity = faceUp ? "1" : "0.8";
+
+    let done = false;
+    const finish = ()=>{ if(done) return; done = true; ghost.remove(); };
+    ghost.addEventListener("transitionend", finish, { once:true });
+    setTimeout(finish, 460);
+  }
+
+  // Carte che "sfarfallano" sopra il mazzo durante la mescolata
+  function riffleGhosts(){
+    const deckEl = document.querySelector(".deck");
+    if(!deckEl) return;
+    const r = deckEl.getBoundingClientRect();
+    for(let i=0;i<5;i++){
+      setTimeout(()=>{
+        const g = buildCardBackEl();
+        g.style.position = "fixed";
+        g.style.margin = "0";
+        g.style.zIndex = "94";
+        g.style.width = r.width + "px";
+        g.style.height = r.height + "px";
+        g.style.left = r.left + "px";
+        g.style.top = r.top + "px";
+        g.style.pointerEvents = "none";
+        g.style.transition = "transform .3s ease-out, opacity .3s ease-out";
+        document.body.appendChild(g);
+        const dir = i % 2 === 0 ? 1 : -1;
+        void g.offsetWidth;
+        g.style.transform = `translate(${dir*26}px, -22px) rotate(${dir*14}deg) scale(.95)`;
+        g.style.opacity = "0";
+        setTimeout(()=>g.remove(), 340);
+      }, i * 90);
+    }
+  }
+
+  function playShuffleSound(){
+    if(!soundOn) return;
+    const ctx = ensureAudio();
+    if(!ctx) return;
+    if(ctx.state === "suspended") ctx.resume();
+    // una manciata di fruscii ravvicinati = mazzo che si mescola
+    for(let i=0;i<6;i++){
+      playWhoosh(ctx.currentTime + i*0.075, 0.03);
+    }
   }
 
   function currentPlayer(){ return PLAYERS[state.turn]; }
@@ -19910,7 +20160,7 @@ global.VexFlow = VexflowNS.default || VexflowNS;
     cards.forEach((card, i)=>{
       const delay = i * 150;   // cascata: le carte partono una dopo l'altra
       setTimeout(()=>{
-        playWhoosh(undefined, 0.09);
+        playWhoosh(undefined, 0.038);
         const ghost = faceUp ? buildCardEl(card) : buildCardBackEl();
         ghost.style.position = "fixed";
         ghost.style.margin = "0";
@@ -20010,7 +20260,7 @@ global.VexFlow = VexflowNS.default || VexflowNS;
   }
 
   function humanDraw(){
-    if(state.gameOver) return;
+    if(state.gameOver || state.dealing) return;
     if(currentPlayer() !== "you") return;
 
     if(state.hasDrawnThisTurn){
@@ -20035,7 +20285,7 @@ global.VexFlow = VexflowNS.default || VexflowNS;
 
   /* ---------- bot AI ---------- */
   function maybeAdvanceBot(){
-    if(state.gameOver) return;
+    if(state.gameOver || state.dealing) return;
     const p = currentPlayer();
     if(p === "you") return;
     setTimeout(()=>botTurn(p), 850);
@@ -20239,6 +20489,12 @@ global.VexFlow = VexflowNS.default || VexflowNS;
     const discardSlot = document.getElementById("discardSlot");
     discardSlot.innerHTML = "";
     const top = topDiscard();
+    // durante la preparazione del tavolo la pila è ancora vuota
+    if(!top){
+      const empty = document.createElement("div");
+      empty.className = "discard-empty";
+      discardSlot.appendChild(empty);
+    } else {
     const topEl = buildCardEl(top);
     // piccolo "atterraggio" quando cambia la carta in cima alla pila
     if(lastDiscardId !== top.id){
@@ -20254,6 +20510,7 @@ global.VexFlow = VexflowNS.default || VexflowNS;
       ring.style.border = "4px solid " + cssColor(state.currentColor);
       ring.style.pointerEvents = "none";
       discardSlot.appendChild(ring);
+    }
     }
 
     // player hand
@@ -20351,7 +20608,7 @@ global.VexFlow = VexflowNS.default || VexflowNS;
 
   function attachDragAndSelect(el, card){
     el.addEventListener("pointerdown", (e)=>{
-      if(state.gameOver) return;
+      if(state.gameOver || state.dealing) return;
       e.preventDefault();
       const startX = e.clientX, startY = e.clientY;
       const origRect = el.getBoundingClientRect();
@@ -20400,7 +20657,7 @@ global.VexFlow = VexflowNS.default || VexflowNS;
               hand.splice(cur, 1);
               hand.splice(target, 0, card);
               layoutHandPreview(card.id);
-              playWhoosh(undefined, 0.05);
+              playWhoosh(undefined, 0.018);
             }
           }
         }
@@ -20472,7 +20729,7 @@ global.VexFlow = VexflowNS.default || VexflowNS;
     const big = window.innerHeight <= 560 ? 1.35 : 1.45;
     const lift = window.innerHeight <= 560 ? 8 : 12;
     el.classList.add("selected");
-    playWhoosh(undefined, 0.06);
+    playWhoosh(undefined, 0.022);
     // raddrizzo la carta (rotate 0) e la ingrandisco, mantenendo la sua
     // posizione orizzontale nel ventaglio
     el.style.transform = `translateX(${offset}px) translateY(-${lift}px) scale(${big}) rotate(0deg)`;
@@ -20490,7 +20747,7 @@ global.VexFlow = VexflowNS.default || VexflowNS;
   }
 
   function onHumanPlay(card){
-    if(state.gameOver) return;
+    if(state.gameOver || state.dealing) return;
     // Solo le carte-nota fanno scattare la domanda: sulle carte azione
     // non c'è nessuna nota da riconoscere.
     const askQuiz = card.type === "note";
@@ -20663,8 +20920,10 @@ global.VexFlow = VexflowNS.default || VexflowNS;
     if(ctx.state === "suspended") ctx.resume();
     const t = ctx.currentTime;
     if(ok){
-      playTone(783.99, t, 0.14, 0.16);
-      playTone(1046.50, t + 0.10, 0.28, 0.16);
+      // note acute: a parità di guadagno si percepiscono molto più forti,
+      // quindi stanno parecchio sotto al livello del suono di errore
+      playTone(783.99, t, 0.12, 0.065);
+      playTone(1046.50, t + 0.09, 0.24, 0.055);
     } else {
       // suono di errore: due note basse e stridule
       playTone(196.00, t, 0.20, 0.18);
@@ -20690,17 +20949,58 @@ global.VexFlow = VexflowNS.default || VexflowNS;
     }
   });
 
+  function showMenu(){
+    document.getElementById("endOverlay").classList.remove("show");
+    document.getElementById("optionsOverlay").classList.remove("show");
+    document.getElementById("startOverlay").classList.add("show");
+  }
+
   document.getElementById("startBtn").addEventListener("click", ()=>{
     // iOS/Safari richiedono che l'audio parta da un gesto dell'utente:
-    // il tocco su "Inizia partita" sblocca il contesto audio.
+    // il tocco sul pulsante sblocca il contesto audio.
     const ctx = ensureAudio();
     if(ctx && ctx.state === "suspended") ctx.resume();
+    playClick();
     document.getElementById("startOverlay").classList.remove("show");
     newGame();
   });
+
+  document.getElementById("optionsBtn").addEventListener("click", ()=>{
+    playClick();
+    document.getElementById("startOverlay").classList.remove("show");
+    document.getElementById("optionsOverlay").classList.add("show");
+    renderClefOptions();
+  });
+
+  document.getElementById("optionsBackBtn").addEventListener("click", ()=>{
+    playClick();
+    document.getElementById("optionsOverlay").classList.remove("show");
+    document.getElementById("startOverlay").classList.add("show");
+  });
+
+  document.getElementById("clefOptions").addEventListener("click", (e)=>{
+    const btn = e.target.closest(".opt[data-clef]");
+    if(!btn) return;
+    clefMode = btn.dataset.clef;
+    playClick();
+    renderClefOptions();
+  });
+
+  function renderClefOptions(){
+    document.querySelectorAll("#clefOptions .opt").forEach(b=>{
+      b.classList.toggle("selected", b.dataset.clef === clefMode);
+    });
+  }
+
   document.getElementById("restartBtn").addEventListener("click", ()=>{
+    playClick();
     document.getElementById("endOverlay").classList.remove("show");
     newGame();
+  });
+
+  document.getElementById("toMenuBtn").addEventListener("click", ()=>{
+    playClick();
+    showMenu();
   });
 
   // Ridisegna la mano quando cambia orientamento o dimensione della finestra,
@@ -20716,6 +21016,7 @@ global.VexFlow = VexflowNS.default || VexflowNS;
 
   renderAvatars();
   renderStats();
+  renderClefOptions();
   document.getElementById("startOverlay").classList.add("show");
 
 })();
