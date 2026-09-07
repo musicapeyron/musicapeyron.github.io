@@ -31,9 +31,9 @@
     --gold-2:#f59e0b;
     --card-w:88px;
     --card-h:126px;
-    --oval-w:70px;
-    --oval-h:96px;
-    --staff-scale:0.62;
+    --oval-w:80px;
+    --oval-h:118px;
+    --staff-scale:0.575;
     --avatar-size:60px;
   }
 
@@ -41,8 +41,8 @@
   @media (min-height:700px){
     :root{
       --card-w:102px; --card-h:146px;
-      --oval-w:81px; --oval-h:111px;
-      --staff-scale:0.72;
+      --oval-w:93px; --oval-h:138px;
+      --staff-scale:0.665;
       --avatar-size:46px;
     }
   }
@@ -53,16 +53,16 @@
   @media (max-height:560px){
     :root{
       --card-w:70px; --card-h:100px;
-      --oval-w:56px; --oval-h:76px;
-      --staff-scale:0.49;
+      --oval-w:64px; --oval-h:94px;
+      --staff-scale:0.455;
       --avatar-size:40px;
     }
   }
   @media (max-height:440px){
     :root{
       --card-w:60px; --card-h:86px;
-      --oval-w:48px; --oval-h:65px;
-      --staff-scale:0.42;
+      --oval-w:55px; --oval-h:81px;
+      --staff-scale:0.39;
       --avatar-size:32px;
     }
   }
@@ -374,7 +374,14 @@
     35%{ transform:translateY(-16px) rotate(-3deg); }
     65%{ transform:translateY(-6px) rotate(2deg); }
   }
-  @media (prefers-reduced-motion:reduce){ .card.wave{ animation:none; } }
+  .card.wave-soft{ animation:cardWaveSoft .95s ease-in-out; }
+  @keyframes cardWaveSoft{
+    0%,100%{ transform:translateY(0) rotate(0deg); }
+    25%{ transform:translateY(-9px) rotate(-2.5deg); }
+    55%{ transform:translateY(-3px) rotate(2deg); }
+    80%{ transform:translateY(-6px) rotate(-1deg); }
+  }
+  @media (prefers-reduced-motion:reduce){ .card.wave, .card.wave-soft{ animation:none; } }
 
   .confetto{
     position:fixed; width:8px; height:12px; border-radius:2px;
@@ -19695,10 +19702,35 @@ global.VexFlow = VexflowNS.default || VexflowNS;
   "use strict";
 
   /* ============ MUSIC / NOTE SETUP ============ */
-  const TREBLE_SEQ = ["b/3","c/4","d/4","e/4","f/4","g/4","a/4","b/4","c/5"]; // values 1..9
-  const TREBLE_ZERO = "a/3";
-  const BASS_SEQ = ["b/2","c/3","d/3","e/3","f/3","g/3","a/3","b/3","c/4"]; // values 1..9
-  const BASS_ZERO = "a/2";
+  /* ---------- estensioni delle note per colore ----------
+     Ogni colore copre 10 note consecutive (i valori da 0 a 9).
+       violino grave (LA sotto il DO centrale  ->  DO al 3° spazio)
+       violino acuto (LA al 2° spazio          ->  DO 2 tagli sopra)
+       basso grave   (DO 2 tagli sotto         ->  MI al 3° spazio)
+       basso acuto   (DO al 2° spazio          ->  MI 2 tagli sopra)   */
+  const SCALE_LETTERS = ["c","d","e","f","g","a","b"];
+
+  function nextKeyUp(key){
+    const [letter, octStr] = key.split("/");
+    let oct = parseInt(octStr, 10);
+    let i = SCALE_LETTERS.indexOf(letter);
+    i++;
+    if(i >= SCALE_LETTERS.length){ i = 0; oct++; }   // dopo il SI si sale di ottava
+    return SCALE_LETTERS[i] + "/" + oct;
+  }
+
+  function buildRange(startKey, count){
+    const out = [startKey];
+    for(let i=1;i<count;i++) out.push(nextKeyUp(out[out.length-1]));
+    return out;
+  }
+
+  const RANGES = {
+    trebleLow:  buildRange("a/3", 10),   // LA3 -> DO5
+    trebleHigh: buildRange("a/4", 10),   // LA4 -> DO6
+    bassLow:    buildRange("c/2", 10),   // DO2 -> MI3
+    bassHigh:   buildRange("c/3", 10)    // DO3 -> MI4
+  };
   const SOLFEGE = {c:"Do", d:"Re", e:"Mi", f:"Fa", g:"Sol", a:"La", b:"Si"};
 
   /* ---------- icone delle carte azione (SVG disegnati a mano) ----------
@@ -19948,15 +19980,26 @@ global.VexFlow = VexflowNS.default || VexflowNS;
     vfHost.innerHTML = "";
     const VF = Vex.Flow;
     const renderer = new VF.Renderer(vfHost, VF.Renderer.Backends.SVG);
-    renderer.resize(120, 140);
+    renderer.resize(104, 150);
     const ctx = renderer.getContext();
-    const stave = new VF.Stave(0, 10, 110);
+    const stave = new VF.Stave(0, 10, 96);
     stave.addClef(clef);
     stave.setContext(ctx).draw();
     const note = new VF.StaveNote({ clef: clef, keys: [key], duration: "q" });
     VF.Formatter.FormatAndDraw(ctx, stave, [note]);
     const svgEl = vfHost.querySelector("svg");
-    svgEl.setAttribute("viewBox", "0 0 120 140");
+    // Il riquadro ha altezza fissa (stessa dimensione del pentagramma su tutte
+    // le carte) ma viene centrato sul disegno effettivo: così le note molto
+    // acute o molto gravi, con i loro tagli addizionali, restano sempre dentro
+    // la carta invece di essere tagliate dal bordo.
+    const VB_W = 104, VB_H = 150;
+    let minY = -30;
+    try{
+      const bb = svgEl.getBBox();
+      if(bb && bb.height > 0) minY = bb.y + bb.height / 2 - VB_H / 2;
+    }catch(e){ /* se getBBox non è disponibile resta il valore di ripiego */ }
+    svgEl.setAttribute("viewBox", `0 ${minY} ${VB_W} ${VB_H}`);
+    svgEl.setAttribute("preserveAspectRatio", "xMidYMid meet");
     const out = svgEl.outerHTML;
     staffCache[cacheKey] = out;
     return out;
@@ -20113,21 +20156,26 @@ global.VexFlow = VexflowNS.default || VexflowNS;
     return trio ? cardsFormTriad(trio) : null;
   }
 
-  function noteForColorValue(color, value){
-    // In "both" il colore decide la chiave; nelle altre modalità i colori
-    // restano quelli, ma tutte le carte usano la stessa chiave.
-    let treble;
-    if(clefMode === "treble") treble = true;
-    else if(clefMode === "bass") treble = false;
-    else treble = (color === "red" || color === "green");
-
-    const clef = treble ? "treble" : "bass";
-    let key;
-    if(value === 0){
-      key = treble ? TREBLE_ZERO : BASS_ZERO;
-    } else {
-      key = treble ? TREBLE_SEQ[value-1] : BASS_SEQ[value-1];
+  // A ogni colore corrisponde una chiave e una delle quattro estensioni.
+  // Rosso e blu stanno sempre in basso, verde e giallo sempre in alto.
+  function rangeForColor(color){
+    const basso = (color === "red" || color === "blue");   // registro grave
+    if(clefMode === "treble"){
+      return { clef:"treble", keys: basso ? RANGES.trebleLow : RANGES.trebleHigh };
     }
+    if(clefMode === "bass"){
+      return { clef:"bass", keys: basso ? RANGES.bassLow : RANGES.bassHigh };
+    }
+    // modalità mista: rosso e verde in violino, blu e giallo in basso
+    if(color === "red")    return { clef:"treble", keys: RANGES.trebleLow  };
+    if(color === "green")  return { clef:"treble", keys: RANGES.trebleHigh };
+    if(color === "blue")   return { clef:"bass",   keys: RANGES.bassLow    };
+    return                        { clef:"bass",   keys: RANGES.bassHigh   };
+  }
+
+  function noteForColorValue(color, value){
+    const { clef, keys } = rangeForColor(color);
+    const key = keys[Math.max(0, Math.min(keys.length - 1, value))];
     return { clef, key };
   }
 
@@ -20308,6 +20356,8 @@ global.VexFlow = VexflowNS.default || VexflowNS;
       dealing: true,             // tavolo in preparazione: input e bot fermi
       tray: [],                  // carte deposte per comporre una triade
       requiredInterval: null,    // intervallo richiesto in questo momento
+      ivCard: null,              // carta mostrata nell'area intervallo durante l'animazione
+      ivCard: null,              // carta esposta nell'area intervallo durante l'animazione
     };
     hideQuiz();
     state.triadQuizPending = false;
@@ -20686,7 +20736,11 @@ global.VexFlow = VexflowNS.default || VexflowNS;
   // del giocatore (penalità per risposta sbagliata al quiz).
   function afterTurnChange(){
     if(state.gameOver) return;
-    ensureIntervalPossible();
+    // L'intervallo richiesto cambia a ogni turno, così non ci si blocca
+    // per troppo tempo su una richiesta difficile. Va ridisegnato subito,
+    // altrimenti l'etichetta resta indietro e mostra la richiesta precedente.
+    refreshInterval(state.requiredInterval);
+    renderInterval();
     if(currentPlayer() === "you" && state.skipYourNextTurn){
       state.skipYourNextTurn = false;
       showToast("Turno saltato");
@@ -20703,14 +20757,29 @@ global.VexFlow = VexflowNS.default || VexflowNS;
   // Il bot cala la carta nell'area intervallo, poi il gioco chiede un nuovo intervallo
   function botPlayInterval(p, card){
     const hand = state.hands[p];
+    const top = topDiscard();
     const i = hand.findIndex(c => c.id === card.id);
     if(i !== -1) hand.splice(i, 1);
     const done = state.requiredInterval;
+
+    // la carta si vede nell'area intervallo, come per il giocatore
+    state.ivCard = card;
+    state.dealing = true;
+    showBubble(p, intervalLabel(done));
+    render(true);
+
+    celebrateInterval(top, card, ()=>{
+      state.dealing = false;
+      state.ivCard = null;
+      botFinishInterval(p, card);
+    });
+  }
+
+  function botFinishInterval(p, card){
+    const hand = state.hands[p];
     state.discard.push(card);
     state.currentColor = card.color;
-    showBubble(p, intervalLabel(done));
-    playCardSound(card);
-    refreshInterval(done);
+    opponentsDraw(p);
 
     if(hand.length === 0){
       state.gameOver = true;
@@ -20981,16 +21050,137 @@ global.VexFlow = VexflowNS.default || VexflowNS;
       ? intervalLabel(state.requiredInterval)
       : "Intervallo";
 
+    if(state.ivCard){
+      wrap.style.width = "";
+      const el = buildCardEl(state.ivCard);
+      el.style.position = "relative";
+      el.id = "ivPlayed";
+      wrap.appendChild(el);
+      return;
+    }
+
     const hint = document.createElement("div");
     hint.className = "tray-empty";
     hint.textContent = "Trascina qui";
     wrap.appendChild(hint);
   }
 
-  // Rete di sicurezza: in modalità intervalli ci dev'essere sempre una richiesta
-  function ensureIntervalPossible(){
-    if(!intervalMode){ state.requiredInterval = null; return; }
-    if(!state.requiredInterval) state.requiredInterval = pickInterval(null);
+  /* Festa dell'intervallo: la carta ondeggia con i coriandoli mentre si
+     sentono le due note una dopo l'altra, poi vola sulla pila. */
+  function celebrateInterval(fromCard, toCard, onDone){
+    const el = document.getElementById("ivPlayed");
+    if(el){
+      el.classList.remove("wave");
+      void el.offsetWidth;
+      el.classList.add("wave-soft");
+    }
+    const box = document.getElementById("ivBox");
+    if(box) burstConfetti(box.getBoundingClientRect());
+    playIntervalSound(fromCard, toCard);
+
+    setTimeout(()=>{
+      if(el) el.classList.remove("wave-soft");
+      flyIntervalToDiscard(onDone);
+    }, 1150);
+  }
+
+  // le due note dell'intervallo, una dopo l'altra
+  function playIntervalSound(a, b){
+    if(!soundOn) return;
+    const ctx = ensureAudio();
+    if(!ctx) return;
+    if(ctx.state === "suspended") ctx.resume();
+    const t = ctx.currentTime;
+    const f1 = a && freqFromKey(a.key);
+    const f2 = b && freqFromKey(b.key);
+    if(f1) playTone(f1, t, 0.75, 0.19);
+    if(f2) playTone(f2, t + 0.5, 1.1, 0.19);
+  }
+
+  function flyIntervalToDiscard(onDone){
+    const src = document.getElementById("ivPlayed");
+    const slot = document.getElementById("discardSlot");
+    if(!src || !slot){ onDone(); return; }
+    const from = src.getBoundingClientRect();
+    const to = slot.getBoundingClientRect();
+
+    const ghost = src.cloneNode(true);
+    ghost.id = "";
+    ghost.style.position = "fixed";
+    ghost.style.margin = "0";
+    ghost.style.zIndex = "96";
+    ghost.style.width = from.width + "px";
+    ghost.style.height = from.height + "px";
+    ghost.style.left = from.left + "px";
+    ghost.style.top = from.top + "px";
+    ghost.style.pointerEvents = "none";
+    ghost.style.transition = "left .36s cubic-bezier(.3,.85,.4,1), top .36s cubic-bezier(.3,.85,.4,1)";
+    document.body.appendChild(ghost);
+    src.style.visibility = "hidden";
+
+    playWhoosh(undefined, 0.032);
+    void ghost.offsetWidth;
+    ghost.style.left = to.left + "px";
+    ghost.style.top = to.top + "px";
+
+    setTimeout(()=>{ ghost.remove(); onDone(); }, 420);
+  }
+
+  // Tutti pescano una carta: è il premio per chi centra l'intervallo
+  // Premio per chi centra l'intervallo: pescano tutti GLI AVVERSARI, non lui
+  function opponentsDraw(who){
+    PLAYERS.forEach(p => { if(p !== who) drawCard(p, 1); });
+    showToast(who === "you"
+      ? "Intervallo centrato: gli avversari pescano una carta"
+      : NAMES[who] + " centra l'intervallo: gli altri pescano una carta");
+  }
+
+  /* La carta resta un momento in vista nell'area intervallo, poi vola:
+     sulla pila se l'intervallo è giusto, in mano se è sbagliato. */
+  function showIntervalCard(card, dest, onDone){
+    state.ivCard = card;
+    state.dealing = true;      // input fermo durante l'animazione
+    render(true);
+
+    setTimeout(()=>{
+      const box = document.getElementById("ivCards");
+      const src = box ? box.querySelector(".card") : null;
+      const target = document.getElementById(dest === "hand" ? "playerHand" : "discardSlot");
+      if(!src || !target){
+        state.ivCard = null; state.dealing = false; onDone(); return;
+      }
+      const from = src.getBoundingClientRect();
+      const tr = target.getBoundingClientRect();
+      const to = dest === "hand"
+        ? { left: tr.left + tr.width/2 - from.width/2, top: tr.top + 8 }
+        : { left: tr.left, top: tr.top };
+
+      const ghost = src.cloneNode(true);
+      ghost.style.position = "fixed";
+      ghost.style.margin = "0";
+      ghost.style.zIndex = "96";
+      ghost.style.width = from.width + "px";
+      ghost.style.height = from.height + "px";
+      ghost.style.left = from.left + "px";
+      ghost.style.top = from.top + "px";
+      ghost.style.pointerEvents = "none";
+      ghost.style.transition = "left .38s cubic-bezier(.3,.85,.4,1), top .38s cubic-bezier(.3,.85,.4,1), transform .38s ease, opacity .38s ease";
+      document.body.appendChild(ghost);
+      src.style.visibility = "hidden";
+
+      playWhoosh(undefined, 0.034);
+      void ghost.offsetWidth;
+      ghost.style.left = to.left + "px";
+      ghost.style.top = to.top + "px";
+      if(dest === "hand") ghost.style.opacity = "0.85";
+
+      setTimeout(()=>{
+        ghost.remove();
+        state.ivCard = null;
+        state.dealing = false;
+        onDone();
+      }, 430);
+    }, 750);
   }
 
   // Nuovo intervallo richiesto, diverso da quello appena soddisfatto.
@@ -21023,27 +21213,34 @@ global.VexFlow = VexflowNS.default || VexflowNS;
       const i = state.hands.you.findIndex(c => c.id === card.id);
       if(i === -1) return false;
       state.hands.you.splice(i, 1);
-      state.discard.push(card);
-      state.currentColor = card.color;
-      playCardSound(card);
+      state.ivCard = card;
       addStat("correct");
-      showToast("Intervallo giusto: " + intervalLabel(state.requiredInterval));
-  
-      if(state.hands.you.length === 0){
-        state.gameOver = true;
-        render(true);
-        addStat("wins");
-        showEnd("Hai vinto! 🎉");
-        playEndJingle(true);
-        return true;
-      }
-      if(state.hands.you.length === 1) showBubble("you", "UNO!");
-
-      state.turn = nextTurnIndex(state.turn, state.direction, 1);
-      state.hasDrawnThisTurn = false;
+      state.dealing = true;              // input fermo durante l'animazione
       render(true);
-      setStatus(currentPlayer()==="you" ? "Tocca a te!" : "");
-      afterTurnChange();
+
+      celebrateInterval(top, card, ()=>{
+        state.dealing = false;
+        state.ivCard = null;
+        state.discard.push(card);
+        state.currentColor = card.color;
+        opponentsDraw("you");            // premio: pescano solo gli avversari
+
+        if(state.hands.you.length === 0){
+          state.gameOver = true;
+          render(true);
+          addStat("wins");
+          showEnd("Hai vinto! 🎉");
+          playEndJingle(true);
+          return;
+        }
+        if(state.hands.you.length === 1) showBubble("you", "UNO!");
+
+        state.turn = nextTurnIndex(state.turn, state.direction, 1);
+        state.hasDrawnThisTurn = false;
+        render(true);
+        setStatus(currentPlayer()==="you" ? "Tocca a te!" : "");
+        afterTurnChange();
+      });
       return true;
     }
 
@@ -22066,10 +22263,11 @@ global.VexFlow = VexflowNS.default || VexflowNS;
     if(intervalMode){
       blocks.push([
         "Modalità intervalli",
-        "Sopra l'area <b>Intervallo</b> è scritto l'intervallo richiesto in questo momento. " +
-        "Trascinaci una carta: l'intervallo si conta <b>dalla nota in cima alla pila alla tua</b>, " +
-        "quindi conta anche se sale o scende. Se è giusto la carta viene giocata e il gioco chiede " +
-        "un nuovo intervallo; se è sbagliato la carta torna in mano, peschi e salti il turno."
+        "Sopra l'area <b>Intervallo</b> è scritto l'intervallo richiesto. Cambia a ogni turno, " +
+        "quindi se non lo puoi fare non resti bloccato. Trascinaci una carta: l'intervallo si conta " +
+        "<b>dalla nota in cima alla pila alla tua</b>, quindi conta anche se sale o scende. " +
+        "Se lo centri, <b>tutti gli avversari pescano una carta</b>: è il modo migliore per " +
+        "riempirgli la mano. Se sbagli, la carta torna in mano, peschi e perdi il turno."
       ]);
     }
 
