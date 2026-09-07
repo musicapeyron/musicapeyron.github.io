@@ -215,6 +215,22 @@
     20%{ transform:translateX(-6px); } 40%{ transform:translateX(6px); }
     60%{ transform:translateX(-4px); } 80%{ transform:translateX(3px); }
   }
+  .note-btn.picked{
+    background:rgba(250,204,21,0.22); border-color:var(--gold); color:#fff8dc;
+  }
+  .row-break{ flex-basis:100%; height:0; }
+  .note-btn.wide{ width:calc(50% - 4px); font-size:13px; }
+  .note-btn.third{ width:calc(33.333% - 5px); font-size:12px; padding:11px 2px; }
+  .note-btn.send{
+    background:rgba(34,197,94,0.28); border-color:rgba(134,239,172,0.65); color:#eafff1;
+  }
+  .note-btn.send:disabled{ opacity:.35; cursor:not-allowed; }
+  .note-btn.send:not(:disabled):hover{ background:rgba(34,197,94,0.42); }
+  .note-btn.cancel{
+    background:rgba(239,68,68,0.26); border-color:rgba(252,165,165,0.6); color:#fff1f1;
+  }
+  .note-btn.cancel:hover{ background:rgba(239,68,68,0.4); }
+
   .quiz-feedback{
     min-height:18px; margin-top:9px; text-align:center;
     font-family:"Sora","Inter",sans-serif; font-weight:700; font-size:13px;
@@ -288,6 +304,47 @@
     .stat-value{ font-size:.9rem; }
   }
 
+  /* ---------- riquadro della triade (solo in modalità triadi) ---------- */
+  .tray{
+    display:none; position:relative; flex:0 0 auto;
+    border:2px dashed rgba(255,255,255,0.2); border-radius:14px;
+    background:rgba(255,255,255,0.04);
+    padding:8px; min-width:calc(var(--card-w) * 1.9);
+    height:calc(var(--card-h) + 16px);
+    align-items:center; justify-content:center;
+  }
+  body.triad-mode #tray{ display:flex; }
+  body.interval-mode #ivBox{ display:flex; }
+  .tray.ivbox{ min-width:calc(var(--card-w) + 20px); }
+  .tray.ivbox .tray-label{
+    color:var(--gold); font-size:10px; max-width:none;
+  }
+  @media (max-height:560px){
+    .tray.ivbox .tray-label{ font-size:8.5px; }
+  }
+  .tray.over{ border-color:var(--gold); background:rgba(250,204,21,0.10); }
+  .tray-label{
+    position:absolute; top:-9px; left:50%; transform:translateX(-50%);
+    font-family:"Sora","Inter",sans-serif; font-weight:700; font-size:9px;
+    letter-spacing:.5px; text-transform:uppercase; color:var(--muted);
+    background:var(--bg-2); padding:0 6px; border-radius:6px; white-space:nowrap;
+  }
+  .tray-cards{ position:relative; display:block; height:var(--card-h); }
+  /* Carte impilate e allineate: nessuna curva, le note restano tutte visibili */
+  .tray-cards .card{
+    position:absolute; top:0; cursor:pointer;
+    transition:transform .2s ease, box-shadow .2s ease;
+  }
+  .tray-cards .card:hover{ transform:translateY(-6px); }
+  .tray-empty{
+    font-family:"Sora","Inter",sans-serif; font-size:10px; color:var(--muted);
+    opacity:.7; text-align:center; padding:0 6px;
+  }
+  @media (max-height:560px){
+    .tray{ padding:5px; border-radius:11px; height:calc(var(--card-h) + 10px); }
+    .tray-label{ font-size:8px; top:-7px; }
+  }
+
   /* Posto vuoto della pila scarti, mentre il tavolo si prepara */
   .discard-empty{
     position:absolute; inset:0; border-radius:12px;
@@ -308,6 +365,20 @@
   }
   @media (prefers-reduced-motion:reduce){
     .deck .cardback.shuffling{ animation:none; }
+  }
+
+  /* Onda ("ola") delle carte quando la triade è completata */
+  .card.wave{ animation:cardWave .52s ease-in-out; }
+  @keyframes cardWave{
+    0%,100%{ transform:translateY(0) rotate(0deg); }
+    35%{ transform:translateY(-16px) rotate(-3deg); }
+    65%{ transform:translateY(-6px) rotate(2deg); }
+  }
+  @media (prefers-reduced-motion:reduce){ .card.wave{ animation:none; } }
+
+  .confetto{
+    position:fixed; width:8px; height:12px; border-radius:2px;
+    pointer-events:none; z-index:97; opacity:0;
   }
 
   /* Dorso della carta usato nelle animazioni di pesca dei bot */
@@ -554,6 +625,23 @@
   /* Quando una carta è selezionata (o trascinata) la mano passa sopra la fascia
      dei messaggi, così la carta ingrandita non viene coperta dal testo. */
   .hand-strip.raised{ z-index:60; }
+  /* Comandi ancorati a sinistra: tutorial sopra, torna al menù sotto */
+  .hand-left{
+    position:absolute; left:6px; top:50%; transform:translateY(-50%);
+    display:flex; flex-direction:column; align-items:stretch; gap:7px; z-index:40;
+  }
+  .side-btn{
+    font-family:"Sora","Inter",sans-serif; font-weight:700; font-size:12px;
+    border:1px solid var(--glass-border); background:var(--glass); color:var(--ink-light);
+    padding:8px 14px; border-radius:11px; cursor:pointer; white-space:nowrap;
+    transition:transform .15s ease, background .15s ease;
+  }
+  .side-btn:hover{ background:var(--glass-strong); transform:translateY(-2px); }
+  @media (max-height:560px){
+    .hand-left{ gap:5px; left:4px; }
+    .side-btn{ font-size:10.5px; padding:6px 10px; border-radius:9px; }
+  }
+
   /* Comandi ancorati a destra: le carte non li raggiungono mai (vedi calcolo in JS) */
   .hand-side{
     position:absolute; right:6px; top:50%; transform:translateY(-50%);
@@ -596,6 +684,10 @@
     backdrop-filter:blur(6px);
   }
   .overlay.show{ display:flex; }
+  /* Sugli schermi bassi il contenuto degli overlay deve poter scorrere,
+     altrimenti i pulsanti in fondo finiscono fuori dalla vista. */
+  .overlay{ overflow-y:auto; padding:14px 12px; }
+  .opt-list{ flex:0 0 auto; }
   .color-pick{ display:flex; gap:16px; }
   .color-pick button{
     width:64px; height:64px; border-radius:50%; border:4px solid rgba(255,255,255,0.7);
@@ -654,15 +746,47 @@
   .opt .opt-name{ font-family:"Sora","Inter",sans-serif; font-weight:700; font-size:14px; }
   .opt .opt-desc{ font-size:11.5px; color:var(--muted); }
   .opt.selected .opt-name::after{ content:" ✓"; color:var(--gold); }
+  .tut{
+    width:min(460px, 88vw); max-height:min(52vh, 420px); overflow-y:auto;
+    text-align:left; display:flex; flex-direction:column; gap:10px;
+    padding-right:4px;
+  }
+  .tut h3{
+    margin:0; font-family:"Sora","Inter",sans-serif; font-size:13px;
+    color:var(--gold); text-transform:uppercase; letter-spacing:.5px;
+  }
+  .tut p{ margin:0; font-size:13px; line-height:1.45; color:var(--ink-light); text-align:left; max-width:none; }
+  .tut .tut-block{
+    background:var(--glass); border:1px solid var(--glass-border);
+    border-radius:12px; padding:10px 12px; display:flex; flex-direction:column; gap:5px;
+  }
+  @media (max-height:560px){
+    .tut{ max-height:44vh; gap:7px; }
+    .tut p{ font-size:11.5px; }
+    .tut h3{ font-size:11px; }
+    .tut .tut-block{ padding:8px 10px; border-radius:10px; }
+  }
+
+  .opt-section{
+    margin:14px 0 0 !important; font-family:"Sora","Inter",sans-serif;
+    font-weight:700; font-size:12px; color:var(--muted);
+    text-transform:uppercase; letter-spacing:.6px;
+  }
 
   @media (max-height:560px){
     .menu .menu-logo{ font-size:32px; }
     .menu-title{ font-size:24px; }
     .menu-sub{ font-size:12px; }
-    .opt{ padding:8px 12px; border-radius:11px; }
-    .opt .opt-name{ font-size:12.5px; }
-    .opt .opt-desc{ font-size:10.5px; }
-    .overlay h2{ font-size:20px; }
+    .opt{ padding:6px 10px; border-radius:10px; }
+    .opt .opt-name{ font-size:11.5px; }
+    .opt .opt-desc{ font-size:9.5px; }
+    .overlay h2{ font-size:18px; margin:0; }
+    .overlay p{ font-size:11px; }
+    .overlay{ gap:8px !important; justify-content:flex-start; }
+    .opt-list{ gap:6px; }
+    .opt-section{ margin-top:6px !important; font-size:10px; }
+    .btn-main{ font-size:13px; padding:9px 20px; border-radius:11px; }
+    .btn-ghost{ font-size:12px; padding:9px 18px; border-radius:11px; }
   }
 
 </style>
@@ -734,6 +858,16 @@
       </div>
       <div class="discard-slot" id="discardSlot"></div>
 
+      <div class="tray ivbox" id="ivBox">
+        <div class="tray-label" id="ivLabel">Intervallo</div>
+        <div class="tray-cards" id="ivCards"></div>
+      </div>
+
+      <div class="tray" id="tray">
+        <div class="tray-label">Triade</div>
+        <div class="tray-cards" id="trayCards"></div>
+      </div>
+
       <div class="quiz" id="quiz">
         <div class="quiz-title" id="quizTitle">Che nota hai giocato?</div>
         <div class="quiz-buttons" id="quizButtons"></div>
@@ -767,6 +901,10 @@
 
   <div class="hand-strip">
     <div class="player-zone" id="playerHand"></div>
+    <div class="hand-left">
+      <button class="side-btn" id="tutorialBtn">Tutorial</button>
+      <button class="side-btn" id="menuBtn">Torna al menù</button>
+    </div>
     <div class="hand-side">
       <button class="icon-btn" id="soundBtn" title="Attiva/disattiva audio">🔊</button>
       <button class="pass-btn" id="passBtn">Passa</button>
@@ -810,7 +948,26 @@
         <span class="opt-desc">Tutti e quattro i colori in chiave di basso</span>
       </button>
     </div>
+
+    <p class="opt-section">Modalità di gioco</p>
+    <div class="opt-list">
+      <button class="opt toggle" id="triadOpt">
+        <span class="opt-name">Modalità triadi</span>
+        <span class="opt-desc">Aggiungi 2 carte alla nota sul tavolo per formare un accordo</span>
+      </button>
+      <button class="opt toggle" id="intervalOpt">
+        <span class="opt-name">Modalità intervalli</span>
+        <span class="opt-desc">Cala la nota che forma l'intervallo richiesto</span>
+      </button>
+    </div>
+
     <button class="btn-main" id="optionsBackBtn">Indietro</button>
+  </div>
+
+  <div class="overlay" id="tutorialOverlay">
+    <h2>Come si gioca</h2>
+    <div class="tut" id="tutBody"></div>
+    <button class="btn-main" id="tutorialCloseBtn">Ho capito</button>
   </div>
 
   <div class="overlay" id="endOverlay">
@@ -19810,6 +19967,151 @@ global.VexFlow = VexflowNS.default || VexflowNS;
 
   // Modalità chiavi scelta dalle opzioni: "both" | "treble" | "bass"
   let clefMode = "both";
+  // Modalità triadi: si può attivare insieme a qualsiasi modalità di chiave
+  let triadMode = false;
+  // Modalità intervalli: combinabile con tutte le altre
+  let intervalMode = false;
+
+  /* ---------- intervalli ----------
+     L'intervallo si misura DALLA nota in cima alla pila ALLA nota calata,
+     quindi ha anche una direzione (ascendente o discendente).
+     Il calcolo usa il grado diatonico (nome della nota) e i semitoni, così
+     resta corretto anche quando più avanti si aggiungeranno le alterazioni. */
+  const LETTER_STEP = { c:0, d:1, e:2, f:3, g:4, a:5, b:6 };
+
+  function diatonicIndexOfKey(key){
+    const [letter, oct] = key.split("/");
+    return parseInt(oct,10) * 7 + LETTER_STEP[letter.toLowerCase()];
+  }
+
+  // Qualità dell'intervallo in base a grado e semitoni
+  const INTERVAL_QUALITY = {
+    1:  { 0:"giusta" },
+    2:  { 1:"minore", 2:"maggiore" },
+    3:  { 3:"minore", 4:"maggiore" },
+    4:  { 5:"giusta", 6:"aumentata" },
+    5:  { 6:"diminuita", 7:"giusta" },
+    6:  { 8:"minore", 9:"maggiore" },
+    7:  { 10:"minore", 11:"maggiore" },
+    8:  { 12:"giusta" }
+  };
+
+  const ORDINALE = {1:"unisono",2:"2ª",3:"3ª",4:"4ª",5:"5ª",6:"6ª",7:"7ª",8:"8ª"};
+
+  // Restituisce {degree, quality, dir} oppure null se fuori dai casi previsti
+  function intervalBetween(fromCard, toCard){
+    if(!fromCard || !toCard) return null;
+    if(fromCard.type !== "note" || toCard.type !== "note") return null;
+    const dDia = diatonicIndexOfKey(toCard.key) - diatonicIndexOfKey(fromCard.key);
+    const dSemi = toCard.midi - fromCard.midi;
+    const degree = Math.abs(dDia) + 1;
+    if(degree > 8) return null;                       // niente none, decime, ecc.
+    const table = INTERVAL_QUALITY[degree];
+    if(!table) return null;
+    const quality = table[Math.abs(dSemi)];
+    if(!quality) return null;
+    const dir = dSemi > 0 ? "su" : (dSemi < 0 ? "giu" : "pari");
+    return { degree, quality, dir };
+  }
+
+  function sameInterval(a, b){
+    return !!a && !!b && a.degree === b.degree && a.quality === b.quality && a.dir === b.dir;
+  }
+
+  function intervalLabel(iv){
+    if(!iv) return "";
+    if(iv.degree === 1) return "Unisono";
+    const freccia = iv.dir === "su" ? "▲" : "▼";
+    return ORDINALE[iv.degree] + " " + iv.quality + " " + freccia;
+  }
+
+  // Tutte le note che il mazzo può produrre nella modalità di chiave attiva
+  function availableNoteCards(){
+    const out = [];
+    let uid = -1;
+    COLORS.forEach(color=>{
+      for(let v=0; v<=9; v++){
+        out.push(makeNoteCard(color, v, uid--));
+      }
+    });
+    return out;
+  }
+
+  // Tutti gli intervalli che il mazzo può produrre nella modalità di chiave
+  // attiva. NON dipende dalla carta in cima: la richiesta resta in piedi anche
+  // quando in cima c'è una carta azione, e può tornare raggiungibile appena
+  // qualcuno pesca o gioca una nota.
+  let intervalPool = null;
+
+  function buildIntervalPool(){
+    const seen = new Map();
+    const notes = availableNoteCards();
+    notes.forEach(a=>{
+      notes.forEach(c=>{
+        const iv = intervalBetween(a, c);
+        if(!iv || iv.degree === 1) return;    // l'unisono sarebbe banale
+        const k = iv.degree + "|" + iv.quality + "|" + iv.dir;
+        if(!seen.has(k)) seen.set(k, iv);
+      });
+    });
+    intervalPool = [...seen.values()];
+    return intervalPool;
+  }
+
+  // Sceglie il prossimo intervallo richiesto, mai uguale al precedente
+  function pickInterval(avoid){
+    const pool = intervalPool || buildIntervalPool();
+    const options = pool.filter(iv => !sameInterval(iv, avoid));
+    if(options.length === 0) return pool[0] || null;
+    return options[Math.floor(Math.random() * options.length)];
+  }
+
+  /* ---------- riconoscimento delle triadi ----------
+     Le carte non hanno alterazioni, quindi dalle sette note naturali si
+     ottengono sei triadi maggiori/minori (più Si-Re-Fa, che è diminuita
+     e quindi NON è una risposta valida con i soli pulsanti maggiore/minore). */
+  const PITCH_CLASS = { do:0, re:2, mi:4, fa:5, sol:7, la:9, si:11 };
+
+  function triadIdentity(noteNames){
+    const names = [...new Set(noteNames)];
+    if(names.length !== 3) return null;                 // servono tre note diverse
+    if(names.some(n => !(n in PITCH_CLASS))) return null;
+    const pcs = names.map(n => PITCH_CLASS[n]);
+    for(let i=0;i<3;i++){
+      const root = pcs[i];
+      const rel = pcs.map(p => (p - root + 12) % 12).sort((a,b)=>a-b);
+      const key = rel.join(",");
+      if(key === "0,4,7") return { root: names[i], quality: "maggiore" };
+      if(key === "0,3,7") return { root: names[i], quality: "minore" };
+      if(key === "0,3,6") return { root: names[i], quality: "diminuita" };
+    }
+    return null;
+  }
+
+  // I nomi delle carte in solfeggio, per il confronto con la risposta del quiz
+  function cardSolfa(card){
+    return card.type === "note" ? LETTER_TO_SOLFA[card.noteName] : null;
+  }
+
+  function cardsFormTriad(cards){
+    if(cards.length !== 3) return null;
+    if(cards.some(c => c.type !== "note")) return null;
+    return triadIdentity(cards.map(cardSolfa));
+  }
+
+  // La triade in gioco: la carta in cima alla pila fa da terza nota,
+  // le altre due sono quelle deposte nel vassoio.
+  function trayTriadCards(tray){
+    const top = topDiscard();
+    if(!top || top.type !== "note") return null;
+    if(!tray || tray.length !== 2) return null;
+    return [top, tray[0], tray[1]];
+  }
+
+  function currentTrayTriad(){
+    const trio = trayTriadCards(state.tray);
+    return trio ? cardsFormTriad(trio) : null;
+  }
 
   function noteForColorValue(color, value){
     // In "both" il colore decide la chiave; nelle altre modalità i colori
@@ -19982,7 +20284,9 @@ global.VexFlow = VexflowNS.default || VexflowNS;
     // Preparo in anticipo la distribuzione, ma le carte arrivano in mano
     // una alla volta durante l'animazione.
     const dealPlan = [];
-    for(let r=0;r<7;r++){
+    // in modalità triadi si cala di più, quindi si parte con più carte
+    const handSize = (triadMode || intervalMode) ? 10 : 7;
+    for(let r=0;r<handSize;r++){
       PLAYERS.forEach(p=>{ dealPlan.push({ player:p, card: deck.pop() }); });
     }
     // carta iniziale: una nota semplice, per non aprire con un'azione
@@ -20001,9 +20305,14 @@ global.VexFlow = VexflowNS.default || VexflowNS;
       hasDrawnThisTurn: false,
       skipYourNextTurn: false,   // penalità: risposta sbagliata al quiz
       quizPending: false,        // turno sospeso in attesa della risposta
-      dealing: true              // tavolo in preparazione: input e bot fermi
+      dealing: true,             // tavolo in preparazione: input e bot fermi
+      tray: [],                  // carte deposte per comporre una triade
+      requiredInterval: null,    // intervallo richiesto in questo momento
     };
     hideQuiz();
+    state.triadQuizPending = false;
+    state.tray = [];
+    intervalPool = null;   // la modalità di chiave può essere cambiata
     // le statistiche sono cumulative sulla sessione: non si azzerano fra le partite
     renderStats();
     lastDiscardId = null;
@@ -20047,6 +20356,7 @@ global.VexFlow = VexflowNS.default || VexflowNS;
         state.discard.push(startCard);
         state.currentColor = startCard.color;
         state.dealing = false;
+        refreshInterval(null);
         render(true);
         playCardSound(startCard);
         setStatus("Tocca a te!");
@@ -20339,6 +20649,10 @@ global.VexFlow = VexflowNS.default || VexflowNS;
   function humanDraw(){
     if(state.gameOver || state.dealing) return;
     if(currentPlayer() !== "you") return;
+    if(state.tray && state.tray.length){
+      showToast("Completa o ritira la triade prima di passare");
+      return;
+    }
 
     if(state.hasDrawnThisTurn){
       // Ha già pescato in questo turno (con carta giocabile ma ha scelto di non giocarla):
@@ -20372,6 +20686,7 @@ global.VexFlow = VexflowNS.default || VexflowNS;
   // del giocatore (penalità per risposta sbagliata al quiz).
   function afterTurnChange(){
     if(state.gameOver) return;
+    ensureIntervalPossible();
     if(currentPlayer() === "you" && state.skipYourNextTurn){
       state.skipYourNextTurn = false;
       showToast("Turno saltato");
@@ -20385,9 +20700,120 @@ global.VexFlow = VexflowNS.default || VexflowNS;
     maybeAdvanceBot();
   }
 
+  // Il bot cala la carta nell'area intervallo, poi il gioco chiede un nuovo intervallo
+  function botPlayInterval(p, card){
+    const hand = state.hands[p];
+    const i = hand.findIndex(c => c.id === card.id);
+    if(i !== -1) hand.splice(i, 1);
+    const done = state.requiredInterval;
+    state.discard.push(card);
+    state.currentColor = card.color;
+    showBubble(p, intervalLabel(done));
+    playCardSound(card);
+    refreshInterval(done);
+
+    if(hand.length === 0){
+      state.gameOver = true;
+      render(true);
+      addStat("losses");
+      showEnd(NAMES[p] + " ha vinto la partita");
+      playEndJingle(false);
+      return;
+    }
+    if(hand.length === 1) showBubble(p, "UNO!");
+
+    state.turn = nextTurnIndex(state.turn, state.direction, 1);
+    state.hasDrawnThisTurn = false;
+    render(true);
+    setStatus(currentPlayer()==="you" ? "Tocca a te!" : "");
+    afterTurnChange();
+  }
+
+  /* ---------- triadi dei bot ---------- */
+  // Cerca due carte che, insieme alla nota già in cima alla pila, formino una triade
+  function findBotTriad(hand){
+    const top = topDiscard();
+    if(!top || top.type !== "note") return null;
+    const notes = hand.filter(c => c.type === "note");
+    for(let i=0;i<notes.length-1;i++){
+      for(let j=i+1;j<notes.length;j++){
+        if(cardsFormTriad([top, notes[i], notes[j]])) return [notes[i], notes[j]];
+      }
+    }
+    return null;
+  }
+
+  // Il bot depone le due carte nel vassoio, le lascia in vista un momento
+  // (così il giocatore vede come si compone la triade) e poi le cala.
+  function botPlayTriad(p, pair){
+    const hand = state.hands[p];
+    const trio = trayTriadCards(pair) || [topDiscard(), pair[0], pair[1]];
+    const id = cardsFormTriad(trio);
+
+    pair.forEach(c=>{
+      const i = hand.findIndex(x => x.id === c.id);
+      if(i !== -1) hand.splice(i,1);
+    });
+    state.tray = pair.slice();
+    showBubble(p, id ? (id.root.toUpperCase() + " " + id.quality) : "Triade!");
+    playWhoosh(undefined, 0.03);
+    render(true);
+
+    setTimeout(()=>botCommitTriad(p, pair, trio), 1100);
+  }
+
+  function botCommitTriad(p, pair, trio){
+    if(state.gameOver) return;
+    state.dealing = true;
+    celebrateTriad(trio, ()=>{
+      state.dealing = false;
+      state.tray = [];
+      botFinishTriad(p, pair);
+    });
+  }
+
+  function botFinishTriad(p, pair){
+    const hand = state.hands[p];
+    pair.forEach(c => state.discard.push(c));
+    state.currentColor = pair[pair.length-1].color;
+
+    if(hand.length === 0){
+      state.gameOver = true;
+      render(true);
+      addStat("losses");
+      showEnd(NAMES[p] + " ha vinto la partita");
+      playEndJingle(false);
+      return;
+    }
+    if(hand.length === 1) showBubble(p, "UNO!");
+
+    state.turn = nextTurnIndex(state.turn, state.direction, 1);
+    state.hasDrawnThisTurn = false;
+    render(true);
+    setStatus(currentPlayer()==="you" ? "Tocca a te!" : "");
+    afterTurnChange();
+  }
+
   function botTurn(p){
     if(state.gameOver) return;
     const hand = state.hands[p];
+
+    // In modalità intervalli il bot cala la nota richiesta, se ce l'ha
+    if(intervalMode && state.requiredInterval){
+      const top = topDiscard();
+      if(top && top.type === "note"){
+        const match = hand.find(c => c.type === "note" &&
+          sameInterval(intervalBetween(top, c), state.requiredInterval));
+        if(match){ botPlayInterval(p, match); return; }
+      }
+    }
+
+    // In modalità triadi il bot cala sempre l'accordo, se può farlo
+    if(triadMode){
+      const triad = findBotTriad(hand);
+      if(triad){ botPlayTriad(p, triad); return; }
+    }
+
     let candidates = hand.filter(canPlay);
     // prefer non-wild
     candidates.sort((a,b)=> (a.color==="black"?1:0) - (b.color==="black"?1:0));
@@ -20535,13 +20961,189 @@ global.VexFlow = VexflowNS.default || VexflowNS;
     b.textContent = text;
     b.classList.add("show");
     clearTimeout(b._t);
-    b._t = setTimeout(()=>b.classList.remove("show"), 1400);
+    b._t = setTimeout(()=>b.classList.remove("show"), text && text.length > 6 ? 2700 : 1400);
   }
 
   function showEnd(title){
     document.getElementById("endTitle").textContent = title;
     document.getElementById("endOverlay").classList.add("show");
   }
+
+  /* ---------- area intervallo ---------- */
+  function renderInterval(){
+    const label = document.getElementById("ivLabel");
+    const wrap = document.getElementById("ivCards");
+    if(!label || !wrap) return;
+    wrap.innerHTML = "";
+    if(!intervalMode){ label.textContent = "Intervallo"; return; }
+
+    label.textContent = state.requiredInterval
+      ? intervalLabel(state.requiredInterval)
+      : "Intervallo";
+
+    const hint = document.createElement("div");
+    hint.className = "tray-empty";
+    hint.textContent = "Trascina qui";
+    wrap.appendChild(hint);
+  }
+
+  // Rete di sicurezza: in modalità intervalli ci dev'essere sempre una richiesta
+  function ensureIntervalPossible(){
+    if(!intervalMode){ state.requiredInterval = null; return; }
+    if(!state.requiredInterval) state.requiredInterval = pickInterval(null);
+  }
+
+  // Nuovo intervallo richiesto, diverso da quello appena soddisfatto.
+  // La richiesta cambia SOLO quando viene soddisfatta.
+  function refreshInterval(justDone){
+    if(!intervalMode){ state.requiredInterval = null; return; }
+    state.requiredInterval = pickInterval(justDone || state.requiredInterval);
+  }
+
+  // Il giocatore cala una carta nell'area intervallo
+  function playInterval(card){
+    const top = topDiscard();
+    if(!top || top.type !== "note"){
+      showToast("Serve una nota in cima alla pila");
+      return false;
+    }
+    if(!state.requiredInterval){
+      showToast("Nessun intervallo richiesto");
+      return false;
+    }
+    if(card.type !== "note"){
+      showToast("Nell'intervallo vanno solo carte con le note");
+      return false;
+    }
+
+    const got = intervalBetween(top, card);
+    const ok = sameInterval(got, state.requiredInterval);
+
+    if(ok){
+      const i = state.hands.you.findIndex(c => c.id === card.id);
+      if(i === -1) return false;
+      state.hands.you.splice(i, 1);
+      state.discard.push(card);
+      state.currentColor = card.color;
+      playCardSound(card);
+      addStat("correct");
+      showToast("Intervallo giusto: " + intervalLabel(state.requiredInterval));
+  
+      if(state.hands.you.length === 0){
+        state.gameOver = true;
+        render(true);
+        addStat("wins");
+        showEnd("Hai vinto! 🎉");
+        playEndJingle(true);
+        return true;
+      }
+      if(state.hands.you.length === 1) showBubble("you", "UNO!");
+
+      state.turn = nextTurnIndex(state.turn, state.direction, 1);
+      state.hasDrawnThisTurn = false;
+      render(true);
+      setStatus(currentPlayer()==="you" ? "Tocca a te!" : "");
+      afterTurnChange();
+      return true;
+    }
+
+    // sbagliato: la carta torna in mano, si pesca e si perde il turno
+    addStat("errors");
+    playQuizSound(false);
+    showToast(got
+      ? ("Era " + intervalLabel(got) + ", serviva " + intervalLabel(state.requiredInterval))
+      : "Intervallo non valido");
+    drawCard("you", 1);
+    state.turn = nextTurnIndex(state.turn, state.direction, 1);
+    state.hasDrawnThisTurn = false;
+    render(true);
+    setStatus(currentPlayer()==="you" ? "Tocca a te!" : "");
+    afterTurnChange();
+    return false;
+  }
+
+  /* ---------- vassoio della triade ---------- */
+  function renderTray(){
+    const wrap = document.getElementById("trayCards");
+    if(!wrap) return;
+    wrap.innerHTML = "";
+    const tray = state.tray || [];
+
+    if(!triadMode){ wrap.style.width = "0px"; return; }
+
+    if(tray.length === 0){
+      const hint = document.createElement("div");
+      hint.className = "tray-empty";
+      hint.textContent = "Trascina qui 2 carte";
+      wrap.appendChild(hint);
+      wrap.style.width = "";
+      wrap.style.height = "";
+      return;
+    }
+
+    const cs = getComputedStyle(document.documentElement);
+    const cardW = parseFloat(cs.getPropertyValue("--card-w")) || 88;
+    // scoperto sufficiente a lasciare visibile chiave e nota di ogni carta
+    const step = cardW * 0.66;
+    wrap.style.width = (cardW + step * (tray.length - 1)) + "px";
+
+    tray.forEach((card, i)=>{
+      const el = buildCardEl(card);
+      el.style.left = (i * step) + "px";
+      el.style.zIndex = i;
+      el.title = "Tocca per rimetterla in mano";
+      el.addEventListener("pointerdown", (ev)=>{
+        ev.preventDefault();
+        if(state.gameOver || state.dealing) return;
+        if(state.triadQuizPending) return;   // durante la domanda non si tocca
+        takeBackFromTray(card.id);
+      });
+      wrap.appendChild(el);
+    });
+  }
+
+  function addToTray(card){
+    if(!triadMode) return false;
+    if(state.tray.length >= 2) return false;   // la terza nota è quella sul tavolo
+    const i = state.hands.you.findIndex(c => c.id === card.id);
+    if(i === -1) return false;
+    if(card.type !== "note"){
+      showToast("Nella triade vanno solo carte con le note");
+      return false;
+    }
+    const top = topDiscard();
+    if(!top || top.type !== "note"){
+      showToast("Serve una nota in cima alla pila per formare una triade");
+      return false;
+    }
+    state.hands.you.splice(i, 1);
+    state.tray.push(card);
+    playWhoosh(undefined, 0.03);
+    render(true);
+    if(state.tray.length === 2) showTriadQuiz();
+    return true;
+  }
+
+  function takeBackFromTray(cardId){
+    const i = state.tray.findIndex(c => c.id === cardId);
+    if(i === -1) return;
+    const [card] = state.tray.splice(i, 1);
+    state.hands.you.push(card);
+    playWhoosh(undefined, 0.03);
+    hideQuiz();
+    state.triadQuizPending = false;
+    state.tray = [];
+    intervalPool = null;   // la modalità di chiave può essere cambiata
+    render(true);
+  }
+
+  function returnWholeTray(){
+    while(state.tray.length){
+      state.hands.you.push(state.tray.pop());
+    }
+    render(true);
+  }
+
 
   function render(full){
     if(!state) return;
@@ -20558,6 +21160,10 @@ global.VexFlow = VexflowNS.default || VexflowNS;
         handEl.appendChild(mc);
       }
     });
+
+    // aree di gioco delle modalità
+    renderInterval();
+    renderTray();
 
     // deck count
     document.getElementById("deckCount").textContent = "Mazzo: " + state.deck.length;
@@ -20633,9 +21239,11 @@ global.VexFlow = VexflowNS.default || VexflowNS;
     const cs = getComputedStyle(document.documentElement);
     const cardW = parseFloat(cs.getPropertyValue("--card-w")) || 88;
     const sideEl = document.querySelector(".hand-side");
+    const leftEl = document.querySelector(".hand-left");
     const reserveRight = sideEl ? sideEl.getBoundingClientRect().width + 28 : 0;
+    const reserveLeft = leftEl ? leftEl.getBoundingClientRect().width + 24 : 10;
 
-    const regionLeft = 10;
+    const regionLeft = reserveLeft;
     const regionRight = Math.max(handWrap.clientWidth - reserveRight, regionLeft + cardW);
     const regionW = regionRight - regionLeft;
     const regionCenter = regionLeft + regionW / 2;
@@ -20721,8 +21329,14 @@ global.VexFlow = VexflowNS.default || VexflowNS;
           const pad = 60;
           const over = ev.clientX >= dzr.left - pad && ev.clientX <= dzr.right + pad &&
                        ev.clientY >= dzr.top - pad && ev.clientY <= dzr.bottom + pad;
+          const trayEl2 = document.getElementById("tray");
+          const ivEl2 = document.getElementById("ivBox");
+          const overTray2 = triadMode && trayEl2 && isOver(trayEl2, ev.clientX, ev.clientY, 24);
+          const overIv2 = intervalMode && ivEl2 && isOver(ivEl2, ev.clientX, ev.clientY, 24);
+          if(trayEl2) trayEl2.classList.toggle("over", !!overTray2 && currentPlayer() === "you");
+          if(ivEl2) ivEl2.classList.toggle("over", !!overIv2 && currentPlayer() === "you");
           document.getElementById("dropZone").classList.toggle("drop-active",
-            over && currentPlayer() === "you" && !state.quizPending);
+            over && !overTray2 && !overIv2 && currentPlayer() === "you" && !state.quizPending);
 
           // Anteprima del riordino: le altre carte si spostano davvero
           // per fare spazio, prima ancora del rilascio.
@@ -20754,7 +21368,29 @@ global.VexFlow = VexflowNS.default || VexflowNS;
           const pad = 60;
           const overTable = ev.clientX >= dz.left - pad && ev.clientX <= dz.right + pad &&
                              ev.clientY >= dz.top - pad && ev.clientY <= dz.bottom + pad;
-          if(overTable && currentPlayer() === "you" && !state.quizPending && canPlay(card)){
+
+          // le aree delle modalità hanno la precedenza sul resto del tavolo
+          const trayEl = document.getElementById("tray");
+          const ivEl = document.getElementById("ivBox");
+          const overTray = triadMode && trayEl && isOver(trayEl, ev.clientX, ev.clientY, 24);
+          const overIv = intervalMode && ivEl && isOver(ivEl, ev.clientX, ev.clientY, 24);
+          if(trayEl) trayEl.classList.remove("over");
+          if(ivEl) ivEl.classList.remove("over");
+
+          if(overIv && currentPlayer() === "you" && !state.quizPending && !state.triadQuizPending){
+            el.classList.remove("dragging");
+            raiseHand(false);
+            if(state.tray && state.tray.length){
+              showToast("Completa o ritira la triade prima di giocare");
+              render(true);
+            } else if(!playInterval(card)){
+              render(true);
+            }
+          } else if(overTray && currentPlayer() === "you" && !state.quizPending && !state.triadQuizPending){
+            el.classList.remove("dragging");
+            raiseHand(false);
+            if(!addToTray(card)) render(true);
+          } else if(overTable && currentPlayer() === "you" && !state.quizPending && canPlay(card)){
             el.classList.remove("dragging");
             raiseHand(false);
             onHumanPlay(card);
@@ -20798,6 +21434,15 @@ global.VexFlow = VexflowNS.default || VexflowNS;
     return {red:"#c0392b", green:"#1f8a5f", blue:"#2c5f9e", yellow:"#e8b23d"}[c] || "#fff";
   }
 
+  // Il punto (x,y) cade dentro l'elemento (con un margine di tolleranza)?
+  function isOver(el, x, y, pad){
+    pad = pad || 0;
+    const r = el.getBoundingClientRect();
+    if(r.width === 0 && r.height === 0) return false;
+    return x >= r.left - pad && x <= r.right + pad &&
+           y >= r.top - pad && y <= r.bottom + pad;
+  }
+
   /* ---------- selezione carta: si stacca dal ventaglio e si ingrandisce ---------- */
   function raiseHand(on){
     const strip = document.querySelector(".hand-strip");
@@ -20828,6 +21473,10 @@ global.VexFlow = VexflowNS.default || VexflowNS;
 
   function onHumanPlay(card){
     if(state.gameOver || state.dealing) return;
+    if(state.tray && state.tray.length){
+      showToast("Completa o ritira la triade prima di giocare");
+      return;
+    }
     // Solo le carte-nota fanno scattare la domanda: sulle carte azione
     // non c'è nessuna nota da riconoscere.
     const askQuiz = card.type === "note";
@@ -20857,12 +21506,275 @@ global.VexFlow = VexflowNS.default || VexflowNS;
   const NOTE_ORDER = ["do","re","mi","fa","sol","la","si"];
   const LETTER_TO_SOLFA = { c:"do", d:"re", e:"mi", f:"fa", g:"sol", a:"la", b:"si" };
 
+  /* ---------- quiz della triade ---------- */
+  function showTriadQuiz(){
+    const quiz = document.getElementById("quiz");
+    const title = document.getElementById("quizTitle");
+    const btns = document.getElementById("quizButtons");
+    const feedback = document.getElementById("quizFeedback");
+
+    state.triadQuizPending = true;
+    title.textContent = "Che triade hai completato?";
+    feedback.textContent = "";
+    feedback.className = "quiz-feedback";
+    btns.innerHTML = "";
+
+    let pickRoot = null, pickQuality = null;
+
+    const paint = ()=>{
+      btns.querySelectorAll(".note-btn").forEach(b=>{
+        const isRoot = b.dataset.root && b.dataset.root === pickRoot;
+        const isQual = b.dataset.quality && b.dataset.quality === pickQuality;
+        b.classList.toggle("picked", !!(isRoot || isQual));
+      });
+      const send = btns.querySelector(".note-btn.send");
+      if(send) send.disabled = !(pickRoot && pickQuality);
+    };
+
+    NOTE_ORDER.forEach(n=>{
+      const b = document.createElement("button");
+      b.className = "note-btn";
+      b.dataset.root = n;
+      b.textContent = n.toUpperCase();
+      b.addEventListener("pointerdown", (ev)=>{ ev.preventDefault(); pickRoot = n; paint(); });
+      btns.appendChild(b);
+    });
+
+    btns.appendChild(rowBreak());
+
+    [["maggiore","MAGG."],["minore","MIN."],["diminuita","DIM."]].forEach(([q,lab])=>{
+      const b = document.createElement("button");
+      b.className = "note-btn third";
+      b.dataset.quality = q;
+      b.textContent = lab;
+      b.addEventListener("pointerdown", (ev)=>{ ev.preventDefault(); pickQuality = q; paint(); });
+      btns.appendChild(b);
+    });
+
+    btns.appendChild(rowBreak());
+
+    const cancel = document.createElement("button");
+    cancel.className = "note-btn wide cancel";
+    cancel.textContent = "ANNULLA";
+    cancel.addEventListener("pointerdown", (ev)=>{
+      ev.preventDefault();
+      playClick();
+      hideQuiz();
+      state.triadQuizPending = false;
+      returnWholeTray();      // le carte tornano in mano, resta il tuo turno
+      setStatus("Tocca a te!");
+    });
+    btns.appendChild(cancel);
+
+    const send = document.createElement("button");
+    send.className = "note-btn wide send";
+    send.textContent = "INVIA";
+    send.disabled = true;
+    send.addEventListener("pointerdown", (ev)=>{
+      ev.preventDefault();
+      if(!pickRoot || !pickQuality) return;
+      submitTriadAnswer(pickRoot, pickQuality, feedback);
+    });
+    btns.appendChild(send);
+
+    paint();
+    fitQuiz();
+    quiz.classList.add("show");
+  }
+
+  // separatore che manda i pulsanti successivi su una riga nuova
+  function rowBreak(){
+    const d = document.createElement("div");
+    d.className = "row-break";
+    return d;
+  }
+
+  function submitTriadAnswer(root, quality, feedback){
+    const truth = currentTrayTriad();
+    const right = truth && truth.root === root && truth.quality === quality;
+
+    if(right){
+      feedback.textContent = "Esatto: " + root.toUpperCase() + " " + quality + "!";
+      feedback.className = "quiz-feedback ok";
+      addStat("correct");
+      setTimeout(()=>{
+        hideQuiz();
+        state.triadQuizPending = false;
+        commitTriad();
+      }, 620);
+    } else {
+      // Sbagliato sia se la risposta è errata, sia se quelle tre note non
+      // formano affatto una triade: in entrambi i casi si segna un errore
+      // e le carte del vassoio tornano in mano.
+      const nome = truth
+        ? ("era " + truth.root.toUpperCase() + " " + truth.quality)
+        : "quelle tre note non formano una triade";
+      feedback.textContent = "Sbagliato, " + nome + "!";
+      feedback.className = "quiz-feedback ko";
+      playQuizSound(false);
+      addStat("errors");
+      drawCard("you", 1);
+      setTimeout(()=>{
+        hideQuiz();
+        state.triadQuizPending = false;
+        returnWholeTray();
+        showToast("Le carte tornano in mano: peschi e perdi il turno");
+        state.turn = nextTurnIndex(state.turn, state.direction, 1);
+        state.hasDrawnThisTurn = false;
+        render(true);
+        setStatus(currentPlayer()==="you" ? "Tocca a te!" : "");
+        afterTurnChange();
+      }, 1700);
+    }
+  }
+
+  // La triade è accettata: le due carte del vassoio finiscono sulla pila,
+  // con quella più a destra in cima.
+  function commitTriad(){
+    const trio = trayTriadCards(state.tray);   // include la carta già sul tavolo
+    const cards = state.tray.slice();
+    state.dealing = true;                      // input fermo durante la festa
+    celebrateTriad(trio, ()=>{
+      state.dealing = false;
+      state.tray = [];
+      finishTriad(cards);
+    });
+  }
+
+  function finishTriad(cards){
+    cards.forEach(c => state.discard.push(c));
+    const last = cards[cards.length-1];
+    state.currentColor = last.color;
+
+    if(state.hands.you.length === 0){
+      state.gameOver = true;
+      render(true);
+      addStat("wins");
+      showEnd("Hai vinto! 🎉");
+      playEndJingle(true);
+      return;
+    }
+    if(state.hands.you.length === 1) showBubble("you", "UNO!");
+
+    state.turn = nextTurnIndex(state.turn, state.direction, 1);
+    state.hasDrawnThisTurn = false;
+    render(true);
+    setStatus(currentPlayer()==="you" ? "Tocca a te!" : "");
+    afterTurnChange();
+  }
+
+  /* ---------- festa della triade completata ----------
+     Le carte del vassoio e quella in cima alla pila ondeggiano a turno mentre
+     suona l'accordo, con i coriandoli sopra; poi le carte si calano sulla pila. */
+  function celebrateTriad(trio, onDone){
+    const trayEls = [...document.querySelectorAll("#trayCards .card")];
+    const topEl = document.querySelector("#discardSlot .card");
+    // l'onda parte dalla nota già sul tavolo e prosegue sulle due deposte
+    const waveEls = [topEl, ...trayEls].filter(Boolean);
+
+    waveEls.forEach((el, i)=>{
+      setTimeout(()=>{
+        el.classList.remove("wave");
+        void el.offsetWidth;
+        el.classList.add("wave");
+      }, i * 170);
+    });
+
+    if(trio) playTriadSound(trio);
+    const box = document.getElementById("tray");
+    if(box) burstConfetti(box.getBoundingClientRect());
+
+    setTimeout(()=>{
+      waveEls.forEach(el => el.classList.remove("wave"));
+      flyTrayToDiscard(onDone);
+    }, 1150);
+  }
+
+  // Le due carte del vassoio volano sulla pila, l'ultima a destra resta in cima
+  function flyTrayToDiscard(onDone){
+    const trayEls = [...document.querySelectorAll("#trayCards .card")];
+    const slot = document.getElementById("discardSlot");
+    if(!slot || trayEls.length === 0){ onDone(); return; }
+    const to = slot.getBoundingClientRect();
+
+    trayEls.forEach((src, i)=>{
+      const from = src.getBoundingClientRect();
+      const ghost = src.cloneNode(true);
+      ghost.style.position = "fixed";
+      ghost.style.margin = "0";
+      ghost.style.zIndex = 96 + i;
+      ghost.style.width = from.width + "px";
+      ghost.style.height = from.height + "px";
+      ghost.style.left = from.left + "px";
+      ghost.style.top = from.top + "px";
+      ghost.style.pointerEvents = "none";
+      ghost.style.transition = "left .36s cubic-bezier(.3,.85,.4,1), top .36s cubic-bezier(.3,.85,.4,1), transform .36s ease";
+      document.body.appendChild(ghost);
+      src.style.visibility = "hidden";
+
+      setTimeout(()=>{
+        playWhoosh(undefined, 0.032);
+        void ghost.offsetWidth;
+        ghost.style.left = to.left + "px";
+        ghost.style.top = to.top + "px";
+        ghost.style.transform = "rotate(0deg)";
+      }, i * 130);
+
+      setTimeout(()=>ghost.remove(), i * 130 + 420);
+    });
+
+    setTimeout(onDone, (trayEls.length - 1) * 130 + 430);
+  }
+
+  function burstConfetti(rect){
+    const colori = ["#ef4444","#22c55e","#3b82f6","#facc15","#a855f7","#f97316"];
+    const cx = rect.left + rect.width / 2;
+    const cy = rect.top + 6;
+    for(let i=0;i<22;i++){
+      const c = document.createElement("div");
+      c.className = "confetto";
+      c.style.background = colori[i % colori.length];
+      c.style.left = (cx - 4) + "px";
+      c.style.top = cy + "px";
+      document.body.appendChild(c);
+      const dx = (Math.random() - 0.5) * rect.width * 1.4;
+      const dy = -(40 + Math.random() * 70);
+      const rot = (Math.random() - 0.5) * 540;
+      const delay = Math.random() * 220;
+      setTimeout(()=>{
+        c.style.transition = "transform .9s cubic-bezier(.2,.7,.4,1), opacity .9s ease";
+        c.style.opacity = "1";
+        c.style.transform = `translate(${dx}px, ${dy}px) rotate(${rot}deg)`;
+        setTimeout(()=>{
+          c.style.opacity = "0";
+          c.style.transform = `translate(${dx*1.25}px, ${dy + 90}px) rotate(${rot*1.3}deg)`;
+        }, 420);
+      }, delay);
+      setTimeout(()=>c.remove(), 1600 + delay);
+    }
+  }
+
+  // Le tre note suonano insieme, come un accordo
+  function playTriadSound(cards){
+    if(!soundOn) return;
+    const ctx = ensureAudio();
+    if(!ctx) return;
+    if(ctx.state === "suspended") ctx.resume();
+    const t = ctx.currentTime;
+    // tutte e tre allo stesso istante: si sente l'accordo, non un arpeggio
+    cards.forEach(c=>{
+      const f = freqFromKey(c.key);
+      if(f) playTone(f, t, 1.6, 0.15);
+    });
+  }
+
   function showQuiz(card){
     const quiz = document.getElementById("quiz");
     const btns = document.getElementById("quizButtons");
     const feedback = document.getElementById("quizFeedback");
     const correct = LETTER_TO_SOLFA[card.noteName];
 
+    document.getElementById("quizTitle").textContent = "Che nota hai giocato?";
     feedback.textContent = "";
     feedback.className = "quiz-feedback";
     btns.innerHTML = "";
@@ -21074,7 +21986,25 @@ global.VexFlow = VexflowNS.default || VexflowNS;
     document.querySelectorAll("#clefOptions .opt").forEach(b=>{
       b.classList.toggle("selected", b.dataset.clef === clefMode);
     });
+    const t = document.getElementById("triadOpt");
+    if(t) t.classList.toggle("selected", triadMode);
+    const iv = document.getElementById("intervalOpt");
+    if(iv) iv.classList.toggle("selected", intervalMode);
+    document.body.classList.toggle("triad-mode", triadMode);
+    document.body.classList.toggle("interval-mode", intervalMode);
   }
+
+  document.getElementById("triadOpt").addEventListener("click", ()=>{
+    triadMode = !triadMode;
+    playClick();
+    renderClefOptions();
+  });
+
+  document.getElementById("intervalOpt").addEventListener("click", ()=>{
+    intervalMode = !intervalMode;
+    playClick();
+    renderClefOptions();
+  });
 
   document.getElementById("restartBtn").addEventListener("click", ()=>{
     playClick();
@@ -21086,6 +22016,76 @@ global.VexFlow = VexflowNS.default || VexflowNS;
     playClick();
     showMenu();
   });
+
+  document.getElementById("menuBtn").addEventListener("click", ()=>{
+    playClick();
+    showMenu();
+  });
+
+  document.getElementById("tutorialBtn").addEventListener("click", ()=>{
+    playClick();
+    renderTutorial();
+    document.getElementById("tutorialOverlay").classList.add("show");
+  });
+
+  document.getElementById("tutorialCloseBtn").addEventListener("click", ()=>{
+    playClick();
+    document.getElementById("tutorialOverlay").classList.remove("show");
+  });
+
+  // Il tutorial mostra solo le regole delle modalità effettivamente attive
+  function renderTutorial(){
+    const body = document.getElementById("tutBody");
+    const blocks = [];
+
+    blocks.push([
+      "Obiettivo",
+      "Liberati di tutte le carte prima di Bach, Mozart e Beethoven. " +
+      "Trascina una carta al centro del tavolo per giocarla."
+    ]);
+
+    blocks.push([
+      "Quando puoi giocare una carta",
+      "Se ha lo stesso <b>colore</b> della carta in cima alla pila, oppure se la nota " +
+      "ha lo <b>stesso nome</b> (un DO su un DO), indipendentemente da chiave, ottava e colore. " +
+      "I jolly si giocano sempre. Il gioco non ti dice quali carte sono valide: devi riconoscerle tu."
+    ]);
+
+    blocks.push([
+      "La domanda",
+      "Ogni volta che giochi una carta con una nota, il gioco ti chiede di riconoscerla. " +
+      "Se sbagli, peschi una carta e salti il turno."
+    ]);
+
+    blocks.push([
+      "Se non puoi giocare",
+      "Premi <b>Passa</b> per pescare una carta. Puoi ancora giocarla, oppure premere di nuovo " +
+      "Passa per chiudere il turno."
+    ]);
+
+    if(intervalMode){
+      blocks.push([
+        "Modalità intervalli",
+        "Sopra l'area <b>Intervallo</b> è scritto l'intervallo richiesto in questo momento. " +
+        "Trascinaci una carta: l'intervallo si conta <b>dalla nota in cima alla pila alla tua</b>, " +
+        "quindi conta anche se sale o scende. Se è giusto la carta viene giocata e il gioco chiede " +
+        "un nuovo intervallo; se è sbagliato la carta torna in mano, peschi e salti il turno."
+      ]);
+    }
+
+    if(triadMode){
+      blocks.push([
+        "Modalità triadi",
+        "La nota in cima alla pila è la prima dell'accordo. Trascina <b>due carte</b> nell'area " +
+        "<b>Triade</b> per completarlo, poi rispondi indicando nome e tipo (maggiore, minore o " +
+        "diminuita). Puoi togliere una carta toccandola, o annullare tutto. " +
+        "Non puoi passare finché l'area non è vuota."
+      ]);
+    }
+
+    body.innerHTML = blocks.map(([t, p]) =>
+      `<div class="tut-block"><h3>${t}</h3><p>${p}</p></div>`).join("");
+  }
 
   // Ridisegna la mano quando cambia orientamento o dimensione della finestra,
   // così il ventaglio si ricalcola sulle nuove dimensioni disponibili.
