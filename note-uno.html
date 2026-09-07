@@ -165,7 +165,7 @@
   /* ---------- quiz "Che nota hai giocato?" (a sinistra, dentro l'area di gioco) ----------
      Sta dentro .center-area, quindi resta sempre sotto la riga dei bot. */
   .quiz{
-    position:absolute; left:0; top:50%; transform:translateY(-50%) scale(.94);
+    position:absolute; left:0; top:50%; transform:translateY(-50%);
     transform-origin:left center;
     width:min(280px, 30%);
     background:linear-gradient(180deg, rgba(255,255,255,0.10), rgba(255,255,255,0.05));
@@ -173,9 +173,12 @@
     padding:14px 14px 12px; z-index:45;
     box-shadow:0 1px 0 rgba(255,255,255,0.07) inset, 0 16px 34px rgba(0,0,0,0.35);
     opacity:0; pointer-events:none; visibility:hidden;
-    transition:opacity .2s ease, transform .25s cubic-bezier(.34,1.3,.64,1);
+    /* Solo dissolvenza, nessun movimento: se il pannello scivolasse mentre
+       compare, un tocco immediato sui pulsanti della prima riga (DO, RE, MI)
+       arriverebbe dove il pulsante sta per essere e andrebbe a vuoto. */
+    transition:opacity .18s ease;
   }
-  .quiz.show{ opacity:1; pointer-events:auto; visibility:visible; transform:translateY(-50%) scale(1); }
+  .quiz.show{ opacity:1; pointer-events:auto; visibility:visible; }
   .quiz-title{
     font-family:"Sora","Inter",sans-serif; font-weight:700; font-size:14px;
     margin-bottom:10px; color:var(--ink-light); text-align:center;
@@ -485,16 +488,28 @@
 
   .card .corner{
     position:absolute; font-family:"Sora","Inter",sans-serif; font-weight:800; font-size:11px;
-    line-height:1; z-index:2; text-shadow:0 1px 2px rgba(0,0,0,.3);
+    line-height:1; z-index:2; color:#111827;
+    text-shadow:0 1px 1px rgba(255,255,255,.25);
   }
   .card .corner.tl{ top:6px; left:7px; }
   .card .corner.br{ bottom:6px; right:7px; transform:rotate(180deg); }
 
-  .card .staff-svg{ transform:scale(var(--staff-scale)); }
+  /* Il pentagramma viene spostato leggermente a destra: VexFlow disegna la
+     chiave a ridosso del margine sinistro e senza questa correzione risulta
+     tagliata dentro l'ovale bianco. Lo spostamento è proporzionale alla scala
+     della carta, così resta equilibrato anche sugli schermi piccoli. */
+  .card .staff-svg{
+    transform:translateX(calc(var(--staff-scale) * 4.4px)) scale(var(--staff-scale));
+  }
   .card .staff-svg svg{ overflow:visible; }
 
   .card .symbol{ font-size:30px; font-family:"Sora","Inter",sans-serif; font-weight:800; color:var(--ink); }
   .card .symbol.small{ font-size:16px; margin-top:2px; }
+  /* Icone SVG delle carte azione: scalano con la carta */
+  .card .action-icon{
+    width:74%; height:74%; display:flex; align-items:center; justify-content:center;
+  }
+  .card .action-icon svg{ width:100%; height:100%; display:block; }
   .card.wild .oval, .card.wild4 .oval{
     background:conic-gradient(var(--red),var(--yellow),var(--green),var(--blue),var(--red));
   }
@@ -650,37 +665,9 @@
     .overlay h2{ font-size:20px; }
   }
 
-
-/* PULSANTE "TORNA AL SITO" FISSO (porta a index.html) */
-.site-home-button {
-    position: fixed;
-    top: 18px;
-    left: 18px;
-    z-index: 999;
-    width: 44px;
-    height: 44px;
-    border-radius: 50%;
-    border: 1px solid rgba(255,255,255,0.18);
-    background: linear-gradient(180deg, rgba(255,255,255,0.12), rgba(255,255,255,0.04));
-    color: #e2e8f0;
-    font-size: 1.15rem;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    cursor: pointer;
-    text-decoration: none;
-    box-shadow: 0 4px 12px rgba(0,0,0,0.3);
-    transition: transform 0.15s ease, background 0.15s ease;
-}
-.site-home-button:hover {
-    background: linear-gradient(180deg, rgba(255,255,255,0.22), rgba(255,255,255,0.08));
-    transform: translateY(-2px);
-}
 </style>
 </head>
 <body>
-<a class="site-home-button" href="index.html" aria-label="Torna al sito" title="Torna al sito">🏠</a>
-
 
 <div id="rotateOverlay">
   <div class="icon">📱</div>
@@ -19557,6 +19544,35 @@ global.VexFlow = VexflowNS.default || VexflowNS;
   const BASS_ZERO = "a/2";
   const SOLFEGE = {c:"Do", d:"Re", e:"Mi", f:"Fa", g:"Sol", a:"La", b:"Si"};
 
+  /* ---------- icone delle carte azione (SVG disegnati a mano) ----------
+     STOP: una croma sbarrata — "questa nota non si suona", cioè salti il turno.
+     INVERTI: due crome che si rincorrono in cerchio, il senso di marcia cambia. */
+  const ICON_SKIP = `
+    <svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+      <g fill="#1e293b">
+        <ellipse cx="38" cy="66" rx="14" ry="10.5" transform="rotate(-20 38 66)"/>
+        <rect x="48" y="22" width="5.5" height="44" rx="2.6"/>
+        <path d="M53.5 24 Q73 31 71 48 Q66 35 53.5 37 Z"/>
+      </g>
+      <circle cx="50" cy="50" r="40" fill="none" stroke="#dc2626" stroke-width="8" opacity="0.92"/>
+      <line x1="22" y1="78" x2="78" y2="22" stroke="#dc2626" stroke-width="8" stroke-linecap="round" opacity="0.92"/>
+    </svg>`;
+
+  const ICON_REVERSE = `
+    <svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+      <g fill="none" stroke="#1e293b" stroke-width="8.5" stroke-linecap="round">
+        <path d="M24 44 A28 28 0 0 1 68 28"/>
+        <path d="M76 56 A28 28 0 0 1 32 72"/>
+      </g>
+      <g fill="#1e293b">
+        <path d="M70 21 l12 9 l-14 8 z"/>
+        <path d="M30 79 l-12 -9 l14 -8 z"/>
+        <ellipse cx="44" cy="58" rx="8.5" ry="6.6" transform="rotate(-20 44 58)"/>
+        <rect x="50.5" y="34" width="4" height="25" rx="2"/>
+        <path d="M54.5 34 Q66 39 64 50 Q61 41 54.5 42 Z"/>
+      </g>
+    </svg>`;
+
   /* ============ AUDIO ============
      Sintesi via Web Audio API: nessun file audio esterno, funziona offline.
      Ogni carta-nota suona la propria altezza reale. */
@@ -19906,18 +19922,16 @@ global.VexFlow = VexflowNS.default || VexflowNS;
       staffWrap.innerHTML = renderStaffSVG(card.clef, card.key);
       oval.appendChild(staffWrap);
     } else if(card.type === "skip"){
+      // Nota barrata: "questa nota non si suona" = salta il turno
       const s = document.createElement("div");
-      s.className = "symbol";
-      s.textContent = "𝄽";
+      s.className = "action-icon";
+      s.innerHTML = ICON_SKIP;
       oval.appendChild(s);
-      const s2 = document.createElement("div");
-      s2.className = "symbol small";
-      s2.textContent = "STOP";
-      oval.appendChild(s2);
     } else if(card.type === "reverse"){
+      // Due note che si rincorrono in cerchio = si inverte il senso di marcia
       const s = document.createElement("div");
-      s.className = "symbol";
-      s.textContent = "🔁";
+      s.className = "action-icon";
+      s.innerHTML = ICON_REVERSE;
       oval.appendChild(s);
     } else if(card.type === "draw2"){
       const s = document.createElement("div");
@@ -19949,6 +19963,18 @@ global.VexFlow = VexflowNS.default || VexflowNS;
 
   let state = null;
   let lastDiscardId = null; // per animare solo quando la carta in cima cambia davvero
+  // Carte già entrate nella mano ma la cui animazione di arrivo è ancora in volo:
+  // restano invisibili nel ventaglio finché il "fantasma" non atterra, così non
+  // si vedono due copie della stessa carta.
+  const arriving = new Set();
+
+  function markArriving(cardId){ arriving.add(cardId); }
+
+  function clearArriving(cardId){
+    arriving.delete(cardId);
+    const el = document.querySelector(`.player-zone .card[data-id="${cardId}"]`);
+    if(el) el.style.visibility = "";
+  }
 
   function newGame(){
     let deck = shuffle(buildDeck());
@@ -19978,7 +20004,7 @@ global.VexFlow = VexflowNS.default || VexflowNS;
       dealing: true              // tavolo in preparazione: input e bot fermi
     };
     hideQuiz();
-    stats.correct = 0; stats.errors = 0;  // vinte/perse restano
+    // le statistiche sono cumulative sulla sessione: non si azzerano fra le partite
     renderStats();
     lastDiscardId = null;
     render(true);
@@ -20006,6 +20032,7 @@ global.VexFlow = VexflowNS.default || VexflowNS;
     dealPlan.forEach((item, i)=>{
       setTimeout(()=>{
         state.hands[item.player].push(item.card);
+        if(item.player === "you") markArriving(item.card.id);
         render(true);
         flyDealtCard(item.card, item.player);
         if(i % 4 === 0) playWhoosh(undefined, 0.022);
@@ -20037,11 +20064,12 @@ global.VexFlow = VexflowNS.default || VexflowNS;
     let to;
 
     if(faceUp){
+      // la carta è già al suo posto nel ventaglio, solo invisibile
+      const slot = document.querySelector(`.player-zone .card[data-id="${card.id}"]`);
       const zone = document.getElementById("playerHand");
-      const els = zone ? zone.querySelectorAll(".card") : [];
-      if(els.length){
-        const last = els[els.length-1].getBoundingClientRect();
-        to = { left:last.left, top:last.top };
+      if(slot){
+        const sr = slot.getBoundingClientRect();
+        to = { left:sr.left, top:sr.top };
       } else if(zone){
         const z = zone.getBoundingClientRect();
         to = { left:z.left + z.width/2 - from.width/2, top:z.top + 8 };
@@ -20072,7 +20100,11 @@ global.VexFlow = VexflowNS.default || VexflowNS;
     ghost.style.opacity = faceUp ? "1" : "0.8";
 
     let done = false;
-    const finish = ()=>{ if(done) return; done = true; ghost.remove(); };
+    const finish = ()=>{
+      if(done) return; done = true;
+      ghost.remove();
+      if(faceUp) clearArriving(card.id);
+    };
     ghost.addEventListener("transitionend", finish, { once:true });
     setTimeout(finish, 460);
   }
@@ -20185,6 +20217,9 @@ global.VexFlow = VexflowNS.default || VexflowNS;
              w: from.width, h: from.height };
     }
 
+    // le carte del giocatore restano nascoste nel ventaglio finché non atterrano
+    if(faceUp) cards.forEach(c=>markArriving(c.id));
+
     cards.forEach((card, i)=>{
       const delay = i * 150;   // cascata: le carte partono una dopo l'altra
       setTimeout(()=>{
@@ -20204,13 +20239,27 @@ global.VexFlow = VexflowNS.default || VexflowNS;
         document.body.appendChild(ghost);
 
         void ghost.offsetWidth;
-        ghost.style.left = to.left + "px";
-        ghost.style.top = to.top + "px";
+        // bersaglio: il posto che la carta occupa davvero nel ventaglio
+        // (è già lì, solo invisibile), così l'atterraggio è preciso
+        let dest = to;
+        if(faceUp){
+          const slot = document.querySelector(`.player-zone .card[data-id="${card.id}"]`);
+          if(slot){
+            const sr = slot.getBoundingClientRect();
+            dest = { left: sr.left, top: sr.top };
+          }
+        }
+        ghost.style.left = dest.left + "px";
+        ghost.style.top = dest.top + "px";
         ghost.style.transform = faceUp ? "scale(1) rotate(0deg)" : "scale(0.32) rotate(10deg)";
         ghost.style.opacity = faceUp ? "1" : "0.85";
 
         let done = false;
-        const finish = ()=>{ if(done) return; done = true; ghost.remove(); };
+        const finish = ()=>{
+          if(done) return; done = true;
+          ghost.remove();
+          if(faceUp) clearArriving(card.id);   // ora la carta compare in mano
+        };
         ghost.addEventListener("transitionend", finish, { once:true });
         setTimeout(finish, 560);
       }, delay);
@@ -20563,6 +20612,9 @@ global.VexFlow = VexflowNS.default || VexflowNS;
       el.dataset.offset = offset;
       el.dataset.rot = rot;
       el.style.zIndex = i;
+      // Se la carta sta ancora "volando" dal mazzo, tiene il suo posto nel
+      // ventaglio ma resta invisibile finché l'animazione non atterra.
+      if(arriving.has(card.id)) el.style.visibility = "hidden";
       // Tutte le carte si comportano allo stesso modo: nessun indizio visivo su
       // quali siano giocabili. La validità viene controllata solo al rilascio.
       el.classList.add(isYourTurn ? "playable" : "notyourturn");
@@ -20858,8 +20910,10 @@ global.VexFlow = VexflowNS.default || VexflowNS;
       btns.appendChild(b);
     });
 
-    quiz.classList.add("show");
+    // Prima calcolo la scala definitiva, POI mostro: così i pulsanti sono già
+    // nella loro posizione finale quando il pannello diventa toccabile.
     fitQuiz();
+    quiz.classList.add("show");
   }
 
   /* Garantisce che il riquadro del quiz stia SEMPRE dentro l'area di gioco,
@@ -20868,7 +20922,9 @@ global.VexFlow = VexflowNS.default || VexflowNS;
   function fitQuiz(){
     const quiz = document.getElementById("quiz");
     const area = document.getElementById("dropZone");
-    if(!quiz || !area || !quiz.classList.contains("show")) return;
+    if(!quiz || !area) return;
+    // funziona anche prima che il pannello sia visibile: con visibility:hidden
+    // l'elemento occupa comunque spazio e si può misurare
 
     // misuro l'ingombro NATURALE (senza scala) e poi lo riduco quel tanto
     // che basta per stare dentro l'area di gioco
@@ -20889,7 +20945,7 @@ global.VexFlow = VexflowNS.default || VexflowNS;
   }
 
   /* ---------- statistiche note ---------- */
-  // corrette/errori si azzerano a ogni partita; vinte/perse restano per la sessione
+  // Statistiche cumulative di sessione: restano fra una partita e l'altra
   let stats = { correct: 0, errors: 0, wins: 0, losses: 0 };
   const STAT_BOX = {
     correct: "statCorrectBox", errors: "statErrorsBox",
