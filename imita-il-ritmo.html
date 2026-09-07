@@ -460,9 +460,37 @@
     .challenge-card .num{ font-size:0.6rem; margin-bottom:1px; }
     .challenge-card .name{ font-size:0.78rem; line-height:1.2; }
   }
+
+/* PULSANTE "TORNA AL SITO" FISSO (porta a index.html) */
+.site-home-button {
+    position: fixed;
+    top: 18px;
+    left: 18px;
+    z-index: 999;
+    width: 44px;
+    height: 44px;
+    border-radius: 50%;
+    border: 1px solid rgba(255,255,255,0.18);
+    background: linear-gradient(180deg, rgba(255,255,255,0.12), rgba(255,255,255,0.04));
+    color: #e2e8f0;
+    font-size: 1.15rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    text-decoration: none;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+    transition: transform 0.15s ease, background 0.15s ease;
+}
+.site-home-button:hover {
+    background: linear-gradient(180deg, rgba(255,255,255,0.22), rgba(255,255,255,0.08));
+    transform: translateY(-2px);
+}
 </style>
 </head>
 <body>
+<a class="site-home-button" href="index.html" aria-label="Torna al sito" title="Torna al sito">🏠</a>
+
 
 <div class="sheet" id="screenMain" style="display:none">
   <h1>Imita il ritmo</h1>

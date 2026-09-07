@@ -1741,7 +1741,7 @@ selectStartButton.addEventListener("click", () => {
         startTheme("custom");
     }
 });
-siteHomeButton.addEventListener("click", () => {});
+siteHomeButton.addEventListener("click", () => { window.location.href = "index.html"; });
 
 playButton.addEventListener("click", () => {
     if (!currentQuestion) return;

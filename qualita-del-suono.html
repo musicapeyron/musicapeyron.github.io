@@ -149,12 +149,12 @@ h1 {
 .mode-button.m-reverb    { background: linear-gradient(135deg, #8b5cf6, #5b21b6); }
 .mode-button.m-doppler   { background: linear-gradient(135deg, #fb923c, #c2410c); }
 
-/* PULSANTE HOME FISSO */
-.home-button {
+/* PULSANTE "TORNA AL SITO" FISSO (porta a index.html) */
+.site-home-button {
     position: fixed;
     top: 18px;
     left: 18px;
-    z-index: 50;
+    z-index: 51;
     width: 44px;
     height: 44px;
     border-radius: 50%;
@@ -166,10 +166,33 @@ h1 {
     align-items: center;
     justify-content: center;
     cursor: pointer;
+    text-decoration: none;
     box-shadow: 0 4px 12px rgba(0,0,0,0.3);
     transition: transform 0.15s var(--ease-out-soft), background 0.15s, opacity 0.15s;
 }
-.home-button:hover { background: linear-gradient(180deg, rgba(255,255,255,0.2), rgba(255,255,255,0.08)); transform: translateY(-2px); }
+.site-home-button:hover { background: linear-gradient(180deg, rgba(255,255,255,0.2), rgba(255,255,255,0.08)); transform: translateY(-2px); }
+
+/* PULSANTE HOME INTERNA (torna alla schermata iniziale DI QUESTO gioco, non al sito) */
+.home-button {
+    position: fixed;
+    top: 18px;
+    left: 70px;
+    z-index: 50;
+    width: 38px;
+    height: 38px;
+    border-radius: 50%;
+    border: 1px solid rgba(255,255,255,0.12);
+    background: linear-gradient(180deg, rgba(255,255,255,0.05), rgba(255,255,255,0.01));
+    color: #94a3b8;
+    font-size: 0.95rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+    transition: transform 0.15s var(--ease-out-soft), background 0.15s, opacity 0.15s;
+}
+.home-button:hover { background: linear-gradient(180deg, rgba(255,255,255,0.15), rgba(255,255,255,0.05)); transform: translateY(-2px); }
 .home-button.hidden { opacity: 0; pointer-events: none; }
 
 /* VOLUME GLOBALE */
@@ -449,7 +472,8 @@ input[type="range"]::-moz-range-thumb {
 </head>
 <body>
 
-<button class="home-button hidden" id="homeButton" aria-label="Torna alla home" title="Torna alla home">🏠</button>
+<a class="site-home-button" href="index.html" aria-label="Torna al sito" title="Torna al sito">🏠</a>
+<button class="home-button hidden" id="homeButton" aria-label="Torna alla schermata iniziale del gioco" title="Torna alla schermata iniziale del gioco">↩</button>
 <div class="master-volume hidden" id="masterVolumeBox">
     <span class="icon">🔈</span>
     <input type="range" id="masterVolume" min="0" max="100" value="55" aria-label="Volume generale">
