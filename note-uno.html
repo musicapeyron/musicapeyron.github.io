@@ -29,20 +29,20 @@
     --black-card-2:#1e293b;
     --gold:#facc15;
     --gold-2:#f59e0b;
-    --card-w:88px;
-    --card-h:126px;
-    --oval-w:80px;
-    --oval-h:118px;
-    --staff-scale:0.575;
+    --card-w:104px;
+    --card-h:150px;
+    --oval-w:95px;
+    --oval-h:140px;
+    --staff-scale:0.68;
     --avatar-size:60px;
   }
 
   /* Schermi alti (desktop/tablet): carte più grandi, si legge meglio la nota */
   @media (min-height:700px){
     :root{
-      --card-w:102px; --card-h:146px;
-      --oval-w:93px; --oval-h:138px;
-      --staff-scale:0.665;
+      --card-w:138px; --card-h:198px;
+      --oval-w:126px; --oval-h:187px;
+      --staff-scale:0.90;
       --avatar-size:46px;
     }
   }
@@ -52,17 +52,17 @@
      sempre visibile senza uscire dallo schermo. */
   @media (max-height:560px){
     :root{
-      --card-w:70px; --card-h:100px;
-      --oval-w:64px; --oval-h:94px;
-      --staff-scale:0.455;
+      --card-w:84px; --card-h:120px;
+      --oval-w:77px; --oval-h:113px;
+      --staff-scale:0.545;
       --avatar-size:40px;
     }
   }
   @media (max-height:440px){
     :root{
-      --card-w:60px; --card-h:86px;
-      --oval-w:55px; --oval-h:81px;
-      --staff-scale:0.39;
+      --card-w:64px; --card-h:92px;
+      --oval-w:58px; --oval-h:86px;
+      --staff-scale:0.42;
       --avatar-size:32px;
     }
   }
@@ -137,11 +137,13 @@
   /* ---------- fascia messaggi, sotto il tavolo ----------
      Qui finiscono sia lo stato del turno che gli avvisi temporanei,
      così i testi lunghi non vanno mai a finire sopra i bot. */
+  /* Fascia dei messaggi: dentro il tavolo, sotto mazzo e aree di gioco */
+  /* I messaggi stanno subito sotto le aree di gioco, centrati sul tavolo.
+     Sono una riga a sé: così le aree restano equidistanti fra i bot e questo
+     testo, indipendentemente dall'altezza dei comandi sottostanti. */
   .msg-bar{
-    position:relative; z-index:2; flex:0 0 auto;
-    width:100%; max-width:1400px; height:34px;
-    display:flex; align-items:center; justify-content:center;
-    padding:0 12px;
+    position:relative; z-index:2; flex:0 0 auto; width:100%; height:34px;
+    display:flex; align-items:center; justify-content:center; padding:0 8px;
   }
   .status-bar{
     background:var(--glass-strong); padding:6px 18px; border-radius:20px;
@@ -254,9 +256,10 @@
   /* ---------- statistiche note (a destra, dentro l'area di gioco) ----------
      Stesso linguaggio visivo del gioco "Leggi la nota": riquadri in vetro
      con barretta colorata in alto e animazione a ogni aggiornamento. */
+  /* Statistiche in alto a destra, allineate alla riga dei bot */
   .stats{
-    position:absolute; right:0; top:50%; transform:translateY(-50%);
-    transform-origin:right center;
+    position:absolute; right:14px; top:14px;
+    transform-origin:right top;
     display:flex; flex-direction:column; gap:6px;
     width:min(118px, 17%); z-index:20; pointer-events:none;
   }
@@ -528,7 +531,7 @@
   /* ---------- center area (deck + discard): always centred and clear ---------- */
   .center-area{
     position:relative; display:flex; align-items:center; justify-content:center;
-    gap:26px; flex:1 1 auto; min-height:0; margin:0;
+    gap:26px; flex:1 1 auto; min-height:var(--card-h); margin:0;
   }
   @media (max-height:560px){
     .center-area{ gap:18px; }
@@ -587,6 +590,7 @@
     line-height:1; z-index:2; color:#111827;
     text-shadow:0 1px 1px rgba(255,255,255,.25);
   }
+  .card .corner.on-dark{ color:#fff; text-shadow:0 1px 3px rgba(0,0,0,0.7); }
   .card .corner.tl{ top:6px; left:7px; }
   .card .corner.br{ bottom:6px; right:7px; transform:rotate(180deg); }
 
@@ -609,8 +613,17 @@
   .card.wild .oval, .card.wild4 .oval{
     background:conic-gradient(var(--red),var(--yellow),var(--green),var(--blue),var(--red));
   }
-  .card.wild .oval::after, .card.wild4 .oval::after{
+  .card.wild .oval::after{
     content:"♪"; font-size:34px; color:#fff; text-shadow:0 0 6px rgba(0,0,0,0.5), 0 0 2px #000;
+  }
+  /* Jolly giocato: prende il colore scelto, ma l'ovale resta multicolore
+     così si riconosce che è una carta jolly. */
+  .card.wild-chosen{ box-shadow:0 0 0 3px rgba(255,255,255,0.35), 0 5px 0 rgba(0,0,0,0.2), 0 10px 18px rgba(0,0,0,0.35); }
+
+  /* scritte bianche del +4, leggibili sopra l'ovale multicolore */
+  .card .symbol.wild-num{
+    color:#fff; position:relative; z-index:2;
+    text-shadow:0 2px 4px rgba(0,0,0,0.55), 0 0 2px rgba(0,0,0,0.9);
   }
 
   /* Nessuna evidenziazione delle carte giocabili: tutte identiche,
@@ -631,29 +644,46 @@
     box-shadow:0 16px 30px rgba(0,0,0,0.6) !important;
     cursor:grabbing;
   }
-  .drop-hint{
-    position:absolute; inset:-10px; border-radius:20px;
-    border:3px dashed rgba(250,204,21,0.55); pointer-events:none; opacity:0;
-    transition:opacity .15s;
+  /* Tratteggio attorno alla PILA degli scarti quando ci si passa sopra
+     con una carta: è lì che si gioca. */
+  .discard-slot::after{
+    content:""; position:absolute; inset:-9px; border-radius:18px;
+    border:3px dashed rgba(250,204,21,0.75); pointer-events:none;
+    opacity:0; transition:opacity .15s;
   }
-  .center-area.drop-active .drop-hint{ opacity:1; }
+  .discard-slot.drop-active::after{ opacity:1; }
 
   /* ---------- player hand (own strip below the board, never overlapped) ----------
      flex:0 0 auto + altezza derivata dalla carta = la mano è "prenotata" per prima
      e non può mai essere spinta fuori schermo dal pannello di gioco. */
   .hand-strip{
-    position:relative; z-index:1; flex:0 0 auto; width:100%; max-width:1400px;
+    position:relative; z-index:1; flex:0 0 auto; width:100%;
     display:block;
-    height:calc(var(--card-h) + 26px);
-    padding-top:8px;
+    height:calc(var(--card-h) + 22px);
+    padding-top:6px;
   }
   /* Quando una carta è selezionata (o trascinata) la mano passa sopra la fascia
      dei messaggi, così la carta ingrandita non viene coperta dal testo. */
   .hand-strip.raised{ z-index:60; }
   /* Comandi ancorati a sinistra: tutorial sopra, torna al menù sotto */
-  .hand-left{
-    position:absolute; left:6px; top:50%; transform:translateY(-50%);
-    display:flex; flex-direction:column; align-items:stretch; gap:7px; z-index:40;
+  /* Riga inferiore del tavolo: comandi a sinistra, messaggi al centro,
+     Passa a destra. Essendo una riga vera non si sovrappone mai alle aree. */
+  .board-bottom{
+    display:flex; align-items:flex-end; gap:10px; flex:0 0 auto; margin-top:4px;
+  }
+  /* Le due colonne hanno la stessa larghezza minima: così la fascia dei
+     messaggi resta centrata rispetto al tavolo, non allo spazio residuo. */
+  .hand-left, .hand-side{ flex:1 1 0; min-width:0; }
+  .hand-left{ display:flex; flex-direction:column; align-items:flex-start; gap:6px; }
+  .hand-side{ display:flex; align-items:flex-end; justify-content:flex-end; }
+  @media (max-height:560px){
+    .board-bottom{ gap:6px; margin-top:2px; }
+  }
+  /* Su schermi molto bassi i comandi vanno in riga: la colonna li renderebbe
+     troppo alti, rubando spazio al centro del tavolo. */
+  @media (max-height:440px){
+    .hand-left{ flex-direction:row; align-items:center; gap:5px; }
+    .board-bottom{ align-items:center; }
   }
   .side-btn{
     font-family:"Sora","Inter",sans-serif; font-weight:700; font-size:12px;
@@ -668,10 +698,7 @@
   }
 
   /* Comandi ancorati a destra: le carte non li raggiungono mai (vedi calcolo in JS) */
-  .hand-side{
-    position:absolute; right:6px; top:50%; transform:translateY(-50%);
-    display:flex; align-items:center; gap:8px; z-index:40;
-  }
+
   .pass-btn{
     font-family:"Sora","Inter",sans-serif; font-weight:700; font-size:14px;
     border:1px solid var(--glass-border); background:var(--glass-strong); color:var(--ink-light);
@@ -713,12 +740,22 @@
      altrimenti i pulsanti in fondo finiscono fuori dalla vista. */
   .overlay{ overflow-y:auto; padding:14px 12px; }
   .opt-list{ flex:0 0 auto; }
-  .color-pick{ display:flex; gap:16px; }
+  .color-pick{ display:flex; gap:10px; flex-wrap:wrap; justify-content:center; }
   .color-pick button{
-    width:64px; height:64px; border-radius:50%; border:4px solid rgba(255,255,255,0.7);
-    cursor:pointer; box-shadow:0 6px 12px rgba(0,0,0,0.5); transition:transform .15s;
+    width:calc(50% - 5px); height:52px; border-radius:12px;
+    border:3px solid rgba(255,255,255,0.55);
+    cursor:pointer; box-shadow:0 4px 10px rgba(0,0,0,0.4); transition:transform .15s;
   }
-  .color-pick button:hover{ transform:scale(1.1); }
+  .color-pick button:hover{ transform:translateY(-2px) scale(1.03); }
+  /* Pannello della scelta colore: stesso aspetto del quiz, così la mano
+     resta visibile invece di essere sfocata dietro una tendina. */
+  .color-panel .quiz-title{ margin-bottom:12px; }
+  /* mentre si sceglie il colore le carte non si toccano, ma i pulsanti
+     Tutorial e Torna al menù restano usabili */
+  body.choosing-color .player-zone, body.choosing-color .center-area,
+  body.choosing-color .bots-row, body.choosing-color .hand-side{
+    pointer-events:none;
+  }
   .overlay h2{ font-family:"Sora","Inter",sans-serif; font-size:26px; margin:0; }
   .overlay p{ font-family:"Inter",sans-serif; color:var(--muted); margin:0; text-align:center; max-width:380px;}
   .btn-main{
@@ -916,7 +953,6 @@
     </div>
 
     <div class="center-area" id="dropZone">
-      <div class="drop-hint"></div>
       <div class="deck" id="deckAnchor">
         <div class="cardback" id="deckBtn"></div>
         <div class="deck-label" id="deckCount">Mazzo: 0</div>
@@ -934,7 +970,9 @@
       </div>
       <button class="tray-send" id="traySend">Invia</button>
 
-      <div class="stats" id="stats">
+    </div>
+
+    <div class="stats" id="stats">
         <div class="stat correct" id="statCorrectBox">
           <span class="stat-label">Corrette</span>
           <span class="stat-value" id="statCorrect">0</span>
@@ -947,28 +985,30 @@
           <span class="stat-label">Vinte</span>
           <span class="stat-value" id="statWins">0</span>
         </div>
-        <div class="stat losses" id="statLossesBox">
-          <span class="stat-label">Perse</span>
-          <span class="stat-value" id="statLosses">0</span>
-        </div>
+      <div class="stat losses" id="statLossesBox">
+        <span class="stat-label">Perse</span>
+        <span class="stat-value" id="statLosses">0</span>
+      </div>
+    </div>
+
+    <div class="msg-bar">
+      <div class="status-bar hidden" id="statusBar"></div>
+    </div>
+
+    <div class="board-bottom">
+      <div class="hand-left">
+        <button class="icon-btn" id="soundBtn" title="Attiva/disattiva audio">🔊</button>
+        <button class="side-btn" id="tutorialBtn">Tutorial</button>
+        <button class="side-btn" id="menuBtn">Torna al menù</button>
+      </div>
+      <div class="hand-side">
+        <button class="pass-btn" id="passBtn">Passa</button>
       </div>
     </div>
   </div>
 
-  <div class="msg-bar">
-    <div class="status-bar hidden" id="statusBar"></div>
-  </div>
-
   <div class="hand-strip">
     <div class="player-zone" id="playerHand"></div>
-    <div class="hand-left">
-      <button class="side-btn" id="tutorialBtn">Tutorial</button>
-      <button class="side-btn" id="menuBtn">Torna al menù</button>
-    </div>
-    <div class="hand-side">
-      <button class="icon-btn" id="soundBtn" title="Attiva/disattiva audio">🔊</button>
-      <button class="pass-btn" id="passBtn">Passa</button>
-    </div>
   </div>
 
   <div class="quiz" id="quiz">
@@ -977,8 +1017,8 @@
     <div class="quiz-feedback" id="quizFeedback"></div>
   </div>
 
-  <div class="overlay" id="colorOverlay">
-    <h2>Scegli un colore</h2>
+  <div class="quiz color-panel" id="colorOverlay">
+    <div class="quiz-title">Scegli un colore</div>
     <div class="color-pick">
       <button style="background:var(--red)" data-color="red"></button>
       <button style="background:var(--green)" data-color="green"></button>
@@ -20416,12 +20456,14 @@ global.VexFlow = VexflowNS.default || VexflowNS;
     const deck = [];
     let uid = 0;
     COLORS.forEach(color=>{
-      // one 0
-      deck.push(makeNoteCard(color, 0, uid++));
-      // two each of 1-9
-      for(let v=1; v<=9; v++){
-        deck.push(makeNoteCard(color, v, uid++));
-        deck.push(makeNoteCard(color, v, uid++));
+      /* Numero di copie calibrato perché OGNI NOME di nota esca lo stesso
+         numero di volte. L'estensione copre 10 gradi ma i nomi sono 7: i
+         valori 0-2 e 7-9 sono le due occorrenze dello stesso nome (es. il LA
+         iniziale e il LA finale), quindi ricevono meno copie dei valori
+         centrali, che compaiono una volta sola. */
+      for(let v=0; v<=9; v++){
+        const copie = (v >= 3 && v <= 6) ? 3 : (v <= 2 ? 2 : 1);
+        for(let k=0;k<copie;k++) deck.push(makeNoteCard(color, v, uid++));
       }
       // two each of skip, reverse, draw2
       for(let i=0;i<2;i++){
@@ -20490,11 +20532,13 @@ global.VexFlow = VexflowNS.default || VexflowNS;
 
     const label = cardLabel(card);
     if(card.type !== "note"){
+      // sui jolly le scritte d'angolo sono bianche, per staccare dal fondo scuro
+      const bianco = (card.type === "wild" || card.type === "wild4") ? " on-dark" : "";
       const tl = document.createElement("div");
-      tl.className = "corner tl";
+      tl.className = "corner tl" + bianco;
       tl.textContent = label;
       const br = document.createElement("div");
-      br.className = "corner br";
+      br.className = "corner br" + bianco;
       br.textContent = label;
       el.appendChild(tl);
       el.appendChild(br);
@@ -20532,11 +20576,14 @@ global.VexFlow = VexflowNS.default || VexflowNS;
     } else if(card.type === "wild"){
       // handled by CSS ::after
     } else if(card.type === "wild4"){
+      // "+4" in bianco, ben leggibile sopra l'ovale colorato
+      const s = document.createElement("div");
+      s.className = "symbol wild-num";
+      s.textContent = "+4";
+      oval.appendChild(s);
       const s2 = document.createElement("div");
-      s2.className = "symbol small";
-      s2.style.marginTop = "38px";
-      s2.style.color = "#fff";
-      s2.textContent = "+4";
+      s2.className = "symbol small wild-num";
+      s2.textContent = "♪♪";
       oval.appendChild(s2);
     }
 
@@ -20593,7 +20640,6 @@ global.VexFlow = VexflowNS.default || VexflowNS;
       dealing: true,             // tavolo in preparazione: input e bot fermi
       tray: [],                  // carte deposte per comporre una triade
       requiredInterval: null,    // intervallo richiesto in questo momento
-      ivCard: null,              // carta mostrata nell'area intervallo durante l'animazione
       ivCard: null,              // carta esposta nell'area intervallo durante l'animazione
     };
     hideQuiz();
@@ -21075,7 +21121,10 @@ global.VexFlow = VexflowNS.default || VexflowNS;
       if(i !== -1) hand.splice(i,1);
     });
     state.tray = pair.slice();
-    showBubble(p, id ? (id.root.toUpperCase() + alterSymbol(id.rootAlter) + " " + id.quality) : "Triade!");
+    // Il bot annuncia l'accordo per esteso, come se avesse risposto al quiz
+    showBubble(p, id
+      ? (id.root.toUpperCase() + alterSymbol(id.rootAlter) + " " + id.quality)
+      : (pair.length === 3 ? "Settima!" : "Triade!"));
     playWhoosh(undefined, 0.03);
     render(true);
 
@@ -21288,7 +21337,7 @@ global.VexFlow = VexflowNS.default || VexflowNS;
     b.textContent = text;
     b.classList.add("show");
     clearTimeout(b._t);
-    b._t = setTimeout(()=>b.classList.remove("show"), text && text.length > 6 ? 2700 : 1400);
+    b._t = setTimeout(()=>b.classList.remove("show"), text && text.length > 6 ? 3200 : 1400);
   }
 
   function showEnd(title){
@@ -21541,7 +21590,9 @@ global.VexFlow = VexflowNS.default || VexflowNS;
       hint.textContent = trayNeedsSend() ? "Trascina qui 2 o 3 carte"
                        : (trayCapacity() === 3 ? "Trascina qui 3 carte" : "Trascina qui 2 carte");
       wrap.appendChild(hint);
-      wrap.style.width = "";
+      const cs0 = getComputedStyle(document.documentElement);
+      const cw0 = parseFloat(cs0.getPropertyValue("--card-w")) || 88;
+      wrap.style.width = (cw0 + cw0 * 0.66 * (trayCapacity() - 1)) + "px";
       wrap.style.height = "";
       return;
     }
@@ -21550,7 +21601,10 @@ global.VexFlow = VexflowNS.default || VexflowNS;
     const cardW = parseFloat(cs.getPropertyValue("--card-w")) || 88;
     // scoperto sufficiente a lasciare visibile chiave e nota di ogni carta
     const step = cardW * 0.66;
-    wrap.style.width = (cardW + step * (tray.length - 1)) + "px";
+    // La larghezza resta FISSA sulla capienza massima: così l'area non si
+    // ridimensiona man mano che si aggiungono carte e le altre zone del
+    // tavolo non si spostano.
+    wrap.style.width = (cardW + step * (trayCapacity() - 1)) + "px";
 
     tray.forEach((card, i)=>{
       const el = buildCardEl(card);
@@ -21613,10 +21667,9 @@ global.VexFlow = VexflowNS.default || VexflowNS;
     const [card] = state.tray.splice(i, 1);
     state.hands.you.push(card);
     playWhoosh(undefined, 0.03);
+    // torna in mano SOLO la carta toccata: le altre restano nell'area
     hideQuiz();
     state.triadQuizPending = false;
-    state.tray = [];
-    intervalPool = null;   // la modalità di chiave può essere cambiata
     render(true);
   }
 
@@ -21668,14 +21721,11 @@ global.VexFlow = VexflowNS.default || VexflowNS;
       lastDiscardId = top.id;
     }
     discardSlot.appendChild(topEl);
-    if(top.color === "black"){
-      const ring = document.createElement("div");
-      ring.style.position = "absolute";
-      ring.style.inset = "-6px";
-      ring.style.borderRadius = "12px";
-      ring.style.border = "4px solid " + cssColor(state.currentColor);
-      ring.style.pointerEvents = "none";
-      discardSlot.appendChild(ring);
+    if(top.color === "black" && state.currentColor){
+      // Un jolly giocato prende il colore scelto: la carta stessa cambia
+      // tinta, così si vede a colpo d'occhio su cosa si sta giocando.
+      topEl.classList.remove("black");
+      topEl.classList.add(state.currentColor, "wild-chosen");
     }
     }
 
@@ -21725,13 +21775,9 @@ global.VexFlow = VexflowNS.default || VexflowNS;
     const cs = getComputedStyle(document.documentElement);
     const cardW = parseFloat(cs.getPropertyValue("--card-w")) || 88;
     const staffScale = parseFloat(cs.getPropertyValue("--staff-scale")) || 0.6;
-    const sideEl = document.querySelector(".hand-side");
-    const leftEl = document.querySelector(".hand-left");
-    const reserveRight = sideEl ? sideEl.getBoundingClientRect().width + 28 : 0;
-    const reserveLeft = leftEl ? leftEl.getBoundingClientRect().width + 24 : 10;
-
-    const regionLeft = reserveLeft;
-    const regionRight = Math.max(handWrap.clientWidth - reserveRight, regionLeft + cardW);
+    // i comandi ora stanno dentro il tavolo: la mano ha tutta la larghezza
+    const regionLeft = 12;
+    const regionRight = Math.max(handWrap.clientWidth - 12, regionLeft + cardW);
     const regionW = regionRight - regionLeft;
     const regionCenter = regionLeft + regionW / 2;
 
@@ -21891,19 +21937,17 @@ global.VexFlow = VexflowNS.default || VexflowNS;
           el.style.left = (ev.clientX - offsetX) + "px";
           el.style.top = (ev.clientY - offsetY) + "px";
 
-          // Il tavolo si evidenzia solo quando la carta ci passa davvero sopra
-          const dzr = document.getElementById("dropZone").getBoundingClientRect();
-          const pad = 60;
-          const over = ev.clientX >= dzr.left - pad && ev.clientX <= dzr.right + pad &&
-                       ev.clientY >= dzr.top - pad && ev.clientY <= dzr.bottom + pad;
+          // La pila si evidenzia solo quando la carta ci passa davvero sopra
+          const pilaEl2 = document.getElementById("discardSlot");
+          const over = pilaEl2 && isOver(pilaEl2, ev.clientX, ev.clientY, 34);
           const trayEl2 = document.getElementById("tray");
           const ivEl2 = document.getElementById("ivBox");
           const overTray2 = (triadMode || seventhMode) && trayEl2 && isOver(trayEl2, ev.clientX, ev.clientY, 24);
           const overIv2 = intervalMode && ivEl2 && isOver(ivEl2, ev.clientX, ev.clientY, 24);
           if(trayEl2) trayEl2.classList.toggle("over", !!overTray2 && currentPlayer() === "you");
           if(ivEl2) ivEl2.classList.toggle("over", !!overIv2 && currentPlayer() === "you");
-          document.getElementById("dropZone").classList.toggle("drop-active",
-            over && !overTray2 && !overIv2 && currentPlayer() === "you" && !state.quizPending);
+          document.getElementById("discardSlot").classList.toggle("drop-active",
+            !!over && !overTray2 && !overIv2 && currentPlayer() === "you" && !state.quizPending);
 
           // Anteprima del riordino: le altre carte si spostano davvero
           // per fare spazio, prima ancora del rilascio.
@@ -21928,13 +21972,13 @@ global.VexFlow = VexflowNS.default || VexflowNS;
         el.removeEventListener("pointermove", onMove);
         el.removeEventListener("pointerup", onUp);
         el.removeEventListener("pointercancel", onUp);
-        document.getElementById("dropZone").classList.remove("drop-active");
+        document.getElementById("discardSlot").classList.remove("drop-active");
 
         if(dragging){
-          const dz = document.getElementById("dropZone").getBoundingClientRect();
-          const pad = 60;
-          const overTable = ev.clientX >= dz.left - pad && ev.clientX <= dz.right + pad &&
-                             ev.clientY >= dz.top - pad && ev.clientY <= dz.bottom + pad;
+          // Si gioca solo rilasciando SOPRA la pila degli scarti, non
+          // ovunque sul tavolo.
+          const pilaEl = document.getElementById("discardSlot");
+          const overTable = pilaEl && isOver(pilaEl, ev.clientX, ev.clientY, 34);
 
           // le aree delle modalità hanno la precedenza sul resto del tavolo
           const trayEl = document.getElementById("tray");
@@ -22051,11 +22095,17 @@ global.VexFlow = VexflowNS.default || VexflowNS;
     const askQuiz = card.type === "note";
     if(card.color === "black"){
       const overlay = document.getElementById("colorOverlay");
+      // il pannello si colloca come quello del quiz e blocca solo le carte
+      fitPanel(overlay);
       overlay.classList.add("show");
+      document.body.classList.add("choosing-color");
+      requestAnimationFrame(()=>fitPanel(overlay));
       const handler = (e)=>{
         const btn = e.target.closest("button[data-color]");
         if(!btn) return;
+        playClick();
         overlay.classList.remove("show");
+        document.body.classList.remove("choosing-color");
         overlay.removeEventListener("click", handler);
         state.quizPending = askQuiz;
         playCard("you", card, btn.dataset.color);
@@ -22416,8 +22466,9 @@ global.VexFlow = VexflowNS.default || VexflowNS;
      carta in cima alla pila né i pulsanti Tutorial / Torna al menù.
      Sceglie il lato con più spazio libero: a sinistra della pila oppure a
      destra delle aree di gioco. */
-  function fitQuiz(){
-    const quiz = document.getElementById("quiz");
+  function fitQuiz(){ fitPanel(document.getElementById("quiz")); }
+
+  function fitPanel(quiz){
     if(!quiz) return;
 
     const vw = window.innerWidth, vh = window.innerHeight;
@@ -22492,16 +22543,18 @@ global.VexFlow = VexflowNS.default || VexflowNS;
 
   /* Come il quiz: se i quattro riquadri non ci stanno in altezza,
      vengono ridotti quel tanto che basta per restare dentro il tavolo. */
+  /* Le statistiche stanno in alto a destra nel tavolo, allineate ai bot.
+     Se non ci stanno in altezza vengono rimpicciolite, senza spostarle. */
   function fitStats(){
     const box = document.getElementById("stats");
-    const area = document.getElementById("dropZone");
-    if(!box || !area) return;
-    box.style.transform = "translateY(-50%) scale(1)";
-    const availH = area.clientHeight;
+    const board = document.querySelector(".board");
+    if(!box || !board) return;
+    box.style.transform = "none";
+    const availH = board.clientHeight - 28;
     const h = box.offsetHeight;
     if(!h || availH <= 0) return;
     const scale = Math.max(0.5, Math.min(1, availH / h));
-    box.style.transform = `translateY(-50%) scale(${scale})`;
+    if(scale < 1) box.style.transform = `scale(${scale})`;
   }
 
   function bumpStat(which){
