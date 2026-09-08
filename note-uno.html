@@ -86,10 +86,13 @@
     padding:12px 12px 6px 12px; gap:8px;
     overflow:hidden;
   }
+  /* Trama di sfondo senza mix-blend-mode: la fusione dei colori obbliga la
+     GPU a ricomporre l'intero schermo a ogni fotogramma. Lo stesso effetto si
+     ottiene con un velo bianco molto tenue. */
   #app::before{
-    content:""; position:fixed; inset:0; z-index:0; pointer-events:none; opacity:.5;
-    background-image:radial-gradient(rgba(255,255,255,0.035) 1px, transparent 1px);
-    background-size:3px 3px; mix-blend-mode:overlay;
+    content:""; position:fixed; inset:0; z-index:0; pointer-events:none; opacity:.35;
+    background-image:radial-gradient(rgba(255,255,255,0.05) 1px, transparent 1px);
+    background-size:3px 3px;
   }
 
   /* ---------- rotate overlay for mobile portrait ---------- */
@@ -116,7 +119,10 @@
     border:1px solid var(--glass-border);
     border-radius:22px;
     box-shadow:0 1px 0 rgba(255,255,255,0.06) inset, 0 20px 50px rgba(0,0,0,0.45);
-    backdrop-filter:blur(16px) saturate(140%);
+    /* niente backdrop-filter: la sfocatura andrebbe ricalcolata a ogni
+       fotogramma su quasi tutto lo schermo. Il vetro si ottiene lo stesso
+       con un velo chiaro e il bordo luminoso. */
+    background-color:rgba(255,255,255,0.03);
     padding:12px 16px 14px;
     display:flex; flex-direction:column; gap:10px;
   }
@@ -141,8 +147,11 @@
   /* I messaggi stanno subito sotto le aree di gioco, centrati sul tavolo.
      Sono una riga a sé: così le aree restano equidistanti fra i bot e questo
      testo, indipendentemente dall'altezza dei comandi sottostanti. */
+  /* I messaggi stanno sulla stessa riga del pulsante Passa, in fondo al
+     tavolo, e restano centrati perché le due colonne laterali hanno la
+     stessa quota elastica. */
   .msg-bar{
-    position:relative; z-index:2; flex:0 0 auto; width:100%; height:34px;
+    position:relative; z-index:2; flex:0 1 auto; min-width:0; height:34px;
     display:flex; align-items:center; justify-content:center; padding:0 8px;
   }
   .status-bar{
@@ -431,15 +440,20 @@
 
   .status-bar.hidden{ visibility:hidden; }
   /* Lampeggio quando tocca al giocatore */
+  /* Lampeggio del turno: si limita a un paio di battiti e poi si ferma, e
+     agisce sull'opacità invece che sull'ombra. Un'animazione infinita che
+     anima l'ombra costringe il telefono a ridisegnare 60 volte al secondo
+     anche a schermo fermo, con consumo e calore inutili. */
   .status-bar.your-turn{
     background:rgba(250,204,21,0.16);
     border-color:rgba(250,204,21,0.55);
     color:#fde68a;
-    animation:turnPulse 1.15s ease-in-out infinite;
+    box-shadow:0 0 0 2px rgba(250,204,21,0.35);
+    animation:turnPulse 1.05s ease-in-out 3;
   }
   @keyframes turnPulse{
-    0%,100%{ box-shadow:0 0 0 0 rgba(250,204,21,0.5); opacity:1; }
-    50%{ box-shadow:0 0 0 7px rgba(250,204,21,0); opacity:.72; }
+    0%,100%{ opacity:1; }
+    50%{ opacity:.6; }
   }
   @media (prefers-reduced-motion:reduce){
     .status-bar.your-turn{ animation:none; box-shadow:0 0 0 2px rgba(250,204,21,0.6); }
@@ -469,11 +483,12 @@
   }
   .bot.active{
     background:rgba(250,204,21,0.10);
-    animation:botPulse 1.15s ease-in-out infinite;
+    box-shadow:0 0 0 2px var(--gold);
+    animation:botPulse 1.05s ease-in-out 3;
   }
   @keyframes botPulse{
-    0%,100%{ box-shadow:0 0 0 2px var(--gold), 0 0 0 0 rgba(250,204,21,0.45); }
-    50%{ box-shadow:0 0 0 2px rgba(250,204,21,0.55), 0 0 0 8px rgba(250,204,21,0); }
+    0%,100%{ opacity:1; }
+    50%{ opacity:.68; }
   }
   @media (prefers-reduced-motion:reduce){
     .bot.active{ animation:none; box-shadow:0 0 0 2px var(--gold); }
@@ -669,7 +684,7 @@
   /* Riga inferiore del tavolo: comandi a sinistra, messaggi al centro,
      Passa a destra. Essendo una riga vera non si sovrappone mai alle aree. */
   .board-bottom{
-    display:flex; align-items:flex-end; gap:10px; flex:0 0 auto; margin-top:4px;
+    display:flex; align-items:center; gap:10px; flex:0 0 auto; margin-top:4px;
   }
   /* Le due colonne hanno la stessa larghezza minima: così la fascia dei
      messaggi resta centrata rispetto al tavolo, non allo spazio residuo. */
@@ -733,7 +748,6 @@
   .overlay{
     position:fixed; inset:0; background:rgba(15,23,42,0.82);
     display:none; align-items:center; justify-content:center; z-index:100; flex-direction:column; gap:18px;
-    backdrop-filter:blur(6px);
   }
   .overlay.show{ display:flex; }
   /* Sugli schermi bassi il contenuto degli overlay deve poter scorrere,
@@ -991,15 +1005,14 @@
       </div>
     </div>
 
-    <div class="msg-bar">
-      <div class="status-bar hidden" id="statusBar"></div>
-    </div>
-
     <div class="board-bottom">
       <div class="hand-left">
         <button class="icon-btn" id="soundBtn" title="Attiva/disattiva audio">🔊</button>
         <button class="side-btn" id="tutorialBtn">Tutorial</button>
         <button class="side-btn" id="menuBtn">Torna al menù</button>
+      </div>
+      <div class="msg-bar">
+        <div class="status-bar hidden" id="statusBar"></div>
       </div>
       <div class="hand-side">
         <button class="pass-btn" id="passBtn">Passa</button>
