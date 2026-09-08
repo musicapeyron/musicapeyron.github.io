@@ -164,14 +164,17 @@
   .topbar-spacer{ }
   /* ---------- quiz "Che nota hai giocato?" (a sinistra, dentro l'area di gioco) ----------
      Sta dentro .center-area, quindi resta sempre sotto la riga dei bot. */
+  /* Il pannello del quiz può passare sopra tavolo, bot e mano: la sua
+     posizione viene calcolata in JS per non coprire mai la carta in cima alla
+     pila né i pulsanti Tutorial / Torna al menù. */
   .quiz{
-    position:absolute; left:0; top:50%; transform:translateY(-50%);
+    position:fixed; left:0; top:0;
     transform-origin:left center;
-    width:min(280px, 30%);
-    background:linear-gradient(180deg, rgba(255,255,255,0.10), rgba(255,255,255,0.05));
-    border:1px solid var(--glass-border); border-radius:18px;
-    padding:14px 14px 12px; z-index:45;
-    box-shadow:0 1px 0 rgba(255,255,255,0.07) inset, 0 16px 34px rgba(0,0,0,0.35);
+    width:280px;
+    background:#232045;
+    border:1px solid rgba(255,255,255,0.18); border-radius:18px;
+    padding:14px 14px 12px; z-index:70;
+    box-shadow:0 1px 0 rgba(255,255,255,0.07) inset, 0 20px 50px rgba(0,0,0,0.55);
     opacity:0; pointer-events:none; visibility:hidden;
     /* Solo dissolvenza, nessun movimento: se il pannello scivolasse mentre
        compare, un tocco immediato sui pulsanti della prima riga (DO, RE, MI)
@@ -314,7 +317,21 @@
     height:calc(var(--card-h) + 16px);
     align-items:center; justify-content:center;
   }
-  body.triad-mode #tray{ display:flex; }
+  body.triad-mode #tray, body.seventh-mode #tray{ display:flex; }
+  /* Pulsante per confermare l'accordo quando si può scegliere fra due e tre carte */
+  .tray-send{
+    display:none; align-self:center; margin-left:8px;
+    font-family:"Sora","Inter",sans-serif; font-weight:700; font-size:12px;
+    background:rgba(34,197,94,0.25); border:1px solid rgba(134,239,172,0.6);
+    color:#eafff1; padding:9px 14px; border-radius:11px; cursor:pointer;
+    white-space:nowrap; transition:background .15s ease, transform .12s ease;
+  }
+  .tray-send.show{ display:block; }
+  .tray-send:hover:not(:disabled){ background:rgba(34,197,94,0.42); transform:translateY(-2px); }
+  .tray-send:disabled{ opacity:.35; cursor:not-allowed; }
+  @media (max-height:560px){
+    .tray-send{ font-size:10.5px; padding:7px 10px; border-radius:9px; margin-left:5px; }
+  }
   body.interval-mode #ivBox{ display:flex; }
   .tray.ivbox{ min-width:calc(var(--card-w) + 20px); }
   .tray.ivbox .tray-label{
@@ -912,15 +929,10 @@
       </div>
 
       <div class="tray" id="tray">
-        <div class="tray-label">Triade</div>
+        <div class="tray-label" id="trayLabel">Triade</div>
         <div class="tray-cards" id="trayCards"></div>
       </div>
-
-      <div class="quiz" id="quiz">
-        <div class="quiz-title" id="quizTitle">Che nota hai giocato?</div>
-        <div class="quiz-buttons" id="quizButtons"></div>
-        <div class="quiz-feedback" id="quizFeedback"></div>
-      </div>
+      <button class="tray-send" id="traySend">Invia</button>
 
       <div class="stats" id="stats">
         <div class="stat correct" id="statCorrectBox">
@@ -957,6 +969,12 @@
       <button class="icon-btn" id="soundBtn" title="Attiva/disattiva audio">🔊</button>
       <button class="pass-btn" id="passBtn">Passa</button>
     </div>
+  </div>
+
+  <div class="quiz" id="quiz">
+    <div class="quiz-title" id="quizTitle">Che nota hai giocato?</div>
+    <div class="quiz-buttons" id="quizButtons"></div>
+    <div class="quiz-feedback" id="quizFeedback"></div>
   </div>
 
   <div class="overlay" id="colorOverlay">
@@ -1009,6 +1027,7 @@
       <p class="opt-section">Modalità di gioco</p>
       <div class="chips">
         <button class="chip" id="triadOpt">Triadi</button>
+        <button class="chip" id="seventhOpt">Settime</button>
         <button class="chip" id="intervalOpt">Intervalli</button>
         <button class="chip sub" id="intervalDirOpt">Ascendenti o discendenti</button>
       </div>
@@ -20086,6 +20105,8 @@ global.VexFlow = VexflowNS.default || VexflowNS;
   let clefMode = "both";
   // Modalità triadi: si può attivare insieme a qualsiasi modalità di chiave
   let triadMode = false;
+  // Modalità settime: si cala una carta in più e si forma un accordo di quattro suoni
+  let seventhMode = false;
   // Modalità intervalli: combinabile con tutte le altre
   let intervalMode = false;
   // Se attivo, conta anche se l'intervallo sale o scende; altrimenti basta
@@ -20270,6 +20291,24 @@ global.VexFlow = VexflowNS.default || VexflowNS;
     "0,4,8": "aumentata"
   };
 
+  /* Accordi di settima, sempre in semitoni dalla fondamentale.
+     Gli ultimi due nascono solo nella minore armonica (sul I e sul III grado). */
+  const SEVENTH_SHAPES = {
+    "0,4,7,11": "maggiore",
+    "0,4,7,10": "di dominante",
+    "0,3,7,10": "minore",
+    "0,3,6,10": "semidiminuita",
+    "0,3,6,9":  "diminuita",
+    "0,3,7,11": "minore con 7ª maggiore",
+    "0,4,8,11": "aumentata con 7ª maggiore"
+  };
+
+  const SEVENTH_LABELS = [
+    ["maggiore","MAG7"], ["di dominante","DOM7"], ["minore","MIN7"],
+    ["semidiminuita","SEMID"], ["diminuita","DIM7"],
+    ["minore con 7ª maggiore","mMAG7"], ["aumentata con 7ª maggiore","AUM7"]
+  ];
+
   /* Identifica la triade a partire dalle CARTE, usando le altezze reali
      (quindi tenendo conto delle alterazioni in armatura). I nomi delle note
      devono essere tre diversi: una triade è fatta di terze sovrapposte. */
@@ -20295,6 +20334,45 @@ global.VexFlow = VexflowNS.default || VexflowNS;
   function cardsFormTriad(cards){
     if(!cards || cards.length !== 3) return null;
     return triadIdentity(cards);
+  }
+
+  /* Identifica un accordo di settima dalle quattro carte. Come per le triadi
+     si usano le altezze reali, e i quattro nomi devono essere tutti diversi
+     (l'accordo è fatto di terze sovrapposte). */
+  function seventhIdentity(cards){
+    if(!cards || cards.length !== 4) return null;
+    if(cards.some(c => !c || c.type !== "note" || c.midi == null)) return null;
+    const names = cards.map(cardSolfa);
+    if(new Set(names).size !== 4) return null;
+    const pcs = cards.map(c => ((c.midi % 12) + 12) % 12);
+    for(let i=0;i<4;i++){
+      const rel = pcs.map(p => (p - pcs[i] + 12) % 12).sort((a,b)=>a-b).join(",");
+      const quality = SEVENTH_SHAPES[rel];
+      if(quality) return { root: names[i], quality, rootAlter: cards[i].alter || 0 };
+    }
+    return null;
+  }
+
+  function cardsFormSeventh(cards){
+    if(!cards || cards.length !== 4) return null;
+    return seventhIdentity(cards);
+  }
+
+  // Le carte in gioco: la cima della pila più quelle deposte nell'area
+  function trayChordCards(tray){
+    const top = topDiscard();
+    if(!top || top.type !== "note") return null;
+    if(!tray || !tray.length) return null;
+    return [top, ...tray];
+  }
+
+  // L'accordo attualmente composto nell'area (triade con 2 carte, settima con 3)
+  function currentTrayChord(){
+    const cards = trayChordCards(state.tray);
+    if(!cards) return null;
+    if(cards.length === 3) return { kind:"triade", id: cardsFormTriad(cards) };
+    if(cards.length === 4) return { kind:"settima", id: cardsFormSeventh(cards) };
+    return null;
   }
 
   // La triade in gioco: la carta in cima alla pila fa da terza nota,
@@ -20492,7 +20570,7 @@ global.VexFlow = VexflowNS.default || VexflowNS;
     // una alla volta durante l'animazione.
     const dealPlan = [];
     // in modalità triadi si cala di più, quindi si parte con più carte
-    const handSize = (triadMode || intervalMode) ? 10 : 7;
+    const handSize = seventhMode ? 12 : ((triadMode || intervalMode) ? 10 : 7);
     for(let r=0;r<handSize;r++){
       PLAYERS.forEach(p=>{ dealPlan.push({ player:p, card: deck.pop() }); });
     }
@@ -20973,10 +21051,24 @@ global.VexFlow = VexflowNS.default || VexflowNS;
 
   // Il bot depone le due carte nel vassoio, le lascia in vista un momento
   // (così il giocatore vede come si compone la triade) e poi le cala.
+  // Tre carte che, con la nota in cima, formino un accordo di settima
+  function findBotSeventh(hand){
+    const top = topDiscard();
+    if(!top || top.type !== "note") return null;
+    const notes = hand.filter(c => c.type === "note");
+    for(let i=0;i<notes.length-2;i++)
+      for(let j=i+1;j<notes.length-1;j++)
+        for(let k=j+1;k<notes.length;k++){
+          if(cardsFormSeventh([top, notes[i], notes[j], notes[k]]))
+            return [notes[i], notes[j], notes[k]];
+        }
+    return null;
+  }
+
   function botPlayTriad(p, pair){
     const hand = state.hands[p];
-    const trio = trayTriadCards(pair) || [topDiscard(), pair[0], pair[1]];
-    const id = cardsFormTriad(trio);
+    const trio = [topDiscard(), ...pair];
+    const id = pair.length === 3 ? cardsFormSeventh(trio) : cardsFormTriad(trio);
 
     pair.forEach(c=>{
       const i = hand.findIndex(x => x.id === c.id);
@@ -21034,6 +21126,13 @@ global.VexFlow = VexflowNS.default || VexflowNS;
           sameInterval(intervalBetween(top, c), state.requiredInterval));
         if(match){ botPlayInterval(p, match); return; }
       }
+    }
+
+    // Con le settime attive il bot ci prova per primo, ma non sempre:
+    // calare tre carte in un colpo è già un grande vantaggio.
+    if(seventhMode && Math.random() < 0.55){
+      const sept = findBotSeventh(hand);
+      if(sept){ botPlayTriad(p, sept); return; }
     }
 
     // In modalità triadi il bot cala sempre l'accordo, se può farlo
@@ -21425,12 +21524,22 @@ global.VexFlow = VexflowNS.default || VexflowNS;
     wrap.innerHTML = "";
     const tray = state.tray || [];
 
-    if(!triadMode){ wrap.style.width = "0px"; return; }
+    if(!triadMode && !seventhMode){ wrap.style.width = "0px"; return; }
+
+    const lab = document.getElementById("trayLabel");
+    if(lab) lab.textContent = trayTitle();
+
+    const send = document.getElementById("traySend");
+    if(send){
+      send.classList.toggle("show", trayNeedsSend());
+      send.disabled = !(tray.length >= 2 && currentPlayer() === "you" && !state.triadQuizPending);
+    }
 
     if(tray.length === 0){
       const hint = document.createElement("div");
       hint.className = "tray-empty";
-      hint.textContent = "Trascina qui 2 carte";
+      hint.textContent = trayNeedsSend() ? "Trascina qui 2 o 3 carte"
+                       : (trayCapacity() === 3 ? "Trascina qui 3 carte" : "Trascina qui 2 carte");
       wrap.appendChild(hint);
       wrap.style.width = "";
       wrap.style.height = "";
@@ -21458,9 +21567,25 @@ global.VexFlow = VexflowNS.default || VexflowNS;
     });
   }
 
+  // Quante carte accetta l'area: 2 per la triade, 3 per la settima
+  function trayCapacity(){
+    return seventhMode ? 3 : 2;
+  }
+
+  // Serve il pulsante Invia? Solo quando si può scegliere fra triade e settima
+  function trayNeedsSend(){
+    return triadMode && seventhMode;
+  }
+
+  function trayTitle(){
+    if(triadMode && seventhMode) return "Triade + Settima";
+    if(seventhMode) return "Settima";
+    return "Triade";
+  }
+
   function addToTray(card){
-    if(!triadMode) return false;
-    if(state.tray.length >= 2) return false;   // la terza nota è quella sul tavolo
+    if(!triadMode && !seventhMode) return false;
+    if(state.tray.length >= trayCapacity()) return false;
     const i = state.hands.you.findIndex(c => c.id === card.id);
     if(i === -1) return false;
     if(card.type !== "note"){
@@ -21476,7 +21601,9 @@ global.VexFlow = VexflowNS.default || VexflowNS;
     state.tray.push(card);
     playWhoosh(undefined, 0.03);
     render(true);
-    if(state.tray.length === 2) showTriadQuiz();
+    // Con una sola modalità attiva la domanda parte da sola appena l'accordo
+    // è completo; con entrambe attive decide il giocatore, premendo Invia.
+    if(!trayNeedsSend() && state.tray.length === trayCapacity()) showChordQuiz();
     return true;
   }
 
@@ -21771,7 +21898,7 @@ global.VexFlow = VexflowNS.default || VexflowNS;
                        ev.clientY >= dzr.top - pad && ev.clientY <= dzr.bottom + pad;
           const trayEl2 = document.getElementById("tray");
           const ivEl2 = document.getElementById("ivBox");
-          const overTray2 = triadMode && trayEl2 && isOver(trayEl2, ev.clientX, ev.clientY, 24);
+          const overTray2 = (triadMode || seventhMode) && trayEl2 && isOver(trayEl2, ev.clientX, ev.clientY, 24);
           const overIv2 = intervalMode && ivEl2 && isOver(ivEl2, ev.clientX, ev.clientY, 24);
           if(trayEl2) trayEl2.classList.toggle("over", !!overTray2 && currentPlayer() === "you");
           if(ivEl2) ivEl2.classList.toggle("over", !!overIv2 && currentPlayer() === "you");
@@ -21812,7 +21939,7 @@ global.VexFlow = VexflowNS.default || VexflowNS;
           // le aree delle modalità hanno la precedenza sul resto del tavolo
           const trayEl = document.getElementById("tray");
           const ivEl = document.getElementById("ivBox");
-          const overTray = triadMode && trayEl && isOver(trayEl, ev.clientX, ev.clientY, 24);
+          const overTray = (triadMode || seventhMode) && trayEl && isOver(trayEl, ev.clientX, ev.clientY, 24);
           const overIv = intervalMode && ivEl && isOver(ivEl, ev.clientX, ev.clientY, 24);
           if(trayEl) trayEl.classList.remove("over");
           if(ivEl) ivEl.classList.remove("over");
@@ -21948,15 +22075,20 @@ global.VexFlow = VexflowNS.default || VexflowNS;
   const NOTE_ORDER = ["do","re","mi","fa","sol","la","si"];
   const LETTER_TO_SOLFA = { c:"do", d:"re", e:"mi", f:"fa", g:"sol", a:"la", b:"si" };
 
-  /* ---------- quiz della triade ---------- */
-  function showTriadQuiz(){
+  /* ---------- quiz dell'accordo (triade o settima) ---------- */
+  function showChordQuiz(){
     const quiz = document.getElementById("quiz");
     const title = document.getElementById("quizTitle");
     const btns = document.getElementById("quizButtons");
     const feedback = document.getElementById("quizFeedback");
 
+    const chord = currentTrayChord();
+    const kind = chord ? chord.kind : "triade";
+
     state.triadQuizPending = true;
-    title.textContent = "Che triade hai completato?";
+    title.textContent = kind === "settima"
+      ? "Che settima hai completato?"
+      : "Che triade hai completato?";
     feedback.textContent = "";
     feedback.className = "quiz-feedback";
     btns.innerHTML = "";
@@ -21984,13 +22116,16 @@ global.VexFlow = VexflowNS.default || VexflowNS;
 
     btns.appendChild(rowBreak());
 
-    // nelle minori armoniche compaiono anche le triadi aumentate
-    [["maggiore","MAGG."],["minore","MIN."],["diminuita","DIM."],["aumentata","AUM."]]
-      .forEach(([q,lab])=>{
+    const tipi = kind === "settima"
+      ? SEVENTH_LABELS
+      : [["maggiore","MAGG."],["minore","MIN."],["diminuita","DIM."],["aumentata","AUM."]];
+    const classe = kind === "settima" ? "note-btn third" : "note-btn quarter";
+    tipi.forEach(([q,lab])=>{
       const b = document.createElement("button");
-      b.className = "note-btn quarter";
+      b.className = classe;
       b.dataset.quality = q;
       b.textContent = lab;
+      b.title = q;
       b.addEventListener("pointerdown", (ev)=>{ ev.preventDefault(); pickQuality = q; paint(); });
       btns.appendChild(b);
     });
@@ -22017,25 +22152,22 @@ global.VexFlow = VexflowNS.default || VexflowNS;
     send.addEventListener("pointerdown", (ev)=>{
       ev.preventDefault();
       if(!pickRoot || !pickQuality) return;
-      submitTriadAnswer(pickRoot, pickQuality, feedback);
+      submitChordAnswer(pickRoot, pickQuality, feedback, kind);
     });
     btns.appendChild(send);
 
     paint();
     fitQuiz();
     quiz.classList.add("show");
+    // secondo passaggio: dopo la comparsa le misure sono definitive
+    requestAnimationFrame(fitQuiz);
   }
 
-  // separatore che manda i pulsanti successivi su una riga nuova
-  function rowBreak(){
-    const d = document.createElement("div");
-    d.className = "row-break";
-    return d;
-  }
-
-  function submitTriadAnswer(root, quality, feedback){
-    const truth = currentTrayTriad();
+  function submitChordAnswer(root, quality, feedback, kind){
+    const chord = currentTrayChord();
+    const truth = chord ? chord.id : null;
     const right = truth && truth.root === root && truth.quality === quality;
+    const cosa = kind === "settima" ? "settima" : "triade";
 
     if(right){
       feedback.textContent = "Esatto: " + root.toUpperCase() +
@@ -22045,15 +22177,12 @@ global.VexFlow = VexflowNS.default || VexflowNS;
       setTimeout(()=>{
         hideQuiz();
         state.triadQuizPending = false;
-        commitTriad();
+        commitChord();
       }, 620);
     } else {
-      // Sbagliato sia se la risposta è errata, sia se quelle tre note non
-      // formano affatto una triade: in entrambi i casi si segna un errore
-      // e le carte del vassoio tornano in mano.
       const nome = truth
         ? ("era " + truth.root.toUpperCase() + alterSymbol(truth.rootAlter) + " " + truth.quality)
-        : "quelle tre note non formano una triade";
+        : ("quelle note non formano " + (kind === "settima" ? "una settima" : "una triade"));
       feedback.textContent = "Sbagliato, " + nome + "!";
       feedback.className = "quiz-feedback ko";
       playQuizSound(false);
@@ -22073,10 +22202,10 @@ global.VexFlow = VexflowNS.default || VexflowNS;
     }
   }
 
-  // La triade è accettata: le due carte del vassoio finiscono sulla pila,
+  // L'accordo è accettato: le carte dell'area finiscono sulla pila,
   // con quella più a destra in cima.
-  function commitTriad(){
-    const trio = trayTriadCards(state.tray);   // include la carta già sul tavolo
+  function commitChord(){
+    const trio = trayChordCards(state.tray);
     const cards = state.tray.slice();
     state.dealing = true;                      // input fermo durante la festa
     celebrateTriad(trio, ()=>{
@@ -22084,6 +22213,13 @@ global.VexFlow = VexflowNS.default || VexflowNS;
       state.tray = [];
       finishTriad(cards);
     });
+  }
+
+  // separatore che manda i pulsanti successivi su una riga nuova
+  function rowBreak(){
+    const d = document.createElement("div");
+    d.className = "row-break";
+    return d;
   }
 
   function finishTriad(cards){
@@ -22276,29 +22412,62 @@ global.VexFlow = VexflowNS.default || VexflowNS;
   /* Garantisce che il riquadro del quiz stia SEMPRE dentro l'area di gioco,
      senza sconfinare né sopra (riga dei bot) né sotto, su qualunque schermo:
      se non ci sta, viene rimpicciolito quel tanto che basta. */
+  /* Colloca il pannello del quiz: può coprire tavolo, bot e mano, ma mai la
+     carta in cima alla pila né i pulsanti Tutorial / Torna al menù.
+     Sceglie il lato con più spazio libero: a sinistra della pila oppure a
+     destra delle aree di gioco. */
   function fitQuiz(){
     const quiz = document.getElementById("quiz");
-    const area = document.getElementById("dropZone");
-    if(!quiz || !area) return;
-    // funziona anche prima che il pannello sia visibile: con visibility:hidden
-    // l'elemento occupa comunque spazio e si può misurare
+    if(!quiz) return;
 
-    // misuro l'ingombro NATURALE (senza scala) e poi lo riduco quel tanto
-    // che basta per stare dentro l'area di gioco
-    quiz.style.transform = "translateY(-50%) scale(1)";
-    const availH = area.clientHeight;
-    const availW = area.clientWidth;
-    const h = quiz.offsetHeight;
-    const w = quiz.offsetWidth;
-    if(!h || !w) return;
+    const vw = window.innerWidth, vh = window.innerHeight;
+    const M = 10;
 
-    let scale = 1;
-    if(availH > 0 && availW > 0){
-      scale = Math.min(1, availH / h, availW / w);
+    const leftBtns = document.querySelector(".hand-left");
+    const disc = document.getElementById("discardSlot");
+    const tray = document.getElementById("tray");
+    const ivb  = document.getElementById("ivBox");
+
+    const bordoSx = leftBtns ? leftBtns.getBoundingClientRect().right + M : M;
+    const pila = disc ? disc.getBoundingClientRect() : null;
+
+    // fin dove arrivano le aree di gioco sulla destra
+    let destraAree = pila ? pila.right : vw / 2;
+    [ivb, tray].forEach(el=>{
+      if(el && getComputedStyle(el).display !== "none"){
+        destraAree = Math.max(destraAree, el.getBoundingClientRect().right);
+      }
+    });
+
+    const spazioSx = pila ? (pila.left - M) - bordoSx : 0;
+    const spazioDx = (vw - M) - (destraAree + M);
+
+    let left, larghezza;
+    if(spazioSx >= spazioDx){
+      larghezza = Math.max(170, Math.min(360, spazioSx));
+      left = bordoSx;
+    } else {
+      larghezza = Math.max(170, Math.min(360, spazioDx));
+      left = Math.min(destraAree + M, vw - M - larghezza);
     }
-    // sotto una certa soglia diventerebbe illeggibile: meglio fermarsi
-    scale = Math.max(0.5, scale);
-    quiz.style.transform = `translateY(-50%) scale(${scale})`;
+
+    // il pannello non deve mai sporgere dallo schermo
+    larghezza = Math.min(larghezza, vw - 2 * M);
+    left = Math.max(M, Math.min(left, vw - M - larghezza));
+
+    quiz.style.transform = "none";
+    quiz.style.transformOrigin = "left top";
+    quiz.style.width = larghezza + "px";
+    quiz.style.left = left + "px";
+    quiz.style.top = M + "px";
+
+    // se è più alto dello schermo si riduce quel tanto che basta
+    const altezzaMax = vh - 2 * M;
+    const h = quiz.offsetHeight;
+    const scale = h > altezzaMax ? Math.max(0.5, altezzaMax / h) : 1;
+    const hFin = h * scale;
+    quiz.style.top = Math.max(M, Math.min((vh - hFin) / 2, vh - M - hFin)) + "px";
+    if(scale !== 1) quiz.style.transform = `scale(${scale})`;
   }
 
   /* ---------- statistiche note ---------- */
@@ -22372,6 +22541,14 @@ global.VexFlow = VexflowNS.default || VexflowNS;
     }
   }
 
+  document.getElementById("traySend").addEventListener("click", ()=>{
+    if(state.gameOver || state.dealing) return;
+    if(currentPlayer() !== "you" || state.triadQuizPending) return;
+    if(!state.tray || state.tray.length < 2) return;
+    playClick();
+    showChordQuiz();
+  });
+
   document.getElementById("deckBtn").addEventListener("click", ()=>{ playClick(); humanDraw(); });
   document.getElementById("passBtn").addEventListener("click", ()=>{ playClick(); humanDraw(); });
 
@@ -22421,6 +22598,12 @@ global.VexFlow = VexflowNS.default || VexflowNS;
 
   document.getElementById("triadOpt").addEventListener("click", ()=>{
     triadMode = !triadMode;
+    playClick();
+    renderOptions();
+  });
+
+  document.getElementById("seventhOpt").addEventListener("click", ()=>{
+    seventhMode = !seventhMode;
     playClick();
     renderOptions();
   });
@@ -22519,7 +22702,10 @@ global.VexFlow = VexflowNS.default || VexflowNS;
       ivd.classList.toggle("selected", intervalMode && intervalDirected);
       ivd.classList.toggle("off", !intervalMode);
     }
+    const sv = document.getElementById("seventhOpt");
+    if(sv) sv.classList.toggle("selected", seventhMode);
     document.body.classList.toggle("triad-mode", triadMode);
+    document.body.classList.toggle("seventh-mode", seventhMode);
     document.body.classList.toggle("interval-mode", intervalMode);
   }
 
@@ -22603,7 +22789,17 @@ global.VexFlow = VexflowNS.default || VexflowNS;
       ]);
     }
 
-    if(triadMode){
+    if(seventhMode){
+      blocks.push([
+        triadMode ? "Triadi e settime" : "Modalità settime",
+        "La nota in cima alla pila è la prima dell'accordo. Trascina nell'area " +
+        (triadMode
+          ? "<b>due carte</b> per una triade o <b>tre</b> per una settima, poi premi <b>Invia</b>. "
+          : "<b>tre carte</b> per completare un accordo di settima. ") +
+        "Poi indica nome e tipo dell'accordo. Se sbagli, le carte tornano in mano, " +
+        "peschi e perdi il turno."
+      ]);
+    } else if(triadMode){
       blocks.push([
         "Modalità triadi",
         "La nota in cima alla pila è la prima dell'accordo. Trascina <b>due carte</b> nell'area " +
