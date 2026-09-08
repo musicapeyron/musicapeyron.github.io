@@ -221,6 +221,7 @@
   .row-break{ flex-basis:100%; height:0; }
   .note-btn.wide{ width:calc(50% - 4px); font-size:13px; }
   .note-btn.third{ width:calc(33.333% - 5px); font-size:12px; padding:11px 2px; }
+  .note-btn.quarter{ width:calc(25% - 6px); font-size:11px; padding:11px 1px; letter-spacing:-.3px; }
   .note-btn.send{
     background:rgba(34,197,94,0.28); border-color:rgba(134,239,172,0.65); color:#eafff1;
   }
@@ -577,7 +578,7 @@
      tagliata dentro l'ovale bianco. Lo spostamento è proporzionale alla scala
      della carta, così resta equilibrato anche sugli schermi piccoli. */
   .card .staff-svg{
-    transform:translateX(calc(var(--staff-scale) * 4.4px)) scale(var(--staff-scale));
+    transform:scale(var(--staff-scale));
   }
   .card .staff-svg svg{ overflow:visible; }
 
@@ -739,6 +740,14 @@
   .menu-actions{ display:flex; gap:12px; align-items:center; flex-wrap:wrap; justify-content:center; }
 
   .opt-list{ display:flex; flex-direction:column; gap:9px; width:min(340px, 86vw); }
+  /* L'elenco delle tonalità è lungo: deve poter scorrere e restare
+     interamente raggiungibile anche sugli schermi bassi. */
+  #keyList{
+    max-height:min(56vh, 380px); overflow-y:auto;
+    padding-right:6px; flex:0 1 auto;
+  }
+  #keyList::-webkit-scrollbar{ width:6px; }
+  #keyList::-webkit-scrollbar-thumb{ background:rgba(255,255,255,0.18); border-radius:3px; }
   .opt{
     display:flex; flex-direction:column; gap:2px; text-align:left;
     background:var(--glass); border:1px solid var(--glass-border);
@@ -775,9 +784,41 @@
   }
 
   .opt-section{
-    margin:14px 0 0 !important; font-family:"Sora","Inter",sans-serif;
-    font-weight:700; font-size:12px; color:var(--muted);
+    margin:0 !important; font-family:"Sora","Inter",sans-serif;
+    font-weight:700; font-size:11px; color:var(--muted);
     text-transform:uppercase; letter-spacing:.6px;
+  }
+
+  /* ---------- opzioni compatte, tutte su una schermata ---------- */
+  .opt-block{ width:min(560px, 92vw); display:flex; flex-direction:column; gap:5px; }
+  .opt-block.disabled{ opacity:.4; }
+  .opt-hint{ font-weight:600; text-transform:none; letter-spacing:0; opacity:.75; }
+  .chips{ display:flex; flex-wrap:wrap; gap:5px; }
+  .chip{
+    font-family:"Sora","Inter",sans-serif; font-weight:700; font-size:12px;
+    background:var(--glass); border:1px solid var(--glass-border); color:var(--ink-light);
+    padding:6px 12px; border-radius:10px; cursor:pointer; white-space:nowrap;
+    transition:background .15s ease, border-color .15s ease, transform .1s ease;
+  }
+  .chip:hover:not(:disabled){ background:var(--glass-strong); transform:translateY(-1px); }
+  .chip.selected{ background:rgba(250,204,21,0.16); border-color:var(--gold); color:#fff8dc; }
+  .chip:disabled{ cursor:not-allowed; }
+  .chip.off{ opacity:.4; }
+  .chip.sub{ font-size:11px; opacity:.95; }
+  /* pastiglie delle tonalità: nome sopra, armatura sotto */
+  .chip.key{
+    display:flex; flex-direction:column; align-items:center; gap:1px;
+    padding:5px 9px; min-width:52px;
+  }
+  .chip.key .k-name{ font-size:12px; line-height:1.1; }
+  .chip.key .k-alt{ font-size:10px; opacity:.7; letter-spacing:1px; }
+  @media (max-height:560px){
+    .opt-block{ width:min(620px, 94vw); gap:3px; }
+    .chip{ font-size:10.5px; padding:4px 9px; border-radius:8px; }
+    .chip.key{ padding:3px 7px; min-width:44px; }
+    .chip.key .k-name{ font-size:10.5px; }
+    .chip.key .k-alt{ font-size:9px; }
+    .opt-section{ font-size:9.5px; }
   }
 
   @media (max-height:560px){
@@ -940,32 +981,37 @@
 
   <div class="overlay" id="optionsOverlay">
     <h2>Opzioni</h2>
-    <p>Quali chiavi vuoi usare durante la partita?</p>
-    <div class="opt-list" id="clefOptions">
-      <button class="opt" data-clef="both">
-        <span class="opt-name">Chiave di violino e basso</span>
-        <span class="opt-desc">Rosso e verde in violino, giallo e blu in basso</span>
-      </button>
-      <button class="opt" data-clef="treble">
-        <span class="opt-name">Solo chiave di violino</span>
-        <span class="opt-desc">Tutti e quattro i colori in chiave di violino</span>
-      </button>
-      <button class="opt" data-clef="bass">
-        <span class="opt-name">Solo chiave di basso</span>
-        <span class="opt-desc">Tutti e quattro i colori in chiave di basso</span>
-      </button>
+
+    <div class="opt-block">
+      <p class="opt-section">Chiavi</p>
+      <div class="chips" id="clefOptions">
+        <button class="chip" data-clef="both">Violino e basso</button>
+        <button class="chip" data-clef="treble">Solo violino</button>
+        <button class="chip" data-clef="bass">Solo basso</button>
+      </div>
     </div>
 
-    <p class="opt-section">Modalità di gioco</p>
-    <div class="opt-list">
-      <button class="opt toggle" id="triadOpt">
-        <span class="opt-name">Modalità triadi</span>
-        <span class="opt-desc">Aggiungi 2 carte alla nota sul tavolo per formare un accordo</span>
-      </button>
-      <button class="opt toggle" id="intervalOpt">
-        <span class="opt-name">Modalità intervalli</span>
-        <span class="opt-desc">Cala la nota che forma l'intervallo richiesto</span>
-      </button>
+    <div class="opt-block">
+      <p class="opt-section">Tonalità <span class="opt-hint">— dai bemolli ai diesis</span></p>
+      <div class="chips keys" id="keyListMaj"></div>
+      <div class="chips keys" id="keyListMin"></div>
+    </div>
+
+    <div class="opt-block" id="minorBlock">
+      <p class="opt-section">Modo minore</p>
+      <div class="chips" id="minorOptions">
+        <button class="chip" data-minor="naturale">Minori naturali</button>
+        <button class="chip" data-minor="armonica">Minori armoniche</button>
+      </div>
+    </div>
+
+    <div class="opt-block">
+      <p class="opt-section">Modalità di gioco</p>
+      <div class="chips">
+        <button class="chip" id="triadOpt">Triadi</button>
+        <button class="chip" id="intervalOpt">Intervalli</button>
+        <button class="chip sub" id="intervalDirOpt">Ascendenti o discendenti</button>
+      </div>
     </div>
 
     <button class="btn-main" id="optionsBackBtn">Indietro</button>
@@ -19779,6 +19825,12 @@ global.VexFlow = VexflowNS.default || VexflowNS;
     return audioCtx;
   }
 
+  // Frequenza dall'altezza reale della carta (alterazione dell'armatura inclusa)
+  function freqFromCard(card){
+    if(!card || card.midi == null) return null;
+    return 440 * Math.pow(2, (card.midi - 69) / 12);
+  }
+
   function freqFromKey(key){
     // key nel formato VexFlow "b/3" => nota B, ottava 3
     const parts = key.split("/");
@@ -19921,7 +19973,7 @@ global.VexFlow = VexflowNS.default || VexflowNS;
     if(!ctx) return;
     if(ctx.state === "suspended") ctx.resume();
     if(card.type === "note"){
-      const f = freqFromKey(card.key);
+      const f = freqFromCard(card);
       if(f) playTone(f, ctx.currentTime, 1.2, 0.24);
     } else {
       playActionSound(card.type);
@@ -19966,39 +20018,61 @@ global.VexFlow = VexflowNS.default || VexflowNS;
   }
 
   // ---- Real VexFlow rendering (embedded bundle, no CDN, works fully offline) ----
-  const staffCache = {};
+  let staffCache = {};
+  // per ogni disegno: quanto lontano dal bordo sinistro finisce la nota
+  let noteFraction = {};
+  const STAFF_BOX_W = 124;   // larghezza in px del riquadro del pentagramma
   const vfHost = document.createElement("div");
   vfHost.style.position = "absolute";
   vfHost.style.left = "-9999px";
   vfHost.style.top = "-9999px";
   document.body.appendChild(vfHost);
 
-  function renderStaffSVG(clef, key){
-    const cacheKey = clef + "|" + key;
+  function renderStaffSVG(clef, key, alter){
+    alter = alter || 0;
+    // l'alterazione fa parte del disegno, quindi entra nella chiave di cache
+    const cacheKey = clef + "|" + key + "|" + alter;
     if(staffCache[cacheKey]) return staffCache[cacheKey];
 
     vfHost.innerHTML = "";
     const VF = Vex.Flow;
     const renderer = new VF.Renderer(vfHost, VF.Renderer.Backends.SVG);
-    renderer.resize(104, 150);
+    renderer.resize(124, 150);
     const ctx = renderer.getContext();
-    const stave = new VF.Stave(0, 10, 96);
+    // Rigo di lunghezza piena: le carte devono restare belle da vedere.
+    // È il ventaglio ad adattarsi (vedi fanGeometry), non il disegno.
+    const stave = new VF.Stave(0, 10, alter ? 108 : 96);
     stave.addClef(clef);
     stave.setContext(ctx).draw();
     const note = new VF.StaveNote({ clef: clef, keys: [key], duration: "q" });
+    // l'alterazione è scritta sulla singola nota, non in armatura
+    if(alter !== 0){
+      note.addModifier(new VF.Accidental(alter > 0 ? "#" : "b"), 0);
+    }
     VF.Formatter.FormatAndDraw(ctx, stave, [note]);
+    // posizione orizzontale della nota, per poterla inquadrare bene
+    let noteX = null;
+    try{ noteX = note.getAbsoluteX(); }catch(e){}
     const svgEl = vfHost.querySelector("svg");
     // Il riquadro ha altezza fissa (stessa dimensione del pentagramma su tutte
     // le carte) ma viene centrato sul disegno effettivo: così le note molto
     // acute o molto gravi, con i loro tagli addizionali, restano sempre dentro
     // la carta invece di essere tagliate dal bordo.
-    const VB_W = 104, VB_H = 150;
-    let minY = -30;
+    const VB_W = 124, VB_H = 150;
+    let minY = -30, minX = -4;
     try{
       const bb = svgEl.getBBox();
-      if(bb && bb.height > 0) minY = bb.y + bb.height / 2 - VB_H / 2;
-    }catch(e){ /* se getBBox non è disponibile resta il valore di ripiego */ }
-    svgEl.setAttribute("viewBox", `0 ${minY} ${VB_W} ${VB_H}`);
+      if(bb && bb.height > 0){
+        // Verticale: centrato, così i tagli addizionali restano dentro.
+        minY = bb.y + bb.height / 2 - VB_H / 2;
+        // Orizzontale: il riquadro viene messo in modo che la TESTA DI NOTA
+        // cada a circa un terzo da sinistra. Nel ventaglio le carte coprono il
+        // lato destro di quella prima, quindi così restano sempre visibili sia
+        // l'alterazione sia la nota (e non solo l'alterazione).
+        minX = bb.x + bb.width / 2 - VB_W / 2;
+      }
+    }catch(e){ /* se getBBox non è disponibile restano i valori di ripiego */ }
+    svgEl.setAttribute("viewBox", `${minX} ${minY} ${VB_W} ${VB_H}`);
     svgEl.setAttribute("preserveAspectRatio", "xMidYMid meet");
     const out = svgEl.outerHTML;
     staffCache[cacheKey] = out;
@@ -20014,6 +20088,75 @@ global.VexFlow = VexflowNS.default || VexflowNS;
   let triadMode = false;
   // Modalità intervalli: combinabile con tutte le altre
   let intervalMode = false;
+  // Se attivo, conta anche se l'intervallo sale o scende; altrimenti basta
+  // che l'ampiezza sia giusta, in qualunque direzione.
+  let intervalDirected = false;
+
+  /* ---------- tonalità ----------
+     L'armatura decide quali note sono alterate. Il nome della nota resta lo
+     stesso (un FA diesis si chiama sempre FA), cambia solo l'altezza reale:
+     così quiz e riconoscimento dei nomi non cambiano, mentre intervalli e
+     triadi si adeguano da soli perché lavorano sui semitoni.
+     Per aggiungere una tonalità basta una riga qui con "ready:true". */
+  const KEYS = {
+    // ---- maggiori con i diesis ----
+    "C":   { nome:"Do maggiore",   sharps:[],                        flats:[], ready:true },
+    "G":   { nome:"Sol maggiore",  sharps:["f"],                     flats:[], ready:true },
+    "D":   { nome:"Re maggiore",   sharps:["f","c"],                 flats:[], ready:true },
+    "A":   { nome:"La maggiore",   sharps:["f","c","g"],             flats:[], ready:true },
+    "E":   { nome:"Mi maggiore",   sharps:["f","c","g","d"],         flats:[], ready:true },
+    "B":   { nome:"Si maggiore",   sharps:["f","c","g","d","a"],     flats:[], ready:false },
+    // ---- maggiori con i bemolli ----
+    "F":   { nome:"Fa maggiore",   sharps:[], flats:["b"],                     ready:true },
+    "Bb":  { nome:"Si♭ maggiore",  sharps:[], flats:["b","e"],                 ready:true },
+    "Eb":  { nome:"Mi♭ maggiore",  sharps:[], flats:["b","e","a"],             ready:true },
+    "Ab":  { nome:"La♭ maggiore",  sharps:[], flats:["b","e","a","d"],         ready:true },
+    // ---- minori con i diesis (stessa armatura della relativa maggiore) ----
+    "Am":  { nome:"La minore",     sharps:[],                        flats:[], ready:true, minor:true, tonic:"a" },
+    "Em":  { nome:"Mi minore",     sharps:["f"],                     flats:[], ready:true, minor:true, tonic:"e" },
+    "Bm":  { nome:"Si minore",     sharps:["f","c"],                 flats:[], ready:true, minor:true, tonic:"b" },
+    "F#m": { nome:"Fa♯ minore",    sharps:["f","c","g"],             flats:[], ready:true, minor:true, tonic:"f" },
+    "C#m": { nome:"Do♯ minore",    sharps:["f","c","g","d"],         flats:[], ready:true, minor:true, tonic:"c" },
+    // ---- minori con i bemolli ----
+    "Dm":  { nome:"Re minore",     sharps:[], flats:["b"],                     ready:true, minor:true, tonic:"d" },
+    "Gm":  { nome:"Sol minore",    sharps:[], flats:["b","e"],                 ready:true, minor:true, tonic:"g" },
+    "Cm":  { nome:"Do minore",     sharps:[], flats:["b","e","a"],             ready:true, minor:true, tonic:"c" },
+    "Fm":  { nome:"Fa minore",     sharps:[], flats:["b","e","a","d"],         ready:true, minor:true, tonic:"f" }
+  };
+
+  let keySig = "C";
+  // Nelle tonalità minori: "naturale" (solo armatura) oppure "armonica"
+  // (settimo grado alzato di un semitono, scritto sulla nota).
+  let minorMode = "armonica";
+
+  function keyInfo(){ return KEYS[keySig] || KEYS.C; }
+  function isMinorKey(){ return !!keyInfo().minor; }
+
+  // Settimo grado di una tonalità minore = la lettera subito sotto la tonica
+  function seventhLetter(){
+    const k = keyInfo();
+    if(!k.minor || !k.tonic) return null;
+    const i = SCALE_LETTERS.indexOf(k.tonic);
+    return SCALE_LETTERS[(i + 6) % 7];
+  }
+
+  /* Alterazione della lettera: prima quella dell'armatura, poi l'eventuale
+     innalzamento della sensibile nella minore armonica. Vale anche quando in
+     armatura la nota è bemolle: il bemolle diventa naturale (es. in DO minore
+     il SI♭ diventa SI naturale). */
+  function alterationFor(letter){
+    const k = keyInfo();
+    let a = 0;
+    if(k.sharps.includes(letter)) a = 1;
+    else if(k.flats.includes(letter)) a = -1;
+    if(k.minor && minorMode === "armonica" && letter === seventhLetter()) a += 1;
+    return a;
+  }
+
+  // Simbolo da mostrare accanto al nome della nota (es. "FA♯")
+  function alterSymbol(alter){
+    return alter > 0 ? "♯" : (alter < 0 ? "♭" : "");
+  }
 
   /* ---------- intervalli ----------
      L'intervallo si misura DALLA nota in cima alla pila ALLA nota calata,
@@ -20029,14 +20172,14 @@ global.VexFlow = VexflowNS.default || VexflowNS;
 
   // Qualità dell'intervallo in base a grado e semitoni
   const INTERVAL_QUALITY = {
-    1:  { 0:"giusta" },
-    2:  { 1:"minore", 2:"maggiore" },
-    3:  { 3:"minore", 4:"maggiore" },
-    4:  { 5:"giusta", 6:"aumentata" },
-    5:  { 6:"diminuita", 7:"giusta" },
-    6:  { 8:"minore", 9:"maggiore" },
-    7:  { 10:"minore", 11:"maggiore" },
-    8:  { 12:"giusta" }
+    1:  { 0:"giusta",    1:"aumentata" },
+    2:  { 0:"diminuita", 1:"minore",    2:"maggiore",  3:"aumentata" },
+    3:  { 2:"diminuita", 3:"minore",    4:"maggiore",  5:"aumentata" },
+    4:  { 4:"diminuita", 5:"giusta",    6:"aumentata" },
+    5:  { 6:"diminuita", 7:"giusta",    8:"aumentata" },
+    6:  { 7:"diminuita", 8:"minore",    9:"maggiore", 10:"aumentata" },
+    7:  { 9:"diminuita", 10:"minore",  11:"maggiore", 12:"aumentata" },
+    8:  { 11:"diminuita", 12:"giusta", 13:"aumentata" }
   };
 
   const ORDINALE = {1:"unisono",2:"2ª",3:"3ª",4:"4ª",5:"5ª",6:"6ª",7:"7ª",8:"8ª"};
@@ -20058,14 +20201,18 @@ global.VexFlow = VexflowNS.default || VexflowNS;
   }
 
   function sameInterval(a, b){
-    return !!a && !!b && a.degree === b.degree && a.quality === b.quality && a.dir === b.dir;
+    if(!a || !b) return false;
+    if(a.degree !== b.degree || a.quality !== b.quality) return false;
+    // la direzione conta solo se richiesto dalle opzioni
+    return intervalDirected ? a.dir === b.dir : true;
   }
 
   function intervalLabel(iv){
     if(!iv) return "";
     if(iv.degree === 1) return "Unisono";
-    const freccia = iv.dir === "su" ? "▲" : "▼";
-    return ORDINALE[iv.degree] + " " + iv.quality + " " + freccia;
+    const base = ORDINALE[iv.degree] + " " + iv.quality;
+    if(!intervalDirected) return base;
+    return base + " " + (iv.dir === "su" ? "▲" : "▼");
   }
 
   // Tutte le note che il mazzo può produrre nella modalità di chiave attiva
@@ -20093,7 +20240,7 @@ global.VexFlow = VexflowNS.default || VexflowNS;
       notes.forEach(c=>{
         const iv = intervalBetween(a, c);
         if(!iv || iv.degree === 1) return;    // l'unisono sarebbe banale
-        const k = iv.degree + "|" + iv.quality + "|" + iv.dir;
+        const k = iv.degree + "|" + iv.quality + (intervalDirected ? "|" + iv.dir : "");
         if(!seen.has(k)) seen.set(k, iv);
       });
     });
@@ -20115,18 +20262,27 @@ global.VexFlow = VexflowNS.default || VexflowNS;
      e quindi NON è una risposta valida con i soli pulsanti maggiore/minore). */
   const PITCH_CLASS = { do:0, re:2, mi:4, fa:5, sol:7, la:9, si:11 };
 
-  function triadIdentity(noteNames){
-    const names = [...new Set(noteNames)];
-    if(names.length !== 3) return null;                 // servono tre note diverse
-    if(names.some(n => !(n in PITCH_CLASS))) return null;
-    const pcs = names.map(n => PITCH_CLASS[n]);
+  // Tipi di triade riconosciuti, in semitoni dalla fondamentale
+  const TRIAD_SHAPES = {
+    "0,4,7": "maggiore",
+    "0,3,7": "minore",
+    "0,3,6": "diminuita",
+    "0,4,8": "aumentata"
+  };
+
+  /* Identifica la triade a partire dalle CARTE, usando le altezze reali
+     (quindi tenendo conto delle alterazioni in armatura). I nomi delle note
+     devono essere tre diversi: una triade è fatta di terze sovrapposte. */
+  function triadIdentity(cards){
+    if(!cards || cards.length !== 3) return null;
+    if(cards.some(c => !c || c.type !== "note" || c.midi == null)) return null;
+    const names = cards.map(cardSolfa);
+    if(new Set(names).size !== 3) return null;
+    const pcs = cards.map(c => ((c.midi % 12) + 12) % 12);
     for(let i=0;i<3;i++){
-      const root = pcs[i];
-      const rel = pcs.map(p => (p - root + 12) % 12).sort((a,b)=>a-b);
-      const key = rel.join(",");
-      if(key === "0,4,7") return { root: names[i], quality: "maggiore" };
-      if(key === "0,3,7") return { root: names[i], quality: "minore" };
-      if(key === "0,3,6") return { root: names[i], quality: "diminuita" };
+      const rel = pcs.map(p => (p - pcs[i] + 12) % 12).sort((a,b)=>a-b).join(",");
+      const quality = TRIAD_SHAPES[rel];
+      if(quality) return { root: names[i], quality, rootAlter: cards[i].alter || 0 };
     }
     return null;
   }
@@ -20137,9 +20293,8 @@ global.VexFlow = VexflowNS.default || VexflowNS;
   }
 
   function cardsFormTriad(cards){
-    if(cards.length !== 3) return null;
-    if(cards.some(c => c.type !== "note")) return null;
-    return triadIdentity(cards.map(cardSolfa));
+    if(!cards || cards.length !== 3) return null;
+    return triadIdentity(cards);
   }
 
   // La triade in gioco: la carta in cima alla pila fa da terza nota,
@@ -20206,13 +20361,17 @@ global.VexFlow = VexflowNS.default || VexflowNS;
 
   function makeNoteCard(color, value, id){
     const {clef, key} = noteForColorValue(color, value);
-    // noteName = nome della nota (Do, Re, Mi…), indipendente da ottava e chiave:
-    // è questo che determina se due carte si possono abbinare.
-    // midi = altezza reale, usata solo per far suonare la nota giusta.
+    const letter = key.split("/")[0].toLowerCase();
+    const alter = alterationFor(letter);      // dall'armatura della tonalità
+    // noteName = nome della nota (Do, Re, Mi…), indipendente da ottava, chiave
+    // e alterazione: è questo che decide se due carte si possono abbinare.
+    // midi = altezza reale (alterazione inclusa): serve per il suono, gli
+    // intervalli e il riconoscimento delle triadi.
     return {
       id, color, type:"note", value, clef, key,
-      noteName: key.split("/")[0].toLowerCase(),
-      midi: midiFromKey(key)
+      noteName: letter,
+      alter,
+      midi: midiFromKey(key) + alter
     };
   }
 
@@ -20269,7 +20428,7 @@ global.VexFlow = VexflowNS.default || VexflowNS;
     if(card.type === "note"){
       const staffWrap = document.createElement("div");
       staffWrap.className = "staff-svg";
-      staffWrap.innerHTML = renderStaffSVG(card.clef, card.key);
+      staffWrap.innerHTML = renderStaffSVG(card.clef, card.key, card.alter);
       oval.appendChild(staffWrap);
     } else if(card.type === "skip"){
       // Nota barrata: "questa nota non si suona" = salta il turno
@@ -20824,7 +20983,7 @@ global.VexFlow = VexflowNS.default || VexflowNS;
       if(i !== -1) hand.splice(i,1);
     });
     state.tray = pair.slice();
-    showBubble(p, id ? (id.root.toUpperCase() + " " + id.quality) : "Triade!");
+    showBubble(p, id ? (id.root.toUpperCase() + alterSymbol(id.rootAlter) + " " + id.quality) : "Triade!");
     playWhoosh(undefined, 0.03);
     render(true);
 
@@ -21091,8 +21250,8 @@ global.VexFlow = VexflowNS.default || VexflowNS;
     if(!ctx) return;
     if(ctx.state === "suspended") ctx.resume();
     const t = ctx.currentTime;
-    const f1 = a && freqFromKey(a.key);
-    const f2 = b && freqFromKey(b.key);
+    const f1 = a && freqFromCard(a);
+    const f2 = b && freqFromCard(b);
     if(f1) playTone(f1, t, 0.75, 0.19);
     if(f2) playTone(f2, t + 0.5, 1.1, 0.19);
   }
@@ -21403,13 +21562,14 @@ global.VexFlow = VexflowNS.default || VexflowNS;
     const count = hand.length;
 
     // Ventaglio responsive: usa tutta la larghezza libera a sinistra dei comandi
-    const geo = fanGeometry(count);
+    const geo = fanGeometry(hand);
 
     hand.forEach((card, i)=>{
       const el = buildCardEl(card);
-      const { offset, rot } = slotTransform(geo, i, count);
+      const { offset, rot, scale } = slotTransform(geo, i, count);
       el.style.left = `${geo.baseLeft}px`;
-      el.style.transform = `translateX(${offset}px) rotate(${rot}deg)`;
+      el.style.transform = cardTransform(offset, rot, scale);
+      el.dataset.scale = scale;
       // memorizzo la posizione nel ventaglio per poterla ripristinare
       // dopo che la carta è stata selezionata/ingrandita
       el.dataset.offset = offset;
@@ -21431,10 +21591,13 @@ global.VexFlow = VexflowNS.default || VexflowNS;
   /* ---------- geometria del ventaglio ----------
      Isolata qui perché serve sia al disegno normale sia all'anteprima
      del riordino mentre si trascina una carta. */
-  function fanGeometry(count){
+  function fanGeometry(hand){
+    const cards = Array.isArray(hand) ? hand : [];
+    const count = cards.length;
     const handWrap = document.getElementById("playerHand");
     const cs = getComputedStyle(document.documentElement);
     const cardW = parseFloat(cs.getPropertyValue("--card-w")) || 88;
+    const staffScale = parseFloat(cs.getPropertyValue("--staff-scale")) || 0.6;
     const sideEl = document.querySelector(".hand-side");
     const leftEl = document.querySelector(".hand-left");
     const reserveRight = sideEl ? sideEl.getBoundingClientRect().width + 28 : 0;
@@ -21445,32 +21608,111 @@ global.VexFlow = VexflowNS.default || VexflowNS;
     const regionW = regionRight - regionLeft;
     const regionCenter = regionLeft + regionW / 2;
 
-    const maxSpread = cardW * 0.62;
-    const spread = count > 1
-      ? Math.min(maxSpread, (regionW - cardW) / (count - 1))
-      : 0;
+    /* Quanto va scoperta OGNI carta: abbastanza da mostrare la sua nota.
+       Le carte senza alterazione hanno la nota più a sinistra e possono quindi
+       stare più vicine; quelle con diesis o bemolle chiedono più spazio.
+       Con molte alterazioni in tonalità il ventaglio si allarga da solo. */
+    function scopertoPer(card){
+      if(!card || card.type !== "note") return cardW * 0.52;   // carte azione: simbolo centrale
+      // il margine tiene conto anche dell'inclinazione delle carte nel
+      // ventaglio, che sposta lateralmente la nota
+      return Math.min(cardW, measureNoteRight(card) + 11);
+    }
+
+    // spazi fra una carta e la successiva
+    const gaps = [];
+    for(let i=0;i<count-1;i++) gaps.push(scopertoPer(cards[i]));
+    const sommaGap = gaps.reduce((a,b)=>a+b, 0);
+
+    // se non ci sta, si rimpiccioliscono le carte invece di sovrapporle di più
+    const servita = sommaGap + cardW;
+    const scale = count > 1 ? Math.min(1, regionW / servita) : 1;
+
+    // posizioni cumulative, con il ventaglio centrato nella zona disponibile
+    const xs = [0];
+    for(let i=0;i<gaps.length;i++) xs.push(xs[i] + gaps[i] * scale);
+    const totale = (xs[count-1] || 0) + cardW * scale;
+    const startLeft = regionCenter - totale / 2;
+    const baseLeft = regionCenter - cardW / 2;
+
+    const spreadMedio = count > 1 ? (xs[count-1] / (count-1)) : 0;
+
     return {
-      cardW, spread,
-      rotStep: spread < 18 ? 2 : 4,
-      baseLeft: regionCenter - cardW / 2,
+      cardW, scale, baseLeft, xs, startLeft,
+      spread: spreadMedio,
+      rotStep: spreadMedio < 18 ? 2 : 4,
       handLeft: handWrap.getBoundingClientRect().left
     };
   }
 
+  /* Quanto lontano dal bordo sinistro della carta finisce la nota.
+     Viene misurato davvero su una carta di prova fuori schermo (una volta per
+     tipo di disegno) invece di stimarlo: così il ventaglio scopre esattamente
+     quello che serve, né più né meno. */
+  let probeHost = null;
+  function measureNoteRight(card){
+    const k = card.clef + "|" + card.key + "|" + (card.alter || 0) + "|" +
+              getComputedStyle(document.documentElement).getPropertyValue("--card-w").trim();
+    if(noteFraction[k] != null) return noteFraction[k];
+
+    if(!probeHost){
+      probeHost = document.createElement("div");
+      probeHost.style.cssText = "position:absolute;left:-9999px;top:-9999px;";
+      document.body.appendChild(probeHost);
+    }
+    probeHost.innerHTML = "";
+    const el = buildCardEl(card);
+    el.style.position = "relative";
+    probeHost.appendChild(el);
+
+    const cr = el.getBoundingClientRect();
+    let right = cr.left + cr.width * 0.86;      // valore di ripiego
+    const svg = el.querySelector(".staff-svg svg");
+    if(svg){
+      let r = -Infinity;
+      // la nota è fatta dal glifo della testa e dal gambo: prendo il più a destra
+      svg.querySelectorAll("text, rect").forEach(e=>{
+        const q = e.getBoundingClientRect();
+        if(q.width === 0 && q.height === 0) return;
+        if(q.height > 4 && q.width < cr.width * 0.4) r = Math.max(r, q.right);
+      });
+      if(r > -Infinity) right = r;
+    }
+    const val = Math.max(cr.width * 0.4, right - cr.left);
+    probeHost.innerHTML = "";
+    noteFraction[k] = val;
+    return val;
+  }
+
   function slotTransform(geo, i, count){
+    const x = geo.xs && geo.xs[i] != null ? geo.xs[i] : 0;
     return {
-      offset: (i - (count-1)/2) * geo.spread,
-      rot:    (i - (count-1)/2) * geo.rotStep
+      offset: geo.startLeft + x - geo.baseLeft,
+      rot:    (i - (count-1)/2) * geo.rotStep,
+      scale:  geo.scale || 1
     };
   }
 
+  // Trasformazione di una carta nel ventaglio (posizione, inclinazione, scala)
+  function cardTransform(offset, rot, scale){
+    const sc = (scale && scale !== 1) ? ` scale(${scale})` : "";
+    return `translateX(${offset}px) rotate(${rot}deg)${sc}`;
+  }
+
   // Indice della "casella" del ventaglio più vicina al punto indicato
+  // Con distanze variabili non basta una divisione: si cerca la casella
+  // il cui centro è più vicino al punto indicato.
   function slotIndexAtX(geo, count, pointerX){
+    if(!geo.xs || !geo.xs.length) return 0;
     const localX = pointerX - geo.handLeft;
-    const firstCenter = geo.baseLeft + geo.cardW/2 + (0 - (count-1)/2) * geo.spread;
-    if(geo.spread === 0) return 0;
-    const raw = Math.round((localX - firstCenter) / geo.spread);
-    return Math.max(0, Math.min(count - 1, raw));
+    const half = (geo.cardW * (geo.scale || 1)) / 2;
+    let best = 0, bestD = Infinity;
+    for(let i=0;i<count;i++){
+      const centro = geo.startLeft + (geo.xs[i] || 0) + half;
+      const d = Math.abs(localX - centro);
+      if(d < bestD){ bestD = d; best = i; }
+    }
+    return best;
   }
 
   // Riposiziona le carte NON trascinate secondo l'ordine attuale della mano,
@@ -21478,13 +21720,14 @@ global.VexFlow = VexflowNS.default || VexflowNS;
   function layoutHandPreview(draggedId){
     const hand = state.hands.you;
     const count = hand.length;
-    const geo = fanGeometry(count);
+    const geo = fanGeometry(hand);
     hand.forEach((card, i)=>{
       const el = document.querySelector(`.player-zone .card[data-id="${card.id}"]`);
       if(!el || card.id === draggedId) return;
-      const { offset, rot } = slotTransform(geo, i, count);
+      const { offset, rot, scale } = slotTransform(geo, i, count);
       el.style.left = `${geo.baseLeft}px`;
-      el.style.transform = `translateX(${offset}px) rotate(${rot}deg)`;
+      el.style.transform = cardTransform(offset, rot, scale);
+      el.dataset.scale = scale;
       el.dataset.offset = offset;
       el.dataset.rot = rot;
       el.style.zIndex = i;
@@ -21542,7 +21785,7 @@ global.VexFlow = VexflowNS.default || VexflowNS;
           const strip = document.querySelector(".hand-strip").getBoundingClientRect();
           const inHandBand = ev.clientY >= strip.top - 30;
           if(inHandBand && cur !== -1 && hand.length > 1){
-            const geo = fanGeometry(hand.length);
+            const geo = fanGeometry(hand);
             const target = slotIndexAtX(geo, hand.length, ev.clientX);
             if(target !== cur){
               hand.splice(cur, 1);
@@ -21654,7 +21897,8 @@ global.VexFlow = VexflowNS.default || VexflowNS;
     playWhoosh(undefined, 0.022);
     // raddrizzo la carta (rotate 0) e la ingrandisco, mantenendo la sua
     // posizione orizzontale nel ventaglio
-    el.style.transform = `translateX(${offset}px) translateY(-${lift}px) scale(${big}) rotate(0deg)`;
+    const base = parseFloat(el.dataset.scale || 1);
+    el.style.transform = `translateX(${offset}px) translateY(-${lift}px) scale(${big * base}) rotate(0deg)`;
     raiseHand(true);
   }
 
@@ -21663,7 +21907,8 @@ global.VexFlow = VexflowNS.default || VexflowNS;
       c.classList.remove("selected");
       const offset = parseFloat(c.dataset.offset || 0);
       const rot = parseFloat(c.dataset.rot || 0);
-      c.style.transform = `translateX(${offset}px) rotate(${rot}deg)`;
+      const sc = parseFloat(c.dataset.scale || 1);
+      c.style.transform = cardTransform(offset, rot, sc);
     });
     raiseHand(false);
   }
@@ -21739,9 +21984,11 @@ global.VexFlow = VexflowNS.default || VexflowNS;
 
     btns.appendChild(rowBreak());
 
-    [["maggiore","MAGG."],["minore","MIN."],["diminuita","DIM."]].forEach(([q,lab])=>{
+    // nelle minori armoniche compaiono anche le triadi aumentate
+    [["maggiore","MAGG."],["minore","MIN."],["diminuita","DIM."],["aumentata","AUM."]]
+      .forEach(([q,lab])=>{
       const b = document.createElement("button");
-      b.className = "note-btn third";
+      b.className = "note-btn quarter";
       b.dataset.quality = q;
       b.textContent = lab;
       b.addEventListener("pointerdown", (ev)=>{ ev.preventDefault(); pickQuality = q; paint(); });
@@ -21791,7 +22038,8 @@ global.VexFlow = VexflowNS.default || VexflowNS;
     const right = truth && truth.root === root && truth.quality === quality;
 
     if(right){
-      feedback.textContent = "Esatto: " + root.toUpperCase() + " " + quality + "!";
+      feedback.textContent = "Esatto: " + root.toUpperCase() +
+        alterSymbol(truth.rootAlter) + " " + quality + "!";
       feedback.className = "quiz-feedback ok";
       addStat("correct");
       setTimeout(()=>{
@@ -21804,7 +22052,7 @@ global.VexFlow = VexflowNS.default || VexflowNS;
       // formano affatto una triade: in entrambi i casi si segna un errore
       // e le carte del vassoio tornano in mano.
       const nome = truth
-        ? ("era " + truth.root.toUpperCase() + " " + truth.quality)
+        ? ("era " + truth.root.toUpperCase() + alterSymbol(truth.rootAlter) + " " + truth.quality)
         : "quelle tre note non formano una triade";
       feedback.textContent = "Sbagliato, " + nome + "!";
       feedback.className = "quiz-feedback ko";
@@ -21960,7 +22208,7 @@ global.VexFlow = VexflowNS.default || VexflowNS;
     const t = ctx.currentTime;
     // tutte e tre allo stesso istante: si sente l'accordo, non un arpeggio
     cards.forEach(c=>{
-      const f = freqFromKey(c.key);
+      const f = freqFromCard(c);
       if(f) playTone(f, t, 1.6, 0.15);
     });
   }
@@ -22162,7 +22410,7 @@ global.VexFlow = VexflowNS.default || VexflowNS;
     playClick();
     document.getElementById("startOverlay").classList.remove("show");
     document.getElementById("optionsOverlay").classList.add("show");
-    renderClefOptions();
+    renderOptions();
   });
 
   document.getElementById("optionsBackBtn").addEventListener("click", ()=>{
@@ -22171,36 +22419,117 @@ global.VexFlow = VexflowNS.default || VexflowNS;
     document.getElementById("startOverlay").classList.add("show");
   });
 
-  document.getElementById("clefOptions").addEventListener("click", (e)=>{
-    const btn = e.target.closest(".opt[data-clef]");
-    if(!btn) return;
-    clefMode = btn.dataset.clef;
-    playClick();
-    renderClefOptions();
-  });
-
-  function renderClefOptions(){
-    document.querySelectorAll("#clefOptions .opt").forEach(b=>{
-      b.classList.toggle("selected", b.dataset.clef === clefMode);
-    });
-    const t = document.getElementById("triadOpt");
-    if(t) t.classList.toggle("selected", triadMode);
-    const iv = document.getElementById("intervalOpt");
-    if(iv) iv.classList.toggle("selected", intervalMode);
-    document.body.classList.toggle("triad-mode", triadMode);
-    document.body.classList.toggle("interval-mode", intervalMode);
-  }
-
   document.getElementById("triadOpt").addEventListener("click", ()=>{
     triadMode = !triadMode;
     playClick();
-    renderClefOptions();
+    renderOptions();
   });
 
   document.getElementById("intervalOpt").addEventListener("click", ()=>{
     intervalMode = !intervalMode;
     playClick();
-    renderClefOptions();
+    resetMusicCaches();
+    renderOptions();
+  });
+
+  document.getElementById("intervalDirOpt").addEventListener("click", (e)=>{
+    if(e.currentTarget.disabled) return;
+    intervalDirected = !intervalDirected;
+    playClick();
+    resetMusicCaches();
+    renderOptions();
+  });
+
+  document.getElementById("minorOptions").addEventListener("click", (e)=>{
+    const b = e.target.closest(".chip[data-minor]");
+    if(!b || b.disabled) return;
+    minorMode = b.dataset.minor;
+    playClick();
+    resetMusicCaches();
+    renderOptions();
+  });
+
+  // Quando cambia tonalità o modo minore i disegni e gli intervalli
+  // vanno ricalcolati da zero.
+  function resetMusicCaches(){
+    staffCache = {};
+    noteFraction = {};
+    intervalPool = null;
+  }
+
+  /* ---------- tonalità, disposte in ordine di armatura ----------
+     dai 4 bemolli, passando per quella senza alterazioni, ai 4 diesis:
+     è l'ordine del circolo delle quinte, quindi si legge da sinistra a destra
+     come una progressione. */
+  function keysInOrder(minor){
+    return Object.keys(KEYS)
+      .filter(k => KEYS[k].ready && !!KEYS[k].minor === !!minor)
+      .map(k => ({ k, info: KEYS[k], n: KEYS[k].sharps.length - KEYS[k].flats.length }))
+      .sort((a,b) => a.n - b.n);
+  }
+
+  function renderKeyChips(){
+    [["keyListMaj", false], ["keyListMin", true]].forEach(([id, minor])=>{
+      const box = document.getElementById(id);
+      if(!box) return;
+      box.innerHTML = "";
+      keysInOrder(minor).forEach(({k, info, n})=>{
+        const b = document.createElement("button");
+        b.className = "chip key" + (k === keySig ? " selected" : "");
+        b.dataset.key = k;
+        const segno = n > 0 ? "♯".repeat(Math.min(n,4))
+                    : n < 0 ? "♭".repeat(Math.min(-n,4)) : "—";
+        b.innerHTML = `<span class="k-name">${info.nome.replace(" maggiore","").replace(" minore","m")}</span>` +
+                      `<span class="k-alt">${segno}</span>`;
+        b.title = info.nome;
+        b.addEventListener("click", ()=>{
+          keySig = k;
+          playClick();
+          resetMusicCaches();
+          renderOptions();
+        });
+        box.appendChild(b);
+      });
+    });
+  }
+
+  function renderOptions(){
+    document.querySelectorAll("#clefOptions .chip").forEach(b=>{
+      b.classList.toggle("selected", b.dataset.clef === clefMode);
+    });
+    renderKeyChips();
+
+    // le spunte del modo minore restano ingrigite finché non si sceglie una minore
+    const min = isMinorKey();
+    const blocco = document.getElementById("minorBlock");
+    if(blocco) blocco.classList.toggle("disabled", !min);
+    document.querySelectorAll("#minorOptions .chip").forEach(b=>{
+      b.disabled = !min;
+      b.classList.toggle("selected", min && b.dataset.minor === minorMode);
+    });
+
+    const t = document.getElementById("triadOpt");
+    if(t) t.classList.toggle("selected", triadMode);
+    const iv = document.getElementById("intervalOpt");
+    if(iv) iv.classList.toggle("selected", intervalMode);
+    // la scelta sulla direzione ha senso solo con gli intervalli attivi
+    const ivd = document.getElementById("intervalDirOpt");
+    if(ivd){
+      ivd.disabled = !intervalMode;
+      ivd.classList.toggle("selected", intervalMode && intervalDirected);
+      ivd.classList.toggle("off", !intervalMode);
+    }
+    document.body.classList.toggle("triad-mode", triadMode);
+    document.body.classList.toggle("interval-mode", intervalMode);
+  }
+
+  document.getElementById("clefOptions").addEventListener("click", (e)=>{
+    const b = e.target.closest(".chip[data-clef]");
+    if(!b) return;
+    clefMode = b.dataset.clef;
+    playClick();
+    resetMusicCaches();
+    renderOptions();
   });
 
   document.getElementById("restartBtn").addEventListener("click", ()=>{
@@ -22265,7 +22594,10 @@ global.VexFlow = VexflowNS.default || VexflowNS;
         "Modalità intervalli",
         "Sopra l'area <b>Intervallo</b> è scritto l'intervallo richiesto. Cambia a ogni turno, " +
         "quindi se non lo puoi fare non resti bloccato. Trascinaci una carta: l'intervallo si conta " +
-        "<b>dalla nota in cima alla pila alla tua</b>, quindi conta anche se sale o scende. " +
+        "<b>dalla nota in cima alla pila alla tua</b>. " +
+        (intervalDirected
+          ? "In questa partita conta anche se sale o scende. "
+          : "Va bene sia salendo che scendendo, basta che l'ampiezza sia giusta. ") +
         "Se lo centri, <b>tutti gli avversari pescano una carta</b>: è il modo migliore per " +
         "riempirgli la mano. Se sbagli, la carta torna in mano, peschi e perdi il turno."
       ]);
@@ -22298,7 +22630,7 @@ global.VexFlow = VexflowNS.default || VexflowNS;
 
   renderAvatars();
   renderStats();
-  renderClefOptions();
+  renderOptions();
   document.getElementById("startOverlay").classList.add("show");
 
 })();
