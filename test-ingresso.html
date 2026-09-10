@@ -1043,7 +1043,7 @@ function buildResultsPayload() {
 function submitResults() {
     const payload = buildResultsPayload();
 
-    if (!APPS_SCRIPT_URL || APPS_SCRIPT_URL.indexOf("APPS_SCRIPT_URL_QUI") !== -1) {
+    if (!APPS_SCRIPT_URL || APPS_SCRIPT_URL.indexOf("https://script.google.com/macros/s/AKfycbyMMc2HxmAi71Uq6YKz7cFaPyq5ILClBqRqPkWSE_OQlvqMDofZc5O4gUGhIX7TeYk3/exec") !== -1) {
         // l'indirizzo non è ancora stato configurato: lo segnaliamo
         // chiaramente invece di far sparire silenziosamente i risultati
         finalBadge.textContent = "⚠️";
