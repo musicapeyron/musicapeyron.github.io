@@ -21880,9 +21880,10 @@ global.VexFlow = VexflowNS.default || VexflowNS;
   }
 
   // Trasformazione di una carta nel ventaglio (posizione, inclinazione, scala)
-  function cardTransform(offset, rot, scale){
+  function cardTransform(offset, rot, scale, dy){
     const sc = (scale && scale !== 1) ? ` scale(${scale})` : "";
-    return `translateX(${offset}px) rotate(${rot}deg)${sc}`;
+    const y = dy ? `, ${dy}px` : "";
+    return `translate(${offset}px${y || ", 0px"}) rotate(${rot}deg)${sc}`;
   }
 
   // Indice della "casella" del ventaglio più vicina al punto indicato
@@ -21925,8 +21926,19 @@ global.VexFlow = VexflowNS.default || VexflowNS;
       if(state.gameOver || state.dealing) return;
       e.preventDefault();
       const startX = e.clientX, startY = e.clientY;
-      const origRect = el.getBoundingClientRect();
-      const offsetX = startX - origRect.left, offsetY = startY - origRect.top;
+      // posizione e scala della carta nel ventaglio: servono a spostarla
+      // senza cambiarle dimensione
+      const baseOffset = parseFloat(el.dataset.offset || 0);
+      const baseRot = parseFloat(el.dataset.rot || 0);
+      const baseScale = parseFloat(el.dataset.scale || 1);
+      // Se la carta era stata ingrandita con un tocco, resta ingrandita anche
+      // mentre la trascini: la dimensione non cambia mai sotto il dito.
+      const eraSelezionata = el.classList.contains("selected");
+      const grande = window.innerHeight <= 560 ? 1.35 : 1.45;
+      const alzata = window.innerHeight <= 560 ? 8 : 12;
+      const dragScale = eraSelezionata ? baseScale * grande : baseScale;
+      const dragRot = eraSelezionata ? 0 : baseRot;
+      const dragLift = eraSelezionata ? -alzata : 0;
       let dragging = false;
       try{ el.setPointerCapture(e.pointerId); }catch(err){}
 
@@ -21934,21 +21946,33 @@ global.VexFlow = VexflowNS.default || VexflowNS;
         const dx = ev.clientX - startX, dy = ev.clientY - startY;
         if(!dragging && Math.hypot(dx, dy) > 8){
           dragging = true;
-          deselectAllCards();
+          // tolgo la selezione alle ALTRE carte, non a quella che sto trascinando
+          document.querySelectorAll(".player-zone .card.selected").forEach(c=>{
+            if(c === el) return;
+            c.classList.remove("selected");
+            c.style.transform = cardTransform(
+              parseFloat(c.dataset.offset || 0),
+              parseFloat(c.dataset.rot || 0),
+              parseFloat(c.dataset.scale || 1));
+          });
           el.classList.add("dragging");
-          el.style.transform = "none";
-          el.style.position = "fixed";
-          el.style.left = origRect.left + "px";
-          el.style.top = origRect.top + "px";
-          el.style.width = origRect.width + "px";
-          el.style.height = origRect.height + "px";
-          el.style.margin = "0";
+          /* La carta resta dov'è nel documento e viene spostata solo con una
+             traslazione: mantiene esattamente la dimensione che aveva nel
+             ventaglio. Prima veniva usato il suo riquadro RUOTATO, che è più
+             grande della carta e tanto più grande quanto più la carta è
+             inclinata: da lì il cambio di dimensione e il salto iniziale
+             sulle carte alle estremità. */
+          el.style.transition = "none";
           el.style.zIndex = 9999;
           raiseHand(true);
+
+          /* La carta conserva inclinazione e scala che aveva nel ventaglio:
+             viene solo traslata. Così non cambia dimensione e il punto che
+             hai afferrato resta immobile sotto il dito, senza bisogno di
+             alcuna correzione. */
         }
         if(dragging){
-          el.style.left = (ev.clientX - offsetX) + "px";
-          el.style.top = (ev.clientY - offsetY) + "px";
+          el.style.transform = cardTransform(baseOffset + dx, dragRot, dragScale, dragLift + dy);
 
           // La pila si evidenzia solo quando la carta ci passa davvero sopra
           const pilaEl2 = document.getElementById("discardSlot");
@@ -22031,14 +22055,15 @@ global.VexFlow = VexflowNS.default || VexflowNS;
               showToast("Mossa non valida");
               addStat("errors");
             }
-            el.style.transition = "left .22s ease, top .22s ease";
-            el.style.left = origRect.left + "px";
-            el.style.top = origRect.top + "px";
+            el.style.transition = "transform .22s ease";
+            el.classList.remove("selected");
+            el.style.transform = cardTransform(baseOffset, baseRot, baseScale);
             el.addEventListener("transitionend", function h(){
               el.removeEventListener("transitionend", h);
               raiseHand(false);
               render(true);
             }, { once:true });
+            setTimeout(()=>{ raiseHand(false); render(true); }, 320);
             el.classList.remove("dragging");
           }
         } else {
