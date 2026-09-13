@@ -400,6 +400,40 @@ h1 {
 .mode-grid { display: flex; flex-direction: column; gap: 14px; margin-top: 28px; }
 .mode-divider { margin: 22px 0 4px; border: none; border-top: 1px solid var(--border-soft); }
 
+.answer-mode-title {
+    font-size: 0.7rem;
+    font-weight: 700;
+    letter-spacing: 0.6px;
+    text-transform: uppercase;
+    color: #a5b4fc;
+    opacity: 0.85;
+    margin: 4px 0 8px;
+}
+.answer-mode-pair {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+    margin-bottom: 6px;
+}
+.answer-mode-choice {
+    padding: 12px 8px;
+    border-radius: 10px;
+    border: 1px solid rgba(255,255,255,0.16);
+    background: rgba(255,255,255,0.06);
+    color: #e2e8f0;
+    font-family: "Sora", "Inter", Arial, sans-serif;
+    font-weight: 700;
+    font-size: 0.82rem;
+    cursor: pointer;
+    transition: background 0.15s, box-shadow 0.15s;
+}
+.answer-mode-choice:hover { background: rgba(255,255,255,0.12); }
+.answer-mode-choice.active {
+    background: linear-gradient(135deg, #22c55e, #15803d);
+    border-color: rgba(255,255,255,0.35);
+    box-shadow: 0 4px 12px rgba(34,197,94,0.4), inset 0 0 0 2px rgba(255,255,255,0.2);
+}
+
 .mode-button {
     border: none;
     padding: 20px 22px;
@@ -534,6 +568,11 @@ h1 {
     <div class="hero-badge">🎧</div>
     <h1>Ascolta gli intervalli</h1>
     <p class="subtitle">Ascolta l'intervallo e indovinalo a orecchio.</p>
+    <div class="answer-mode-title">Cosa vuoi indovinare?</div>
+    <div class="answer-mode-pair">
+        <button class="answer-mode-choice active" id="fullModeButton" data-mode="full">Numero e qualità</button>
+        <button class="answer-mode-choice" id="numberModeButton" data-mode="number">Solo numero</button>
+    </div>
     <div class="mode-grid">
         <button class="mode-button up" data-direction="up">
             <span class="mode-button-title">🔼 Ascendenti</span>
@@ -800,6 +839,9 @@ const MAX_ACCIDENTALS = 1;
 const CLEF = "treble";
 
 const DIRECTION_LABELS = { up: "Ascendenti", down: "Discendenti", mixed: "Ascendenti e discendenti" };
+const NUMBER_LABELS = { 2: "Seconda", 3: "Terza", 4: "Quarta", 5: "Quinta", 6: "Sesta", 7: "Settima", 8: "Ottava" };
+
+let answerMode = "full"; // "full" (numero e qualità) | "number" (solo numero)
 
 /* =========================================================
    ELEMENTI DOM
@@ -815,6 +857,8 @@ const selectStartButton = document.getElementById("selectStartButton");
 const groupBackButton = document.getElementById("groupBackButton");
 const gameContainer = document.getElementById("gameContainer");
 const verificaButton = document.getElementById("verificaButton");
+const fullModeButton = document.getElementById("fullModeButton");
+const numberModeButton = document.getElementById("numberModeButton");
 const customButton = document.getElementById("customButton");
 const siteHomeButton = document.getElementById("siteHomeButton");
 const homeMenuButton = document.getElementById("homeMenuButton");
@@ -1100,14 +1144,26 @@ function generateQuestionForDef(def) {
 
 function renderAnswerButtons() {
     answerRow.innerHTML = "";
-    currentPool.forEach(def => {
-        const btn = document.createElement("button");
-        btn.className = "choice-btn";
-        btn.textContent = def.label;
-        btn.dataset.key = def.key;
-        btn.addEventListener("click", () => onAnswerClicked(def.key, btn));
-        answerRow.appendChild(btn);
-    });
+    if (answerMode === "number") {
+        const numbers = [...new Set(currentPool.map(d => d.n))].sort((a, b) => a - b);
+        numbers.forEach(n => {
+            const btn = document.createElement("button");
+            btn.className = "choice-btn";
+            btn.textContent = NUMBER_LABELS[n];
+            btn.dataset.value = n;
+            btn.addEventListener("click", () => onAnswerClicked(n, btn));
+            answerRow.appendChild(btn);
+        });
+    } else {
+        currentPool.forEach(def => {
+            const btn = document.createElement("button");
+            btn.className = "choice-btn";
+            btn.textContent = def.label;
+            btn.dataset.value = def.key;
+            btn.addEventListener("click", () => onAnswerClicked(def.key, btn));
+            answerRow.appendChild(btn);
+        });
+    }
 }
 
 function setAnswerButtonsDisabled(disabled) {
@@ -1198,13 +1254,13 @@ function updateStats() {
 
 /* ---- Risposta (un solo click, niente pulsante Invia) ---- */
 
-function onAnswerClicked(key, btnEl) {
+function onAnswerClicked(value, btnEl) {
     if (!answering || finished) return;
     answering = false;
     setAnswerButtonsDisabled(true);
 
     total++;
-    const wasCorrect = key === currentQuestion.key;
+    const wasCorrect = answerMode === "number" ? (value === currentQuestion.number) : (value === currentQuestion.key);
 
     if (wasCorrect) {
         correct++;
@@ -1365,6 +1421,14 @@ groupBackButton.addEventListener("click", goHome);
 /* ---- Verifica (dalla home, salta direttamente alla selezione) ---- */
 verificaButton.addEventListener("click", () => showSelectScreen("verifica"));
 
+function setAnswerMode(newMode) {
+    answerMode = newMode;
+    fullModeButton.classList.toggle("active", newMode === "full");
+    numberModeButton.classList.toggle("active", newMode === "number");
+}
+fullModeButton.addEventListener("click", () => setAnswerMode("full"));
+numberModeButton.addEventListener("click", () => setAnswerMode("number"));
+
 /* ---- Schermata di selezione a spunte ---- */
 selectBackButton.addEventListener("click", () => {
     if (selectFlow === "verifica") {
@@ -1385,7 +1449,7 @@ selectStartButton.addEventListener("click", () => {
 });
 
 /* ---- Pulsanti di gioco ---- */
-siteHomeButton.addEventListener("click", () => { window.location.href = "index.html"; });
+siteHomeButton.addEventListener("click", () => {});
 
 playButton.addEventListener("click", () => {
     if (!currentQuestion) return;

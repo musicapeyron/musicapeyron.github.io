@@ -3914,14 +3914,14 @@ h1 {
     <div class="options-pair">
 
         <button
-            class="options-choice active"
+            class="options-choice"
             id="trophiesOnButton"
             data-trophies="on">
             🏆 Trofei attivati
         </button>
 
         <button
-            class="options-choice"
+            class="options-choice active"
             id="trophiesOffButton"
             data-trophies="off">
             🏆 Trofei disattivati
@@ -4940,7 +4940,7 @@ const trophyUnlockContinue =
    compilare quando il gioco sarà pubblicato online.
    Finché resta vuoto, il pulsante non fa nulla.
 */
-const GAME_HOME_URL = "index.html";
+const GAME_HOME_URL = "";
 
 
 /*
@@ -5265,8 +5265,12 @@ let pendingTrophyUnlocks = [];
    l'elenco trofei resta sempre accurato, qualunque
    sia lo stato dell'opzione al momento in cui un
    traguardo viene raggiunto.
+
+   Di default i popup sono DISATTIVATI: compaiono
+   solo se il giocatore clicca esplicitamente su
+   "Trofei attivati" nel pannello Opzioni.
 */
-let trophiesPopupsEnabled = true;
+let trophiesPopupsEnabled = false;
 
 function unlockTrophy(id) {
 
@@ -8899,13 +8903,24 @@ function checkAnswer(selectedNote) {
            - dopo almeno un errore
            - quando la nuova serie supera
              la soglia cristallizzata
+           - quando la serie è comunque
+             abbastanza lunga da valere un
+             festeggiamento (altrimenti, subito
+             dopo il primo errore della partita,
+             basterebbe azzeccarne anche solo
+             una per vedersi comparire "nuovo
+             record", che non ha senso)
            - una sola volta
         */
+
+        const MIN_STREAK_FOR_RECORD_CELEBRATION =
+            3;
 
         if (
             hasMadeMistake &&
             !recordCelebratedSinceError &&
-            streak > recordThreshold
+            streak > recordThreshold &&
+            streak >= MIN_STREAK_FOR_RECORD_CELEBRATION
         ) {
 
             recordCelebratedSinceError =

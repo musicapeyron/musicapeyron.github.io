@@ -520,12 +520,27 @@
     border-radius:2px; margin-left:-5px; border:1px solid rgba(255,255,255,0.18);
   }
   .bot-hand .minicard:first-child{ margin-left:0; }
+  /* Fumetto del bot: stessa dimensione di prima, ma con la codina che punta
+     verso il riquadro di chi parla. Sta sopra a tutto il resto del tavolo,
+     comprese le aree di gioco. */
+  #bubbleLayer{
+    position:fixed; inset:0; pointer-events:none; z-index:95;
+  }
   .bot-bubble{
-    position:absolute; bottom:-24px; left:50%; transform:translateX(-50%);
+    position:fixed; transform:translateX(-50%);
     background:#fff; color:#1e293b; font-size:11px; font-weight:800;
-    padding:3px 10px; border-radius:10px; font-family:"Sora","Inter",sans-serif;
-    opacity:0; transition:opacity .25s; white-space:nowrap; z-index:5;
-    box-shadow:0 4px 10px rgba(0,0,0,0.3);
+    padding:3px 10px; border-radius:11px; font-family:"Sora","Inter",sans-serif;
+    opacity:0; transition:opacity .25s; white-space:nowrap;
+    box-shadow:0 5px 14px rgba(0,0,0,0.38);
+    filter:drop-shadow(0 0 0 transparent);
+  }
+  /* codina triangolare rivolta in alto, verso il bot */
+  .bot-bubble::after{
+    content:""; position:absolute; top:-6px; left:50%; margin-left:-6px;
+    width:0; height:0;
+    border-left:6px solid transparent;
+    border-right:6px solid transparent;
+    border-bottom:7px solid #fff;
   }
   .bot-bubble.show{ opacity:1; }
 
@@ -1023,6 +1038,10 @@
   <div class="hand-strip">
     <div class="player-zone" id="playerHand"></div>
   </div>
+
+  <!-- I fumetti vivono qui, fuori dal tavolo: dentro al tavolo resterebbero
+       comunque sotto alle carte, perché il tavolo forma un livello a sé. -->
+  <div id="bubbleLayer"></div>
 
   <div class="quiz" id="quiz">
     <div class="quiz-title" id="quizTitle">Che nota hai giocato?</div>
@@ -21346,8 +21365,18 @@ global.VexFlow = VexflowNS.default || VexflowNS;
   function showBubble(playerKey, text){
     if(playerKey === "you") return;
     const b = document.getElementById("bubble-"+playerKey);
-    if(!b) return;
+    const chip = document.getElementById("bot-" + playerKey);
+    if(!b || !chip) return;
+
+    // il fumetto sta nel livello più alto: lo posiziono sotto al riquadro
+    const layer = document.getElementById("bubbleLayer");
+    if(layer && b.parentElement !== layer) layer.appendChild(b);
+
     b.textContent = text;
+    const r = chip.getBoundingClientRect();
+    b.style.left = (r.left + r.width / 2) + "px";
+    b.style.top = (r.bottom + 7) + "px";
+
     b.classList.add("show");
     clearTimeout(b._t);
     b._t = setTimeout(()=>b.classList.remove("show"), text && text.length > 6 ? 3200 : 1400);

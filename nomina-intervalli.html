@@ -452,6 +452,17 @@ h1 {
 }
 .options-choice.options-full { width: 100%; }
 
+.answer-mode-title {
+    font-size: 0.7rem;
+    font-weight: 700;
+    letter-spacing: 0.6px;
+    text-transform: uppercase;
+    color: #a5b4fc;
+    opacity: 0.85;
+    margin: 4px 0 8px;
+}
+.answer-mode-pair { margin-bottom: 22px; }
+
 /* OVERLAY CONFERMA / SCHERMATA FINALE */
 .overlay {
     position: fixed; inset: 0; z-index: 300;
@@ -549,6 +560,7 @@ h1 {
 .mode-divider { margin: 22px 0 4px; border: none; border-top: 1px solid var(--border-soft); }
 
 #numberSection.hidden { display: none; }
+#qualitySection.hidden { display: none; }
 
 .theory-toast {
     position: fixed;
@@ -688,6 +700,11 @@ h1 {
     <div class="hero-badge">🎼</div>
     <h1>Nomina gli intervalli</h1>
     <p class="subtitle">Scegli su cosa fare pratica, oppure mettiti alla prova nella Verifica.</p>
+    <div class="answer-mode-title">Cosa vuoi indovinare?</div>
+    <div class="options-pair answer-mode-pair">
+        <button class="options-choice active" id="fullModeButton" data-mode="full">Numero e qualità</button>
+        <button class="options-choice" id="numberModeButton" data-mode="number">Solo numero</button>
+    </div>
     <div class="theme-grid">
         <button class="theme-tile n1" data-number="1">Unisoni</button>
         <button class="theme-tile n2" data-number="2">Seconde</button>
@@ -762,8 +779,10 @@ h1 {
     <button class="play-button" id="playButton" title="Ascolta l'intervallo">🔊</button>
 
     <div class="answer-section">
-        <div class="answer-section-title">Qualità</div>
-        <div class="choice-row quality-row" id="qualityRow"></div>
+        <div id="qualitySection">
+            <div class="answer-section-title">Qualità</div>
+            <div class="choice-row quality-row" id="qualityRow"></div>
+        </div>
         <div id="numberSection">
             <div class="answer-section-title">Numero</div>
             <div class="choice-row number-row" id="numberRow"></div>
@@ -966,6 +985,7 @@ const CLEF_RANGE = {
 const MAX_ACCIDENTALS = 1;
 
 let clef = "treble";
+let answerMode = "full"; // "full" (numero e qualità) | "number" (solo numero)
 let useSubmitButton = true;
 
 /* =========================================================
@@ -975,6 +995,8 @@ let useSubmitButton = true;
 const homeScreen = document.getElementById("homeScreen");
 const gameContainer = document.getElementById("gameContainer");
 const verificaButton = document.getElementById("verificaButton");
+const fullModeButton = document.getElementById("fullModeButton");
+const numberModeButton = document.getElementById("numberModeButton");
 const customButton = document.getElementById("customButton");
 const selectScreen = document.getElementById("selectScreen");
 const checkGrid = document.getElementById("checkGrid");
@@ -987,6 +1009,7 @@ const homeMenuButton = document.getElementById("homeMenuButton");
 const staffInner = document.getElementById("staffInner");
 const playButton = document.getElementById("playButton");
 const confettiLayer = document.getElementById("confettiLayer");
+const qualitySection = document.getElementById("qualitySection");
 const qualityRow = document.getElementById("qualityRow");
 const numberSection = document.getElementById("numberSection");
 const numberRow = document.getElementById("numberRow");
@@ -1346,6 +1369,16 @@ function renderChoiceButtons() {
         numbers = showNumbers ? NUMBER_ORDER.filter(n => specNumbers.has(n)) : [];
     }
 
+    if (!qualityIsRequired()) {
+        // "solo numero": la qualità non si chiede, e si mostrano SEMPRE
+        // tutti gli 8 numeri (anche nelle modalità con un solo numero
+        // fisso), altrimenti non ci sarebbe nulla da indovinare
+        qualities = [];
+        numbers = NUMBER_ORDER;
+        showNumbers = true;
+    }
+
+    qualitySection.classList.toggle("hidden", !qualityIsRequired());
     qualityRow.innerHTML = "";
     qualities.forEach(q => {
         const btn = document.createElement("button");
@@ -1375,8 +1408,8 @@ function clearSelectionVisuals() {
 
 function presentQuestion(question, animated) {
     currentQuestion = question;
-    selectedQuality = null;
-    selectedNumber = (mode === "theme" && themeNumber !== "all" && themeNumber !== "custom") ? themeNumber : null;
+    selectedQuality = qualityIsRequired() ? null : question.quality;
+    selectedNumber = numberIsRequired() ? null : question.number;
     lastWrongKey = null;
     clearSelectionVisuals();
     message.textContent = "";
@@ -1486,7 +1519,12 @@ function showTheoryToast(text) {
 let lastWrongKey = null; // combinazione gia' inviata e risultata sbagliata: va cambiata prima di poter reinviare
 
 function numberIsRequired() {
+    if (!qualityIsRequired()) return true; // "solo numero": il numero va sempre scelto esplicitamente
     return mode === "verifica" || themeNumber === "all" || themeNumber === "custom";
+}
+
+function qualityIsRequired() {
+    return answerMode === "full";
 }
 
 function currentSelectionKey() {
@@ -1494,7 +1532,7 @@ function currentSelectionKey() {
 }
 
 function refreshSubmitState() {
-    const complete = selectedQuality !== null && (!numberIsRequired() || selectedNumber !== null);
+    const complete = (!qualityIsRequired() || selectedQuality !== null) && (!numberIsRequired() || selectedNumber !== null);
     const unchanged = currentSelectionKey() === lastWrongKey;
     submitButton.disabled = !answering || finished || !complete || unchanged;
     if (useSubmitButton) return;
@@ -1546,29 +1584,32 @@ function submitAnswer() {
 
     // prima si controlla se la coppia scelta dal giocatore (qualita' +
     // numero selezionati) ha senso a livello teorico, indipendentemente
-    // da quale sia la risposta corretta
-    const allowedQualities = validQualitiesForNumber(selectedNumber);
-    if (!allowedQualities.includes(selectedQuality)) {
-        total++;
-        errors++;
-        streak = 0;
-        playWrongSound();
-        animateStat(errorsBox, "bump");
-        if (qBtn) qBtn.classList.add("wrong-flash");
-        if (nBtn) nBtn.classList.add("wrong-flash");
-        setTimeout(() => {
-            if (qBtn) qBtn.classList.remove("wrong-flash");
-            if (nBtn) nBtn.classList.remove("wrong-flash");
-        }, 400);
-        showTheoryToast(theoryImpossibleMessage(selectedNumber));
-        lastWrongKey = currentSelectionKey();
-        refreshSubmitState();
-        updateStats();
-        return;
+    // da quale sia la risposta corretta (non si applica in modalità
+    // "solo numero", dove la qualità non viene nemmeno chiesta)
+    if (qualityIsRequired()) {
+        const allowedQualities = validQualitiesForNumber(selectedNumber);
+        if (!allowedQualities.includes(selectedQuality)) {
+            total++;
+            errors++;
+            streak = 0;
+            playWrongSound();
+            animateStat(errorsBox, "bump");
+            if (qBtn) qBtn.classList.add("wrong-flash");
+            if (nBtn) nBtn.classList.add("wrong-flash");
+            setTimeout(() => {
+                if (qBtn) qBtn.classList.remove("wrong-flash");
+                if (nBtn) nBtn.classList.remove("wrong-flash");
+            }, 400);
+            showTheoryToast(theoryImpossibleMessage(selectedNumber));
+            lastWrongKey = currentSelectionKey();
+            refreshSubmitState();
+            updateStats();
+            return;
+        }
     }
 
     total++;
-    const wasCorrect = selectedQuality === currentQuestion.quality && selectedNumber === currentQuestion.number;
+    const wasCorrect = (!qualityIsRequired() || selectedQuality === currentQuestion.quality) && selectedNumber === currentQuestion.number;
 
     if (wasCorrect) {
         answering = false;
@@ -1730,6 +1771,14 @@ document.querySelectorAll(".theme-tile").forEach(tile => {
     });
 });
 verificaButton.addEventListener("click", () => showSelectScreen("verifica"));
+
+function setAnswerMode(newMode) {
+    answerMode = newMode;
+    fullModeButton.classList.toggle("active", newMode === "full");
+    numberModeButton.classList.toggle("active", newMode === "number");
+}
+fullModeButton.addEventListener("click", () => setAnswerMode("full"));
+numberModeButton.addEventListener("click", () => setAnswerMode("number"));
 customButton.addEventListener("click", () => showSelectScreen("theme"));
 selectBackButton.addEventListener("click", goHome);
 selectStartButton.addEventListener("click", () => {
@@ -1741,7 +1790,7 @@ selectStartButton.addEventListener("click", () => {
         startTheme("custom");
     }
 });
-siteHomeButton.addEventListener("click", () => { window.location.href = "index.html"; });
+siteHomeButton.addEventListener("click", () => {});
 
 playButton.addEventListener("click", () => {
     if (!currentQuestion) return;
