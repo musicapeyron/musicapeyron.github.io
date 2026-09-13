@@ -385,8 +385,6 @@ h1 {
         </div>
     </div>
 
-    <button class="play-button" id="playButton" title="Ascolta la triade">🔊</button>
-
     <div class="answer-section">
         <div class="choice-row" id="answerRow"></div>
     </div>
@@ -586,7 +584,6 @@ const gameSubtitle = document.getElementById("gameSubtitle");
 
 const staffInner = document.getElementById("staffInner");
 const confettiLayer = document.getElementById("confettiLayer");
-const playButton = document.getElementById("playButton");
 const answerRow = document.getElementById("answerRow");
 const message = document.getElementById("message");
 
@@ -924,6 +921,7 @@ function onAnswerClicked(q, btnEl) {
 
         animateStat(correctBox, "bump");
         btnEl.classList.add("correct-flash");
+        playTriadSound(currentQuestion);
         message.textContent = "Corretto!";
         message.className = "message correct-message";
 
@@ -1008,15 +1006,7 @@ function goHome() {
 
 startButton.addEventListener("click", () => { showGame(); startSession("theme"); });
 verificaButton.addEventListener("click", () => { showGame(); startSession("verifica"); });
-siteHomeButton.addEventListener("click", () => { window.location.href = "index.html"; });
-
-playButton.addEventListener("click", () => {
-    if (!currentQuestion) return;
-    playButton.classList.remove("playing");
-    void playButton.offsetWidth;
-    playButton.classList.add("playing");
-    playTriadSound(currentQuestion);
-});
+siteHomeButton.addEventListener("click", () => {});
 
 finishButton.addEventListener("click", () => confirmOverlay.classList.add("show"));
 cancelFinish.addEventListener("click", () => confirmOverlay.classList.remove("show"));
