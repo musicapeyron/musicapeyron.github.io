@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Test d'ingresso</title>
-<meta name="description" content="Test d'ingresso: una versione breve e semplificata di quattro giochi didattici di educazione musicale.">
+<meta name="description" content="Test d'ingresso: cinque giochi didattici di educazione musicale in versione breve, con statistiche finali.">
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='.9em' font-size='90'%3E%F0%9F%8E%B5%3C/text%3E%3C/svg%3E">
 
 <script>
@@ -254,6 +254,58 @@ h1 {
     min-height: 1.5em;
 }
 
+.word-acuto { color: #4ade80; }
+.word-grave { color: #60a5fa; }
+
+/* =========================================================
+   SPIEGAZIONE INTRODUTTIVA DI OGNI MINI-GIOCO
+========================================================= */
+.game-intro {
+    width: min(480px, 100%);
+    margin: 8px auto 0;
+    padding: 22px 22px 26px;
+    background: linear-gradient(180deg, rgba(255,255,255,0.09), rgba(255,255,255,0.04));
+    border: 1px solid var(--border-soft);
+    border-radius: 18px;
+    text-align: center;
+    animation: menuScreenIn 0.4s var(--ease-out-soft);
+}
+.game-intro-icon {
+    width: 64px;
+    height: 64px;
+    margin: 0 auto 14px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.8rem;
+    background: linear-gradient(145deg, #4f46e5, #7c3aed);
+    box-shadow: 0 1px 0 rgba(255,255,255,0.3) inset, 0 10px 22px rgba(79,70,229,0.4);
+}
+.game-intro-text {
+    margin: 0 0 20px;
+    color: #e2e8f0;
+    font-size: 0.96rem;
+    line-height: 1.55;
+}
+.game-intro-text .word-acuto, .game-intro-text .word-grave { font-weight: 800; }
+
+.start-game-button {
+    border: none;
+    padding: 14px 28px;
+    border-radius: 14px;
+    color: #052e16;
+    font-family: "Sora", "Inter", Arial, sans-serif;
+    font-size: 1.02rem;
+    font-weight: 800;
+    cursor: pointer;
+    background: linear-gradient(135deg, #4ade80, #16a34a);
+    box-shadow: 0 1px 0 rgba(255,255,255,0.35) inset, 0 10px 22px rgba(22,163,74,0.4);
+    transition: transform 0.15s var(--ease-out-soft), filter 0.15s;
+}
+.start-game-button:hover { transform: translateY(-3px); filter: brightness(1.08); }
+.start-game-button:active { transform: translateY(1px); }
+
 /* PENTAGRAMMA */
 .staff-row {
     display: flex;
@@ -347,8 +399,12 @@ h1 {
         0 2px 5px rgba(0,0,0,0.4);
 }
 .answer::after { content: ""; position: absolute; inset: 0; background: linear-gradient(180deg, rgba(255,255,255,0.22), rgba(255,255,255,0) 55%); pointer-events: none; }
-.answer:hover { filter: brightness(1.1); transform: translateY(-3px); }
-.answer:active { transform: translateY(3px); }
+/* niente spostamento del pulsante su hover/click: uno spostamento
+   verticale muove il tasto da sotto il cursore proprio mentre lo
+   si preme, causando click "persi" specialmente vicino al bordo
+   superiore. Il feedback resta solo via luminosità/ombra. */
+.answer:hover { filter: brightness(1.12); }
+.answer:active { filter: brightness(0.92); box-shadow: 0 1px 0 rgba(255,255,255,0.28) inset, 0 2px 0 rgba(0,0,0,0.25), 0 3px 8px rgba(0,0,0,0.28); }
 .answer:disabled { opacity: 0.45; cursor: not-allowed; filter: grayscale(0.3); transform: none; }
 .answer.wrong-flash { animation: buttonShake 0.4s ease-in-out; }
 
@@ -532,25 +588,49 @@ h1 {
 .final-screen h2 { margin: 0 0 6px; font-family: "Sora", Arial, sans-serif; font-size: 1.6rem; }
 .final-screen p.subtitle-final { color: #cbd5e1; margin: 0 0 20px; }
 
-.final-block {
-    text-align: left;
-    margin: 0 auto 18px;
-    padding: 16px 18px;
+.hero-badge-small {
+    width: 48px;
+    height: 48px;
+    font-size: 1.4rem;
+    margin: 0 auto 10px;
+}
+
+/* tabella compatta con tutte le percentuali, pensata per
+   stare intera a schermo senza dover scorrere */
+.final-table {
+    width: min(460px, 100%);
+    margin: 4px auto 0;
     background: linear-gradient(180deg, rgba(255,255,255,0.08), rgba(255,255,255,0.03));
     border: 1px solid var(--border-soft);
-    border-radius: 16px;
+    border-radius: 14px;
+    overflow: hidden;
 }
-.final-block h3 {
-    margin: 0 0 10px;
-    font-size: 0.82rem;
+.final-row {
+    display: grid;
+    grid-template-columns: 1fr auto auto;
+    align-items: center;
+    gap: 10px;
+    padding: 9px 14px;
+    border-bottom: 1px solid rgba(255,255,255,0.07);
+}
+.final-row:last-child { border-bottom: none; }
+.final-row-header {
+    font-size: 0.62rem;
     text-transform: uppercase;
-    letter-spacing: 0.6px;
-    color: #fde68a;
+    letter-spacing: 0.5px;
+    color: #94a3b8;
+    font-weight: 700;
+    padding-top: 10px;
+    padding-bottom: 6px;
 }
-.final-stats { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
-.final-stat { padding: 10px 12px; border-radius: 10px; background: rgba(255,255,255,0.06); border: 1px solid var(--border-soft); }
-.final-stat span { display: block; font-size: 0.65rem; text-transform: uppercase; color: #94a3b8; margin-bottom: 3px; }
-.final-stat strong { font-family: "Sora", Arial, sans-serif; font-size: 1.15rem; }
+.final-row-label { text-align: left; font-size: 0.86rem; font-weight: 600; color: #e2e8f0; }
+.final-row-frac { font-size: 0.8rem; color: #cbd5e1; min-width: 52px; text-align: right; }
+.final-row-pct { font-size: 0.95rem; font-weight: 800; min-width: 46px; text-align: right; color: #fde68a; }
+.final-row.total {
+    background: rgba(250, 204, 21, 0.10);
+    border-bottom: 1px solid rgba(255,255,255,0.12);
+}
+.final-row.total .final-row-label { font-weight: 800; color: #fef3c7; }
 
 @media (max-width: 620px) {
     .answer { min-width: 70px; padding: 12px 10px; font-size: 0.95rem; }
@@ -573,28 +653,9 @@ h1 {
         <li>🎧 Acuto o grave</li>
         <li>🎹 Tastiera del pianoforte</li>
         <li>🎼 Figure ritmiche</li>
-        <li>🎶 Leggi la nota</li>
+        <li>🎶 Leggi la nota (chiave di violino)</li>
+        <li>🎶 Leggi la nota (chiave di basso)</li>
     </ul>
-
-    <div class="identify-form">
-        <div class="identify-row">
-            <label for="inputClasse">Classe</label>
-            <select id="inputClasse">
-                <option value="">-</option>
-            </select>
-        </div>
-        <div class="identify-row">
-            <label for="inputSezione">Sezione</label>
-            <select id="inputSezione">
-                <option value="">-</option>
-            </select>
-        </div>
-        <div class="identify-row">
-            <label for="inputNumero">Numero di registro</label>
-            <input type="number" id="inputNumero" min="1" step="1" placeholder="es. 12">
-        </div>
-    </div>
-    <p class="identify-error" id="identifyError"></p>
 
     <div class="mode-grid">
         <button class="mode-button" id="startButton">
@@ -604,63 +665,82 @@ h1 {
 </div>
 
 <!-- ============================================================
-     SCHERMATA DI GIOCO (comune ai quattro mini-giochi)
+     SCHERMATA DI GIOCO (comune ai cinque mini-giochi)
 ============================================================ -->
 <div class="game" id="gameScreen" style="display:none;">
     <h1 id="gameTitle">Titolo del gioco</h1>
-    <p class="subtitle" id="gameSubtitle">Sottotitolo</p>
 
-    <div class="level-box" id="levelBox">
-        <div class="level-header">
-            <span class="level-title" id="levelTitle">Gioco 1 di 4</span>
-            <span class="level-number" id="levelNumber">1 / 10</span>
-        </div>
-        <div class="progress-bar">
-            <div class="progress-fill" id="progressFill"></div>
-        </div>
-        <div class="level-info" id="levelInfo"></div>
+    <!-- spiegazione introduttiva, mostrata prima di ogni mini-gioco -->
+    <div class="game-intro" id="gameIntro">
+        <div class="game-intro-icon" id="gameIntroIcon">🎵</div>
+        <p class="game-intro-text" id="gameIntroText"></p>
+        <button class="start-game-button" id="gameIntroStart">✅ Inizia!</button>
     </div>
 
-    <div class="question-prompt" id="questionPrompt"></div>
+    <div class="game-content" id="gameContent" style="display:none;">
+        <p class="subtitle" id="gameSubtitle">Sottotitolo</p>
 
-    <button class="listen-button" id="listenButton" style="display:none;">🔊 Ascolta di nuovo</button>
-
-    <!-- pentagramma / figura -->
-    <div class="staff-row" id="staffRow" style="display:none;">
-        <div class="staff-card" id="staffCard">
-            <div class="confetti-layer" id="confettiLayer"></div>
-            <div class="staff-inner" id="staffInner"></div>
+        <div class="level-box" id="levelBox">
+            <div class="level-header">
+                <span class="level-title" id="levelTitle">Gioco 1 di 4</span>
+                <span class="level-number" id="levelNumber">1 / 10</span>
+            </div>
+            <div class="progress-bar">
+                <div class="progress-fill" id="progressFill"></div>
+            </div>
+            <div class="level-info" id="levelInfo"></div>
         </div>
-    </div>
 
-    <!-- tastiera semplificata -->
-    <div class="keyboard-stage" id="keyboardStage" style="display:none;">
-        <div class="keyboard-frame">
-            <div class="keyboard-brand">Pianoforte digitale</div>
-            <div class="keyboard" id="keyboard"></div>
+        <div class="question-prompt" id="questionPrompt"></div>
+
+        <button class="listen-button" id="listenButton" style="display:none;">🔊 Ascolta di nuovo</button>
+
+        <!-- pentagramma / figura -->
+        <div class="staff-row" id="staffRow" style="display:none;">
+            <div class="staff-card" id="staffCard">
+                <div class="confetti-layer" id="confettiLayer"></div>
+                <div class="staff-inner" id="staffInner"></div>
+            </div>
         </div>
-    </div>
 
-    <div class="answers" id="answers"></div>
+        <!-- tastiera semplificata -->
+        <div class="keyboard-stage" id="keyboardStage" style="display:none;">
+            <div class="keyboard-frame">
+                <div class="keyboard-brand">Pianoforte digitale</div>
+                <div class="keyboard" id="keyboard"></div>
+            </div>
+        </div>
 
-    <div class="message" id="message"></div>
+        <div class="answers" id="answers"></div>
 
-    <div class="toolbar">
-        <div class="volume-control">
-            <span class="volume-icon">🔊</span>
-            <input type="range" class="volume-slider" id="volumeSlider" min="0" max="100" value="75">
+        <div class="message" id="message"></div>
+
+        <div class="toolbar">
+            <div class="volume-control">
+                <span class="volume-icon">🔊</span>
+                <input type="range" class="volume-slider" id="volumeSlider" min="0" max="100" value="75">
+            </div>
         </div>
     </div>
 </div>
 
 <!-- ============================================================
-     SCHERMATA FINALE (nessuna statistica mostrata all'alunno:
-     i risultati vengono inviati all'insegnante)
+     SCHERMATA FINALE (percentuali di risposte corrette,
+     compatta: una sola tabella, pensata per stare tutta a
+     schermo senza dover scorrere)
 ============================================================ -->
 <div class="final-screen" id="finalScreen" style="display:none;">
-    <div class="hero-badge" id="finalBadge">📤</div>
-    <h2 id="finalTitle">Invio dei risultati in corso...</h2>
-    <p class="subtitle-final" id="finalMessage">Un attimo, non chiudere questa pagina.</p>
+    <div class="hero-badge hero-badge-small">🏁</div>
+    <h2>Test concluso!</h2>
+
+    <div class="final-table" id="finalTable"></div>
+
+    <div class="toolbar">
+        <div class="volume-control">
+            <span class="volume-icon">🔊</span>
+            <input type="range" class="volume-slider" id="volumeSliderFinal" min="0" max="100" value="75">
+        </div>
+    </div>
 </div>
 
 
@@ -674,12 +754,12 @@ const finalScreen = document.getElementById("finalScreen");
 const startButton = document.getElementById("startButton");
 const siteHomeButton = document.getElementById("siteHomeButton");
 
-const inputClasse = document.getElementById("inputClasse");
-const inputSezione = document.getElementById("inputSezione");
-const inputNumero = document.getElementById("inputNumero");
-const identifyError = document.getElementById("identifyError");
-
 const gameTitle = document.getElementById("gameTitle");
+const gameIntro = document.getElementById("gameIntro");
+const gameIntroIcon = document.getElementById("gameIntroIcon");
+const gameIntroText = document.getElementById("gameIntroText");
+const gameIntroStart = document.getElementById("gameIntroStart");
+const gameContent = document.getElementById("gameContent");
 const gameSubtitle = document.getElementById("gameSubtitle");
 const levelTitle = document.getElementById("levelTitle");
 const levelNumber = document.getElementById("levelNumber");
@@ -695,10 +775,9 @@ const keyboard = document.getElementById("keyboard");
 const answersBox = document.getElementById("answers");
 const message = document.getElementById("message");
 const volumeSlider = document.getElementById("volumeSlider");
+const volumeSliderFinal = document.getElementById("volumeSliderFinal");
 
-const finalBadge = document.getElementById("finalBadge");
-const finalTitle = document.getElementById("finalTitle");
-const finalMessage = document.getElementById("finalMessage");
+const finalTable = document.getElementById("finalTable");
 
 /* =========================================================
    AUDIO (Web Audio, timbro di pianoforte) — riutilizzato
@@ -838,10 +917,16 @@ function playVictorySound() {
 volumeSlider.addEventListener("input", () => {
     masterVolume = volumeSlider.value / 100;
     if (masterGain) masterGain.gain.value = masterVolume;
+    volumeSliderFinal.value = volumeSlider.value;
+});
+volumeSliderFinal.addEventListener("input", () => {
+    masterVolume = volumeSliderFinal.value / 100;
+    if (masterGain) masterGain.gain.value = masterVolume;
+    volumeSlider.value = volumeSliderFinal.value;
 });
 
 /* per ora il tasto Home non fa nulla, come richiesto */
-siteHomeButton.addEventListener("click", () => { window.location.href = "index.html"; });
+siteHomeButton.addEventListener("click", () => {});
 
 /* =========================================================
    SCHERMATE
@@ -856,12 +941,13 @@ function showScreen(name) {
    STATISTICHE (globali + per gioco, MAI resettate tra un
    mini-gioco e l'altro, mostrate solo alla fine)
 ========================================================= */
-const GAME_ORDER = ["acuto", "tastiera", "figure", "leggi"];
+const GAME_ORDER = ["acuto", "tastiera", "figure", "leggiViolino", "leggiBasso"];
 const GAME_LABELS = {
     acuto: "Acuto o grave",
     tastiera: "Tastiera del pianoforte",
     figure: "Figure ritmiche",
-    leggi: "Leggi la nota"
+    leggiViolino: "Leggi la nota (chiave di violino)",
+    leggiBasso: "Leggi la nota (chiave di basso)"
 };
 
 const stats = {
@@ -869,7 +955,8 @@ const stats = {
     acuto: { total: 0, correct: 0, errors: 0 },
     tastiera: { total: 0, correct: 0, errors: 0 },
     figure: { total: 0, correct: 0, errors: 0 },
-    leggi: { total: 0, correct: 0, errors: 0 }
+    leggiViolino: { total: 0, correct: 0, errors: 0 },
+    leggiBasso: { total: 0, correct: 0, errors: 0 }
 };
 
 function recordAnswer(gameKey, wasCorrect) {
@@ -989,14 +1076,56 @@ function startTest() {
 }
 
 function launchGame(key) {
-    resetGameUi();
     gameTitle.textContent = GAME_LABELS[key];
-    switch (key) {
-        case "acuto": initAcutoGame(); break;
-        case "tastiera": initTastieraGame(); break;
-        case "figure": initFigureGame(); break;
-        case "leggi": initLeggiGame(); break;
+    showGameIntro(key);
+}
+
+/* =========================================================
+   SPIEGAZIONE INTRODUTTIVA DI OGNI MINI-GIOCO
+========================================================= */
+const GAME_INTROS = {
+    acuto: {
+        icon: "🎧",
+        html: "Ascolterai due suoni, uno dopo l'altro. Il tuo compito è capire quale dei due è più <span class=\"word-acuto\">acuto</span> oppure quale è più <span class=\"word-grave\">grave</span>, a seconda di cosa chiede la domanda."
+    },
+    tastiera: {
+        icon: "🎹",
+        html: "Sulla tastiera si accenderà un tasto. Osservalo con attenzione e indica di che nota naturale si tratta, tra le sette proposte. Puoi cliccare i tasti per ascoltarli in qualsiasi momento."
+    },
+    figure: {
+        icon: "🎼",
+        html: "Ti verrà mostrata una figura musicale — una nota, una pausa, una frazione o un nome — e dovrai riconoscere la stessa figura tra le opzioni proposte."
+    },
+    leggiViolino: {
+        icon: "🎶",
+        html: "Sul pentagramma, in chiave di violino, comparirà una nota: osservala con attenzione e indicane il nome."
+    },
+    leggiBasso: {
+        icon: "🎶",
+        html: "Stesso esercizio di prima, ma questa volta le note sono scritte in chiave di basso: osserva il pentagramma e indica il nome della nota."
     }
+};
+
+const GAME_INIT = {
+    acuto: initAcutoGame,
+    tastiera: initTastieraGame,
+    figure: initFigureGame,
+    leggiViolino: () => initLeggiGame("violino"),
+    leggiBasso: () => initLeggiGame("basso")
+};
+
+function showGameIntro(key) {
+    gameContent.style.display = "none";
+    gameIntro.style.display = "";
+    const intro = GAME_INTROS[key];
+    gameIntroIcon.textContent = intro.icon;
+    gameIntroText.innerHTML = intro.html;
+    gameIntroStart.onclick = () => {
+        gameIntro.style.display = "none";
+        gameContent.style.display = "";
+        resetGameUi();
+        GAME_INIT[key]();
+    };
 }
 
 function finishCurrentGame() {
@@ -1014,103 +1143,40 @@ function finishCurrentGame() {
 }
 
 function finishTest() {
+    playVictorySound();
     showScreen("final");
-    submitResults();
+    renderFinalScreen();
 }
 
-/* =========================================================
-   INVIO DEI RISULTATI (Google Apps Script)
-   Sostituire APPS_SCRIPT_URL con l'URL ottenuto distribuendo
-   lo script come "app web" (vedi le istruzioni a parte).
-========================================================= */
-const APPS_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbyMMc2HxmAi71Uq6YKz7cFaPyq5ILClBqRqPkWSE_OQlvqMDofZc5O4gUGhIX7TeYk3/exec";
+function renderFinalScreen() {
+    finalTable.innerHTML = "";
 
-function buildResultsPayload() {
-    const payload = {
-        classe: studentInfo.classe,
-        sezione: studentInfo.sezione,
-        numero: studentInfo.numero
-    };
+    const header = document.createElement("div");
+    header.className = "final-row final-row-header";
+    header.innerHTML = "<span>Esercizio</span><span>Corrette</span><span>%</span>";
+    finalTable.appendChild(header);
+
     GAME_ORDER.forEach(key => {
         const s = stats[key];
-        payload[key] = { total: s.total, correct: s.correct, errors: s.errors, accuracy: accuracyOf(s) };
+        const row = document.createElement("div");
+        row.className = "final-row";
+        row.innerHTML =
+            "<span class=\"final-row-label\">" + GAME_LABELS[key] + "</span>" +
+            "<span class=\"final-row-frac\">" + s.correct + " / " + s.total + "</span>" +
+            "<span class=\"final-row-pct\">" + accuracyOf(s) + "%</span>";
+        finalTable.appendChild(row);
     });
-    const g = stats.global;
-    payload.globale = { total: g.total, correct: g.correct, errors: g.errors, accuracy: accuracyOf(g) };
-    return payload;
+
+    const totalRow = document.createElement("div");
+    totalRow.className = "final-row total";
+    totalRow.innerHTML =
+        "<span class=\"final-row-label\">Complessivo</span>" +
+        "<span class=\"final-row-frac\">" + stats.global.correct + " / " + stats.global.total + "</span>" +
+        "<span class=\"final-row-pct\">" + accuracyOf(stats.global) + "%</span>";
+    finalTable.appendChild(totalRow);
 }
 
-function submitResults() {
-    const payload = buildResultsPayload();
-
-    if (!APPS_SCRIPT_URL || APPS_SCRIPT_URL.indexOf("https://script.google.com/macros/s/AKfycbyMMc2HxmAi71Uq6YKz7cFaPyq5ILClBqRqPkWSE_OQlvqMDofZc5O4gUGhIX7TeYk3/exec") !== -1) {
-        // l'indirizzo non è ancora stato configurato: lo segnaliamo
-        // chiaramente invece di far sparire silenziosamente i risultati
-        finalBadge.textContent = "⚠️";
-        finalTitle.textContent = "Invio non configurato";
-        finalMessage.textContent = "Il test è stato completato, ma l'invio dei risultati non è ancora stato impostato. Avvisa l'insegnante.";
-        return;
-    }
-
-    // Content-Type "text/plain" evita la richiesta di preflight CORS,
-    // che Google Apps Script non gestisce sempre in modo affidabile
-    fetch(APPS_SCRIPT_URL, {
-        method: "POST",
-        headers: { "Content-Type": "text/plain;charset=utf-8" },
-        body: JSON.stringify(payload)
-    })
-        .then(response => response.json())
-        .then(data => {
-            if (!data || !data.ok) throw new Error((data && data.error) || "risposta non valida");
-            finalBadge.textContent = "✅";
-            finalTitle.textContent = "Test completato!";
-            finalMessage.textContent = "I tuoi risultati sono stati inviati. Puoi chiudere questa pagina.";
-        })
-        .catch(() => {
-            finalBadge.textContent = "⚠️";
-            finalTitle.textContent = "Invio non riuscito";
-            finalMessage.textContent = "Non è stato possibile inviare i risultati. Avvisa l'insegnante prima di chiudere la pagina.";
-        });
-}
-
-/* =========================================================
-   VALIDAZIONE DEL MODULO INIZIALE
-========================================================= */
-let studentInfo = { classe: "", sezione: "", numero: "" };
-
-// popola i due menu a tendina: classi 1-3, sezioni A-H
-(function populateIdentifyMenus() {
-    for (let c = 1; c <= 3; c++) {
-        const opt = document.createElement("option");
-        opt.value = String(c);
-        opt.textContent = String(c);
-        inputClasse.appendChild(opt);
-    }
-    const sezioni = ["A", "B", "C", "D", "E", "F", "G", "H"];
-    sezioni.forEach(s => {
-        const opt = document.createElement("option");
-        opt.value = s;
-        opt.textContent = s;
-        inputSezione.appendChild(opt);
-    });
-})();
-
-function validateAndStart() {
-    const classe = inputClasse.value;
-    const sezione = inputSezione.value;
-    const numero = inputNumero.value.trim();
-
-    if (!classe || !sezione || !numero || !/^\d+$/.test(numero) || Number(numero) <= 0) {
-        identifyError.textContent = "Seleziona classe, sezione e inserisci un numero di registro valido prima di cominciare.";
-        return;
-    }
-
-    identifyError.textContent = "";
-    studentInfo = { classe, sezione, numero: Number(numero) };
-    startTest();
-}
-
-startButton.addEventListener("click", validateAndStart);
+startButton.addEventListener("click", startTest);
 
 /* =========================================================
    GIOCO 1 — ACUTO O GRAVE (solo livello 1)
@@ -1163,9 +1229,9 @@ function nextAcutoQuestion() {
     }
     acutoQuestion = generateAcutoQuestion();
     updateGameProgress(currentGameIndex, acutoIndex, ACUTO_TOTAL_QUESTIONS, "Domanda " + (acutoIndex + 1) + " di " + ACUTO_TOTAL_QUESTIONS);
-    questionPrompt.textContent = acutoQuestion.askHigher
-        ? "Quale dei due suoni è più acuto?"
-        : "Quale dei due suoni è più grave?";
+    questionPrompt.innerHTML = acutoQuestion.askHigher
+        ? "Quale dei due suoni è più <span class=\"word-acuto\">acuto</span>?"
+        : "Quale dei due suoni è più <span class=\"word-grave\">grave</span>?";
     showMessage("");
     renderAcutoAnswers();
     setAnswersEnabled(false);
@@ -1506,38 +1572,14 @@ function handleFigureAnswer(key, btn) {
 }
 
 /* =========================================================
-   GIOCO 4 — LEGGI LA NOTA
-   (solo chiave di violino, dal Do centrale al Sol sopra il
-   rigo, introdotte in ordine graduale)
+   GIOCHI "LEGGI LA NOTA" (chiave di violino e chiave di basso)
+   Stessa logica, parametrizzata per le due chiavi: intervallo
+   di posizioni sul pentagramma diverso, sblocco graduale con
+   un po' di casualità in entrambi i casi.
 ========================================================= */
 const LETTER_CYCLE = ["C", "D", "E", "F", "G", "A", "B"];
 const LETTER_TO_NAME = { C: "Do", D: "Re", E: "Mi", F: "Fa", G: "Sol", A: "La", B: "Si" };
-const TREBLE_BASE_DIATONIC_INDEX = 30; // E4 = posizione 6 (prima riga del rigo)
-
-function pitchForPosition(position) {
-    const diatonicIndex = TREBLE_BASE_DIATONIC_INDEX + (position - 6);
-    const octave = Math.floor(diatonicIndex / 7);
-    const letter = LETTER_CYCLE[((diatonicIndex % 7) + 7) % 7];
-    return {
-        name: LETTER_TO_NAME[letter],
-        key: letter.toLowerCase() + "/" + octave
-    };
-}
-
-// ordine di SBLOCCO delle posizioni: si parte dal centro del
-// pentagramma (più facile) per poi allargarsi gradualmente verso
-// il basso, fino al Do centrale, e verso l'alto, fino al Sol
-// appena sopra il rigo. Ad ogni domanda si sblocca la posizione
-// successiva, ma la domanda vera e propria viene estratta a
-// caso fra tutte quelle già sbloccate finora: la progressione
-// resta graduale, ma con un po' di variabilità.
-const LEGGI_POSITION_ORDER = [8, 9, 10, 11, 7, 12, 6, 13, 5, 14, 4, 15];
-const LEGGI_INITIAL_UNLOCKED = 3; // le prime 3 posizioni sono disponibili subito
-const LEGGI_TOTAL_QUESTIONS = LEGGI_POSITION_ORDER.length;
 const LEGGI_NOTE_CLASSES = { Do: "do", Re: "re", Mi: "mi", Fa: "fa", Sol: "sol", La: "la", Si: "si" };
-
-let leggiUnlockedCount = LEGGI_INITIAL_UNLOCKED;
-let leggiPreviousPosition = null;
 
 const semitoneFromC = { c: 0, d: 2, e: 4, f: 5, g: 7, a: 9, b: 11 };
 function midiFromVexKey(vexKey) {
@@ -1546,15 +1588,55 @@ function midiFromVexKey(vexKey) {
     return (octave + 1) * 12 + semitoneFromC[letter];
 }
 
+// diatonicIndex = ottava*7 + indice_lettera (C=0..B=6); la posizione 6
+// corrisponde sempre alla prima riga del rigo, qualunque sia la chiave
+function pitchForPosition(position, baseDiatonicIndex) {
+    const diatonicIndex = baseDiatonicIndex + (position - 6);
+    const octave = Math.floor(diatonicIndex / 7);
+    const letter = LETTER_CYCLE[((diatonicIndex % 7) + 7) % 7];
+    return {
+        name: LETTER_TO_NAME[letter],
+        key: letter.toLowerCase() + "/" + octave
+    };
+}
+
+const LEGGI_CONFIGS = {
+    // chiave di violino: dal Do centrale (posizione 4) al Sol appena
+    // sopra il rigo (posizione 15)
+    violino: {
+        clef: "treble",
+        baseDiatonicIndex: 30, // posizione 6 = Mi4 (prima riga)
+        positionOrder: [8, 9, 10, 11, 7, 12, 6, 13, 5, 14, 4, 15],
+        subtitle: "Osserva la nota sul pentagramma (chiave di violino) e indicane il nome."
+    },
+    // chiave di basso: livello analogo, mirato in basso. Dal Fa2
+    // (appena sotto il rigo) al Do centrale (appena sopra il rigo)
+    basso: {
+        clef: "bass",
+        baseDiatonicIndex: 18, // posizione 6 = Sol2 (prima riga)
+        positionOrder: [9, 10, 11, 12, 8, 13, 7, 14, 6, 15, 5, 16],
+        subtitle: "Osserva la nota sul pentagramma (chiave di basso) e indicane il nome."
+    }
+};
+
+let leggiConfigKey = "violino";
+let leggiGameKey = "leggiViolino";
 let leggiIndex = 0;
+let leggiUnlockedCount = 0;
+let leggiPreviousPosition = null;
 let leggiCurrentNote = null;
 let leggiAnswering = false;
 
-function initLeggiGame() {
+function initLeggiGame(configKey) {
+    leggiConfigKey = configKey;
+    leggiGameKey = configKey === "violino" ? "leggiViolino" : "leggiBasso";
+    const config = LEGGI_CONFIGS[configKey];
+
     leggiIndex = 0;
-    leggiUnlockedCount = LEGGI_INITIAL_UNLOCKED;
+    leggiUnlockedCount = 3;
     leggiPreviousPosition = null;
-    gameSubtitle.textContent = "Osserva la nota sul pentagramma (chiave di violino) e indicane il nome.";
+
+    gameSubtitle.textContent = config.subtitle;
     staffRow.style.display = "";
     listenButton.style.display = "";
     listenButton.textContent = "🔊 Ascolta la nota";
@@ -1564,7 +1646,7 @@ function initLeggiGame() {
     nextLeggiQuestion();
 }
 
-function drawLeggiNote(vexKey) {
+function drawLeggiNote(vexKey, clef) {
     if (typeof Vex === "undefined") return;
     const { Renderer, Stave, StaveNote, Voice, Formatter } = Vex.Flow;
 
@@ -1574,10 +1656,10 @@ function drawLeggiNote(vexKey) {
     const context = renderer.getContext();
 
     const stave = new Stave(6, 30, 255, { spacing_between_lines_px: 14 });
-    stave.addClef("treble");
+    stave.addClef(clef);
     stave.setContext(context).draw();
 
-    const note = new StaveNote({ keys: [vexKey], duration: "q", clef: "treble" });
+    const note = new StaveNote({ keys: [vexKey], duration: "q", clef: clef });
 
     const voice = new Voice({ num_beats: 1, beat_value: 4 });
     voice.setMode(Voice.Mode.SOFT);
@@ -1588,7 +1670,10 @@ function drawLeggiNote(vexKey) {
 }
 
 function nextLeggiQuestion() {
-    if (leggiIndex >= LEGGI_TOTAL_QUESTIONS) {
+    const config = LEGGI_CONFIGS[leggiConfigKey];
+    const total = config.positionOrder.length;
+
+    if (leggiIndex >= total) {
         finishCurrentGame();
         return;
     }
@@ -1596,20 +1681,20 @@ function nextLeggiQuestion() {
     // ad ogni domanda si sblocca gradualmente una posizione in più,
     // poi si estrae a caso una posizione fra quelle finora sbloccate,
     // evitando se possibile di ripetere l'ultima
-    leggiUnlockedCount = Math.min(LEGGI_INITIAL_UNLOCKED + leggiIndex, LEGGI_POSITION_ORDER.length);
-    const pool = LEGGI_POSITION_ORDER.slice(0, leggiUnlockedCount);
+    leggiUnlockedCount = Math.min(3 + leggiIndex, total);
+    const pool = config.positionOrder.slice(0, leggiUnlockedCount);
     let position;
     do {
         position = pool[randInt(0, pool.length - 1)];
     } while (position === leggiPreviousPosition && pool.length > 1);
     leggiPreviousPosition = position;
 
-    leggiCurrentNote = pitchForPosition(position);
+    leggiCurrentNote = pitchForPosition(position, config.baseDiatonicIndex);
 
-    updateGameProgress(currentGameIndex, leggiIndex, LEGGI_TOTAL_QUESTIONS, "Domanda " + (leggiIndex + 1) + " di " + LEGGI_TOTAL_QUESTIONS);
+    updateGameProgress(currentGameIndex, leggiIndex, total, "Domanda " + (leggiIndex + 1) + " di " + total);
     questionPrompt.textContent = "Che nota è?";
     showMessage("");
-    drawLeggiNote(leggiCurrentNote.key);
+    drawLeggiNote(leggiCurrentNote.key, config.clef);
     renderLeggiAnswers();
     leggiAnswering = true;
     setAnswersEnabled(true);
@@ -1628,7 +1713,7 @@ function checkLeggiAnswer(note, btn) {
     setAnswersEnabled(false);
 
     const wasCorrect = note === leggiCurrentNote.name;
-    recordAnswer("leggi", wasCorrect);
+    recordAnswer(leggiGameKey, wasCorrect);
 
     leggiIndex++;
     setTimeout(nextLeggiQuestion, 700);
