@@ -257,6 +257,40 @@ header p {
 
 
 /* =========================================================
+   INDICATORE BATTUTE IDENTICHE
+========================================================= */
+
+.duplicates-indicator {
+    padding: 7px 11px;
+
+    border-radius: 8px;
+
+    border:
+        1px solid
+        rgba(255,255,255,.14);
+
+    background:
+        rgba(255,255,255,.06);
+
+    color: #9fe3b4;
+
+    font-family: var(--font-ui);
+
+    font-size: 10.5px;
+
+    font-weight: 600;
+
+    letter-spacing: .2px;
+
+    white-space: nowrap;
+}
+
+.duplicates-indicator.duplicates-off {
+    color: #ffc98b;
+}
+
+
+/* =========================================================
    BANNER LIVELLO
 ========================================================= */
 
@@ -1910,6 +1944,112 @@ header p {
     color: #9fc8ea;
 }
 
+
+/* =========================================================
+   TOGGLE BATTUTE IDENTICHE
+========================================================= */
+
+.toggle-row {
+    margin-top: 26px;
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    gap: 12px;
+}
+
+.toggle-switch {
+    position: relative;
+
+    display: inline-block;
+
+    width: 46px;
+    height: 26px;
+
+    flex-shrink: 0;
+}
+
+.toggle-switch input {
+    opacity: 0;
+
+    width: 0;
+    height: 0;
+}
+
+.toggle-slider {
+    position: absolute;
+
+    inset: 0;
+
+    border-radius: 999px;
+
+    background:
+        rgba(255,255,255,.18);
+
+    border:
+        1px solid
+        rgba(255,255,255,.22);
+
+    cursor: pointer;
+
+    transition:
+        background .2s;
+}
+
+.toggle-slider::before {
+    content: "";
+
+    position: absolute;
+
+    left: 3px;
+    top: 2px;
+
+    width: 20px;
+    height: 20px;
+
+    border-radius: 50%;
+
+    background: #f5f8ff;
+
+    box-shadow:
+        0 2px 6px rgba(0,0,0,.3);
+
+    transition:
+        transform .2s;
+}
+
+.toggle-switch input:checked + .toggle-slider {
+    background:
+        linear-gradient(
+            135deg,
+            #42c96a,
+            #258d52
+        );
+
+    border-color:
+        rgba(255,255,255,.3);
+}
+
+.toggle-switch input:checked + .toggle-slider::before {
+    transform:
+        translateX(20px);
+}
+
+.toggle-label {
+    color: #dce8f5;
+
+    font-family: var(--font-ui);
+
+    font-size: 13px;
+
+    font-weight: 600;
+
+    letter-spacing: .1px;
+}
+
 .start-level-grid {
     margin-top: 14px;
 
@@ -2801,39 +2941,11 @@ header p {
     display: none;
 }
 
-
-/* PULSANTE "TORNA AL SITO" FISSO (porta a index.html) */
-.site-home-button {
-    position: fixed;
-    top: 18px;
-    left: 18px;
-    z-index: 999;
-    width: 44px;
-    height: 44px;
-    border-radius: 50%;
-    border: 1px solid rgba(255,255,255,0.18);
-    background: linear-gradient(180deg, rgba(255,255,255,0.12), rgba(255,255,255,0.04));
-    color: #e2e8f0;
-    font-size: 1.15rem;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    cursor: pointer;
-    text-decoration: none;
-    box-shadow: 0 4px 12px rgba(0,0,0,0.3);
-    transition: transform 0.15s ease, background 0.15s ease;
-}
-.site-home-button:hover {
-    background: linear-gradient(180deg, rgba(255,255,255,0.22), rgba(255,255,255,0.08));
-    transform: translateY(-2px);
-}
 </style>
 
 </head>
 
 <body>
-<a class="site-home-button" href="index.html" aria-label="Torna al sito" title="Torna al sito">🏠</a>
-
 
 <div class="app">
 
@@ -2884,6 +2996,13 @@ header p {
 
         </select>
 
+    </div>
+
+    <div
+        id="duplicatesIndicator"
+        class="duplicates-indicator"
+    >
+        Battute identiche: consentite
     </div>
 
 </div>
@@ -3055,7 +3174,7 @@ header p {
         <button
             class="time-select-btn"
             type="button"
-            data-time="4"
+            data-time="4/4"
         >
             4/4
             <span class="time-select-sub">
@@ -3066,7 +3185,7 @@ header p {
         <button
             class="time-select-btn"
             type="button"
-            data-time="3"
+            data-time="3/4"
         >
             3/4
             <span class="time-select-sub">
@@ -3077,13 +3196,44 @@ header p {
         <button
             class="time-select-btn"
             type="button"
-            data-time="2"
+            data-time="2/4"
         >
             2/4
             <span class="time-select-sub">
                 due quarti
             </span>
         </button>
+
+        <button
+            class="time-select-btn"
+            type="button"
+            data-time="6/8"
+        >
+            6/8
+            <span class="time-select-sub">
+                tempo composto
+            </span>
+        </button>
+
+    </div>
+
+    <div class="toggle-row">
+
+        <label class="toggle-switch">
+
+            <input
+                id="allowDuplicatesToggle"
+                type="checkbox"
+                checked
+            >
+
+            <span class="toggle-slider"></span>
+
+        </label>
+
+        <span class="toggle-label">
+            Permetti battute identiche
+        </span>
 
     </div>
 
@@ -3838,23 +3988,264 @@ const LEVELS_2_4 = {
 
 
 /* =========================================================
-   TEMPO ATTIVO
+   LIVELLI - TEMPO 6/8
 
-   LEVELS punta sempre all'insieme di livelli
-   del tempo attualmente selezionato.
-   beatsPerMeasure è il numero di quarti che
-   riempiono una battuta (4, 3 o 2).
+   Il 6/8 è un tempo composto: la battuta
+   dura quanto in 3/4 (tre quarti in totale),
+   ma il "passo" naturale è l'ottavo e il
+   battito principale è la semiminima
+   puntata (un ottavo puntato di durata,
+   pari a tre crome). Per questo qui si
+   parte dalla minima puntata (l'intera
+   battuta), dalla semiminima puntata
+   (il battito) e dalla croma (la suddivisione),
+   invece che dalla minima come in 3/4.
 ========================================================= */
 
-const LEVEL_SETS = {
-    4: LEVELS_4_4,
-    3: LEVELS_3_4,
-    2: LEVELS_2_4
+const LEVELS_6_8 = {
+
+    1: {
+        measures: 5,
+
+        pieces: [
+            "minima-puntata",
+            "semiminima-puntata",
+            "croma"
+        ],
+
+        description:
+            "Minima puntata, semiminima puntata e croma."
+    },
+
+
+    2: {
+        measures: 15,
+
+        pieces: [
+            "minima-puntata",
+            "semiminima-puntata",
+            "croma",
+            "semiminima"
+        ],
+
+        description:
+            "Ora puoi usare anche la semiminima."
+    },
+
+
+    3: {
+        measures: 20,
+
+        pieces: [
+            "minima-puntata",
+            "semiminima-puntata",
+            "croma",
+            "semiminima",
+            "minima"
+        ],
+
+        description:
+            "Hai a disposizione anche la minima."
+    },
+
+
+    4: {
+        measures: 25,
+
+        pieces: [
+            "minima-puntata",
+            "semiminima-puntata",
+            "croma",
+            "semiminima",
+            "minima",
+            "pauseminima"
+        ],
+
+        description:
+            "Ora puoi usare anche la pausa di minima."
+    },
+
+
+    5: {
+        measures: 35,
+
+        pieces: [
+            "minima-puntata",
+            "semiminima-puntata",
+            "croma",
+            "semiminima",
+            "minima",
+            "pauseminima",
+            "pausesemiminima"
+        ],
+
+        description:
+            "Hai sbloccato anche la pausa di semiminima."
+    },
+
+
+    6: {
+        measures: 40,
+
+        pieces: [
+            "minima-puntata",
+            "semiminima-puntata",
+            "croma",
+            "semiminima",
+            "minima",
+            "pauseminima",
+            "pausesemiminima",
+            "pausacroma"
+        ],
+
+        description:
+            "Hai sbloccato anche la pausa di croma."
+    },
+
+
+    7: {
+        measures: 45,
+
+        pieces: [
+            "minima-puntata",
+            "semiminima-puntata",
+            "croma",
+            "semiminima",
+            "minima",
+            "pauseminima",
+            "pausesemiminima",
+            "pausacroma"
+        ],
+
+        description:
+            "Ora crome e pause di croma sono limitate."
+    },
+
+
+    8: {
+        measures: 45,
+
+        pieces: [
+            "minima-puntata",
+            "semiminima-puntata",
+            "croma",
+            "semiminima",
+            "minima",
+            "pauseminima",
+            "pausesemiminima",
+            "pausacroma"
+        ],
+
+        description:
+            "Ora i mattoncini sono in bianco e nero."
+    },
+
+
+    9: {
+        measures: 45,
+
+        pieces: [
+            "minima-puntata",
+            "semiminima-puntata",
+            "croma",
+            "semiminima",
+            "minima",
+            "pauseminima",
+            "pausesemiminima",
+            "pausacroma"
+        ],
+
+        description:
+            "Ora devi riconoscere il valore delle figure senza l'aiuto dei mattoncini."
+    },
+
+
+    10: {
+        measures: 45,
+
+        pieces: [
+            "minima-puntata",
+            "semiminima-puntata",
+            "croma",
+            "semiminima",
+            "minima",
+            "pauseminima",
+            "pausesemiminima",
+            "pausacroma"
+        ],
+
+        description:
+            "Nessuna suddivisione interna: costruisci le battute contando mentalmente."
+    }
+
 };
 
-let beatsPerMeasure = 4;
+
+/* =========================================================
+   TEMPO ATTIVO
+
+   Ogni tempo ha:
+   - target: la somma di valori (in quarti)
+     che riempie una battuta;
+   - columns: il numero di colonne della
+     griglia visiva (i "passi" della battuta:
+     quarti nei tempi semplici, ottavi nel 6/8);
+   - levels: l'insieme di livelli dedicato.
+
+   LEVELS, measureTarget e gridColumns puntano
+   sempre al tempo attualmente selezionato.
+========================================================= */
+
+const TIME_SIGNATURES = {
+
+    "4/4": {
+        target: 4,
+        columns: 4,
+        levels: LEVELS_4_4
+    },
+
+    "3/4": {
+        target: 3,
+        columns: 3,
+        levels: LEVELS_3_4
+    },
+
+    "2/4": {
+        target: 2,
+        columns: 2,
+        levels: LEVELS_2_4
+    },
+
+    "6/8": {
+        target: 3,
+        columns: 6,
+        levels: LEVELS_6_8
+    }
+
+};
+
+let timeSignature = "4/4";
+
+let measureTarget = 4;
+
+let gridColumns = 4;
 
 let LEVELS = LEVELS_4_4;
+
+
+/* =========================================================
+   BATTUTE IDENTICHE
+
+   Se attivo (default), la battuta appena
+   completata non viene mai confrontata con
+   quelle precedenti: le ripetizioni sono
+   permesse. Se disattivo, una battuta
+   identica a una già costruita viene
+   segnalata e cancellata (livelli normali)
+   oppure conteggiata come errore (verifica).
+========================================================= */
+
+let allowDuplicateMeasures = true;
 
 
 /* =========================================================
@@ -4763,7 +5154,7 @@ function calculateDimensions() {
 
 
     const unitFromWidth =
-        (cellWidth - 7) / beatsPerMeasure;
+        (cellWidth - 7) / measureTarget;
 
 
     const unitFromHeight =
@@ -4797,14 +5188,14 @@ function calculateDimensions() {
     document.documentElement.style
         .setProperty(
             "--measure-width",
-            (unit * beatsPerMeasure) + "px"
+            (unit * measureTarget) + "px"
         );
 
 
     document.documentElement.style
         .setProperty(
             "--beats",
-            beatsPerMeasure
+            gridColumns
         );
 
 
@@ -4928,7 +5319,7 @@ function createMeasure(index) {
 
         for (
             let i = 0;
-            i < beatsPerMeasure;
+            i < gridColumns;
             i++
         ) {
 
@@ -5889,8 +6280,8 @@ function addPiece(index, type) {
 
         setResult(
             "Non c'è abbastanza spazio: la battuta deve essere " +
-            beatsPerMeasure +
-            "/4.",
+            timeSignature +
+            ".",
             "#d88900"
         );
 
@@ -5952,7 +6343,7 @@ function addPiece(index, type) {
 
 
     if (
-        getMeasureValue(index) === beatsPerMeasure
+        getMeasureValue(index) === measureTarget
     ) {
 
         checkCompletedMeasure(index);
@@ -5971,7 +6362,7 @@ function canFitPiece(index, type) {
     return (
         getMeasureValue(index) +
         VALUES[type]
-        <= beatsPerMeasure
+        <= measureTarget
     );
 
 }
@@ -6053,7 +6444,7 @@ function findPreviousDuplicate(index) {
     ) {
 
         if (
-            getMeasureValue(i) !== beatsPerMeasure
+            getMeasureValue(i) !== measureTarget
         ) {
 
             continue;
@@ -6085,7 +6476,9 @@ function findPreviousDuplicate(index) {
 function checkCompletedMeasure(index) {
 
     const duplicate =
-        findPreviousDuplicate(index);
+        allowDuplicateMeasures
+            ? null
+            : findPreviousDuplicate(index);
 
 
     /*
@@ -7627,15 +8020,25 @@ function hideStartScreen() {
 
 
 /* =========================================================
-   SELEZIONE DEL TEMPO (4/4, 3/4, 2/4)
+   SELEZIONE DEL TEMPO (4/4, 3/4, 2/4, 6/8)
 ========================================================= */
 
 function selectTimeSignature(ts) {
 
-    beatsPerMeasure = ts;
+    const config =
+        TIME_SIGNATURES[ts];
+
+
+    timeSignature = ts;
+
+    measureTarget =
+        config.target;
+
+    gridColumns =
+        config.columns;
 
     LEVELS =
-        LEVEL_SETS[ts];
+        config.levels;
 
 
     level = 1;
@@ -7663,8 +8066,8 @@ function selectTimeSignature(ts) {
         "startSubtitle"
     ).textContent =
         "Costruisci le battute in " +
-        beatsPerMeasure +
-        "/4 e supera tutti i livelli";
+        timeSignature +
+        " e supera tutti i livelli";
 
 
     resetLevel();
@@ -7685,11 +8088,59 @@ function openTimeScreen() {
 
     document
         .getElementById(
+            "allowDuplicatesToggle"
+        ).checked =
+            allowDuplicateMeasures;
+
+
+    document
+        .getElementById(
             "timeScreen"
         )
         .classList.remove(
             "hide"
         );
+
+}
+
+
+function updateDuplicatesIndicator() {
+
+    const indicator =
+        document.getElementById(
+            "duplicatesIndicator"
+        );
+
+
+    if (!indicator) {
+        return;
+    }
+
+
+    if (
+        allowDuplicateMeasures
+    ) {
+
+        indicator.textContent =
+            "Battute identiche: consentite";
+
+
+        indicator.classList.remove(
+            "duplicates-off"
+        );
+
+    }
+    else {
+
+        indicator.textContent =
+            "Battute identiche: non consentite";
+
+
+        indicator.classList.add(
+            "duplicates-off"
+        );
+
+    }
 
 }
 
@@ -7708,9 +8159,7 @@ function initTimeScreen() {
                     () => {
 
                         selectTimeSignature(
-                            Number(
-                                btn.dataset.time
-                            )
+                            btn.dataset.time
                         );
 
                     }
@@ -7728,6 +8177,27 @@ function initTimeScreen() {
             "click",
             openTimeScreen
         );
+
+
+    document
+        .getElementById(
+            "allowDuplicatesToggle"
+        )
+        .addEventListener(
+            "change",
+            function() {
+
+                allowDuplicateMeasures =
+                    this.checked;
+
+
+                updateDuplicatesIndicator();
+
+            }
+        );
+
+
+    updateDuplicatesIndicator();
 
 }
 
@@ -7814,23 +8284,24 @@ function updateLevelInterface() {
         "livello " +
         level +
         " · " +
-        beatsPerMeasure +
-        "/4";
+        timeSignature;
 
 
     document.getElementById(
         "timeBadge"
     ).textContent =
-        beatsPerMeasure +
-        "/4";
+        timeSignature;
 
 
     document.getElementById(
         "headerSubtitle"
     ).textContent =
         "Costruisci le battute in " +
-        beatsPerMeasure +
-        "/4 e supera tutti i livelli";
+        timeSignature +
+        " e supera tutti i livelli";
+
+
+    updateDuplicatesIndicator();
 
 
     document.getElementById(
