@@ -46,35 +46,35 @@
 
   /* ---------- hero ---------- */
   header.hero {
-    max-width: 620px;
+    max-width: 560px;
     margin: 0 auto;
-    padding: 44px 24px 28px;
+    padding: 24px 24px 16px;
     text-align: center;
   }
 
   header.hero h1 {
     font-family: 'Manrope', sans-serif;
     font-weight: 800;
-    font-size: clamp(24px, 4vw, 32px);
+    font-size: clamp(19px, 3.4vw, 25px);
     line-height: 1.2;
-    margin: 0 0 8px;
+    margin: 0 0 6px;
     letter-spacing: -0.015em;
   }
 
   header.hero p {
-    font-size: 14px;
+    font-size: 12.5px;
     color: #9FB3CE;
     font-weight: 500;
-    line-height: 1.5;
-    max-width: 420px;
+    line-height: 1.45;
+    max-width: 380px;
     margin: 0 auto;
   }
 
   /* ---------- staff line signature ---------- */
   .staff {
-    max-width: 340px;
-    margin: 24px auto 0;
-    height: 36px;
+    max-width: 300px;
+    margin: 14px auto 0;
+    height: 32px;
     position: relative;
   }
   .staff svg { width: 100%; height: 100%; display: block; }
@@ -90,7 +90,7 @@
   }
   @keyframes travel {
     0%   { transform: translateX(0); }
-    100% { transform: translateX(300px); }
+    100% { transform: translateX(260px); }
   }
   @media (prefers-reduced-motion: reduce) {
     .staff .note-path { animation: none; }
@@ -98,28 +98,28 @@
 
   /* ---------- tools grid ---------- */
   main {
-    max-width: 940px;
+    max-width: 900px;
     margin: 0 auto;
-    padding: 0 20px 64px;
+    padding: 0 20px 40px;
   }
 
   .grid {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-    gap: 14px;
+    grid-template-columns: repeat(auto-fit, minmax(190px, 1fr));
+    gap: 10px;
   }
 
   .card {
     position: relative;
     background: rgba(255,255,255,0.035);
     border: 1px solid rgba(255,255,255,0.09);
-    border-radius: 14px;
-    padding: 16px 16px 14px;
+    border-radius: 12px;
+    padding: 12px 12px 10px;
     backdrop-filter: blur(6px);
     transition: border-color 0.2s ease, transform 0.2s ease, background 0.2s ease;
     display: flex;
     flex-direction: column;
-    min-height: 148px;
+    min-height: 118px;
   }
 
   .card:hover {
@@ -132,46 +132,46 @@
     display: flex;
     align-items: center;
     justify-content: space-between;
-    margin-bottom: 10px;
+    margin-bottom: 7px;
   }
 
   .card .icon {
-    width: 30px;
-    height: 30px;
-    border-radius: 9px;
+    width: 25px;
+    height: 25px;
+    border-radius: 7px;
     background: rgba(94, 200, 216, 0.12);
     display: flex;
     align-items: center;
     justify-content: center;
-    font-size: 15px;
+    font-size: 13px;
     flex-shrink: 0;
   }
 
   .card .label {
-    font-size: 10px;
+    font-size: 9px;
     font-weight: 700;
     letter-spacing: 0.05em;
     text-transform: uppercase;
     color: #7FD8E4;
     background: rgba(94, 200, 216, 0.1);
-    padding: 3px 8px;
+    padding: 2px 7px;
     border-radius: 999px;
   }
 
   .card h2 {
     font-family: 'Manrope', sans-serif;
     font-weight: 700;
-    font-size: 15.5px;
-    margin: 0 0 5px;
+    font-size: 13.5px;
+    margin: 0 0 4px;
     letter-spacing: -0.01em;
   }
 
   .card p {
-    font-size: 12.5px;
-    line-height: 1.45;
+    font-size: 11px;
+    line-height: 1.4;
     color: #9FB3CE;
     font-weight: 500;
-    margin: 0 0 12px;
+    margin: 0 0 9px;
     flex: 1;
   }
 
@@ -179,12 +179,12 @@
     align-self: flex-start;
     font-family: 'Manrope', sans-serif;
     font-weight: 700;
-    font-size: 12.5px;
+    font-size: 11px;
     color: #061323;
     background: #EAF2FF;
     text-decoration: none;
-    padding: 6px 14px;
-    border-radius: 8px;
+    padding: 5px 12px;
+    border-radius: 7px;
     transition: background 0.15s ease, transform 0.15s ease;
   }
   .card a.open:hover {
@@ -200,23 +200,23 @@
     border-style: dashed;
     background: transparent;
     color: #64789A;
-    min-height: 148px;
+    min-height: 118px;
   }
   .card.empty:hover { transform: none; border-color: rgba(255,255,255,0.14); }
   .card.empty .plus {
     font-family: 'Manrope', sans-serif;
-    font-size: 20px;
+    font-size: 17px;
     color: #5EC8D8;
-    margin-bottom: 3px;
+    margin-bottom: 2px;
   }
   .card.empty div:last-child {
-    font-size: 12px;
+    font-size: 10.5px;
   }
 
   footer {
     text-align: center;
-    padding: 0 20px 32px;
-    font-size: 11.5px;
+    padding: 0 20px 22px;
+    font-size: 10.5px;
     color: #5C7091;
   }
 </style>
@@ -228,14 +228,14 @@
   <p>Esercizi interattivi per allenare orecchio, teoria e ritmo un passo alla volta.</p>
 
   <div class="staff" aria-hidden="true">
-    <svg viewBox="0 0 340 36" preserveAspectRatio="none">
-      <line x1="0" y1="6"  x2="340" y2="6"></line>
-      <line x1="0" y1="13" x2="340" y2="13"></line>
-      <line x1="0" y1="20" x2="340" y2="20"></line>
-      <line x1="0" y1="27" x2="340" y2="27"></line>
-      <line x1="0" y1="34" x2="340" y2="34"></line>
+    <svg viewBox="0 0 300 32" preserveAspectRatio="none">
+      <line x1="0" y1="5"  x2="300" y2="5"></line>
+      <line x1="0" y1="11.5" x2="300" y2="11.5"></line>
+      <line x1="0" y1="18" x2="300" y2="18"></line>
+      <line x1="0" y1="24.5" x2="300" y2="24.5"></line>
+      <line x1="0" y1="31" x2="300" y2="31"></line>
       <g class="note-path">
-        <circle cx="5" cy="13" r="3.2"></circle>
+        <circle cx="5" cy="11.5" r="3"></circle>
       </g>
     </svg>
   </div>
@@ -253,11 +253,18 @@
      ============================================================ */
   const tools = [
     {
-      title: "Le Note sul Pianoforte",
-      icon: "🎹",
-      label: "Teoria",
-      desc: "Riconosci le note sulla tastiera, tasto dopo tasto.",
-      url: "tastierapianoforte.html"
+      title: "Test d'Ingresso",
+      icon: "📝",
+      label: "Verifica",
+      desc: "Una versione breve di quattro giochi didattici, per testare le conoscenze di partenza.",
+      url: "test-ingresso.html"
+    },
+    {
+      title: "Acuto, Grave o Unisono?",
+      icon: "👂",
+      label: "Ascolto",
+      desc: "Allena l'orecchio a distinguere suoni acuti, gravi e all'unisono.",
+      url: "acuto-o-grave.html"
     },
     {
       title: "Leggi la Nota",
@@ -265,13 +272,6 @@
       label: "Teoria",
       desc: "Impara a leggere le note sul pentagramma, una alla volta.",
       url: "leggi-la-nota.html"
-    },
-    {
-      title: "Acuto o Grave?",
-      icon: "👂",
-      label: "Ascolto",
-      desc: "Allena l'orecchio a distinguere i suoni acuti dai gravi.",
-      url: "acuto-o-grave.html"
     },
     {
       title: "Figure Ritmiche",
@@ -286,6 +286,20 @@
       label: "Ritmo",
       desc: "Componi battute scegliendo e disponendo le figure ritmiche.",
       url: "costruttore-di-battute.html"
+    },
+    {
+      title: "Le Note sul Pianoforte",
+      icon: "🎹",
+      label: "Teoria",
+      desc: "Riconosci le note sulla tastiera, tasto dopo tasto.",
+      url: "tastierapianoforte.html"
+    },
+    {
+      title: "Imita il Ritmo",
+      icon: "👏",
+      label: "Ritmo",
+      desc: "Ascolta uno schema ritmico e riproducilo battendo il tempo.",
+      url: "imita-il-ritmo.html"
     },
     {
       title: "Le Qualità del Suono",
@@ -309,27 +323,6 @@
       url: "ascolta-intervalli.html"
     },
     {
-      title: "Imita il Ritmo",
-      icon: "👏",
-      label: "Ritmo",
-      desc: "Ascolta uno schema ritmico e riproducilo battendo il tempo.",
-      url: "imita-il-ritmo.html"
-    },
-    {
-      title: "Note-UNO",
-      icon: "🃏",
-      label: "Teoria",
-      desc: "Un gioco di carte in stile UNO per allenarsi con le note musicali.",
-      url: "note-uno.html"
-    },
-    {
-      title: "Test d'Ingresso",
-      icon: "📝",
-      label: "Verifica",
-      desc: "Una versione breve di quattro giochi didattici, per testare le conoscenze di partenza.",
-      url: "test-ingresso.html"
-    },
-    {
       title: "Nomina la Triade",
       icon: "🎶",
       label: "Teoria",
@@ -349,6 +342,27 @@
       label: "Teoria",
       desc: "Posiziona le note sul pentagramma e usa le frecce per alterarle e formare la triade.",
       url: "costruisci-triade.html"
+    },
+    {
+      title: "Identifica gli Accordi",
+      icon: "🎯",
+      label: "Teoria",
+      desc: "Riconosci a colpo d'occhio la qualità degli accordi, anche nei loro rivolti.",
+      url: "identifica-accordi.html"
+    },
+    {
+      title: "Ascolta gli Accordi",
+      icon: "👂",
+      label: "Ascolto",
+      desc: "Riconosci a orecchio la qualità degli accordi, anche nei loro rivolti.",
+      url: "ascolta-accordi.html"
+    },
+    {
+      title: "Note-UNO",
+      icon: "🃏",
+      label: "Teoria",
+      desc: "Un gioco di carte in stile UNO per allenarsi con le note musicali.",
+      url: "note-uno.html"
     }
   ];
 

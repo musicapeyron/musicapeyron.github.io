@@ -2,19 +2,11 @@
 <html lang="it">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Acuto, grave o unisono?</title>
-<meta name="description" content="Un gioco per allenare l'orecchio a distinguere i suoni acuti dai suoni gravi, e a riconoscere quando sono all'unisono.">
-<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='.9em' font-size='90'%3E%F0%9F%8E%A7%3C/text%3E%3C/svg%3E">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>Identifica l'accordo</title>
+<meta name="description" content="Un esercizio di lettura musicale per riconoscere a colpo d'occhio la qualità degli accordi (triadi e accordi di settima), anche nei loro rivolti.">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='.9em' font-size='90'%3E%F0%9F%8E%BC%3C/text%3E%3C/svg%3E">
 
-<!-- Font di sistema come fallback: senza connessione i Google
-     Fonts non si caricano comunque, quindi non serve più
-     collegarsi a fonts.googleapis.com / fonts.gstatic.com -->
-
-<!-- VexFlow: disegna il doppio pentagramma (violino + basso)
-     con le due note da confrontare. File incorporato
-     direttamente, nessuna dipendenza esterna, funziona anche offline -->
-<!-- VexFlow 4.2.2 incorporato direttamente: nessuna dipendenza esterna, funziona anche offline -->
 <script>
 /*!
  * VexFlow 4.2.2   2023-07-03T19:56:22.952Z   7ad933bdf12b4137ce04d3f332a838887d08a595
@@ -27,882 +19,284 @@
 
 <style>
 *, *::before, *::after { box-sizing: border-box; }
-
 :root {
     --ease-out-soft: cubic-bezier(0.16, 1, 0.3, 1);
     --ease-spring: cubic-bezier(.34, 1.56, .64, 1);
     --border-soft: rgba(255,255,255,0.10);
-    --border-softer: rgba(255,255,255,0.06);
 }
-
 html, body { margin: 0; padding: 0; min-height: 100%; }
-
 body {
-    min-height: 100vh;
-    padding: 40px 18px 48px;
-    font-family: "Inter", "Segoe UI", Arial, Helvetica, sans-serif;
-    font-size: 15px;
-    line-height: 1.5;
-    -webkit-font-smoothing: antialiased;
-    color: white;
-    background:
-        radial-gradient(circle at 50% 0%, #3730a3 0%, transparent 45%),
-        linear-gradient(135deg, #0f172a, #1e1b4b);
+    min-height: 100vh; padding: 40px 18px 48px;
+    font-family: "Inter", "Segoe UI", Arial, Helvetica, sans-serif; font-size: 15px; line-height: 1.5;
+    -webkit-font-smoothing: antialiased; color: white;
+    background: radial-gradient(circle at 50% 0%, #3730a3 0%, transparent 45%), linear-gradient(135deg, #0f172a, #1e1b4b);
     background-attachment: fixed;
-    display: flex;
-    justify-content: center;
-    align-items: flex-start;
-    overflow-x: hidden;
-    position: relative;
+    display: flex; justify-content: center; align-items: flex-start; overflow-x: hidden; position: relative;
 }
-
 body::before {
-    content: "";
-    position: fixed;
-    inset: 0;
-    z-index: 0;
-    pointer-events: none;
-    opacity: 0.5;
-    background-image: radial-gradient(rgba(255,255,255,0.035) 1px, transparent 1px);
-    background-size: 3px 3px;
-    mix-blend-mode: overlay;
+    content: ""; position: fixed; inset: 0; z-index: 0; pointer-events: none; opacity: 0.5;
+    background-image: radial-gradient(rgba(255,255,255,0.035) 1px, transparent 1px); background-size: 3px 3px; mix-blend-mode: overlay;
 }
+.game, .menu-screen { position: relative; z-index: 1; width: min(600px, 100%); max-width: 100%; text-align: center; }
+.menu-screen { animation: menuScreenIn 0.5s var(--ease-out-soft); }
+@keyframes menuScreenIn { from { opacity: 0; transform: translateY(14px); } to { opacity: 1; transform: translateY(0); } }
+h1 { margin: 0; font-family: "Sora", "Inter", Arial, sans-serif; font-size: 2rem; font-weight: 700; letter-spacing: -0.02em; text-shadow: 0 3px 10px rgba(0,0,0,0.35); }
+.subtitle { margin: 10px 0 22px; color: #cbd5e1; font-size: 0.95rem; opacity: 0.85; }
 
-.game {
-    position: relative;
-    z-index: 1;
-    width: min(720px, 100%);
-    max-width: 100%;
-    text-align: center;
+.hero-badge {
+    width: 76px; height: 76px; margin: 0 auto 16px; border-radius: 50%; display: flex; align-items: center; justify-content: center;
+    font-size: 2.1rem; background: linear-gradient(145deg, #4f46e5, #7c3aed);
+    box-shadow: 0 1px 0 rgba(255,255,255,0.3) inset, 0 14px 30px rgba(79,70,229,0.45); animation: heroBadgeFloat 3.2s ease-in-out infinite;
 }
+@keyframes heroBadgeFloat { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-6px); } }
 
-h1 {
-    margin: 0;
-    font-family: "Sora", "Inter", Arial, sans-serif;
-    font-size: 1.9rem;
-    font-weight: 700;
-    letter-spacing: -0.02em;
-    text-shadow: 0 3px 10px rgba(0,0,0,0.35);
+.mode-grid { display: flex; flex-direction: column; gap: 14px; margin-top: 8px; }
+.mode-button {
+    border: none; padding: 20px 22px; border-radius: 16px; color: white; font-family: "Sora", "Inter", Arial, sans-serif;
+    font-size: 1.02rem; font-weight: 700; text-align: left; cursor: pointer; display: flex; flex-direction: column; gap: 4px;
+    box-shadow: 0 1px 0 rgba(255,255,255,0.22) inset, 0 10px 22px rgba(0,0,0,0.3);
+    transition: transform 0.15s var(--ease-out-soft), filter 0.15s, box-shadow 0.15s;
 }
+.mode-button:hover { transform: translateY(-3px); filter: brightness(1.08); }
+.mode-button:disabled, .mode-button:disabled:hover { opacity: 0.4; cursor: not-allowed; transform: none; filter: none; }
+.mode-button-title { font-size: 1.05rem; font-weight: 800; }
+.mode-button-desc { font-size: 0.78rem; font-weight: 500; opacity: 0.85; }
+.mode-button.m1 { background: linear-gradient(135deg, #6366f1, #4338ca); }
+.mode-button.m2 { background: linear-gradient(135deg, #ec4899, #a21caf); }
+.mode-button.start { background: linear-gradient(135deg, #22c55e, #15803d); }
 
-.subtitle {
-    margin: 8px 0 16px;
-    color: #cbd5e1;
-    font-size: 0.94rem;
-    opacity: 0.85;
+.menu-button { border: 1px solid rgba(255,255,255,0.18); padding: 12px 22px; border-radius: 12px; background: rgba(255,255,255,0.06);
+    color: #e2e8f0; font-family: "Sora", "Inter", Arial, sans-serif; font-size: 0.86rem; font-weight: 700; cursor: pointer;
+    transition: transform 0.15s var(--ease-out-soft), background 0.15s; }
+.menu-button:hover { background: rgba(255,255,255,0.12); transform: translateY(-2px); }
+
+.site-home-button {
+    position: fixed; top: 18px; left: 18px; z-index: 50; width: 44px; height: 44px; border-radius: 50%;
+    border: 1px solid rgba(255,255,255,0.18); background: linear-gradient(180deg, rgba(255,255,255,0.1), rgba(255,255,255,0.04));
+    color: #e2e8f0; font-size: 1.15rem; display: flex; align-items: center; justify-content: center; cursor: pointer;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.3); transition: transform 0.15s var(--ease-out-soft), background 0.15s;
 }
+.site-home-button:hover { background: linear-gradient(180deg, rgba(255,255,255,0.2), rgba(255,255,255,0.08)); transform: translateY(-2px); }
 
-/* LAYOUT A DUE COLONNE: statistiche a sinistra, gioco a destra */
-.game-layout {
-    display: flex;
-    align-items: flex-start;
-    justify-content: center;
-    gap: 16px;
-    text-align: left;
-}
-
-.main-panel {
-    flex: 1 1 auto;
-    min-width: 0;
-    max-width: 480px;
-    text-align: center;
-}
-
-/* STATISTICHE (colonna) */
-.stats-sidebar {
-    flex: 0 0 128px;
-    display: flex;
-    flex-direction: column;
-    gap: 8px;
-}
-
-.stat {
-    position: relative;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    gap: 6px;
-    padding: 9px 11px;
-    border-radius: 12px;
-    background: linear-gradient(180deg, rgba(255,255,255,0.08), rgba(255,255,255,0.045));
-    border: 1px solid var(--border-soft);
-    box-shadow: 0 1px 0 rgba(255,255,255,0.05) inset, 0 10px 24px rgba(0,0,0,0.20);
-    overflow: hidden;
-    transition: transform 0.25s var(--ease-out-soft);
-}
-
-.stat::before { content: ""; position: absolute; left: 0; right: 0; top: 0; height: 3px; background: #64748b; }
-.stat.total::before { background: #38bdf8; }
-.stat.correct::before { background: #22c55e; }
-.stat.errors::before { background: #ef4444; }
-.stat.streak::before { background: linear-gradient(90deg, #f59e0b, #fde047, #f59e0b); }
-.stat.record::before { background: linear-gradient(90deg, #a16207, #facc15, #a16207); }
-
-.stat.correct.bump { animation: correctBounce 0.5s var(--ease-spring); }
-.stat.errors.bump { animation: wrongShake 0.5s ease-in-out; }
-
-@keyframes correctBounce {
-    0% { transform: scale(1) translateY(0); }
-    30% { transform: scale(1.06) translateY(-5px); }
-    100% { transform: scale(1) translateY(0); }
-}
-@keyframes wrongShake {
-    0% { transform: translateX(0); }
-    20% { transform: translateX(-5px); }
-    40% { transform: translateX(5px); }
-    60% { transform: translateX(-4px); }
-    80% { transform: translateX(3px); }
-    100% { transform: translateX(0); }
-}
-
-.stat-label { display: block; color: #cbd5e1; font-size: 0.62rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.4px; white-space: nowrap; }
-.stat-value { font-family: "Sora", "Inter", Arial, sans-serif; font-size: 1.1rem; font-weight: 700; font-variant-numeric: tabular-nums; }
-.stat.total .stat-value { color: #7dd3fc; }
-.stat.correct .stat-value { color: #86efac; }
-.stat.errors .stat-value { color: #fca5a5; }
-.stat.streak .stat-value { color: #fde68a; }
-.stat.record .stat-value { color: #facc15; }
-
-/* LIVELLO */
-.level-box {
-    margin: 0 auto 16px;
-    padding: 13px 18px 15px;
-    background: linear-gradient(180deg, rgba(255,255,255,0.09), rgba(255,255,255,0.05));
-    border: 1px solid var(--border-soft);
-    border-radius: 16px;
-    box-shadow: 0 1px 0 rgba(255,255,255,0.06) inset, 0 14px 34px rgba(0,0,0,0.24);
-    backdrop-filter: blur(14px) saturate(130%);
-    transition: transform 0.25s var(--ease-spring);
-}
-.level-box.bump { transform: scale(1.02); }
-
-.level-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; }
-.level-title { font-size: 0.78rem; font-weight: 700; letter-spacing: 0.6px; text-transform: uppercase; color: #fef3c7; opacity: 0.9; }
-.level-number { font-size: 1rem; font-weight: 700; color: #fde68a; }
-
-.progress-bar { position: relative; width: 100%; height: 12px; background: rgba(15,23,42,0.85); border-radius: 999px; overflow: hidden; border: 1px solid rgba(255,255,255,0.07); box-shadow: inset 0 2px 5px rgba(0,0,0,0.45); }
-.progress-fill { height: 100%; width: 0%; border-radius: 999px; background: linear-gradient(90deg, #f59e0b, #facc15, #fde68a); box-shadow: 0 0 12px rgba(250,204,21,0.55); transition: width 0.45s var(--ease-out-soft); }
-.level-info { margin-top: 8px; font-size: 0.74rem; color: #94a3b8; }
-
-/* DOMANDA */
-.question-prompt {
-    margin: 0 auto 12px;
-    font-family: "Sora", "Inter", Arial, sans-serif;
-    font-size: 1.15rem;
-    font-weight: 800;
-    letter-spacing: -0.01em;
-    color: #f1f5f9;
-    text-shadow: 0 2px 8px rgba(0,0,0,0.3);
-    min-height: 1.5em;
-}
-
-/* PENTAGRAMMA (rivelato brevemente dopo la risposta corretta) */
-.staff-row {
-    display: flex;
-    justify-content: center;
-    align-items: stretch;
-    margin: 0 auto 14px;
-    max-width: 100%;
-    overflow-x: auto;
-    padding-bottom: 4px;
-}
-
-.staff-card {
-    position: relative;
-    overflow: hidden;
-    margin: 0;
-    padding: 12px;
-    background: linear-gradient(180deg, #fdfaf3, #f2e9d8);
-    border-radius: 16px;
-    box-shadow: 0 1px 0 rgba(255,255,255,0.4) inset, 0 16px 34px rgba(0,0,0,0.35);
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    min-height: 260px;
-    width: 320px;
-    max-width: 100%;
-    line-height: 0;
-    opacity: 0;
-    transform: scale(0.92);
-    pointer-events: none;
-    transition: opacity 0.3s var(--ease-out-soft), transform 0.3s var(--ease-out-soft);
-}
-
-.staff-card.show {
-    opacity: 1;
-    transform: scale(1);
-}
-
-.staff-placeholder {
-    font-size: 2.6rem;
-    opacity: 0.35;
-    color: #3f3520;
-}
-
-.confetti-layer {
-    position: absolute;
-    inset: 0;
-    pointer-events: none;
-    overflow: hidden;
-}
-
-.confetti-piece {
-    position: absolute;
-    top: 45%;
-    left: 50%;
-    width: 8px;
-    height: 8px;
-    border-radius: 2px;
-    opacity: 1;
-    animation: confettiBurst 0.9s ease-out forwards;
-}
-
-@keyframes confettiBurst {
-    0% {
-        transform: translate(-50%, -50%) rotate(0deg);
-        opacity: 1;
-    }
-    100% {
-        transform:
-            translate(
-                calc(-50% + var(--dx)),
-                calc(-50% + var(--dy))
-            )
-            rotate(var(--rot));
-        opacity: 0;
-    }
-}
-
-/* RISPOSTE */
-.answers {
-    display: flex;
-    flex-wrap: wrap;
-    justify-content: center;
-    align-content: center;
-    gap: 10px;
-    max-width: 500px;
-    margin: 0 auto 14px;
-}
-
-.answer {
-    position: relative;
-    overflow: hidden;
-    flex: 0 0 auto;
-    width: 142px;
-    border: none;
-    border-radius: 14px;
-    padding: 16px 8px;
-    color: white;
-    font-family: "Sora", "Inter", Arial, sans-serif;
-    font-size: 1rem;
-    font-weight: 800;
-    cursor: pointer;
-    box-shadow: 0 1px 0 rgba(255,255,255,0.28) inset, 0 5px 0 rgba(0,0,0,0.25), 0 8px 16px rgba(0,0,0,0.28);
-    transition: transform 0.12s var(--ease-out-soft), filter 0.15s, box-shadow 0.12s;
-    text-shadow:
-        -1px -1px 0 rgba(0,0,0,0.65),
-        1px -1px 0 rgba(0,0,0,0.65),
-        -1px 1px 0 rgba(0,0,0,0.65),
-        1px 1px 0 rgba(0,0,0,0.65),
-        0 2px 5px rgba(0,0,0,0.4);
-}
-.answer::after { content: ""; position: absolute; inset: 0; background: linear-gradient(180deg, rgba(255,255,255,0.22), rgba(255,255,255,0) 55%); pointer-events: none; }
-.answer:hover { filter: brightness(1.1); transform: translateY(-3px); }
-.answer:active { transform: translateY(3px); }
-.answer:disabled { opacity: 0.45; cursor: not-allowed; filter: grayscale(0.3); transform: none; }
-
-.answer.wrong-flash { animation: buttonShake 0.4s ease-in-out; }
-
-@keyframes buttonShake {
-    0% { transform: translateX(0); }
-    20% { transform: translateX(-6px); }
-    40% { transform: translateX(6px); }
-    60% { transform: translateX(-4px); }
-    80% { transform: translateX(3px); }
-    100% { transform: translateX(0); }
-}
-
-.answer.primo { background: linear-gradient(135deg, #38bdf8, #0369a1); }
-.answer.secondo { background: linear-gradient(135deg, #fb923c, #c2410c); }
-.answer.unisono { background: linear-gradient(135deg, #a78bfa, #6d28d9); }
-
-/* le parole "acuto" e "grave" sono sempre colorate allo
-   stesso modo in tutta l'interfaccia: verde per l'acuto,
-   blu per il grave, per creare un'associazione visiva
-   costante indipendente dal contesto in cui compaiono */
-.word-acuto { color: #4ade80; font-weight: 800; }
-.word-grave { color: #38bdf8; font-weight: 800; }
-
-.message { min-height: 26px; font-size: 1rem; font-weight: 700; letter-spacing: 0.1px; }
-.correct-message { color: #86efac; }
-.wrong-message { color: #fca5a5; }
-.playing-message { color: #a5b4fc; }
-
-/* PULSANTI */
-.game-buttons { display: flex; justify-content: center; align-items: center; gap: 10px; margin-top: 6px; flex-wrap: wrap; }
-
-.menu-button, .finish-button, .new-game, .listen-button {
-    border: 1px solid rgba(255,255,255,0.18);
-    padding: 12px 22px;
-    border-radius: 12px;
-    background: rgba(255,255,255,0.06);
-    color: #e2e8f0;
-    font-family: "Sora", "Inter", Arial, sans-serif;
-    font-size: 0.88rem;
-    font-weight: 700;
-    cursor: pointer;
-    transition: transform 0.15s var(--ease-out-soft), background 0.15s;
-}
-.menu-button:hover, .finish-button:hover, .listen-button:hover { background: rgba(255,255,255,0.12); transform: translateY(-2px); }
-
-.listen-button {
-    border: none;
-    background: linear-gradient(135deg, #818cf8, #4f46e5);
-    color: white;
-    box-shadow: 0 6px 16px rgba(79,70,229,0.35);
-    margin: 0 auto 12px;
-    display: inline-flex;
-    align-items: center;
-    gap: 8px;
-    padding: 10px 20px;
-}
-.listen-button:hover { background: linear-gradient(135deg, #a5b4fc, #6366f1); box-shadow: 0 10px 22px rgba(79,70,229,0.4); }
-.listen-button:disabled { opacity: 0.5; filter: grayscale(0.6); cursor: not-allowed; transform: none; }
-
-.new-game { border: none; background: linear-gradient(135deg, #ffffff, #e2e8f0); color: #312e81; box-shadow: 0 6px 16px rgba(0,0,0,0.18); }
-.new-game:hover { transform: translateY(-2px); box-shadow: 0 10px 22px rgba(0,0,0,0.22); }
-
-.finish-button { border-color: rgba(248,113,113,0.35); background: rgba(127,29,29,0.25); color: #fca5a5; }
-.finish-button:hover { background: rgba(127,29,29,0.4); }
-
-/* BARRA STRUMENTI */
-.toolbar { display: flex; align-items: center; justify-content: center; gap: 14px; margin: 20px auto 0; }
-
-.volume-control { display: flex; align-items: center; gap: 8px; }
-.volume-icon { font-size: 1.05rem; }
-.volume-slider {
-    width: 120px; height: 6px;
-    -webkit-appearance: none; appearance: none;
-    background: linear-gradient(90deg, #a855f7, #7c3aed);
-    border-radius: 999px; outline: none; cursor: pointer;
-}
-.volume-slider::-webkit-slider-thumb {
-    -webkit-appearance: none; width: 16px; height: 16px; border-radius: 50%;
-    background: #f5f3ff; border: 2px solid #a855f7; cursor: pointer;
-}
-
-.toolbar-button {
-    width: 42px; height: 42px; border-radius: 50%;
-    border: 1px solid rgba(255,255,255,0.18);
-    background: linear-gradient(180deg, rgba(255,255,255,0.1), rgba(255,255,255,0.04));
-    color: #e2e8f0; font-size: 1.1rem;
-    display: flex; align-items: center; justify-content: center;
-    cursor: pointer; box-shadow: 0 4px 10px rgba(0,0,0,0.3);
-    transition: transform 0.12s var(--ease-out-soft), background 0.15s;
-}
-.toolbar-button:hover { background: linear-gradient(180deg, rgba(255,255,255,0.2), rgba(255,255,255,0.08)); }
-.toolbar-button.bump { animation: toolbarBump 0.25s var(--ease-spring); }
-.options-choice.bump { animation: toolbarBump 0.25s var(--ease-spring); }
-@keyframes toolbarBump { 0% { transform: scale(1); } 45% { transform: scale(0.82); } 100% { transform: scale(1); } }
-
-/* PANNELLO TROFEI */
-.trophy-panel {
-    position: fixed; top: 90px; right: 24px; z-index: 200;
-    width: 300px; max-width: calc(100vw - 32px);
-    padding: 16px;
-    background: linear-gradient(180deg, rgba(49,46,129,0.9), rgba(15,23,42,0.92));
-    border: 1px solid rgba(255,255,255,0.18);
-    border-radius: 16px;
-    box-shadow: 0 20px 45px rgba(0,0,0,0.5);
-    backdrop-filter: blur(12px) saturate(140%);
-    opacity: 0; transform: translateY(-8px) scale(0.96); pointer-events: none;
-    transition: opacity 0.2s ease, transform 0.2s var(--ease-out-soft);
-    max-height: calc(100vh - 120px);
-    overflow-y: auto;
-}
-
-.options-panel {
-    position: fixed;
-    top: 50%;
-    left: 50%;
-    z-index: 250;
-    width: 320px;
-    max-width: calc(100vw - 32px);
-    padding: 18px;
-    background: linear-gradient(180deg, rgba(49,46,129,0.72), rgba(15,23,42,0.75));
-    border: 1px solid rgba(255,255,255,0.2);
-    border-radius: 16px;
-    box-shadow: 0 20px 45px rgba(0,0,0,0.45);
-    backdrop-filter: blur(10px) saturate(140%);
-    opacity: 0;
-    transform: translate(-50%, -50%) scale(0.95);
-    pointer-events: none;
-    transition: opacity 0.2s ease, transform 0.2s var(--ease-out-soft);
-}
-.options-panel.show { opacity: 1; transform: translate(-50%, -50%) scale(1); pointer-events: auto; }
-
-.options-panel-title {
-    font-size: 0.82rem; font-weight: 700; letter-spacing: 0.5px; text-transform: uppercase;
-    color: #fef3c7; opacity: 0.9; margin-bottom: 14px; text-align: center;
-}
-
-.options-toggle-row {
-    display: flex; align-items: center; justify-content: space-between; gap: 12px;
-    padding: 10px 12px;
-    border-radius: 10px;
-    background: rgba(255,255,255,0.06);
-    border: 1px solid rgba(255,255,255,0.12);
-    font-family: "Sora", "Inter", Arial, sans-serif;
-    font-weight: 600; font-size: 0.88rem; color: #e2e8f0;
-    cursor: pointer;
-}
-.options-toggle-row input[type="checkbox"] {
-    width: 20px; height: 20px; accent-color: #a855f7; cursor: pointer;
-}
-
-.options-group-title {
-    font-size: 0.66rem; font-weight: 700; letter-spacing: 0.5px; text-transform: uppercase;
-    color: #a5b4fc; opacity: 0.85; margin: 16px 0 8px; text-align: left;
-}
-#questionTypeGroup .options-group-title { margin-top: 0; }
-
-.options-triple {
-    display: grid;
-    grid-template-columns: 1fr 1fr 1fr;
-    gap: 8px;
-}
-
+/* TOGGLE (schermata di selezione qualita') */
+.answer-mode-title { font-size: 0.7rem; font-weight: 700; letter-spacing: 0.6px; text-transform: uppercase; color: #a5b4fc; opacity: 0.85; margin: 14px 0 8px; text-align: left; }
+.options-triple { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 8px; }
 .options-choice {
-    padding: 12px 6px;
-    border-radius: 10px;
-    border: 1px solid rgba(255,255,255,0.16);
-    background: rgba(255,255,255,0.06);
-    color: #e2e8f0;
-    font-family: "Sora", "Inter", Arial, sans-serif;
-    font-weight: 700;
-    font-size: 0.74rem;
-    cursor: pointer;
+    padding: 12px 8px; border-radius: 10px; border: 1px solid rgba(255,255,255,0.16); background: rgba(255,255,255,0.06);
+    color: #e2e8f0; font-family: "Sora", "Inter", Arial, sans-serif; font-weight: 700; font-size: 0.82rem; cursor: pointer;
     transition: background 0.15s, box-shadow 0.15s;
 }
 .options-choice:hover { background: rgba(255,255,255,0.12); }
-.options-choice.active {
-    background: linear-gradient(135deg, #22c55e, #15803d);
-    border-color: rgba(255,255,255,0.35);
-    box-shadow: 0 4px 12px rgba(34,197,94,0.4), inset 0 0 0 2px rgba(255,255,255,0.2);
+.options-choice.active { background: linear-gradient(135deg, #22c55e, #15803d); border-color: rgba(255,255,255,0.35); box-shadow: 0 4px 12px rgba(34,197,94,0.4), inset 0 0 0 2px rgba(255,255,255,0.2); }
+.toggle-list { display: flex; flex-direction: column; gap: 8px; margin-bottom: 6px; }
+.toggle-item {
+    display: flex; align-items: center; gap: 10px; padding: 12px 14px; border-radius: 12px;
+    border: 1px solid rgba(255,255,255,0.14); background: rgba(255,255,255,0.05); cursor: pointer;
+    font-family: "Sora", "Inter", Arial, sans-serif; font-size: 0.86rem; font-weight: 600; color: #cbd5e1; text-align: left;
+    transition: background 0.15s, border-color 0.15s;
 }
-/* quando il pulsante è attivo lo sfondo è già verde: le
-   parole colorate diventano bianche solo qui, per restare
-   leggibili (altrove restano sempre verde/blu) */
-.options-choice.active .word-acuto,
-.options-choice.active .word-grave {
-    color: #ffffff;
-}
+.toggle-item:hover { background: rgba(255,255,255,0.09); }
+.toggle-item.active { background: linear-gradient(135deg, rgba(34,197,94,0.28), rgba(21,128,61,0.22)); border-color: rgba(134,239,172,0.4); color: white; }
+.toggle-check { width: 20px; height: 20px; border-radius: 6px; border: 2px solid rgba(255,255,255,0.35); flex: 0 0 auto; display: flex; align-items: center; justify-content: center; font-size: 0.7rem; }
+.toggle-item.active .toggle-check { background: rgba(255,255,255,0.25); border-color: rgba(255,255,255,0.6); }
 
-.trophy-panel.show { opacity: 1; transform: translateY(0) scale(1); pointer-events: auto; }
-.trophy-panel-title { font-size: 0.8rem; font-weight: 700; text-transform: uppercase; color: #fef3c7; margin-bottom: 12px; text-align: center; }
-.trophy-row { display: flex; flex-direction: column; gap: 3px; padding: 9px 11px; border-radius: 10px; background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); font-family: "Sora", "Inter", Arial, sans-serif; font-size: 0.82rem; font-weight: 600; color: #cbd5e1; margin-bottom: 7px; }
-.trophy-row-main { display: flex; justify-content: space-between; align-items: center; }
-.trophy-row-details { font-size: 0.7rem; font-weight: 500; color: #94a3b8; }
-.trophy-row.done .trophy-row-details { color: #bbf7d0; }
-.trophy-row.in-loop { border-color: rgba(245,158,11,0.55); background: linear-gradient(135deg, rgba(245,158,11,0.16), rgba(180,83,9,0.1)); }
+/* STATISTICHE / LIVELLO */
+.stats { display: grid; grid-template-columns: repeat(5, 1fr); gap: 8px; margin: 0 auto 14px; }
+.stat { position: relative; padding: 10px 6px 9px; border-radius: 12px; background: linear-gradient(180deg, rgba(255,255,255,0.08), rgba(255,255,255,0.045)); border: 1px solid var(--border-soft); overflow: hidden; transition: transform 0.25s var(--ease-out-soft); }
+.stat::before { content: ""; position: absolute; left: 0; right: 0; top: 0; height: 3px; background: #64748b; }
+.stat.total::before { background: #38bdf8; } .stat.correct::before { background: #22c55e; } .stat.errors::before { background: #ef4444; }
+.stat.streak::before { background: linear-gradient(90deg, #f59e0b, #fde047, #f59e0b); } .stat.record::before { background: linear-gradient(90deg, #a16207, #facc15, #a16207); }
+.stat.correct.bump { animation: correctBounce 0.5s var(--ease-spring); } .stat.errors.bump { animation: wrongShake 0.5s ease-in-out; }
+@keyframes correctBounce { 0% { transform: scale(1) translateY(0); } 30% { transform: scale(1.06) translateY(-5px); } 100% { transform: scale(1) translateY(0); } }
+@keyframes wrongShake { 0% { transform: translateX(0); } 20% { transform: translateX(-5px); } 40% { transform: translateX(5px); } 60% { transform: translateX(-4px); } 80% { transform: translateX(3px); } 100% { transform: translateX(0); } }
+.stat-label { display: block; color: #cbd5e1; font-size: 0.58rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.4px; margin-bottom: 4px; }
+.stat-value { font-family: "Sora", "Inter", Arial, sans-serif; font-size: 1.15rem; font-weight: 700; font-variant-numeric: tabular-nums; }
+.stat.total .stat-value { color: #7dd3fc; } .stat.correct .stat-value { color: #86efac; } .stat.errors .stat-value { color: #fca5a5; }
+.stat.streak .stat-value { color: #fde68a; } .stat.record .stat-value { color: #facc15; }
 
-.trophy-loop-controls {
-    display: none;
-    margin-bottom: 14px;
-    padding: 10px 11px;
-    border-radius: 10px;
-    background: rgba(245,158,11,0.08);
-    border: 1px solid rgba(245,158,11,0.25);
-}
-.trophy-loop-controls.visible { display: block; }
+.level-box { margin: 0 auto 14px; padding: 12px 16px 14px; background: linear-gradient(180deg, rgba(255,255,255,0.09), rgba(255,255,255,0.05)); border: 1px solid var(--border-soft); border-radius: 14px; transition: transform 0.25s var(--ease-spring); }
+.level-box.bump { transform: scale(1.02); }
+.level-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; }
+.level-title { font-size: 0.72rem; font-weight: 700; letter-spacing: 0.5px; text-transform: uppercase; color: #fef3c7; opacity: 0.9; }
+.level-number { font-size: 0.92rem; font-weight: 700; color: #fde68a; }
+.progress-bar { position: relative; width: 100%; height: 10px; background: rgba(15,23,42,0.85); border-radius: 999px; overflow: hidden; border: 1px solid rgba(255,255,255,0.07); }
+.progress-fill { height: 100%; width: 0%; border-radius: 999px; background: linear-gradient(90deg, #f59e0b, #facc15, #fde68a); transition: width 0.45s var(--ease-out-soft); }
+.level-footer { display: flex; align-items: center; justify-content: space-between; gap: 8px; margin-top: 6px; }
+.level-info { font-size: 0.7rem; color: #94a3b8; }
+.level-name { font-size: 0.7rem; color: #a5b4fc; font-weight: 600; text-align: right; }
 
-.trophy-loop-title {
-    font-size: 0.7rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.4px;
-    color: #fde68a; margin-bottom: 8px;
-}
+/* PENTAGRAMMA */
+.staff-wrap { margin: 0 auto 16px; padding: 10px; background: linear-gradient(180deg, #fdfaf3, #f2e9d8); border-radius: 18px; box-shadow: 0 1px 0 rgba(255,255,255,0.4) inset, 0 16px 34px rgba(0,0,0,0.35); display: flex; justify-content: center; }
+#staffContainer svg { display: block; }
 
-.trophy-loop-row {
-    display: flex; align-items: center; gap: 6px;
+/* RISPOSTE */
+.answer-section { margin: 0 auto 12px; }
+.answer-section-title { font-size: 0.68rem; font-weight: 700; letter-spacing: 0.6px; text-transform: uppercase; color: #a5b4fc; opacity: 0.85; margin-bottom: 8px; text-align: center; }
+.choice-row { display: flex; flex-wrap: wrap; justify-content: center; gap: 8px; margin-bottom: 14px; }
+.choice-btn {
+    flex: 0 0 auto; min-width: 100px; border: 1px solid rgba(255,255,255,0.16); padding: 12px 16px; border-radius: 12px;
+    background: rgba(255,255,255,0.07); color: #e2e8f0; font-family: "Sora", "Inter", Arial, sans-serif; font-weight: 700; font-size: 0.84rem; cursor: pointer;
+    box-shadow: 0 1px 0 rgba(255,255,255,0.10) inset, 0 4px 10px rgba(0,0,0,0.2);
+    transition: transform 0.12s var(--ease-out-soft), background 0.15s, box-shadow 0.12s;
 }
-.trophy-loop-row select {
-    flex: 1;
-    padding: 6px 4px;
-    border-radius: 8px;
-    border: 1px solid rgba(255,255,255,0.16);
-    background: rgba(15,23,42,0.6);
-    color: #e2e8f0;
-    font-family: "Sora", "Inter", Arial, sans-serif;
-    font-size: 0.78rem;
-    font-weight: 600;
-}
-.trophy-loop-row span { color: #cbd5e1; font-size: 0.8rem; }
-.trophy-loop-row .options-choice {
-    flex: 0 0 auto;
-    padding: 7px 10px;
-    font-size: 0.74rem;
-}
-.trophy-loop-row .options-choice.active {
-    background: linear-gradient(135deg, #f59e0b, #b45309);
-    box-shadow: 0 4px 12px rgba(245,158,11,0.4), inset 0 0 0 2px rgba(255,255,255,0.2);
-}
-.trophy-row.done { background: linear-gradient(135deg, rgba(34,197,94,0.22), rgba(21,128,61,0.14)); border-color: rgba(134,239,172,0.4); color: #dcfce7; }
+.choice-btn:hover { background: rgba(255,255,255,0.13); transform: translateY(-2px); }
+.choice-btn.selected { background: linear-gradient(135deg, #6366f1, #4338ca); border-color: rgba(255,255,255,0.35); box-shadow: 0 4px 12px rgba(79,70,229,0.45), inset 0 0 0 2px rgba(255,255,255,0.18); }
+.position-row .choice-btn.selected { background: linear-gradient(135deg, #0ea5e9, #0369a1); box-shadow: 0 4px 12px rgba(3,105,161,0.45), inset 0 0 0 2px rgba(255,255,255,0.18); }
+.choice-btn.correct-flash { background: linear-gradient(135deg, #22c55e, #15803d) !important; animation: correctPulse 0.5s var(--ease-spring); }
+.choice-btn.wrong-flash { background: linear-gradient(135deg, #ef4444, #b91c1c) !important; animation: buttonShake 0.4s ease-in-out; }
+@keyframes correctPulse { 0% { transform: scale(1); } 35% { transform: scale(1.08); } 100% { transform: scale(1); } }
+@keyframes buttonShake { 0% { transform: translateX(0); } 20% { transform: translateX(-6px); } 40% { transform: translateX(6px); } 60% { transform: translateX(-4px); } 80% { transform: translateX(3px); } 100% { transform: translateX(0); } }
 
-/* OVERLAY CONFERMA / SCHERMATA FINALE */
-.overlay {
-    position: fixed; inset: 0; z-index: 300;
-    background: rgba(2,6,23,0.72);
-    display: flex; align-items: center; justify-content: center;
-    opacity: 0; pointer-events: none;
-    transition: opacity 0.2s ease;
-    padding: 20px;
+.message { min-height: 30px; font-size: 1.05rem; font-weight: 700; }
+.correct-message { color: #86efac; } .wrong-message { color: #fca5a5; }
+
+.submit-button {
+    display: block; margin: 4px auto 10px; border: none; padding: 13px 34px; border-radius: 12px;
+    background: linear-gradient(135deg, #22c55e, #15803d); color: white; font-family: "Sora", "Inter", Arial, sans-serif;
+    font-size: 0.95rem; font-weight: 800; cursor: pointer; box-shadow: 0 1px 0 rgba(255,255,255,0.25) inset, 0 8px 18px rgba(21,128,61,0.4);
+    transition: transform 0.15s var(--ease-out-soft), filter 0.15s, opacity 0.15s;
 }
+.submit-button:hover:not(:disabled) { transform: translateY(-2px); filter: brightness(1.08); }
+.submit-button:disabled { background: rgba(255,255,255,0.08); color: rgba(226,232,240,0.4); box-shadow: none; cursor: not-allowed; }
+
+.game-buttons { display: flex; justify-content: center; align-items: center; gap: 10px; margin-top: 6px; flex-wrap: wrap; }
+.finish-button, .new-game { border: 1px solid rgba(255,255,255,0.18); padding: 12px 22px; border-radius: 12px; background: rgba(255,255,255,0.06);
+    color: #e2e8f0; font-family: "Sora", "Inter", Arial, sans-serif; font-size: 0.86rem; font-weight: 700; cursor: pointer; transition: transform 0.15s var(--ease-out-soft), background 0.15s; }
+.new-game { border: none; background: linear-gradient(135deg, #ffffff, #e2e8f0); color: #312e81; box-shadow: 0 6px 16px rgba(0,0,0,0.18); }
+.finish-button { border-color: rgba(248,113,113,0.35); background: rgba(127,29,29,0.25); color: #fca5a5; }
+.finish-button:hover { background: rgba(127,29,29,0.4); }
+
+.toolbar { display: flex; align-items: center; justify-content: center; gap: 14px; margin: 18px auto 0; }
+.volume-control { display: flex; align-items: center; gap: 8px; }
+.volume-slider { width: 120px; height: 6px; -webkit-appearance: none; appearance: none; background: linear-gradient(90deg, #a855f7, #7c3aed); border-radius: 999px; outline: none; cursor: pointer; }
+.volume-slider::-webkit-slider-thumb { -webkit-appearance: none; width: 16px; height: 16px; border-radius: 50%; background: #f5f3ff; border: 2px solid #a855f7; cursor: pointer; }
+
+.overlay { position: fixed; inset: 0; z-index: 300; background: rgba(2,6,23,0.72); display: flex; align-items: center; justify-content: center; opacity: 0; pointer-events: none; transition: opacity 0.2s ease; padding: 20px; }
 .overlay.show { opacity: 1; pointer-events: auto; }
-
-#finalHomeConfirmOverlay {
-    z-index: 350;
-    /* sfondo più scuro del solito: questo popup si apre
-       sopra la schermata di riepilogo già a schermo, e deve
-       risultare chiaramente sopra e distinto da essa */
-    background: rgba(2,6,23,0.86);
-}
-
-.warning-card {
-    border: 2px solid rgba(250,204,21,0.55);
-    box-shadow: 0 0 0 5px rgba(250,204,21,0.10), 0 24px 60px rgba(0,0,0,0.6);
-}
-
-.warning-icon {
-    font-size: 2.1rem;
-    margin-bottom: 6px;
-}
-
-.overlay-card {
-    width: min(420px, 100%);
-    padding: 26px 24px;
-    background: linear-gradient(180deg, rgba(49,46,129,0.96), rgba(15,23,42,0.97));
-    border: 1px solid rgba(255,255,255,0.18);
-    border-radius: 20px;
-    box-shadow: 0 24px 60px rgba(0,0,0,0.5);
-    text-align: center;
-}
-
+.overlay-card { width: min(420px, 100%); padding: 26px 24px; background: linear-gradient(180deg, rgba(49,46,129,0.96), rgba(15,23,42,0.97)); border: 1px solid rgba(255,255,255,0.18); border-radius: 20px; box-shadow: 0 24px 60px rgba(0,0,0,0.5); text-align: center; }
 .overlay-card h2 { margin: 0 0 8px; font-family: "Sora", Arial, sans-serif; font-size: 1.5rem; }
 .overlay-card p { color: #cbd5e1; margin: 0 0 20px; }
-
 .overlay-buttons { display: flex; justify-content: center; gap: 10px; }
-
 .final-stats { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin: 0 0 22px; text-align: left; }
 .final-stat { padding: 10px 12px; border-radius: 10px; background: rgba(255,255,255,0.06); border: 1px solid var(--border-soft); }
 .final-stat span { display: block; font-size: 0.65rem; text-transform: uppercase; color: #94a3b8; margin-bottom: 3px; }
 .final-stat strong { font-family: "Sora", Arial, sans-serif; font-size: 1.15rem; }
 
-@media (max-width: 620px) {
-    .game-layout { flex-direction: column; align-items: stretch; }
-    .stats-sidebar {
-        flex-direction: row;
-        flex-wrap: wrap;
-        width: 100%;
-    }
-    .stats-sidebar .stat {
-        flex: 1 1 30%;
-        flex-direction: column;
-        align-items: flex-start;
-        gap: 3px;
-    }
-    .main-panel { max-width: 100%; }
-    .answer { width: 140px; padding: 14px 6px; font-size: 0.98rem; }
-    .staff-card { width: 100%; min-height: 240px; }
-}
-
-/* =========================================================
-   SCHERMATE DI SELEZIONE MODALITÀ
-========================================================= */
-
-.menu-screen {
-    position: relative;
-    z-index: 1;
-    width: min(520px, 100%);
-    text-align: center;
-    animation: menuScreenIn 0.5s var(--ease-out-soft);
-}
-
-@keyframes menuScreenIn {
-    from { opacity: 0; transform: translateY(14px); }
-    to { opacity: 1; transform: translateY(0); }
-}
-
-.hero-badge {
-    width: 76px;
-    height: 76px;
-    margin: 0 auto 16px;
-    border-radius: 50%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 2.1rem;
-    background: linear-gradient(145deg, #4f46e5, #7c3aed);
-    box-shadow: 0 1px 0 rgba(255,255,255,0.3) inset, 0 14px 30px rgba(79,70,229,0.45);
-    animation: heroBadgeFloat 3.2s ease-in-out infinite;
-}
-
-@keyframes heroBadgeFloat {
-    0%, 100% { transform: translateY(0); }
-    50% { transform: translateY(-6px); }
-}
-
-.mode-grid {
-    display: flex;
-    flex-direction: column;
-    gap: 14px;
-    margin-top: 28px;
-}
-
-.mode-divider {
-    margin: 22px 0 4px;
-    border: none;
-    border-top: 1px solid var(--border-soft);
-}
-
-.mode-button {
-    border: none;
-    padding: 20px 22px;
-    border-radius: 16px;
-    color: white;
-    font-family: "Sora", "Inter", Arial, sans-serif;
-    font-size: 1.05rem;
-    font-weight: 700;
-    letter-spacing: 0.1px;
-    text-align: left;
-    cursor: pointer;
-    display: flex;
-    flex-direction: column;
-    gap: 4px;
-    box-shadow: 0 1px 0 rgba(255,255,255,0.22) inset, 0 10px 22px rgba(0,0,0,0.3);
-    transition: transform 0.15s var(--ease-out-soft), filter 0.15s, box-shadow 0.15s;
-}
-.mode-button:hover { transform: translateY(-3px); filter: brightness(1.08); box-shadow: 0 1px 0 rgba(255,255,255,0.25) inset, 0 16px 30px rgba(0,0,0,0.35); }
-.mode-button:active { transform: translateY(1px); }
-
-.mode-button-title { font-size: 1.08rem; font-weight: 800; }
-.mode-button-desc { font-size: 0.78rem; font-weight: 500; opacity: 0.85; letter-spacing: 0.1px; }
-
-.mode-button.training-1 { background: linear-gradient(135deg, #0ea5e9, #0369a1); }
-.mode-button.verifica { background: linear-gradient(135deg, #ec4899, #a21caf); }
-
-.back-button {
-    margin-top: 22px;
-    border: 1px solid rgba(255,255,255,0.18);
-    padding: 12px 22px;
-    border-radius: 12px;
-    background: rgba(255,255,255,0.06);
-    color: #e2e8f0;
-    font-family: "Sora", "Inter", Arial, sans-serif;
-    font-size: 0.88rem;
-    font-weight: 700;
-    cursor: pointer;
-    transition: transform 0.15s var(--ease-out-soft), background 0.15s;
-}
-.back-button:hover { background: rgba(255,255,255,0.12); transform: translateY(-2px); }
-
-/* PULSANTE HOME (verso il sito che ospita il gioco) */
-.site-home-button {
-    position: fixed;
-    top: 18px;
-    left: 18px;
-    z-index: 50;
-    width: 44px;
-    height: 44px;
-    border-radius: 50%;
-    border: 1px solid rgba(255,255,255,0.18);
-    background: linear-gradient(180deg, rgba(255,255,255,0.1), rgba(255,255,255,0.04));
-    color: #e2e8f0;
-    font-size: 1.15rem;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    cursor: pointer;
-    box-shadow: 0 4px 12px rgba(0,0,0,0.3);
-    transition: transform 0.15s var(--ease-out-soft), background 0.15s;
-}
-.site-home-button:hover { background: linear-gradient(180deg, rgba(255,255,255,0.2), rgba(255,255,255,0.08)); transform: translateY(-2px); }
-
-/* TIMER e PULSANTE MENU IN PARTITA */
-.level-footer {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    gap: 10px;
-    margin-top: 8px;
-}
-.level-timer {
-    font-family: "Sora", "Inter", Arial, sans-serif;
-    font-size: 0.76rem;
-    font-weight: 700;
-    color: #94a3b8;
-    letter-spacing: 0.3px;
-    white-space: nowrap;
-}
-
-.home-menu-button {
-    display: none;
-}
-.home-menu-button.visible {
-    display: inline-flex;
+@media (min-width: 640px) {
+    body { padding: 16px 18px 20px; }
+    h1 { font-size: 1.55rem; } .subtitle { margin: 4px 0 12px; font-size: 0.85rem; }
+    .stats { margin-bottom: 8px; } .stat { padding: 6px 4px 5px; }
+    .level-box { margin-bottom: 8px; padding: 7px 14px 8px; }
+    .staff-wrap { margin-bottom: 10px; padding: 6px; }
+    .message { min-height: 20px; }
 }
 </style>
 </head>
 <body>
 
-<!-- SCHERMATA INIZIALE: SCELTA MODALITÀ -->
 <button class="site-home-button" id="siteHomeButton" title="Torna al sito">🏠</button>
 
+<!-- SCHERMATA INIZIALE -->
 <div class="menu-screen" id="homeScreen">
-
-    <div class="hero-badge">🎧</div>
-    <h1><span class="word-acuto">Acuto</span>, <span class="word-grave">grave</span> o unisono?</h1>
-    <p class="subtitle">Allena l'orecchio a riconoscere qual è il suono più <span class="word-acuto">acuto</span>, quale il più <span class="word-grave">grave</span> — o se sono all'unisono.</p>
-
+    <div class="hero-badge">🎼</div>
+    <h1>Identifica l'accordo</h1>
+    <p class="subtitle">Guarda l'accordo sul pentagramma e riconoscine la qualità.</p>
     <div class="mode-grid">
-        <button class="mode-button training-1" id="trainingButton">
-            <span class="mode-button-title">📘 Allenamento</span>
-            <span class="mode-button-desc">Fai pratica con calma, un livello alla volta</span>
+        <button class="mode-button m1" data-position="root">
+            <span class="mode-button-title">Accordi in posizione iniziale</span>
+            <span class="mode-button-desc">L'accordo è sempre in stato fondamentale: indica solo la qualità</span>
         </button>
-        <hr class="mode-divider">
-        <button class="mode-button verifica" id="verificaButton">
-            <span class="mode-button-title">📝 Verifica</span>
-            <span class="mode-button-desc">Mettiti alla prova e scopri il tuo voto</span>
+        <button class="mode-button m2" data-position="inverted">
+            <span class="mode-button-title">Accordi rivolti</span>
+            <span class="mode-button-desc">Indica sia la qualità sia lo stato di rivolto</span>
         </button>
     </div>
-
 </div>
 
+<!-- SCHERMATA SELEZIONE QUALITA' -->
+<div class="menu-screen" id="selectScreen" style="display: none;">
+    <div class="hero-badge">🎯</div>
+    <h1>Scegli le qualità</h1>
+    <p class="subtitle">Seleziona quali tipi di accordo vuoi allenare.</p>
+    <div class="toggle-list" id="toggleList"></div>
+    <div class="answer-mode-title">Chiave</div>
+    <div class="options-triple" id="clefToggleGroup">
+        <button class="options-choice active" id="trebleClefButton" data-clef="treble">Violino</button>
+        <button class="options-choice" id="bassClefButton" data-clef="bass">Basso</button>
+        <button class="options-choice" id="mixedClefButton" data-clef="mixed">Entrambe</button>
+    </div>
+    <div class="mode-grid" style="margin-top: 18px;">
+        <button class="menu-button" id="selectBackButton">⬅️ Indietro</button>
+        <button class="mode-button start" id="selectStartButton">
+            <span class="mode-button-title">▶️ Inizia</span>
+        </button>
+    </div>
+</div>
+
+<!-- SCHERMATA DI GIOCO -->
 <div class="game" id="gameContainer" style="display: none;">
 
-    <h1>🎧 <span class="word-acuto">Acuto</span>, <span class="word-grave">grave</span> o unisono?</h1>
-    <p class="subtitle">Ascolta i due suoni e indica quello richiesto.</p>
+    <h1>🎼 Identifica l'accordo</h1>
+    <p class="subtitle" id="gameSubtitle">Osserva l'accordo e rispondi.</p>
 
-    <div class="game-layout">
-
-        <div class="stats-sidebar">
-            <div class="stat total"><span class="stat-label">Risposte</span><span class="stat-value" id="total">0</span></div>
-            <div class="stat correct" id="correctBox"><span class="stat-label">Corrette</span><span class="stat-value" id="correct">0</span></div>
-            <div class="stat errors" id="errorsBox"><span class="stat-label">Errori</span><span class="stat-value" id="errors">0</span></div>
-            <div class="stat streak"><span class="stat-label">🏆 Serie</span><span class="stat-value" id="streak">0</span></div>
-            <div class="stat record"><span class="stat-label">👑 Record</span><span class="stat-value" id="record">0</span></div>
-        </div>
-
-        <div class="main-panel">
-
-            <div class="level-box" id="levelBox">
-                <div class="level-header">
-                    <span class="level-title">⭐ Livello</span>
-                    <span class="level-number" id="levelNumber">1 / 10</span>
-                </div>
-                <div class="progress-bar"><div class="progress-fill" id="progressFill"></div></div>
-                <div class="level-footer">
-                    <span class="level-info" id="levelInfo">0 / 6 risposte corrette</span>
-                    <span class="level-timer" id="timerDisplay">⏱ 0:00</span>
-                </div>
-            </div>
-
-            <div class="question-prompt" id="questionPrompt">Quale dei due suoni è più acuto?</div>
-
-            <button class="listen-button" id="listenButton">🔊 Ascolta di nuovo</button>
-
-            <div class="staff-row" id="staffRow">
-                <div class="staff-card" id="staffCard">
-                    <div class="staff-inner" id="staffInner"></div>
-                    <div class="confetti-layer" id="confettiLayer"></div>
-                </div>
-            </div>
-
-            <div class="answers" id="answers">
-                <button class="answer primo" data-choice="primo">Il PRIMO</button>
-                <button class="answer secondo" data-choice="secondo">Il SECONDO</button>
-                <button class="answer unisono" data-choice="unisono">UNISONO</button>
-            </div>
-
-            <div class="message" id="message"></div>
-
-            <div class="game-buttons">
-                <button class="menu-button home-menu-button" id="homeMenuButton">🏠 Menu</button>
-                <button class="menu-button" id="finishButton">Termina partita</button>
-                <button class="new-game" id="restartButton">🔄 Ricomincia</button>
-            </div>
-
-            <div class="toolbar">
-                <div class="volume-control">
-                    <span class="volume-icon">🔊</span>
-                    <input type="range" class="volume-slider" id="volumeSlider" min="0" max="100" value="75">
-                </div>
-                <button class="toolbar-button" id="optionsButton" title="Opzioni">⚙️</button>
-                <button class="toolbar-button" id="trophyButton" title="Livelli completati">🏆</button>
-            </div>
-
-        </div>
-
+    <div class="stats">
+        <div class="stat total"><span class="stat-label">Risposte</span><span class="stat-value" id="total">0</span></div>
+        <div class="stat correct" id="correctBox"><span class="stat-label">Corrette</span><span class="stat-value" id="correct">0</span></div>
+        <div class="stat errors" id="errorsBox"><span class="stat-label">Errori</span><span class="stat-value" id="errors">0</span></div>
+        <div class="stat streak"><span class="stat-label">🏆 Serie</span><span class="stat-value" id="streak">0</span></div>
+        <div class="stat record"><span class="stat-label">👑 Record</span><span class="stat-value" id="record">0</span></div>
     </div>
 
-</div>
-
-<!-- PANNELLO TROFEI -->
-<div class="trophy-panel" id="trophyPanel">
-    <div class="trophy-panel-title">Livelli completati</div>
-
-    <div class="trophy-loop-controls" id="trophyLoopControls">
-        <div class="trophy-loop-title">🔁 Loop livelli (allenamento)</div>
-        <div class="trophy-loop-row">
-            <select id="loopStartSelect"></select>
-            <span>→</span>
-            <select id="loopEndSelect"></select>
-            <button class="options-choice" id="loopToggleButton">Attiva</button>
+    <div class="level-box" id="levelBox">
+        <div class="level-header">
+            <span class="level-title">⭐ Livello</span>
+            <span class="level-number" id="levelNumber">1 / 10</span>
+        </div>
+        <div class="progress-bar"><div class="progress-fill" id="progressFill"></div></div>
+        <div class="level-footer">
+            <span class="level-info" id="levelInfo">0 / 100 risposte corrette</span>
+            <span class="level-name" id="levelName"></span>
         </div>
     </div>
 
-    <div id="trophyList"></div>
-</div>
+    <div class="staff-wrap">
+        <div id="staffContainer"></div>
+    </div>
 
-<!-- PANNELLO OPZIONI -->
-<div class="options-panel" id="optionsPanel">
-    <div class="options-panel-title">Opzioni</div>
-
-    <div id="questionTypeGroup">
-        <div class="options-group-title">Tipo di domanda</div>
-        <div class="options-triple">
-            <button class="options-choice active" id="mixedQuestionButton" data-question="mixed">Misto</button>
-            <button class="options-choice" id="higherQuestionButton" data-question="higher">Solo <span class="word-acuto">acuto</span></button>
-            <button class="options-choice" id="lowerQuestionButton" data-question="lower">Solo <span class="word-grave">grave</span></button>
+    <div class="answer-section">
+        <div class="answer-section-title">Qualità</div>
+        <div class="choice-row" id="qualityRow"></div>
+        <div id="positionSection" style="display: none;">
+            <div class="answer-section-title">Posizione</div>
+            <div class="choice-row position-row" id="positionRow"></div>
         </div>
     </div>
 
-    <div class="options-group-title">Aiuto</div>
-    <label class="options-toggle-row">
-        <span>Mostra il pentagramma alla risposta giusta</span>
-        <input type="checkbox" id="showStaffToggle" checked>
-    </label>
+    <button class="submit-button" id="submitButton" disabled>Invia ✅</button>
+
+    <div class="message" id="message"></div>
+
+    <div class="game-buttons">
+        <button class="finish-button" id="finishButton">Termina partita</button>
+    </div>
+
+    <div class="toolbar">
+        <div class="volume-control">
+            <span class="volume-icon">🔊</span>
+            <input type="range" class="volume-slider" id="volumeSlider" min="0" max="100" value="75">
+        </div>
+    </div>
+
 </div>
 
 <!-- CONFERMA FINE PARTITA -->
 <div class="overlay" id="confirmOverlay">
     <div class="overlay-card">
-        <h2 id="confirmFinishTitle">Terminare la partita?</h2>
+        <h2>Terminare la partita?</h2>
         <p>Le statistiche attuali verranno mostrate nel riepilogo finale.</p>
         <div class="overlay-buttons">
             <button class="menu-button" id="cancelFinish">Annulla</button>
             <button class="finish-button" id="confirmFinish">Termina</button>
-        </div>
-    </div>
-</div>
-
-<!-- CONFERMA RITORNO AL MENU DALLA SCHERMATA FINALE (solo verifica) -->
-<div class="overlay" id="finalHomeConfirmOverlay">
-    <div class="overlay-card warning-card">
-        <div class="warning-icon">⚠️</div>
-        <h2>Chiudere il riepilogo?</h2>
-        <p>Sei sicuro di voler chiudere la schermata di riepilogo?</p>
-        <div class="overlay-buttons">
-            <button class="menu-button" id="cancelFinalHome">Annulla</button>
-            <button class="finish-button" id="confirmFinalHome">Sì, chiudi</button>
         </div>
     </div>
 </div>
@@ -917,12 +311,9 @@ h1 {
             <div class="final-stat"><span>Accuratezza</span><strong id="finalAccuracy">0%</strong></div>
             <div class="final-stat"><span>Risposte corrette</span><strong id="finalCorrect">0</strong></div>
             <div class="final-stat"><span>Errori</span><strong id="finalErrors">0</strong></div>
-            <div class="final-stat"><span>Tempo impiegato</span><strong id="finalTime">0:00</strong></div>
-            <div class="final-stat"><span>Riascolti richiesti</span><strong id="finalReplays">0</strong></div>
-            <div class="final-stat" id="finalGradeBox" style="display: none;"><span>Voto</span><strong id="finalGrade">-</strong></div>
         </div>
         <div class="overlay-buttons">
-            <button class="menu-button home-menu-button" id="finalMenuButton">🏠 Menu</button>
+            <button class="menu-button" id="finalMenuButton">🏠 Menu</button>
             <button class="new-game" id="playAgainButton">🔄 Gioca ancora</button>
         </div>
     </div>
@@ -931,98 +322,156 @@ h1 {
 <script>
 
 /* =========================================================
-   LIVELLI: intervallo (in semitoni) tra i due suoni, quando
-   non sono all'unisono. Si parte da distanze molto ampie
-   (più di due ottave) e si restringe progressivamente fino
-   al semitono nell'ultimo livello. Indipendentemente dal
-   livello, con una certa probabilità i due suoni possono
-   essere anche perfettamente identici (unisono): il gioco
-   pone comunque la domanda "più acuto" o "più grave" per
-   ingannare il giocatore, ma la risposta giusta è "Unisono".
-========================================================= */
+   TEORIA: 9 qualita' di accordo (4 triadi + 5 di settima),
+   generazione libera per fondamentale, con ricerca automatica
+   dell'armatura di chiave (max 2 alterazioni) che minimizza le
+   alterazioni esplicite da scrivere sulle singole note
+   ========================================================= */
 
-const levelIntervals = [
-    { min: 24, max: 30 }, // livello 1: più di due ottave, facilissimo
-    { min: 18, max: 23 }, // livello 2
-    { min: 13, max: 17 }, // livello 3
-    { min: 9,  max: 12 }, // livello 4
-    { min: 7,  max: 8  }, // livello 5
-    { min: 5,  max: 6  }, // livello 6
-    { min: 4,  max: 4  }, // livello 7
-    { min: 3,  max: 3  }, // livello 8
-    { min: 2,  max: 2  }, // livello 9
-    { min: 1,  max: 1  }  // livello 10: un solo semitono, il massimo della difficoltà
+const LETTERS = ["C", "D", "E", "F", "G", "A", "B"];
+const NATURAL_OFFSET = [0, 2, 4, 5, 7, 9, 11];
+const POSITION_NAMES = ["Stato fondamentale", "Primo rivolto", "Secondo rivolto", "Terzo rivolto"];
+
+const CHORD_QUALITIES = {
+    m:    { name: "Minore",                tones: [[2, 3], [4, 7]] },
+    M:    { name: "Maggiore",              tones: [[2, 4], [4, 7]] },
+    d:    { name: "Diminuita",             tones: [[2, 3], [4, 6]] },
+    a:    { name: "Aumentata",             tones: [[2, 4], [4, 8]] },
+    m7:   { name: "Settima minore",        tones: [[2, 3], [4, 7], [6, 10]] },
+    Mm7:  { name: "Settima di dominante",  tones: [[2, 4], [4, 7], [6, 10]] },
+    M7:   { name: "Settima maggiore",      tones: [[2, 4], [4, 7], [6, 11]] },
+    d7:   { name: "Settima diminuita",     tones: [[2, 3], [4, 6], [6, 9]] },
+    m7b5: { name: "Settima semidiminuita", tones: [[2, 3], [4, 6], [6, 10]] }
+};
+const TOGGLE_GROUPS = [
+    { id: "triad_mM", label: "Triadi minori e maggiori", qualities: ["m", "M"], defaultOn: true },
+    { id: "triad_da", label: "Triadi diminuite e aumentate", qualities: ["d", "a"] },
+    { id: "seventh_m7", label: "Accordi di settima minore", qualities: ["m7"] },
+    { id: "seventh_Mm7", label: "Accordi di settima di dominante", qualities: ["Mm7"] },
+    { id: "seventh_M7", label: "Accordi di settima maggiore", qualities: ["M7"] },
+    { id: "seventh_d7", label: "Accordi di settima diminuita", qualities: ["d7"] },
+    { id: "seventh_m7b5", label: "Accordi di settima semidiminuita", qualities: ["m7b5"] }
 ];
 
-const totalLevels = levelIntervals.length;
-const QUESTIONS_PER_LEVEL = 6;
+const SIGNATURES = [
+    { name: "C", sharps: [], flats: [] },
+    { name: "G", sharps: ["F"], flats: [] },
+    { name: "D", sharps: ["F", "C"], flats: [] },
+    { name: "F", sharps: [], flats: ["B"] },
+    { name: "Bb", sharps: [], flats: ["B", "E"] }
+];
 
-// probabilità che i due suoni di una domanda siano
-// perfettamente identici (unisono), a qualunque livello
-const UNISON_PROBABILITY = 0.2;
+function computeChordTone(rootLetter, rootAcc, letterSteps, semitoneOffset) {
+    const letter = ((rootLetter + letterSteps) % 7 + 7) % 7;
+    const rootPitchClass = NATURAL_OFFSET[rootLetter] + rootAcc;
+    const desiredPitchClass = ((rootPitchClass + semitoneOffset) % 12 + 12) % 12;
+    let acc = desiredPitchClass - NATURAL_OFFSET[letter];
+    while (acc > 6) acc -= 12;
+    while (acc < -6) acc += 12;
+    return { letter: letter, acc: acc };
+}
+function buildChordTones(rootLetter, rootAcc, qualityKey) {
+    const q = CHORD_QUALITIES[qualityKey];
+    const tones = [{ letter: rootLetter, acc: rootAcc }];
+    q.tones.forEach(t => tones.push(computeChordTone(rootLetter, rootAcc, t[0], t[1])));
+    return tones;
+}
+function bestFitSignature(tones) {
+    let best = null, bestMismatches = Infinity;
+    SIGNATURES.forEach(sig => {
+        let mismatches = 0;
+        tones.forEach(n => {
+            const letterName = LETTERS[n.letter];
+            const sigAcc = sig.sharps.includes(letterName) ? 1 : sig.flats.includes(letterName) ? -1 : 0;
+            if (sigAcc !== n.acc) mismatches++;
+        });
+        if (mismatches < bestMismatches) { bestMismatches = mismatches; best = sig; }
+    });
+    return best;
+}
+function signatureAccFor(sig, letterIdx) {
+    const letterName = LETTERS[letterIdx];
+    return sig.sharps.includes(letterName) ? 1 : sig.flats.includes(letterName) ? -1 : 0;
+}
 
-// estremi dell'intervallo di note utilizzabili (in numero
-// MIDI): da C2 a C6, un'estensione ampia ma comoda da
-// disegnare su un doppio rigo pianistico
-const MIN_MIDI = 36;
-const MAX_MIDI = 84;
+function naturalMidi(letter, octave) { return (octave + 1) * 12 + NATURAL_OFFSET[letter]; }
+function noteMidi(n) { return naturalMidi(n.letter, n.octave) + n.acc; }
+function pitchClassOf(n) { return ((NATURAL_OFFSET[n.letter] + n.acc) % 12 + 12) % 12; }
+function accidentalTypeFor(acc) { return acc === 1 ? "#" : acc === 2 ? "##" : acc === -1 ? "b" : "bb"; }
 
-// soglia di passaggio tra chiave di basso e di violino
-// nel doppio rigo (Do centrale incluso in chiave di violino)
-const CLEF_SPLIT_MIDI = 60;
-
-/*
-   "mixed" -> il tipo di domanda (acuto/grave) è scelto a
-   caso ad ogni turno; "higher"/"lower" -> fissato dalle
-   opzioni, sempre la stessa domanda per tutta la partita
-*/
-let questionMode = "mixed";
-let showStaffOnCorrect = true;
-
-/* =========================================================
-   STATO
-========================================================= */
-
-let level = 1;
-let total = 0;
-let correct = 0;
-let errors = 0;
-let streak = 0;
-let record = 0;
-let answering = false;
-let isPlaying = false;
-let finished = false;
-let currentQuestion = null;
-let levelQuestionIndex = 0;
-let levelCorrectCount = 0;
-let completedLevels = [];
-let levelErrorCounts = {};
-let levelCompletionCounts = {};
-let replayCount = 0;
-
-// in modalità Verifica i riascolti sono limitati per ogni
-// domanda; in Allenamento restano illimitati
-const MAX_REPLAYS_VERIFICA = 2;
-let replaysUsedThisQuestion = 0;
-
-let loopActive = false;
-let loopStart = 1;
-let loopEnd = 1;
-
-/* "training" oppure "verifica" */
-let appMode = "training";
+function diatonicIndex(letter, octave) { return octave * 7 + letter; }
+function fromDiatonicIndex(idx) { return { letter: ((idx % 7) + 7) % 7, octave: Math.floor(idx / 7) }; }
 
 /* =========================================================
-   ELEMENTI
-========================================================= */
+   GENERAZIONE DELLA DOMANDA
+   ========================================================= */
 
-const staffInner = document.getElementById("staffInner");
-const staffCard = document.getElementById("staffCard");
-const confettiLayer = document.getElementById("confettiLayer");
-const answersBox = document.getElementById("answers");
+function generateChord(qualityKey, wantInversion, clef) {
+    const q = CHORD_QUALITIES[qualityKey];
+    const numNotes = q.tones.length + 1;
+    const stepsList = [0].concat(q.tones.map(t => t[0]));
+
+    for (let attempt = 0; attempt < 60; attempt++) {
+        const rootLetter = Math.floor(Math.random() * 7);
+        const accPool = [-1, 0, 0, 1];
+        const rootAcc = accPool[Math.floor(Math.random() * accPool.length)];
+        const tones = buildChordTones(rootLetter, rootAcc, qualityKey);
+        if (tones.some(t => Math.abs(t.acc) > 1)) continue; // evita doppie alterazioni assurde
+
+        const baseOctave = clef === "bass" ? 3 : 4;
+        const rootDia = diatonicIndex(rootLetter, baseOctave);
+        const rootPosDias = stepsList.map(s => rootDia + s);
+
+        const dias = [];
+        for (let i = 0; i < numNotes; i++) {
+            const idx = (i + wantInversion) % numNotes;
+            const octaveBump = (i + wantInversion) >= numNotes ? 7 : 0;
+            dias.push(rootPosDias[idx] + octaveBump);
+        }
+        const displayNotes = dias.map((d, i) => {
+            const toneIdx = (i + wantInversion) % numNotes;
+            const pos = fromDiatonicIndex(d);
+            return { letter: pos.letter, acc: tones[toneIdx].acc, octave: pos.octave };
+        });
+
+        const signature = bestFitSignature(tones);
+        return {
+            qualityKey: qualityKey,
+            inversion: wantInversion,
+            numNotes: numNotes,
+            clef: clef,
+            tones: tones,           // stato fondamentale, senza ottava: [root, terza, quinta, (settima)]
+            displayNotes: displayNotes,
+            signature: signature
+        };
+    }
+    return null; // estremamente improbabile
+}
+
+/* =========================================================
+   ELEMENTI DOM
+   ========================================================= */
+
+const homeScreen = document.getElementById("homeScreen");
+const selectScreen = document.getElementById("selectScreen");
+const gameContainer = document.getElementById("gameContainer");
+const siteHomeButton = document.getElementById("siteHomeButton");
+const gameSubtitle = document.getElementById("gameSubtitle");
+
+const toggleList = document.getElementById("toggleList");
+const selectBackButton = document.getElementById("selectBackButton");
+const selectStartButton = document.getElementById("selectStartButton");
+const trebleClefButton = document.getElementById("trebleClefButton");
+const bassClefButton = document.getElementById("bassClefButton");
+const mixedClefButton = document.getElementById("mixedClefButton");
+
+const staffContainer = document.getElementById("staffContainer");
+const qualityRow = document.getElementById("qualityRow");
+const positionSection = document.getElementById("positionSection");
+const positionRow = document.getElementById("positionRow");
+const submitButton = document.getElementById("submitButton");
 const message = document.getElementById("message");
-const questionPrompt = document.getElementById("questionPrompt");
-const listenButton = document.getElementById("listenButton");
+
 const totalEl = document.getElementById("total");
 const correctEl = document.getElementById("correct");
 const errorsEl = document.getElementById("errors");
@@ -1034,15 +483,13 @@ const levelBox = document.getElementById("levelBox");
 const levelNumber = document.getElementById("levelNumber");
 const progressFill = document.getElementById("progressFill");
 const levelInfo = document.getElementById("levelInfo");
+const levelName = document.getElementById("levelName");
+
 const finishButton = document.getElementById("finishButton");
-const restartButton = document.getElementById("restartButton");
 const confirmOverlay = document.getElementById("confirmOverlay");
-const confirmFinishTitle = document.getElementById("confirmFinishTitle");
 const cancelFinish = document.getElementById("cancelFinish");
 const confirmFinish = document.getElementById("confirmFinish");
-const finalHomeConfirmOverlay = document.getElementById("finalHomeConfirmOverlay");
-const cancelFinalHome = document.getElementById("cancelFinalHome");
-const confirmFinalHome = document.getElementById("confirmFinalHome");
+
 const gameOver = document.getElementById("gameOver");
 const resultTitle = document.getElementById("resultTitle");
 const resultSubtitle = document.getElementById("resultSubtitle");
@@ -1050,39 +497,13 @@ const finalLevel = document.getElementById("finalLevel");
 const finalAccuracy = document.getElementById("finalAccuracy");
 const finalCorrect = document.getElementById("finalCorrect");
 const finalErrors = document.getElementById("finalErrors");
+const finalMenuButton = document.getElementById("finalMenuButton");
 const playAgainButton = document.getElementById("playAgainButton");
 const volumeSlider = document.getElementById("volumeSlider");
-const trophyButton = document.getElementById("trophyButton");
-const trophyPanel = document.getElementById("trophyPanel");
-const trophyList = document.getElementById("trophyList");
-const trophyLoopControls = document.getElementById("trophyLoopControls");
-const loopStartSelect = document.getElementById("loopStartSelect");
-const loopEndSelect = document.getElementById("loopEndSelect");
-const loopToggleButton = document.getElementById("loopToggleButton");
-const optionsButton = document.getElementById("optionsButton");
-const optionsPanel = document.getElementById("optionsPanel");
-const showStaffToggle = document.getElementById("showStaffToggle");
-const mixedQuestionButton = document.getElementById("mixedQuestionButton");
-const higherQuestionButton = document.getElementById("higherQuestionButton");
-const lowerQuestionButton = document.getElementById("lowerQuestionButton");
-const questionTypeGroup = document.getElementById("questionTypeGroup");
-const gameContainer = document.getElementById("gameContainer");
-const homeScreen = document.getElementById("homeScreen");
-const trainingButton = document.getElementById("trainingButton");
-const siteHomeButton = document.getElementById("siteHomeButton");
-const verificaButton = document.getElementById("verificaButton");
-const homeMenuButtons = document.querySelectorAll(".home-menu-button");
-const finalMenuButton = document.getElementById("finalMenuButton");
-const midGameHomeButton = document.getElementById("homeMenuButton");
-const timerDisplay = document.getElementById("timerDisplay");
-const finalTime = document.getElementById("finalTime");
-const finalReplays = document.getElementById("finalReplays");
-const finalGradeBox = document.getElementById("finalGradeBox");
-const finalGrade = document.getElementById("finalGrade");
 
 /* =========================================================
-   AUDIO (suono sintetizzato via Web Audio, timbro di pianoforte)
-========================================================= */
+   AUDIO (stesso motore piano-like degli altri giochi)
+   ========================================================= */
 
 let audioContext = null;
 let masterGain = null;
@@ -1093,14 +514,94 @@ function getAudioContext() {
         audioContext = new (window.AudioContext || window.webkitAudioContext)();
         masterGain = audioContext.createGain();
         masterGain.gain.value = masterVolume;
-        masterGain.connect(audioContext.destination);
+        const compressor = audioContext.createDynamicsCompressor();
+        compressor.threshold.setValueAtTime(-20, audioContext.currentTime);
+        compressor.knee.setValueAtTime(24, audioContext.currentTime);
+        compressor.ratio.setValueAtTime(8, audioContext.currentTime);
+        compressor.attack.setValueAtTime(0.003, audioContext.currentTime);
+        compressor.release.setValueAtTime(0.25, audioContext.currentTime);
+        masterGain.connect(compressor);
+        compressor.connect(audioContext.destination);
     }
-    if (audioContext.state === "suspended") {
-        audioContext.resume();
-    }
+    if (audioContext.state === "suspended") { audioContext.resume(); }
     return audioContext;
 }
+function frequencyForMidi(midi) { return 440 * Math.pow(2, (midi - 69) / 12); }
 
+function playPianoNote(midi, delay) {
+    const ctx = getAudioContext();
+    const now = ctx.currentTime + (delay || 0);
+    const duration = 1.3;
+    const freq = frequencyForMidi(midi);
+
+    const filter = ctx.createBiquadFilter();
+    filter.type = "lowpass";
+    filter.frequency.setValueAtTime(6000, now);
+    filter.frequency.exponentialRampToValueAtTime(500, now + duration);
+    filter.Q.value = 0.3;
+    filter.connect(masterGain);
+
+    // brevissimo "tocco" del martelletto, discreto (un solo impulso,
+    // non uno per ogni armonico: piu' pulito quando suonano piu' note)
+    const noiseDuration = 0.012;
+    const bufferSize = Math.max(1, Math.ceil(ctx.sampleRate * noiseDuration));
+    const noiseBuffer = ctx.createBuffer(1, bufferSize, ctx.sampleRate);
+    const noiseData = noiseBuffer.getChannelData(0);
+    for (let i = 0; i < bufferSize; i++) noiseData[i] = (Math.random() * 2 - 1) * (1 - i / bufferSize);
+    const noiseSrc = ctx.createBufferSource();
+    noiseSrc.buffer = noiseBuffer;
+    const noiseFilter = ctx.createBiquadFilter();
+    noiseFilter.type = "bandpass";
+    noiseFilter.frequency.value = Math.min(6000, freq * 3);
+    noiseFilter.Q.value = 0.6;
+    const noiseGain = ctx.createGain();
+    noiseGain.gain.setValueAtTime(0.05, now);
+    noiseGain.gain.exponentialRampToValueAtTime(0.0001, now + noiseDuration);
+    noiseSrc.connect(noiseFilter);
+    noiseFilter.connect(noiseGain);
+    noiseGain.connect(masterGain);
+    noiseSrc.start(now);
+    noiseSrc.stop(now + noiseDuration + 0.01);
+
+    // corpo del suono: fondamentale + armonici, UN oscillatore ciascuno
+    // (niente piu' coppie scordate per ogni armonico: erano troppe,
+    // specialmente quando suonano piu' note insieme in un accordo)
+    const harmonics = [
+        { mult: 1, gain: 0.34, decay: duration },
+        { mult: 2, gain: 0.16, decay: duration * 0.85 },
+        { mult: 3, gain: 0.09, decay: duration * 0.65 },
+        { mult: 4, gain: 0.05, decay: duration * 0.5 },
+        { mult: 5, gain: 0.025, decay: duration * 0.35 }
+    ];
+    harmonics.forEach(h => {
+        const osc = ctx.createOscillator();
+        const gain = ctx.createGain();
+        osc.type = "sine";
+        osc.frequency.value = freq * h.mult;
+        gain.gain.setValueAtTime(0.0001, now);
+        gain.gain.exponentialRampToValueAtTime(h.gain, now + 0.006);
+        gain.gain.exponentialRampToValueAtTime(0.0001, now + h.decay);
+        osc.connect(gain);
+        gain.connect(filter);
+        osc.start(now);
+        osc.stop(now + h.decay + 0.05);
+    });
+
+    // una seconda "corda" leggermente scordata SOLO sul fondamentale,
+    // per un accenno di corpo/battimento pianistico senza moltiplicare
+    // il numero di oscillatori per ogni armonico
+    const osc2 = ctx.createOscillator();
+    const gain2 = ctx.createGain();
+    osc2.type = "sine";
+    osc2.frequency.value = freq * 1.0015;
+    gain2.gain.setValueAtTime(0.0001, now);
+    gain2.gain.exponentialRampToValueAtTime(0.16, now + 0.006);
+    gain2.gain.exponentialRampToValueAtTime(0.0001, now + duration);
+    osc2.connect(gain2);
+    gain2.connect(filter);
+    osc2.start(now);
+    osc2.stop(now + duration + 0.05);
+}
 function tone(freq, duration, type, delay) {
     const ctx = getAudioContext();
     const osc = ctx.createOscillator();
@@ -1116,446 +617,138 @@ function tone(freq, duration, type, delay) {
     osc.start(startTime);
     osc.stop(startTime + duration + 0.05);
 }
-
-function playClickSound() { tone(520, 0.08, "triangle", 0); }
-
-function frequencyForMidi(midi) {
-    return 440 * Math.pow(2, (midi - 69) / 12);
-}
-
-/*
-   Rumore bianco filtrato, usato solo per il primo istante
-   del suono: imita il "thump" meccanico del martelletto che
-   colpisce la corda, prima che restino solo le armoniche.
-   Il buffer viene creato una sola volta e riutilizzato.
-*/
-let noiseBuffer = null;
-function getNoiseBuffer(ctx) {
-    if (noiseBuffer) return noiseBuffer;
-    const length = ctx.sampleRate * 0.05;
-    noiseBuffer = ctx.createBuffer(1, length, ctx.sampleRate);
-    const data = noiseBuffer.getChannelData(0);
-    for (let i = 0; i < length; i++) {
-        data[i] = (Math.random() * 2 - 1) * (1 - i / length);
-    }
-    return noiseBuffer;
-}
-
-/*
-   Suono di pianoforte, un po' più ricco e "vero" del
-   semplice fondamentale+armoniche:
-   - le armoniche sono leggermente "stirate" verso l'acuto
-     (inarmonicità), come nelle vere corde di pianoforte;
-   - ogni armonica è raddoppiata da un secondo oscillatore
-     appena scordato, per il caratteristico "battimento"
-     delle corde multiple dello stesso tasto;
-   - un breve soffio di rumore filtrato all'attacco imita
-     il colpo del martelletto;
-   - un filtro passa-basso si scurisce nel tempo, per lo
-     smorzamento naturale delle armoniche alte.
-   delay e duration parametrizzabili per poter accostare
-   due note in sequenza senza sovrapporle troppo.
-*/
-function playPianoNote(midi, delay, duration) {
-    const freq = frequencyForMidi(midi);
-    const ctx = getAudioContext();
-    const now = ctx.currentTime + (delay || 0);
-    const dur = duration || 1.6;
-
-    // coefficiente di inarmonicità: più marcato nel registro
-    // grave (corde più spesse), quasi assente in quello acuto
-    const inharmonicity = midi < 48 ? 0.00035 : (midi < 72 ? 0.00015 : 0.00005);
-
-    const filter = ctx.createBiquadFilter();
-    filter.type = "lowpass";
-    filter.frequency.setValueAtTime(7000, now);
-    filter.frequency.exponentialRampToValueAtTime(700, now + dur);
-    filter.Q.value = 0.5;
-    filter.connect(masterGain);
-
-    // colpo del martelletto: un breve soffio di rumore,
-    // filtrato attorno alla fondamentale, che si spegne
-    // quasi subito
-    const noise = ctx.createBufferSource();
-    noise.buffer = getNoiseBuffer(ctx);
-    const noiseFilter = ctx.createBiquadFilter();
-    noiseFilter.type = "bandpass";
-    noiseFilter.frequency.value = freq * 1.5;
-    noiseFilter.Q.value = 0.8;
-    const noiseGain = ctx.createGain();
-    noiseGain.gain.setValueAtTime(0.16, now);
-    noiseGain.gain.exponentialRampToValueAtTime(0.0001, now + 0.05);
-    noise.connect(noiseFilter);
-    noiseFilter.connect(noiseGain);
-    noiseGain.connect(filter);
-    noise.start(now);
-    noise.stop(now + 0.06);
-
-    const harmonics = [
-        { mult: 1, gain: 0.5,   decay: dur        },
-        { mult: 2, gain: 0.26,  decay: dur * 0.85 },
-        { mult: 3, gain: 0.15,  decay: dur * 0.68 },
-        { mult: 4, gain: 0.095, decay: dur * 0.55 },
-        { mult: 5, gain: 0.06,  decay: dur * 0.42 },
-        { mult: 6, gain: 0.04,  decay: dur * 0.32 },
-        { mult: 8, gain: 0.02,  decay: dur * 0.22 }
-    ];
-
-    // scordatura in cents tra le due "corde" di ogni
-    // armonica: piccola quanto basta per dare corpo e un
-    // leggero battimento, senza risultare stonata
-    const detuneCents = 4;
-    const detuneRatioUp = Math.pow(2, detuneCents / 1200);
-    const detuneRatioDown = Math.pow(2, -detuneCents / 1200);
-
-    harmonics.forEach(h => {
-        const n = h.mult;
-        const stretchedMult = n * Math.sqrt(1 + inharmonicity * n * n);
-        const harmonicFreq = freq * stretchedMult;
-
-        [detuneRatioDown, detuneRatioUp].forEach(ratio => {
-            const osc = ctx.createOscillator();
-            const gain = ctx.createGain();
-
-            osc.type = "sine";
-            osc.frequency.value = harmonicFreq * ratio;
-
-            const partialGain = h.gain * 0.5;
-            gain.gain.setValueAtTime(0.0001, now);
-            gain.gain.exponentialRampToValueAtTime(partialGain, now + 0.008);
-            gain.gain.exponentialRampToValueAtTime(0.0001, now + h.decay);
-
-            osc.connect(gain);
-            gain.connect(filter);
-
-            osc.start(now);
-            osc.stop(now + h.decay + 0.05);
-        });
-    });
-}
-
 function playWrongSound() { tone(180, 0.22, "sawtooth", 0); }
-
+function playLevelUpSound() { [523, 659, 784, 1047].forEach((f, i) => tone(f, 0.18, "sine", i * 0.09)); }
 function playVictorySound() {
     const run = [523.25, 659.25, 783.99, 1046.50, 1318.51, 1567.98, 2093.00];
     run.forEach((f, i) => tone(f, 0.32, "triangle", i * 0.1));
-
     const chordStart = run.length * 0.1 + 0.06;
-    [1046.50, 1318.51, 1567.98, 2093.00].forEach(f => {
-        tone(f, 1.3, "sine", chordStart);
-        tone(f * 2, 0.7, "sine", chordStart);
-    });
+    [1046.50, 1318.51, 1567.98, 2093.00].forEach(f => { tone(f, 1.3, "sine", chordStart); tone(f * 2, 0.7, "sine", chordStart); });
 }
-
-/*
-   Riproduce la coppia di suoni della domanda corrente,
-   nell'ordine stabilito quando è stata generata. Il primo
-   suono ha il tempo di spegnersi quasi del tutto prima che
-   parta il secondo, per non confonderli.
-*/
-const NOTE_DURATION = 1.7;
-const GAP_BETWEEN_NOTES = 1.9;
-
-function playQuestionSequence(question) {
-    isPlaying = true;
-    setAnswersEnabled(false);
-    updateListenButtonState();
-    message.textContent = "";
-    message.className = "message";
-    questionPrompt.classList.add("playing");
-
-    playPianoNote(question.firstPitch, 0, NOTE_DURATION);
-    playPianoNote(question.secondPitch, GAP_BETWEEN_NOTES, NOTE_DURATION);
-
-    const totalDuration = (GAP_BETWEEN_NOTES + NOTE_DURATION) * 1000;
-    setTimeout(() => {
-        isPlaying = false;
-        updateListenButtonState();
-        if (!finished) setAnswersEnabled(true);
-    }, totalDuration);
-}
+function playChordSound(notes) { notes.forEach((n, i) => playPianoNote(noteMidi(n), i * 0.09)); }
 
 /* =========================================================
-   DOPPIO PENTAGRAMMA (VexFlow) - rivelato solo come
-   conferma dopo una risposta corretta
-========================================================= */
+   DISEGNO (interamente VexFlow: rigo, armatura, accordo)
+   ========================================================= */
 
-const NOTE_LETTERS = ["c","c#","d","d#","e","f","f#","g","g#","a","a#","b"];
+const SVG_W = 320, SVG_H = 280;
 
-function midiToVexInfo(midi) {
-    const pc = ((midi % 12) + 12) % 12;
-    const octave = Math.floor(midi / 12) - 1;
-    const letter = NOTE_LETTERS[pc];
-    const isSharp = letter.indexOf("#") !== -1;
-    return { vexKey: letter + "/" + octave, isSharp };
+function vexKeyFor(note) {
+    return LETTERS[note.letter].toLowerCase() + (note.acc === 0 ? "" : accidentalTypeFor(note.acc)) + "/" + note.octave;
 }
 
-function clefForMidi(midi) {
-    return midi >= CLEF_SPLIT_MIDI ? "treble" : "bass";
-}
-
-/*
-   Disegna un doppio rigo (chiave di violino sopra, chiave
-   di basso sotto, come uno spartito per pianoforte) con le
-   due note della domanda appena risolta: la prima in blu,
-   la seconda in arancione, etichettate "1" e "2" così da
-   ricollegarle visivamente ai pulsanti "Il PRIMO"/"Il SECONDO".
-*/
-function drawGrandStaff(question) {
+function renderChord() {
+    staffContainer.innerHTML = "";
     if (typeof Vex === "undefined") return;
+    const { Renderer, Stave, StaveNote, Accidental, Voice, Formatter } = Vex.Flow;
 
-    const { Renderer, Stave, StaveNote, StaveConnector, GhostNote, Accidental, Voice, Formatter } = Vex.Flow;
-
-    staffInner.innerHTML = "";
-
-    const width = 270;
-    const height = 250;
-    const renderer = new Renderer(staffInner, Renderer.Backends.SVG);
-    renderer.resize(width, height);
+    const renderer = new Renderer(staffContainer, Renderer.Backends.SVG);
+    renderer.resize(SVG_W, SVG_H);
     const context = renderer.getContext();
 
-    const trebleStave = new Stave(18, 8, width - 36, { spacing_between_lines_px: 10 });
-    trebleStave.addClef("treble");
-    trebleStave.setContext(context).draw();
+    const stave = new Stave(10, 40, SVG_W - 20);
+    stave.addClef(currentQuestion.clef);
+    stave.addKeySignature(currentQuestion.signature.name);
+    stave.setContext(context).draw();
 
-    const bassStave = new Stave(18, 128, width - 36, { spacing_between_lines_px: 10 });
-    bassStave.addClef("bass");
-    bassStave.setContext(context).draw();
-
-    const connector = new StaveConnector(trebleStave, bassStave);
-    connector.setType(StaveConnector.type.BRACE);
-    connector.setContext(context).draw();
-
-    const lineConnector = new StaveConnector(trebleStave, bassStave);
-    lineConnector.setType(StaveConnector.type.SINGLE_LEFT);
-    lineConnector.setContext(context).draw();
-
-    const slotColors = ["#0369a1", "#c2410c"];
-    const pitches = [question.firstPitch, question.secondPitch];
-
-    function buildTickablesFor(clefName) {
-        return pitches.map((midi, i) => {
-            const belongsHere = clefForMidi(midi) === clefName;
-            if (!belongsHere) {
-                return new GhostNote({ duration: "q" });
-            }
-            const info = midiToVexInfo(midi);
-            const note = new StaveNote({ keys: [info.vexKey], duration: "q", clef: clefName });
-            if (info.isSharp) note.addModifier(new Accidental("#"), 0);
-            note.setStyle({ fillStyle: slotColors[i], strokeStyle: slotColors[i] });
-            return note;
-        });
-    }
-
-    const trebleNotes = buildTickablesFor("treble");
-    const bassNotes = buildTickablesFor("bass");
-
-    const trebleVoice = new Voice({ num_beats: 2, beat_value: 4 });
-    trebleVoice.setMode(Voice.Mode.SOFT);
-    trebleVoice.addTickables(trebleNotes);
-
-    const bassVoice = new Voice({ num_beats: 2, beat_value: 4 });
-    bassVoice.setMode(Voice.Mode.SOFT);
-    bassVoice.addTickables(bassNotes);
-
-    new Formatter().joinVoices([trebleVoice]).joinVoices([bassVoice]).format([trebleVoice, bassVoice], width - 90);
-
-    trebleVoice.draw(context, trebleStave);
-    bassVoice.draw(context, bassStave);
-
-    // etichette "1" e "2" sopra/sotto le note reali (non i
-    // GhostNote, che non hanno una posizione da etichettare)
-    context.save();
-    context.setFont("Sora, Arial", 13, "bold");
-    [trebleNotes, bassNotes].forEach(group => {
-        group.forEach((note, i) => {
-            if (note instanceof GhostNote) return;
-            const x = note.getAbsoluteX();
-            const y = note.getYs()[0];
-            context.setFillStyle(slotColors[i]);
-            context.fillText(String(i + 1), x - 3, y - 22);
-        });
+    const keys = currentQuestion.displayNotes.map(vexKeyFor);
+    const chord = new StaveNote({ keys: keys, duration: "q", clef: currentQuestion.clef });
+    currentQuestion.displayNotes.forEach((note, i) => {
+        const sigAcc = signatureAccFor(currentQuestion.signature, note.letter);
+        if (sigAcc !== note.acc) {
+            chord.addModifier(new Accidental(accidentalTypeFor(note.acc)), i);
+        }
     });
-    context.restore();
-}
 
-function revealStaff(question) {
-    drawGrandStaff(question);
-    staffCard.classList.add("show");
-}
-
-function hideStaff() {
-    staffCard.classList.remove("show");
-}
-
-/*
-   Piccola esplosione di coriandoli, usata quando si passa
-   di livello.
-*/
-const confettiColors = ["#f59e0b", "#22c55e", "#3b82f6", "#ec4899", "#a855f7", "#facc15", "#06b6d4"];
-
-function spawnConfetti() {
-    const count = 26;
-    for (let i = 0; i < count; i++) {
-        const piece = document.createElement("span");
-        piece.className = "confetti-piece";
-
-        const angle = Math.random() * Math.PI * 2;
-        const distance = 60 + Math.random() * 90;
-        const dx = Math.cos(angle) * distance;
-        const dy = Math.sin(angle) * distance - 20;
-
-        piece.style.setProperty("--dx", dx + "px");
-        piece.style.setProperty("--dy", dy + "px");
-        piece.style.setProperty("--rot", (Math.random() * 480 - 240) + "deg");
-        piece.style.background = confettiColors[i % confettiColors.length];
-        piece.style.width = (5 + Math.random() * 5) + "px";
-        piece.style.height = piece.style.width;
-        piece.style.animationDelay = (Math.random() * 0.08) + "s";
-
-        confettiLayer.appendChild(piece);
-        setTimeout(() => piece.remove(), 1100);
-    }
+    const voice = new Voice({ num_beats: 1, beat_value: 4 });
+    voice.setMode(Voice.Mode.SOFT);
+    voice.addTickables([chord]);
+    new Formatter().joinVoices([voice]).format([voice], SVG_W - 90);
+    voice.draw(context, stave);
 }
 
 /* =========================================================
-   GENERAZIONE DELLE DOMANDE
-========================================================= */
+   STATO DI GIOCO
+   ========================================================= */
 
-function randInt(min, max) {
-    return Math.floor(Math.random() * (max - min + 1)) + min;
+let positionMode = "root"; // "root" | "inverted"
+let clefMode = "treble"; // "treble" | "bass" | "mixed"
+let enabledQualities = new Set(["m", "M"]);
+let currentQuestion = null;
+
+let selectedQuality = null;
+let selectedPosition = null;
+let lastWrongKey = null;
+
+let answering = true, finished = false;
+let total = 0, correct = 0, errors = 0, streak = 0, record = 0;
+let progress = 0;
+const SESSION_TARGET = 100, QUESTIONS_PER_LEVEL = 10, THEME_LEVELS = SESSION_TARGET / QUESTIONS_PER_LEVEL;
+
+function activeQualityList() {
+    return Object.keys(CHORD_QUALITIES).filter(q => enabledQualities.has(q));
+}
+function anySeventhEnabled() {
+    return [...enabledQualities].some(q => CHORD_QUALITIES[q].tones.length === 3);
 }
 
-function pickQuestionType() {
-    if (questionMode === "higher") return true;
-    if (questionMode === "lower") return false;
-    return Math.random() < 0.5;
-}
-
-/*
-   Genera una domanda per il livello corrente: sceglie un
-   intervallo casuale nel range del livello, due altezze
-   valide entro l'estensione consentita, l'ordine di
-   riproduzione e il tipo di domanda (acuto o grave).
-*/
 function generateQuestion() {
-    const askHigher = pickQuestionType();
-    const isUnison = Math.random() < UNISON_PROBABILITY;
-
-    if (isUnison) {
-        // stessa identica nota per entrambi i suoni: la
-        // domanda viene comunque posta normalmente (a caso
-        // "più acuto" o "più grave"), ma la risposta corretta
-        // resta "Unisono" in entrambi i casi
-        const pitch = randInt(MIN_MIDI, MAX_MIDI);
-        return {
-            lowPitch: pitch,
-            highPitch: pitch,
-            firstPitch: pitch,
-            secondPitch: pitch,
-            firstIsHigh: false,
-            askHigher,
-            correctChoice: "unisono",
-            isUnison: true
-        };
-    }
-
-    const range = levelIntervals[level - 1];
-    const interval = randInt(range.min, range.max);
-
-    const lowMax = MAX_MIDI - interval;
-    const lowPitch = randInt(MIN_MIDI, lowMax);
-    const highPitch = lowPitch + interval;
-
-    const firstIsHigh = Math.random() < 0.5;
-    const firstPitch = firstIsHigh ? highPitch : lowPitch;
-    const secondPitch = firstIsHigh ? lowPitch : highPitch;
-
-    // corretto: quale tra "primo" e "secondo" soddisfa la domanda
-    let correctChoice;
-    if (askHigher) {
-        correctChoice = firstIsHigh ? "primo" : "secondo";
-    } else {
-        correctChoice = firstIsHigh ? "secondo" : "primo";
-    }
-
-    return { lowPitch, highPitch, firstPitch, secondPitch, firstIsHigh, askHigher, correctChoice, isUnison: false };
+    const qualities = activeQualityList();
+    const qualityKey = qualities[Math.floor(Math.random() * qualities.length)];
+    const numNotes = CHORD_QUALITIES[qualityKey].tones.length + 1;
+    const inversion = positionMode === "inverted" ? Math.floor(Math.random() * numNotes) : 0;
+    const clef = clefMode === "mixed" ? (Math.random() < 0.5 ? "treble" : "bass") : clefMode;
+    return generateChord(qualityKey, inversion, clef) || generateChord(qualityKey, 0, clef);
 }
 
-function updateQuestionPrompt() {
-    questionPrompt.innerHTML = currentQuestion.askHigher
-        ? "Quale dei due suoni è più <span class=\"word-acuto\">acuto</span>?"
-        : "Quale dei due suoni è più <span class=\"word-grave\">grave</span>?";
-    questionPrompt.classList.remove("playing");
-}
-
-function setAnswersEnabled(enabled) {
-    answersBox.querySelectorAll(".answer").forEach(btn => {
-        btn.disabled = !enabled;
+function renderChoiceButtons() {
+    qualityRow.innerHTML = "";
+    activeQualityList().forEach(qKey => {
+        const btn = document.createElement("button");
+        btn.className = "choice-btn";
+        btn.textContent = CHORD_QUALITIES[qKey].name;
+        btn.dataset.quality = qKey;
+        btn.addEventListener("click", () => onQualityClicked(qKey, btn));
+        qualityRow.appendChild(btn);
     });
-}
 
-/*
-   Aggiorna testo e stato (attivo/disattivo) del pulsante
-   "Ascolta di nuovo": in Verifica mostra quanti riascolti
-   restano e si ingrigisce quando finiscono; in Allenamento
-   resta sempre disponibile (fatta salva la riproduzione in corso).
-*/
-function updateListenButtonLabel() {
-    if (appMode === "verifica") {
-        const remaining = Math.max(0, MAX_REPLAYS_VERIFICA - replaysUsedThisQuestion);
-        const word = remaining === 1 ? "disponibile" : "disponibili";
-        listenButton.textContent = "🔊 Ascolta di nuovo - " + remaining + " " + word;
-    } else {
-        listenButton.textContent = "🔊 Ascolta di nuovo";
+    const showPosition = positionMode === "inverted";
+    positionSection.style.display = showPosition ? "block" : "none";
+    positionRow.innerHTML = "";
+    if (showPosition) {
+        const maxPos = anySeventhEnabled() ? 4 : 3;
+        for (let p = 0; p < maxPos; p++) {
+            const btn = document.createElement("button");
+            btn.className = "choice-btn";
+            btn.textContent = POSITION_NAMES[p];
+            btn.dataset.position = p;
+            btn.addEventListener("click", () => onPositionClicked(p, btn));
+            positionRow.appendChild(btn);
+        }
     }
 }
 
-function updateListenButtonState() {
-    const exhausted = appMode === "verifica" && replaysUsedThisQuestion >= MAX_REPLAYS_VERIFICA;
-    listenButton.disabled = isPlaying || exhausted;
-    updateListenButtonLabel();
+function clearSelectionVisuals() {
+    qualityRow.querySelectorAll(".choice-btn").forEach(b => b.classList.remove("selected", "correct-flash", "wrong-flash"));
+    positionRow.querySelectorAll(".choice-btn").forEach(b => b.classList.remove("selected", "correct-flash", "wrong-flash"));
 }
 
-function loadNextQuestion() {
-    hideStaff();
+function presentQuestion() {
     currentQuestion = generateQuestion();
-    updateQuestionPrompt();
+    selectedQuality = null;
+    selectedPosition = positionMode === "inverted" ? null : 0;
+    lastWrongKey = null;
+    clearSelectionVisuals();
+    message.textContent = "";
+    message.className = "message";
     answering = true;
-    replaysUsedThisQuestion = 0;
-    updateListenButtonLabel();
-    playQuestionSequence(currentQuestion);
+    refreshSubmitState();
+    renderChord();
 }
 
-// piccola pausa dopo l'animazione dei coriandoli prima di
-// far partire i suoni della domanda successiva, così il
-// cambio di livello si vede e si sente distintamente
-const LEVEL_TRANSITION_SOUND_DELAY = 300;
+/* ---- Statistiche / livello ---- */
 
-function startLevel(animated) {
-    levelQuestionIndex = 0;
-    levelCorrectCount = 0;
-    if (animated) {
-        spawnConfetti();
-        setTimeout(() => {
-            loadNextQuestion();
-            updateStats();
-        }, LEVEL_TRANSITION_SOUND_DELAY);
-    } else {
-        loadNextQuestion();
-        updateStats();
-    }
-}
-
-/* =========================================================
-   STATISTICHE
-========================================================= */
-
-function animateStat(el, className) {
-    el.classList.remove(className);
-    void el.offsetWidth;
-    el.classList.add(className);
-}
+function animateStat(el, className) { el.classList.remove(className); void el.offsetWidth; el.classList.add(className); }
 
 function updateStats() {
     totalEl.textContent = total;
@@ -1564,504 +757,214 @@ function updateStats() {
     streakEl.textContent = streak;
     recordEl.textContent = record;
 
-    const pct = Math.min(100, Math.round((levelCorrectCount / QUESTIONS_PER_LEVEL) * 100));
+    const lvl = Math.min(THEME_LEVELS, Math.floor(progress / QUESTIONS_PER_LEVEL) + 1);
+    const pct = progress >= SESSION_TARGET ? 100 : ((progress % QUESTIONS_PER_LEVEL) / QUESTIONS_PER_LEVEL) * 100;
     progressFill.style.width = pct + "%";
-    levelNumber.textContent = level + " / " + totalLevels;
-    levelInfo.textContent = levelCorrectCount + " / " + QUESTIONS_PER_LEVEL + " risposte corrette";
+    levelNumber.textContent = lvl + " / " + THEME_LEVELS;
+    levelInfo.textContent = progress + " / " + SESSION_TARGET + " risposte corrette";
+    levelName.textContent = positionMode === "inverted" ? "Accordi rivolti" : "Accordi in posizione iniziale";
 }
 
-/* =========================================================
-   TROFEI
-========================================================= */
+/* ---- Selezione risposta (con pulsante Invia) ---- */
 
-function populateLoopSelects() {
-    const buildOptions = (selected) => {
-        let html = "";
-        for (let i = 1; i <= totalLevels; i++) {
-            html += "<option value=\"" + i + "\"" + (i === selected ? " selected" : "") + ">Livello " + i + "</option>";
-        }
-        return html;
-    };
-    loopStartSelect.innerHTML = buildOptions(loopStart);
-    loopEndSelect.innerHTML = buildOptions(loopEnd);
+function selectedQualityBtn() { return qualityRow.querySelector('.choice-btn[data-quality="' + selectedQuality + '"]'); }
+function selectedPositionBtn() { return positionRow.querySelector('.choice-btn[data-position="' + selectedPosition + '"]'); }
+function currentSelectionKey() { return (selectedQuality || "-") + "|" + (selectedPosition === null ? "-" : selectedPosition); }
+
+function refreshSubmitState() {
+    const complete = selectedQuality !== null && selectedPosition !== null;
+    const unchanged = currentSelectionKey() === lastWrongKey;
+    submitButton.disabled = !answering || finished || !complete || unchanged;
 }
 
-function renderTrophyList() {
-    trophyLoopControls.classList.toggle("visible", appMode === "training");
-    if (appMode === "training") {
-        populateLoopSelects();
-        loopToggleButton.textContent = loopActive ? "Disattiva" : "Attiva";
-        loopToggleButton.classList.toggle("active", loopActive);
+function onQualityClicked(qKey, btnEl) {
+    if (!answering || finished) return;
+    if (btnEl.classList.contains("selected")) {
+        selectedQuality = null;
+        btnEl.classList.remove("selected");
+    } else {
+        selectedQuality = qKey;
+        qualityRow.querySelectorAll(".choice-btn").forEach(b => b.classList.remove("selected"));
+        btnEl.classList.add("selected");
     }
-
-    trophyList.innerHTML = "";
-    for (let i = 1; i <= totalLevels; i++) {
-        const row = document.createElement("div");
-        const done = completedLevels.includes(i);
-        const attemptedNow = levelErrorCounts[i] !== undefined || done || i === level;
-        const completions = levelCompletionCounts[i] || 0;
-        const inLoop = loopActive && i >= loopStart && i <= loopEnd;
-
-        row.className = "trophy-row" + (done ? " done" : "") + (inLoop ? " in-loop" : "");
-
-        let errorsLabel = "";
-        if (attemptedNow) {
-            const count = levelErrorCounts[i] || 0;
-            errorsLabel = count === 0
-                ? "0 errori"
-                : count + (count === 1 ? " errore" : " errori");
-        }
-
-        let completionsLabel = "";
-        if (completions > 0) {
-            completionsLabel = "completato " + completions + (completions === 1 ? " volta" : " volte");
-        }
-
-        const details = [errorsLabel, completionsLabel].filter(Boolean).join(" · ");
-        const statusIcon = inLoop ? "🔁" : (done ? "✅" : "🔒");
-
-        row.innerHTML =
-            "<div class=\"trophy-row-main\"><span>Livello " + i + "</span><span>" + statusIcon + "</span></div>" +
-            (details ? "<div class=\"trophy-row-details\">" + details + "</div>" : "");
-
-        trophyList.appendChild(row);
+    refreshSubmitState();
+}
+function onPositionClicked(p, btnEl) {
+    if (!answering || finished) return;
+    if (btnEl.classList.contains("selected")) {
+        selectedPosition = null;
+        btnEl.classList.remove("selected");
+    } else {
+        selectedPosition = p;
+        positionRow.querySelectorAll(".choice-btn").forEach(b => b.classList.remove("selected"));
+        btnEl.classList.add("selected");
     }
+    refreshSubmitState();
 }
 
-/* =========================================================
-   RISPOSTA
-========================================================= */
+function submitAnswer() {
+    if (submitButton.disabled) return;
+    if (!answering || finished) return;
 
-function checkAnswer(choice, btnEl) {
-    if (!answering || finished || isPlaying) return;
-    answering = false;
-    setAnswersEnabled(false);
+    const qBtn = selectedQualityBtn();
+    const pBtn = positionMode === "inverted" ? selectedPositionBtn() : null;
 
     total++;
-    const wasCorrect = choice === currentQuestion.correctChoice;
+    const wasCorrect = selectedQuality === currentQuestion.qualityKey && selectedPosition === currentQuestion.inversion;
 
     if (wasCorrect) {
+        answering = false;
+        submitButton.disabled = true;
         correct++;
         streak++;
         if (streak > record) record = streak;
-
-        message.textContent = "✅ Esatto!";
-        message.className = "message correct-message";
         animateStat(correctBox, "bump");
+        if (qBtn) qBtn.classList.add("correct-flash");
+        if (pBtn) pBtn.classList.add("correct-flash");
+        playChordSound(currentQuestion.displayNotes);
+        message.textContent = "Corretto! " + CHORD_QUALITIES[currentQuestion.qualityKey].name +
+            (positionMode === "inverted" ? " — " + POSITION_NAMES[currentQuestion.inversion] : "");
+        message.className = "message correct-message";
 
-        if (showStaffOnCorrect) {
-            revealStaff(currentQuestion);
-        }
-
-        levelCorrectCount++;
-
-        if (levelCorrectCount >= QUESTIONS_PER_LEVEL) {
-
-            levelCompletionCounts[level] = (levelCompletionCounts[level] || 0) + 1;
-            completedLevels.push(level);
-
-            if (appMode === "training" && loopActive && level === loopEnd) {
-                setTimeout(() => {
-                    level = loopStart;
-                    animateStat(levelBox, "bump");
-                    startLevel(true);
-                }, showStaffOnCorrect ? 1600 : 500);
-                updateStats();
-                return;
-            }
-
-            if (level >= totalLevels) {
-                setTimeout(() => {
-                    updateStats();
-                    playVictorySound();
-                    spawnConfetti();
-                    showFinalScreen();
-                }, showStaffOnCorrect ? 1600 : 500);
-                return;
-            }
-
-            setTimeout(() => {
-                level++;
-                animateStat(levelBox, "bump");
-                startLevel(true);
-            }, showStaffOnCorrect ? 1600 : 500);
-            updateStats();
-            return;
-        }
-
+        progress++;
+        const justLeveledUp = progress % QUESTIONS_PER_LEVEL === 0 && progress < SESSION_TARGET;
         setTimeout(() => {
-            loadNextQuestion();
+            if (progress >= SESSION_TARGET) {
+                updateStats();
+                playVictorySound();
+                showFinalScreen();
+                return;
+            }
+            if (justLeveledUp) { playLevelUpSound(); animateStat(levelBox, "bump"); }
+            presentQuestion();
             updateStats();
-        }, showStaffOnCorrect ? 1500 : 450);
-
+        }, 1300);
     } else {
-
         errors++;
         streak = 0;
-        levelErrorCounts[level] = (levelErrorCounts[level] || 0) + 1;
         playWrongSound();
         animateStat(errorsBox, "bump");
-
-        message.textContent = "❌ Sbagliato";
+        if (qBtn) qBtn.classList.add("wrong-flash");
+        if (pBtn) pBtn.classList.add("wrong-flash");
+        message.textContent = "Sbagliato, riprova";
         message.className = "message wrong-message";
-
-        if (btnEl) {
-            btnEl.classList.remove("wrong-flash");
-            void btnEl.offsetWidth;
-            btnEl.classList.add("wrong-flash");
-        }
-
-        updateStats();
-
-        // si può riprovare subito la stessa domanda
-        answering = true;
-        setAnswersEnabled(true);
+        setTimeout(() => {
+            if (qBtn) qBtn.classList.remove("wrong-flash");
+            if (pBtn) pBtn.classList.remove("wrong-flash");
+        }, 400);
+        lastWrongKey = currentSelectionKey();
+        refreshSubmitState();
     }
+    updateStats();
 }
-
-answersBox.querySelectorAll(".answer").forEach(btn => {
-    btn.addEventListener("click", () => {
-        checkAnswer(btn.dataset.choice, btn);
-    });
-});
-
-listenButton.addEventListener("click", () => {
-    if (!currentQuestion || finished || isPlaying) return;
-    if (appMode === "verifica" && replaysUsedThisQuestion >= MAX_REPLAYS_VERIFICA) return;
-
-    replayCount++;
-    if (appMode === "verifica") replaysUsedThisQuestion++;
-    updateListenButtonLabel();
-    playQuestionSequence(currentQuestion);
-});
+submitButton.addEventListener("click", submitAnswer);
 
 /* =========================================================
-   TIMER
-========================================================= */
-
-let timerInterval = null;
-let startTimestamp = null;
-
-function formatTime(totalSeconds) {
-    const m = Math.floor(totalSeconds / 60);
-    const s = totalSeconds % 60;
-    return m + ":" + String(s).padStart(2, "0");
-}
-
-function updateTimerDisplay() {
-    if (!startTimestamp) return;
-    const elapsed = Math.floor((Date.now() - startTimestamp) / 1000);
-    timerDisplay.textContent = "⏱ " + formatTime(elapsed);
-}
-
-function startTimer() {
-    clearInterval(timerInterval);
-    startTimestamp = Date.now();
-    updateTimerDisplay();
-    timerInterval = setInterval(updateTimerDisplay, 500);
-}
-
-function stopTimer() {
-    clearInterval(timerInterval);
-    timerInterval = null;
-    const elapsed = startTimestamp ? Math.floor((Date.now() - startTimestamp) / 1000) : 0;
-    return elapsed;
-}
-
-/* =========================================================
-   VOTO (4-10, mezzi voti, nascosto se insufficiente)
-========================================================= */
-
-function computeGrade() {
-    if (total === 0) return 4;
-    const accuracy = correct / total;
-    const raw = 4 + 6 * accuracy;
-    const clamped = Math.min(10, Math.max(4, raw));
-    return Math.round(clamped * 2) / 2;
-}
-
-function formatGrade(grade) {
-    return Number.isInteger(grade) ? String(grade) : grade.toFixed(1).replace(".", ",");
-}
+   SCHERMATA FINALE
+   ========================================================= */
 
 function showFinalScreen() {
     finished = true;
-
-    const elapsedSeconds = stopTimer();
-    const accuracy = total > 0 ? Math.round((correct / total) * 100) : 0;
-    const grade = computeGrade();
-
-    resultTitle.textContent = "Partita conclusa";
+    const completedAll = progress >= SESSION_TARGET;
+    resultTitle.textContent = completedAll ? "🎉 Sessione completata!" : "Sessione interrotta";
     resultSubtitle.textContent = "Ecco il tuo riepilogo.";
-    finalLevel.textContent = level + " / " + totalLevels;
-    finalAccuracy.textContent = accuracy + "%";
+    finalLevel.textContent = Math.min(THEME_LEVELS, Math.floor(progress / QUESTIONS_PER_LEVEL) + 1) + " / " + THEME_LEVELS;
+    finalAccuracy.textContent = total > 0 ? Math.round((correct / total) * 100) + "%" : "0%";
     finalCorrect.textContent = correct;
     finalErrors.textContent = errors;
-    finalTime.textContent = formatTime(elapsedSeconds);
-    finalReplays.textContent = replayCount;
-
-    if (grade >= 6) {
-        finalGrade.textContent = formatGrade(grade);
-        finalGradeBox.style.display = "";
-    } else {
-        finalGradeBox.style.display = "none";
-    }
-
-    homeMenuButtons.forEach(btn => {
-        btn.classList.toggle("visible", appMode === "training");
-    });
-
-    if (appMode === "verifica") {
-        playAgainButton.textContent = "🏠 Vai al menu";
-    } else {
-        playAgainButton.textContent = "🔄 Gioca ancora";
-    }
-
     gameOver.classList.add("show");
 }
 
-function askFinishGame() {
-    confirmOverlay.classList.add("show");
-}
+/* =========================================================
+   SCHERMATA DI SELEZIONE QUALITA' (toggle)
+   ========================================================= */
 
-function finishManually() {
-    confirmOverlay.classList.remove("show");
-    showFinalScreen();
-}
-
-function newGame() {
-    finished = false;
-    total = 0;
-    correct = 0;
-    errors = 0;
-    streak = 0;
-    record = 0;
-    level = 1;
-    completedLevels = [];
-    levelErrorCounts = {};
-    replayCount = 0;
-    hideStaff();
-    gameOver.classList.remove("show");
-    startTimer();
-    startLevel();
-    updateStats();
-}
-
-finishButton.addEventListener("click", askFinishGame);
-cancelFinish.addEventListener("click", () => confirmOverlay.classList.remove("show"));
-confirmFinish.addEventListener("click", finishManually);
-confirmOverlay.addEventListener("click", e => {
-    if (e.target === confirmOverlay) confirmOverlay.classList.remove("show");
-});
-restartButton.addEventListener("click", newGame);
-
-// qualunque modo si scelga di chiudere la schermata di
-// riepilogo (Gioca ancora / Vai al menu / 🏠 Menu), si
-// chiede sempre prima conferma: l'azione da eseguire dopo
-// la conferma viene salvata qui
-let pendingResultsCloseAction = null;
-
-function requestCloseResults(action) {
-    pendingResultsCloseAction = action;
-    finalHomeConfirmOverlay.classList.add("show");
-}
-
-playAgainButton.addEventListener("click", () => {
-    requestCloseResults(() => {
-        if (appMode === "verifica") {
-            goHome();
-        } else {
-            newGame();
+TOGGLE_GROUPS.forEach(group => {
+    const item = document.createElement("button");
+    item.className = "toggle-item" + (group.defaultOn ? " active" : "");
+    item.innerHTML = '<span class="toggle-check">✓</span><span>' + group.label + "</span>";
+    item.dataset.groupId = group.id;
+    item.addEventListener("click", () => {
+        const nowActive = !item.classList.contains("active");
+        // non si puo' disattivare l'ultimo gruppo rimasto attivo
+        if (!nowActive) {
+            const othersActive = TOGGLE_GROUPS.some(g => g.id !== group.id && [...enabledQualities].some(q => g.qualities.includes(q)));
+            if (!othersActive) return;
         }
+        item.classList.toggle("active", nowActive);
+        group.qualities.forEach(q => { if (nowActive) enabledQualities.add(q); else enabledQualities.delete(q); });
+        selectStartButton.disabled = enabledQualities.size === 0;
+    });
+    toggleList.appendChild(item);
+});
+
+/* =========================================================
+   NAVIGAZIONE
+   ========================================================= */
+
+function showScreen(el) {
+    [homeScreen, selectScreen, gameContainer].forEach(s => { s.style.display = "none"; });
+    el.style.display = "block";
+}
+function goHome() {
+    showScreen(homeScreen);
+    gameOver.classList.remove("show");
+    confirmOverlay.classList.remove("show");
+}
+
+document.querySelectorAll(".mode-button[data-position]").forEach(btn => {
+    btn.addEventListener("click", () => {
+        positionMode = btn.dataset.position;
+        showScreen(selectScreen);
     });
 });
+selectBackButton.addEventListener("click", goHome);
+function setClefMode(newMode) {
+    clefMode = newMode;
+    trebleClefButton.classList.toggle("active", newMode === "treble");
+    bassClefButton.classList.toggle("active", newMode === "bass");
+    mixedClefButton.classList.toggle("active", newMode === "mixed");
+}
+trebleClefButton.addEventListener("click", () => setClefMode("treble"));
+bassClefButton.addEventListener("click", () => setClefMode("bass"));
+mixedClefButton.addEventListener("click", () => setClefMode("mixed"));
 
-finalMenuButton.addEventListener("click", () => {
-    requestCloseResults(goHome);
+selectStartButton.addEventListener("click", () => {
+    if (enabledQualities.size === 0) return;
+    startSession();
 });
 
-cancelFinalHome.addEventListener("click", () => {
-    finalHomeConfirmOverlay.classList.remove("show");
-    pendingResultsCloseAction = null;
-});
+function startSession() {
+    total = 0; correct = 0; errors = 0; streak = 0; record = 0; finished = false; progress = 0;
+    showScreen(gameContainer);
+    gameSubtitle.textContent = positionMode === "inverted"
+        ? "Indica qualità e stato di rivolto dell'accordo mostrato."
+        : "L'accordo è sempre in stato fondamentale: indica solo la qualità.";
+    renderChoiceButtons();
+    presentQuestion();
+    updateStats();
+}
+function restartCurrent() { startSession(); }
 
-confirmFinalHome.addEventListener("click", () => {
-    finalHomeConfirmOverlay.classList.remove("show");
-    if (pendingResultsCloseAction) {
-        pendingResultsCloseAction();
-        pendingResultsCloseAction = null;
-    }
-});
+siteHomeButton.addEventListener("click", () => { window.location.href = "index.html"; });
+finishButton.addEventListener("click", () => confirmOverlay.classList.add("show"));
+cancelFinish.addEventListener("click", () => confirmOverlay.classList.remove("show"));
+confirmFinish.addEventListener("click", () => { confirmOverlay.classList.remove("show"); showFinalScreen(); });
+confirmOverlay.addEventListener("click", e => { if (e.target === confirmOverlay) confirmOverlay.classList.remove("show"); });
 
-finalHomeConfirmOverlay.addEventListener("click", e => {
-    if (e.target === finalHomeConfirmOverlay) {
-        finalHomeConfirmOverlay.classList.remove("show");
-        pendingResultsCloseAction = null;
-    }
-});
+playAgainButton.addEventListener("click", restartCurrent);
+finalMenuButton.addEventListener("click", () => { gameOver.classList.remove("show"); goHome(); });
 
 volumeSlider.addEventListener("input", () => {
     masterVolume = volumeSlider.value / 100;
     if (masterGain) masterGain.gain.value = masterVolume;
 });
 
-function bumpButton(btn) {
-    btn.classList.remove("bump");
-    void btn.offsetWidth;
-    btn.classList.add("bump");
-}
-
-trophyButton.addEventListener("click", e => {
-    e.stopPropagation();
-    playClickSound();
-    bumpButton(trophyButton);
-    optionsPanel.classList.remove("show");
-    const opening = !trophyPanel.classList.contains("show");
-    if (opening) renderTrophyList();
-    trophyPanel.classList.toggle("show");
-});
-
-optionsButton.addEventListener("click", e => {
-    e.stopPropagation();
-    playClickSound();
-    bumpButton(optionsButton);
-    trophyPanel.classList.remove("show");
-    optionsPanel.classList.toggle("show");
-});
-
-loopStartSelect.addEventListener("click", e => e.stopPropagation());
-loopEndSelect.addEventListener("click", e => e.stopPropagation());
-
-loopStartSelect.addEventListener("change", () => {
-    loopStart = parseInt(loopStartSelect.value, 10);
-    if (loopStart > loopEnd) loopEnd = loopStart;
-    if (loopActive) applyLoopJump();
-    renderTrophyList();
-});
-
-loopEndSelect.addEventListener("change", () => {
-    loopEnd = parseInt(loopEndSelect.value, 10);
-    if (loopEnd < loopStart) loopStart = loopEnd;
-    if (loopActive) applyLoopJump();
-    renderTrophyList();
-});
-
-function applyLoopJump() {
-    if (level === loopStart) return;
-    level = loopStart;
-    animateStat(levelBox, "bump");
-    startLevel(true);
-    updateStats();
-}
-
-loopToggleButton.addEventListener("click", e => {
-    e.stopPropagation();
-    playClickSound();
-    bumpButton(loopToggleButton);
-
-    loopActive = !loopActive;
-    if (loopActive) applyLoopJump();
-
-    renderTrophyList();
-});
-
-document.addEventListener("click", e => {
-    if (!trophyPanel.contains(e.target) && e.target !== trophyButton) {
-        trophyPanel.classList.remove("show");
-    }
-    if (!optionsPanel.contains(e.target) && e.target !== optionsButton) {
-        optionsPanel.classList.remove("show");
-    }
-});
-
-showStaffToggle.addEventListener("change", () => {
-    showStaffOnCorrect = showStaffToggle.checked;
-});
-
-function setQuestionMode(mode) {
-    questionMode = mode;
-    mixedQuestionButton.classList.toggle("active", mode === "mixed");
-    higherQuestionButton.classList.toggle("active", mode === "higher");
-    lowerQuestionButton.classList.toggle("active", mode === "lower");
-}
-
-mixedQuestionButton.addEventListener("click", () => { playClickSound(); bumpButton(mixedQuestionButton); setQuestionMode("mixed"); });
-higherQuestionButton.addEventListener("click", () => { playClickSound(); bumpButton(higherQuestionButton); setQuestionMode("higher"); });
-lowerQuestionButton.addEventListener("click", () => { playClickSound(); bumpButton(lowerQuestionButton); setQuestionMode("lower"); });
-
-/* =========================================================
-   NAVIGAZIONE TRA SCHERMATE
-========================================================= */
-
-function showScreen(name) {
-    homeScreen.style.display = name === "home" ? "" : "none";
-    gameContainer.style.display = name === "game" ? "" : "none";
-}
-
-function goHome() {
-    clearInterval(timerInterval);
-    gameOver.classList.remove("show");
-    confirmOverlay.classList.remove("show");
-    optionsPanel.classList.remove("show");
-    trophyPanel.classList.remove("show");
-    showScreen("home");
-}
-
-function startTraining() {
-    appMode = "training";
-
-    loopActive = false;
-    loopStart = 1;
-    loopEnd = 1;
-
-    homeMenuButtons.forEach(btn => btn.classList.add("visible"));
-
-    // in Allenamento il tipo di domanda resta scelto liberamente
-    questionTypeGroup.style.display = "";
-
-    restartButton.style.display = "";
-    finishButton.textContent = "Termina partita";
-    confirmFinishTitle.textContent = "Terminare la partita?";
-
-    showScreen("game");
-    newGame();
-}
-
-function startVerifica() {
-    appMode = "verifica";
-
-    homeMenuButtons.forEach(btn => btn.classList.remove("visible"));
-
-    // in Verifica la domanda è sempre mista: non è una
-    // scelta lasciata al giocatore, quindi l'opzione sparisce
-    questionTypeGroup.style.display = "none";
-    setQuestionMode("mixed");
-
-    restartButton.style.display = "none";
-    finishButton.textContent = "Fine verifica";
-    confirmFinishTitle.textContent = "Terminare la verifica?";
-
-    showScreen("game");
-    newGame();
-}
-
-trainingButton.addEventListener("click", startTraining);
-verificaButton.addEventListener("click", startVerifica);
-
-// il tasto "Menu" visibile durante la partita (solo in
-// allenamento) torna subito alla home: non sta chiudendo
-// la schermata di riepilogo, quindi non serve conferma
-midGameHomeButton.addEventListener("click", goHome);
-
-// pulsante verso il sito che ospita il gioco: per ora non
-// fa nulla, verrà collegato in seguito
-siteHomeButton.addEventListener("click", () => { window.location.href = "index.html"; });
-
 /* =========================================================
    AVVIO
-========================================================= */
+   ========================================================= */
 
-showScreen("home");
+goHome();
 
 </script>
 </body>
