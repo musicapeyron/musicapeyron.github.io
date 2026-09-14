@@ -3,8 +3,8 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Acuto o grave?</title>
-<meta name="description" content="Un gioco per allenare l'orecchio a distinguere i suoni acuti dai suoni gravi.">
+<title>Acuto, grave o unisono?</title>
+<meta name="description" content="Un gioco per allenare l'orecchio a distinguere i suoni acuti dai suoni gravi, e a riconoscere quando sono all'unisono.">
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='.9em' font-size='90'%3E%F0%9F%8E%A7%3C/text%3E%3C/svg%3E">
 
 <!-- Font di sistema come fallback: senza connessione i Google
@@ -279,8 +279,8 @@ h1 {
     flex-wrap: wrap;
     justify-content: center;
     align-content: center;
-    gap: 12px;
-    max-width: 480px;
+    gap: 10px;
+    max-width: 500px;
     margin: 0 auto 14px;
 }
 
@@ -288,13 +288,13 @@ h1 {
     position: relative;
     overflow: hidden;
     flex: 0 0 auto;
-    width: 150px;
+    width: 142px;
     border: none;
     border-radius: 14px;
-    padding: 16px 10px;
+    padding: 16px 8px;
     color: white;
     font-family: "Sora", "Inter", Arial, sans-serif;
-    font-size: 1.05rem;
+    font-size: 1rem;
     font-weight: 800;
     cursor: pointer;
     box-shadow: 0 1px 0 rgba(255,255,255,0.28) inset, 0 5px 0 rgba(0,0,0,0.25), 0 8px 16px rgba(0,0,0,0.28);
@@ -324,6 +324,14 @@ h1 {
 
 .answer.primo { background: linear-gradient(135deg, #38bdf8, #0369a1); }
 .answer.secondo { background: linear-gradient(135deg, #fb923c, #c2410c); }
+.answer.unisono { background: linear-gradient(135deg, #a78bfa, #6d28d9); }
+
+/* le parole "acuto" e "grave" sono sempre colorate allo
+   stesso modo in tutta l'interfaccia: verde per l'acuto,
+   blu per il grave, per creare un'associazione visiva
+   costante indipendente dal contesto in cui compaiono */
+.word-acuto { color: #4ade80; font-weight: 800; }
+.word-grave { color: #38bdf8; font-weight: 800; }
 
 .message { min-height: 26px; font-size: 1rem; font-weight: 700; letter-spacing: 0.1px; }
 .correct-message { color: #86efac; }
@@ -481,6 +489,13 @@ h1 {
     background: linear-gradient(135deg, #22c55e, #15803d);
     border-color: rgba(255,255,255,0.35);
     box-shadow: 0 4px 12px rgba(34,197,94,0.4), inset 0 0 0 2px rgba(255,255,255,0.2);
+}
+/* quando il pulsante è attivo lo sfondo è già verde: le
+   parole colorate diventano bianche solo qui, per restare
+   leggibili (altrove restano sempre verde/blu) */
+.options-choice.active .word-acuto,
+.options-choice.active .word-grave {
+    color: #ffffff;
 }
 
 .trophy-panel.show { opacity: 1; transform: translateY(0) scale(1); pointer-events: auto; }
@@ -744,8 +759,8 @@ h1 {
 <div class="menu-screen" id="homeScreen">
 
     <div class="hero-badge">🎧</div>
-    <h1>Acuto o grave?</h1>
-    <p class="subtitle">Allena l'orecchio a riconoscere qual è il suono più acuto e quale il più grave.</p>
+    <h1><span class="word-acuto">Acuto</span>, <span class="word-grave">grave</span> o unisono?</h1>
+    <p class="subtitle">Allena l'orecchio a riconoscere qual è il suono più <span class="word-acuto">acuto</span>, quale il più <span class="word-grave">grave</span> — o se sono all'unisono.</p>
 
     <div class="mode-grid">
         <button class="mode-button training-1" id="trainingButton">
@@ -763,7 +778,7 @@ h1 {
 
 <div class="game" id="gameContainer" style="display: none;">
 
-    <h1>🎧 Acuto o grave?</h1>
+    <h1>🎧 <span class="word-acuto">Acuto</span>, <span class="word-grave">grave</span> o unisono?</h1>
     <p class="subtitle">Ascolta i due suoni e indica quello richiesto.</p>
 
     <div class="game-layout">
@@ -804,6 +819,7 @@ h1 {
             <div class="answers" id="answers">
                 <button class="answer primo" data-choice="primo">Il PRIMO</button>
                 <button class="answer secondo" data-choice="secondo">Il SECONDO</button>
+                <button class="answer unisono" data-choice="unisono">UNISONO</button>
             </div>
 
             <div class="message" id="message"></div>
@@ -854,8 +870,8 @@ h1 {
         <div class="options-group-title">Tipo di domanda</div>
         <div class="options-triple">
             <button class="options-choice active" id="mixedQuestionButton" data-question="mixed">Misto</button>
-            <button class="options-choice" id="higherQuestionButton" data-question="higher">Solo acuto</button>
-            <button class="options-choice" id="lowerQuestionButton" data-question="lower">Solo grave</button>
+            <button class="options-choice" id="higherQuestionButton" data-question="higher">Solo <span class="word-acuto">acuto</span></button>
+            <button class="options-choice" id="lowerQuestionButton" data-question="lower">Solo <span class="word-grave">grave</span></button>
         </div>
     </div>
 
@@ -915,10 +931,14 @@ h1 {
 <script>
 
 /* =========================================================
-   LIVELLI: intervallo (in semitoni) tra i due suoni.
-   Si parte da distanze molto ampie (più di due ottave) e
-   si restringe progressivamente fino al semitono
-   nell'ultimo livello (mai suoni identici).
+   LIVELLI: intervallo (in semitoni) tra i due suoni, quando
+   non sono all'unisono. Si parte da distanze molto ampie
+   (più di due ottave) e si restringe progressivamente fino
+   al semitono nell'ultimo livello. Indipendentemente dal
+   livello, con una certa probabilità i due suoni possono
+   essere anche perfettamente identici (unisono): il gioco
+   pone comunque la domanda "più acuto" o "più grave" per
+   ingannare il giocatore, ma la risposta giusta è "Unisono".
 ========================================================= */
 
 const levelIntervals = [
@@ -936,6 +956,10 @@ const levelIntervals = [
 
 const totalLevels = levelIntervals.length;
 const QUESTIONS_PER_LEVEL = 6;
+
+// probabilità che i due suoni di una domanda siano
+// perfettamente identici (unisono), a qualunque livello
+const UNISON_PROBABILITY = 0.2;
 
 // estremi dell'intervallo di note utilizzabili (in numero
 // MIDI): da C2 a C6, un'estensione ampia ma comoda da
@@ -1415,6 +1439,27 @@ function pickQuestionType() {
    riproduzione e il tipo di domanda (acuto o grave).
 */
 function generateQuestion() {
+    const askHigher = pickQuestionType();
+    const isUnison = Math.random() < UNISON_PROBABILITY;
+
+    if (isUnison) {
+        // stessa identica nota per entrambi i suoni: la
+        // domanda viene comunque posta normalmente (a caso
+        // "più acuto" o "più grave"), ma la risposta corretta
+        // resta "Unisono" in entrambi i casi
+        const pitch = randInt(MIN_MIDI, MAX_MIDI);
+        return {
+            lowPitch: pitch,
+            highPitch: pitch,
+            firstPitch: pitch,
+            secondPitch: pitch,
+            firstIsHigh: false,
+            askHigher,
+            correctChoice: "unisono",
+            isUnison: true
+        };
+    }
+
     const range = levelIntervals[level - 1];
     const interval = randInt(range.min, range.max);
 
@@ -1426,8 +1471,6 @@ function generateQuestion() {
     const firstPitch = firstIsHigh ? highPitch : lowPitch;
     const secondPitch = firstIsHigh ? lowPitch : highPitch;
 
-    const askHigher = pickQuestionType();
-
     // corretto: quale tra "primo" e "secondo" soddisfa la domanda
     let correctChoice;
     if (askHigher) {
@@ -1436,13 +1479,13 @@ function generateQuestion() {
         correctChoice = firstIsHigh ? "secondo" : "primo";
     }
 
-    return { lowPitch, highPitch, firstPitch, secondPitch, firstIsHigh, askHigher, correctChoice };
+    return { lowPitch, highPitch, firstPitch, secondPitch, firstIsHigh, askHigher, correctChoice, isUnison: false };
 }
 
 function updateQuestionPrompt() {
-    questionPrompt.textContent = currentQuestion.askHigher
-        ? "Quale dei due suoni è più acuto?"
-        : "Quale dei due suoni è più basso?";
+    questionPrompt.innerHTML = currentQuestion.askHigher
+        ? "Quale dei due suoni è più <span class=\"word-acuto\">acuto</span>?"
+        : "Quale dei due suoni è più <span class=\"word-grave\">grave</span>?";
     questionPrompt.classList.remove("playing");
 }
 
@@ -2012,7 +2055,7 @@ midGameHomeButton.addEventListener("click", goHome);
 
 // pulsante verso il sito che ospita il gioco: per ora non
 // fa nulla, verrà collegato in seguito
-siteHomeButton.addEventListener("click", () => { window.location.href = "index.html"; });
+siteHomeButton.addEventListener("click", () => {});
 
 /* =========================================================
    AVVIO
