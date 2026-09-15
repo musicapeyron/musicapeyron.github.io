@@ -654,6 +654,7 @@ h1 {
 .mode-button-title { font-size: 1.08rem; font-weight: 800; }
 .mode-button-desc { font-size: 0.78rem; font-weight: 500; opacity: 0.85; letter-spacing: 0.1px; }
 
+.mode-button.tutorial { background: linear-gradient(135deg, #22c55e, #15803d); }
 .mode-button.training-1 { background: linear-gradient(135deg, #0ea5e9, #0369a1); }
 .mode-button.verifica { background: linear-gradient(135deg, #ec4899, #a21caf); }
 .mode-button.clef-treble { background: linear-gradient(135deg, #6366f1, #4338ca); }
@@ -720,6 +721,68 @@ h1 {
 .home-menu-button.visible {
     display: inline-flex;
 }
+
+/* =========================================================
+   TUTORIAL
+========================================================= */
+
+/* puntini di avanzamento, al posto del riquadro livello:
+   nessun testo, solo pallini che si riempiono man mano */
+.tutorial-progress {
+    display: none;
+    justify-content: center;
+    gap: 10px;
+    margin: 0 auto 22px;
+}
+body.mode-tutorial .tutorial-progress {
+    display: flex;
+}
+
+.tutorial-dot {
+    width: 16px;
+    height: 16px;
+    border-radius: 50%;
+    background: rgba(255,255,255,0.12);
+    border: 1px solid rgba(255,255,255,0.18);
+    transition: transform 0.25s var(--ease-spring), background 0.25s ease;
+}
+.tutorial-dot.filled {
+    background: linear-gradient(135deg, #22c55e, #15803d);
+    border-color: rgba(255,255,255,0.4);
+    transform: scale(1.15);
+    box-shadow: 0 0 10px rgba(34,197,94,0.6);
+}
+.tutorial-dot.current {
+    border-color: rgba(250,204,21,0.8);
+    box-shadow: 0 0 0 3px rgba(250,204,21,0.25);
+}
+
+/* il pulsante giusto si "auto-evidenzia" e "si preme da
+   solo" durante la dimostrazione: è l'unico modo in cui il
+   tutorial indica cosa fare, senza scrivere nulla */
+.answer.tutorial-glow {
+    animation: tutorialGlow 0.65s ease-in-out infinite;
+    z-index: 2;
+}
+@keyframes tutorialGlow {
+    0%, 100% { box-shadow: 0 1px 0 rgba(255,255,255,0.28) inset, 0 5px 0 rgba(0,0,0,0.25), 0 0 0 rgba(250,204,21,0.7); transform: translateY(0) scale(1); }
+    50% { box-shadow: 0 1px 0 rgba(255,255,255,0.28) inset, 0 5px 0 rgba(0,0,0,0.25), 0 0 22px 6px rgba(250,204,21,0.7); transform: translateY(-4px) scale(1.05); }
+}
+.answer.tutorial-press {
+    transform: translateY(3px) scale(0.96);
+    filter: brightness(1.3);
+}
+
+/* durante il tutorial il riquadro livello e i pulsanti di
+   fine/trofei non hanno senso: si procede solo in avanti,
+   un passo alla volta. Le statistiche invece restano
+   visibili come nelle altre modalità. */
+body.mode-tutorial .level-box,
+body.mode-tutorial .message,
+body.mode-tutorial #finishButton,
+body.mode-tutorial #trophyButton {
+    display: none;
+}
 </style>
 </head>
 <body>
@@ -733,6 +796,10 @@ h1 {
     <h1>Leggi la nota</h1>
 
     <div class="mode-grid">
+        <button class="mode-button tutorial" id="tutorialButton">
+            <span class="mode-button-title">🎓 Tutorial</span>
+            <span class="mode-button-desc">Impara passo passo, senza dare nulla per scontato</span>
+        </button>
         <button class="mode-button training-1" id="trainingButton">
             <span class="mode-button-title">📘 Allenamento</span>
             <span class="mode-button-desc">Fai pratica con calma, un livello alla volta</span>
@@ -743,6 +810,21 @@ h1 {
             <span class="mode-button-desc">Mettiti alla prova e scopri il tuo voto</span>
         </button>
     </div>
+
+</div>
+
+<!-- SCHERMATA TUTORIAL: SCELTA CHIAVE -->
+<div class="menu-screen" id="tutorialMenuScreen" style="display: none;">
+
+    <h1>🎓 Tutorial</h1>
+    <p class="subtitle">Scegli quale chiave vuoi imparare a leggere.</p>
+
+    <div class="mode-grid">
+        <button class="mode-button clef-treble" id="tutorialTrebleButton">🎼 Chiave di violino</button>
+        <button class="mode-button clef-bass" id="tutorialBassButton">🎼 Chiave di basso</button>
+    </div>
+
+    <button class="back-button" id="tutorialBackButton">← Indietro</button>
 
 </div>
 
@@ -787,6 +869,8 @@ h1 {
             <span class="level-timer" id="timerDisplay">⏱ 0:00</span>
         </div>
     </div>
+
+    <div class="tutorial-progress" id="tutorialProgress"></div>
 
     <div class="staff-row" id="staffRow">
         <div class="staff-card">
@@ -893,12 +977,12 @@ h1 {
         <h2 id="resultTitle">Partita conclusa</h2>
         <p id="resultSubtitle">Ecco come è andata.</p>
         <div class="final-stats">
-            <div class="final-stat"><span>Livello raggiunto</span><strong id="finalLevel">1</strong></div>
+            <div class="final-stat" id="finalLevelBox"><span>Livello raggiunto</span><strong id="finalLevel">1</strong></div>
             <div class="final-stat"><span>Accuratezza</span><strong id="finalAccuracy">0%</strong></div>
             <div class="final-stat"><span>Risposte corrette</span><strong id="finalCorrect">0</strong></div>
             <div class="final-stat"><span>Errori</span><strong id="finalErrors">0</strong></div>
             <div class="final-stat"><span>Tempo impiegato</span><strong id="finalTime">0:00</strong></div>
-            <div class="final-stat"><span>Schema consultato</span><strong id="finalSchemaUsage">Mai</strong></div>
+            <div class="final-stat" id="finalSchemaBox"><span>Schema consultato</span><strong id="finalSchemaUsage">Mai</strong></div>
             <div class="final-stat" id="finalGradeBox" style="display: none;"><span>Voto</span><strong id="finalGrade">-</strong></div>
         </div>
         <div class="overlay-buttons">
@@ -1067,6 +1151,25 @@ let levelCompletionCounts = {};
 let loopActive = false;
 let loopStart = 1;
 let loopEnd = 1;
+
+/*
+   TUTORIAL: percorso scriptato, senza testo, per imparare
+   a leggere le prime 7 note. Le posizioni sono le stesse
+   con cui iniziano i livelli 1-5 dell'allenamento (Sol,
+   La, Si insieme, poi Do, Fa, Re, Mi una alla volta): alla
+   fine del tutorial lo studente conosce esattamente le
+   note con cui l'allenamento comincia.
+*/
+const TUTORIAL_POSITIONS = [8, 9, 10, 11, 7, 12, 6];
+
+let tutorialClefChoice = null;
+let tutorialSessionId = 0;
+let tutorialUnlocked = [];
+let tutorialIndex = 0;
+let tutorialAwaitingAnswer = false;
+let tutorialPendingName = null;
+let tutorialPendingKey = null;
+let tutorialOnSuccess = null;
 let questionsShownCount = 0; // quante note sono state presentate in totale
 let schemaUsedCount = 0;     // per quante di queste lo schema era visibile
 
@@ -1102,6 +1205,7 @@ const gameOver = document.getElementById("gameOver");
 const resultTitle = document.getElementById("resultTitle");
 const resultSubtitle = document.getElementById("resultSubtitle");
 const finalLevel = document.getElementById("finalLevel");
+const finalLevelBox = document.getElementById("finalLevelBox");
 const finalAccuracy = document.getElementById("finalAccuracy");
 const finalCorrect = document.getElementById("finalCorrect");
 const finalErrors = document.getElementById("finalErrors");
@@ -1131,11 +1235,18 @@ const verificaTrebleButton = document.getElementById("verificaTrebleButton");
 const verificaBassButton = document.getElementById("verificaBassButton");
 const verificaMixedButton = document.getElementById("verificaMixedButton");
 const verificaBackButton = document.getElementById("verificaBackButton");
+const tutorialButton = document.getElementById("tutorialButton");
+const tutorialMenuScreen = document.getElementById("tutorialMenuScreen");
+const tutorialTrebleButton = document.getElementById("tutorialTrebleButton");
+const tutorialBassButton = document.getElementById("tutorialBassButton");
+const tutorialBackButton = document.getElementById("tutorialBackButton");
+const tutorialProgress = document.getElementById("tutorialProgress");
 const clefOptionsGroup = document.getElementById("clefOptionsGroup");
 const homeMenuButtons = document.querySelectorAll(".home-menu-button");
 const timerDisplay = document.getElementById("timerDisplay");
 const finalTime = document.getElementById("finalTime");
 const finalSchemaUsage = document.getElementById("finalSchemaUsage");
+const finalSchemaBox = document.getElementById("finalSchemaBox");
 const finalGradeBox = document.getElementById("finalGradeBox");
 const finalGrade = document.getElementById("finalGrade");
 
@@ -1773,7 +1884,11 @@ function checkAnswer(selectedName, btnEl) {
 answersBox.querySelectorAll(".answer").forEach(btn => {
     btn.addEventListener("click", () => {
         if (btn.classList.contains("locked")) return;
-        checkAnswer(btn.dataset.note, btn);
+        if (appMode === "tutorial") {
+            handleTutorialAnswer(btn.dataset.note, btn);
+        } else {
+            checkAnswer(btn.dataset.note, btn);
+        }
     });
 });
 
@@ -1843,8 +1958,9 @@ function showFinalScreen() {
     const elapsedSeconds = stopTimer();
     const accuracy = total > 0 ? Math.round((correct / total) * 100) : 0;
     const grade = computeGrade();
+    const isTutorial = appMode === "tutorial";
 
-    resultTitle.textContent = "Partita conclusa";
+    resultTitle.textContent = isTutorial ? "Tutorial completato" : "Partita conclusa";
     resultSubtitle.textContent = "Ecco il tuo riepilogo.";
     finalLevel.textContent = level + " / " + totalLevels;
     finalAccuracy.textContent = accuracy + "%";
@@ -1855,9 +1971,15 @@ function showFinalScreen() {
         ? "Mai"
         : schemaUsedCount + " / " + questionsShownCount + " note";
 
+    // nel tutorial non ha senso parlare di livello, schema
+    // consultato o voto: si mostrano solo le statistiche
+    // che hanno davvero un significato lì
+    finalLevelBox.style.display = isTutorial ? "none" : "";
+    finalSchemaBox.style.display = isTutorial ? "none" : "";
+
     // il voto si mostra solo se sufficiente: sotto al 6
-    // meglio non mostrarlo affatto
-    if (grade >= 6) {
+    // meglio non mostrarlo affatto (e mai nel tutorial)
+    if (!isTutorial && grade >= 6) {
         finalGrade.textContent = formatGrade(grade);
         finalGradeBox.style.display = "";
     } else {
@@ -1865,13 +1987,16 @@ function showFinalScreen() {
     }
 
     homeMenuButtons.forEach(btn => {
-        btn.classList.toggle("visible", appMode === "training");
+        btn.classList.toggle("visible", appMode === "training" || isTutorial);
     });
 
     // in verifica non si può "ricominciare": il pulsante
-    // diventa un modo (con conferma) per tornare al menu
+    // diventa un modo (con conferma) per tornare al menu.
+    // Nel tutorial invece rifarlo da capo ha senso.
     if (appMode === "verifica") {
         playAgainButton.textContent = "🏠 Vai al menu";
+    } else if (isTutorial) {
+        playAgainButton.textContent = "🔁 Rifai il tutorial";
     } else {
         playAgainButton.textContent = "🔄 Gioca ancora";
     }
@@ -1916,6 +2041,8 @@ restartButton.addEventListener("click", newGame);
 playAgainButton.addEventListener("click", () => {
     if (appMode === "verifica") {
         finalHomeConfirmOverlay.classList.add("show");
+    } else if (appMode === "tutorial") {
+        startTutorial(tutorialClefChoice);
     } else {
         newGame();
     }
@@ -2077,11 +2204,13 @@ bassClefButton.addEventListener("click", () => {
 
 function showScreen(name) {
     homeScreen.style.display = name === "home" ? "" : "none";
+    tutorialMenuScreen.style.display = name === "tutorialMenu" ? "" : "none";
     verificaMenuScreen.style.display = name === "verificaMenu" ? "" : "none";
     gameContainer.style.display = name === "game" ? "" : "none";
 }
 
 function goHome() {
+    tutorialSessionId++; // invalida qualsiasi passo del tutorial ancora pianificato
     clearInterval(timerInterval);
     gameOver.classList.remove("show");
     confirmOverlay.classList.remove("show");
@@ -2099,6 +2228,9 @@ function startTraining() {
     appMode = "training";
     verificaClefChoice = null;
     clef = "treble";
+
+    document.body.classList.remove("mode-verifica", "mode-tutorial");
+    document.body.classList.add("mode-training");
 
     loopActive = false;
     loopStart = 1;
@@ -2130,6 +2262,9 @@ function startVerifica(choice) {
     verificaClefChoice = choice;
     clef = choice === "bass" ? "bass" : "treble";
 
+    document.body.classList.remove("mode-training", "mode-tutorial");
+    document.body.classList.add("mode-verifica");
+
     // in verifica la chiave è decisa dal menu, non più
     // modificabile a piacere dal pannello opzioni
     clefOptionsGroup.style.display = "none";
@@ -2144,7 +2279,381 @@ function startVerifica(choice) {
     newGame();
 }
 
+/* =========================================================
+   TUTORIAL: motore del percorso guidato
+
+   Nessun testo, nessun popup: ogni nota nuova viene prima
+   mostrata con il pulsante giusto che si accende e "si
+   preme da solo" (dimostrazione), poi richiesta di nuovo
+   da soli (pratica). Una volta imparate due o più note, un
+   breve giro le ripassa mescolate prima di introdurne
+   un'altra. Sbagliare non interrompe nulla: il pulsante
+   giusto si riaccende e si riprova, senza scritte d'errore.
+========================================================= */
+
+function renderTutorialDots() {
+    tutorialProgress.innerHTML = "";
+    TUTORIAL_POSITIONS.forEach((position, i) => {
+        const dot = document.createElement("span");
+        dot.className = "tutorial-dot";
+        if (i < tutorialUnlocked.length) dot.classList.add("filled");
+        else if (i === tutorialUnlocked.length) dot.classList.add("current");
+        tutorialProgress.appendChild(dot);
+    });
+}
+
+// mostra la nota e prepara i pulsanti visibili per questo
+// gruppo di posizioni (mescolati una sola volta, non ad
+// ogni singola domanda, così il pulsante non "salta" via
+// subito dopo la dimostrazione)
+function tutorialShowNote(position) {
+    const { key } = pitchForPosition(position, clef);
+    drawNote(key, clef);
+}
+
+// nel tutorial i pulsanti non cambiano mai posizione né
+// colore: restano sempre nell'ordine naturale Do Re Mi Fa
+// Sol La Si, e semplicemente compaiono (si sbloccano) uno
+// alla volta, senza toccare l'ordine del layout condiviso
+// con le altre modalità
+function tutorialSetButtons(positions) {
+    const names = [];
+    positions.forEach(p => {
+        const { name } = pitchForPosition(p, clef);
+        if (!names.includes(name)) names.push(name);
+    });
+
+    const buttons = Array.from(answersBox.querySelectorAll(".answer"));
+    buttons.forEach(btn => {
+        btn.style.order = 0;
+        btn.classList.toggle("locked", !names.includes(btn.dataset.note));
+    });
+}
+
+// dimostrazione passiva: la nota appare, poco dopo il
+// pulsante corrispondente lampeggia e "si preme" da solo
+function tutorialRunDemo(session, position, onDone) {
+    tutorialShowNote(position);
+    const { name, key } = pitchForPosition(position, clef);
+
+    setTimeout(() => {
+        if (session !== tutorialSessionId) return;
+        const btn = answersBox.querySelector('.answer[data-note="' + name + '"]');
+
+        if (btn) btn.classList.add("tutorial-glow");
+
+        setTimeout(() => {
+            if (session !== tutorialSessionId) return;
+            if (btn) {
+                btn.classList.remove("tutorial-glow");
+                btn.classList.add("tutorial-press");
+            }
+            playNoteSound(key);
+
+            setTimeout(() => {
+                if (session !== tutorialSessionId) return;
+                if (btn) btn.classList.remove("tutorial-press");
+                onDone();
+            }, 550);
+        }, 700);
+    }, 550);
+}
+
+// fase attiva: la stessa nota (o un'altra già nota) va
+// indovinata da soli, senza aiuti
+function tutorialRunPractice(session, position, onDone) {
+    tutorialShowNote(position);
+    const { name, key } = pitchForPosition(position, clef);
+
+    tutorialPendingName = name;
+    tutorialPendingKey = key;
+    tutorialOnSuccess = () => {
+        if (session !== tutorialSessionId) return;
+        onDone();
+    };
+    tutorialAwaitingAnswer = true;
+}
+
+function handleTutorialAnswer(name, btn) {
+    if (!tutorialAwaitingAnswer) return;
+
+    total++;
+
+    if (name === tutorialPendingName) {
+        tutorialAwaitingAnswer = false;
+        correct++;
+        streak++;
+        if (streak > record) record = streak;
+        animateStat(correctBox, "bump");
+        updateStats();
+
+        playNoteSound(tutorialPendingKey);
+        spawnConfetti();
+        const onSuccess = tutorialOnSuccess;
+        setTimeout(() => onSuccess && onSuccess(), 550);
+    } else {
+        errors++;
+        streak = 0;
+        animateStat(errorsBox, "bump");
+        updateStats();
+
+        playWrongSound();
+        if (btn) {
+            btn.classList.remove("wrong-flash");
+            void btn.offsetWidth;
+            btn.classList.add("wrong-flash");
+        }
+        // niente scritte: si riaccende semplicemente il
+        // pulsante giusto, così si può riprovare subito
+        const correctBtn = answersBox.querySelector('.answer[data-note="' + tutorialPendingName + '"]');
+        if (correctBtn) {
+            correctBtn.classList.add("tutorial-glow");
+            setTimeout(() => correctBtn.classList.remove("tutorial-glow"), 700);
+        }
+    }
+}
+
+/*
+   Costruzione della sequenza di ripasso, in base a quante
+   note sono già sbloccate (n):
+
+   n = 2 o 3  -> almeno 15 selezioni casuali (senza ripetere
+                 la stessa nota due volte di fila)
+   n = 4      -> ascendente+discendente due volte di fila,
+                 poi 10 per grado congiunto (direzione
+                 libera), poi 10 con salti
+   n = 5,6,7  -> ascendente+discendente una sola volta,
+                 poi 10 per grado congiunto (direzione
+                 libera), poi 10 con salti
+
+   Le posizioni sono già in corrispondenza diretta con
+   l'altezza (un numero più alto = una nota più acuta),
+   quindi ordinarle numericamente equivale a ordinarle per
+   intonazione.
+*/
+
+function buildRandomReviewSequence(positions, minCount) {
+    const sequence = [];
+    let last = null;
+
+    while (sequence.length < minCount) {
+        const batch = shuffle(positions);
+        if (last !== null && batch[0] === last && batch.length > 1) {
+            [batch[0], batch[1]] = [batch[1], batch[0]];
+        }
+        sequence.push(...batch);
+        last = sequence[sequence.length - 1];
+    }
+
+    return sequence;
+}
+
+// cammino per grado congiunto: ogni passo si sposta di una
+// sola posizione (su o giù), la direzione cambia a caso
+// cammino per grado congiunto che copre davvero tutta
+// l'estensione: ad ogni passo preferisce muoversi verso la
+// nota vicina visitata di meno finora (con un po' di
+// casualità), così non rimane a rimbalzare solo tra due o
+// tre note vicine. Continua finché non ha raggiunto almeno
+// il numero minimo di selezioni E ogni nota è stata
+// toccata almeno due volte.
+function buildStepwiseWalk(sortedPositions, minCount) {
+    const n = sortedPositions.length;
+    let index = Math.floor(Math.random() * n);
+    const visits = new Array(n).fill(0);
+    const sequence = [];
+
+    // la nota di partenza è essa stessa la prima domanda:
+    // deve comparire davvero nella sequenza, non solo
+    // "contare" internamente
+    visits[index] = 1;
+    sequence.push(sortedPositions[index]);
+
+    while (sequence.length < minCount || visits.some(v => v < 2)) {
+        const canGoDown = index - 1 >= 0;
+        const canGoUp = index + 1 < n;
+
+        // c'è ancora qualcosa di scoperto sotto/sopra la
+        // posizione attuale? Se sì, la direzione punta lì,
+        // così il percorso arriva davvero a coprire tutta
+        // l'estensione invece di rimbalzare solo vicino al
+        // punto di partenza
+        const belowNeedsCoverage = canGoDown && visits.slice(0, index).some(v => v < 2);
+        const aboveNeedsCoverage = canGoUp && visits.slice(index + 1).some(v => v < 2);
+
+        let direction;
+        if (belowNeedsCoverage && aboveNeedsCoverage) {
+            const downNeighborNeeds = visits[index - 1] < 2;
+            const upNeighborNeeds = visits[index + 1] < 2;
+            if (downNeighborNeeds && !upNeighborNeeds) direction = -1;
+            else if (upNeighborNeeds && !downNeighborNeeds) direction = 1;
+            else direction = Math.random() < 0.5 ? -1 : 1;
+        } else if (belowNeedsCoverage) {
+            direction = -1;
+        } else if (aboveNeedsCoverage) {
+            direction = 1;
+        } else {
+            // tutta l'estensione è già coperta: il resto
+            // delle selezioni (per arrivare al minimo) può
+            // muoversi liberamente in entrambe le direzioni
+            const options = [];
+            if (canGoDown) options.push(-1);
+            if (canGoUp) options.push(1);
+            direction = options[Math.floor(Math.random() * options.length)];
+        }
+
+        index += direction;
+        visits[index]++;
+        sequence.push(sortedPositions[index]);
+
+        if (sequence.length > minCount * 4 + n * 4) break; // rete di sicurezza
+    }
+
+    return sequence;
+}
+
+// cammino a salti: ogni passo salta ad almeno due posizioni
+// di distanza, mai alla nota adiacente
+function buildJumpWalk(sortedPositions, count) {
+    const n = sortedPositions.length;
+    let index = Math.floor(Math.random() * n);
+    const sequence = [];
+
+    for (let i = 0; i < count; i++) {
+        const options = [];
+        for (let j = 0; j < n; j++) {
+            if (Math.abs(j - index) >= 2) options.push(j);
+        }
+        index = options.length
+            ? options[Math.floor(Math.random() * options.length)]
+            : (index + 1) % n;
+        sequence.push(sortedPositions[index]);
+    }
+
+    return sequence;
+}
+
+function buildReviewSequence(unlockedPositions) {
+    const n = unlockedPositions.length;
+
+    if (n === 2) {
+        return buildRandomReviewSequence(unlockedPositions, 8);
+    }
+    if (n === 3) {
+        return buildRandomReviewSequence(unlockedPositions, 15);
+    }
+
+    const sorted = [...unlockedPositions].sort((a, b) => a - b);
+    const ascending = sorted;
+    const descending = [...sorted].reverse();
+    const passes = n === 4 ? 2 : 1;
+
+    let sequence = [];
+    for (let p = 0; p < passes; p++) {
+        sequence = sequence.concat(ascending, descending);
+    }
+
+    sequence = sequence.concat(buildStepwiseWalk(sorted, 10));
+    sequence = sequence.concat(buildJumpWalk(sorted, 10));
+
+    return sequence;
+}
+
+function tutorialRunMixRound(session, onDone) {
+    tutorialSetButtons(tutorialUnlocked);
+    const queue = buildReviewSequence(tutorialUnlocked);
+    let i = 0;
+
+    function next() {
+        if (session !== tutorialSessionId) return;
+        if (i >= queue.length) {
+            onDone();
+            return;
+        }
+        const position = queue[i++];
+        tutorialRunPractice(session, position, next);
+    }
+
+    next();
+}
+
+function tutorialAdvance(session) {
+    if (session !== tutorialSessionId) return;
+
+    if (tutorialIndex >= TUTORIAL_POSITIONS.length) {
+        tutorialFinish();
+        return;
+    }
+
+    const newPosition = TUTORIAL_POSITIONS[tutorialIndex];
+    tutorialSetButtons(tutorialUnlocked.concat([newPosition]));
+
+    tutorialRunDemo(session, newPosition, () => {
+        tutorialRunPractice(session, newPosition, () => {
+            tutorialUnlocked.push(newPosition);
+            tutorialIndex++;
+            renderTutorialDots();
+
+            if (tutorialUnlocked.length >= 2) {
+                tutorialRunMixRound(session, () => tutorialAdvance(session));
+            } else {
+                tutorialAdvance(session);
+            }
+        });
+    });
+}
+
+// il tutorial si conclude con una piccola festa e si torna
+// da soli al menu: niente schermate riassuntive da leggere
+function tutorialFinish() {
+    spawnConfetti();
+    playVictorySound();
+    setTimeout(() => {
+        if (appMode === "tutorial") showFinalScreen();
+    }, 1200);
+}
+
+function startTutorial(clefChoice) {
+    appMode = "tutorial";
+    tutorialClefChoice = clefChoice;
+    clef = clefChoice;
+    verificaClefChoice = null;
+
+    document.body.classList.remove("mode-training", "mode-verifica");
+    document.body.classList.add("mode-tutorial");
+
+    clefOptionsGroup.style.display = "none";
+    restartButton.style.display = "none";
+    homeMenuButtons.forEach(btn => btn.classList.add("visible"));
+
+    tutorialSessionId++;
+    const session = tutorialSessionId;
+    tutorialUnlocked = [];
+    tutorialIndex = 0;
+    tutorialAwaitingAnswer = false;
+
+    // stesse statistiche delle altre modalità, azzerate
+    // ad ogni nuovo tutorial
+    total = 0;
+    correct = 0;
+    errors = 0;
+    streak = 0;
+    record = 0;
+    updateStats();
+    startTimer();
+
+    renderTutorialDots();
+    showScreen("game");
+
+    tutorialAdvance(session);
+}
+
 trainingButton.addEventListener("click", startTraining);
+
+tutorialButton.addEventListener("click", () => showScreen("tutorialMenu"));
+tutorialBackButton.addEventListener("click", () => showScreen("home"));
+tutorialTrebleButton.addEventListener("click", () => startTutorial("treble"));
+tutorialBassButton.addEventListener("click", () => startTutorial("bass"));
 
 verificaButton.addEventListener("click", () => showScreen("verificaMenu"));
 verificaBackButton.addEventListener("click", () => showScreen("home"));
@@ -2159,7 +2668,7 @@ homeMenuButtons.forEach(btn => {
 
 // pulsante verso il sito che ospita il gioco: per ora non
 // fa nulla, verrà collegato in seguito
-siteHomeButton.addEventListener("click", () => { window.location.href = "index.html"; });
+siteHomeButton.addEventListener("click", () => {});
 
 /* =========================================================
    AVVIO
