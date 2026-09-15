@@ -1,0 +1,2758 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Recita le note</title>
+<meta name="description" content="Un piccolo esercizio interattivo per imparare a recitare la scala: do re mi fa sol la si do e ritorno, partendo da ogni nota.">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='.9em' font-size='90'%3E%F0%9F%8E%B6%3C/text%3E%3C/svg%3E">
+
+<style>
+*, *::before, *::after { box-sizing: border-box; }
+
+:root {
+    --ease-out-soft: cubic-bezier(0.16, 1, 0.3, 1);
+    --ease-spring: cubic-bezier(.34, 1.56, .64, 1);
+    --border-soft: rgba(255,255,255,0.10);
+    --border-softer: rgba(255,255,255,0.06);
+}
+
+html, body { margin: 0; padding: 0; min-height: 100%; }
+
+body {
+    min-height: 100vh;
+    padding: 40px 18px 48px;
+    font-family: "Inter", "Segoe UI", Arial, Helvetica, sans-serif;
+    font-size: 15px;
+    line-height: 1.5;
+    -webkit-font-smoothing: antialiased;
+    color: white;
+    background:
+        radial-gradient(circle at 50% 0%, #3730a3 0%, transparent 45%),
+        linear-gradient(135deg, #0f172a, #1e1b4b);
+    background-attachment: fixed;
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+    overflow-x: hidden;
+    position: relative;
+}
+
+body::before {
+    content: "";
+    position: fixed;
+    inset: 0;
+    z-index: 0;
+    pointer-events: none;
+    opacity: 0.5;
+    background-image: radial-gradient(rgba(255,255,255,0.035) 1px, transparent 1px);
+    background-size: 3px 3px;
+    mix-blend-mode: overlay;
+}
+
+button:focus-visible, select:focus-visible, input:focus-visible {
+    outline: 3px solid #facc15;
+    outline-offset: 3px;
+}
+
+.game {
+    position: relative;
+    z-index: 1;
+    width: min(900px, 100%);
+    max-width: 100%;
+    text-align: center;
+}
+
+h1 {
+    margin: 0;
+    font-family: "Sora", "Inter", Arial, sans-serif;
+    font-size: 2.2rem;
+    font-weight: 700;
+    letter-spacing: -0.02em;
+    text-shadow: 0 3px 10px rgba(0,0,0,0.35);
+}
+
+.subtitle {
+    margin: 10px 0 26px;
+    color: #cbd5e1;
+    font-size: 0.98rem;
+    opacity: 0.85;
+}
+
+/* STATISTICHE */
+.stats {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    gap: 10px;
+    margin: 0 auto 22px;
+}
+
+.stat {
+    position: relative;
+    padding: 14px 8px 13px;
+    border-radius: 14px;
+    background: linear-gradient(180deg, rgba(255,255,255,0.08), rgba(255,255,255,0.045));
+    border: 1px solid var(--border-soft);
+    box-shadow: 0 1px 0 rgba(255,255,255,0.05) inset, 0 10px 24px rgba(0,0,0,0.20);
+    overflow: hidden;
+    transition: transform 0.25s var(--ease-out-soft);
+}
+
+.stat::before { content: ""; position: absolute; left: 0; right: 0; top: 0; height: 3px; background: #64748b; }
+.stat.total::before { background: #38bdf8; }
+.stat.correct::before { background: #22c55e; }
+.stat.errors::before { background: #ef4444; }
+.stat.streak::before { background: linear-gradient(90deg, #f59e0b, #fde047, #f59e0b); }
+.stat.record::before { background: linear-gradient(90deg, #a16207, #facc15, #a16207); }
+
+.stat.correct.bump { animation: correctBounce 0.5s var(--ease-spring); }
+.stat.errors.bump { animation: wrongShake 0.5s ease-in-out; }
+.stat.streak.bump { animation: correctBounce 0.5s var(--ease-spring); }
+
+@keyframes correctBounce {
+    0% { transform: scale(1) translateY(0); }
+    30% { transform: scale(1.06) translateY(-5px); }
+    100% { transform: scale(1) translateY(0); }
+}
+@keyframes wrongShake {
+    0% { transform: translateX(0); }
+    20% { transform: translateX(-5px); }
+    40% { transform: translateX(5px); }
+    60% { transform: translateX(-4px); }
+    80% { transform: translateX(3px); }
+    100% { transform: translateX(0); }
+}
+
+.stat-label { display: block; color: #cbd5e1; font-size: 0.62rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 5px; }
+.stat-value { font-family: "Sora", "Inter", Arial, sans-serif; font-size: 1.35rem; font-weight: 700; font-variant-numeric: tabular-nums; }
+.stat.total .stat-value { color: #7dd3fc; }
+.stat.correct .stat-value { color: #86efac; }
+.stat.errors .stat-value { color: #fca5a5; }
+.stat.streak .stat-value { color: #fde68a; }
+.stat.record .stat-value { color: #facc15; }
+
+/* LIVELLO */
+.level-box {
+    margin: 0 auto 22px;
+    padding: 16px 20px 18px;
+    background: linear-gradient(180deg, rgba(255,255,255,0.09), rgba(255,255,255,0.05));
+    border: 1px solid var(--border-soft);
+    border-radius: 16px;
+    box-shadow: 0 1px 0 rgba(255,255,255,0.06) inset, 0 14px 34px rgba(0,0,0,0.24);
+    backdrop-filter: blur(14px) saturate(130%);
+    transition: transform 0.25s var(--ease-spring);
+}
+.level-box.bump { animation: levelBump 0.6s var(--ease-spring); }
+@keyframes levelBump { 0% { transform: scale(1); } 35% { transform: scale(1.03); } 100% { transform: scale(1); } }
+
+.level-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; }
+.level-title { font-size: 0.78rem; font-weight: 700; letter-spacing: 0.6px; text-transform: uppercase; color: #fef3c7; opacity: 0.9; }
+.level-number { font-size: 1rem; font-weight: 700; color: #fde68a; }
+
+.progress-bar { position: relative; width: 100%; height: 12px; background: rgba(15,23,42,0.85); border-radius: 999px; overflow: hidden; border: 1px solid rgba(255,255,255,0.07); box-shadow: inset 0 2px 5px rgba(0,0,0,0.45); }
+.progress-fill { height: 100%; width: 0%; border-radius: 999px; background: linear-gradient(90deg, #f59e0b, #facc15, #fde68a); box-shadow: 0 0 12px rgba(250,204,21,0.55); transition: width 0.45s var(--ease-out-soft); }
+.level-info { margin-top: 8px; font-size: 0.74rem; color: #94a3b8; text-align: left; }
+
+.level-footer {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+    margin-top: 8px;
+}
+.level-footer .level-info { margin-top: 0; }
+.level-timer {
+    font-family: "Sora", "Inter", Arial, sans-serif;
+    font-size: 0.76rem;
+    font-weight: 700;
+    color: #94a3b8;
+    letter-spacing: 0.3px;
+    white-space: nowrap;
+}
+
+/* =========================================================
+   AREA DI GIOCO: colonna delle note + palco delle carte
+========================================================= */
+
+.play-area {
+    display: grid;
+    grid-template-columns: auto minmax(0, 1fr);
+    gap: 16px;
+    align-items: stretch;
+    margin: 0 auto 22px;
+}
+
+/* colonna dei pulsanti: Do in basso, Si in alto */
+.note-column {
+    display: flex;
+    flex-direction: column-reverse;
+    justify-content: center;
+    gap: 8px;
+}
+
+.answer {
+    position: relative;
+    overflow: hidden;
+    flex: 0 0 auto;
+    width: 96px;
+    border: none;
+    border-radius: 12px;
+    padding: 14px 6px;
+    color: white;
+    font-family: "Sora", "Inter", Arial, sans-serif;
+    font-size: 1.2rem;
+    font-weight: 800;
+    cursor: pointer;
+    box-shadow: 0 1px 0 rgba(255,255,255,0.28) inset, 0 5px 0 rgba(0,0,0,0.25), 0 8px 16px rgba(0,0,0,0.28);
+    transition: transform 0.12s var(--ease-out-soft), filter 0.15s, box-shadow 0.15s, opacity 0.25s;
+    text-shadow:
+        -1px -1px 0 rgba(0,0,0,0.65),
+        1px -1px 0 rgba(0,0,0,0.65),
+        -1px 1px 0 rgba(0,0,0,0.65),
+        1px 1px 0 rgba(0,0,0,0.65),
+        0 2px 5px rgba(0,0,0,0.4);
+}
+.answer::after { content: ""; position: absolute; inset: 0; background: linear-gradient(180deg, rgba(255,255,255,0.22), rgba(255,255,255,0) 55%); pointer-events: none; }
+.answer:hover { filter: brightness(1.1); transform: translateY(-3px); }
+.answer:active { transform: translateY(3px); }
+
+.answer.do  { background: #ef4444; --glow: rgba(239,68,68,0.9); }
+.answer.re  { background: #f97316; --glow: rgba(249,115,22,0.9); }
+.answer.mi  { background: #eab308; --glow: rgba(234,179,8,0.9); }
+.answer.fa  { background: #22c55e; --glow: rgba(34,197,94,0.9); }
+.answer.sol { background: #06b6d4; --glow: rgba(6,182,212,0.9); }
+.answer.la  { background: #3b82f6; --glow: rgba(59,130,246,0.9); }
+.answer.si  { background: #8b5cf6; --glow: rgba(139,92,246,0.9); }
+
+.note-column.waiting .answer { opacity: 0.55; cursor: default; }
+.note-column.waiting .answer:hover { transform: none; filter: none; }
+
+/* il pulsante si illumina quando la sua nota suona */
+.answer.lit,
+.note-column.waiting .answer.lit {
+    opacity: 1;
+    filter: brightness(1.25);
+    box-shadow: 0 0 0 3px rgba(255,255,255,0.9), 0 0 26px 4px var(--glow), 0 5px 0 rgba(0,0,0,0.25);
+    animation: litPop 0.35s var(--ease-spring);
+}
+@keyframes litPop { 0% { scale: 1; } 40% { scale: 1.08; } 100% { scale: 1; } }
+
+.answer.good { animation: goodPop 0.4s var(--ease-spring); }
+@keyframes goodPop { 0% { scale: 1; } 35% { scale: 1.12; } 100% { scale: 1; } }
+
+.answer.wrong-flash { animation: buttonShake 0.4s ease-in-out; }
+@keyframes buttonShake {
+    0% { transform: translateX(0); }
+    20% { transform: translateX(-6px); }
+    40% { transform: translateX(6px); }
+    60% { transform: translateX(-4px); }
+    80% { transform: translateX(3px); }
+    100% { transform: translateX(0); }
+}
+
+/* suggerimento dopo alcuni errori sulla stessa carta */
+.answer.hint { animation: hintPulse 1s ease-in-out infinite; }
+@keyframes hintPulse {
+    0%, 100% { box-shadow: 0 0 0 0 rgba(255,255,255,0.0), 0 5px 0 rgba(0,0,0,0.25); }
+    50% { box-shadow: 0 0 0 4px rgba(255,255,255,0.85), 0 0 24px 4px var(--glow), 0 5px 0 rgba(0,0,0,0.25); }
+}
+
+/* PALCO */
+.stage {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    min-width: 0;
+    padding: 14px 18px 12px;
+    background: linear-gradient(180deg, rgba(255,255,255,0.09), rgba(255,255,255,0.045));
+    border: 1px solid var(--border-soft);
+    border-radius: 20px;
+    box-shadow: 0 1px 0 rgba(255,255,255,0.06) inset, 0 16px 34px rgba(0,0,0,0.28);
+    overflow: hidden;
+}
+
+.stage-header {
+    position: relative;
+    z-index: 3;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+    flex-wrap: wrap;
+    min-height: 34px;
+}
+
+.stage-start {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    font-family: "Sora", "Inter", Arial, sans-serif;
+    font-size: 0.86rem;
+    font-weight: 600;
+    color: #cbd5e1;
+}
+
+.start-chip {
+    display: inline-block;
+    min-width: 44px;
+    padding: 3px 10px;
+    border-radius: 8px;
+    color: white;
+    font-weight: 800;
+    font-size: 0.9rem;
+    text-align: center;
+    text-shadow: 0 1px 2px rgba(0,0,0,0.6);
+    box-shadow: 0 1px 0 rgba(255,255,255,0.3) inset, 0 3px 8px rgba(0,0,0,0.3);
+}
+.start-chip.pop { animation: goodPop 0.45s var(--ease-spring); }
+
+.stage-header-right { display: flex; align-items: center; gap: 8px; }
+
+.dir-chip {
+    display: inline-flex;
+    align-items: center;
+    padding: 5px 12px;
+    border-radius: 999px;
+    font-family: "Sora", "Inter", Arial, sans-serif;
+    font-size: 0.8rem;
+    font-weight: 700;
+    border: 1px solid rgba(255,255,255,0.18);
+    background: rgba(255,255,255,0.06);
+    color: #e2e8f0;
+}
+.dir-chip.up { background: rgba(34,197,94,0.18); border-color: rgba(134,239,172,0.45); color: #bbf7d0; }
+.dir-chip.down { background: rgba(236,72,153,0.18); border-color: rgba(249,168,212,0.45); color: #fbcfe8; }
+.dir-chip.hidden { visibility: hidden; }
+.dir-chip.flip { animation: chipFlip 0.5s var(--ease-spring); }
+@keyframes chipFlip { 0% { transform: rotateX(90deg) scale(0.8); } 100% { transform: rotateX(0) scale(1); } }
+
+.replay-button {
+    border: 1px solid rgba(255,255,255,0.18);
+    padding: 6px 12px;
+    border-radius: 999px;
+    background: rgba(255,255,255,0.06);
+    color: #e2e8f0;
+    font-family: "Sora", "Inter", Arial, sans-serif;
+    font-size: 0.78rem;
+    font-weight: 700;
+    cursor: pointer;
+    transition: transform 0.15s var(--ease-out-soft), background 0.15s, opacity 0.2s;
+}
+.replay-button:hover:not(:disabled) { background: rgba(255,255,255,0.12); transform: translateY(-2px); }
+.replay-button:disabled { opacity: 0.4; cursor: default; }
+
+/* CARTE */
+.cards {
+    --step: 11px;
+    flex: 1;
+    display: grid;
+    grid-template-columns: repeat(8, minmax(0, 1fr));
+    column-gap: clamp(5px, 1.2vw, 12px);
+    row-gap: 50px;
+    align-items: end;
+    align-content: center;
+    padding-top: calc(7 * var(--step) + 58px);
+    padding-bottom: 6px;
+    perspective: 900px;
+}
+
+.card-slot {
+    position: relative;
+    container-type: inline-size;
+    translate: 0 calc(var(--rank) * var(--step) * -1);
+    transition: translate 0.5s var(--ease-out-soft);
+}
+.card-slot.current { z-index: 2; }
+
+/* freccia sopra alla carta da indovinare */
+.card-slot::before {
+    content: "▼";
+    position: absolute;
+    left: 50%;
+    top: -34px;
+    transform: translateX(-50%);
+    color: #facc15;
+    font-size: 1.1rem;
+    line-height: 1;
+    text-shadow: 0 0 10px rgba(250,204,21,0.7);
+    opacity: 0;
+    transition: opacity 0.2s;
+    pointer-events: none;
+}
+.card-slot.current::before {
+    opacity: 1;
+    animation: arrowBob 0.9s ease-in-out infinite;
+}
+@keyframes arrowBob {
+    0%, 100% { transform: translate(-50%, 0); }
+    50% { transform: translate(-50%, -7px); }
+}
+
+.card-anim { position: relative; }
+
+.card-flip {
+    position: relative;
+    aspect-ratio: 5 / 7;
+    transform-style: preserve-3d;
+    transition: transform 0.62s var(--ease-spring), translate 0.25s var(--ease-out-soft);
+}
+.card-slot.revealed .card-flip { transform: rotateY(180deg); }
+.card-slot.current .card-flip { translate: 0 -8px; }
+
+.card-face {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    border-radius: 10px;
+    border-radius: 13cqi;
+    backface-visibility: hidden;
+    -webkit-backface-visibility: hidden;
+    overflow: hidden;
+}
+
+.card-back {
+    background:
+        radial-gradient(circle at 50% 50%, rgba(255,255,255,0.16) 0 24%, transparent 25%),
+        repeating-linear-gradient(45deg, rgba(255,255,255,0.07) 0 5px, transparent 5px 11px),
+        linear-gradient(150deg, #6366f1, #7c3aed 60%, #5b21b6);
+    border: 2px solid rgba(255,255,255,0.28);
+    box-shadow: 0 1px 0 rgba(255,255,255,0.3) inset, 0 10px 20px rgba(0,0,0,0.35);
+    transition: box-shadow 0.2s;
+}
+.card-back::before {
+    content: "";
+    position: absolute;
+    inset: 7cqi;
+    border: 1.5px solid rgba(255,255,255,0.28);
+    border-radius: 8cqi;
+}
+.card-back::after {
+    content: "♪";
+    font-size: 1.6rem;
+    font-size: 36cqi;
+    line-height: 1;
+    color: rgba(255,255,255,0.9);
+    text-shadow: 0 2px 6px rgba(0,0,0,0.35);
+}
+
+.card-slot.current .card-back {
+    animation: currentGlow 1.2s ease-in-out infinite;
+}
+@keyframes currentGlow {
+    0%, 100% { box-shadow: 0 0 0 3px #facc15, 0 0 14px rgba(250,204,21,0.45), 0 12px 22px rgba(0,0,0,0.4); }
+    50% { box-shadow: 0 0 0 4px #fde68a, 0 0 28px rgba(250,204,21,0.8), 0 12px 22px rgba(0,0,0,0.4); }
+}
+
+.card-slot.current .card-back.oops,
+.card-back.oops { animation: oopsFlash 0.5s ease-out; }
+@keyframes oopsFlash {
+    0% { box-shadow: 0 0 0 4px #ef4444, 0 0 26px rgba(239,68,68,0.9); filter: saturate(0.5) brightness(1.2); }
+    100% { box-shadow: 0 0 0 3px #facc15, 0 0 14px rgba(250,204,21,0.45); filter: none; }
+}
+
+.card-front {
+    transform: rotateY(180deg);
+    background: linear-gradient(180deg, #fdfaf3, #f2e9d8);
+    border: 2px solid rgba(255,255,255,0.7);
+    box-shadow: 0 1px 0 rgba(255,255,255,0.4) inset, 0 10px 20px rgba(0,0,0,0.35);
+}
+.card-front::before {
+    content: "";
+    position: absolute;
+    left: 0; right: 0; top: 0;
+    height: 9cqi;
+    background: var(--note-color);
+}
+.card-name {
+    font-family: "Sora", "Inter", Arial, sans-serif;
+    font-weight: 800;
+    font-size: 1.2rem;
+    font-size: 29cqi;
+    line-height: 1;
+    letter-spacing: -0.02em;
+    color: var(--note-ink);
+}
+.card-pip {
+    width: 24cqi;
+    height: 17cqi;
+    margin-top: 10cqi;
+    border-radius: 50%;
+    background: var(--note-color);
+    transform: rotate(-22deg);
+    box-shadow: inset 0 -2px 0 rgba(0,0,0,0.18);
+}
+
+/* riflesso luminoso per il giro perfetto */
+.card-front::after {
+    content: "";
+    position: absolute;
+    top: -20%;
+    bottom: -20%;
+    width: 40%;
+    left: -60%;
+    background: linear-gradient(100deg, transparent, rgba(255,255,255,0.85), transparent);
+    transform: skewX(-12deg);
+    opacity: 0;
+}
+.card-slot.shine .card-front::after {
+    animation: shineSweep 0.9s ease-out forwards;
+    animation-delay: calc(var(--i) * 70ms);
+}
+@keyframes shineSweep {
+    0% { left: -60%; opacity: 1; }
+    100% { left: 130%; opacity: 1; }
+}
+
+/* piccoli movimenti delle carte */
+.card-flip.hop { animation: cardHop 0.45s var(--ease-out-soft); }
+@keyframes cardHop {
+    0% { translate: 0 0; scale: 1; }
+    35% { translate: 0 -22px; scale: 1.08; }
+    70% { translate: 0 2px; scale: 0.98; }
+    100% { translate: 0 0; scale: 1; }
+}
+
+.card-flip.pop { animation: cardPop 0.5s var(--ease-spring); }
+@keyframes cardPop {
+    0% { scale: 1; }
+    40% { scale: 1.15; }
+    100% { scale: 1; }
+}
+
+.card-flip.shake { animation: cardShake 0.45s ease-in-out; }
+@keyframes cardShake {
+    0%, 100% { rotate: 0deg; translate: 0 -8px; }
+    20% { rotate: -8deg; translate: 0 -8px; }
+    40% { rotate: 7deg; translate: 0 -8px; }
+    60% { rotate: -4deg; translate: 0 -8px; }
+    80% { rotate: 3deg; translate: 0 -8px; }
+}
+
+/* entrate delle carte */
+.card-anim.enter-deal { animation: dealIn 0.62s var(--ease-out-soft) both; }
+@keyframes dealIn {
+    0% { opacity: 0; transform: translateX(calc((var(--i) + 1.5) * -118%)) translateY(-30px) rotate(-28deg) scale(0.8); }
+    50% { opacity: 1; }
+    100% { opacity: 1; transform: none; }
+}
+.card-anim.enter-drop { animation: dropIn 0.75s var(--ease-spring) both; }
+@keyframes dropIn {
+    0% { opacity: 0; transform: translateY(-170%) rotate(calc((var(--i) - 3.5) * 9deg)); }
+    35% { opacity: 1; }
+    100% { opacity: 1; transform: none; }
+}
+.card-anim.enter-pop { animation: popIn 0.65s var(--ease-spring) both; }
+@keyframes popIn {
+    0% { opacity: 0; transform: scale(0) rotate(-200deg); }
+    100% { opacity: 1; transform: none; }
+}
+
+/* uscite delle carte */
+.card-anim.exit-fly { animation: flyOut 0.62s cubic-bezier(.5,0,.75,0) forwards; }
+@keyframes flyOut {
+    0% { transform: none; opacity: 1; }
+    25% { transform: translateY(12px) scale(0.95); opacity: 1; }
+    100% { transform: translate(calc((var(--i) - 3.5) * 40%), -240%) rotate(calc((var(--i) - 3.5) * 14deg)) scale(0.7); opacity: 0; }
+}
+.card-anim.exit-sweep { animation: sweepOut 0.55s cubic-bezier(.5,0,.75,0) forwards; }
+@keyframes sweepOut {
+    0% { transform: none; opacity: 1; }
+    100% { transform: translateX(calc((8 - var(--i)) * 118%)) rotate(26deg); opacity: 0; }
+}
+.card-anim.exit-spin { animation: spinOut 0.6s cubic-bezier(.5,0,.75,0) forwards; }
+@keyframes spinOut {
+    0% { transform: none; opacity: 1; }
+    30% { transform: scale(1.12); opacity: 1; }
+    100% { transform: scale(0) rotate(300deg); opacity: 0; }
+}
+
+.message {
+    position: relative;
+    z-index: 3;
+    min-height: 34px;
+    margin-top: 8px;
+    font-family: "Sora", "Inter", Arial, sans-serif;
+    font-size: 1.05rem;
+    font-weight: 700;
+    letter-spacing: 0.1px;
+}
+.message.pop { animation: goodPop 0.45s var(--ease-spring); }
+.correct-message { color: #86efac; }
+.info-message { color: #fde68a; }
+
+/* EFFETTI */
+.fx-layer {
+    position: absolute;
+    inset: 0;
+    z-index: 4;
+    pointer-events: none;
+    overflow: hidden;
+}
+
+.confetti-piece {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 8px;
+    height: 8px;
+    border-radius: 2px;
+    animation: confettiBurst 1s ease-out forwards;
+}
+@keyframes confettiBurst {
+    0% { transform: translate(-50%, -50%) rotate(0deg); opacity: 1; }
+    100% { transform: translate(calc(-50% + var(--dx)), calc(-50% + var(--dy))) rotate(var(--rot)); opacity: 0; }
+}
+
+.confetti-rain {
+    position: absolute;
+    top: -14px;
+    width: 8px;
+    height: 12px;
+    border-radius: 2px;
+    animation: confettiFall var(--dur) linear forwards;
+}
+@keyframes confettiFall {
+    0% { transform: translate(0, 0) rotate(0deg); opacity: 1; }
+    100% { transform: translate(var(--drift), var(--fall)) rotate(var(--rot)); opacity: 0.2; }
+}
+
+.spark {
+    position: absolute;
+    font-size: 15px;
+    line-height: 1;
+    transform: translate(-50%, -50%);
+    animation: sparkBurst 0.75s ease-out forwards;
+    text-shadow: 0 0 6px rgba(255,255,255,0.8);
+}
+@keyframes sparkBurst {
+    0% { transform: translate(-50%, -50%) scale(0.4); opacity: 1; }
+    100% { transform: translate(calc(-50% + var(--dx)), calc(-50% + var(--dy))) scale(1.1) rotate(160deg); opacity: 0; }
+}
+
+.float-note {
+    position: absolute;
+    font-size: 22px;
+    line-height: 1;
+    font-weight: 700;
+    transform: translate(-50%, 0);
+    text-shadow: 0 2px 6px rgba(0,0,0,0.45);
+    animation: floatUp 1.05s ease-out forwards;
+}
+@keyframes floatUp {
+    0% { transform: translate(-50%, 0) scale(0.6); opacity: 0; }
+    20% { opacity: 1; }
+    100% { transform: translate(calc(-50% + var(--dx)), -56px) scale(1.15) rotate(var(--rot)); opacity: 0; }
+}
+
+.combo-pop {
+    position: absolute;
+    left: 50%;
+    top: 46px;
+    padding: 6px 14px;
+    border-radius: 999px;
+    background: linear-gradient(135deg, #f59e0b, #b45309);
+    font-family: "Sora", "Inter", Arial, sans-serif;
+    font-weight: 800;
+    font-size: 0.95rem;
+    white-space: nowrap;
+    box-shadow: 0 8px 20px rgba(0,0,0,0.35);
+    animation: comboPop 1.5s var(--ease-out-soft) forwards;
+}
+@keyframes comboPop {
+    0% { transform: translate(-50%, 10px) scale(0.4); opacity: 0; }
+    18% { transform: translate(-50%, 0) scale(1.1); opacity: 1; }
+    30% { transform: translate(-50%, 0) scale(1); }
+    75% { opacity: 1; }
+    100% { transform: translate(-50%, -26px) scale(1); opacity: 0; }
+}
+
+/* striscione al centro del palco (inizio livello) */
+.stage-banner {
+    position: absolute;
+    inset: 0;
+    z-index: 5;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+    background: rgba(15,23,42,0.45);
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.25s ease;
+}
+.stage-banner.show { opacity: 1; }
+
+.stage-banner-card {
+    max-width: 420px;
+    padding: 18px 26px 20px;
+    border-radius: 18px;
+    background: linear-gradient(180deg, rgba(49,46,129,0.96), rgba(15,23,42,0.97));
+    border: 1px solid rgba(255,255,255,0.2);
+    box-shadow: 0 24px 50px rgba(0,0,0,0.5);
+    transform: scale(0.6) rotate(-4deg);
+    transition: transform 0.5s var(--ease-spring);
+}
+.stage-banner.show .stage-banner-card { transform: scale(1) rotate(0deg); }
+
+.banner-badge {
+    display: block;
+    font-size: 2rem;
+    line-height: 1;
+    margin-bottom: 6px;
+}
+.banner-title {
+    display: block;
+    font-family: "Sora", "Inter", Arial, sans-serif;
+    font-size: 1.5rem;
+    font-weight: 800;
+    color: #fde68a;
+}
+.banner-text {
+    display: block;
+    margin-top: 4px;
+    color: #cbd5e1;
+    font-size: 0.92rem;
+}
+
+/* PULSANTI */
+.game-buttons { display: flex; justify-content: center; align-items: center; gap: 10px; margin-top: 6px; flex-wrap: wrap; }
+
+.menu-button, .finish-button, .new-game {
+    border: 1px solid rgba(255,255,255,0.18);
+    padding: 12px 22px;
+    border-radius: 12px;
+    background: rgba(255,255,255,0.06);
+    color: #e2e8f0;
+    font-family: "Sora", "Inter", Arial, sans-serif;
+    font-size: 0.88rem;
+    font-weight: 700;
+    cursor: pointer;
+    transition: transform 0.15s var(--ease-out-soft), background 0.15s;
+}
+.menu-button:hover, .finish-button:hover { background: rgba(255,255,255,0.12); transform: translateY(-2px); }
+
+.new-game { border: none; background: linear-gradient(135deg, #ffffff, #e2e8f0); color: #312e81; box-shadow: 0 6px 16px rgba(0,0,0,0.18); }
+.new-game:hover { transform: translateY(-2px); box-shadow: 0 10px 22px rgba(0,0,0,0.22); }
+
+.finish-button { border-color: rgba(248,113,113,0.35); background: rgba(127,29,29,0.25); color: #fca5a5; }
+.finish-button:hover { background: rgba(127,29,29,0.4); }
+
+.home-menu-button { display: none; }
+.home-menu-button.visible { display: inline-flex; }
+
+/* BARRA STRUMENTI */
+.toolbar { display: flex; align-items: center; justify-content: center; gap: 14px; margin: 20px auto 0; }
+
+.volume-control { display: flex; align-items: center; gap: 8px; }
+.volume-icon { font-size: 1.05rem; }
+.volume-slider {
+    width: 120px; height: 6px;
+    -webkit-appearance: none; appearance: none;
+    background: linear-gradient(90deg, #a855f7, #7c3aed);
+    border-radius: 999px; outline: none; cursor: pointer;
+}
+.volume-slider::-webkit-slider-thumb {
+    -webkit-appearance: none; width: 16px; height: 16px; border-radius: 50%;
+    background: #f5f3ff; border: 2px solid #a855f7; cursor: pointer;
+}
+.volume-slider::-moz-range-thumb {
+    width: 14px; height: 14px; border-radius: 50%;
+    background: #f5f3ff; border: 2px solid #a855f7; cursor: pointer;
+}
+
+.toolbar-button {
+    width: 42px; height: 42px; border-radius: 50%;
+    border: 1px solid rgba(255,255,255,0.18);
+    background: linear-gradient(180deg, rgba(255,255,255,0.1), rgba(255,255,255,0.04));
+    color: #e2e8f0; font-size: 1.1rem;
+    display: flex; align-items: center; justify-content: center;
+    cursor: pointer; box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+    transition: transform 0.12s var(--ease-out-soft), background 0.15s;
+}
+.toolbar-button:hover { background: linear-gradient(180deg, rgba(255,255,255,0.2), rgba(255,255,255,0.08)); }
+.toolbar-button.bump, .options-choice.bump { animation: toolbarBump 0.25s var(--ease-spring); }
+@keyframes toolbarBump { 0% { transform: scale(1); } 45% { transform: scale(0.82); } 100% { transform: scale(1); } }
+
+/* PANNELLO TROFEI */
+.trophy-panel {
+    position: fixed; top: 90px; right: 24px; z-index: 200;
+    width: 300px; max-width: calc(100vw - 32px);
+    max-height: calc(100vh - 120px);
+    overflow-y: auto;
+    padding: 16px;
+    background: linear-gradient(180deg, rgba(49,46,129,0.9), rgba(15,23,42,0.92));
+    border: 1px solid rgba(255,255,255,0.18);
+    border-radius: 16px;
+    box-shadow: 0 20px 45px rgba(0,0,0,0.5);
+    backdrop-filter: blur(12px) saturate(140%);
+    opacity: 0; transform: translateY(-8px) scale(0.96); pointer-events: none;
+    transition: opacity 0.2s ease, transform 0.2s var(--ease-out-soft);
+}
+.trophy-panel.show { opacity: 1; transform: translateY(0) scale(1); pointer-events: auto; }
+.trophy-panel-title { font-size: 0.8rem; font-weight: 700; text-transform: uppercase; color: #fef3c7; margin-bottom: 12px; text-align: center; }
+.trophy-row { display: flex; flex-direction: column; gap: 3px; padding: 9px 11px; border-radius: 10px; background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); font-family: "Sora", "Inter", Arial, sans-serif; font-size: 0.82rem; font-weight: 600; color: #cbd5e1; margin-bottom: 7px; text-align: left; }
+.trophy-row-main { display: flex; justify-content: space-between; align-items: center; }
+.trophy-row-details { font-size: 0.7rem; font-weight: 500; color: #94a3b8; }
+.trophy-row.done { background: linear-gradient(135deg, rgba(34,197,94,0.22), rgba(21,128,61,0.14)); border-color: rgba(134,239,172,0.4); color: #dcfce7; }
+.trophy-row.done .trophy-row-details { color: #bbf7d0; }
+.trophy-row.in-loop { border-color: rgba(245,158,11,0.55); background: linear-gradient(135deg, rgba(245,158,11,0.16), rgba(180,83,9,0.1)); }
+.trophy-row.playing { box-shadow: inset 3px 0 0 #facc15; }
+
+.trophy-loop-controls {
+    display: none;
+    margin-bottom: 14px;
+    padding: 10px 11px;
+    border-radius: 10px;
+    background: rgba(245,158,11,0.08);
+    border: 1px solid rgba(245,158,11,0.25);
+}
+.trophy-loop-controls.visible { display: block; }
+.trophy-loop-title {
+    font-size: 0.7rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.4px;
+    color: #fde68a; margin-bottom: 8px; text-align: left;
+}
+.trophy-loop-row { display: flex; align-items: center; gap: 6px; }
+.trophy-loop-row select {
+    flex: 1;
+    min-width: 0;
+    padding: 6px 4px;
+    border-radius: 8px;
+    border: 1px solid rgba(255,255,255,0.16);
+    background: rgba(15,23,42,0.6);
+    color: #e2e8f0;
+    font-family: "Sora", "Inter", Arial, sans-serif;
+    font-size: 0.78rem;
+    font-weight: 600;
+}
+.trophy-loop-row span { color: #cbd5e1; font-size: 0.8rem; }
+.trophy-loop-row .options-choice { flex: 0 0 auto; padding: 7px 10px; font-size: 0.74rem; }
+.trophy-loop-row .options-choice.active {
+    background: linear-gradient(135deg, #f59e0b, #b45309);
+    box-shadow: 0 4px 12px rgba(245,158,11,0.4), inset 0 0 0 2px rgba(255,255,255,0.2);
+}
+
+/* PANNELLO OPZIONI */
+.options-panel {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    z-index: 250;
+    width: 320px;
+    max-width: calc(100vw - 32px);
+    padding: 18px;
+    background: linear-gradient(180deg, rgba(49,46,129,0.72), rgba(15,23,42,0.75));
+    border: 1px solid rgba(255,255,255,0.2);
+    border-radius: 16px;
+    box-shadow: 0 20px 45px rgba(0,0,0,0.45);
+    backdrop-filter: blur(10px) saturate(140%);
+    opacity: 0;
+    transform: translate(-50%, -50%) scale(0.95);
+    pointer-events: none;
+    transition: opacity 0.2s ease, transform 0.2s var(--ease-out-soft);
+}
+.options-panel.show { opacity: 1; transform: translate(-50%, -50%) scale(1); pointer-events: auto; }
+
+.options-panel-title {
+    font-size: 0.82rem; font-weight: 700; letter-spacing: 0.5px; text-transform: uppercase;
+    color: #fef3c7; opacity: 0.9; margin-bottom: 14px; text-align: center;
+}
+
+.options-toggle-row {
+    display: flex; align-items: center; justify-content: space-between; gap: 12px;
+    padding: 10px 12px;
+    border-radius: 10px;
+    background: rgba(255,255,255,0.06);
+    border: 1px solid rgba(255,255,255,0.12);
+    font-family: "Sora", "Inter", Arial, sans-serif;
+    font-weight: 600; font-size: 0.86rem; color: #e2e8f0;
+    text-align: left;
+    cursor: pointer;
+}
+.options-toggle-row input[type="checkbox"] {
+    flex: 0 0 auto;
+    width: 20px; height: 20px; accent-color: #a855f7; cursor: pointer;
+}
+
+.options-group-title {
+    font-size: 0.66rem; font-weight: 700; letter-spacing: 0.5px; text-transform: uppercase;
+    color: #a5b4fc; opacity: 0.85; margin: 16px 0 8px; text-align: left;
+}
+.options-group-title.first { margin-top: 0; }
+
+.options-trio {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 8px;
+}
+
+.options-choice {
+    padding: 12px 6px;
+    border-radius: 10px;
+    border: 1px solid rgba(255,255,255,0.16);
+    background: rgba(255,255,255,0.06);
+    color: #e2e8f0;
+    font-family: "Sora", "Inter", Arial, sans-serif;
+    font-weight: 700;
+    font-size: 0.8rem;
+    cursor: pointer;
+    transition: background 0.15s, box-shadow 0.15s;
+}
+.options-choice:hover { background: rgba(255,255,255,0.12); }
+.options-choice.active {
+    background: linear-gradient(135deg, #22c55e, #15803d);
+    border-color: rgba(255,255,255,0.35);
+    box-shadow: 0 4px 12px rgba(34,197,94,0.4), inset 0 0 0 2px rgba(255,255,255,0.2);
+}
+
+/* OVERLAY CONFERMA / SCHERMATA FINALE */
+.overlay {
+    position: fixed; inset: 0; z-index: 300;
+    background: rgba(2,6,23,0.72);
+    display: flex; align-items: center; justify-content: center;
+    opacity: 0; pointer-events: none;
+    transition: opacity 0.2s ease;
+    padding: 20px;
+}
+.overlay.show { opacity: 1; pointer-events: auto; }
+#finalHomeConfirmOverlay { z-index: 350; }
+
+.overlay-card {
+    width: min(420px, 100%);
+    padding: 26px 24px;
+    background: linear-gradient(180deg, rgba(49,46,129,0.96), rgba(15,23,42,0.97));
+    border: 1px solid rgba(255,255,255,0.18);
+    border-radius: 20px;
+    box-shadow: 0 24px 60px rgba(0,0,0,0.5);
+    text-align: center;
+    transform: scale(0.94);
+    transition: transform 0.35s var(--ease-spring);
+}
+.overlay.show .overlay-card { transform: scale(1); }
+
+.overlay-card h2 { margin: 0 0 8px; font-family: "Sora", Arial, sans-serif; font-size: 1.5rem; }
+.overlay-card p { color: #cbd5e1; margin: 0 0 20px; }
+
+.overlay-buttons { display: flex; justify-content: center; gap: 10px; flex-wrap: wrap; }
+
+.final-stats { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin: 0 0 22px; text-align: left; }
+.final-stat { padding: 10px 12px; border-radius: 10px; background: rgba(255,255,255,0.06); border: 1px solid var(--border-soft); }
+.final-stat span { display: block; font-size: 0.65rem; text-transform: uppercase; color: #94a3b8; margin-bottom: 3px; }
+.final-stat strong { font-family: "Sora", Arial, sans-serif; font-size: 1.15rem; }
+
+/* =========================================================
+   SCHERMATE DI SELEZIONE MODALITÀ
+========================================================= */
+
+.menu-screen {
+    position: relative;
+    z-index: 1;
+    width: min(520px, 100%);
+    text-align: center;
+    animation: menuScreenIn 0.5s var(--ease-out-soft);
+}
+@keyframes menuScreenIn {
+    from { opacity: 0; transform: translateY(14px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+.hero-badge {
+    width: 76px;
+    height: 76px;
+    margin: 0 auto 16px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 2.1rem;
+    background: linear-gradient(145deg, #4f46e5, #7c3aed);
+    box-shadow: 0 1px 0 rgba(255,255,255,0.3) inset, 0 14px 30px rgba(79,70,229,0.45);
+    animation: heroBadgeFloat 3.2s ease-in-out infinite;
+}
+@keyframes heroBadgeFloat {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-6px); }
+}
+
+/* scaletta decorativa sotto al titolo */
+.hero-scale {
+    display: flex;
+    justify-content: center;
+    align-items: flex-end;
+    gap: 6px;
+    height: 74px;
+    margin: 18px auto 0;
+}
+.hero-chip {
+    padding: 4px 8px;
+    border-radius: 8px;
+    background: var(--c);
+    color: white;
+    font-family: "Sora", "Inter", Arial, sans-serif;
+    font-size: 0.72rem;
+    font-weight: 800;
+    text-shadow: 0 1px 2px rgba(0,0,0,0.6);
+    box-shadow: 0 1px 0 rgba(255,255,255,0.3) inset, 0 4px 10px rgba(0,0,0,0.3);
+    translate: 0 calc(var(--r) * -6px);
+    animation: chipWave 3.6s ease-in-out infinite;
+    animation-delay: calc(var(--r) * 0.11s);
+}
+@keyframes chipWave {
+    0%, 55%, 100% { transform: translateY(0) scale(1); }
+    64% { transform: translateY(-10px) scale(1.1); }
+    73% { transform: translateY(0) scale(1); }
+}
+
+.mode-grid {
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+    margin-top: 24px;
+}
+
+.mode-divider {
+    margin: 22px 0 4px;
+    border: none;
+    border-top: 1px solid var(--border-soft);
+}
+
+.mode-button {
+    border: none;
+    padding: 20px 22px;
+    border-radius: 16px;
+    color: white;
+    font-family: "Sora", "Inter", Arial, sans-serif;
+    font-size: 1.05rem;
+    font-weight: 700;
+    letter-spacing: 0.1px;
+    text-align: left;
+    cursor: pointer;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    box-shadow: 0 1px 0 rgba(255,255,255,0.22) inset, 0 10px 22px rgba(0,0,0,0.3);
+    transition: transform 0.15s var(--ease-out-soft), filter 0.15s, box-shadow 0.15s;
+}
+.mode-button:hover { transform: translateY(-3px); filter: brightness(1.08); box-shadow: 0 1px 0 rgba(255,255,255,0.25) inset, 0 16px 30px rgba(0,0,0,0.35); }
+.mode-button:active { transform: translateY(1px); }
+
+.mode-button-title { font-size: 1.08rem; font-weight: 800; }
+.mode-button-desc { font-size: 0.78rem; font-weight: 500; opacity: 0.85; letter-spacing: 0.1px; }
+
+.mode-button.training-1 { background: linear-gradient(135deg, #0ea5e9, #0369a1); }
+.mode-button.verifica { background: linear-gradient(135deg, #ec4899, #a21caf); }
+.mode-button.ver-up { background: linear-gradient(135deg, #6366f1, #4338ca); }
+.mode-button.ver-down { background: linear-gradient(135deg, #0ea5e9, #0369a1); }
+.mode-button.ver-mixed { background: linear-gradient(135deg, #f59e0b, #b45309); }
+
+.back-button {
+    margin-top: 22px;
+    border: 1px solid rgba(255,255,255,0.18);
+    padding: 12px 22px;
+    border-radius: 12px;
+    background: rgba(255,255,255,0.06);
+    color: #e2e8f0;
+    font-family: "Sora", "Inter", Arial, sans-serif;
+    font-size: 0.88rem;
+    font-weight: 700;
+    cursor: pointer;
+    transition: transform 0.15s var(--ease-out-soft), background 0.15s;
+}
+.back-button:hover { background: rgba(255,255,255,0.12); transform: translateY(-2px); }
+
+.site-home-button {
+    position: fixed;
+    top: 18px;
+    left: 18px;
+    z-index: 50;
+    width: 44px;
+    height: 44px;
+    border-radius: 50%;
+    border: 1px solid rgba(255,255,255,0.18);
+    background: linear-gradient(180deg, rgba(255,255,255,0.1), rgba(255,255,255,0.04));
+    color: #e2e8f0;
+    font-size: 1.15rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+    transition: transform 0.15s var(--ease-out-soft), background 0.15s;
+}
+.site-home-button:hover { background: linear-gradient(180deg, rgba(255,255,255,0.2), rgba(255,255,255,0.08)); transform: translateY(-2px); }
+
+/* SCHERMI PICCOLI */
+@media (max-width: 640px) {
+    body { padding: 70px 12px 40px; }
+    h1 { font-size: 1.8rem; }
+    .stats { gap: 6px; }
+    .stat { padding: 10px 4px; }
+    .stat-value { font-size: 1.05rem; }
+    .play-area { gap: 10px; }
+    .note-column { gap: 6px; }
+    .answer { width: 66px; padding: 12px 2px; font-size: 1rem; }
+    .stage { padding: 12px 10px 10px; }
+    .stage-start { font-size: 0.78rem; }
+    /* le 8 carte vanno su due righe da 4, senza scalinata */
+    .cards {
+        --step: 0px;
+        grid-template-columns: repeat(4, minmax(0, 1fr));
+        padding-top: 44px;
+        row-gap: 48px;
+    }
+    .level-footer { flex-wrap: wrap; }
+    .trophy-panel { right: 16px; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .card-anim[class*="enter-"],
+    .card-anim[class*="exit-"] { animation-duration: 0.01ms !important; }
+    .hero-chip, .hero-badge, .card-slot.current::before, .card-slot.current .card-back { animation: none; }
+    .card-flip { transition-duration: 0.2s; }
+}
+</style>
+</head>
+<body>
+
+<button class="site-home-button" id="siteHomeButton" title="Torna al sito">🏠</button>
+
+<!-- SCHERMATA INIZIALE: SCELTA MODALITÀ -->
+<div class="menu-screen" id="homeScreen">
+
+    <div class="hero-badge">🎶</div>
+    <h1>Recita le note</h1>
+
+    <div class="hero-scale" aria-hidden="true">
+        <span class="hero-chip" style="--r:0; --c:#ef4444">DO</span>
+        <span class="hero-chip" style="--r:1; --c:#f97316">RE</span>
+        <span class="hero-chip" style="--r:2; --c:#eab308">MI</span>
+        <span class="hero-chip" style="--r:3; --c:#22c55e">FA</span>
+        <span class="hero-chip" style="--r:4; --c:#06b6d4">SOL</span>
+        <span class="hero-chip" style="--r:5; --c:#3b82f6">LA</span>
+        <span class="hero-chip" style="--r:6; --c:#8b5cf6">SI</span>
+        <span class="hero-chip" style="--r:7; --c:#ef4444">DO</span>
+    </div>
+
+    <div class="mode-grid">
+        <button class="mode-button training-1" id="trainingButton">
+            <span class="mode-button-title">📘 Allenamento</span>
+            <span class="mode-button-desc">Recita la scala da ogni nota, un livello alla volta</span>
+        </button>
+        <hr class="mode-divider">
+        <button class="mode-button verifica" id="verificaButton">
+            <span class="mode-button-title">📝 Verifica</span>
+            <span class="mode-button-desc">Mettiti alla prova e scopri il tuo voto</span>
+        </button>
+    </div>
+
+</div>
+
+<!-- SCHERMATA VERIFICA: SCELTA DIREZIONE -->
+<div class="menu-screen" id="verificaMenuScreen" style="display: none;">
+
+    <h1>📝 Verifica</h1>
+    <p class="subtitle">Scegli da che parte cominciano le sequenze.</p>
+
+    <div class="mode-grid">
+        <button class="mode-button ver-up" id="verificaUpButton">
+            <span class="mode-button-title">↗ Si parte salendo</span>
+            <span class="mode-button-desc">7 giri, come do re mi… e ritorno</span>
+        </button>
+        <button class="mode-button ver-down" id="verificaDownButton">
+            <span class="mode-button-title">↘ Si parte scendendo</span>
+            <span class="mode-button-desc">7 giri, come do si la… e ritorno</span>
+        </button>
+        <button class="mode-button ver-mixed" id="verificaMixedButton">
+            <span class="mode-button-title">🔀 Mista</span>
+            <span class="mode-button-desc">7 giri, la direzione cambia a sorpresa</span>
+        </button>
+    </div>
+
+    <button class="back-button" id="verificaBackButton">← Indietro</button>
+
+</div>
+
+<!-- GIOCO -->
+<div class="game" id="gameContainer" style="display: none;">
+
+    <h1>🎶 Recita le note</h1>
+    <p class="subtitle" id="gameSubtitle">Ascolta la sequenza, poi scegli la nota della carta evidenziata.</p>
+
+    <div class="stats">
+        <div class="stat total"><span class="stat-label">Risposte</span><span class="stat-value" id="total">0</span></div>
+        <div class="stat correct" id="correctBox"><span class="stat-label">Corrette</span><span class="stat-value" id="correct">0</span></div>
+        <div class="stat errors" id="errorsBox"><span class="stat-label">Errori</span><span class="stat-value" id="errors">0</span></div>
+        <div class="stat streak" id="streakBox"><span class="stat-label">🏆 Serie</span><span class="stat-value" id="streak">0</span></div>
+        <div class="stat record"><span class="stat-label">👑 Record</span><span class="stat-value" id="record">0</span></div>
+    </div>
+
+    <div class="level-box" id="levelBox">
+        <div class="level-header">
+            <span class="level-title" id="levelTitle">⭐ Livello</span>
+            <span class="level-number" id="levelNumber">1 / 4</span>
+        </div>
+        <div class="progress-bar"><div class="progress-fill" id="progressFill"></div></div>
+        <div class="level-footer">
+            <span class="level-info" id="levelInfo">Giro 1 di 15</span>
+            <span class="level-timer" id="timerDisplay">⏱ 0:00</span>
+        </div>
+    </div>
+
+    <div class="play-area">
+
+        <div class="note-column waiting" id="noteColumn">
+            <button class="answer do"  data-note="0" title="Do (tasto 1)">Do</button>
+            <button class="answer re"  data-note="1" title="Re (tasto 2)">Re</button>
+            <button class="answer mi"  data-note="2" title="Mi (tasto 3)">Mi</button>
+            <button class="answer fa"  data-note="3" title="Fa (tasto 4)">Fa</button>
+            <button class="answer sol" data-note="4" title="Sol (tasto 5)">Sol</button>
+            <button class="answer la"  data-note="5" title="La (tasto 6)">La</button>
+            <button class="answer si"  data-note="6" title="Si (tasto 7)">Si</button>
+        </div>
+
+        <div class="stage" id="stage">
+            <div class="stage-header">
+                <span class="stage-start" id="stageStart"></span>
+                <div class="stage-header-right">
+                    <span class="dir-chip hidden" id="dirChip">↗ Salita</span>
+                    <button class="replay-button" id="replayButton" disabled title="Riascolta la sequenza">🔁 Riascolta</button>
+                </div>
+            </div>
+            <div class="cards" id="cards"></div>
+            <div class="message" id="message"></div>
+            <div class="fx-layer" id="fxLayer"></div>
+            <div class="stage-banner" id="stageBanner">
+                <div class="stage-banner-card">
+                    <span class="banner-badge" id="bannerBadge">⭐</span>
+                    <span class="banner-title" id="bannerTitle"></span>
+                    <span class="banner-text" id="bannerText"></span>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <div class="game-buttons">
+        <button class="menu-button home-menu-button" id="homeMenuButton">🏠 Menu</button>
+        <button class="menu-button" id="finishButton">Termina partita</button>
+        <button class="new-game" id="restartButton">🔄 Ricomincia</button>
+    </div>
+
+    <div class="toolbar">
+        <div class="volume-control">
+            <span class="volume-icon">🔊</span>
+            <input type="range" class="volume-slider" id="volumeSlider" min="0" max="100" value="75" aria-label="Volume">
+        </div>
+        <button class="toolbar-button" id="optionsButton" title="Opzioni">⚙️</button>
+        <button class="toolbar-button" id="trophyButton" title="Livelli completati">🏆</button>
+    </div>
+
+</div>
+
+<!-- PANNELLO TROFEI -->
+<div class="trophy-panel" id="trophyPanel">
+    <div class="trophy-panel-title">Livelli completati</div>
+
+    <div class="trophy-loop-controls" id="trophyLoopControls">
+        <div class="trophy-loop-title">🔁 Loop livelli (allenamento)</div>
+        <div class="trophy-loop-row">
+            <select id="loopStartSelect" aria-label="Primo livello del loop"></select>
+            <span>→</span>
+            <select id="loopEndSelect" aria-label="Ultimo livello del loop"></select>
+            <button class="options-choice" id="loopToggleButton">Attiva</button>
+        </div>
+    </div>
+
+    <div id="trophyList"></div>
+</div>
+
+<!-- PANNELLO OPZIONI -->
+<div class="options-panel" id="optionsPanel">
+    <div class="options-panel-title">Opzioni</div>
+
+    <div class="options-group-title first">Velocità delle note</div>
+    <div class="options-trio">
+        <button class="options-choice" data-speed="1.45">🐢 Lenta</button>
+        <button class="options-choice active" data-speed="1">Normale</button>
+        <button class="options-choice" data-speed="0.7">🐇 Veloce</button>
+    </div>
+
+    <div id="hintOptionsGroup">
+        <div class="options-group-title">Aiuto</div>
+        <label class="options-toggle-row">
+            <span>Suggerisci la nota dopo 2 errori</span>
+            <input type="checkbox" id="hintToggle" checked>
+        </label>
+    </div>
+</div>
+
+<!-- CONFERMA FINE PARTITA -->
+<div class="overlay" id="confirmOverlay">
+    <div class="overlay-card">
+        <h2 id="confirmFinishTitle">Terminare la partita?</h2>
+        <p>Le statistiche attuali verranno mostrate nel riepilogo finale.</p>
+        <div class="overlay-buttons">
+            <button class="menu-button" id="cancelFinish">Annulla</button>
+            <button class="finish-button" id="confirmFinish">Termina</button>
+        </div>
+    </div>
+</div>
+
+<!-- CONFERMA RITORNO AL MENU DALLA SCHERMATA FINALE (solo verifica) -->
+<div class="overlay" id="finalHomeConfirmOverlay">
+    <div class="overlay-card">
+        <h2>Tornare al menu?</h2>
+        <p>Sei sicuro di voler chiudere la schermata di riepilogo e tornare al menu?</p>
+        <div class="overlay-buttons">
+            <button class="menu-button" id="cancelFinalHome">Annulla</button>
+            <button class="finish-button" id="confirmFinalHome">Torna al menu</button>
+        </div>
+    </div>
+</div>
+
+<!-- SCHERMATA FINALE -->
+<div class="overlay" id="gameOver">
+    <div class="overlay-card">
+        <h2 id="resultTitle">Partita conclusa</h2>
+        <p id="resultSubtitle">Ecco come è andata.</p>
+        <div class="final-stats">
+            <div class="final-stat"><span id="finalLevelLabel">Livello raggiunto</span><strong id="finalLevel">1</strong></div>
+            <div class="final-stat"><span>Accuratezza</span><strong id="finalAccuracy">0%</strong></div>
+            <div class="final-stat"><span>Risposte corrette</span><strong id="finalCorrect">0</strong></div>
+            <div class="final-stat"><span>Errori</span><strong id="finalErrors">0</strong></div>
+            <div class="final-stat"><span>Tempo impiegato</span><strong id="finalTime">0:00</strong></div>
+            <div class="final-stat" id="finalReplaysBox"><span>Riascolti usati</span><strong id="finalReplays">Mai</strong></div>
+            <div class="final-stat" id="finalGradeBox" style="display: none;"><span>Voto</span><strong id="finalGrade">-</strong></div>
+        </div>
+        <div class="overlay-buttons">
+            <button class="menu-button home-menu-button" id="finalMenuButton">🏠 Menu</button>
+            <button class="new-game" id="playAgainButton">🔄 Gioca ancora</button>
+        </div>
+    </div>
+</div>
+
+<script>
+
+/* =========================================================
+   NOTE
+
+   Le note sono identificate da un indice diatonico
+   relativo al Do centrale (0 = Do4, 7 = Do5, -3 = Sol3).
+   Il nome si ricava dall'indice modulo 7; l'altezza reale
+   serve solo per il suono, così ogni sequenza sale o
+   scende davvero (da Re: Re Mi Fa Sol La Si Do Re, con
+   Do e Re finali all'ottava superiore).
+========================================================= */
+
+const NOTE_NAMES = ["Do", "Re", "Mi", "Fa", "Sol", "La", "Si"];
+const NOTE_COLORS = ["#ef4444", "#f97316", "#eab308", "#22c55e", "#06b6d4", "#3b82f6", "#8b5cf6"];
+const NOTE_INKS = ["#dc2626", "#ea580c", "#b45309", "#16a34a", "#0891b2", "#2563eb", "#7c3aed"];
+const SEMITONES = [0, 2, 4, 5, 7, 9, 11];
+
+const CARDS_PER_ROUND = 8;
+const ANSWERS_PER_ROUND = 14; // 7 in un verso + 7 nell'altro
+
+function mod7(n) { return ((n % 7) + 7) % 7; }
+
+function frequencyForDiatonic(d) {
+    const octave = Math.floor(d / 7);
+    const midi = 60 + octave * 12 + SEMITONES[mod7(d)];
+    return 440 * Math.pow(2, (midi - 69) / 12);
+}
+
+/*
+   Un "giro" è una partenza (0-6) e una direzione iniziale:
+   "up"   -> carte da sinistra a destra in salita, ritorno in discesa
+   "down" -> carte da sinistra a destra in discesa, ritorno in salita
+   Le partenze da Sol, La e Si suonano un'ottava più in basso,
+   così tutte le sequenze restano in un registro comodo.
+*/
+function buildRoundNotes(round) {
+    const base = round.start >= 4 ? round.start - 7 : round.start;
+    const notes = [];
+    for (let i = 0; i < CARDS_PER_ROUND; i++) {
+        const d = round.dir === "up" ? base + i : base + 7 - i;
+        notes.push({
+            d,
+            idx: mod7(d),
+            freq: frequencyForDiatonic(d),
+            rank: round.dir === "up" ? i : 7 - i
+        });
+    }
+    return notes;
+}
+
+/* =========================================================
+   LIVELLI
+
+   Ogni livello di allenamento è un "percorso" completo:
+   partenze da Do, Re, Mi… fino a Si in salita, ancora una
+   volta da Do, poi le sequenze che partono scendendo da
+   Si, La, Sol… fino a Do. Cambia solo quanto aiuto si
+   riceve prima di rispondere.
+========================================================= */
+
+const LEVELS = [
+    { name: "Guarda e ascolta", desc: "Le carte si scoprono e suonano, poi tocca a te.", demo: "full", order: "course", badge: "👀" },
+    { name: "Solo ascolto", desc: "Le carte suonano ma restano coperte.", demo: "sound", order: "course", badge: "👂" },
+    { name: "A memoria", desc: "Nessuna anteprima: si scopre solo la prima carta.", demo: "none", order: "course", badge: "🧠" },
+    { name: "Ordine sparso", desc: "Partenze e direzioni arrivano in ordine casuale.", demo: "none", order: "shuffle", badge: "🎲" }
+];
+
+const totalLevels = LEVELS.length;
+
+function courseRounds() {
+    const rounds = [];
+    for (let s = 0; s <= 6; s++) rounds.push({ start: s, dir: "up" });
+    rounds.push({ start: 0, dir: "up" });
+    for (let s = 6; s >= 0; s--) rounds.push({ start: s, dir: "down" });
+    return rounds;
+}
+
+function shuffle(array) {
+    const copy = [...array];
+    for (let i = copy.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [copy[i], copy[j]] = [copy[j], copy[i]];
+    }
+    return copy;
+}
+
+function shuffledRounds() {
+    const all = [];
+    for (let s = 0; s <= 6; s++) {
+        all.push({ start: s, dir: "up" });
+        all.push({ start: s, dir: "down" });
+    }
+    // evita due giri di fila con la stessa partenza
+    for (let attempt = 0; attempt < 40; attempt++) {
+        const mixed = shuffle(all);
+        if (mixed.every((r, i) => i === 0 || r.start !== mixed[i - 1].start)) return mixed;
+    }
+    return shuffle(all);
+}
+
+function verificaRounds(choice) {
+    return shuffle([0, 1, 2, 3, 4, 5, 6]).map(start => ({
+        start,
+        dir: choice === "up" ? "up" : choice === "down" ? "down" : (Math.random() < 0.5 ? "up" : "down")
+    }));
+}
+
+/* =========================================================
+   STATO
+========================================================= */
+
+let appMode = "training";      // "training" | "verifica"
+let verificaChoice = null;     // "up" | "down" | "mixed"
+
+let level = 1;
+let total = 0;
+let correct = 0;
+let errors = 0;
+let streak = 0;
+let record = 0;
+let finished = false;
+
+let rounds = [];
+let roundIndex = 0;
+let roundNotes = [];
+let answeredInRound = 0;
+let roundErrors = 0;
+let cardErrors = 0;
+let phase = "A";               // "A": da sinistra a destra, "B": ritorno
+let pos = 0;                   // carta da indovinare
+let answering = false;
+let busy = false;
+let replayCount = 0;
+
+let completedLevels = [];
+let levelErrorCounts = {};
+let levelCompletionCounts = {};
+let loopActive = false;
+let loopStart = 1;
+let loopEnd = 1;
+
+let speed = 1;
+let hintsOn = true;
+
+let slotEls = [];
+
+/*
+   Ogni sequenza animata (distribuzione delle carte,
+   dimostrazione, fine giro…) porta con sé un "gettone":
+   quando si ricomincia o si torna al menu il gettone
+   cambia e le sequenze ancora in corso si fermano da sole.
+*/
+let runToken = 0;
+const ABORT = Symbol("abort");
+
+function sleep(ms, tok, scaled = true) {
+    return new Promise((resolve, reject) => {
+        setTimeout(() => {
+            if (tok === runToken) resolve();
+            else reject(ABORT);
+        }, scaled ? ms * speed : ms);
+    });
+}
+
+function guard(promise) {
+    promise.catch(err => {
+        if (err !== ABORT) console.error(err);
+    });
+}
+
+/* =========================================================
+   ELEMENTI
+========================================================= */
+
+const $ = id => document.getElementById(id);
+
+const cardsEl = $("cards");
+const stage = $("stage");
+const fxLayer = $("fxLayer");
+const noteColumn = $("noteColumn");
+const noteButtons = Array.from(noteColumn.querySelectorAll(".answer"));
+const message = $("message");
+const stageStart = $("stageStart");
+const dirChip = $("dirChip");
+const replayButton = $("replayButton");
+const stageBanner = $("stageBanner");
+const bannerBadge = $("bannerBadge");
+const bannerTitle = $("bannerTitle");
+const bannerText = $("bannerText");
+const gameSubtitle = $("gameSubtitle");
+
+const totalEl = $("total");
+const correctEl = $("correct");
+const errorsEl = $("errors");
+const streakEl = $("streak");
+const recordEl = $("record");
+const correctBox = $("correctBox");
+const errorsBox = $("errorsBox");
+const streakBox = $("streakBox");
+const levelBox = $("levelBox");
+const levelTitle = $("levelTitle");
+const levelNumber = $("levelNumber");
+const progressFill = $("progressFill");
+const levelInfo = $("levelInfo");
+const timerDisplay = $("timerDisplay");
+
+const finishButton = $("finishButton");
+const restartButton = $("restartButton");
+const confirmOverlay = $("confirmOverlay");
+const confirmFinishTitle = $("confirmFinishTitle");
+const cancelFinish = $("cancelFinish");
+const confirmFinish = $("confirmFinish");
+const finalHomeConfirmOverlay = $("finalHomeConfirmOverlay");
+const cancelFinalHome = $("cancelFinalHome");
+const confirmFinalHome = $("confirmFinalHome");
+const gameOver = $("gameOver");
+const resultTitle = $("resultTitle");
+const resultSubtitle = $("resultSubtitle");
+const finalLevelLabel = $("finalLevelLabel");
+const finalLevel = $("finalLevel");
+const finalAccuracy = $("finalAccuracy");
+const finalCorrect = $("finalCorrect");
+const finalErrors = $("finalErrors");
+const finalTime = $("finalTime");
+const finalReplays = $("finalReplays");
+const finalGradeBox = $("finalGradeBox");
+const finalGrade = $("finalGrade");
+const playAgainButton = $("playAgainButton");
+
+const volumeSlider = $("volumeSlider");
+const trophyButton = $("trophyButton");
+const trophyPanel = $("trophyPanel");
+const trophyList = $("trophyList");
+const trophyLoopControls = $("trophyLoopControls");
+const loopStartSelect = $("loopStartSelect");
+const loopEndSelect = $("loopEndSelect");
+const loopToggleButton = $("loopToggleButton");
+const optionsButton = $("optionsButton");
+const optionsPanel = $("optionsPanel");
+const speedButtons = Array.from(optionsPanel.querySelectorAll("[data-speed]"));
+const hintToggle = $("hintToggle");
+const hintOptionsGroup = $("hintOptionsGroup");
+
+const gameContainer = $("gameContainer");
+const homeScreen = $("homeScreen");
+const verificaMenuScreen = $("verificaMenuScreen");
+const homeMenuButtons = document.querySelectorAll(".home-menu-button");
+
+/* =========================================================
+   AUDIO (toni generati via WebAudio)
+========================================================= */
+
+let audioContext = null;
+let masterGain = null;
+let masterVolume = 0.75;
+let noiseBuffer = null;
+
+function getAudioContext() {
+    if (!audioContext) {
+        audioContext = new (window.AudioContext || window.webkitAudioContext)();
+        masterGain = audioContext.createGain();
+        masterGain.gain.value = masterVolume;
+        masterGain.connect(audioContext.destination);
+    }
+    if (audioContext.state === "suspended") {
+        audioContext.resume();
+    }
+    return audioContext;
+}
+
+function tone(freq, duration, type, delay, peak, endFreq) {
+    const ctx = getAudioContext();
+    const osc = ctx.createOscillator();
+    const gain = ctx.createGain();
+    osc.type = type || "sine";
+    const startTime = ctx.currentTime + (delay || 0);
+    osc.frequency.setValueAtTime(freq, startTime);
+    if (endFreq) osc.frequency.exponentialRampToValueAtTime(endFreq, startTime + duration);
+    gain.gain.setValueAtTime(0.0001, startTime);
+    gain.gain.exponentialRampToValueAtTime(peak || 0.35, startTime + 0.01);
+    gain.gain.exponentialRampToValueAtTime(0.0001, startTime + duration);
+    osc.connect(gain);
+    gain.connect(masterGain);
+    osc.start(startTime);
+    osc.stop(startTime + duration + 0.05);
+}
+
+function noiseBurst(duration, freqFrom, freqTo, peak, delay, filterType) {
+    const ctx = getAudioContext();
+    if (!noiseBuffer) {
+        noiseBuffer = ctx.createBuffer(1, Math.floor(ctx.sampleRate * 0.6), ctx.sampleRate);
+        const data = noiseBuffer.getChannelData(0);
+        for (let i = 0; i < data.length; i++) data[i] = Math.random() * 2 - 1;
+    }
+    const src = ctx.createBufferSource();
+    src.buffer = noiseBuffer;
+    const filter = ctx.createBiquadFilter();
+    filter.type = filterType || "bandpass";
+    filter.Q.value = 1.2;
+    const start = ctx.currentTime + (delay || 0);
+    filter.frequency.setValueAtTime(freqFrom, start);
+    filter.frequency.exponentialRampToValueAtTime(freqTo, start + duration);
+    const gain = ctx.createGain();
+    gain.gain.setValueAtTime(0.0001, start);
+    gain.gain.exponentialRampToValueAtTime(peak, start + 0.012);
+    gain.gain.exponentialRampToValueAtTime(0.0001, start + duration);
+    src.connect(filter);
+    filter.connect(gain);
+    gain.connect(masterGain);
+    src.start(start);
+    src.stop(start + duration + 0.05);
+}
+
+function playClickSound() { tone(520, 0.08, "triangle", 0); }
+
+/* timbro "pianoforte" del gioco originale */
+function playNoteSound(freq, duration) {
+    const ctx = getAudioContext();
+    const now = ctx.currentTime;
+    const dur = duration || 1.6;
+
+    const filter = ctx.createBiquadFilter();
+    filter.type = "lowpass";
+    filter.frequency.setValueAtTime(6500, now);
+    filter.frequency.exponentialRampToValueAtTime(800, now + dur);
+    filter.Q.value = 0.6;
+    filter.connect(masterGain);
+
+    const harmonics = [
+        { mult: 1, gain: 0.5,  decay: dur },
+        { mult: 2, gain: 0.24, decay: dur * 0.8 },
+        { mult: 3, gain: 0.14, decay: dur * 0.6 },
+        { mult: 4, gain: 0.08, decay: dur * 0.45 },
+        { mult: 6, gain: 0.04, decay: dur * 0.3 }
+    ];
+
+    harmonics.forEach(h => {
+        const osc = ctx.createOscillator();
+        const gain = ctx.createGain();
+        osc.type = "sine";
+        osc.frequency.value = freq * h.mult;
+        gain.gain.setValueAtTime(0.0001, now);
+        gain.gain.exponentialRampToValueAtTime(h.gain, now + 0.01);
+        gain.gain.exponentialRampToValueAtTime(0.0001, now + h.decay);
+        osc.connect(gain);
+        gain.connect(filter);
+        osc.start(now);
+        osc.stop(now + h.decay + 0.05);
+    });
+}
+
+function playFlipSound() { noiseBurst(0.13, 900, 3200, 0.16, 0, "bandpass"); }
+function playDealSound(delay) {
+    noiseBurst(0.06, 2500, 5000, 0.2, delay, "highpass");
+    tone(1300, 0.05, "triangle", delay, 0.05);
+}
+function playWhooshSound() { noiseBurst(0.45, 400, 2800, 0.14, 0, "bandpass"); }
+
+/* errore: un "bwoing" discendente, buffo ma non punitivo */
+function playWrongSound() {
+    tone(330, 0.22, "triangle", 0, 0.3, 150);
+    tone(220, 0.18, "square", 0.02, 0.05, 110);
+}
+
+function playSparkle(count, delay) {
+    const pent = [1568, 1760, 2093, 2349, 2637, 3136];
+    for (let i = 0; i < (count || 5); i++) {
+        tone(pent[Math.floor(Math.random() * pent.length)], 0.22, "sine", (delay || 0) + i * 0.055 + Math.random() * 0.02, 0.07);
+    }
+}
+
+function playChime() {
+    tone(1318.5, 0.2, "triangle", 0, 0.18);
+    tone(1760, 0.3, "triangle", 0.08, 0.18);
+    playSparkle(3, 0.12);
+}
+
+/* tre piccoli jingle di fine giro, scelti a caso */
+const JINGLES = [
+    () => { // ta-daa
+        [523.25, 659.25, 783.99].forEach((f, i) => tone(f, 0.14, "triangle", i * 0.08, 0.28));
+        [1046.5, 1318.5, 1568].forEach(f => tone(f, 0.7, "sine", 0.26, 0.16));
+        playSparkle(5, 0.3);
+    },
+    () => { // scaletta pentatonica
+        [523.25, 587.33, 659.25, 783.99, 880, 1046.5].forEach((f, i) => tone(f, 0.12, "triangle", i * 0.055, 0.24));
+        tone(1568, 0.6, "sine", 0.36, 0.2);
+        tone(2093, 0.6, "sine", 0.36, 0.12);
+        playSparkle(4, 0.4);
+    },
+    () => { // do-do-mi-sol!
+        tone(783.99, 0.1, "square", 0, 0.08);
+        tone(1046.5, 0.1, "square", 0.1, 0.08);
+        tone(1318.5, 0.12, "triangle", 0.2, 0.25);
+        tone(1568, 0.55, "triangle", 0.32, 0.25);
+        tone(784, 0.55, "sine", 0.32, 0.15);
+        playSparkle(4, 0.34);
+    }
+];
+
+function playJingle() {
+    JINGLES[Math.floor(Math.random() * JINGLES.length)]();
+}
+
+function playLevelUpSound() {
+    [523, 659, 784, 1047].forEach((f, i) => tone(f, 0.18, "sine", i * 0.09));
+}
+
+function playVictorySound() {
+    const run = [523.25, 659.25, 783.99, 1046.50, 1318.51, 1567.98, 2093.00];
+    run.forEach((f, i) => tone(f, 0.32, "triangle", i * 0.1));
+    const chordStart = run.length * 0.1 + 0.06;
+    [1046.50, 1318.51, 1567.98, 2093.00].forEach(f => {
+        tone(f, 1.3, "sine", chordStart);
+        tone(f * 2, 0.7, "sine", chordStart);
+    });
+}
+
+/* =========================================================
+   UTILITÀ PER LE ANIMAZIONI
+========================================================= */
+
+function restartClass(el, className) {
+    el.classList.remove(className);
+    void el.offsetWidth;
+    el.classList.add(className);
+}
+
+function pick(list) { return list[Math.floor(Math.random() * list.length)]; }
+
+function flipEl(i) { return slotEls[i].querySelector(".card-flip"); }
+
+const FLIP_ANIMS = ["hop", "pop", "shake"];
+
+/* una sola animazione per volta sulla carta, sempre ripartendo da capo */
+function animateCard(i, className) {
+    const el = flipEl(i);
+    el.classList.remove(...FLIP_ANIMS);
+    void el.offsetWidth;
+    el.classList.add(className);
+}
+
+function cardGeometry(i) {
+    const r = flipEl(i).getBoundingClientRect();
+    const s = stage.getBoundingClientRect();
+    return {
+        x: r.left - s.left + r.width / 2,
+        y: r.top - s.top + r.height / 2,
+        top: r.top - s.top
+    };
+}
+
+function spawnFx(el, lifetime) {
+    fxLayer.appendChild(el);
+    setTimeout(() => el.remove(), lifetime);
+}
+
+function sparkleAt(i) {
+    const { x, y } = cardGeometry(i);
+    const color = NOTE_COLORS[roundNotes[i].idx];
+    for (let k = 0; k < 9; k++) {
+        const s = document.createElement("span");
+        s.className = "spark";
+        s.textContent = k % 3 === 0 ? "★" : "✦";
+        const angle = (k / 9) * Math.PI * 2 + Math.random() * 0.4;
+        const dist = 38 + Math.random() * 30;
+        s.style.left = x + "px";
+        s.style.top = y + "px";
+        s.style.color = k % 2 ? color : "#fde68a";
+        s.style.setProperty("--dx", Math.cos(angle) * dist + "px");
+        s.style.setProperty("--dy", Math.sin(angle) * dist + "px");
+        spawnFx(s, 800);
+    }
+}
+
+function floatNoteFrom(i) {
+    const { x, top } = cardGeometry(i);
+    const n = document.createElement("span");
+    n.className = "float-note";
+    n.textContent = pick(["♪", "♫", "♬"]);
+    n.style.left = x + "px";
+    n.style.top = (top - 6) + "px";
+    n.style.color = slotEls[i].classList.contains("revealed") ? NOTE_COLORS[roundNotes[i].idx] : "#e9d5ff";
+    n.style.setProperty("--dx", (Math.random() * 24 - 12) + "px");
+    n.style.setProperty("--rot", (Math.random() * 40 - 20) + "deg");
+    spawnFx(n, 1100);
+}
+
+const confettiColors = ["#f59e0b", "#22c55e", "#3b82f6", "#ec4899", "#a855f7", "#facc15", "#06b6d4"];
+
+function burstConfetti(count) {
+    for (let i = 0; i < count; i++) {
+        const piece = document.createElement("span");
+        piece.className = "confetti-piece";
+        const angle = Math.random() * Math.PI * 2;
+        const distance = 90 + Math.random() * 200;
+        piece.style.setProperty("--dx", Math.cos(angle) * distance + "px");
+        piece.style.setProperty("--dy", (Math.sin(angle) * distance * 0.7 - 30) + "px");
+        piece.style.setProperty("--rot", (Math.random() * 540 - 270) + "deg");
+        piece.style.background = confettiColors[i % confettiColors.length];
+        const size = 5 + Math.random() * 6;
+        piece.style.width = size + "px";
+        piece.style.height = size + "px";
+        piece.style.animationDelay = (Math.random() * 0.1) + "s";
+        spawnFx(piece, 1200);
+    }
+}
+
+function rainConfetti(count) {
+    const height = stage.clientHeight;
+    for (let i = 0; i < count; i++) {
+        const piece = document.createElement("span");
+        piece.className = "confetti-rain";
+        piece.style.left = (Math.random() * 100) + "%";
+        piece.style.background = confettiColors[i % confettiColors.length];
+        piece.style.setProperty("--fall", (height + 30) + "px");
+        piece.style.setProperty("--drift", (Math.random() * 80 - 40) + "px");
+        piece.style.setProperty("--rot", (Math.random() * 900 - 450) + "deg");
+        const dur = 1.4 + Math.random() * 1.2;
+        piece.style.setProperty("--dur", dur + "s");
+        piece.style.animationDelay = (Math.random() * 0.9) + "s";
+        spawnFx(piece, (dur + 1) * 1000);
+    }
+}
+
+function comboPop(text) {
+    const el = document.createElement("span");
+    el.className = "combo-pop";
+    el.textContent = text;
+    spawnFx(el, 1600);
+}
+
+function setMessage(text, kind) {
+    message.textContent = text;
+    message.className = "message" + (kind ? " " + kind : "");
+    if (text) restartClass(message, "pop");
+}
+
+function lightButton(idx) {
+    const btn = noteButtons[idx];
+    restartClass(btn, "lit");
+    clearTimeout(btn._litTimer);
+    btn._litTimer = setTimeout(() => btn.classList.remove("lit"), 420);
+}
+
+function clearHints() {
+    noteButtons.forEach(b => b.classList.remove("hint"));
+}
+
+function setWaiting(waiting) {
+    noteColumn.classList.toggle("waiting", waiting);
+    replayButton.disabled = waiting;
+}
+
+function setCurrent(i) {
+    slotEls.forEach((s, k) => s.classList.toggle("current", k === i));
+}
+
+function setDirChip(dir) {
+    dirChip.className = "dir-chip " + dir;
+    dirChip.textContent = dir === "up" ? "↗ Salita" : "↘ Discesa";
+    restartClass(dirChip, "flip");
+}
+
+function setStartLabel(round) {
+    const idx = round.start;
+    stageStart.innerHTML = "Partenza da <b class=\"start-chip\" style=\"background:" + NOTE_COLORS[idx] + "\">" +
+        NOTE_NAMES[idx].toUpperCase() + "</b>";
+    const chip = stageStart.querySelector(".start-chip");
+    restartClass(chip, "pop");
+}
+
+/* =========================================================
+   CARTE
+========================================================= */
+
+function renderCards(notes, enterStyle) {
+    cardsEl.innerHTML = "";
+    slotEls = [];
+
+    notes.forEach((n, i) => {
+        const slot = document.createElement("div");
+        slot.className = "card-slot";
+        slot.style.setProperty("--rank", n.rank);
+        slot.style.setProperty("--i", i);
+        slot.innerHTML =
+            "<div class=\"card-anim\">" +
+                "<div class=\"card-flip\">" +
+                    "<div class=\"card-face card-back\"></div>" +
+                    "<div class=\"card-face card-front\" style=\"--note-color:" + NOTE_COLORS[n.idx] + ";--note-ink:" + NOTE_INKS[n.idx] + "\">" +
+                        "<span class=\"card-name\">" + NOTE_NAMES[n.idx].toUpperCase() + "</span>" +
+                        "<span class=\"card-pip\"></span>" +
+                    "</div>" +
+                "</div>" +
+            "</div>";
+
+        const anim = slot.firstElementChild;
+        const cls = "enter-" + enterStyle;
+        anim.classList.add(cls);
+        anim.style.animationDelay = (i * 70) + "ms";
+        const onEnd = e => {
+            if (e.target !== anim) return;
+            anim.classList.remove(cls);
+            anim.style.animationDelay = "";
+            anim.removeEventListener("animationend", onEnd);
+        };
+        anim.addEventListener("animationend", onEnd);
+
+        cardsEl.appendChild(slot);
+        slotEls.push(slot);
+        playDealSound(i * 0.07 + 0.05);
+    });
+}
+
+function exitCards(style) {
+    const cls = "exit-" + style;
+    slotEls.forEach((slot, i) => {
+        slot.classList.remove("current");
+        const anim = slot.firstElementChild;
+        let delay = i * 50;
+        if (style === "sweep") delay = (7 - i) * 50;
+        if (style === "spin") delay = Math.abs(i - 3.5) * 60;
+        anim.style.animationDelay = delay + "ms";
+        anim.classList.add(cls);
+    });
+}
+
+function clearStage() {
+    cardsEl.innerHTML = "";
+    slotEls = [];
+    fxLayer.innerHTML = "";
+    stageBanner.classList.remove("show");
+    stageStart.innerHTML = "";
+    dirChip.className = "dir-chip hidden";
+    setMessage("");
+    clearHints();
+    setWaiting(true);
+}
+
+function reveal(i) {
+    slotEls[i].classList.add("revealed");
+    playFlipSound();
+}
+
+function cover(i) {
+    slotEls[i].classList.remove("revealed");
+}
+
+/* suona una carta con un saltello e una notina che vola via */
+function playCard(i, opts) {
+    const o = opts || {};
+    playNoteSound(roundNotes[i].freq, o.short ? 0.7 : 1.6);
+    if (o.hop !== false) animateCard(i, "hop");
+    floatNoteFrom(i);
+    if (o.light) lightButton(roundNotes[i].idx);
+}
+
+/* =========================================================
+   STRISCIONE
+========================================================= */
+
+async function showBanner(badge, title, text, tok, duration) {
+    bannerBadge.textContent = badge;
+    bannerTitle.textContent = title;
+    bannerText.textContent = text;
+    stageBanner.classList.add("show");
+    await sleep(duration || 2000, tok, false);
+    stageBanner.classList.remove("show");
+    await sleep(300, tok, false);
+}
+
+/* =========================================================
+   SVOLGIMENTO DEL GIOCO
+========================================================= */
+
+function currentDemo() {
+    return appMode === "verifica" ? "none" : LEVELS[level - 1].demo;
+}
+
+function phaseDirection() {
+    const dir = rounds[roundIndex].dir;
+    if (phase === "A") return dir;
+    return dir === "up" ? "down" : "up";
+}
+
+async function startLevel(tok, levelUp) {
+    if (appMode === "verifica") {
+        rounds = verificaRounds(verificaChoice);
+    } else {
+        rounds = LEVELS[level - 1].order === "shuffle" ? shuffledRounds() : courseRounds();
+    }
+    roundIndex = 0;
+    answeredInRound = 0;
+    clearStage();
+    updateStats();
+    if (trophyPanel.classList.contains("show")) renderTrophyList();
+
+    if (levelUp) {
+        playLevelUpSound();
+        restartClass(levelBox, "bump");
+        rainConfetti(50);
+    }
+
+    if (appMode === "verifica") {
+        const texts = {
+            up: "7 giri che partono salendo, in ordine sparso.",
+            down: "7 giri che partono scendendo, in ordine sparso.",
+            mixed: "7 giri: la direzione cambia a sorpresa."
+        };
+        await showBanner("📝", "Verifica", texts[verificaChoice] + " Nessuna anteprima.", tok, 2300);
+    } else {
+        const info = LEVELS[level - 1];
+        await showBanner(info.badge, "Livello " + level + ": " + info.name, info.desc, tok, 2300);
+    }
+
+    await startRound(tok);
+}
+
+async function startRound(tok) {
+    const round = rounds[roundIndex];
+    roundNotes = buildRoundNotes(round);
+    answeredInRound = 0;
+    roundErrors = 0;
+    cardErrors = 0;
+    phase = "A";
+    answering = false;
+    setWaiting(true);
+    clearHints();
+    setMessage("");
+    updateStats();
+
+    setStartLabel(round);
+    setDirChip(round.dir);
+    renderCards(roundNotes, pick(["deal", "drop", "pop"]));
+    await sleep(700 + CARDS_PER_ROUND * 70, tok, false);
+
+    const T = 560;
+    const demo = currentDemo();
+
+    if (demo === "full") {
+        // si scoprono una alla volta, da sinistra a destra
+        for (let i = 0; i < CARDS_PER_ROUND; i++) {
+            reveal(i);
+            playCard(i, { light: true, hop: false });
+            animateCard(i, "pop");
+            await sleep(T, tok);
+        }
+        await sleep(T * 0.5, tok);
+        // e risuonano all'indietro
+        setDirChip(round.dir === "up" ? "down" : "up");
+        for (let i = CARDS_PER_ROUND - 1; i >= 0; i--) {
+            playCard(i, { light: true });
+            await sleep(T * 0.8, tok);
+        }
+        await sleep(T * 0.6, tok);
+        // si rigirano tutte tranne la prima
+        setDirChip(round.dir);
+        for (let i = CARDS_PER_ROUND - 1; i >= 1; i--) {
+            cover(i);
+            if (i % 2 === 1) playFlipSound();
+            await sleep(65, tok, false);
+        }
+        await sleep(650, tok, false);
+
+    } else if (demo === "sound") {
+        reveal(0);
+        playCard(0, { light: true, hop: false });
+        animateCard(0, "pop");
+        await sleep(T, tok);
+        for (let i = 1; i < CARDS_PER_ROUND; i++) {
+            playCard(i);
+            await sleep(T, tok);
+        }
+        await sleep(T * 0.5, tok);
+        setDirChip(round.dir === "up" ? "down" : "up");
+        for (let i = CARDS_PER_ROUND - 1; i >= 0; i--) {
+            playCard(i);
+            await sleep(T * 0.8, tok);
+        }
+        await sleep(T * 0.6, tok);
+        setDirChip(round.dir);
+        await sleep(250, tok, false);
+
+    } else {
+        reveal(0);
+        playCard(0, { light: true, hop: false });
+        animateCard(0, "pop");
+        await sleep(650, tok, false);
+    }
+
+    startPhase("A");
+}
+
+function startPhase(p) {
+    phase = p;
+    pos = p === "A" ? 1 : CARDS_PER_ROUND - 2;
+    cardErrors = 0;
+    setDirChip(phaseDirection());
+    setCurrent(pos);
+    answering = true;
+    setWaiting(false);
+}
+
+async function endPhaseA(tok) {
+    setWaiting(true);
+    setCurrent(-1);
+    await sleep(500, tok, false);
+
+    setMessage("E ora si torna indietro! ↩", "info-message");
+    setDirChip(phaseDirection() === "up" ? "down" : "up");
+
+    // l'ultima carta risuona: da lì parte il ritorno
+    playCard(CARDS_PER_ROUND - 1, { light: false });
+    await sleep(650, tok);
+
+    for (let i = 0; i < CARDS_PER_ROUND - 1; i++) {
+        cover(i);
+        if (i % 2 === 0) playFlipSound();
+        await sleep(65, tok, false);
+    }
+    await sleep(550, tok, false);
+    startPhase("B");
+}
+
+async function endRound(tok) {
+    setWaiting(true);
+    setCurrent(-1);
+    const perfect = roundErrors === 0;
+    await sleep(420, tok, false);
+
+    // corsa finale: tutta la formula, veloce, con la ola delle carte
+    const order = [];
+    for (let i = 0; i < CARDS_PER_ROUND; i++) order.push(i);
+    for (let i = CARDS_PER_ROUND - 1; i >= 0; i--) order.push(i);
+    for (const i of order) {
+        playCard(i, { light: true, short: true });
+        await sleep(115, tok);
+    }
+    await sleep(180, tok, false);
+
+    playJingle();
+    burstConfetti(perfect ? 46 : 28);
+    if (perfect) slotEls.forEach(s => s.classList.add("shine"));
+    setMessage(perfect
+        ? pick(["Giro perfetto! ✨", "Impeccabile! 🌟", "Nemmeno un errore! 🎯"])
+        : pick(["Giro completato! 🎉", "Ben fatto! 👏", "Avanti così! 🚀"]),
+        "correct-message");
+
+    await sleep(1100, tok, false);
+
+    exitCards(pick(["fly", "sweep", "spin"]));
+    playWhooshSound();
+    await sleep(900, tok, false);
+
+    roundIndex++;
+    answeredInRound = 0;
+    updateStats();
+
+    if (roundIndex >= rounds.length) {
+        await levelComplete(tok);
+    } else {
+        await startRound(tok);
+    }
+}
+
+async function levelComplete(tok) {
+    if (appMode === "verifica") {
+        clearStage();
+        playVictorySound();
+        rainConfetti(70);
+        await sleep(1400, tok, false);
+        showFinalScreen("completed");
+        return;
+    }
+
+    levelCompletionCounts[level] = (levelCompletionCounts[level] || 0) + 1;
+    if (!completedLevels.includes(level)) completedLevels.push(level);
+
+    if (loopActive && level === loopEnd) {
+        level = loopStart;
+    } else if (level >= totalLevels) {
+        clearStage();
+        playVictorySound();
+        rainConfetti(80);
+        await sleep(1500, tok, false);
+        showFinalScreen("completed");
+        return;
+    } else {
+        level++;
+    }
+
+    await startLevel(tok, true);
+}
+
+/* riascolta la formula completa, senza scoprire le carte */
+async function replaySequence(tok) {
+    if (!answering || busy || finished) return;
+    busy = true;
+    answering = false;
+    setWaiting(true);
+    replayCount++;
+    const keep = pos;
+    setCurrent(-1);
+    clearHints();
+
+    try {
+        const T = 520;
+        for (let i = 0; i < CARDS_PER_ROUND; i++) {
+            playCard(i);
+            await sleep(T * 0.8, tok);
+        }
+        await sleep(T * 0.3, tok);
+        for (let i = CARDS_PER_ROUND - 1; i >= 0; i--) {
+            playCard(i);
+            await sleep(T * 0.8, tok);
+        }
+        await sleep(250, tok, false);
+    } catch (e) {
+        busy = false;
+        throw e;
+    }
+
+    busy = false;
+    setCurrent(keep);
+    answering = true;
+    setWaiting(false);
+}
+
+/* =========================================================
+   RISPOSTA
+========================================================= */
+
+function checkAnswer(noteIdx, btn) {
+    if (finished || !answering) return;
+
+    total++;
+    const expected = roundNotes[pos].idx;
+
+    if (noteIdx === expected) {
+        correct++;
+        streak++;
+        if (streak > record) record = streak;
+        answeredInRound++;
+        restartClass(correctBox, "bump");
+        clearHints();
+        restartClass(btn, "good");
+
+        const i = pos;
+        slotEls[i].classList.remove("current");
+        reveal(i);
+        playCard(i, { light: true, hop: false });
+        animateCard(i, "pop");
+        sparkleAt(i);
+        if (answeredInRound === 1 || phase === "B") setMessage("");
+
+        if (streak > 0 && streak % 10 === 0) {
+            comboPop("🔥 " + streak + " di fila!");
+            restartClass(streakBox, "bump");
+            playChime();
+        }
+
+        if (phase === "A" && pos === CARDS_PER_ROUND - 1) {
+            answering = false;
+            guard(endPhaseA(runToken));
+        } else if (phase === "B" && pos === 0) {
+            answering = false;
+            guard(endRound(runToken));
+        } else {
+            pos += phase === "A" ? 1 : -1;
+            cardErrors = 0;
+            setCurrent(pos);
+        }
+    } else {
+        errors++;
+        streak = 0;
+        roundErrors++;
+        cardErrors++;
+        const key = appMode === "verifica" ? "v" : level;
+        levelErrorCounts[key] = (levelErrorCounts[key] || 0) + 1;
+
+        playWrongSound();
+        restartClass(errorsBox, "bump");
+        restartClass(btn, "wrong-flash");
+        animateCard(pos, "shake");
+        restartClass(slotEls[pos].querySelector(".card-back"), "oops");
+
+        if (hintsOn && appMode === "training" && cardErrors >= 2) {
+            noteButtons[expected].classList.add("hint");
+        }
+    }
+
+    updateStats();
+}
+
+noteButtons.forEach(btn => {
+    btn.addEventListener("click", () => {
+        checkAnswer(parseInt(btn.dataset.note, 10), btn);
+    });
+});
+
+// tasti 1-7 = Do-Si
+document.addEventListener("keydown", e => {
+    if (gameContainer.style.display === "none") return;
+    if (e.ctrlKey || e.metaKey || e.altKey) return;
+    const n = parseInt(e.key, 10);
+    if (n >= 1 && n <= 7) {
+        const btn = noteButtons[n - 1];
+        checkAnswer(n - 1, btn);
+    }
+});
+
+cardsEl.addEventListener("animationend", e => {
+    const t = e.target;
+    if (t.classList.contains("card-flip")) t.classList.remove(...FLIP_ANIMS);
+    if (t.classList.contains("card-back")) t.classList.remove("oops");
+});
+
+noteButtons.forEach(btn => {
+    btn.addEventListener("animationend", e => {
+        if (e.animationName === "goodPop") btn.classList.remove("good");
+        if (e.animationName === "buttonShake") btn.classList.remove("wrong-flash");
+    });
+});
+
+replayButton.addEventListener("click", () => {
+    playClickSound();
+    guard(replaySequence(runToken));
+});
+
+/* =========================================================
+   STATISTICHE
+========================================================= */
+
+function updateStats() {
+    totalEl.textContent = total;
+    correctEl.textContent = correct;
+    errorsEl.textContent = errors;
+    streakEl.textContent = streak;
+    recordEl.textContent = record;
+
+    const target = (rounds.length * ANSWERS_PER_ROUND) || 1;
+    const done = roundIndex * ANSWERS_PER_ROUND + answeredInRound;
+    progressFill.style.width = Math.min(100, Math.round((done / target) * 100)) + "%";
+
+    const shownRound = Math.min(roundIndex + 1, rounds.length || 1);
+
+    if (appMode === "verifica") {
+        levelTitle.textContent = "📝 Verifica";
+        levelNumber.textContent = "Giro " + shownRound + " / " + (rounds.length || 7);
+        levelInfo.textContent = done + " / " + target + " note";
+    } else {
+        levelTitle.textContent = "⭐ Livello";
+        levelNumber.textContent = level + " / " + totalLevels;
+        levelInfo.textContent = LEVELS[level - 1].name + ": giro " + shownRound + " di " + (rounds.length || 15);
+    }
+}
+
+/* =========================================================
+   TROFEI
+========================================================= */
+
+function populateLoopSelects() {
+    const build = selected => {
+        let html = "";
+        for (let i = 1; i <= totalLevels; i++) {
+            html += "<option value=\"" + i + "\"" + (i === selected ? " selected" : "") + ">Livello " + i + "</option>";
+        }
+        return html;
+    };
+    loopStartSelect.innerHTML = build(loopStart);
+    loopEndSelect.innerHTML = build(loopEnd);
+}
+
+function renderTrophyList() {
+    trophyLoopControls.classList.toggle("visible", appMode === "training");
+    if (appMode === "training") {
+        populateLoopSelects();
+        loopToggleButton.textContent = loopActive ? "Disattiva" : "Attiva";
+        loopToggleButton.classList.toggle("active", loopActive);
+    }
+
+    trophyList.innerHTML = "";
+    for (let i = 1; i <= totalLevels; i++) {
+        const row = document.createElement("div");
+        const done = completedLevels.includes(i);
+        const playing = appMode === "training" && i === level && !finished;
+        const attempted = levelErrorCounts[i] !== undefined || done || playing;
+        const completions = levelCompletionCounts[i] || 0;
+        const inLoop = loopActive && i >= loopStart && i <= loopEnd;
+
+        row.className = "trophy-row" + (done ? " done" : "") + (inLoop ? " in-loop" : "") + (playing ? " playing" : "");
+
+        const parts = [LEVELS[i - 1].name];
+        if (attempted) {
+            const count = levelErrorCounts[i] || 0;
+            parts.push(count === 1 ? "1 errore" : count + " errori");
+        }
+        if (completions > 0) {
+            parts.push("completato " + completions + (completions === 1 ? " volta" : " volte"));
+        }
+
+        const statusIcon = inLoop ? "🔁" : (done ? "✅" : (playing ? "▶️" : "🔒"));
+
+        row.innerHTML =
+            "<div class=\"trophy-row-main\"><span>" + LEVELS[i - 1].badge + " Livello " + i + "</span><span>" + statusIcon + "</span></div>" +
+            "<div class=\"trophy-row-details\">" + parts.join(", ") + "</div>";
+
+        trophyList.appendChild(row);
+    }
+}
+
+/* =========================================================
+   TIMER
+========================================================= */
+
+let timerInterval = null;
+let startTimestamp = null;
+
+function formatTime(totalSeconds) {
+    const m = Math.floor(totalSeconds / 60);
+    const s = totalSeconds % 60;
+    return m + ":" + String(s).padStart(2, "0");
+}
+
+function updateTimerDisplay() {
+    if (!startTimestamp) return;
+    const elapsed = Math.floor((Date.now() - startTimestamp) / 1000);
+    timerDisplay.textContent = "⏱ " + formatTime(elapsed);
+}
+
+function startTimer() {
+    clearInterval(timerInterval);
+    startTimestamp = Date.now();
+    updateTimerDisplay();
+    timerInterval = setInterval(updateTimerDisplay, 500);
+}
+
+function stopTimer() {
+    clearInterval(timerInterval);
+    timerInterval = null;
+    return startTimestamp ? Math.floor((Date.now() - startTimestamp) / 1000) : 0;
+}
+
+/* =========================================================
+   VOTO (come nel gioco originale)
+   Da 4 a 10 con mezzi voti, lineare sull'accuratezza;
+   mostrato solo se sufficiente.
+========================================================= */
+
+function computeGrade() {
+    if (total === 0) return 4;
+    const raw = 4 + 6 * (correct / total);
+    return Math.round(Math.min(10, Math.max(4, raw)) * 2) / 2;
+}
+
+function formatGrade(grade) {
+    return Number.isInteger(grade) ? String(grade) : grade.toFixed(1).replace(".", ",");
+}
+
+/* =========================================================
+   FINE PARTITA
+========================================================= */
+
+function showFinalScreen(reason) {
+    finished = true;
+    runToken++;
+    answering = false;
+    setWaiting(true);
+
+    const elapsedSeconds = stopTimer();
+    const accuracy = total > 0 ? Math.round((correct / total) * 100) : 0;
+    const grade = computeGrade();
+
+    if (appMode === "verifica") {
+        resultTitle.textContent = reason === "completed" ? "Verifica completata! 🎉" : "Verifica conclusa";
+        finalLevelLabel.textContent = "Giri completati";
+        finalLevel.textContent = roundIndex + " / " + rounds.length;
+    } else {
+        resultTitle.textContent = reason === "completed" ? "Tutti i livelli completati! 🏆" : "Partita conclusa";
+        finalLevelLabel.textContent = "Livello raggiunto";
+        finalLevel.textContent = level + " / " + totalLevels;
+    }
+    resultSubtitle.textContent = "Ecco il tuo riepilogo.";
+    finalAccuracy.textContent = accuracy + "%";
+    finalCorrect.textContent = correct;
+    finalErrors.textContent = errors;
+    finalTime.textContent = formatTime(elapsedSeconds);
+    finalReplays.textContent = replayCount === 0 ? "Mai" : String(replayCount);
+    // in verifica il riascolto non esiste: la voce non serve
+    $("finalReplaysBox").style.display = appMode === "verifica" ? "none" : "";
+
+    if (grade >= 6) {
+        finalGrade.textContent = formatGrade(grade);
+        finalGradeBox.style.display = "";
+    } else {
+        finalGradeBox.style.display = "none";
+    }
+
+    homeMenuButtons.forEach(btn => btn.classList.toggle("visible", appMode === "training"));
+    playAgainButton.textContent = appMode === "verifica" ? "🏠 Vai al menu" : "🔄 Gioca ancora";
+
+    gameOver.classList.add("show");
+}
+
+function newGame() {
+    runToken++;
+    finished = false;
+    total = 0;
+    correct = 0;
+    errors = 0;
+    streak = 0;
+    record = 0;
+    level = appMode === "training" && loopActive ? loopStart : 1;
+    completedLevels = [];
+    levelErrorCounts = {};
+    replayCount = 0;
+    busy = false;
+    answering = false;
+    rounds = [];
+    roundIndex = 0;
+    answeredInRound = 0;
+    gameOver.classList.remove("show");
+    if (appMode === "training") {
+        homeMenuButtons.forEach(btn => btn.classList.add("visible"));
+    }
+    startTimer();
+    updateStats();
+    guard(startLevel(runToken, false));
+}
+
+finishButton.addEventListener("click", () => confirmOverlay.classList.add("show"));
+cancelFinish.addEventListener("click", () => confirmOverlay.classList.remove("show"));
+confirmFinish.addEventListener("click", () => {
+    confirmOverlay.classList.remove("show");
+    showFinalScreen("manual");
+});
+confirmOverlay.addEventListener("click", e => {
+    if (e.target === confirmOverlay) confirmOverlay.classList.remove("show");
+});
+restartButton.addEventListener("click", newGame);
+
+playAgainButton.addEventListener("click", () => {
+    if (appMode === "verifica") finalHomeConfirmOverlay.classList.add("show");
+    else newGame();
+});
+cancelFinalHome.addEventListener("click", () => finalHomeConfirmOverlay.classList.remove("show"));
+confirmFinalHome.addEventListener("click", () => {
+    finalHomeConfirmOverlay.classList.remove("show");
+    goHome();
+});
+finalHomeConfirmOverlay.addEventListener("click", e => {
+    if (e.target === finalHomeConfirmOverlay) finalHomeConfirmOverlay.classList.remove("show");
+});
+
+volumeSlider.addEventListener("input", () => {
+    masterVolume = volumeSlider.value / 100;
+    if (masterGain) masterGain.gain.value = masterVolume;
+});
+
+/* =========================================================
+   PANNELLI
+========================================================= */
+
+trophyButton.addEventListener("click", e => {
+    e.stopPropagation();
+    playClickSound();
+    restartClass(trophyButton, "bump");
+    optionsPanel.classList.remove("show");
+    if (!trophyPanel.classList.contains("show")) renderTrophyList();
+    trophyPanel.classList.toggle("show");
+});
+
+optionsButton.addEventListener("click", e => {
+    e.stopPropagation();
+    playClickSound();
+    restartClass(optionsButton, "bump");
+    trophyPanel.classList.remove("show");
+    optionsPanel.classList.toggle("show");
+});
+
+speedButtons.forEach(btn => {
+    btn.addEventListener("click", () => {
+        playClickSound();
+        restartClass(btn, "bump");
+        speed = parseFloat(btn.dataset.speed);
+        speedButtons.forEach(b => b.classList.toggle("active", b === btn));
+    });
+});
+
+hintToggle.addEventListener("change", () => {
+    hintsOn = hintToggle.checked;
+    if (!hintsOn) clearHints();
+});
+
+loopStartSelect.addEventListener("click", e => e.stopPropagation());
+loopEndSelect.addEventListener("click", e => e.stopPropagation());
+
+loopStartSelect.addEventListener("change", () => {
+    loopStart = parseInt(loopStartSelect.value, 10);
+    if (loopStart > loopEnd) loopEnd = loopStart;
+    if (loopActive) applyLoopJump();
+    renderTrophyList();
+});
+
+loopEndSelect.addEventListener("change", () => {
+    loopEnd = parseInt(loopEndSelect.value, 10);
+    if (loopEnd < loopStart) loopStart = loopEnd;
+    if (loopActive) applyLoopJump();
+    renderTrophyList();
+});
+
+function applyLoopJump() {
+    if (level >= loopStart && level <= loopEnd) return;
+    runToken++;
+    level = loopStart;
+    busy = false;
+    answering = false;
+    guard(startLevel(runToken, true));
+}
+
+loopToggleButton.addEventListener("click", e => {
+    e.stopPropagation();
+    playClickSound();
+    restartClass(loopToggleButton, "bump");
+    loopActive = !loopActive;
+    if (loopActive) applyLoopJump();
+    renderTrophyList();
+});
+
+document.addEventListener("click", e => {
+    if (!trophyPanel.contains(e.target) && e.target !== trophyButton) {
+        trophyPanel.classList.remove("show");
+    }
+    if (!optionsPanel.contains(e.target) && e.target !== optionsButton) {
+        optionsPanel.classList.remove("show");
+    }
+});
+
+/* =========================================================
+   NAVIGAZIONE TRA SCHERMATE
+========================================================= */
+
+function showScreen(name) {
+    homeScreen.style.display = name === "home" ? "" : "none";
+    verificaMenuScreen.style.display = name === "verificaMenu" ? "" : "none";
+    gameContainer.style.display = name === "game" ? "" : "none";
+}
+
+function goHome() {
+    runToken++;
+    busy = false;
+    answering = false;
+    clearInterval(timerInterval);
+    clearStage();
+    gameOver.classList.remove("show");
+    confirmOverlay.classList.remove("show");
+    optionsPanel.classList.remove("show");
+    trophyPanel.classList.remove("show");
+    showScreen("home");
+}
+
+function startTraining() {
+    getAudioContext();
+    appMode = "training";
+    verificaChoice = null;
+    loopActive = false;
+    loopStart = 1;
+    loopEnd = 1;
+
+    hintOptionsGroup.style.display = "";
+    trophyButton.style.display = "";
+    replayButton.style.display = "";
+    homeMenuButtons.forEach(btn => btn.classList.add("visible"));
+    restartButton.style.display = "";
+    finishButton.textContent = "Termina partita";
+    confirmFinishTitle.textContent = "Terminare la partita?";
+    gameSubtitle.textContent = "Ascolta la sequenza, poi scegli la nota della carta evidenziata.";
+
+    showScreen("game");
+    newGame();
+}
+
+function startVerifica(choice) {
+    getAudioContext();
+    appMode = "verifica";
+    verificaChoice = choice;
+
+    // in verifica niente suggerimenti, riascolti o cambi di livello
+    hintOptionsGroup.style.display = "none";
+    trophyButton.style.display = "none";
+    replayButton.style.display = "none";
+    homeMenuButtons.forEach(btn => btn.classList.remove("visible"));
+    restartButton.style.display = "none";
+    finishButton.textContent = "Fine verifica";
+    confirmFinishTitle.textContent = "Terminare la verifica?";
+    gameSubtitle.textContent = "Scegli la nota di ogni carta evidenziata, andata e ritorno.";
+
+    showScreen("game");
+    newGame();
+}
+
+$("trainingButton").addEventListener("click", startTraining);
+$("verificaButton").addEventListener("click", () => showScreen("verificaMenu"));
+$("verificaBackButton").addEventListener("click", () => showScreen("home"));
+$("verificaUpButton").addEventListener("click", () => startVerifica("up"));
+$("verificaDownButton").addEventListener("click", () => startVerifica("down"));
+$("verificaMixedButton").addEventListener("click", () => startVerifica("mixed"));
+
+homeMenuButtons.forEach(btn => btn.addEventListener("click", goHome));
+
+// pulsante verso il sito che ospita il gioco: da collegare in seguito
+$("siteHomeButton").addEventListener("click", () => {});
+
+/* =========================================================
+   AVVIO
+========================================================= */
+
+showScreen("home");
+
+</script>
+</body>
+</html>
