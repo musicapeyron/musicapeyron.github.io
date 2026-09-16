@@ -101,6 +101,143 @@ body::before {
     mix-blend-mode: overlay;
 }
 
+
+/* =========================================================
+   SCELTA DISPOSITIVO
+========================================================= */
+
+.device-select {
+    position: fixed;
+    inset: 0;
+
+    z-index: 500;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    padding: 24px;
+
+    background:
+        radial-gradient(
+            circle at 50% 0%,
+            #3730a3 0%,
+            transparent 45%
+        ),
+        linear-gradient(
+            135deg,
+            #0f172a,
+            #1e1b4b
+        );
+}
+
+.device-select.hidden {
+    display: none;
+}
+
+.device-select-card {
+    width: min(640px, 100%);
+
+    text-align: center;
+}
+
+.device-select-title {
+    font-family: "Sora", "Inter", Arial, sans-serif;
+    font-size: 1.8rem;
+    font-weight: 800;
+
+    margin: 0 0 8px;
+}
+
+.device-select-subtitle {
+    color: #cbd5e1;
+
+    font-size: 1rem;
+
+    margin: 0 0 34px;
+}
+
+.device-select-buttons {
+    display: flex;
+
+    flex-wrap: wrap;
+
+    justify-content: center;
+
+    gap: 20px;
+}
+
+.device-button {
+    flex: 1 1 240px;
+    max-width: 280px;
+
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+
+    gap: 8px;
+
+    padding: 30px 22px;
+
+    border: 1px solid rgba(255,255,255,0.16);
+
+    border-radius: 20px;
+
+    background:
+        linear-gradient(
+            180deg,
+            rgba(255,255,255,0.09),
+            rgba(255,255,255,0.04)
+        );
+
+    color: white;
+
+    cursor: pointer;
+
+    box-shadow:
+        0 1px 0 rgba(255,255,255,0.08) inset,
+        0 16px 34px rgba(0,0,0,0.35);
+
+    transition:
+        transform 0.15s var(--ease-out-soft),
+        box-shadow 0.15s,
+        background 0.15s;
+}
+
+.device-button:hover {
+    transform: translateY(-3px);
+
+    background:
+        linear-gradient(
+            180deg,
+            rgba(255,255,255,0.16),
+            rgba(255,255,255,0.07)
+        );
+
+    box-shadow:
+        0 0 24px rgba(129,140,248,0.35),
+        0 16px 34px rgba(0,0,0,0.4);
+}
+
+.device-button-icon {
+    font-size: 2.6rem;
+}
+
+.device-button-label {
+    font-family: "Sora", "Inter", Arial, sans-serif;
+    font-size: 1.15rem;
+    font-weight: 800;
+}
+
+.device-button-desc {
+    font-size: 0.82rem;
+
+    color: #cbd5e1;
+
+    line-height: 1.4;
+}
+
+
 .game {
     position: relative;
     z-index: 1;
@@ -910,26 +1047,6 @@ h1 {
 
     text-shadow:
         0 3px 10px rgba(0,0,0,0.35);
-
-    animation:
-        titleBreath
-        6s
-        ease-in-out
-        infinite;
-}
-
-@keyframes titleBreath {
-
-    0%,
-    100% {
-        text-shadow:
-            0 3px 10px rgba(0,0,0,0.35);
-    }
-
-    50% {
-        text-shadow:
-            0 3px 14px rgba(99,102,241,0.25);
-    }
 }
 
 .subtitle {
@@ -1102,62 +1219,6 @@ h1 {
 }
 
 
-/*
-   Riflesso luminoso che attraversa
-   lentamente la parte riempita.
-*/
-
-.progress-fill::after {
-    content: "";
-
-    position: absolute;
-
-    top: 0;
-    bottom: 0;
-
-    width: 70px;
-
-    left: -80px;
-
-    background:
-        linear-gradient(
-            90deg,
-            transparent,
-            rgba(255,255,255,0.45),
-            transparent
-        );
-
-    transform:
-        skewX(-20deg);
-
-    animation:
-        progressShimmer
-        4.5s
-        ease-in-out
-        infinite;
-}
-
-@keyframes progressShimmer {
-
-    0% {
-        left: -80px;
-        opacity: 0;
-    }
-
-    20% {
-        opacity: 0.7;
-    }
-
-    45% {
-        opacity: 0;
-    }
-
-    100% {
-        left: 110%;
-        opacity: 0;
-    }
-}
-
 .level-info {
     margin-top: 10px;
 
@@ -1233,67 +1294,6 @@ h1 {
     box-shadow:
         0 1px 0 rgba(255,255,255,0.06) inset,
         0 14px 28px rgba(0,0,0,0.28);
-}
-
-
-/*
-   Piccolissimo movimento ambientale.
-   Ogni riquadro ha una fase diversa,
-   quindi non sembrano tutti sincronizzati.
-*/
-
-.stat:nth-child(1) {
-    animation:
-        idleFloat
-        7s
-        ease-in-out
-        infinite;
-}
-
-.stat:nth-child(2) {
-    animation:
-        idleFloat
-        8s
-        ease-in-out
-        infinite 0.8s;
-}
-
-.stat:nth-child(3) {
-    animation:
-        idleFloat
-        7.5s
-        ease-in-out
-        infinite 1.5s;
-}
-
-.stat:nth-child(4) {
-    animation:
-        idleFloat
-        8.5s
-        ease-in-out
-        infinite 2.1s;
-}
-
-.stat:nth-child(5) {
-    animation:
-        idleFloat
-        9s
-        ease-in-out
-        infinite 1.2s;
-}
-
-@keyframes idleFloat {
-
-    0%,
-    100% {
-        transform:
-            translateY(0);
-    }
-
-    50% {
-        transform:
-            translateY(-1.5px);
-    }
 }
 
 
@@ -1673,28 +1673,6 @@ h1 {
     box-shadow:
         0 20px 35px rgba(0,0,0,0.5),
         0 0 0 1px rgba(255,255,255,0.03);
-
-    animation:
-        keyboardBreath
-        8s
-        ease-in-out
-        infinite;
-}
-
-@keyframes keyboardBreath {
-
-    0%,
-    100% {
-        box-shadow:
-            0 20px 35px rgba(0,0,0,0.5),
-            0 0 0 1px rgba(255,255,255,0.03);
-    }
-
-    50% {
-        box-shadow:
-            0 22px 38px rgba(0,0,0,0.55),
-            0 0 18px rgba(99,102,241,0.07);
-    }
 }
 
 .white-key {
@@ -1971,12 +1949,6 @@ h1 {
 
     text-shadow:
         0 1px 2px rgba(0,0,0,0.55);
-
-    animation:
-        answerBreath
-        9s
-        ease-in-out
-        infinite;
 }
 
 /* Sottile riflesso vetrato in alto: dà volume al tasto
@@ -1992,18 +1964,6 @@ h1 {
             rgba(255,255,255,0) 55%
         );
     pointer-events: none;
-}
-
-@keyframes answerBreath {
-
-    0%,
-    100% {
-        filter: brightness(1);
-    }
-
-    50% {
-        filter: brightness(1.025);
-    }
 }
 
 .answer:hover {
@@ -3270,12 +3230,432 @@ h1 {
     }
 }
 
+
+/* =========================================================
+   MODALITÀ MOBILE
+   ---------------------------------------------------------
+   Attiva solo con la classe "mobile-mode" sul body,
+   impostata dopo la scelta del dispositivo. Nessuna
+   regola qui sotto tocca la versione PC: sono tutte
+   sovrascritture aggiuntive, con selettori che partono
+   sempre da "body.mobile-mode".
+
+   Pensata per un telefono in orizzontale: lo spazio
+   verticale è pochissimo (tipicamente 350-430px),
+   quindi qui si comprime tutto parecchio. I valori in
+   pixel della tastiera sono ricalcolati in proporzione,
+   passando da 22 a 15 tasti bianchi (due ottave invece
+   di tre).
+========================================================= */
+
+body.mobile-mode {
+    padding: 10px 8px 14px;
+}
+
+/*
+   I "mix-blend-mode" costringono il browser a
+   fondere via software un layer a schermo intero
+   ad ogni ridisegno: molto pesante sulle GPU dei
+   telefoni. Su mobile lo spegniamo del tutto (resta
+   invariato su PC).
+*/
+body.mobile-mode::before {
+    display: none;
+}
+
+/*
+   backdrop-filter: blur() è un altro effetto molto
+   costoso sui telefoni. Su mobile lo sostituiamo con
+   uno sfondo pieno leggermente più opaco: stesso
+   effetto visivo di "vetro scuro", senza il calcolo
+   di sfocatura in tempo reale.
+*/
+body.mobile-mode .level-box,
+body.mobile-mode .note-popup-card,
+body.mobile-mode .options-panel,
+body.mobile-mode .trophy-modal {
+    backdrop-filter: none;
+    -webkit-backdrop-filter: none;
+}
+
+body.mobile-mode .level-box {
+    background: rgba(30,27,75,0.55);
+}
+
+body.mobile-mode .game {
+    width: 100%;
+}
+
+body.mobile-mode h1 {
+    font-size: 1.05rem;
+    margin-bottom: 2px;
+}
+
+body.mobile-mode .subtitle {
+    display: none;
+}
+
+body.mobile-mode .level-box {
+    padding: 8px 12px 10px;
+    margin-bottom: 8px;
+}
+
+body.mobile-mode .mode-select-title {
+    font-size: 0.68rem;
+    margin-bottom: 8px;
+}
+
+body.mobile-mode .mode-buttons {
+    gap: 8px;
+}
+
+body.mobile-mode .mode-button {
+    padding: 10px 8px;
+    font-size: 0.75rem;
+}
+
+body.mobile-mode .level-header {
+    margin-bottom: 4px;
+}
+
+body.mobile-mode .level-title,
+body.mobile-mode .level-number {
+    font-size: 0.7rem;
+}
+
+body.mobile-mode .level-info {
+    font-size: 0.68rem;
+    margin-top: 4px;
+}
+
+body.mobile-mode .stats {
+    gap: 6px;
+    margin-bottom: 8px;
+}
+
+body.mobile-mode .stat {
+    padding: 6px 4px 5px;
+}
+
+body.mobile-mode .stat-label {
+    font-size: 0.55rem;
+}
+
+body.mobile-mode .stat-value {
+    font-size: 1rem;
+}
+
+/*
+   Tastiera: da 22 a 15 tasti bianchi (due ottave).
+   Ogni misura è ridotta in proporzione a quelle
+   originali (fattore verticale ≈ 0.55).
+*/
+
+body.mobile-mode .keyboard-frame {
+    width: 700px;
+    max-width: 100%;
+    padding: 6px 4px 0;
+}
+
+body.mobile-mode .keyboard-brand {
+    padding-bottom: 4px;
+    font-size: 0.5rem;
+}
+
+body.mobile-mode .keyboard {
+    width: 690px;
+    height: 155px;
+}
+
+body.mobile-mode .white-key {
+    height: 150px;
+}
+
+body.mobile-mode .black-key {
+    width: 29px;
+    height: 96px;
+}
+
+body.mobile-mode .central-do-label {
+    bottom: 6px;
+    font-size: 0.55rem;
+}
+
+body.mobile-mode .key-note-label {
+    top: 106px;
+    font-size: 0.78rem;
+}
+
+body.mobile-mode .answers {
+    gap: 6px;
+    max-width: 700px;
+    margin: 6px auto 10px;
+}
+
+body.mobile-mode .answer {
+    padding: 10px 4px;
+    font-size: 0.8rem;
+}
+
+body.mobile-mode .message {
+    min-height: 22px;
+    font-size: 0.8rem;
+}
+
+body.mobile-mode .game-buttons {
+    margin-top: 4px;
+    gap: 6px;
+}
+
+body.mobile-mode .menu-button,
+body.mobile-mode .new-game,
+body.mobile-mode .finish-button {
+    padding: 8px 14px;
+    font-size: 0.75rem;
+}
+
+body.mobile-mode .toolbar-sidebar {
+    margin-top: 8px;
+    gap: 8px;
+}
+
+body.mobile-mode .toolbar-button {
+    width: 34px;
+    height: 34px;
+    font-size: 0.9rem;
+}
+
+body.mobile-mode .volume-slider-wrap {
+    width: 90px;
+}
+
+body.mobile-mode .volume-slider {
+    width: 90px;
+}
+
+/*
+   Riquadro col pentagramma: su mobile è più
+   piccolo (soprattutto più stretto: la larghezza
+   la imposta già il JavaScript in base al caso).
+   La notazione VexFlow viene disegnata a
+   grandezza nativa, la stessa di PC — niente scala
+   CSS che l'avrebbe resa sfocata — solo con meno
+   spazio bianco intorno.
+*/
+
+body.mobile-mode .note-popup-card {
+    padding: 6px 8px 8px;
+}
+
+body.mobile-mode .note-popup-header {
+    margin-bottom: 2px;
+}
+
+body.mobile-mode .note-popup-name {
+    font-size: 0.72rem;
+    min-height: 0.9rem;
+}
+
+body.mobile-mode .note-popup-staff {
+    min-height: 190px;
+}
+
+/*
+   Linea sottile che collega il riquadro al tasto
+   a cui si riferisce: serve solo su mobile, dove
+   il riquadro non compare più sopra al tasto ma
+   di lato, per non coprire l'ottava in cui si
+   trova.
+*/
+
+.note-popup-connector {
+    position: absolute;
+
+    top: 0;
+    left: 0;
+
+    height: 2px;
+    width: 0;
+
+    background: #ef4444;
+
+    transform-origin: 0 50%;
+
+    pointer-events: none;
+
+    opacity: 0;
+
+    z-index: 49;
+
+    box-shadow: 0 0 4px rgba(239,68,68,0.7);
+
+    transition: opacity 0.25s ease;
+}
+
+.note-popup-connector.show {
+    opacity: 1;
+}
+
+
+/* =========================================================
+   RUOTA IL TELEFONO
+   ---------------------------------------------------------
+   Visibile solo in modalità mobile, e solo quando lo
+   schermo è in verticale: blocca il gioco finché il
+   telefono non viene ruotato in orizzontale. Nessuna
+   animazione qui dentro: potrebbe restare a schermo per
+   un po', meglio non aggiungere altro carico.
+========================================================= */
+
+.rotate-device-overlay {
+    display: none;
+}
+
+@media (orientation: portrait) {
+
+    body.mobile-mode .rotate-device-overlay {
+        display: flex;
+
+        position: fixed;
+        inset: 0;
+
+        z-index: 999;
+
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+
+        gap: 18px;
+
+        padding: 32px;
+
+        text-align: center;
+
+        background:
+            linear-gradient(
+                135deg,
+                #0f172a,
+                #1e1b4b
+            );
+
+        color: white;
+    }
+}
+
+.rotate-device-icon {
+    font-size: 3.2rem;
+}
+
+.rotate-device-text {
+    font-family: "Sora", "Inter", Arial, sans-serif;
+    font-size: 1.1rem;
+    font-weight: 700;
+
+    max-width: 320px;
+
+    margin: 0;
+}
+
+.rotate-device-subtext {
+    font-size: 0.85rem;
+
+    color: #cbd5e1;
+
+    max-width: 300px;
+
+    margin: 0;
+}
+
 </style>
 
 </head>
 
 
 <body>
+
+<!-- RUOTA IL TELEFONO -->
+
+<div
+    class="rotate-device-overlay"
+    id="rotateDeviceOverlay">
+
+    <div class="rotate-device-icon">
+        📱
+    </div>
+
+    <p class="rotate-device-text">
+        Ruota il telefono in orizzontale
+    </p>
+
+    <p class="rotate-device-subtext">
+        Questa modalità è pensata per essere giocata
+        con il telefono girato di lato.
+    </p>
+
+</div>
+
+
+<!-- SCELTA DISPOSITIVO -->
+
+<div
+    class="device-select"
+    id="deviceSelect">
+
+    <div class="device-select-card">
+
+        <h1 class="device-select-title">
+            🎹 Le note sul pianoforte
+        </h1>
+
+        <p class="device-select-subtitle">
+            Su quale dispositivo stai giocando?
+        </p>
+
+        <div class="device-select-buttons">
+
+            <button
+                class="device-button"
+                id="pcDeviceButton">
+
+                <span class="device-button-icon">
+                    💻
+                </span>
+
+                <span class="device-button-label">
+                    Versione PC
+                </span>
+
+                <span class="device-button-desc">
+                    Tastiera completa, tre ottave
+                </span>
+
+            </button>
+
+            <button
+                class="device-button"
+                id="mobileDeviceButton">
+
+                <span class="device-button-icon">
+                    📱
+                </span>
+
+                <span class="device-button-label">
+                    Versione Mobile
+                </span>
+
+                <span class="device-button-desc">
+                    Due ottave, pensata per lo smartphone
+                    in orizzontale
+                </span>
+
+            </button>
+
+        </div>
+
+    </div>
+
+</div>
+
 
 <div class="game">
 
@@ -3528,6 +3908,14 @@ h1 {
 
             </div>
 
+        </div>
+
+
+        <!-- LINEA DI COLLEGAMENTO (solo mobile) -->
+
+        <div
+            class="note-popup-connector"
+            id="notePopupConnector">
         </div>
 
 
@@ -4510,6 +4898,84 @@ function flatNameForBlackKey(afterIndex) {
     return notes[afterIndex + 1] + "♭";
 }
 
+
+/* =========================================================
+   MODALITÀ DISPOSITIVO (PC / MOBILE)
+   ---------------------------------------------------------
+   La versione PC usa l'intera tastiera (indici 0-21,
+   tre ottave + il Do più acuto), esattamente come
+   prima: nulla cambia per lei.
+
+   La versione mobile riusa esattamente lo stesso
+   modello di note/frequenze/nomi, mostrando però
+   solo un sottoinsieme della tastiera: gli indici da
+   7 a 21, cioè "ottava centrale (con il Do centrale) +
+   ottava alta + il Do più acuto" — due ottave intere,
+   pensate per stare su un telefono in orizzontale
+   senza dover scorrere. Non essendo un secondo
+   modello di dati, ma solo un intervallo più corto
+   dello stesso, tutte le funzioni di frequenza,
+   notazione e nome restano automaticamente corrette
+   senza bisogno di duplicare nulla.
+*/
+
+let deviceMode = "pc";
+
+const MOBILE_MIN_INDEX = 7;
+
+const MOBILE_MAX_INDEX = 21;
+
+
+function activeIndexRange() {
+
+    if (deviceMode === "mobile") {
+
+        return [MOBILE_MIN_INDEX, MOBILE_MAX_INDEX];
+    }
+
+    return [0, notes.length - 1];
+}
+
+
+/*
+   Indici dei tasti bianchi effettivamente presenti
+   sulla tastiera nella modalità dispositivo attiva.
+*/
+
+function activeWhiteIndexes() {
+
+    const [min, max] =
+        activeIndexRange();
+
+    const list = [];
+
+    for (let i = min; i <= max; i++) {
+        list.push(i);
+    }
+
+    return list;
+}
+
+
+/*
+   Indici (tra quelli attivi) dopo cui esiste un
+   vero tasto nero, nella modalità dispositivo
+   attiva.
+*/
+
+function activeBlackKeyAfterIndexes() {
+
+    const [min, max] =
+        activeIndexRange();
+
+    return blackKeyAfterIndexes.filter(
+        afterIndex =>
+            afterIndex >= min &&
+            afterIndex < max
+    );
+}
+
+
 function frequencyForKeyId(id) {
 
     let freq;
@@ -4843,6 +5309,9 @@ const keyboardStage =
 
 const notePopup =
     document.getElementById("notePopup");
+
+const notePopupConnector =
+    document.getElementById("notePopupConnector");
 
 const notePopupName =
     document.getElementById("notePopupName");
@@ -6137,7 +6606,44 @@ function playNote(index) {
                 now + harmonic.duration + 0.05
             );
 
+
+            /*
+               Senza questo scollegamento esplicito,
+               oscillatore e guadagno restano agganciati
+               al grafo audio anche dopo aver smesso di
+               suonare: su una sessione lunga, con
+               centinaia di note, il grafo cresce senza
+               mai svuotarsi, con un carico crescente
+               sulla CPU.
+            */
+
+            oscillator.onended =
+                () => {
+
+                    oscillator.disconnect();
+
+                    gain.disconnect();
+                };
+
         }
+    );
+
+
+    /*
+       Il filtro, condiviso da tutte le armoniche,
+       non ha un proprio evento "onended" (non è una
+       sorgente): lo si scollega manualmente non
+       appena la più lunga fra le armoniche (la
+       fondamentale) ha finito di suonare.
+    */
+
+    setTimeout(
+        () => {
+
+            filter.disconnect();
+
+        },
+        (harmonics[0].duration + 0.1) * 1000
     );
 }
 
@@ -6203,6 +6709,14 @@ function playClickSound() {
     oscillator.stop(
         now + 0.07
     );
+
+    oscillator.onended =
+        () => {
+
+            oscillator.disconnect();
+
+            gain.disconnect();
+        };
 }
 
 
@@ -6294,6 +6808,14 @@ function playWrongSound() {
     oscillator.stop(
         now + 0.34
     );
+
+    oscillator.onended =
+        () => {
+
+            oscillator.disconnect();
+
+            gain.disconnect();
+        };
 }
 
 
@@ -6406,6 +6928,14 @@ function playLevelUpJingle() {
             end + 0.02
         );
 
+        oscillator.onended =
+            () => {
+
+                oscillator.disconnect();
+
+                gain.disconnect();
+            };
+
     });
 }
 
@@ -6507,6 +7037,14 @@ function playRecordJingle() {
             end + 0.02
         );
 
+        oscillator.onended =
+            () => {
+
+                oscillator.disconnect();
+
+                gain.disconnect();
+            };
+
     });
 }
 
@@ -6591,8 +7129,11 @@ function animateLevelBox() {
 
 function positionNotePopup(id) {
 
+    const isBlack =
+        isBlackKeyId(id);
+
     const keyEl =
-        isBlackKeyId(id) ?
+        isBlack ?
             keyboard.querySelector(
                 '.black-key[data-after-index="' +
                 blackKeyAfterIndex(id) +
@@ -6614,16 +7155,143 @@ function positionNotePopup(id) {
         keyboardStage.getBoundingClientRect();
 
     const popupWidth =
-        notePopup.offsetWidth || 240;
+        notePopup.offsetWidth ||
+        (deviceMode === "mobile" ? 155 : 240);
 
     const popupHeight =
-        notePopup.offsetHeight || 300;
+        notePopup.offsetHeight ||
+        (deviceMode === "mobile" ? 220 : 300);
 
 
-    let left =
-        (keyRect.left - stageRect.left) +
-        (keyRect.width / 2) -
-        (popupWidth / 2);
+    /* =====================================================
+       PC: comportamento invariato, il riquadro fluttua
+       centrato sopra il tasto.
+    ====================================================== */
+
+    if (deviceMode !== "mobile") {
+
+        let left =
+            (keyRect.left - stageRect.left) +
+            (keyRect.width / 2) -
+            (popupWidth / 2);
+
+        left =
+            Math.max(
+                4,
+                Math.min(
+                    left,
+                    stageRect.width - popupWidth - 4
+                )
+            );
+
+
+        const top =
+            (keyRect.top - stageRect.top) -
+            popupHeight -
+            14;
+
+
+        notePopup.style.left =
+            left + "px";
+
+        notePopup.style.top =
+            top + "px";
+
+
+        notePopupConnector.classList.remove(
+            "show"
+        );
+
+
+        return;
+    }
+
+
+    /* =====================================================
+       MOBILE: il riquadro compare a destra o a sinistra
+       del tasto, mai sopra — così l'ottava a cui il
+       tasto appartiene resta sempre completamente
+       visibile. Una sottile linea rossa lo collega al
+       centro del tasto.
+    ====================================================== */
+
+    const referenceIndex =
+        isBlack ? blackKeyAfterIndex(id) : id;
+
+    const octaveSplit = 14;
+
+    const [min, max] =
+        activeIndexRange();
+
+    const [octMinIndex, octMaxIndex] =
+        referenceIndex < octaveSplit ?
+            [min, octaveSplit - 1] :
+            [octaveSplit, max];
+
+    const octMinKey =
+        keyboard.querySelector(
+            '.white-key[data-index="' + octMinIndex + '"]'
+        );
+
+    const octMaxKey =
+        keyboard.querySelector(
+            '.white-key[data-index="' + octMaxIndex + '"]'
+        );
+
+    const octLeft =
+        octMinKey ?
+            octMinKey.getBoundingClientRect().left - stageRect.left :
+            keyRect.left - stageRect.left;
+
+    const octRight =
+        octMaxKey ?
+            octMaxKey.getBoundingClientRect().right - stageRect.left :
+            keyRect.right - stageRect.left;
+
+
+    const gap = 10;
+
+    const spaceRight =
+        stageRect.width - octRight - gap;
+
+    const spaceLeft =
+        octLeft - gap;
+
+
+    let left;
+
+    let placedOnRight;
+
+    if (spaceRight >= popupWidth) {
+
+        left = octRight + gap;
+
+        placedOnRight = true;
+
+    } else if (spaceLeft >= popupWidth) {
+
+        left = octLeft - gap - popupWidth;
+
+        placedOnRight = false;
+
+    } else {
+
+        /*
+           Non c'è spazio pulito da nessuna delle due
+           parti (schermo molto stretto): si sceglie il
+           lato con più margine disponibile, accettando
+           che il riquadro venga poi limitato ai bordi
+           dello schermo.
+        */
+
+        placedOnRight =
+            spaceRight >= spaceLeft;
+
+        left =
+            placedOnRight ?
+                octRight + gap :
+                octLeft - gap - popupWidth;
+    }
 
     left =
         Math.max(
@@ -6635,10 +7303,24 @@ function positionNotePopup(id) {
         );
 
 
-    const top =
-        (keyRect.top - stageRect.top) -
-        popupHeight -
-        14;
+    const referenceBlackKey =
+        keyboard.querySelector(".black-key");
+
+    const blackKeyHeight =
+        referenceBlackKey ?
+            referenceBlackKey.getBoundingClientRect().height :
+            96;
+
+    let top =
+        (keyRect.top - stageRect.top) +
+        blackKeyHeight -
+        popupHeight;
+
+    const minTop =
+        -(stageRect.top) + 4;
+
+    top =
+        Math.max(top, minTop);
 
 
     notePopup.style.left =
@@ -6646,6 +7328,58 @@ function positionNotePopup(id) {
 
     notePopup.style.top =
         top + "px";
+
+
+    /*
+       Linea di collegamento: parte dal margine del
+       riquadro rivolto verso il tasto (il lato destro
+       del riquadro se questo è a sinistra, il lato
+       sinistro se è a destra) e arriva al centro
+       esatto del tasto.
+    */
+
+    const lineStartX =
+        placedOnRight ? left : left + popupWidth;
+
+    const lineStartY =
+        top + (popupHeight / 2);
+
+    const keyCenterX =
+        (keyRect.left - stageRect.left) +
+        (keyRect.width / 2);
+
+    const keyCenterY =
+        (keyRect.top - stageRect.top) +
+        (keyRect.height / 2);
+
+    const deltaX =
+        keyCenterX - lineStartX;
+
+    const deltaY =
+        keyCenterY - lineStartY;
+
+    const lineLength =
+        Math.sqrt(
+            (deltaX * deltaX) +
+            (deltaY * deltaY)
+        );
+
+    const lineAngle =
+        Math.atan2(deltaY, deltaX) *
+        (180 / Math.PI);
+
+
+    notePopupConnector.style.left =
+        lineStartX + "px";
+
+    notePopupConnector.style.top =
+        lineStartY + "px";
+
+    notePopupConnector.style.width =
+        lineLength + "px";
+
+    notePopupConnector.style.transform =
+        `rotate(${lineAngle}deg)`;
 }
 
 
@@ -6709,21 +7443,64 @@ function showNotePopup(index, duration, hideName) {
         gameMode !== "flat";
 
 
+    /*
+       Su mobile il riquadro deve essere più
+       piccolo: qui si restringe la LARGHEZZA della
+       tastiera VexFlow (non l'altezza, che serve
+       intatta a non tagliare mai le note più gravi).
+       La notazione resta disegnata a grandezza
+       nativa, quindi leggibile quanto su PC: non è
+       una versione rimpicciolita con una scala CSS,
+       che l'avrebbe resa sfocata e poco leggibile.
+    */
+
+    const isMobile =
+        deviceMode === "mobile";
+
     const canvasWidth =
-        showBothSpellings ? 270 : 200;
+        showBothSpellings ?
+            (isMobile ? 175 : 270) :
+            (isMobile ? 130 : 200);
 
     const staveWidth =
-        showBothSpellings ? 250 : 170;
+        showBothSpellings ?
+            (isMobile ? 150 : 250) :
+            (isMobile ? 105 : 170);
 
     const formatWidth =
-        showBothSpellings ? 190 : 110;
+        showBothSpellings ?
+            (isMobile ? 100 : 190) :
+            (isMobile ? 65 : 110);
 
     const popupWidth =
-        showBothSpellings ? 310 : 240;
+        showBothSpellings ?
+            (isMobile ? 200 : 310) :
+            (isMobile ? 155 : 240);
 
 
     notePopup.style.width =
         popupWidth + "px";
+
+
+    /*
+       Altezza del canvas e posizione del rigo:
+       su PC restano quelle già collaudate (300px,
+       rigo a 90px) perché devono reggere l'intera
+       estensione della tastiera. Su mobile, dove le
+       ottave disponibili sono solo due, il caso
+       peggiore è molto meno estremo (al massimo 4
+       tagli addizionali sopra il rigo per il Do più
+       acuto in chiave di basso, contro margini ben
+       più ampi già prima necessari su PC): un
+       canvas più basso è sicuro e rende il riquadro
+       davvero più piccolo, non solo più stretto.
+    */
+
+    const canvasHeight =
+        isMobile ? 190 : 300;
+
+    const staveY =
+        isMobile ? 85 : 90;
 
 
     const renderer =
@@ -6732,7 +7509,7 @@ function showNotePopup(index, duration, hideName) {
             Renderer.Backends.SVG
         );
 
-    renderer.resize(canvasWidth, 300);
+    renderer.resize(canvasWidth, canvasHeight);
 
 
     const context =
@@ -6740,7 +7517,7 @@ function showNotePopup(index, duration, hideName) {
 
 
     const stave =
-        new Stave(10, 90, staveWidth);
+        new Stave(10, staveY, staveWidth);
 
     stave.addClef(
         clef === "bass" ? "bass" : "treble"
@@ -6849,12 +7626,23 @@ function showNotePopup(index, duration, hideName) {
         "show"
     );
 
+    if (deviceMode === "mobile") {
+
+        notePopupConnector.classList.add(
+            "show"
+        );
+    }
+
 
     notePopupHideTimeout =
         setTimeout(
             () => {
 
                 notePopup.classList.remove(
+                    "show"
+                );
+
+                notePopupConnector.classList.remove(
                     "show"
                 );
 
@@ -6888,6 +7676,10 @@ function hideNotePopupImmediately() {
     clearTimeout(notePopupCleanupTimeout);
 
     notePopup.classList.remove(
+        "show"
+    );
+
+    notePopupConnector.classList.remove(
         "show"
     );
 
@@ -7107,8 +7899,15 @@ function createKeyboard() {
     keyboard.innerHTML = "";
 
 
-    notes.forEach(
-        (note, index) => {
+    const activeWhite =
+        activeWhiteIndexes();
+
+    const activeMin =
+        activeWhite[0];
+
+
+    activeWhite.forEach(
+        index => {
 
             const key =
                 document.createElement("div");
@@ -7173,15 +7972,14 @@ function createKeyboard() {
        Tasti neri: ora sono suonabili come i
        bianchi, con lo stesso comportamento di
        popup e "nascondi nome" durante una domanda.
+       La posizione orizzontale è calcolata in base
+       alla posizione RELATIVA fra i soli tasti
+       bianchi visibili (importante in modalità
+       mobile, dove non sono tutti e 22).
     */
 
-    blackAfter.forEach(
-        (hasBlack, index) => {
-
-            if (!hasBlack) {
-                return;
-            }
-
+    activeBlackKeyAfterIndexes().forEach(
+        index => {
 
             const black =
                 document.createElement("div");
@@ -7196,16 +7994,30 @@ function createKeyboard() {
 
 
             const whiteWidth =
-                100 / notes.length;
+                100 / activeWhite.length;
+
+
+            const relativePosition =
+                index - activeMin;
 
 
             const position =
-                (index + 1) *
+                (relativePosition + 1) *
                 whiteWidth;
 
 
+            /*
+               Lo scarto di centratura è metà della
+               larghezza del tasto nero: su mobile è
+               più stretto (29px) che su PC (38px),
+               quindi va calcolato, non fissato.
+            */
+
+            const blackKeyHalfWidth =
+                deviceMode === "mobile" ? 14.5 : 19;
+
             black.style.left =
-                `calc(${position}% - 19px)`;
+                `calc(${position}% - ${blackKeyHalfWidth}px)`;
 
 
             const id =
@@ -7370,12 +8182,10 @@ function clearAllKeyNoteLabels() {
 function selectablePoolForMode(mode) {
 
     const whitePool =
-        notes.map(
-            (note, index) => index
-        );
+        activeWhiteIndexes();
 
     const blackPool =
-        blackKeyAfterIndexes.map(
+        activeBlackKeyAfterIndexes().map(
             afterIndex => blackKeyId(afterIndex)
         );
 
@@ -7728,8 +8538,11 @@ function generateTutorialPhase1() {
 
     const steps = [];
 
+    const [min, max] =
+        activeIndexRange();
 
-    const letterGroups = [
+
+    const allLetterGroups = [
         { indexes: [0, 7, 14, 21], label: "DO" },
         { indexes: [1, 8, 15], label: "RE" },
         { indexes: [2, 9, 16], label: "MI" },
@@ -7738,6 +8551,30 @@ function generateTutorialPhase1() {
         { indexes: [5, 12, 19], label: "LA" },
         { indexes: [6, 13, 20], label: "SI" }
     ];
+
+
+    /*
+       Su PC l'intervallo attivo copre tutta la
+       tastiera e questo filtro non toglie nulla.
+       Su mobile (solo due ottave, indici 7-21)
+       elimina automaticamente le occorrenze
+       "basso" che non esistono su quella tastiera,
+       senza bisogno di una lista separata.
+    */
+
+    const letterGroups =
+        allLetterGroups
+            .map(
+                group => ({
+                    indexes: group.indexes.filter(
+                        index => index >= min && index <= max
+                    ),
+                    label: group.label
+                })
+            )
+            .filter(
+                group => group.indexes.length > 0
+            );
 
 
     letterGroups.forEach(
@@ -7763,22 +8600,27 @@ function generateTutorialPhase1() {
     /*
        Chiusura della fase 1: Do centrale,
        Do alto, Do più acuto. Trovati questi,
-       la fase 1 è completa.
+       la fase 1 è completa. Tutti e tre esistono
+       sempre, sia su PC sia su mobile.
     */
 
-    [7, 14, 21].forEach(
-        index => {
+    [7, 14, 21]
+        .filter(
+            index => index >= min && index <= max
+        )
+        .forEach(
+            index => {
 
-            steps.push({
-                keyId: index,
-                letterKey: "DO",
-                octaveHighlight: null,
-                showLabel: true,
-                clearLabelsNow: false
-            });
+                steps.push({
+                    keyId: index,
+                    letterKey: "DO",
+                    octaveHighlight: null,
+                    showLabel: true,
+                    clearLabelsNow: false
+                });
 
-        }
-    );
+            }
+        );
 
 
     return steps;
@@ -7787,21 +8629,41 @@ function generateTutorialPhase1() {
 
 /*
    Fase 2: scala ascendente e discendente più
-   15 note casuali per ciascuna delle tre ottave
-   (centrale, bassa, alta), con la relativa
-   evidenziazione rossa sulla tastiera.
+   15 note casuali per ciascuna ottava disponibile
+   (centrale, bassa, alta su PC; solo centrale e
+   alta su mobile, che ha due ottave in meno),
+   con la relativa evidenziazione rossa sulla
+   tastiera.
 */
 
 function generateTutorialPhase2() {
 
     const steps = [];
 
+    const [min, max] =
+        activeIndexRange();
 
-    const octaves = [
+
+    const allOctaves = [
         { start: 7 },
         { start: 0 },
         { start: 14 }
     ];
+
+    /*
+       Un'ottava è disponibile solo se è interamente
+       contenuta nell'intervallo attivo: su mobile
+       questo esclude automaticamente l'ottava
+       "bassa" (che partirebbe dall'indice 0, fuori
+       dall'intervallo 7-21).
+    */
+
+    const octaves =
+        allOctaves.filter(
+            octave =>
+                octave.start >= min &&
+                (octave.start + 7) <= max
+        );
 
 
     octaves.forEach(
@@ -9570,15 +10432,77 @@ trophiesOffButton.addEventListener(
 
 
 /* =========================================================
-   AVVIO
+   SCELTA DISPOSITIVO E AVVIO
 ========================================================= */
 
-createKeyboard();
+const deviceSelect =
+    document.getElementById("deviceSelect");
 
-setCentralDoLabel(7);
+const pcDeviceButton =
+    document.getElementById("pcDeviceButton");
 
-setGameMode(
-    "menu"
+const mobileDeviceButton =
+    document.getElementById("mobileDeviceButton");
+
+
+/*
+   Il gioco vero e proprio (tastiera, menu,
+   modalità) si inizializza solo DOPO che il
+   giocatore ha scelto il dispositivo: la tastiera
+   va costruita sapendo già se mostrare tutte e tre
+   le ottave (PC) o solo due (mobile).
+*/
+
+function startGameForDevice(chosenDevice) {
+
+    deviceMode =
+        chosenDevice;
+
+
+    document.body.classList.toggle(
+        "mobile-mode",
+        deviceMode === "mobile"
+    );
+
+
+    deviceSelect.classList.add(
+        "hidden"
+    );
+
+
+    createKeyboard();
+
+    setCentralDoLabel(
+        clef === "bass" ? 14 : 7
+    );
+
+    setGameMode(
+        "menu"
+    );
+}
+
+
+pcDeviceButton.addEventListener(
+    "click",
+    () => {
+
+        playClickSound();
+
+        startGameForDevice("pc");
+
+    }
+);
+
+
+mobileDeviceButton.addEventListener(
+    "click",
+    () => {
+
+        playClickSound();
+
+        startGameForDevice("mobile");
+
+    }
 );
 
 </script>
