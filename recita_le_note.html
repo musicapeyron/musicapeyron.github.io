@@ -1083,6 +1083,50 @@ h1 {
 }
 .site-home-button:hover { background: linear-gradient(180deg, rgba(255,255,255,0.2), rgba(255,255,255,0.08)); transform: translateY(-2px); }
 
+/* STRISCIONE CON PULSANTE */
+.stage-banner.interactive { pointer-events: auto; }
+.banner-start {
+    display: inline-block;
+    margin-top: 16px;
+    padding: 12px 30px;
+    font-size: 1rem;
+    animation: startPulse 1.6s ease-in-out infinite;
+}
+@keyframes startPulse {
+    0%, 100% { box-shadow: 0 6px 16px rgba(0,0,0,0.18), 0 0 0 0 rgba(250,204,21,0); }
+    50% { box-shadow: 0 6px 16px rgba(0,0,0,0.18), 0 0 0 6px rgba(250,204,21,0.35); }
+}
+
+/* PARTENZA DA INDOVINARE */
+.stage-start.found { color: #86efac; }
+.start-chip.unknown {
+    background: rgba(255,255,255,0.12);
+    border: 1px dashed rgba(255,255,255,0.6);
+    color: #fde68a;
+    animation: unknownWiggle 1.4s ease-in-out infinite;
+}
+@keyframes unknownWiggle {
+    0%, 100% { transform: rotate(0deg) scale(1); }
+    20% { transform: rotate(-10deg) scale(1.08); }
+    40% { transform: rotate(8deg) scale(1.08); }
+    60% { transform: rotate(0deg) scale(1); }
+}
+
+/* PULSANTI MESCOLATI */
+.answer.shuffle-out { animation: shuffleOut 0.22s ease-in forwards; }
+@keyframes shuffleOut { to { scale: 0.2; rotate: 25deg; opacity: 0; } }
+.answer.shuffle-in { animation: shuffleIn 0.45s var(--ease-spring) both; }
+@keyframes shuffleIn {
+    from { scale: 0.2; rotate: -25deg; opacity: 0; }
+    to { scale: 1; rotate: 0deg; opacity: 1; }
+}
+
+.mode-button.allenamento { background: linear-gradient(135deg, #10b981, #047857); }
+
+.trophy-row.clickable { cursor: pointer; transition: background 0.15s, transform 0.15s var(--ease-out-soft); }
+.trophy-row.clickable:hover { background: rgba(255,255,255,0.12); transform: translateX(3px); }
+.trophy-row.locked { opacity: 0.55; }
+
 /* SCHERMI PICCOLI */
 @media (max-width: 640px) {
     body { padding: 70px 12px 40px; }
@@ -1136,41 +1180,20 @@ h1 {
     </div>
 
     <div class="mode-grid">
-        <button class="mode-button training-1" id="trainingButton">
-            <span class="mode-button-title">📘 Allenamento</span>
-            <span class="mode-button-desc">Recita la scala da ogni nota, un livello alla volta</span>
+        <button class="mode-button training-1" id="tutorialButton">
+            <span class="mode-button-title">📘 Tutorial</span>
+            <span class="mode-button-desc">Impara la formula passo passo, in 4 livelli</span>
+        </button>
+        <button class="mode-button allenamento" id="allenamentoButton">
+            <span class="mode-button-title">🎯 Allenamento</span>
+            <span class="mode-button-desc">Tutte le partenze in ordine casuale, con i pulsanti che si mescolano</span>
         </button>
         <hr class="mode-divider">
         <button class="mode-button verifica" id="verificaButton">
             <span class="mode-button-title">📝 Verifica</span>
-            <span class="mode-button-desc">Mettiti alla prova e scopri il tuo voto</span>
+            <span class="mode-button-desc">10 giri: mettiti alla prova e scopri il tuo voto</span>
         </button>
     </div>
-
-</div>
-
-<!-- SCHERMATA VERIFICA: SCELTA DIREZIONE -->
-<div class="menu-screen" id="verificaMenuScreen" style="display: none;">
-
-    <h1>📝 Verifica</h1>
-    <p class="subtitle">Scegli da che parte cominciano le sequenze.</p>
-
-    <div class="mode-grid">
-        <button class="mode-button ver-up" id="verificaUpButton">
-            <span class="mode-button-title">↗ Si parte salendo</span>
-            <span class="mode-button-desc">7 giri, come do re mi… e ritorno</span>
-        </button>
-        <button class="mode-button ver-down" id="verificaDownButton">
-            <span class="mode-button-title">↘ Si parte scendendo</span>
-            <span class="mode-button-desc">7 giri, come do si la… e ritorno</span>
-        </button>
-        <button class="mode-button ver-mixed" id="verificaMixedButton">
-            <span class="mode-button-title">🔀 Mista</span>
-            <span class="mode-button-desc">7 giri, la direzione cambia a sorpresa</span>
-        </button>
-    </div>
-
-    <button class="back-button" id="verificaBackButton">← Indietro</button>
 
 </div>
 
@@ -1228,6 +1251,7 @@ h1 {
                     <span class="banner-badge" id="bannerBadge">⭐</span>
                     <span class="banner-title" id="bannerTitle"></span>
                     <span class="banner-text" id="bannerText"></span>
+                    <button class="new-game banner-start" id="bannerStart">▶ Inizia</button>
                 </div>
             </div>
         </div>
@@ -1246,24 +1270,14 @@ h1 {
             <input type="range" class="volume-slider" id="volumeSlider" min="0" max="100" value="75" aria-label="Volume">
         </div>
         <button class="toolbar-button" id="optionsButton" title="Opzioni">⚙️</button>
-        <button class="toolbar-button" id="trophyButton" title="Livelli completati">🏆</button>
+        <button class="toolbar-button" id="trophyButton" title="Livelli del tutorial">🏆</button>
     </div>
 
 </div>
 
 <!-- PANNELLO TROFEI -->
 <div class="trophy-panel" id="trophyPanel">
-    <div class="trophy-panel-title">Livelli completati</div>
-
-    <div class="trophy-loop-controls" id="trophyLoopControls">
-        <div class="trophy-loop-title">🔁 Loop livelli (allenamento)</div>
-        <div class="trophy-loop-row">
-            <select id="loopStartSelect" aria-label="Primo livello del loop"></select>
-            <span>→</span>
-            <select id="loopEndSelect" aria-label="Ultimo livello del loop"></select>
-            <button class="options-choice" id="loopToggleButton">Attiva</button>
-        </div>
-    </div>
+    <div class="trophy-panel-title">Livelli del tutorial</div>
 
     <div id="trophyList"></div>
 </div>
@@ -1334,16 +1348,14 @@ h1 {
 </div>
 
 <script>
-
 /* =========================================================
    NOTE
 
    Le note sono identificate da un indice diatonico
-   relativo al Do centrale (0 = Do4, 7 = Do5, -3 = Sol3).
+   relativo al Do centrale (0 = Do4, 7 = Do5, -7 = Do3).
    Il nome si ricava dall'indice modulo 7; l'altezza reale
-   serve solo per il suono, così ogni sequenza sale o
-   scende davvero (da Re: Re Mi Fa Sol La Si Do Re, con
-   Do e Re finali all'ottava superiore).
+   serve per il suono, così ogni sequenza sale o scende
+   davvero.
 ========================================================= */
 
 const NOTE_NAMES = ["Do", "Re", "Mi", "Fa", "Sol", "La", "Si"];
@@ -1351,8 +1363,9 @@ const NOTE_COLORS = ["#ef4444", "#f97316", "#eab308", "#22c55e", "#06b6d4", "#3b
 const NOTE_INKS = ["#dc2626", "#ea580c", "#b45309", "#16a34a", "#0891b2", "#2563eb", "#7c3aed"];
 const SEMITONES = [0, 2, 4, 5, 7, 9, 11];
 
-const CARDS_PER_ROUND = 8;
-const ANSWERS_PER_ROUND = 14; // 7 in un verso + 7 nell'altro
+const CARDS = 8;
+const ENTER_STYLES = ["deal", "drop", "pop"];
+const EXIT_STYLES = ["fly", "sweep", "spin"];
 
 function mod7(n) { return ((n % 7) + 7) % 7; }
 
@@ -1363,52 +1376,35 @@ function frequencyForDiatonic(d) {
 }
 
 /*
-   Un "giro" è una partenza (0-6) e una direzione iniziale:
-   "up"   -> carte da sinistra a destra in salita, ritorno in discesa
-   "down" -> carte da sinistra a destra in discesa, ritorno in salita
-   Le partenze da Sol, La e Si suonano un'ottava più in basso,
-   così tutte le sequenze restano in un registro comodo.
+   Un giro è descritto da:
+   kind: "cycle"  -> andata e ritorno (16 risposte)
+         "single" -> solo andata (8 risposte), usato nei livelli 3 e 4
+   dir:  "up" | "down", direzione dell'andata
+   d0:   altezza della prima carta
 */
 function buildRoundNotes(round) {
-    const base = round.start >= 4 ? round.start - 7 : round.start;
     const notes = [];
-    for (let i = 0; i < CARDS_PER_ROUND; i++) {
-        const d = round.dir === "up" ? base + i : base + 7 - i;
+    for (let i = 0; i < CARDS; i++) {
+        const d = round.dir === "up" ? round.d0 + i : round.d0 - i;
         notes.push({
             d,
             idx: mod7(d),
             freq: frequencyForDiatonic(d),
-            rank: round.dir === "up" ? i : 7 - i
+            rank: round.dir === "up" ? i : CARDS - 1 - i
         });
     }
     return notes;
 }
 
-/* =========================================================
-   LIVELLI
+function answersFor(round) {
+    return round.kind === "cycle" ? CARDS * 2 : CARDS;
+}
 
-   Ogni livello di allenamento è un "percorso" completo:
-   partenze da Do, Re, Mi… fino a Si in salita, ancora una
-   volta da Do, poi le sequenze che partono scendendo da
-   Si, La, Sol… fino a Do. Cambia solo quanto aiuto si
-   riceve prima di rispondere.
-========================================================= */
-
-const LEVELS = [
-    { name: "Guarda e ascolta", desc: "Le carte si scoprono e suonano, poi tocca a te.", demo: "full", order: "course", badge: "👀" },
-    { name: "Solo ascolto", desc: "Le carte suonano ma restano coperte.", demo: "sound", order: "course", badge: "👂" },
-    { name: "A memoria", desc: "Nessuna anteprima: si scopre solo la prima carta.", demo: "none", order: "course", badge: "🧠" },
-    { name: "Ordine sparso", desc: "Partenze e direzioni arrivano in ordine casuale.", demo: "none", order: "shuffle", badge: "🎲" }
-];
-
-const totalLevels = LEVELS.length;
-
-function courseRounds() {
-    const rounds = [];
-    for (let s = 0; s <= 6; s++) rounds.push({ start: s, dir: "up" });
-    rounds.push({ start: 0, dir: "up" });
-    for (let s = 6; s >= 0; s--) rounds.push({ start: s, dir: "down" });
-    return rounds;
+/* giro di andata e ritorno: le partenze da Sol, La e Si
+   suonano un'ottava più in basso per restare in un registro comodo */
+function cycleRound(start, dir) {
+    const base = start >= 4 ? start - 7 : start;
+    return { kind: "cycle", dir, d0: dir === "up" ? base : base + 7 };
 }
 
 function shuffle(array) {
@@ -1420,33 +1416,78 @@ function shuffle(array) {
     return copy;
 }
 
-function shuffledRounds() {
+/* mescola evitando, se possibile, due giri di fila con la stessa partenza */
+function shuffleNoRepeat(list) {
+    for (let attempt = 0; attempt < 60; attempt++) {
+        const mixed = shuffle(list);
+        if (mixed.every((r, i) => i === 0 || r.start !== mixed[i - 1].start)) return mixed;
+    }
+    return shuffle(list);
+}
+
+/* =========================================================
+   TUTORIAL: 4 LIVELLI
+========================================================= */
+
+const LEVELS = [
+    {
+        name: "Salita e discesa",
+        desc: "Guarda e ascolta la scala, poi recitala tu: su fino al Do alto e poi di nuovo giù.",
+        badge: "👀",
+        demo: true,
+        build: () => [{ kind: "cycle", dir: "up", d0: 0 }]
+    },
+    {
+        name: "Discesa e salita",
+        desc: "Ora si parte dal Do alto: giù fino al Do e poi di nuovo su.",
+        badge: "🔄",
+        demo: true,
+        build: () => [{ kind: "cycle", dir: "down", d0: 7 }]
+    },
+    {
+        name: "Sali di un gradino",
+        desc: "Ogni scala parte dalla seconda nota di quella prima. Da Do fino al Do alto!",
+        badge: "🪜",
+        demo: false,
+        // Do, Re, Mi… Si, Do alto: ogni partenza è la seconda nota della scala precedente
+        build: () => Array.from({ length: CARDS }, (_, k) => ({ kind: "single", dir: "up", d0: -7 + k }))
+    },
+    {
+        name: "Scendi di un gradino",
+        desc: "Come prima, ma in discesa: dal Do alto fino al Do.",
+        badge: "🛝",
+        demo: false,
+        // Do alto, Si, La… Re, Do
+        build: () => Array.from({ length: CARDS }, (_, k) => ({ kind: "single", dir: "down", d0: 7 - k }))
+    }
+];
+
+const totalLevels = LEVELS.length;
+
+/* =========================================================
+   ALLENAMENTO E VERIFICA
+========================================================= */
+
+function allenamentoRounds() {
     const all = [];
     for (let s = 0; s <= 6; s++) {
         all.push({ start: s, dir: "up" });
         all.push({ start: s, dir: "down" });
     }
-    // evita due giri di fila con la stessa partenza
-    for (let attempt = 0; attempt < 40; attempt++) {
-        const mixed = shuffle(all);
-        if (mixed.every((r, i) => i === 0 || r.start !== mixed[i - 1].start)) return mixed;
-    }
-    return shuffle(all);
+    return shuffleNoRepeat(all).map(c => cycleRound(c.start, c.dir));
 }
 
-function verificaRounds(choice) {
-    return shuffle([0, 1, 2, 3, 4, 5, 6]).map(start => ({
-        start,
-        dir: choice === "up" ? "up" : choice === "down" ? "down" : (Math.random() < 0.5 ? "up" : "down")
-    }));
+function verificaRounds() {
+    const ups = shuffle([0, 1, 2, 3, 4, 5, 6]).slice(0, 5).map(start => ({ start, dir: "up" }));
+    const downs = shuffle([0, 1, 2, 3, 4, 5, 6]).slice(0, 5).map(start => ({ start, dir: "down" }));
+    return shuffleNoRepeat([...ups, ...downs]).map(c => cycleRound(c.start, c.dir));
 }
 
 /* =========================================================
    STATO
 ========================================================= */
 
-let appMode = "training";      // "training" | "verifica"
-let verificaChoice = null;     // "up" | "down" | "mixed"
+let appMode = "tutorial";      // "tutorial" | "allenamento" | "verifica"
 
 let level = 1;
 let total = 0;
@@ -1462,18 +1503,16 @@ let roundNotes = [];
 let answeredInRound = 0;
 let roundErrors = 0;
 let cardErrors = 0;
-let phase = "A";               // "A": da sinistra a destra, "B": ritorno
+let phase = "A";               // "A": andata (sinistra → destra), "B": ritorno
 let pos = 0;                   // carta da indovinare
 let answering = false;
 let busy = false;
+let startUnknown = false;      // "Partenza da ?" nei livelli 3 e 4
 let replayCount = 0;
 
 let completedLevels = [];
 let levelErrorCounts = {};
 let levelCompletionCounts = {};
-let loopActive = false;
-let loopStart = 1;
-let loopEnd = 1;
 
 let speed = 1;
 let hintsOn = true;
@@ -1481,8 +1520,7 @@ let hintsOn = true;
 let slotEls = [];
 
 /*
-   Ogni sequenza animata (distribuzione delle carte,
-   dimostrazione, fine giro…) porta con sé un "gettone":
+   Ogni sequenza animata porta con sé un "gettone":
    quando si ricomincia o si torna al menu il gettone
    cambia e le sequenze ancora in corso si fermano da sole.
 */
@@ -1523,6 +1561,7 @@ const stageBanner = $("stageBanner");
 const bannerBadge = $("bannerBadge");
 const bannerTitle = $("bannerTitle");
 const bannerText = $("bannerText");
+const bannerStart = $("bannerStart");
 const gameSubtitle = $("gameSubtitle");
 
 const totalEl = $("total");
@@ -1559,6 +1598,7 @@ const finalCorrect = $("finalCorrect");
 const finalErrors = $("finalErrors");
 const finalTime = $("finalTime");
 const finalReplays = $("finalReplays");
+const finalReplaysBox = $("finalReplaysBox");
 const finalGradeBox = $("finalGradeBox");
 const finalGrade = $("finalGrade");
 const playAgainButton = $("playAgainButton");
@@ -1567,10 +1607,6 @@ const volumeSlider = $("volumeSlider");
 const trophyButton = $("trophyButton");
 const trophyPanel = $("trophyPanel");
 const trophyList = $("trophyList");
-const trophyLoopControls = $("trophyLoopControls");
-const loopStartSelect = $("loopStartSelect");
-const loopEndSelect = $("loopEndSelect");
-const loopToggleButton = $("loopToggleButton");
 const optionsButton = $("optionsButton");
 const optionsPanel = $("optionsPanel");
 const speedButtons = Array.from(optionsPanel.querySelectorAll("[data-speed]"));
@@ -1579,7 +1615,6 @@ const hintOptionsGroup = $("hintOptionsGroup");
 
 const gameContainer = $("gameContainer");
 const homeScreen = $("homeScreen");
-const verificaMenuScreen = $("verificaMenuScreen");
 const homeMenuButtons = document.querySelectorAll(".home-menu-button");
 
 /* =========================================================
@@ -1752,6 +1787,17 @@ function playVictorySound() {
     });
 }
 
+function playShuffleSound() {
+    for (let k = 0; k < 7; k++) {
+        noiseBurst(0.04, 3000, 5200, 0.12, k * 0.035, "highpass");
+    }
+}
+
+function playSlideSound() {
+    noiseBurst(0.5, 500, 1600, 0.12, 0, "bandpass");
+    tone(660, 0.12, "sine", 0.45, 0.12, 990);
+}
+
 /* =========================================================
    UTILITÀ PER LE ANIMAZIONI
 ========================================================= */
@@ -1892,31 +1938,67 @@ function setCurrent(i) {
     slotEls.forEach((s, k) => s.classList.toggle("current", k === i));
 }
 
-function setDirChip(dir) {
+function opposite(dir) { return dir === "up" ? "down" : "up"; }
+
+function setDirChip(dir, force) {
+    if (!force && dirChip.classList.contains(dir)) return;
     dirChip.className = "dir-chip " + dir;
     dirChip.textContent = dir === "up" ? "↗ Salita" : "↘ Discesa";
     restartClass(dirChip, "flip");
 }
 
-function setStartLabel(round) {
-    const idx = round.start;
-    stageStart.innerHTML = "Partenza da <b class=\"start-chip\" style=\"background:" + NOTE_COLORS[idx] + "\">" +
+/* "Partenza da DO", "Partenza da ?", "Esatto, partenza da RE!" */
+function setStartLabel(state, idx) {
+    stageStart.classList.toggle("found", state === "found");
+    if (state === "unknown") {
+        stageStart.innerHTML = "Partenza da <b class=\"start-chip unknown\">?</b>";
+        return;
+    }
+    const chip = "<b class=\"start-chip\" style=\"background:" + NOTE_COLORS[idx] + "\">" +
         NOTE_NAMES[idx].toUpperCase() + "</b>";
-    const chip = stageStart.querySelector(".start-chip");
-    restartClass(chip, "pop");
+    stageStart.innerHTML = (state === "found" ? "Esatto, partenza da " : "Partenza da ") + chip;
+    restartClass(stageStart.querySelector(".start-chip"), "pop");
+}
+
+/* in allenamento e verifica i pulsanti cambiano posto a ogni giro */
+async function shuffleButtons(tok) {
+    noteButtons.forEach(b => {
+        b.classList.remove("good", "wrong-flash", "lit", "hint", "shuffle-in");
+        b.classList.add("shuffle-out");
+    });
+    playShuffleSound();
+    await sleep(240, tok, false);
+
+    const order = shuffle([0, 1, 2, 3, 4, 5, 6]);
+    noteButtons.forEach((b, idx) => {
+        b.style.order = order.indexOf(idx);
+        b.classList.remove("shuffle-out");
+        b.style.animationDelay = (order.indexOf(idx) * 45) + "ms";
+        b.classList.add("shuffle-in");
+    });
+    await sleep(7 * 45 + 450, tok, false);
+    noteButtons.forEach(b => { b.style.animationDelay = ""; });
+}
+
+function resetButtonOrder() {
+    noteButtons.forEach(b => {
+        b.style.order = "";
+        b.style.animationDelay = "";
+        b.classList.remove("shuffle-in", "shuffle-out");
+    });
 }
 
 /* =========================================================
    CARTE
 ========================================================= */
 
-function renderCards(notes, enterStyle) {
+function renderCards(notes, enterStyle, firstRevealed) {
     cardsEl.innerHTML = "";
     slotEls = [];
 
     notes.forEach((n, i) => {
         const slot = document.createElement("div");
-        slot.className = "card-slot";
+        slot.className = "card-slot" + (firstRevealed && i === 0 ? " revealed" : "");
         slot.style.setProperty("--rank", n.rank);
         slot.style.setProperty("--i", i);
         slot.innerHTML =
@@ -1930,10 +2012,17 @@ function renderCards(notes, enterStyle) {
                 "</div>" +
             "</div>";
 
+        cardsEl.appendChild(slot);
+        slotEls.push(slot);
+
+        // la carta che arriva dal giro precedente è già al suo posto
+        if (firstRevealed && i === 0) return;
+
         const anim = slot.firstElementChild;
         const cls = "enter-" + enterStyle;
+        const order = firstRevealed ? i - 1 : i;
         anim.classList.add(cls);
-        anim.style.animationDelay = (i * 70) + "ms";
+        anim.style.animationDelay = (order * 70) + "ms";
         const onEnd = e => {
             if (e.target !== anim) return;
             anim.classList.remove(cls);
@@ -1941,32 +2030,47 @@ function renderCards(notes, enterStyle) {
             anim.removeEventListener("animationend", onEnd);
         };
         anim.addEventListener("animationend", onEnd);
-
-        cardsEl.appendChild(slot);
-        slotEls.push(slot);
-        playDealSound(i * 0.07 + 0.05);
+        playDealSound(order * 0.07 + 0.05);
     });
 }
 
-function exitCards(style) {
+function exitCards(style, except) {
     const cls = "exit-" + style;
     slotEls.forEach((slot, i) => {
         slot.classList.remove("current");
+        if (i === except) return;
         const anim = slot.firstElementChild;
         let delay = i * 50;
-        if (style === "sweep") delay = (7 - i) * 50;
+        if (style === "sweep") delay = (CARDS - 1 - i) * 50;
         if (style === "spin") delay = Math.abs(i - 3.5) * 60;
         anim.style.animationDelay = delay + "ms";
         anim.classList.add(cls);
     });
 }
 
+/* la carta "from" fa un piccolo salto e va a prendere il posto di "to" */
+async function moveCard(from, to, tok) {
+    const a = slotEls[from].getBoundingClientRect();
+    const b = slotEls[to].getBoundingClientRect();
+    const dx = b.left - a.left;
+    const dy = b.top - a.top;
+    const anim = slotEls[from].firstElementChild;
+    playSlideSound();
+    anim.animate([
+        { transform: "translate(0, 0) scale(1) rotate(0deg)" },
+        { transform: "translate(" + dx * 0.5 + "px, " + (dy * 0.5 - 42) + "px) scale(1.12) rotate(-8deg)", offset: 0.5 },
+        { transform: "translate(" + dx + "px, " + dy + "px) scale(1) rotate(0deg)" }
+    ], { duration: 650, easing: "cubic-bezier(.45, 0, .2, 1)", fill: "forwards" });
+    await sleep(680, tok, false);
+}
+
 function clearStage() {
     cardsEl.innerHTML = "";
     slotEls = [];
     fxLayer.innerHTML = "";
-    stageBanner.classList.remove("show");
+    stageBanner.classList.remove("show", "interactive");
     stageStart.innerHTML = "";
+    stageStart.classList.remove("found");
     dirChip.className = "dir-chip hidden";
     setMessage("");
     clearHints();
@@ -1992,16 +2096,45 @@ function playCard(i, opts) {
 }
 
 /* =========================================================
-   STRISCIONE
+   STRISCIONE (con pulsante Inizia)
 ========================================================= */
 
-async function showBanner(badge, title, text, tok, duration) {
+async function showBanner(badge, title, text, tok, withButton) {
     bannerBadge.textContent = badge;
     bannerTitle.textContent = title;
     bannerText.textContent = text;
+    bannerStart.style.display = withButton ? "" : "none";
+    stageBanner.classList.toggle("interactive", !!withButton);
     stageBanner.classList.add("show");
-    await sleep(duration || 2000, tok, false);
-    stageBanner.classList.remove("show");
+
+    if (withButton) {
+        await new Promise((resolve, reject) => {
+            const cleanup = () => {
+                bannerStart.removeEventListener("click", onClick);
+                clearInterval(watcher);
+            };
+            const onClick = () => {
+                cleanup();
+                playClickSound();
+                getAudioContext();
+                resolve();
+            };
+            const watcher = setInterval(() => {
+                if (tok !== runToken) {
+                    cleanup();
+                    reject(ABORT);
+                }
+            }, 200);
+            bannerStart.addEventListener("click", onClick);
+            setTimeout(() => {
+                if (tok === runToken) bannerStart.focus({ preventScroll: true });
+            }, 350);
+        });
+    } else {
+        await sleep(2000, tok, false);
+    }
+
+    stageBanner.classList.remove("show", "interactive");
     await sleep(300, tok, false);
 }
 
@@ -2009,25 +2142,22 @@ async function showBanner(badge, title, text, tok, duration) {
    SVOLGIMENTO DEL GIOCO
 ========================================================= */
 
-function currentDemo() {
-    return appMode === "verifica" ? "none" : LEVELS[level - 1].demo;
-}
+function currentRound() { return rounds[roundIndex]; }
 
 function phaseDirection() {
-    const dir = rounds[roundIndex].dir;
-    if (phase === "A") return dir;
-    return dir === "up" ? "down" : "up";
+    const dir = currentRound().dir;
+    return phase === "A" ? dir : opposite(dir);
 }
 
 async function startLevel(tok, levelUp) {
-    if (appMode === "verifica") {
-        rounds = verificaRounds(verificaChoice);
-    } else {
-        rounds = LEVELS[level - 1].order === "shuffle" ? shuffledRounds() : courseRounds();
-    }
+    if (appMode === "tutorial") rounds = LEVELS[level - 1].build();
+    else if (appMode === "allenamento") rounds = allenamentoRounds();
+    else rounds = verificaRounds();
+
     roundIndex = 0;
     answeredInRound = 0;
     clearStage();
+    resetButtonOrderIfTutorial();
     updateStats();
     if (trophyPanel.classList.contains("show")) renderTrophyList();
 
@@ -2037,99 +2167,106 @@ async function startLevel(tok, levelUp) {
         rainConfetti(50);
     }
 
-    if (appMode === "verifica") {
-        const texts = {
-            up: "7 giri che partono salendo, in ordine sparso.",
-            down: "7 giri che partono scendendo, in ordine sparso.",
-            mixed: "7 giri: la direzione cambia a sorpresa."
-        };
-        await showBanner("📝", "Verifica", texts[verificaChoice] + " Nessuna anteprima.", tok, 2300);
-    } else {
+    if (appMode === "tutorial") {
         const info = LEVELS[level - 1];
-        await showBanner(info.badge, "Livello " + level + ": " + info.name, info.desc, tok, 2300);
+        await showBanner(info.badge, "Livello " + level + ": " + info.name, info.desc, tok, true);
+    } else if (appMode === "allenamento") {
+        await showBanner("🎯", "Allenamento",
+            "Tutte le 14 partenze, in salita e in discesa, in ordine casuale. Occhio: i pulsanti cambiano posto a ogni giro!", tok, true);
+    } else {
+        await showBanner("📝", "Verifica",
+            "10 giri di andata e ritorno: 5 in salita e 5 in discesa. Ogni errore toglie mezzo punto.", tok, true);
     }
 
-    await startRound(tok);
+    await startRound(tok, false);
 }
 
-async function startRound(tok) {
-    const round = rounds[roundIndex];
+function resetButtonOrderIfTutorial() {
+    if (appMode === "tutorial") resetButtonOrder();
+}
+
+async function startRound(tok, carry) {
+    const round = currentRound();
     roundNotes = buildRoundNotes(round);
     answeredInRound = 0;
     roundErrors = 0;
     cardErrors = 0;
     phase = "A";
     answering = false;
+    startUnknown = !!carry;
     setWaiting(true);
     clearHints();
-    setMessage("");
     updateStats();
 
-    setStartLabel(round);
-    setDirChip(round.dir);
-    renderCards(roundNotes, pick(["deal", "drop", "pop"]));
-    await sleep(700 + CARDS_PER_ROUND * 70, tok, false);
+    if (appMode !== "tutorial") {
+        setMessage("");
+        stageStart.innerHTML = "";
+        dirChip.className = "dir-chip hidden";
+        await shuffleButtons(tok);
+    }
 
-    const T = 560;
-    const demo = currentDemo();
+    setDirChip(round.dir, true);
 
-    if (demo === "full") {
-        // si scoprono una alla volta, da sinistra a destra
-        for (let i = 0; i < CARDS_PER_ROUND; i++) {
-            reveal(i);
-            playCard(i, { light: true, hop: false });
-            animateCard(i, "pop");
-            await sleep(T, tok);
-        }
-        await sleep(T * 0.5, tok);
-        // e risuonano all'indietro
-        setDirChip(round.dir === "up" ? "down" : "up");
-        for (let i = CARDS_PER_ROUND - 1; i >= 0; i--) {
-            playCard(i, { light: true });
-            await sleep(T * 0.8, tok);
-        }
-        await sleep(T * 0.6, tok);
-        // si rigirano tutte tranne la prima
-        setDirChip(round.dir);
-        for (let i = CARDS_PER_ROUND - 1; i >= 1; i--) {
-            cover(i);
-            if (i % 2 === 1) playFlipSound();
-            await sleep(65, tok, false);
-        }
-        await sleep(650, tok, false);
-
-    } else if (demo === "sound") {
-        reveal(0);
-        playCard(0, { light: true, hop: false });
-        animateCard(0, "pop");
-        await sleep(T, tok);
-        for (let i = 1; i < CARDS_PER_ROUND; i++) {
-            playCard(i);
-            await sleep(T, tok);
-        }
-        await sleep(T * 0.5, tok);
-        setDirChip(round.dir === "up" ? "down" : "up");
-        for (let i = CARDS_PER_ROUND - 1; i >= 0; i--) {
-            playCard(i);
-            await sleep(T * 0.8, tok);
-        }
-        await sleep(T * 0.6, tok);
-        setDirChip(round.dir);
-        await sleep(250, tok, false);
-
+    if (carry) {
+        // la carta spostata è già al primo posto: si gira subito
+        renderCards(roundNotes, pick(ENTER_STYLES), true);
+        await sleep(60, tok, false);
+        cover(0);
+        playFlipSound();
+        setStartLabel("unknown");
+        setMessage("Da che nota si parte adesso? 🤔", "info-message");
+        await sleep(600 + 7 * 70, tok, false);
     } else {
-        reveal(0);
-        playCard(0, { light: true, hop: false });
-        animateCard(0, "pop");
-        await sleep(650, tok, false);
+        if (appMode === "tutorial") setMessage("");
+        setStartLabel("known", roundNotes[0].idx);
+        renderCards(roundNotes, pick(ENTER_STYLES), false);
+        await sleep(700 + CARDS * 70, tok, false);
+    }
+
+    if (appMode === "tutorial" && LEVELS[level - 1].demo) {
+        await runDemo(tok, round);
+    } else if (appMode !== "tutorial") {
+        // si sente la nota di partenza, a carta coperta
+        playCard(0);
+        await sleep(600, tok);
     }
 
     startPhase("A");
 }
 
+async function runDemo(tok, round) {
+    const T = 560;
+
+    // si scoprono una alla volta, da sinistra a destra
+    for (let i = 0; i < CARDS; i++) {
+        reveal(i);
+        playCard(i, { light: true, hop: false });
+        animateCard(i, "pop");
+        await sleep(T, tok);
+    }
+    await sleep(T * 0.5, tok);
+
+    // risuonano all'indietro
+    setDirChip(opposite(round.dir));
+    for (let i = CARDS - 1; i >= 0; i--) {
+        playCard(i, { light: true });
+        await sleep(T * 0.8, tok);
+    }
+    await sleep(T * 0.6, tok);
+
+    // si rigirano tutte, anche la prima
+    setDirChip(round.dir);
+    for (let i = CARDS - 1; i >= 0; i--) {
+        cover(i);
+        if (i % 2 === 1) playFlipSound();
+        await sleep(65, tok, false);
+    }
+    await sleep(650, tok, false);
+}
+
 function startPhase(p) {
     phase = p;
-    pos = p === "A" ? 1 : CARDS_PER_ROUND - 2;
+    pos = p === "A" ? 0 : CARDS - 1;
     cardErrors = 0;
     setDirChip(phaseDirection());
     setCurrent(pos);
@@ -2137,19 +2274,16 @@ function startPhase(p) {
     setWaiting(false);
 }
 
+/* fine dell'andata: tutte le carte si coprono e si torna indietro */
 async function endPhaseA(tok) {
     setWaiting(true);
     setCurrent(-1);
-    await sleep(500, tok, false);
+    await sleep(550, tok, false);
 
     setMessage("E ora si torna indietro! ↩", "info-message");
-    setDirChip(phaseDirection() === "up" ? "down" : "up");
+    setDirChip(opposite(currentRound().dir));
 
-    // l'ultima carta risuona: da lì parte il ritorno
-    playCard(CARDS_PER_ROUND - 1, { light: false });
-    await sleep(650, tok);
-
-    for (let i = 0; i < CARDS_PER_ROUND - 1; i++) {
+    for (let i = 0; i < CARDS; i++) {
         cover(i);
         if (i % 2 === 0) playFlipSound();
         await sleep(65, tok, false);
@@ -2158,33 +2292,39 @@ async function endPhaseA(tok) {
     startPhase("B");
 }
 
+/* la scala risuona di corsa, con la ola delle carte */
+async function victoryRun(tok, withReturn) {
+    const order = [];
+    for (let i = 0; i < CARDS; i++) order.push(i);
+    if (withReturn) {
+        for (let i = CARDS - 1; i >= 0; i--) order.push(i);
+    }
+    for (const i of order) {
+        playCard(i, { light: true, short: true });
+        await sleep(withReturn ? 115 : 140, tok);
+    }
+    await sleep(180, tok, false);
+}
+
+const PERFECT_MESSAGES = ["Giro perfetto! ✨", "Impeccabile! 🌟", "Nemmeno un errore! 🎯"];
+const GOOD_MESSAGES = ["Giro completato! 🎉", "Ben fatto! 👏", "Avanti così! 🚀"];
+
+/* fine di un giro completo: festa, le carte se ne vanno, si passa al giro dopo */
 async function endRound(tok) {
     setWaiting(true);
     setCurrent(-1);
     const perfect = roundErrors === 0;
     await sleep(420, tok, false);
 
-    // corsa finale: tutta la formula, veloce, con la ola delle carte
-    const order = [];
-    for (let i = 0; i < CARDS_PER_ROUND; i++) order.push(i);
-    for (let i = CARDS_PER_ROUND - 1; i >= 0; i--) order.push(i);
-    for (const i of order) {
-        playCard(i, { light: true, short: true });
-        await sleep(115, tok);
-    }
-    await sleep(180, tok, false);
+    await victoryRun(tok, currentRound().kind === "cycle");
 
     playJingle();
     burstConfetti(perfect ? 46 : 28);
     if (perfect) slotEls.forEach(s => s.classList.add("shine"));
-    setMessage(perfect
-        ? pick(["Giro perfetto! ✨", "Impeccabile! 🌟", "Nemmeno un errore! 🎯"])
-        : pick(["Giro completato! 🎉", "Ben fatto! 👏", "Avanti così! 🚀"]),
-        "correct-message");
+    setMessage(perfect ? pick(PERFECT_MESSAGES) : pick(GOOD_MESSAGES), "correct-message");
 
     await sleep(1100, tok, false);
-
-    exitCards(pick(["fly", "sweep", "spin"]));
+    exitCards(pick(EXIT_STYLES));
     playWhooshSound();
     await sleep(900, tok, false);
 
@@ -2195,12 +2335,54 @@ async function endRound(tok) {
     if (roundIndex >= rounds.length) {
         await levelComplete(tok);
     } else {
-        await startRound(tok);
+        await startRound(tok, false);
     }
 }
 
+/*
+   Livelli 3 e 4: finita la scala, restano solo le prime due carte;
+   la seconda si sposta al primo posto e diventa la nuova partenza.
+*/
+async function endChainStep(tok) {
+    if (roundIndex >= rounds.length - 1) {
+        await endRound(tok);
+        return;
+    }
+
+    setWaiting(true);
+    setCurrent(-1);
+    const perfect = roundErrors === 0;
+    await sleep(420, tok, false);
+
+    await victoryRun(tok, false);
+
+    playJingle();
+    burstConfetti(perfect ? 34 : 20);
+    if (perfect) slotEls.forEach(s => s.classList.add("shine"));
+    setMessage(perfect
+        ? pick(["Scala perfetta! ✨", "Impeccabile! 🌟", "Senza sbavature! 🎯"])
+        : pick(["Scala completata! 🎉", "Ben fatto! 👏", "Un gradino in più! 🪜"]),
+        "correct-message");
+    await sleep(900, tok, false);
+
+    // se ne vanno tutte tranne la seconda
+    exitCards(pick(EXIT_STYLES), 1);
+    playWhooshSound();
+    await sleep(1000, tok, false);
+
+    // la seconda resta ferma mezzo secondo…
+    await sleep(500, tok, false);
+
+    // …poi prende il posto della prima
+    await moveCard(1, 0, tok);
+
+    roundIndex++;
+    answeredInRound = 0;
+    await startRound(tok, true);
+}
+
 async function levelComplete(tok) {
-    if (appMode === "verifica") {
+    if (appMode !== "tutorial") {
         clearStage();
         playVictorySound();
         rainConfetti(70);
@@ -2212,23 +2394,20 @@ async function levelComplete(tok) {
     levelCompletionCounts[level] = (levelCompletionCounts[level] || 0) + 1;
     if (!completedLevels.includes(level)) completedLevels.push(level);
 
-    if (loopActive && level === loopEnd) {
-        level = loopStart;
-    } else if (level >= totalLevels) {
+    if (level >= totalLevels) {
         clearStage();
         playVictorySound();
         rainConfetti(80);
         await sleep(1500, tok, false);
         showFinalScreen("completed");
         return;
-    } else {
-        level++;
     }
 
+    level++;
     await startLevel(tok, true);
 }
 
-/* riascolta la formula completa, senza scoprire le carte */
+/* riascolta la sequenza senza scoprire le carte */
 async function replaySequence(tok) {
     if (!answering || busy || finished) return;
     busy = true;
@@ -2241,14 +2420,16 @@ async function replaySequence(tok) {
 
     try {
         const T = 520;
-        for (let i = 0; i < CARDS_PER_ROUND; i++) {
+        for (let i = 0; i < CARDS; i++) {
             playCard(i);
             await sleep(T * 0.8, tok);
         }
-        await sleep(T * 0.3, tok);
-        for (let i = CARDS_PER_ROUND - 1; i >= 0; i--) {
-            playCard(i);
-            await sleep(T * 0.8, tok);
+        if (currentRound().kind === "cycle") {
+            await sleep(T * 0.3, tok);
+            for (let i = CARDS - 1; i >= 0; i--) {
+                playCard(i);
+                await sleep(T * 0.8, tok);
+            }
         }
         await sleep(250, tok, false);
     } catch (e) {
@@ -2287,17 +2468,23 @@ function checkAnswer(noteIdx, btn) {
         playCard(i, { light: true, hop: false });
         animateCard(i, "pop");
         sparkleAt(i);
-        if (answeredInRound === 1 || phase === "B") setMessage("");
 
-        if (streak > 0 && streak % 10 === 0) {
+        if (startUnknown && i === 0) {
+            startUnknown = false;
+            setStartLabel("found", expected);
+        }
+        if (message.textContent) setMessage("");
+
+        if (streak % 10 === 0) {
             comboPop("🔥 " + streak + " di fila!");
             restartClass(streakBox, "bump");
             playChime();
         }
 
-        if (phase === "A" && pos === CARDS_PER_ROUND - 1) {
+        const round = currentRound();
+        if (phase === "A" && pos === CARDS - 1) {
             answering = false;
-            guard(endPhaseA(runToken));
+            guard(round.kind === "cycle" ? endPhaseA(runToken) : endChainStep(runToken));
         } else if (phase === "B" && pos === 0) {
             answering = false;
             guard(endRound(runToken));
@@ -2311,7 +2498,7 @@ function checkAnswer(noteIdx, btn) {
         streak = 0;
         roundErrors++;
         cardErrors++;
-        const key = appMode === "verifica" ? "v" : level;
+        const key = appMode === "tutorial" ? level : appMode;
         levelErrorCounts[key] = (levelErrorCounts[key] || 0) + 1;
 
         playWrongSound();
@@ -2320,7 +2507,7 @@ function checkAnswer(noteIdx, btn) {
         animateCard(pos, "shake");
         restartClass(slotEls[pos].querySelector(".card-back"), "oops");
 
-        if (hintsOn && appMode === "training" && cardErrors >= 2) {
+        if (hintsOn && appMode !== "verifica" && cardErrors >= 2) {
             noteButtons[expected].classList.add("hint");
         }
     }
@@ -2332,17 +2519,11 @@ noteButtons.forEach(btn => {
     btn.addEventListener("click", () => {
         checkAnswer(parseInt(btn.dataset.note, 10), btn);
     });
-});
-
-// tasti 1-7 = Do-Si
-document.addEventListener("keydown", e => {
-    if (gameContainer.style.display === "none") return;
-    if (e.ctrlKey || e.metaKey || e.altKey) return;
-    const n = parseInt(e.key, 10);
-    if (n >= 1 && n <= 7) {
-        const btn = noteButtons[n - 1];
-        checkAnswer(n - 1, btn);
-    }
+    btn.addEventListener("animationend", e => {
+        if (e.animationName === "goodPop") btn.classList.remove("good");
+        if (e.animationName === "buttonShake") btn.classList.remove("wrong-flash");
+        if (e.animationName === "shuffleIn") btn.classList.remove("shuffle-in");
+    });
 });
 
 cardsEl.addEventListener("animationend", e => {
@@ -2351,11 +2532,14 @@ cardsEl.addEventListener("animationend", e => {
     if (t.classList.contains("card-back")) t.classList.remove("oops");
 });
 
-noteButtons.forEach(btn => {
-    btn.addEventListener("animationend", e => {
-        if (e.animationName === "goodPop") btn.classList.remove("good");
-        if (e.animationName === "buttonShake") btn.classList.remove("wrong-flash");
-    });
+// tasti 1-7 = Do-Si
+document.addEventListener("keydown", e => {
+    if (gameContainer.style.display === "none") return;
+    if (e.ctrlKey || e.metaKey || e.altKey) return;
+    const n = parseInt(e.key, 10);
+    if (n >= 1 && n <= 7) {
+        checkAnswer(n - 1, noteButtons[n - 1]);
+    }
 });
 
 replayButton.addEventListener("click", () => {
@@ -2367,6 +2551,17 @@ replayButton.addEventListener("click", () => {
    STATISTICHE
 ========================================================= */
 
+function progressNumbers() {
+    let target = 0;
+    let done = 0;
+    rounds.forEach((r, k) => {
+        target += answersFor(r);
+        if (k < roundIndex) done += answersFor(r);
+    });
+    done += answeredInRound;
+    return { target: target || 1, done };
+}
+
 function updateStats() {
     totalEl.textContent = total;
     correctEl.textContent = correct;
@@ -2374,60 +2569,59 @@ function updateStats() {
     streakEl.textContent = streak;
     recordEl.textContent = record;
 
-    const target = (rounds.length * ANSWERS_PER_ROUND) || 1;
-    const done = roundIndex * ANSWERS_PER_ROUND + answeredInRound;
+    const { target, done } = progressNumbers();
     progressFill.style.width = Math.min(100, Math.round((done / target) * 100)) + "%";
 
-    const shownRound = Math.min(roundIndex + 1, rounds.length || 1);
+    const count = rounds.length || 1;
+    const shown = Math.min(roundIndex + 1, count);
 
-    if (appMode === "verifica") {
-        levelTitle.textContent = "📝 Verifica";
-        levelNumber.textContent = "Giro " + shownRound + " / " + (rounds.length || 7);
-        levelInfo.textContent = done + " / " + target + " note";
-    } else {
+    if (appMode === "tutorial") {
+        const info = LEVELS[level - 1];
         levelTitle.textContent = "⭐ Livello";
         levelNumber.textContent = level + " / " + totalLevels;
-        levelInfo.textContent = LEVELS[level - 1].name + ": giro " + shownRound + " di " + (rounds.length || 15);
+        levelInfo.textContent = count > 1
+            ? info.name + ": scala " + shown + " di " + count
+            : info.name;
+    } else if (appMode === "allenamento") {
+        levelTitle.textContent = "🎯 Allenamento";
+        levelNumber.textContent = "Giro " + shown + " / " + count;
+        levelInfo.textContent = "Combinazioni completate: " + roundIndex + " di " + count;
+    } else {
+        levelTitle.textContent = "📝 Verifica";
+        levelNumber.textContent = "Giro " + shown + " / " + count;
+        levelInfo.textContent = done + " / " + target + " note";
     }
 }
 
 /* =========================================================
-   TROFEI
+   TROFEI (solo tutorial)
+   I livelli già sbloccati si possono rigiocare toccandoli.
 ========================================================= */
 
-function populateLoopSelects() {
-    const build = selected => {
-        let html = "";
-        for (let i = 1; i <= totalLevels; i++) {
-            html += "<option value=\"" + i + "\"" + (i === selected ? " selected" : "") + ">Livello " + i + "</option>";
-        }
-        return html;
-    };
-    loopStartSelect.innerHTML = build(loopStart);
-    loopEndSelect.innerHTML = build(loopEnd);
+function highestUnlocked() {
+    let max = level;
+    completedLevels.forEach(l => { max = Math.max(max, l + 1); });
+    return Math.min(max, totalLevels);
 }
 
 function renderTrophyList() {
-    trophyLoopControls.classList.toggle("visible", appMode === "training");
-    if (appMode === "training") {
-        populateLoopSelects();
-        loopToggleButton.textContent = loopActive ? "Disattiva" : "Attiva";
-        loopToggleButton.classList.toggle("active", loopActive);
-    }
-
     trophyList.innerHTML = "";
+    const unlocked = highestUnlocked();
+
     for (let i = 1; i <= totalLevels; i++) {
         const row = document.createElement("div");
         const done = completedLevels.includes(i);
-        const playing = appMode === "training" && i === level && !finished;
-        const attempted = levelErrorCounts[i] !== undefined || done || playing;
+        const playing = i === level && !finished;
+        const open = i <= unlocked;
         const completions = levelCompletionCounts[i] || 0;
-        const inLoop = loopActive && i >= loopStart && i <= loopEnd;
 
-        row.className = "trophy-row" + (done ? " done" : "") + (inLoop ? " in-loop" : "") + (playing ? " playing" : "");
+        row.className = "trophy-row" +
+            (done ? " done" : "") +
+            (playing ? " playing" : "") +
+            (open ? " clickable" : " locked");
 
         const parts = [LEVELS[i - 1].name];
-        if (attempted) {
+        if (levelErrorCounts[i] !== undefined || done) {
             const count = levelErrorCounts[i] || 0;
             parts.push(count === 1 ? "1 errore" : count + " errori");
         }
@@ -2435,14 +2629,30 @@ function renderTrophyList() {
             parts.push("completato " + completions + (completions === 1 ? " volta" : " volte"));
         }
 
-        const statusIcon = inLoop ? "🔁" : (done ? "✅" : (playing ? "▶️" : "🔒"));
+        const statusIcon = playing ? "▶️" : (done ? "✅" : (open ? "🔓" : "🔒"));
 
         row.innerHTML =
             "<div class=\"trophy-row-main\"><span>" + LEVELS[i - 1].badge + " Livello " + i + "</span><span>" + statusIcon + "</span></div>" +
             "<div class=\"trophy-row-details\">" + parts.join(", ") + "</div>";
 
+        if (open && !playing) {
+            row.title = "Gioca questo livello";
+            row.addEventListener("click", () => jumpToLevel(i));
+        }
+
         trophyList.appendChild(row);
     }
+}
+
+function jumpToLevel(i) {
+    if (finished) return;
+    playClickSound();
+    trophyPanel.classList.remove("show");
+    runToken++;
+    busy = false;
+    answering = false;
+    level = i;
+    guard(startLevel(runToken, false));
 }
 
 /* =========================================================
@@ -2478,15 +2688,13 @@ function stopTimer() {
 }
 
 /* =========================================================
-   VOTO (come nel gioco originale)
-   Da 4 a 10 con mezzi voti, lineare sull'accuratezza;
-   mostrato solo se sufficiente.
+   VOTO DELLA VERIFICA
+   10 meno mezzo punto per ogni errore, minimo 4.
+   Mostrato solo se sufficiente e se la verifica è completa.
 ========================================================= */
 
 function computeGrade() {
-    if (total === 0) return 4;
-    const raw = 4 + 6 * (correct / total);
-    return Math.round(Math.min(10, Math.max(4, raw)) * 2) / 2;
+    return Math.max(4, 10 - 0.5 * errors);
 }
 
 function formatGrade(grade) {
@@ -2502,37 +2710,49 @@ function showFinalScreen(reason) {
     runToken++;
     answering = false;
     setWaiting(true);
+    trophyPanel.classList.remove("show");
 
+    const completed = reason === "completed";
     const elapsedSeconds = stopTimer();
     const accuracy = total > 0 ? Math.round((correct / total) * 100) : 0;
-    const grade = computeGrade();
 
-    if (appMode === "verifica") {
-        resultTitle.textContent = reason === "completed" ? "Verifica completata! 🎉" : "Verifica conclusa";
-        finalLevelLabel.textContent = "Giri completati";
-        finalLevel.textContent = roundIndex + " / " + rounds.length;
-    } else {
-        resultTitle.textContent = reason === "completed" ? "Tutti i livelli completati! 🏆" : "Partita conclusa";
+    if (appMode === "tutorial") {
+        resultTitle.textContent = completed ? "Tutorial completato! 🏆" : "Partita conclusa";
         finalLevelLabel.textContent = "Livello raggiunto";
         finalLevel.textContent = level + " / " + totalLevels;
+    } else if (appMode === "allenamento") {
+        resultTitle.textContent = completed ? "Allenamento completato! 🎉" : "Allenamento concluso";
+        finalLevelLabel.textContent = "Combinazioni completate";
+        finalLevel.textContent = roundIndex + " / " + rounds.length;
+    } else {
+        resultTitle.textContent = completed ? "Verifica completata! 🎉" : "Verifica conclusa";
+        finalLevelLabel.textContent = "Giri completati";
+        finalLevel.textContent = roundIndex + " / " + rounds.length;
     }
+
     resultSubtitle.textContent = "Ecco il tuo riepilogo.";
     finalAccuracy.textContent = accuracy + "%";
     finalCorrect.textContent = correct;
     finalErrors.textContent = errors;
     finalTime.textContent = formatTime(elapsedSeconds);
     finalReplays.textContent = replayCount === 0 ? "Mai" : String(replayCount);
-    // in verifica il riascolto non esiste: la voce non serve
-    $("finalReplaysBox").style.display = appMode === "verifica" ? "none" : "";
+    finalReplaysBox.style.display = appMode === "verifica" ? "none" : "";
 
-    if (grade >= 6) {
-        finalGrade.textContent = formatGrade(grade);
-        finalGradeBox.style.display = "";
-    } else {
-        finalGradeBox.style.display = "none";
+    finalGradeBox.style.display = "none";
+    if (appMode === "verifica") {
+        if (!completed) {
+            finalGrade.textContent = "Non assegnato";
+            finalGradeBox.style.display = "";
+        } else {
+            const grade = computeGrade();
+            if (grade >= 6) {
+                finalGrade.textContent = formatGrade(grade);
+                finalGradeBox.style.display = "";
+            }
+        }
     }
 
-    homeMenuButtons.forEach(btn => btn.classList.toggle("visible", appMode === "training"));
+    homeMenuButtons.forEach(btn => btn.classList.toggle("visible", appMode !== "verifica"));
     playAgainButton.textContent = appMode === "verifica" ? "🏠 Vai al menu" : "🔄 Gioca ancora";
 
     gameOver.classList.add("show");
@@ -2546,9 +2766,10 @@ function newGame() {
     errors = 0;
     streak = 0;
     record = 0;
-    level = appMode === "training" && loopActive ? loopStart : 1;
+    level = 1;
     completedLevels = [];
     levelErrorCounts = {};
+    levelCompletionCounts = {};
     replayCount = 0;
     busy = false;
     answering = false;
@@ -2556,9 +2777,8 @@ function newGame() {
     roundIndex = 0;
     answeredInRound = 0;
     gameOver.classList.remove("show");
-    if (appMode === "training") {
-        homeMenuButtons.forEach(btn => btn.classList.add("visible"));
-    }
+    homeMenuButtons.forEach(btn => btn.classList.toggle("visible", appMode !== "verifica"));
+    resetButtonOrder();
     startTimer();
     updateStats();
     guard(startLevel(runToken, false));
@@ -2628,41 +2848,6 @@ hintToggle.addEventListener("change", () => {
     if (!hintsOn) clearHints();
 });
 
-loopStartSelect.addEventListener("click", e => e.stopPropagation());
-loopEndSelect.addEventListener("click", e => e.stopPropagation());
-
-loopStartSelect.addEventListener("change", () => {
-    loopStart = parseInt(loopStartSelect.value, 10);
-    if (loopStart > loopEnd) loopEnd = loopStart;
-    if (loopActive) applyLoopJump();
-    renderTrophyList();
-});
-
-loopEndSelect.addEventListener("change", () => {
-    loopEnd = parseInt(loopEndSelect.value, 10);
-    if (loopEnd < loopStart) loopStart = loopEnd;
-    if (loopActive) applyLoopJump();
-    renderTrophyList();
-});
-
-function applyLoopJump() {
-    if (level >= loopStart && level <= loopEnd) return;
-    runToken++;
-    level = loopStart;
-    busy = false;
-    answering = false;
-    guard(startLevel(runToken, true));
-}
-
-loopToggleButton.addEventListener("click", e => {
-    e.stopPropagation();
-    playClickSound();
-    restartClass(loopToggleButton, "bump");
-    loopActive = !loopActive;
-    if (loopActive) applyLoopJump();
-    renderTrophyList();
-});
-
 document.addEventListener("click", e => {
     if (!trophyPanel.contains(e.target) && e.target !== trophyButton) {
         trophyPanel.classList.remove("show");
@@ -2678,7 +2863,6 @@ document.addEventListener("click", e => {
 
 function showScreen(name) {
     homeScreen.style.display = name === "home" ? "" : "none";
-    verificaMenuScreen.style.display = name === "verificaMenu" ? "" : "none";
     gameContainer.style.display = name === "game" ? "" : "none";
 }
 
@@ -2688,6 +2872,7 @@ function goHome() {
     answering = false;
     clearInterval(timerInterval);
     clearStage();
+    resetButtonOrder();
     gameOver.classList.remove("show");
     confirmOverlay.classList.remove("show");
     optionsPanel.classList.remove("show");
@@ -2695,52 +2880,47 @@ function goHome() {
     showScreen("home");
 }
 
-function startTraining() {
-    getAudioContext();
-    appMode = "training";
-    verificaChoice = null;
-    loopActive = false;
-    loopStart = 1;
-    loopEnd = 1;
+const MODE_SETTINGS = {
+    tutorial: {
+        subtitle: "Ascolta la sequenza, poi scegli la nota della carta evidenziata.",
+        finish: "Termina partita",
+        confirm: "Terminare la partita?",
+        hints: true, trophies: true, replay: true, restart: true
+    },
+    allenamento: {
+        subtitle: "Parti dalla nota indicata e recita la scala, andata e ritorno.",
+        finish: "Termina allenamento",
+        confirm: "Terminare l'allenamento?",
+        hints: true, trophies: false, replay: true, restart: true
+    },
+    verifica: {
+        subtitle: "Parti dalla nota indicata e recita la scala, andata e ritorno.",
+        finish: "Fine verifica",
+        confirm: "Terminare la verifica?",
+        hints: false, trophies: false, replay: false, restart: false
+    }
+};
 
-    hintOptionsGroup.style.display = "";
-    trophyButton.style.display = "";
-    replayButton.style.display = "";
-    homeMenuButtons.forEach(btn => btn.classList.add("visible"));
-    restartButton.style.display = "";
-    finishButton.textContent = "Termina partita";
-    confirmFinishTitle.textContent = "Terminare la partita?";
-    gameSubtitle.textContent = "Ascolta la sequenza, poi scegli la nota della carta evidenziata.";
+function startMode(mode) {
+    getAudioContext();
+    appMode = mode;
+    const cfg = MODE_SETTINGS[mode];
+
+    gameSubtitle.textContent = cfg.subtitle;
+    finishButton.textContent = cfg.finish;
+    confirmFinishTitle.textContent = cfg.confirm;
+    hintOptionsGroup.style.display = cfg.hints ? "" : "none";
+    trophyButton.style.display = cfg.trophies ? "" : "none";
+    replayButton.style.display = cfg.replay ? "" : "none";
+    restartButton.style.display = cfg.restart ? "" : "none";
 
     showScreen("game");
     newGame();
 }
 
-function startVerifica(choice) {
-    getAudioContext();
-    appMode = "verifica";
-    verificaChoice = choice;
-
-    // in verifica niente suggerimenti, riascolti o cambi di livello
-    hintOptionsGroup.style.display = "none";
-    trophyButton.style.display = "none";
-    replayButton.style.display = "none";
-    homeMenuButtons.forEach(btn => btn.classList.remove("visible"));
-    restartButton.style.display = "none";
-    finishButton.textContent = "Fine verifica";
-    confirmFinishTitle.textContent = "Terminare la verifica?";
-    gameSubtitle.textContent = "Scegli la nota di ogni carta evidenziata, andata e ritorno.";
-
-    showScreen("game");
-    newGame();
-}
-
-$("trainingButton").addEventListener("click", startTraining);
-$("verificaButton").addEventListener("click", () => showScreen("verificaMenu"));
-$("verificaBackButton").addEventListener("click", () => showScreen("home"));
-$("verificaUpButton").addEventListener("click", () => startVerifica("up"));
-$("verificaDownButton").addEventListener("click", () => startVerifica("down"));
-$("verificaMixedButton").addEventListener("click", () => startVerifica("mixed"));
+$("tutorialButton").addEventListener("click", () => startMode("tutorial"));
+$("allenamentoButton").addEventListener("click", () => startMode("allenamento"));
+$("verificaButton").addEventListener("click", () => startMode("verifica"));
 
 homeMenuButtons.forEach(btn => btn.addEventListener("click", goHome));
 
@@ -2752,7 +2932,6 @@ $("siteHomeButton").addEventListener("click", () => {});
 ========================================================= */
 
 showScreen("home");
-
 </script>
 </body>
 </html>
