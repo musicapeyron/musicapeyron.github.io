@@ -92,7 +92,7 @@ h1 { margin: 0; font-family: "Sora", "Inter", Arial, sans-serif; font-size: 2rem
 .options-choice.active { background: linear-gradient(135deg, #22c55e, #15803d); border-color: rgba(255,255,255,0.35); box-shadow: 0 4px 12px rgba(34,197,94,0.4), inset 0 0 0 2px rgba(255,255,255,0.2); }
 .toggle-list { display: flex; flex-direction: column; gap: 8px; margin-bottom: 6px; }
 .toggle-item {
-    display: flex; align-items: center; gap: 10px; padding: 12px 14px; border-radius: 12px;
+    display: flex; align-items: flex-start; gap: 10px; padding: 12px 14px; border-radius: 12px;
     border: 1px solid rgba(255,255,255,0.14); background: rgba(255,255,255,0.05); cursor: pointer;
     font-family: "Sora", "Inter", Arial, sans-serif; font-size: 0.86rem; font-weight: 600; color: #cbd5e1; text-align: left;
     transition: background 0.15s, border-color 0.15s;
@@ -101,6 +101,7 @@ h1 { margin: 0; font-family: "Sora", "Inter", Arial, sans-serif; font-size: 2rem
 .toggle-item.active { background: linear-gradient(135deg, rgba(34,197,94,0.28), rgba(21,128,61,0.22)); border-color: rgba(134,239,172,0.4); color: white; }
 .toggle-check { width: 20px; height: 20px; border-radius: 6px; border: 2px solid rgba(255,255,255,0.35); flex: 0 0 auto; display: flex; align-items: center; justify-content: center; font-size: 0.7rem; }
 .toggle-item.active .toggle-check { background: rgba(255,255,255,0.25); border-color: rgba(255,255,255,0.6); }
+.toggle-desc { display: block; font-size: 0.74rem; font-weight: 500; opacity: 0.75; margin-top: 2px; }
 
 /* STATISTICHE / LIVELLO */
 .stats { display: grid; grid-template-columns: repeat(5, 1fr); gap: 8px; margin: 0 auto 14px; }
@@ -129,6 +130,34 @@ h1 { margin: 0; font-family: "Sora", "Inter", Arial, sans-serif; font-size: 2rem
 
 /* PENTAGRAMMA */
 .staff-wrap { margin: 0 auto 16px; padding: 10px; background: linear-gradient(180deg, #fdfaf3, #f2e9d8); border-radius: 18px; box-shadow: 0 1px 0 rgba(255,255,255,0.4) inset, 0 16px 34px rgba(0,0,0,0.35); display: flex; justify-content: center; }
+
+.question-box {
+    margin: 0 auto 12px; padding: 14px 18px; border-radius: 14px; max-width: 420px;
+    background: linear-gradient(135deg, rgba(99,102,241,0.35), rgba(124,58,237,0.28));
+    border: 1px solid rgba(255,255,255,0.18);
+}
+.question-label { font-size: 0.64rem; font-weight: 700; letter-spacing: 0.6px; text-transform: uppercase; color: #ddd6fe; opacity: 0.85; margin-bottom: 4px; }
+.question-text { font-family: "Sora", "Inter", Arial, sans-serif; font-size: 1.3rem; font-weight: 800; }
+.staff-hint { font-size: 0.72rem; color: #94a3b8; margin: 0 0 12px; }
+
+.signature-grid {
+    display: flex; flex-wrap: wrap; justify-content: center; gap: 8px;
+    max-width: 620px; margin: 0 auto 14px;
+}
+.signature-btn {
+    background: linear-gradient(180deg, #fdfaf3, #f2e9d8); border-radius: 10px; border: 2px solid rgba(255,255,255,0.16);
+    padding: 4px; cursor: pointer; display: flex; align-items: center; justify-content: center;
+    flex: 0 0 auto;
+    transition: transform 0.12s var(--ease-out-soft), border-color 0.15s, box-shadow 0.15s;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.25);
+}
+.signature-btn svg { display: block; width: 100%; height: auto; }
+.signature-btn:hover { transform: translateY(-2px); border-color: rgba(165,180,252,0.6); }
+.signature-btn.correct-flash { border-color: #22c55e !important; box-shadow: 0 0 0 3px rgba(34,197,94,0.5) !important; }
+.signature-btn.wrong-flash { border-color: #ef4444 !important; box-shadow: 0 0 0 3px rgba(239,68,68,0.5) !important; animation: buttonShake 0.4s ease-in-out; }
+@media (max-width: 480px) {
+    .signature-grid { gap: 6px; }
+}
 #staffContainer svg { display: block; }
 
 /* RISPOSTE */
@@ -204,7 +233,19 @@ h1 { margin: 0; font-family: "Sora", "Inter", Arial, sans-serif; font-size: 2rem
 <div class="menu-screen" id="homeScreen">
     <div class="hero-badge">🔑</div>
     <h1>Identifica la tonalità</h1>
-    <p class="subtitle">Guarda l'armatura di chiave e indovina sia la tonalità maggiore sia la relativa minore.</p>
+    <p class="subtitle" id="homeSubtitle">Identifica la tonalità maggiore e minore dall'armatura di chiave.</p>
+
+    <div class="answer-mode-title">Modalità</div>
+    <div class="toggle-list" id="gameModeGroup">
+        <button class="toggle-item active" data-mode="name">
+            <span class="toggle-check">✓</span>
+            <span><strong>Nomina la tonalità</strong><br><span class="toggle-desc">Identifica la tonalità maggiore e minore dall'armatura di chiave</span></span>
+        </button>
+        <button class="toggle-item" data-mode="signature">
+            <span class="toggle-check">✓</span>
+            <span><strong>Identifica le alterazioni in chiave</strong><br><span class="toggle-desc">Identifica le alterazioni in chiave di una tonalità</span></span>
+        </button>
+    </div>
 
     <div class="answer-mode-title">Alterazioni massime in chiave</div>
     <div class="options-row-7" id="maxAlterationsGroup">
@@ -258,20 +299,31 @@ h1 { margin: 0; font-family: "Sora", "Inter", Arial, sans-serif; font-size: 2rem
         </div>
     </div>
 
-    <div class="staff-wrap">
-        <div id="staffContainer"></div>
+    <div id="nameModeSection">
+        <div class="staff-wrap">
+            <div id="staffContainer"></div>
+        </div>
+
+        <div class="answer-section">
+            <div class="answer-section-title">Nota</div>
+            <div class="choice-row" id="letterRow"></div>
+            <div class="answer-section-title">Alterazione</div>
+            <div class="choice-row" id="accidentalRow"></div>
+            <div class="answer-section-title">Qualità</div>
+            <div class="choice-row" id="qualityRow"></div>
+        </div>
+
+        <button class="submit-button" id="submitButton" disabled>Invia ✅</button>
     </div>
 
-    <div class="answer-section">
-        <div class="answer-section-title">Nota</div>
-        <div class="choice-row" id="letterRow"></div>
-        <div class="answer-section-title">Alterazione</div>
-        <div class="choice-row" id="accidentalRow"></div>
-        <div class="answer-section-title">Qualità</div>
-        <div class="choice-row" id="qualityRow"></div>
+    <div id="signatureModeSection" style="display: none;">
+        <div class="question-box">
+            <div class="question-label">Tonalità richiesta</div>
+            <div class="question-text" id="signatureQuestionText">Sol maggiore</div>
+        </div>
+        <p class="staff-hint">Clicca l'armatura di chiave corretta.</p>
+        <div class="signature-grid" id="signatureGrid"></div>
     </div>
-
-    <button class="submit-button" id="submitButton" disabled>Invia ✅</button>
 
     <div class="message" id="message"></div>
 
@@ -372,6 +424,12 @@ function pickSignature(maxAlterations) {
    ========================================================= */
 
 const homeScreen = document.getElementById("homeScreen");
+const homeSubtitle = document.getElementById("homeSubtitle");
+const gameModeGroup = document.getElementById("gameModeGroup");
+const nameModeSection = document.getElementById("nameModeSection");
+const signatureModeSection = document.getElementById("signatureModeSection");
+const signatureQuestionText = document.getElementById("signatureQuestionText");
+const signatureGrid = document.getElementById("signatureGrid");
 const gameContainer = document.getElementById("gameContainer");
 const siteHomeButton = document.getElementById("siteHomeButton");
 const gameSubtitle = document.getElementById("gameSubtitle");
@@ -565,15 +623,47 @@ function renderSignature() {
     stave.setContext(context).draw();
 }
 
+// disegno compatto (usato per i pulsanti-armatura della modalita'
+// "Identifica le alterazioni"): spaziatura ridotta cosi' anche le
+// armature con molte alterazioni restano piccole e leggibili
+const MINI_SVG_H = 62;
+function miniWidthFor(signature) {
+    // piu' alterazioni servono, piu' spazio orizzontale serve per
+    // disegnarle senza che si accavallino; per 6 e 7 l'aumento e'
+    // piu' marcato perche' li' lo spazio inizia a scarseggiare di piu'
+    const count = signature.count;
+    if (count <= 5) return 66 + count * 7;
+    return 66 + 5 * 7 + (count - 5) * 14;
+}
+function renderMiniSignature(container, signature, clef) {
+    container.innerHTML = "";
+    if (typeof Vex === "undefined") return;
+    const { Renderer, Stave } = Vex.Flow;
+
+    const width = miniWidthFor(signature);
+    const renderer = new Renderer(container, Renderer.Backends.SVG);
+    renderer.resize(width, MINI_SVG_H);
+    const context = renderer.getContext();
+
+    const stave = new Stave(2, 8, width - 6, { spacing_between_lines_px: 7 });
+    stave.addClef(clef);
+    stave.addKeySignature(signature.name);
+    stave.setContext(context).draw();
+}
+
 /* =========================================================
    STATO DI GIOCO
    ========================================================= */
 
+let gameMode = "name"; // "name" (Nomina la tonalità) | "signature" (Identifica le alterazioni)
 let maxAlterations = 2; // scelto in home
 let clefMode = "treble"; // "treble" | "bass" | "mixed"
 let currentSignature = null;
 let currentClef = "treble";
 let majorDone = false, minorDone = false;
+
+let currentSignatureQuestion = null; // { signature, quality } per la modalita' "signature"
+let signatureQuestionHadError = false;
 
 let selectedLetter = null;
 let selectedAcc = null;
@@ -694,6 +784,89 @@ function presentQuestion() {
     renderSignature();
 }
 
+/* ---- Modalità "Identifica le alterazioni in chiave" ---- */
+
+function signatureLabelFor(sig) {
+    const majorName = noteFullName(sig.major.letter, sig.major.acc) + " maggiore";
+    const minorName = noteFullName(sig.minor.letter, sig.minor.acc) + " minore";
+    return majorName + " / " + minorName;
+}
+
+function renderSignatureButtons() {
+    signatureGrid.innerHTML = "";
+    signaturePool.forEach(sig => {
+        const btn = document.createElement("button");
+        btn.className = "signature-btn";
+        const miniContainer = document.createElement("div");
+        btn.appendChild(miniContainer);
+        btn.addEventListener("click", () => onSignatureButtonClicked(sig, btn));
+        signatureGrid.appendChild(btn);
+        renderMiniSignature(miniContainer, sig, currentClef);
+    });
+}
+
+function presentSignatureQuestion() {
+    currentClef = clefMode === "mixed" ? (Math.random() < 0.5 ? "treble" : "bass") : clefMode;
+    const sig = drawNextSignature();
+    const quality = Math.random() < 0.5 ? "major" : "minor";
+    currentSignatureQuestion = { signature: sig, quality: quality };
+    signatureQuestionHadError = false;
+
+    const tonic = quality === "major" ? sig.major : sig.minor;
+    const qualityLabel = quality === "major" ? "maggiore" : "minore";
+    signatureQuestionText.textContent = noteFullName(tonic.letter, tonic.acc) + " " + qualityLabel;
+
+    message.textContent = "";
+    message.className = "message";
+    answering = true;
+
+    renderSignatureButtons();
+}
+
+function onSignatureButtonClicked(sig, btnEl) {
+    if (!answering || finished) return;
+    total++;
+    const isCorrect = sig.name === currentSignatureQuestion.signature.name;
+
+    if (isCorrect) {
+        answering = false;
+        correct++;
+        streak++;
+        if (streak > record) record = streak;
+        animateStat(correctBox, "bump");
+        btnEl.classList.add("correct-flash");
+        message.textContent = "Corretto! " + signatureLabelFor(currentSignatureQuestion.signature);
+        message.className = "message correct-message";
+
+        if (signatureQuestionHadError) scheduleRepeat(currentSignatureQuestion.signature);
+
+        progress++;
+        const justLeveledUp = progress % QUESTIONS_PER_LEVEL === 0 && progress < SESSION_TARGET;
+        setTimeout(() => {
+            if (progress >= SESSION_TARGET) {
+                updateStats();
+                playVictorySound();
+                showFinalScreen();
+                return;
+            }
+            if (justLeveledUp) { playLevelUpSound(); animateStat(levelBox, "bump"); }
+            presentSignatureQuestion();
+            updateStats();
+        }, 1200);
+    } else {
+        errors++;
+        streak = 0;
+        signatureQuestionHadError = true;
+        playWrongSound();
+        animateStat(errorsBox, "bump");
+        btnEl.classList.add("wrong-flash");
+        message.textContent = "Sbagliato, riprova";
+        message.className = "message wrong-message";
+        setTimeout(() => btnEl.classList.remove("wrong-flash"), 400);
+    }
+    updateStats();
+}
+
 /* ---- Statistiche / livello ---- */
 
 function animateStat(el, className) { el.classList.remove(className); void el.offsetWidth; el.classList.add(className); }
@@ -710,7 +883,7 @@ function updateStats() {
     progressFill.style.width = pct + "%";
     levelNumber.textContent = lvl + " / " + THEME_LEVELS;
     levelInfo.textContent = progress + " / " + SESSION_TARGET + " risposte corrette";
-    levelName.textContent = "Identifica la tonalità";
+    levelName.textContent = gameMode === "name" ? "Nomina la tonalità" : "Identifica le alterazioni";
 }
 
 /* ---- Selezione risposta (con pulsante Invia) ---- */
@@ -899,11 +1072,31 @@ function startSession() {
     total = 0; correct = 0; errors = 0; streak = 0; record = 0; finished = false; progress = 0;
     resetQuestionQueue();
     showGame();
-    renderChoiceButtons();
-    presentQuestion();
+    if (gameMode === "name") {
+        nameModeSection.style.display = "block";
+        signatureModeSection.style.display = "none";
+        gameSubtitle.textContent = "Osserva l'armatura e indica la tonalità maggiore e la relativa minore.";
+        renderChoiceButtons();
+        presentQuestion();
+    } else {
+        nameModeSection.style.display = "none";
+        signatureModeSection.style.display = "block";
+        gameSubtitle.textContent = "Scegli l'armatura di chiave corretta per la tonalità indicata.";
+        presentSignatureQuestion();
+    }
     updateStats();
 }
 function restartCurrent() { startSession(); }
+
+gameModeGroup.querySelectorAll(".toggle-item").forEach(item => {
+    item.addEventListener("click", () => {
+        gameMode = item.dataset.mode;
+        gameModeGroup.querySelectorAll(".toggle-item").forEach(i => i.classList.toggle("active", i === item));
+        homeSubtitle.textContent = gameMode === "name"
+            ? "Identifica la tonalità maggiore e minore dall'armatura di chiave."
+            : "Identifica le alterazioni in chiave di una tonalità.";
+    });
+});
 
 siteHomeButton.addEventListener("click", () => { window.location.href = "index.html"; });
 finishButton.addEventListener("click", () => confirmOverlay.classList.add("show"));
