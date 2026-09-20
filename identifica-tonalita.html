@@ -78,6 +78,38 @@ h1 { margin: 0; font-family: "Sora", "Inter", Arial, sans-serif; font-size: 2rem
 }
 .site-home-button:hover { background: linear-gradient(180deg, rgba(255,255,255,0.2), rgba(255,255,255,0.08)); transform: translateY(-2px); }
 
+.help-button {
+    position: fixed; top: 18px; right: 18px; z-index: 50; width: 44px; height: 44px; border-radius: 50%;
+    border: 1px solid rgba(165,180,252,0.4); background: linear-gradient(180deg, rgba(99,102,241,0.35), rgba(79,70,229,0.25));
+    color: #e0e7ff; font-size: 1.25rem; font-weight: 800; font-family: "Sora", Arial, sans-serif;
+    display: flex; align-items: center; justify-content: center; cursor: pointer;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.3); transition: transform 0.15s var(--ease-out-soft), background 0.15s;
+}
+.help-button:hover { background: linear-gradient(180deg, rgba(99,102,241,0.5), rgba(79,70,229,0.4)); transform: translateY(-2px); }
+
+.help-card { max-width: 560px; max-height: 82vh; overflow-y: auto; text-align: left; position: relative; padding-top: 40px; }
+.help-close {
+    position: absolute; top: 14px; right: 14px; width: 32px; height: 32px; border-radius: 50%; border: 1px solid rgba(255,255,255,0.2);
+    background: rgba(255,255,255,0.08); color: #e2e8f0; font-size: 1rem; cursor: pointer; display: flex; align-items: center; justify-content: center;
+    transition: background 0.15s;
+}
+.help-close:hover { background: rgba(255,255,255,0.16); }
+.help-content h3 {
+    font-family: "Sora", Arial, sans-serif; font-size: 1.15rem; margin: 0 0 4px; color: #fef3c7;
+}
+.help-content h4 {
+    font-family: "Sora", Arial, sans-serif; font-size: 0.92rem; margin: 18px 0 6px; color: #a5b4fc;
+}
+.help-content h4:first-of-type { margin-top: 10px; }
+.help-content p { margin: 0 0 10px; color: #e2e8f0; font-size: 0.88rem; line-height: 1.55; }
+.help-content .example {
+    margin: 8px 0 14px; padding: 10px 12px; border-radius: 10px; background: rgba(255,255,255,0.06);
+    border-left: 3px solid #818cf8; font-size: 0.84rem; color: #cbd5e1; line-height: 1.5;
+}
+.help-content .example strong { color: #fde68a; }
+.help-content ul { margin: 6px 0 12px; padding-left: 20px; color: #e2e8f0; font-size: 0.86rem; line-height: 1.6; }
+.help-content .scale-list { font-family: "Sora", Arial, sans-serif; font-weight: 700; color: #fde68a; letter-spacing: 0.3px; }
+
 /* TOGGLE (schermata di selezione qualita') */
 .answer-mode-title { font-size: 0.7rem; font-weight: 700; letter-spacing: 0.6px; text-transform: uppercase; color: #a5b4fc; opacity: 0.85; margin: 14px 0 8px; text-align: left; }
 .options-triple { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 8px; }
@@ -274,6 +306,8 @@ h1 { margin: 0; font-family: "Sora", "Inter", Arial, sans-serif; font-size: 2rem
 </div>
 
 <!-- SCHERMATA DI GIOCO -->
+<button class="help-button" id="helpButton" title="Come si fa?">?</button>
+
 <div class="game" id="gameContainer" style="display: none;">
 
     <h1>🔑 Identifica la tonalità</h1>
@@ -341,6 +375,14 @@ h1 { margin: 0; font-family: "Sora", "Inter", Arial, sans-serif; font-size: 2rem
 </div>
 
 <!-- CONFERMA FINE PARTITA -->
+<!-- POPUP DI AIUTO -->
+<div class="overlay" id="helpOverlay">
+    <div class="overlay-card help-card">
+        <button class="help-close" id="helpCloseButton">✕</button>
+        <div class="help-content" id="helpContent"></div>
+    </div>
+</div>
+
 <div class="overlay" id="confirmOverlay">
     <div class="overlay-card">
         <h2>Terminare la partita?</h2>
@@ -423,6 +465,10 @@ function pickSignature(maxAlterations) {
    ELEMENTI DOM
    ========================================================= */
 
+const helpButton = document.getElementById("helpButton");
+const helpOverlay = document.getElementById("helpOverlay");
+const helpCloseButton = document.getElementById("helpCloseButton");
+const helpContent = document.getElementById("helpContent");
 const homeScreen = document.getElementById("homeScreen");
 const homeSubtitle = document.getElementById("homeSubtitle");
 const gameModeGroup = document.getElementById("gameModeGroup");
@@ -1111,6 +1157,107 @@ volumeSlider.addEventListener("input", () => {
     masterVolume = volumeSlider.value / 100;
     if (masterGain) masterGain.gain.value = masterVolume;
 });
+
+/* =========================================================
+   POPUP DI AIUTO
+   ========================================================= */
+
+const HELP_CONTENT_NAME = `
+<h3>Come riconoscere la tonalità dall'armatura</h3>
+<p>Ogni armatura di chiave corrisponde sempre a <strong>due</strong> tonalità: una maggiore e la sua "relativa minore", che condividono esattamente le stesse alterazioni. Ecco come trovarle entrambe.</p>
+
+<h4>🎼 Nessuna alterazione</h4>
+<p>Se il rigo non ha né diesis né bemolli, la tonalità è sempre <strong>Do maggiore</strong> (e la relativa <strong>La minore</strong>). Va ricordato a memoria: è l'unico caso senza un vero e proprio calcolo.</p>
+
+<h4>🎼 Armature con i diesis</h4>
+<p>Guarda l'<strong>ultimo diesis</strong> a destra nell'armatura. Sali di un semitono (mezzo tono, cioè la nota subito sopra): quella nota è la tonica della tonalità maggiore.</p>
+<div class="example">
+<strong>Esempio con 1 diesis</strong> (Fa#): l'unico diesis è il Fa#. Salendo di un semitono si arriva a Sol. → <strong>Sol maggiore</strong>.<br><br>
+<strong>Esempio con 3 diesis</strong> (Fa#, Do#, Sol#): l'ultimo è il Sol#. Salendo di un semitono si arriva a La. → <strong>La maggiore</strong>.
+</div>
+
+<h4>🎼 Armature con i bemolli</h4>
+<p>Con i bemolli il trucco è diverso: guarda il <strong>penultimo bemolle</strong> (il secondo contando dalla fine). Quello è già lui il nome della tonalità maggiore, senza bisogno di calcoli. Attenzione: con un solo bemolle non esiste un penultimo, quindi va ricordato a memoria: <strong>un bemolle (Sib) è sempre Fa maggiore</strong>.</p>
+<div class="example">
+<strong>Esempio con 2 bemolli</strong> (Sib, Mib): il penultimo è il Sib. → <strong>Sib maggiore</strong>.<br><br>
+<strong>Esempio con 4 bemolli</strong> (Sib, Mib, Lab, Reb): il penultimo è il Lab. → <strong>Lab maggiore</strong>.
+</div>
+
+<h4>🎵 E la relativa minore?</h4>
+<p>Una volta trovata la tonalità maggiore, per ottenere la relativa minore basta <strong>scendere di tre semitoni</strong> (un tono e mezzo) dalla tonica maggiore. Funziona allo stesso modo sia per le tonalità diesis sia per quelle bemolli.</p>
+<div class="example">
+<strong>Sol maggiore</strong> → scendo tre semitoni: Sol, Fa#, Fa, Mi → <strong>Mi minore</strong>.<br><br>
+<strong>Sib maggiore</strong> → scendo tre semitoni: Sib, La, Lab, Sol → <strong>Sol minore</strong>.<br><br>
+<strong>Do maggiore</strong> → scendo tre semitoni: Do, Si, Sib, La → <strong>La minore</strong>.
+</div>
+`;
+
+const HELP_CONTENT_SIGNATURE = `
+<h3>Come capire quante alterazioni ha una tonalità</h3>
+<p>Anche qui conviene ragionare sempre a partire dalla tonalità <strong>maggiore</strong>: se ti viene chiesta una tonalità minore, il primo passo è trovare la sua maggiore corrispondente, salendo di <strong>tre semitoni</strong> (un tono e mezzo) dalla tonica minore.</p>
+<div class="example">
+<strong>Mi minore</strong> → salgo tre semitoni: Mi, Fa, Fa#, Sol → è come contare le alterazioni di <strong>Sol maggiore</strong>.<br><br>
+<strong>Do minore</strong> → salgo tre semitoni: Do, Do#, Re, Mib → è come contare le alterazioni di <strong>Mib maggiore</strong>.
+</div>
+
+<h4>🎼 Impara due sequenze di 7 lettere</h4>
+<p>Sono la chiave di tutto, e sono una il contrario dell'altra:</p>
+<p class="scale-list">Diesis: Fa – Do – Sol – Re – La – Mi – Si</p>
+<p class="scale-list">Bemolli: Si – Mi – La – Re – Sol – Do – Fa</p>
+<p>Sono le note che, una alla volta, diventano alterate man mano che una tonalità ne ha di più. Per esempio le tonalità con 3 diesis hanno sempre Fa#, Do# e Sol# (le prime tre della sequenza dei diesis).</p>
+
+<h4>🎯 Tonalità con i diesis: recita la sequenza dei diesis</h4>
+<p>Recita a voce (o mentalmente) "Fa, Do, Sol, Re, La, Mi, Si", fermandoti alla lettera che, resa diesis, coincide con la nota subito sotto la tonica della tua tonalità. Il numero di lettere recitate è il numero di diesis.</p>
+<div class="example">
+<strong>Sol maggiore</strong>: la nota subito sotto Sol è Fa#. Recito: <strong>"Fa"</strong> — è già lui, Fa# è quello che cercavo. Ho recitato 1 lettera. → <strong>1 diesis</strong>.<br><br>
+<strong>Mi maggiore</strong>: la nota subito sotto Mi è Re#. Recito: <strong>"Fa, Do, Sol, Re"</strong> — mi fermo a Re, perché Re# è quello che cercavo. Ho recitato 4 lettere. → <strong>4 diesis</strong>.
+</div>
+
+<h4>🎯 Tonalità con i bemolli: recita la sequenza dei bemolli</h4>
+<p>Recita a voce "Si, Mi, La, Re, Sol, Do, Fa": trova la lettera della tonica, poi continua a recitare fino alla lettera <strong>subito dopo</strong>. Il numero totale di lettere recitate (tonica compresa) è il numero di bemolli.</p>
+<p><strong>Eccezione da ricordare a memoria: Fa maggiore ha sempre 1 bemolle</strong> (Sib) — il Fa è l'ultima lettera della sequenza, quindi qui la regola non si può applicare.</p>
+<div class="example">
+<strong>Sib maggiore</strong>: la tonica Si è la prima lettera della sequenza. Recito fino alla lettera subito dopo: <strong>"Si, Mi"</strong> — 2 lettere. → <strong>2 bemolli</strong>.<br><br>
+<strong>Reb maggiore</strong>: la tonica Re è la quarta lettera della sequenza (Si-Mi-La-Re). Recito fino a quella subito dopo: <strong>"Si, Mi, La, Re, Sol"</strong> — 5 lettere. → <strong>5 bemolli</strong>.
+</div>
+
+<h4>📎 Metodo alternativo (circolo delle quinte)</h4>
+<p>Se preferisci, puoi anche memorizzare direttamente questi due elenchi, ottenuti salendo di una quinta giusta alla volta (per i diesis) o scendendo di una quinta giusta alla volta, cioè salendo di una quarta (per i bemolli):</p>
+<p class="scale-list">Diesis: Do (0) → Sol (1) → Re (2) → La (3) → Mi (4) → Si (5) → Fa# (6) → Do# (7)</p>
+<p class="scale-list">Bemolli: Do (0) → Fa (1) → Sib (2) → Mib (3) → Lab (4) → Reb (5) → Solb (6) → Dob (7)</p>
+`;
+
+const HELP_CONTENT_MODES = `
+<h3>Le due modalità di gioco</h3>
+<p>Entrambe lavorano sulla stessa cosa — la corrispondenza tra una tonalità e la sua armatura di chiave — ma partendo da direzioni opposte.</p>
+
+<h4>🎼 Nomina la tonalità</h4>
+<p>Vedi <strong>un'armatura di chiave</strong> sul pentagramma e devi indicare a parole la tonalità maggiore e la relativa minore che le corrispondono, usando i pulsanti Nota, Alterazione e Qualità.</p>
+<div class="example">
+<strong>Esempio</strong>: sul pentagramma appaiono 2 diesis (Fa# e Do#). Devi rispondere <strong>Re maggiore</strong> e, di seguito, <strong>Si minore</strong> — le due tonalità che condividono quell'armatura.
+</div>
+
+<h4>🎯 Identifica le alterazioni in chiave</h4>
+<p>Qui è il contrario: ti viene mostrato <strong>il nome di una tonalità</strong> (maggiore o minore) e devi trovare, tra tanti piccoli pentagrammi, quello con l'armatura di chiave corretta.</p>
+<div class="example">
+<strong>Esempio</strong>: ti viene chiesto <strong>"Mi minore"</strong>. Tra i pentagrammi proposti (senza alterazioni, con 1 diesis, con 2 diesis, ecc.) devi cliccare quello con <strong>1 diesis</strong> (Fa#) — l'armatura di Mi minore e della sua relativa maggiore, Sol maggiore.
+</div>
+
+<p>In entrambe le modalità, durante il gioco trovi questo stesso pulsante "?" con una spiegazione dettagliata di come ragionare per rispondere.</p>
+`;
+
+function openHelp() {
+    const onHome = homeScreen.style.display !== "none";
+    if (onHome) {
+        helpContent.innerHTML = HELP_CONTENT_MODES;
+    } else {
+        helpContent.innerHTML = gameMode === "signature" ? HELP_CONTENT_SIGNATURE : HELP_CONTENT_NAME;
+    }
+    helpOverlay.classList.add("show");
+}
+helpButton.addEventListener("click", openHelp);
+helpCloseButton.addEventListener("click", () => helpOverlay.classList.remove("show"));
+helpOverlay.addEventListener("click", e => { if (e.target === helpOverlay) helpOverlay.classList.remove("show"); });
 
 /* =========================================================
    AVVIO
