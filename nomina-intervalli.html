@@ -484,6 +484,28 @@ h1 {
     text-align: center;
 }
 
+.help-card { max-width: 460px; max-height: 82vh; overflow-y: auto; text-align: left; position: relative; padding-top: 42px; }
+.help-close {
+    position: absolute; top: 14px; right: 14px; width: 32px; height: 32px; border-radius: 50%; border: 1px solid rgba(255,255,255,0.2);
+    background: rgba(255,255,255,0.08); color: #e2e8f0; font-size: 1rem; cursor: pointer; display: flex; align-items: center; justify-content: center;
+    transition: background 0.15s;
+}
+.help-close:hover { background: rgba(255,255,255,0.16); }
+.help-content h3 { font-family: "Sora", Arial, sans-serif; font-size: 1.2rem; margin: 0 0 14px; color: #fef3c7; text-align: center; }
+.interval-scheme { width: 100%; border-collapse: collapse; margin-bottom: 16px; font-size: 0.9rem; }
+.interval-scheme th {
+    text-align: left; font-size: 0.68rem; text-transform: uppercase; letter-spacing: 0.4px; color: #a5b4fc;
+    padding: 0 8px 8px; border-bottom: 1px solid rgba(255,255,255,0.18);
+}
+.interval-scheme td { padding: 9px 8px; border-bottom: 1px solid rgba(255,255,255,0.08); color: #e2e8f0; }
+.interval-scheme tr:last-child td { border-bottom: none; }
+.interval-scheme td:first-child { font-weight: 700; color: #fde68a; }
+.interval-scheme td:nth-child(2) { font-variant-numeric: tabular-nums; color: #7dd3fc; }
+.trick-box {
+    padding: 12px 14px; border-radius: 12px; background: rgba(34,197,94,0.12); border-left: 3px solid #4ade80;
+    font-size: 0.86rem; color: #dcfce7; line-height: 1.5;
+}
+
 .overlay-card h2 { margin: 0 0 8px; font-family: "Sora", Arial, sans-serif; font-size: 1.5rem; }
 .overlay-card p { color: #cbd5e1; margin: 0 0 20px; }
 
@@ -819,6 +841,28 @@ h1 {
     </div>
     <div class="options-group-title">Modalità di risposta</div>
     <button class="options-choice options-full active" id="submitModeToggle">✅ Pulsante "Invia"</button>
+    <div class="options-group-title">Serve una mano?</div>
+    <button class="options-choice options-full" id="helpOpenButton">❓ Aiuto</button>
+</div>
+
+<!-- SCELTA INTERVALLO PER L'AIUTO (solo se la modalita' ne prevede piu' di uno) -->
+<div class="overlay" id="helpPickerOverlay">
+    <div class="overlay-card">
+        <h2>Aiuto: scegli l'intervallo</h2>
+        <p>Su quale intervallo vuoi vedere lo schema delle qualità?</p>
+        <div class="choice-row" id="helpPickerRow"></div>
+        <div class="overlay-buttons">
+            <button class="menu-button" id="helpPickerCancel">Annulla</button>
+        </div>
+    </div>
+</div>
+
+<!-- SCHEMA DI AIUTO PER UN SINGOLO INTERVALLO -->
+<div class="overlay" id="intervalHelpOverlay">
+    <div class="overlay-card help-card">
+        <button class="help-close" id="intervalHelpClose">✕</button>
+        <div class="help-content" id="intervalHelpContent"></div>
+    </div>
 </div>
 
 <!-- CONFERMA FINE PARTITA -->
@@ -867,6 +911,90 @@ const NUMBER_NAMES = { 1: "Unisono", 2: "Seconda", 3: "Terza", 4: "Quarta", 5: "
 const QUALITY_NAMES = { d: "Diminuito", m: "Minore", M: "Maggiore", p: "Perfetto", a: "Aumentato" };
 const QUALITY_NAMES_FEM = { d: "diminuita", m: "minore", M: "maggiore", p: "perfetta", a: "aumentata" };
 const QUALITY_ORDER = ["d", "m", "M", "p", "a"];
+
+/* =========================================================
+   DATI PER IL POPUP DI AIUTO (schemi qualità/semitoni + trucchi)
+   ========================================================= */
+
+function toniLabel(semi) {
+    if (semi === 0) return "0 toni";
+    const toni = Math.floor(semi / 2);
+    const resto = semi % 2;
+    const parts = [];
+    if (toni > 0) parts.push(toni + (toni === 1 ? " tono" : " toni"));
+    if (resto > 0) parts.push("1 semitono");
+    return parts.join(" e ");
+}
+
+const INTERVAL_HELP_DATA = {
+    1: {
+        rows: [
+            { q: "Perfetto", semi: 0 },
+            { q: "Aumentato", semi: 1 }
+        ],
+        trick: "L'unisono naturale (stessa nota, stessa altezza) è sempre perfetto: per essere aumentato serve un'alterazione."
+    },
+    2: {
+        rows: [
+            { q: "Diminuita", semi: 0 },
+            { q: "Minore", semi: 1 },
+            { q: "Maggiore", semi: 2 },
+            { q: "Eccedente", semi: 3 }
+        ],
+        trick: "Tra le seconde naturali (senza alterazioni), sono minori solo Mi-Fa e Si-Do; tutte le altre sono maggiori."
+    },
+    3: {
+        rows: [
+            { q: "Diminuita", semi: 2 },
+            { q: "Minore", semi: 3 },
+            { q: "Maggiore", semi: 4 },
+            { q: "Eccedente", semi: 5 }
+        ],
+        trick: "Tra le terze naturali, sono maggiori solo Do-Mi, Fa-La e Sol-Si; tutte le altre (Re-Fa, Mi-Sol, La-Do, Si-Re) sono minori."
+    },
+    4: {
+        rows: [
+            { q: "Diminuita", semi: 4 },
+            { q: "Perfetta", semi: 5 },
+            { q: "Eccedente", semi: 6 }
+        ],
+        trick: "Tra le quarte naturali, Fa-Si è sempre eccedente (l'unica); tutte le altre sono perfette."
+    },
+    5: {
+        rows: [
+            { q: "Diminuita", semi: 6 },
+            { q: "Perfetta", semi: 7 },
+            { q: "Eccedente", semi: 8 }
+        ],
+        trick: "Tra le quinte naturali, Si-Fa è sempre diminuita (l'unica); tutte le altre sono perfette."
+    },
+    6: {
+        rows: [
+            { q: "Diminuita", semi: 7 },
+            { q: "Minore", semi: 8 },
+            { q: "Maggiore", semi: 9 },
+            { q: "Eccedente", semi: 10 }
+        ],
+        trick: "Tra le seste naturali, sono minori solo Mi-Do, La-Fa e Si-Sol; tutte le altre sono maggiori."
+    },
+    7: {
+        rows: [
+            { q: "Diminuita", semi: 9 },
+            { q: "Minore", semi: 10 },
+            { q: "Maggiore", semi: 11 },
+            { q: "Eccedente", semi: 12 }
+        ],
+        trick: "Tra le settime naturali, sono maggiori solo Do-Si e Fa-Mi; tutte le altre sono minori."
+    },
+    8: {
+        rows: [
+            { q: "Diminuita", semi: 11 },
+            { q: "Perfetta", semi: 12 },
+            { q: "Eccedente", semi: 13 }
+        ],
+        trick: "L'ottava naturale è sempre perfetta: per essere diminuita o eccedente serve un'alterazione."
+    }
+};
 const NUMBER_ORDER = [1, 2, 3, 4, 5, 6, 7, 8];
 
 // semitoni dell'intervallo "base" (maggiore per i numeri imperfetti,
@@ -1049,6 +1177,13 @@ const playAgainButton = document.getElementById("playAgainButton");
 
 const volumeSlider = document.getElementById("volumeSlider");
 const optionsButton = document.getElementById("optionsButton");
+const helpOpenButton = document.getElementById("helpOpenButton");
+const helpPickerOverlay = document.getElementById("helpPickerOverlay");
+const helpPickerRow = document.getElementById("helpPickerRow");
+const helpPickerCancel = document.getElementById("helpPickerCancel");
+const intervalHelpOverlay = document.getElementById("intervalHelpOverlay");
+const intervalHelpContent = document.getElementById("intervalHelpContent");
+const intervalHelpClose = document.getElementById("intervalHelpClose");
 const optionsPanel = document.getElementById("optionsPanel");
 const trebleClefButton = document.getElementById("trebleClefButton");
 const bassClefButton = document.getElementById("bassClefButton");
@@ -1067,11 +1202,16 @@ function getAudioContext() {
         audioContext = new (window.AudioContext || window.webkitAudioContext)();
         masterGain = audioContext.createGain();
         masterGain.gain.value = masterVolume;
-        masterGain.connect(audioContext.destination);
+        const compressor = audioContext.createDynamicsCompressor();
+        compressor.threshold.setValueAtTime(-20, audioContext.currentTime);
+        compressor.knee.setValueAtTime(24, audioContext.currentTime);
+        compressor.ratio.setValueAtTime(8, audioContext.currentTime);
+        compressor.attack.setValueAtTime(0.003, audioContext.currentTime);
+        compressor.release.setValueAtTime(0.25, audioContext.currentTime);
+        masterGain.connect(compressor);
+        compressor.connect(audioContext.destination);
     }
-    if (audioContext.state === "suspended") {
-        audioContext.resume();
-    }
+    if (audioContext.state === "suspended") { audioContext.resume(); }
     return audioContext;
 }
 
@@ -1098,31 +1238,31 @@ function frequencyForMidi(midi) {
 function playPianoNote(midi, delay) {
     const ctx = getAudioContext();
     const now = ctx.currentTime + (delay || 0);
-    const duration = 1.4;
+    const duration = 1.3;
     const freq = frequencyForMidi(midi);
 
     const filter = ctx.createBiquadFilter();
     filter.type = "lowpass";
-    filter.frequency.setValueAtTime(7200, now);
-    filter.frequency.exponentialRampToValueAtTime(650, now + duration);
-    filter.Q.value = 0.5;
+    filter.frequency.setValueAtTime(6000, now);
+    filter.frequency.exponentialRampToValueAtTime(500, now + duration);
+    filter.Q.value = 0.3;
     filter.connect(masterGain);
 
-    // breve "colpo di martelletto": un impulso di rumore filtrato
-    // appena percettibile, che da' attacco percussivo realistico
-    const noiseDuration = 0.018;
+    // brevissimo "tocco" del martelletto, discreto (un solo impulso,
+    // non uno per ogni armonico: piu' pulito quando suonano piu' note)
+    const noiseDuration = 0.012;
     const bufferSize = Math.max(1, Math.ceil(ctx.sampleRate * noiseDuration));
     const noiseBuffer = ctx.createBuffer(1, bufferSize, ctx.sampleRate);
     const noiseData = noiseBuffer.getChannelData(0);
-    for (let i = 0; i < bufferSize; i++) noiseData[i] = Math.random() * 2 - 1;
+    for (let i = 0; i < bufferSize; i++) noiseData[i] = (Math.random() * 2 - 1) * (1 - i / bufferSize);
     const noiseSrc = ctx.createBufferSource();
     noiseSrc.buffer = noiseBuffer;
     const noiseFilter = ctx.createBiquadFilter();
     noiseFilter.type = "bandpass";
-    noiseFilter.frequency.value = Math.min(9000, freq * 4);
-    noiseFilter.Q.value = 0.7;
+    noiseFilter.frequency.value = Math.min(6000, freq * 3);
+    noiseFilter.Q.value = 0.6;
     const noiseGain = ctx.createGain();
-    noiseGain.gain.setValueAtTime(0.16, now);
+    noiseGain.gain.setValueAtTime(0.05, now);
     noiseGain.gain.exponentialRampToValueAtTime(0.0001, now + noiseDuration);
     noiseSrc.connect(noiseFilter);
     noiseFilter.connect(noiseGain);
@@ -1130,34 +1270,44 @@ function playPianoNote(midi, delay) {
     noiseSrc.start(now);
     noiseSrc.stop(now + noiseDuration + 0.01);
 
+    // corpo del suono: fondamentale + armonici, UN oscillatore ciascuno
+    // (niente piu' coppie scordate per ogni armonico: erano troppe,
+    // specialmente quando suonano piu' note insieme in un accordo)
     const harmonics = [
-        { mult: 1, gain: 0.5, decay: duration },
-        { mult: 2, gain: 0.26, decay: duration * 0.82 },
-        { mult: 3, gain: 0.15, decay: duration * 0.62 },
-        { mult: 4, gain: 0.09, decay: duration * 0.46 },
-        { mult: 5, gain: 0.05, decay: duration * 0.34 },
-        { mult: 6, gain: 0.03, decay: duration * 0.26 }
+        { mult: 1, gain: 0.34, decay: duration },
+        { mult: 2, gain: 0.16, decay: duration * 0.85 },
+        { mult: 3, gain: 0.09, decay: duration * 0.65 },
+        { mult: 4, gain: 0.05, decay: duration * 0.5 },
+        { mult: 5, gain: 0.025, decay: duration * 0.35 }
     ];
-
-    // due "corde" leggermente scordate per armonico, come in un
-    // pianoforte vero: da' quel caratteristico shimmer/battimento
-    const detunes = [-0.0018, 0.0018];
-
     harmonics.forEach(h => {
-        detunes.forEach(d => {
-            const osc = ctx.createOscillator();
-            const gain = ctx.createGain();
-            osc.type = "sine";
-            osc.frequency.value = freq * h.mult * (1 + d);
-            gain.gain.setValueAtTime(0.0001, now);
-            gain.gain.exponentialRampToValueAtTime(h.gain / 2, now + 0.004);
-            gain.gain.exponentialRampToValueAtTime(0.0001, now + h.decay);
-            osc.connect(gain);
-            gain.connect(filter);
-            osc.start(now);
-            osc.stop(now + h.decay + 0.05);
-        });
+        const osc = ctx.createOscillator();
+        const gain = ctx.createGain();
+        osc.type = "sine";
+        osc.frequency.value = freq * h.mult;
+        gain.gain.setValueAtTime(0.0001, now);
+        gain.gain.exponentialRampToValueAtTime(h.gain, now + 0.006);
+        gain.gain.exponentialRampToValueAtTime(0.0001, now + h.decay);
+        osc.connect(gain);
+        gain.connect(filter);
+        osc.start(now);
+        osc.stop(now + h.decay + 0.05);
     });
+
+    // una seconda "corda" leggermente scordata SOLO sul fondamentale,
+    // per un accenno di corpo/battimento pianistico senza moltiplicare
+    // il numero di oscillatori per ogni armonico
+    const osc2 = ctx.createOscillator();
+    const gain2 = ctx.createGain();
+    osc2.type = "sine";
+    osc2.frequency.value = freq * 1.0015;
+    gain2.gain.setValueAtTime(0.0001, now);
+    gain2.gain.exponentialRampToValueAtTime(0.16, now + 0.006);
+    gain2.gain.exponentialRampToValueAtTime(0.0001, now + duration);
+    osc2.connect(gain2);
+    gain2.connect(filter);
+    osc2.start(now);
+    osc2.stop(now + duration + 0.05);
 }
 
 function playIntervalSound(question) {
@@ -1790,7 +1940,7 @@ selectStartButton.addEventListener("click", () => {
         startTheme("custom");
     }
 });
-siteHomeButton.addEventListener("click", () => {});
+siteHomeButton.addEventListener("click", () => { window.location.href = "index.html"; });
 
 playButton.addEventListener("click", () => {
     if (!currentQuestion) return;
@@ -1839,6 +1989,54 @@ document.addEventListener("click", e => {
         optionsPanel.classList.remove("show");
     }
 });
+
+/* ---- Sistema di aiuto: schema qualita'/semitoni per intervallo ---- */
+
+function availableHelpNumbers() {
+    return [...new Set(sessionPool.map(s => s.n))].sort((a, b) => a - b);
+}
+
+function showIntervalHelp(n) {
+    const data = INTERVAL_HELP_DATA[n];
+    let html = "<h3>" + NUMBER_NAMES[n] + "</h3>";
+    html += '<table class="interval-scheme"><tr><th>Qualità</th><th>Semitoni</th><th>Equivalente</th></tr>';
+    data.rows.forEach(r => {
+        html += "<tr><td>" + r.q + "</td><td>" + r.semi + "</td><td>" + toniLabel(r.semi) + "</td></tr>";
+    });
+    html += "</table>";
+    html += '<div class="trick-box">💡 ' + data.trick + "</div>";
+    intervalHelpContent.innerHTML = html;
+    intervalHelpOverlay.classList.add("show");
+}
+
+function showHelpPicker(numbers) {
+    helpPickerRow.innerHTML = "";
+    numbers.forEach(n => {
+        const btn = document.createElement("button");
+        btn.className = "choice-btn";
+        btn.textContent = NUMBER_NAMES[n];
+        btn.addEventListener("click", () => {
+            helpPickerOverlay.classList.remove("show");
+            showIntervalHelp(n);
+        });
+        helpPickerRow.appendChild(btn);
+    });
+    helpPickerOverlay.classList.add("show");
+}
+
+helpOpenButton.addEventListener("click", () => {
+    optionsPanel.classList.remove("show");
+    const numbers = availableHelpNumbers();
+    if (numbers.length <= 1) {
+        showIntervalHelp(numbers[0] || themeNumber || 1);
+    } else {
+        showHelpPicker(numbers);
+    }
+});
+helpPickerCancel.addEventListener("click", () => helpPickerOverlay.classList.remove("show"));
+helpPickerOverlay.addEventListener("click", e => { if (e.target === helpPickerOverlay) helpPickerOverlay.classList.remove("show"); });
+intervalHelpClose.addEventListener("click", () => intervalHelpOverlay.classList.remove("show"));
+intervalHelpOverlay.addEventListener("click", e => { if (e.target === intervalHelpOverlay) intervalHelpOverlay.classList.remove("show"); });
 
 function refreshQuestionForClefChange() {
     if (!currentQuestion || finished) return;
