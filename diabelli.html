@@ -12,17 +12,19 @@
   COME AGGIUNGERE UN NUOVO BRANO DI QUESTA RACCOLTA
   ============================================================
   1) Carica nella stessa cartella di questa pagina:
-     - l'audio con melodia + accompagnamento (preferibilmente
-       .mp3: molto più leggero di un .wav, stessa qualità
+     - uno o più audio di accompagnamento (anche a velocità
+       diverse: normale, media, lenta), preferibilmente .mp3
+       (molto più leggero di un .wav, stessa qualità
        all'ascolto. Un .wav può superare i limiti di
        caricamento di GitHub)
-     - l'audio con il solo accompagnamento
+     - se disponibile, l'audio con melodia + accompagnamento
      - il file dello spartito: un'immagine (.png/.jpg) oppure
        un PDF (.pdf)
   2) Aggiungi un blocco { ... } dentro l'array "brani" qui
-     sotto, nel tag <script>: numero del brano, i nomi dei tre
-     file (audioFull, audioAccomp, scoreSrc) e "scoreType"
-     ("image" oppure "pdf").
+     sotto, nel tag <script>: numero del brano, "audioFull"
+     (null se non disponibile), un elenco "accompagnamenti"
+     con un { label, src } per ogni velocità disponibile, e
+     "scoreType" ("image" oppure "pdf") con "scoreSrc".
   3) Copia, incolla o cancella un blocco { ... } se hai meno o
      più brani.
   ============================================================
@@ -350,30 +352,50 @@
     {
       numero: 1,
       audioFull: null,
-      audioAccomp: "diabelli1-accompagnamento.mp3",
+      accompagnamenti: [
+        { label: "Velocità normale", src: "diabelli1-accompagnamento.mp3" }
+      ],
       scoreType: "pdf",
       scoreSrc: "diabelli1.pdf"
     },
     {
       numero: 2,
       audioFull: null,
-      audioAccomp: "diabelli2-accompagnamento.mp3",
+      accompagnamenti: [
+        { label: "Velocità normale", src: "diabelli2-accompagnamento.mp3" }
+      ],
       scoreType: "pdf",
       scoreSrc: "diabelli2.pdf"
     },
     {
       numero: 3,
-      audioFull: "diabelli3-completo.mp3",
-      audioAccomp: "diabelli3-accompagnamento.mp3",
-      scoreType: "image",
-      scoreSrc: "diabelli3.png"
+      audioFull: null,
+      accompagnamenti: [
+        { label: "Velocità normale", src: "diabelli3-accompagnamento.mp3" }
+      ],
+      scoreType: "pdf",
+      scoreSrc: "diabelli3.pdf"
     },
     {
       numero: 4,
-      audioFull: "diabelli4-completo.mp3",
-      audioAccomp: "diabelli4-accompagnamento.mp3",
-      scoreType: "image",
-      scoreSrc: "diabelli4.png"
+      audioFull: null,
+      accompagnamenti: [
+        { label: "Velocità normale", src: "diabelli4-accompagnamento.mp3" },
+        { label: "Velocità media", src: "diabelli4-accompagnamento-media.mp3" },
+        { label: "Velocità lenta", src: "diabelli4-accompagnamento-lenta.mp3" }
+      ],
+      scoreType: "pdf",
+      scoreSrc: "diabelli4.pdf"
+    },
+    {
+      numero: 5,
+      audioFull: null,
+      accompagnamenti: [
+        { label: "Velocità normale", src: "diabelli5-accompagnamento.mp3" },
+        { label: "Velocità media", src: "diabelli5-accompagnamento-media.mp3" }
+      ],
+      scoreType: "pdf",
+      scoreSrc: "diabelli5.pdf"
     }
   ];
 
@@ -419,18 +441,22 @@
         </div>`
       : `<div class="player-row coming-soon">Melodia + accompagnamento: in arrivo</div>`;
 
+    const accompRows = b.accompagnamenti.map(a => `
+      <div class="player-row">
+        <div class="label-row">
+          <span class="label">Accompagnamento — ${a.label}</span>
+          <a class="dl" href="${a.src}" download>Scarica</a>
+        </div>
+        <audio controls preload="none" src="${a.src}"></audio>
+      </div>
+    `).join('');
+
     card.innerHTML = `
       <h2>${title}</h2>
 
       ${melodiaRow}
 
-      <div class="player-row">
-        <div class="label-row">
-          <span class="label">Solo accompagnamento</span>
-          <a class="dl" href="${b.audioAccomp}" download>Scarica</a>
-        </div>
-        <audio controls preload="none" src="${b.audioAccomp}"></audio>
-      </div>
+      ${accompRows}
 
       <div class="score-wrap" data-index="${b.numero}">${scoreHTML}</div>
       <a class="score-dl" href="${b.scoreSrc}" download>Scarica spartito</a>
