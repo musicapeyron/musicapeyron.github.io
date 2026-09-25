@@ -1,0 +1,449 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<!-- Nome del sito: Musica Peyron -->
+<title>Diabelli — Musica Peyron</title>
+<meta name="description" content="Diabelli, dai 24 Studi Melodici op. 149: ascolto e spartiti.">
+
+<!--
+  ============================================================
+  COME AGGIUNGERE UN NUOVO BRANO DI QUESTA RACCOLTA
+  ============================================================
+  1) Carica nella stessa cartella di questa pagina:
+     - l'audio con melodia + accompagnamento (preferibilmente
+       .mp3: molto più leggero di un .wav, stessa qualità
+       all'ascolto. Un .wav può superare i limiti di
+       caricamento di GitHub)
+     - l'audio con il solo accompagnamento
+     - il file dello spartito: un'immagine (.png/.jpg) oppure
+       un PDF (.pdf)
+  2) Aggiungi un blocco { ... } dentro l'array "brani" qui
+     sotto, nel tag <script>: numero del brano, i nomi dei tre
+     file (audioFull, audioAccomp, scoreSrc) e "scoreType"
+     ("image" oppure "pdf").
+  3) Copia, incolla o cancella un blocco { ... } se hai meno o
+     più brani.
+  ============================================================
+-->
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@500;700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+<style>
+  * { box-sizing: border-box; }
+
+  html, body { margin: 0; min-height: 100%; }
+
+  body {
+    min-height: 100vh;
+    font-family: 'Inter', 'Segoe UI', Arial, sans-serif;
+    color: #EAF2FF;
+    -webkit-font-smoothing: antialiased;
+    background:
+      radial-gradient(circle at 50% 0%, #3730a3 0%, transparent 45%),
+      linear-gradient(135deg, #0f172a, #1e1b4b);
+    background-attachment: fixed;
+    overflow-x: hidden;
+    position: relative;
+  }
+  body::before {
+    content: "";
+    position: fixed;
+    inset: 0;
+    z-index: 0;
+    pointer-events: none;
+    opacity: 0.5;
+    background-image: radial-gradient(rgba(255,255,255,0.035) 1px, transparent 1px);
+    background-size: 3px 3px;
+    mix-blend-mode: overlay;
+  }
+
+  .site-home-button {
+    position: fixed;
+    top: 18px;
+    left: 18px;
+    z-index: 51;
+    width: 44px;
+    height: 44px;
+    border-radius: 50%;
+    border: 1px solid rgba(255,255,255,0.18);
+    background: linear-gradient(180deg, rgba(255,255,255,0.1), rgba(255,255,255,0.04));
+    color: #e2e8f0;
+    font-size: 1.15rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    text-decoration: none;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+    transition: transform 0.15s ease, background 0.15s ease;
+  }
+  .site-home-button:hover { background: linear-gradient(180deg, rgba(255,255,255,0.2), rgba(255,255,255,0.08)); transform: translateY(-2px); }
+
+  header.hero {
+    position: relative;
+    z-index: 1;
+    max-width: 560px;
+    margin: 0 auto;
+    padding: 32px 24px 8px;
+    text-align: center;
+  }
+
+  header.hero .breadcrumb {
+    display: block;
+    font-size: 12px;
+    font-weight: 600;
+    color: #7FD8E4;
+    text-decoration: none;
+    margin-bottom: 10px;
+  }
+  header.hero .breadcrumb:hover { text-decoration: underline; }
+
+  header.hero h1 {
+    font-family: 'Manrope', sans-serif;
+    font-weight: 800;
+    font-size: clamp(22px, 4vw, 28px);
+    margin: 0 0 6px;
+    letter-spacing: -0.015em;
+  }
+
+  header.hero p {
+    font-size: 13px;
+    color: #9FB3CE;
+    font-weight: 500;
+    line-height: 1.5;
+    max-width: 420px;
+    margin: 0 auto;
+  }
+
+  main {
+    position: relative;
+    z-index: 1;
+    max-width: 760px;
+    margin: 0 auto;
+    padding: 16px 20px 60px;
+    display: flex;
+    flex-direction: column;
+    gap: 22px;
+  }
+
+  .brano-card {
+    background: rgba(255,255,255,0.035);
+    border: 1px solid rgba(255,255,255,0.09);
+    border-radius: 16px;
+    padding: 20px 20px 22px;
+    backdrop-filter: blur(6px);
+  }
+
+  .brano-card h2 {
+    font-family: 'Manrope', sans-serif;
+    font-weight: 700;
+    font-size: 17px;
+    margin: 0 0 16px;
+    letter-spacing: -0.01em;
+  }
+
+  .player-row {
+    margin-bottom: 14px;
+  }
+
+  .player-row .label-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    margin-bottom: 6px;
+  }
+
+  .player-row .label {
+    font-size: 12px;
+    font-weight: 700;
+    color: #9FB3CE;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+  }
+
+  .player-row .dl {
+    font-family: 'Manrope', sans-serif;
+    font-weight: 700;
+    font-size: 11.5px;
+    color: #7FD8E4;
+    text-decoration: none;
+  }
+  .player-row .dl:hover { text-decoration: underline; }
+
+  audio {
+    width: 100%;
+    height: 38px;
+    border-radius: 10px;
+  }
+  audio::-webkit-media-controls-panel {
+    background-color: rgba(255,255,255,0.06);
+  }
+
+  .score-wrap {
+    border-radius: 10px;
+    overflow: hidden;
+    border: 1px solid rgba(255,255,255,0.08);
+    background: rgba(255,255,255,0.02);
+    margin-top: 16px;
+    cursor: zoom-in;
+    position: relative;
+  }
+  .score-wrap::after {
+    content: "⤢ tocca per ingrandire";
+    position: absolute;
+    bottom: 8px;
+    right: 10px;
+    font-size: 10.5px;
+    font-weight: 600;
+    color: #EAF2FF;
+    background: rgba(0,0,0,0.45);
+    padding: 3px 8px;
+    border-radius: 999px;
+    pointer-events: none;
+  }
+
+  /* ---------- lightbox a schermo intero ---------- */
+  .lightbox {
+    display: none;
+    position: fixed;
+    inset: 0;
+    z-index: 200;
+    background: rgba(5, 8, 20, 0.94);
+    align-items: center;
+    justify-content: center;
+    padding: 30px 16px;
+  }
+  .lightbox.open { display: flex; }
+  .lightbox .lightbox-inner {
+    max-width: 100%;
+    max-height: 100%;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .lightbox img {
+    max-width: 100%;
+    max-height: 100%;
+    object-fit: contain;
+    border-radius: 6px;
+  }
+  .lightbox embed {
+    width: 100%;
+    height: 100%;
+    border: none;
+    border-radius: 6px;
+  }
+  .lightbox .lightbox-close {
+    position: fixed;
+    top: 18px;
+    right: 18px;
+    z-index: 201;
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    background: rgba(255,255,255,0.1);
+    border: 1px solid rgba(255,255,255,0.2);
+    color: #EAF2FF;
+    font-size: 18px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+  }
+  .lightbox .lightbox-close:hover { background: rgba(255,255,255,0.2); }
+
+  .player-row.coming-soon {
+    font-size: 12px;
+    color: #64789A;
+    font-style: italic;
+    padding: 6px 0 2px;
+  }
+
+  .score-wrap img {
+    display: block;
+    width: 100%;
+    height: auto;
+  }
+
+  .score-wrap embed {
+    display: block;
+    width: 100%;
+    height: 420px;
+    border: none;
+  }
+
+  .score-dl {
+    display: inline-block;
+    margin-top: 12px;
+    font-family: 'Manrope', sans-serif;
+    font-weight: 700;
+    font-size: 12.5px;
+    color: #061323;
+    background: #EAF2FF;
+    text-decoration: none;
+    padding: 7px 14px;
+    border-radius: 8px;
+    transition: background 0.15s ease, transform 0.15s ease;
+  }
+  .score-dl:hover {
+    background: #5EC8D8;
+    transform: translateY(-1px);
+  }
+
+  .brano-card.empty {
+    text-align: center;
+    color: #64789A;
+    border-style: dashed;
+    background: transparent;
+    padding: 28px 20px;
+  }
+  .brano-card.empty .plus {
+    font-family: 'Manrope', sans-serif;
+    font-size: 20px;
+    color: #5EC8D8;
+    margin-bottom: 4px;
+  }
+
+  footer {
+    position: relative;
+    z-index: 1;
+    text-align: center;
+    padding: 0 20px 30px;
+    font-size: 11px;
+    color: #5C7091;
+  }
+</style>
+</head>
+<body>
+
+<a class="site-home-button" href="index.html" aria-label="Torna al sito" title="Torna al sito">🏠</a>
+
+<header class="hero">
+  <a class="breadcrumb" href="spartiti.html">← Spartiti</a>
+  <h1>Diabelli</h1>
+  <p>Dai 24 Studi Melodici op. 149. Per ogni brano: melodia con accompagnamento, solo accompagnamento, e spartito.</p>
+</header>
+
+<main id="brani-container"></main>
+
+<div class="lightbox" id="lightbox">
+  <button class="lightbox-close" id="lightboxClose" aria-label="Chiudi">✕</button>
+  <div class="lightbox-inner" id="lightboxInner"></div>
+</div>
+
+<footer></footer>
+
+<script>
+  /* ============================================================
+     I BRANI DI QUESTA RACCOLTA — modifica qui
+     ============================================================
+     scoreType: "image" oppure "pdf"
+  ============================================================ */
+  const brani = [
+    {
+      numero: 1,
+      audioFull: null,
+      audioAccomp: "diabelli1-accompagnamento.mp3",
+      scoreType: "pdf",
+      scoreSrc: "diabelli1.pdf"
+    },
+    {
+      numero: 2,
+      audioFull: "diabelli2-completo.mp3",
+      audioAccomp: "diabelli2-accompagnamento.mp3",
+      scoreType: "image",
+      scoreSrc: "diabelli2.png"
+    },
+    {
+      numero: 3,
+      audioFull: "diabelli3-completo.mp3",
+      audioAccomp: "diabelli3-accompagnamento.mp3",
+      scoreType: "image",
+      scoreSrc: "diabelli3.png"
+    },
+    {
+      numero: 4,
+      audioFull: "diabelli4-completo.mp3",
+      audioAccomp: "diabelli4-accompagnamento.mp3",
+      scoreType: "image",
+      scoreSrc: "diabelli4.png"
+    }
+  ];
+
+  const container = document.getElementById('brani-container');
+  const lightbox = document.getElementById('lightbox');
+  const lightboxInner = document.getElementById('lightboxInner');
+  const lightboxClose = document.getElementById('lightboxClose');
+
+  function openLightbox(b) {
+    lightboxInner.innerHTML = b.scoreType === 'pdf'
+      ? `<embed src="${b.scoreSrc}" type="application/pdf">`
+      : `<img src="${b.scoreSrc}" alt="">`;
+    lightbox.classList.add('open');
+  }
+  function closeLightbox() {
+    lightbox.classList.remove('open');
+    lightboxInner.innerHTML = '';
+  }
+  lightboxClose.addEventListener('click', closeLightbox);
+  lightbox.addEventListener('click', (e) => {
+    if (e.target === lightbox) closeLightbox();
+  });
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape') closeLightbox();
+  });
+
+  brani.forEach(b => {
+    const title = `Diabelli ${b.numero}`;
+    const card = document.createElement('div');
+    card.className = 'brano-card';
+
+    const scoreHTML = b.scoreType === 'pdf'
+      ? `<embed src="${b.scoreSrc}" type="application/pdf">`
+      : `<img src="${b.scoreSrc}" alt="Spartito di ${title}">`;
+
+    const melodiaRow = b.audioFull
+      ? `<div class="player-row">
+          <div class="label-row">
+            <span class="label">Melodia + accompagnamento</span>
+            <a class="dl" href="${b.audioFull}" download>Scarica</a>
+          </div>
+          <audio controls preload="none" src="${b.audioFull}"></audio>
+        </div>`
+      : `<div class="player-row coming-soon">Melodia + accompagnamento: in arrivo</div>`;
+
+    card.innerHTML = `
+      <h2>${title}</h2>
+
+      ${melodiaRow}
+
+      <div class="player-row">
+        <div class="label-row">
+          <span class="label">Solo accompagnamento</span>
+          <a class="dl" href="${b.audioAccomp}" download>Scarica</a>
+        </div>
+        <audio controls preload="none" src="${b.audioAccomp}"></audio>
+      </div>
+
+      <div class="score-wrap" data-index="${b.numero}">${scoreHTML}</div>
+      <a class="score-dl" href="${b.scoreSrc}" download>Scarica spartito</a>
+    `;
+
+    card.querySelector('.score-wrap').addEventListener('click', () => openLightbox(b));
+    container.appendChild(card);
+  });
+
+  const empty = document.createElement('div');
+  empty.className = 'brano-card empty';
+  empty.innerHTML = `<div class="plus">+</div><div>Prossimo brano in arrivo</div>`;
+  container.appendChild(empty);
+</script>
+
+</body>
+</html>
