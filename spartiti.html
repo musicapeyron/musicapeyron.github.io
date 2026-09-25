@@ -218,6 +218,12 @@
       icon: "🎼",
       desc: "Dagli Esercizi Melodici op. 62",
       url: "berens.html"
+    },
+    {
+      title: "Primi Brani",
+      icon: "🎼",
+      desc: "",
+      url: "primi-brani.html"
     }
   ];
 
@@ -230,7 +236,7 @@
     card.innerHTML = `
       <div class="icon">${r.icon}</div>
       <h2>${r.title}</h2>
-      <p>${r.desc}</p>
+      ${r.desc ? `<p>${r.desc}</p>` : ''}
     `;
     grid.appendChild(card);
   });
