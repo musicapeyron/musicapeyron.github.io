@@ -375,6 +375,33 @@
       ],
       scoreType: "pdf",
       scoreSrc: "brano3.pdf"
+    },
+    {
+      numero: 4,
+      audioFull: "brano4-completo.mp3",
+      accompagnamenti: [
+        { label: "Accompagnamento", src: "brano4-accompagnamento.mp3" }
+      ],
+      scoreType: "pdf",
+      scoreSrc: "brano4.pdf"
+    },
+    {
+      numero: 5,
+      audioFull: "brano5-completo.mp3",
+      accompagnamenti: [
+        { label: "Accompagnamento", src: "brano5-accompagnamento.mp3" }
+      ],
+      scoreType: "pdf",
+      scoreSrc: "brano5.pdf"
+    },
+    {
+      numero: 6,
+      audioFull: "brano6-completo.mp3",
+      accompagnamenti: [
+        { label: "Accompagnamento", src: "brano6-accompagnamento.mp3" }
+      ],
+      scoreType: "pdf",
+      scoreSrc: "brano6.pdf"
     }
   ];
 
@@ -423,7 +450,7 @@
     const accompRows = b.accompagnamenti.map(a => `
       <div class="player-row">
         <div class="label-row">
-          <span class="label">Accompagnamento — ${a.label}</span>
+          <span class="label">${a.label}</span>
           <a class="dl" href="${a.src}" download>Scarica</a>
         </div>
         <audio controls preload="none" src="${a.src}"></audio>
