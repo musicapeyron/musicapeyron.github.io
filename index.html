@@ -12,7 +12,7 @@
   COME AGGIUNGERE UN NUOVO GIOCO/STRUMENTO
   ============================================================
   1) Carica il file .html del gioco nella stessa cartella di
-     questa pagina (accanto a musica-peyron.html).
+     questa pagina (accanto a index.html).
   2) Aggiungi un nuovo blocco { ... } dentro l'array "tools"
      qui sotto, nel tag <script>: titolo, descrizione breve,
      etichetta (es. "Teoria", "Ritmo"), un'emoji e "url" col
@@ -38,14 +38,28 @@
     color: #EAF2FF;
     -webkit-font-smoothing: antialiased;
     background:
-      radial-gradient(circle at 12% 8%, #1c4d7c 0%, transparent 32%),
-      radial-gradient(circle at 88% 92%, #14345e 0%, transparent 36%),
-      linear-gradient(160deg, #050a16 0%, #0b1c38 48%, #0e2a4d 100%);
+      radial-gradient(circle at 50% 0%, #3730a3 0%, transparent 45%),
+      linear-gradient(135deg, #0f172a, #1e1b4b);
+    background-attachment: fixed;
     overflow-x: hidden;
+    position: relative;
+  }
+  body::before {
+    content: "";
+    position: fixed;
+    inset: 0;
+    z-index: 0;
+    pointer-events: none;
+    opacity: 0.5;
+    background-image: radial-gradient(rgba(255,255,255,0.035) 1px, transparent 1px);
+    background-size: 3px 3px;
+    mix-blend-mode: overlay;
   }
 
   /* ---------- hero ---------- */
   header.hero {
+    position: relative;
+    z-index: 1;
     max-width: 560px;
     margin: 0 auto;
     padding: 24px 24px 16px;
@@ -59,6 +73,15 @@
     line-height: 1.2;
     margin: 0 0 6px;
     letter-spacing: -0.015em;
+  }
+
+  /* parola "la" del titolo: identica al resto del testo, nessun indizio visivo */
+  #secretLa {
+    cursor: inherit;
+    -webkit-user-select: none;
+    user-select: none;
+    -webkit-tap-highlight-color: transparent;
+    touch-action: manipulation;
   }
 
   header.hero p {
@@ -98,6 +121,8 @@
 
   /* ---------- tools grid ---------- */
   main {
+    position: relative;
+    z-index: 1;
     max-width: 900px;
     margin: 0 auto;
     padding: 0 20px 40px;
@@ -270,6 +295,8 @@
   }
 
   footer {
+    position: relative;
+    z-index: 1;
     text-align: center;
     padding: 0 20px 22px;
     font-size: 10.5px;
@@ -280,8 +307,7 @@
 <body>
 
 <header class="hero">
-  <h1>Piccoli strumenti per imparare la musica.</h1>
-  <p>Esercizi interattivi per allenare orecchio, teoria e ritmo un passo alla volta.</p>
+  <h1>Strumenti interattivi per imparare <span id="secretLa">la</span> musica</h1>
 
   <div class="staff" aria-hidden="true">
     <svg viewBox="0 0 300 32" preserveAspectRatio="none">
@@ -310,7 +336,7 @@
   <div class="grid" id="grid"></div>
 </main>
 
-<footer>una raccolta personale di esercizi musicali</footer>
+<footer></footer>
 
 <script>
   /* ============================================================
@@ -451,6 +477,22 @@
       url: "note-uno.html"
     }
   ];
+
+  /* Accesso nascosto: 6 clic ravvicinati sulla parola "la" del titolo */
+  (function () {
+    const target = document.getElementById('secretLa');
+    const NEEDED = 6, WINDOW_MS = 2500;
+    let clicks = 0, timer = null;
+    target.addEventListener('click', () => {
+      clicks++;
+      clearTimeout(timer);
+      timer = setTimeout(() => { clicks = 0; }, WINDOW_MS);
+      if (clicks >= NEEDED) {
+        clicks = 0;
+        window.location.href = 'programma-m1cekg1q.pdf';
+      }
+    });
+  })();
 
   const grid = document.getElementById('grid');
 
