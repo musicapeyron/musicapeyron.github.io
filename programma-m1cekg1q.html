@@ -1,0 +1,801 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="robots" content="noindex, nofollow">
+<title>Programma — Musica Peyron</title>
+<!--
+  Pagina nascosta: si apre con 6 clic sulla parola "la" del titolo dell'index.
+  Per aggiornarla, mandare a Claude il nuovo file Word del programma.
+-->
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@600;700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  * { box-sizing: border-box; }
+  html { scroll-behavior: smooth; scroll-padding-top: 64px; }
+  html, body { margin: 0; }
+  body {
+    min-height: 100vh;
+    font-family: 'Inter', 'Segoe UI', Arial, sans-serif;
+    color: #D6E2F5;
+    -webkit-font-smoothing: antialiased;
+    background:
+      radial-gradient(circle at 50% 0%, #3730a3 0%, transparent 45%),
+      linear-gradient(135deg, #0f172a, #1e1b4b);
+    background-attachment: fixed;
+    font-size: 13.5px;
+    line-height: 1.5;
+  }
+
+  .site-home-button {
+    position: fixed; top: 10px; left: 12px; z-index: 60;
+    width: 36px; height: 36px; border-radius: 50%;
+    border: 1px solid rgba(255,255,255,0.18);
+    background: linear-gradient(180deg, rgba(255,255,255,0.1), rgba(255,255,255,0.04));
+    color: #e2e8f0; font-size: 1rem; text-decoration: none;
+    display: flex; align-items: center; justify-content: center;
+  }
+  .site-home-button:hover { background: rgba(255,255,255,0.18); }
+
+  nav.classi {
+    position: sticky; top: 0; z-index: 50;
+    display: flex; justify-content: center; gap: 8px;
+    padding: 10px 56px;
+    background: rgba(15, 23, 42, 0.82);
+    backdrop-filter: blur(8px);
+    border-bottom: 1px solid rgba(255,255,255,0.08);
+  }
+  nav.classi a {
+    font-family: 'Manrope', sans-serif; font-weight: 700; font-size: 13px;
+    color: #EAF2FF; text-decoration: none;
+    padding: 7px 16px; border-radius: 999px;
+    border: 1px solid rgba(255,255,255,0.14);
+    background: rgba(255,255,255,0.05);
+    transition: background 0.15s ease, color 0.15s ease;
+  }
+  nav.classi a:hover { background: rgba(255,255,255,0.12); }
+  nav.classi a.active { background: #5EC8D8; color: #061323; border-color: #5EC8D8; }
+
+  main { max-width: 860px; margin: 0 auto; padding: 8px 20px 60px; }
+
+  section {
+    background: rgba(255,255,255,0.03);
+    border: 1px solid rgba(255,255,255,0.08);
+    border-radius: 14px;
+    padding: 6px 20px 14px;
+    margin-top: 16px;
+  }
+  section h2 {
+    font-family: 'Manrope', sans-serif; font-weight: 800;
+    font-size: 17px; color: #EAF2FF; letter-spacing: -0.01em;
+    margin: 12px 0 6px;
+  }
+  section p { margin: 8px 0; }
+
+  strong { color: #F1F5FF; font-weight: 600; }
+  u { text-decoration: none; color: #7FD8E4; }
+  em { color: #9FB3CE; }
+
+  .num {
+    display: inline-block; min-width: 24px; text-align: center;
+    font-family: 'Manrope', sans-serif; font-weight: 800; font-size: 11.5px;
+    color: #061323; background: #EAF2FF;
+    border-radius: 6px; padding: 1px 6px; margin-right: 4px;
+    margin-top: 6px;
+  }
+
+  a { color: #7FD8E4; }
+  a.chip {
+    display: inline-block; max-width: 100%;
+    overflow: hidden; text-overflow: ellipsis; white-space: nowrap; vertical-align: middle;
+    font-size: 12px; font-weight: 600; text-decoration: none;
+    color: #CFF4F9; background: rgba(94,200,216,0.12);
+    border: 1px solid rgba(94,200,216,0.25);
+    padding: 1px 9px; border-radius: 999px; margin: 2px 0;
+  }
+  a.chip:hover { background: rgba(94,200,216,0.25); }
+  a.chip.site { background: rgba(165,180,252,0.14); border-color: rgba(165,180,252,0.3); color: #E0E7FF; }
+  a.chip.yt { background: rgba(248,113,113,0.12); border-color: rgba(248,113,113,0.28); color: #FEE2E2; }
+</style>
+</head>
+<body>
+
+<a class="site-home-button" href="index.html" title="Torna al sito">🏠</a>
+
+<nav class="classi">
+  <a href="#prima">Prima</a>
+  <a href="#seconda">Seconda</a>
+  <a href="#terza">Terza</a>
+</nav>
+
+<main>
+<section id="prima"><h2>Classe prima</h2>
+
+<p><strong>1</strong> <strong>lezione introduttiva</strong></p>
+<p><strong>2 test d'ingresso<br />
+</strong><a
+href="https://musicapeyron.github.io/test-ingresso.html"><u>https://musicapeyron.github.io/test-ingresso.html</u></a></p>
+<p><strong>3 lettura in <u>chiave di violino e basso</u>, concetto
+generale di <u>setticlavio</u></strong>. <strong>trascrizione su
+pentagramma delle <u>note sulle righe e note sugli spazi<br />
+</u></strong>chiave di violino<strong><br />
+</strong><a
+href="https://raw.githubusercontent.com/musicapeyron/musicapeyron.github.io/refs/heads/main/NOTE%20SPAZI%20VIOLINO%20jpg.png"><u>https://raw.githubusercontent.com/musicapeyron/musicapeyron.github.io/refs/heads/main/NOTE%20SPAZI%20VIOLINO%20jpg.png</u></a><strong><br />
+</strong>chiave di basso<br />
+<a
+href="https://www.ceciliastudio.it/wp-content/uploads/2023/05/Imparare_a_leggere_la_chiave_di_basso_3_tecniche_3-1-1024x576.jpg"><u>https://www.ceciliastudio.it/wp-content/uploads/2023/05/Imparare_a_leggere_la_chiave_di_basso_3_tecniche_3-1-1024x576.jpg</u></a><br />
+setticlavio (non da ricopiare)<br />
+<a
+href="https://raw.githubusercontent.com/musicapeyron/musicapeyron.github.io/refs/heads/main/setticalvio.png"><u>https://raw.githubusercontent.com/musicapeyron/musicapeyron.github.io/refs/heads/main/setticalvio.png</u></a></p>
+<p><strong>4 <u>Scala di do maggiore ascendente e discendente</u> in
+chiave di violino e basso, trascrizione su pentagramma.<br />
+</strong>scala di violino ascendente<strong><br />
+</strong><a
+href="https://raw.githubusercontent.com/musicapeyron/musicapeyron.github.io/refs/heads/main/scala%20violino%20ascendente.png"><u>https://raw.githubusercontent.com/musicapeyron/musicapeyron.github.io/refs/heads/main/scala%20violino%20ascendente.png</u></a></p>
+<p>scala di violino discendente<br />
+<a
+href="https://raw.githubusercontent.com/musicapeyron/musicapeyron.github.io/refs/heads/main/scala%20violino%20discendente.png"><u>https://raw.githubusercontent.com/musicapeyron/musicapeyron.github.io/refs/heads/main/scala%20violino%20discendente.png</u></a><strong><br />
+</strong>scala di basso ascendente<strong><br />
+</strong><a
+href="https://raw.githubusercontent.com/musicapeyron/musicapeyron.github.io/refs/heads/main/scala%20basso%20ascendente.png"><u>https://raw.githubusercontent.com/musicapeyron/musicapeyron.github.io/refs/heads/main/scala%20basso%20ascendente.png</u></a><strong><br />
+</strong>scala di basso discendente<strong><br />
+</strong><a
+href="https://raw.githubusercontent.com/musicapeyron/musicapeyron.github.io/refs/heads/main/scala%20basso%20discendente.png"><u>https://raw.githubusercontent.com/musicapeyron/musicapeyron.github.io/refs/heads/main/scala%20basso%20discendente.png</u></a><br />
+<br />
+<strong>5 interrogazione recitazione mnemonica su scala ascendente e
+discendente</strong><br />
+<a
+href="https://musicapeyron.github.io/recita-le-note.html"><u>https://musicapeyron.github.io/recita-le-note.html</u></a><br />
+<br />
+<strong>6 Gli elementi del pentagramma, concetto di <u>misura e
+battuta</u>, <u>ritmo, metro e pulsazione</u>. Spiegazione in classe e
+trascrizione delle definizioni su quaderno pentagrammato<br />
+</strong>elementi pentagramma<strong><br />
+<a
+href="https://raw.githubusercontent.com/musicapeyron/musicapeyron.github.io/refs/heads/main/elementi%20pentagramma.png"><u>https://raw.githubusercontent.com/musicapeyron/musicapeyron.github.io/refs/heads/main/elementi%20pentagramma.png</u></a><br />
+</strong>indicazione di tempo<strong><br />
+<a
+href="https://github.com/musicapeyron/musicapeyron.github.io/blob/main/indicazione%20di%20tempo.png"><u>https://github.com/musicapeyron/musicapeyron.github.io/blob/main/indicazione%20di%20tempo.png</u></a><br />
+</strong><em>Ritmo = successione di eventi con cadenza regolare che si
+ripete nel tempo<br />
+Pulsazione= unità ritmica primaria che compone la battuta<br />
+Metro = come sono organizzate le pulsazioni.<br />
+Indicazione di tempo = Come questa organizzazione viene indicata sul
+pentagramma<br />
+Numeratore (numero sopra): indica il numero di movimenti presenti in
+ogni misura (es. 2, 3 o 4).Denominatore (numero sotto): indica la figura
+musicale che fa da unità di tempo (es. 4 per la semiminima, 8 per la
+croma).<br />
+Unità di suddivisione= l'ulteriore frazionamento del movimento in parti
+più brevi, solitamente la metà nei tempi semplici<br />
+Battuta o misura = lo spazio compreso tra due stanghette verticali sul
+pentagramma<br />
+<strong><br />
+</strong></em><strong>7 le <u>figure ritmiche</u> - trascrizione su
+pentagramma delle figure, relative pause e valori</strong><br />
+<a
+href="https://media.musyance.com/posts/images/2021/05/tabella-valori-delle-note.webp"><u>https://media.musyance.com/posts/images/2021/05/tabella-valori-delle-note.webp</u></a><br />
+<br />
+<strong>8 <u>solfeggio ritmico</u> per imitazione e lettura in 4/4, 3/4,
+2/4</strong> <em>(all'inizio di ogni lezione da ora)</em><br />
+4/4<br />
+-1<a
+href="https://www.youtube.com/watch?v=jYkT0hGTYJM&amp;list=PLZPeYVOPJaRMGON3zhAOPQX_KwV43pJ_h"><u>https://www.youtube.com/watch?v=jYkT0hGTYJM&amp;list=PLZPeYVOPJaRMGON3zhAOPQX_KwV43pJ_h</u></a><br />
+-2<a
+href="https://www.youtube.com/watch?v=mmfm4SdFT-g&amp;list=PLZPeYVOPJaRMGON3zhAOPQX_KwV43pJ_h&amp;index=3"><u>https://www.youtube.com/watch?v=mmfm4SdFT-g&amp;list=PLZPeYVOPJaRMGON3zhAOPQX_KwV43pJ_h&amp;index=3</u></a><br />
+-3<a
+href="https://www.youtube.com/watch?v=YWjsXbFTN-Y&amp;list=PLZPeYVOPJaRMGON3zhAOPQX_KwV43pJ_h&amp;index=4"><u>https://www.youtube.com/watch?v=YWjsXbFTN-Y&amp;list=PLZPeYVOPJaRMGON3zhAOPQX_KwV43pJ_h&amp;index=4</u></a><br />
+-4<a
+href="https://www.youtube.com/watch?v=ZnCDAPpWERs&amp;list=PLZPeYVOPJaRMGON3zhAOPQX_KwV43pJ_h&amp;index=7"><u>https://www.youtube.com/watch?v=ZnCDAPpWERs&amp;list=PLZPeYVOPJaRMGON3zhAOPQX_KwV43pJ_h&amp;index=7</u></a><br />
+<em>(punto di valore ma meglio iniziarlo da musicca)</em><br />
+-5<a
+href="https://www.youtube.com/watch?v=ZLo5DYjXjzE&amp;list=PLZPeYVOPJaRMGON3zhAOPQX_KwV43pJ_h&amp;index=10"><u>https://www.youtube.com/watch?v=ZLo5DYjXjzE&amp;list=PLZPeYVOPJaRMGON3zhAOPQX_KwV43pJ_h&amp;index=10</u></a><br />
+<a
+href="https://www.musicca.com/exercises/circle/130"><u>https://www.musicca.com/exercises/circle/130</u></a><br />
+<a
+href="https://www.musicca.com/exercises/circle/133"><u>https://www.musicca.com/exercises/circle/133</u></a><br />
+<a
+href="https://www.musicca.com/exercises/circle/136"><u>https://www.musicca.com/exercises/circle/136</u></a><br />
+3/4<br />
+<a
+href="https://www.youtube.com/watch?v=dazVkBn1TL0"><u>https://www.youtube.com/watch?v=dazVkBn1TL0</u></a><br />
+2/4 3/4 4/4<br />
+<a
+href="https://www.youtube.com/watch?v=I2YgWKmFJKc"><u>https://www.youtube.com/watch?v=I2YgWKmFJKc</u></a><br />
+<br />
+<strong>9 allenamento aula informatica su identificazione note in chiave
+di violino/basso e figure ritmiche</strong><br />
+<a
+href="https://musicapeyron.github.io/leggi-la-nota.html"><u>https://musicapeyron.github.io/leggi-la-nota.html</u></a><br />
+<a
+href="https://musicapeyron.github.io/figure-ritmiche.html"><u>https://musicapeyron.github.io/figure-ritmiche.html</u></a><br />
+<strong>10 prova di verifica in aula informatica</strong><br />
+<br />
+<strong>11 verifica in aula informatica</strong><br />
+<br />
+<strong>12 le <u>alterazioni</u>, concetto di <u>tono e semitono</u>,
+trascrizione dei simboli delle definizioni sul quaderno<br />
+<a
+href="https://raw.githubusercontent.com/musicapeyron/musicapeyron.github.io/refs/heads/main/alterazioni.png"><u>https://raw.githubusercontent.com/musicapeyron/musicapeyron.github.io/refs/heads/main/alterazioni.png</u></a><br />
+</strong><br />
+<a
+href="https://www.musicca.com/it/pianoforte"><u>https://www.musicca.com/it/pianoforte</u></a><br />
+<a
+href="https://www.musicca.com/it/chitarra?notes=f2.f3.f4.f5.f6.h1.h3.g4.g3&amp;highlighted=ais.cis.gis.fis&amp;inverted="><u>https://www.musicca.com/it/chitarra?notes=f2.f3.f4.f5.f6.h1.h3.g4.g3&amp;highlighted=ais.cis.gis.fis&amp;inverted=</u></a><br />
+<a
+href="https://www.musicca.com/violin"><u>https://www.musicca.com/violin</u></a><br />
+<a
+href="https://virtualinstruments.net/virtual-cello.html"><u>https://virtualinstruments.net/virtual-cello.html</u></a><br />
+<br />
+<strong>13 <u>punto e doppio punto di valore, legatura di valore</u>,
+trascrizione di definizioni e figure sul quaderno pentagrammato. esempi
+pratici e trascrizione delle battute di esempio su quaderno
+pentagrammato<br />
+<a
+href="https://musicapeyron.github.io/imita-il-ritmo.html"><u>https://musicapeyron.github.io/imita-il-ritmo.html</u></a></strong><br />
+<em>Punto di valore: un punto posto dopo una nota (o una pausa), aumenta
+il valore della nota di metà del valore della nota stessa.<br />
+Ulteriori punti aggiunti al primo valgono la metà dei punti che li
+precedono<br />
+Legatura di valore: linea curva che unisce due note con lo stesso nome e
+sulla stessa altezza; unisce i valori delle note<br />
+</em><br />
+<strong>14 <u>solfeggio ritmico</u> per imitazione e lettura con punto
+di valore , legatura di valore ed entrambi</strong> <em>(all'inizio di
+ogni lezione da ora) *3 ESERCIZI SU MUSICCA</em><br />
+<a
+href="https://www.musicca.com/exercises/circle/143"><u>https://www.musicca.com/exercises/circle/143</u></a><br />
+<em>legatura</em><br />
+<a
+href="https://www.musicca.com/exercises/circle/139"><u>https://www.musicca.com/exercises/circle/139</u></a><br />
+<em>misto</em><br />
+<a
+href="https://www.musicca.com/exercises/circle/146"><u>https://www.musicca.com/exercises/circle/146</u></a><br />
+<br />
+<a
+href="https://musicapeyron.github.io/imita-il-ritmo.html"><strong><u>https://musicapeyron.github.io/imita-il-ritmo.html</u></strong></a><br />
+<br />
+<strong>15 <u>le note sulla tastiera del pianoforte</u>, spiegazione in
+classe e propedeutica al concetto di intervallo</strong><br />
+<a
+href="https://musicapeyron.github.io/tastierapianoforte.html"><u>https://musicapeyron.github.io/tastierapianoforte.html</u></a><br />
+<br />
+<strong>16 allenamento aula informatica su identificazione note sulla
+tastiera del pianoforte</strong><br />
+<br />
+<strong>17 prova di verifica in aula informatica</strong><br />
+<br />
+<strong>18 verifica in aula informatica</strong><br />
+<br />
+<strong>19 i <u>tempi semplici</u>, 4/4, 3/4, 2/4, breve propedeutica ai
+<u>tempi composti</u> (vedi punto 4)<br />
+</strong><em>se ogni movimento della battuta è diviso in due
+suddivisioni, il tempo si definisce 'composto'. Se è diviso in tre
+suddivisioni si definisce 'semplice'<br />
+<a
+href="https://www.youtube.com/watch?v=Q6PrDsCWrxk&amp;list=PL6pkF-ku43kPRd38GVEsLbZhzHTrfKl65&amp;index=9"><u>https://www.youtube.com/watch?v=Q6PrDsCWrxk&amp;list=PL6pkF-ku43kPRd38GVEsLbZhzHTrfKl65&amp;index=9</u></a></em><br />
+<br />
+<strong>20 <u>costruzione di battute</u> in 4/4, spiegazione ed esempi
+in classe, trascrizione degli esempi su quaderno
+pentagrammato</strong><br />
+<a
+href="https://musicapeyron.github.io/costruttore-di-battute.html"><u>https://musicapeyron.github.io/costruttore-di-battute.html</u></a><br />
+<br />
+<strong>21 allenamento aula informatica su costruzione battute
+4/4</strong><br />
+<br />
+<strong>22 prova di verifica in aula informatica</strong><br />
+<br />
+<strong>23 verifica in aula informatica</strong><br />
+<br />
+<strong>24 verifica in classe su quaderno pentagrammato</strong><br />
+<br />
+<strong>25 esercizi propedeutici al <u>dettato ritmico</u></strong>
+<em>(da qui ogni lezione) * 20 ESERCIZI<br />
+</em><a
+href="https://solfeggioinrete.altervista.org/html/dettato.ritmico.html"><u>https://solfeggioinrete.altervista.org/html/dettato.ritmico.html</u></a><br />
+<br />
+<strong>26 <u>caratteristiche del suono</u>, altezza-intensità-timbro e
+concetto di suoni armonici</strong><br />
+<a
+href="https://musicapeyron.github.io/qualita-del-suono.html"><u>https://musicapeyron.github.io/qualita-del-suono.html</u></a><br />
+<a
+href="https://www.youtube.com/shorts/o9wWOew4vys"><u>https://www.youtube.com/shorts/o9wWOew4vys</u></a><br />
+<br />
+<strong>27 Esercizi propedeutici per il <u>solfeggio cantato
+</u></strong>* 10 ESERCIZI<br />
+<a
+href="https://solfeggioinrete.altervista.org/html/cantato.trasporto.html"><u>https://solfeggioinrete.altervista.org/html/cantato.trasporto.html</u></a><br />
+<br />
+<strong>28 Ear training, Identificazione suoni uguali</strong><br />
+<a
+href="https://www.musicbus.it/dist/GAME_1.html?G|six"><u>https://www.musicbus.it/dist/GAME_1.html?G|six</u></a><br />
+<strong>29 Ear training, Discriminazione suoni</strong><br />
+<a
+href="https://www.musicbus.it/dist/GAME_4.html?G|six"><u>https://www.musicbus.it/dist/GAME_4.html?G|six</u></a><br />
+<a
+href="https://musicapeyron.github.io/acuto-o-grave.html"><u>https://musicapeyron.github.io/acuto-o-grave.html</u></a><br />
+<strong>30 Ear training, Memoria melodica</strong><br />
+<a
+href="https://www.musicbus.it/dist/GAME_7.html?G|six"><u>https://www.musicbus.it/dist/GAME_7.html?G|six</u></a><br />
+<a
+href="https://www.musicbus.it/dist/GAME_8.html?G|six"><u>https://www.musicbus.it/dist/GAME_8.html?G|six</u></a><br />
+<br />
+<strong>31 La musica nella <u>preistoria</u><br />
+</strong><em>distinzione tra origine della musicalità umana e prima
+evidenza archeologica della musica<br />
+<br />
+~60.000–50.000 anni fa</em><strong><br />
+</strong><em>Slovenia · Paleolitico medio ·
+Neanderthal</em><strong><br />
+Divije Babe flute<br />
+<a
+href="https://thumb.wikimedia.org/wikipedia/commons/thumb/4/46/Inside_cave_Divje_Babe_1.JPG/1280px-Inside_cave_Divje_Babe_1.JPG?utm_source=en.wikipedia.org&amp;utm_campaign=imageinfo&amp;utm_content=thumbnail"><u>https://thumb.wikimedia.org/wikipedia/commons/thumb/4/46/Inside_cave_Divje_Babe_1.JPG/1280px-Inside_cave_Divje_Babe_1.JPG?utm_source=en.wikipedia.org&amp;utm_campaign=imageinfo&amp;utm_content=thumbnail</u></a><br />
+<br />
+<a
+href="https://upload.wikimedia.org/wikipedia/commons/7/7c/Fl%C3%BBte_pal%C3%A9olithique_(mus%C3%A9e_national_de_Slov%C3%A9nie,_Ljubljana)_(9420310527).jpg?utm_source=en.wikipedia.org&amp;utm_campaign=imageinfo&amp;utm_content=thumbnail_unscaled"><u>https://upload.wikimedia.org/wikipedia/commons/7/7c/Fl%C3%BBte_pal%C3%A9olithique_(mus%C3%A9e_national_de_Slov%C3%A9nie,_Ljubljana)_(9420310527).jpg?utm_source=en.wikipedia.org&amp;utm_campaign=imageinfo&amp;utm_content=thumbnail_unscaled</u></a><br />
+<br />
+<a
+href="https://upload.wikimedia.org/wikipedia/commons/8/88/PiscalDivjeBabe-numbers.jpg?utm_source=en.wikipedia.org&amp;utm_campaign=imageinfo&amp;utm_content=thumbnail_unscaled"><u>https://upload.wikimedia.org/wikipedia/commons/8/88/PiscalDivjeBabe-numbers.jpg?utm_source=en.wikipedia.org&amp;utm_campaign=imageinfo&amp;utm_content=thumbnail_unscaled</u></a><br />
+<br />
+<a
+href="https://www.youtube.com/watch?v=eRUufCAFS50"><u>https://www.youtube.com/watch?v=eRUufCAFS50</u></a><br />
+<br />
+</strong><em>~40.000–42.000 anni fa — paleolitico superiore - grotta di
+HOHLE FELS - germania</em><strong><br />
+flauti di hohle fels<br />
+</strong><em>con ancia</em><strong><br />
+<a
+href="https://www.youtube.com/watch?v=YKv-57HrUHo"><u>https://www.youtube.com/watch?v=YKv-57HrUHo</u></a><br />
+Flauti in ossa<br />
+<a
+href="https://www.youtube.com/watch?v=S1hC2XarF6Y"><u>https://www.youtube.com/watch?v=S1hC2XarF6Y</u></a><br />
+</strong><em>Il legno, la corteccia, le fibre vegetali, le pelli e molti
+altri materiali si decompongono. Quindi l'archeologia conserva
+soprattutto gli strumenti realizzati in materiali durevoli.<br />
+~30.000–10.000 anni fa - paleolitico superiore · Europa<br />
+In alcune grotte sono state individuate stalattiti, stalagmiti e colonne
+di calcite che mostrano tracce compatibili con la percussione. Alcuni
+ricercatori le interpretano come litofoni, cioè strumenti musicali in
+pietra.<br />
+<strong>Litofoni<br />
+<a
+href="https://www.youtube.com/watch?v=1kFP7dJ6VZc"><u>https://www.youtube.com/watch?v=1kFP7dJ6VZc</u></a><br />
+<a
+href="https://www.youtube.com/watch?v=74AunwvBr-A"><u>https://www.youtube.com/watch?v=74AunwvBr-A</u></a><br />
+</strong>possibile relazione fra arte rupestre e produzione sonora<br />
+<a
+href="https://smarthistory.org/wp-content/uploads/2023/02/2-870x585.png"><u>https://smarthistory.org/wp-content/uploads/2023/02/2-870x585.png</u></a><br />
+<br />
+<a
+href="https://miro.medium.com/v2/resize:fit:720/format:webp/1*oYoKYNeb2nu-T_faCAtsbg.jpeg"><u>https://miro.medium.com/v2/resize:fit:720/format:webp/1*oYoKYNeb2nu-T_faCAtsbg.jpeg</u></a><br />
+</em><br />
+<em>~7.000–5.700 a.C. — JIAHU Cina · Neolitico</em></p>
+<p><em>A Jiahu, in Cina, sono stati trovati circa 30 flauti ricavati
+dalle ossa delle ali della gru, datati al Neolitico, circa 7000–5700
+a.C. Alcuni sono ancora suonabili e possiedono da cinque a otto
+fori.<br />
+<a
+href="https://www.youtube.com/watch?v=LOpXaee2RbI"><u>https://www.youtube.com/watch?v=LOpXaee2RbI</u></a><br />
+<br />
+<a
+href="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEiN87OhEviJQyuczQ1nfTo_bl1GyHdlHKUJi071VNFL7VTli6zzLMigzF0cfvt0wf9bfm2WFxrApwjOT3BF6RA4_qT67NvWcR7T6Q9lMFcar1lOyApN6cC8dZPUKaAS4fcGfH4t6Kwdrw/s1600/Gudi,+Bone+Flutes,+from+Jiah%C3%BA,+Henan,Central+China+-c.+7000-5700+BC.jpg"><u>https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEiN87OhEviJQyuczQ1nfTo_bl1GyHdlHKUJi071VNFL7VTli6zzLMigzF0cfvt0wf9bfm2WFxrApwjOT3BF6RA4_qT67NvWcR7T6Q9lMFcar1lOyApN6cC8dZPUKaAS4fcGfH4t6Kwdrw/s1600/Gudi,+Bone+Flutes,+from+Jiah%C3%BA,+Henan,Central+China+-c.+7000-5700+BC.jpg</u></a><br />
+<br />
+<a
+href="https://jg-app.obs.cn-north-4.myhuaweicloud.com/prod/upload/0/png/91D5CB5441FDB6401F532F8CE0874A51.png"><u>https://jg-app.obs.cn-north-4.myhuaweicloud.com/prod/upload/0/png/91D5CB5441FDB6401F532F8CE0874A51.png</u></a><br />
+<br />
+</em><strong>32 Gli <u>strumenti musicali</u>, attività di ascolto e
+identificazione strumenti</strong><br />
+<a
+href="https://www.youtube.com/watch?v=tb0gHAzpQPE"><u>https://www.youtube.com/watch?v=tb0gHAzpQPE</u></a><br />
+<br />
+</p>
+</section><section id="seconda"><h2>Classe seconda</h2>
+<p>
+<br />
+<strong>1 <u>solfeggio ritmico</u> per imitazione e lettura con
+<u>sedicesimi</u></strong> <em>(ogni lezione) *4<br />
+</em><a
+href="https://www.musicca.com/exercise/814"><u>https://www.musicca.com/exercise/814</u></a><br />
+<a
+href="https://www.musicca.com/exercises/circle/151"><u>https://www.musicca.com/exercises/circle/151</u></a><br />
+<a
+href="https://www.musicca.com/exercises/circle/154"><u>https://www.musicca.com/exercises/circle/154</u></a><br />
+<a
+href="https://www.musicca.com/exercises/circle/157"><u>https://www.musicca.com/exercises/circle/157</u></a></p>
+<p><strong>2 <u>dettato ritmico</u> di facile e media
+difficoltà</strong> <em>(ogni lezione)*20<br />
+</em><a
+href="https://solfeggioinrete.altervista.org/html/dettato.ritmico.html"><u>https://solfeggioinrete.altervista.org/html/dettato.ritmico.html</u></a><br />
+<br />
+<strong>3 <u>solfeggio cantato</u> su frammenti melodici</strong>
+*30<br />
+<a
+href="https://solfeggioinrete.altervista.org/html/cantato.trasporto.html"><u>https://solfeggioinrete.altervista.org/html/cantato.trasporto.html</u></a><br />
+<br />
+<br />
+<strong>4 <u>Sincope e contrattempo</u>, spiegazione, trascrizione su
+pentagramma di definizione, esempi in classe, trascrizione su
+pentagramma degli esempi<br />
+</strong><em>Sono entrambi spostamenti di accenti ritmici rispetto alla
+pulsazione regolare della battuta<br />
+</em><br />
+<em>La sincope è formata da suoni che iniziano su un tempo debole della
+battuta e si prolungono sul tempo forte successivo. Il suono inizia
+pertanto su un tempo (o suddivisione) debole e si prolunga sul tempo (o
+suddivisione) forte</em></p>
+<p><em><a
+href="https://www.scuoladimusicacluster.it/images/Glossario/contrattempo%20e%20sincope/sincope.jpg"><u>https://www.scuoladimusicacluster.it/images/Glossario/contrattempo%20e%20sincope/sincope.jpg</u></a><br />
+<br />
+tipologie di sincope ed esempi<br />
+<a
+href="https://www.scuoladimusicacluster.it/s/sincope.html"><u>https://www.scuoladimusicacluster.it/s/sincope.html</u></a><br />
+<br />
+sincope per legatura: quando una nota inizia su un tempo (o
+suddivisione) debole e viene legata a una nota sul tempo (o
+suddivisione) forte successivo<br />
+<a
+href="https://musicapeyron.github.io/imita-il-ritmo.html"><u>https://musicapeyron.github.io/imita-il-ritmo.html</u></a><br />
+<br />
+Il contrattempo si ha quando i tempi (o suddivisioni) forti della
+battuta hanno pause e i suoni cadono sui tempi (o suddivisioni)
+deboli<br />
+<a
+href="https://www.scuoladimusicacluster.it/images/Glossario/contrattempo%20e%20sincope/contrattempo.jpg"><u>https://www.scuoladimusicacluster.it/images/Glossario/contrattempo%20e%20sincope/contrattempo.jpg</u></a><br />
+<a
+href="https://musicapeyron.github.io/imita-il-ritmo.html"><u>https://musicapeyron.github.io/imita-il-ritmo.html</u></a><br />
+<a
+href="https://www.youtube.com/watch?v=_vRS2lgPk7s&amp;list=PL6pkF-ku43kPRd38GVEsLbZhzHTrfKl65&amp;index=4"><u>https://www.youtube.com/watch?v=_vRS2lgPk7s&amp;list=PL6pkF-ku43kPRd38GVEsLbZhzHTrfKl65&amp;index=4</u></a><br />
+</em><br />
+<strong>5 <u>Gruppi irregolari</u> nei tempi semplici, spiegazione,
+trascrizione su pentagramma di definizione, esempi in classe,
+trascrizione su pentagramma degli esempi</strong><br />
+I gruppi irregolari sono gruppi ritmici in eccesso o in difetto rispetto
+a quanto la battuta o il movimento possano contenere<br />
+<a
+href="https://www.federiscores.it/wp-content/uploads/2023/03/gruppo-irregolare-1.jpg"><u>https://www.federiscores.it/wp-content/uploads/2023/03/gruppo-irregolare-1.jpg</u></a><br />
+I gruppi irregolari sono segnati da un numero che indica il numero di
+figure presenti all’interno<br />
+<br />
+I gruppi irregolari in tempi semplici sono la terzina e la sestina<br />
+<br />
+<strong>6 <u>solfeggio ritmico</u> per imitazione e lettura con
+<u>terzine </u></strong>*3<br />
+<a
+href="https://www.musicca.com/exercises/circle/160"><u>https://www.musicca.com/exercises/circle/160</u></a><br />
+<a
+href="https://www.musicca.com/exercises/circle/163"><u>https://www.musicca.com/exercises/circle/163</u></a><br />
+<a
+href="https://www.musicca.com/exercises/circle/166"><u>https://www.musicca.com/exercises/circle/166</u></a><br />
+<br />
+<strong>7 <u>tempi composti</u>, spiegazione, trascrizione su
+pentagramma di definizione, esempi in 6/8, trascrizione su pentagramma
+degli esempi</strong><br />
+<em>se ogni movimento della battuta è diviso in tre suddivisioni, il
+tempo si definisce 'composto'<br />
+</em><a
+href="https://solfeggioinrete.altervista.org/corso-inferiore/07-inferiore.html"><u>https://solfeggioinrete.altervista.org/corso-inferiore/07-inferiore.html</u></a><br />
+<a
+href="https://www.youtube.com/watch?v=xITnX-lRSzE&amp;list=PL6pkF-ku43kPRd38GVEsLbZhzHTrfKl65&amp;index=10"><u>https://www.youtube.com/watch?v=xITnX-lRSzE&amp;list=PL6pkF-ku43kPRd38GVEsLbZhzHTrfKl65&amp;index=10</u></a><br />
+<br />
+<strong>8 <u>costruzione di battute</u> in 4/4, 3/4, 2/4 e 6/8,
+spiegazione ed esempi in classe</strong><br />
+<a
+href="https://musicapeyron.github.io/costruttore-di-battute.html"><u>https://musicapeyron.github.io/costruttore-di-battute.html</u></a></p>
+<p><strong>9 allenamento aula informatica su costruzione battute 4/4,
+3/4 e 6/8</strong><br />
+<a
+href="https://musicapeyron.github.io/costruttore-di-battute.html"><u>https://musicapeyron.github.io/costruttore-di-battute.html</u></a><br />
+<br />
+<strong>10 prova di verifica in aula informatica</strong><br />
+<br />
+<strong>11 verifica in aula informatica</strong><br />
+<br />
+<strong>12 verifica in classe su quaderno pentagrammato</strong><br />
+<br />
+<strong>13 approfondimento sugli <u>intervalli</u>, identificazione
+grafica e ear treaning su intervalli di seconda ( ear training su
+ascendenti e discendenti) terza (ear training sugli ascendenti) e quarta
+(forse)</strong>, <strong>spiegazione in classe<br />
+<a
+href="https://www.musicca.com/piano"><u>https://www.musicca.com/piano</u></a><br />
+<a
+href="https://www.musictheory.net/exercises/interval"><u>https://www.musictheory.net/exercises/interval</u></a></strong><br />
+<strong><br />
+14 allenamento aula informatica su intervalli di seconda e terza (e
+quarta forse) *4<br />
+<a
+href="https://musicapeyron.github.io/nomina-intervalli.html"><u>https://musicapeyron.github.io/nomina-intervalli.html</u></a></strong><br />
+<strong><br />
+15 <u>la scala maggiore e minore</u>, costruzione di scale in tonalità
+semplici fino a 2 alterazioni, spiegazione in classe e trascrizione sul
+quaderno. Concetto di scala diatonica e cromatica<br />
+<a
+href="https://www.musicca.com/piano"><u>https://www.musicca.com/piano</u></a></strong><br />
+<br />
+<strong>16 <u>ear training</u> su scala maggiore e minore, spiegazione
+in classe<br />
+<a
+href="https://www.musictheory.net/exercises/ear-scale"><u>https://www.musictheory.net/exercises/ear-scale</u></a></strong><br />
+<br />
+<strong>17 Ear training in aula informatica su scala maggiore e minore
+*4<br />
+<a
+href="https://musicapeyron.github.io/ascolta-scala.html"><u>https://musicapeyron.github.io/ascolta-scala.html</u></a></strong><br />
+<br />
+<strong>18 <u>caratteristiche del suono</u>, battimenti e consonanza -
+inviluppo adsr,</strong> <strong>riverbero ed eco, effetto doppler.
+spiegazione in classe</strong><br />
+<a
+href="https://musicapeyron.github.io/qualita-del-suono.html"><u>https://musicapeyron.github.io/qualita-del-suono.html</u></a><br />
+<br />
+<br />
+<strong>19 <u>Medioevo</u>, la nascita del sistema di <u>notazione
+musicale</u>, spiegazione</strong><br />
+<br />
+<strong>20 Medioevo, <u>musica sacra</u>: il canto gregoriano,
+spiegazione e ascolto</strong><br />
+<br />
+<strong>21 Medioevo, musica sacra: la <u>polifonia</u>, Leonino e
+Perotino, spiegazione e ascolto</strong><br />
+<br />
+<strong>22 Medioevo, <u>musica profana</u>: ascolto di vari autori e
+strumenti</strong><br />
+<br />
+<strong>23 Lettura, solfeggio ed esecuzione a più voci di semplici brani
+medievali, con particolare approfondimento sul brano <u>"In Taberna
+Quando Sumus</u>"</strong><br />
+<br />
+<strong>24 <u>Rinascimento</u>: spiegazione in classe, <u>Roma e
+Venezia</u><br />
+<br />
+25 Rinascimento: Ascolto in classe di vari autori e strumenti<br />
+<br />
+26 Rinascimento: Approfondimento sul <u>madrigale</u><br />
+<br />
+27 Esecuzione a più voci di semplici brani rinascimentali con
+particolare approfondimento sul brano <u>"Schiaranzula
+Maranzula"</u><br />
+<br />
+28 Ascolto e analisi dell'opera <u>"Orfeo" di Claudio
+Monteverdi</u></strong><u><br />
+</u><br />
+<strong>29 <u>Classificazione Sachs</u> strumenti
+musicali</strong><br />
+<br />
+</p>
+</section><section id="terza"><h2>Classe terza</h2>
+<p>
+<br />
+<strong>1 <u>Dettato melodico</u> a una voce</strong> <em>(ogni lezione)
+*20</em><br />
+<a
+href="https://solfeggioinrete.altervista.org/html/dettato.1.voce-1.html"><u>https://solfeggioinrete.altervista.org/html/dettato.1.voce-1.html</u></a></p>
+<p><strong>2 <u>Dettati ritmico</u> di media difficolta e
+difficili</strong> <em>(ogni lezione) *15<br />
+</em><a
+href="https://solfeggioinrete.altervista.org/html/dettato.ritmico.html"><u>https://solfeggioinrete.altervista.org/html/dettato.ritmico.html</u></a><br />
+<br />
+<strong>3 facili <u>solfeggi cantati</u></strong> <em>*20</em><br />
+<a
+href="https://solfeggioinrete.altervista.org/html/cantato.trasporto.html"><u>https://solfeggioinrete.altervista.org/html/cantato.trasporto.html</u></a><br />
+<br />
+<strong>4 Ritmi iniziali <u>(tetico, acefalo, anacrusico</u>) e ritmi
+finali <u>(tronco, piano)</u>, trascrizione delle definizioni e degli
+esempi su quaderno pentagrammato</strong><em><br />
+<br />
+Il ritmo iniziale che incomincia in battere viene denominato ritmo
+tetico.</em></p>
+<p><em>La nota o gruppi di note che formano il ritmo iniziale in levare
+si chiama ritmo anacrusico.</em></p>
+<p><em>Il ritmo in levare acefalo si ha quando la frase inizia con una
+pausa sull’accento forte.<br />
+<br />
+Il ritmo finale viene denominato tronco quando l’ultima nota si trova
+sul tempo forte della battuta, piano quando la nota finale si trova sul
+tempo debole.<br />
+<br />
+<a
+href="https://pianofortelezioni.it/wp-content/uploads/2019/07/Ritmo-iniziale-e-finale-1-1024x576.jpg"><u>https://pianofortelezioni.it/wp-content/uploads/2019/07/Ritmo-iniziale-e-finale-1-1024x576.jpg</u></a></em><strong><br />
+</strong></p>
+<p><strong>5 Gli <u>intervalli di seconda e terza</u>, ripasso,
+spiegazione ed esempi in classe</strong><br />
+<br />
+<strong>6 allenamento aula informatica su intervalli di seconda e terza
+*2<br />
+<a
+href="https://musicapeyron.github.io/nomina-intervalli.html"><u>https://musicapeyron.github.io/nomina-intervalli.html</u></a></strong><br />
+<strong><br />
+7 prova di verifica in aula informatica</strong><br />
+<strong><br />
+8 verifica in aula informatica</strong></p>
+<p><strong>9 Gli <u>intervalli di quarta, quinta e ottava</u>,
+spiegazione ed esempi in classe</strong><br />
+<br />
+<strong>10 allenamento aula informatica su intervalli di quarta, quinta
+e ottava *2<br />
+<a
+href="https://musicapeyron.github.io/nomina-intervalli.html"><u>https://musicapeyron.github.io/nomina-intervalli.html</u></a></strong><br />
+<br />
+<strong>11 prova di verifica in aula informatica<br />
+<br />
+12 verifica in aula informatica<br />
+<br />
+13 Gli intervalli di <u>sesta e settima</u>, spiegazione ed esempi in
+classe<br />
+<br />
+14 allenamento aula informatica su intervalli di sesta e settima
+*2<br />
+<a
+href="https://musicapeyron.github.io/nomina-intervalli.html"><u>https://musicapeyron.github.io/nomina-intervalli.html</u></a><br />
+<br />
+15 prova di verifica in aula informatica</strong><br />
+<br />
+<strong>16 verifica in aula informatica</strong><br />
+<strong><br />
+17 Ripasso scala maggiore e minore in diverse tonalità fino a 2
+alterazioni in chiave, spiegazione in classe e trascrizione sul
+quaderno. <u>Identificazione della tonalità</u> e concetto e
+identificazione di <u>relativa minore </u></strong><u><br />
+</u><br />
+<strong>18 <u>la triade maggiore e minore</u>, spiegazione in classe e
+costruzione delle triadi su quaderno pentagrammato</strong><br />
+<br />
+<strong>19 costruzione delle triadi maggiori e minori in aula
+informatica<br />
+<a
+href="https://musicapeyron.github.io/costruisci-triade.html"><u>https://musicapeyron.github.io/costruisci-triade.html</u></a></strong><br />
+<br />
+<strong>20 <u>I gradi della scala</u>. costruzione di triadi maggiori e
+minori sui gradi della scala, spiegazione ed esempi in classe con
+musescore e trascrizione sul quaderno, fondamenti base di <u>armonia
+funzionale</u></strong><u><br />
+<a
+href="https://www.youtube.com/watch?v=PF6j5fLCvaY">https://www.youtube.com/watch?v=PF6j5fLCvaY</a></u><br />
+<br />
+<strong>21 costruzione delle triadi maggiori e minori sui gradi della
+scala in aula informatica</strong><br />
+<a
+href="https://musicapeyron.github.io/triadi-tonali.html"><u>https://musicapeyron.github.io/triadi-tonali.html</u></a><br />
+<br />
+<strong>22 identificazione grafica della triade maggiore, minore,
+<u>diminuita ed eccedente</u>. spiegazione in classe. ear training sulla
+triade maggiore e minore<br />
+<a
+href="https://musicapeyron.github.io/nomina-triade.html"><u>https://musicapeyron.github.io/nomina-triade.html</u></a><br />
+</strong><br />
+<strong>23 identificazione grafica e ear training dell'accordo maggiore
+e minore in aula informatica<br />
+<a
+href="https://musicapeyron.github.io/identifica-accordi.html"><u>https://musicapeyron.github.io/identifica-accordi.html</u></a><br />
+<a
+href="https://musicapeyron.github.io/ascolta-accordi.html"><u>https://musicapeyron.github.io/ascolta-accordi.html</u></a></strong><br />
+<br />
+<strong>24 il <u>barocco</u>, approfondimento sugli strumenti musicali e
+forme del periodo, ascolto dei principali compositori (<u>Vivaldi, Bach,
+Haendel</u>)<br />
+<a
+href="https://www.youtube.com/watch?v=wFOHRyYiZTQ"><u>https://www.youtube.com/watch?v=wFOHRyYiZTQ</u></a><br />
+</strong></p>
+<p><strong>25 approfondimento sulla <u>fuga</u>. Ascolto in classe e
+analisi della Fuga in sol minore, BWV 578<br />
+</strong><a
+href="https://www.youtube.com/watch?v=ddbxFi3-UO4&amp;list=RDddbxFi3-UO4&amp;start_radio=1"><u>https://www.youtube.com/watch?v=ddbxFi3-UO4&amp;list=RDddbxFi3-UO4&amp;start_radio=1</u></a><br />
+<br />
+<strong>26 il <u>classicismo</u>, spiegazione dei caratteri stilistici,
+approfondimento dei principali compositori (<u>Mozart, Haydn,
+Beethoven)</u></strong><u><br />
+</u><br />
+<strong>27 approfondimento sulla <u>forma sonata</u>, spiegazione e
+trascrizione sul quaderno<br />
+<br />
+28 Ascolto in classe e <u>analisi su varie sonate per pianoforte</u> di
+Mozart e Haydn<br />
+haydn<br />
+<a
+href="https://www.youtube.com/watch?v=0kEQx2juCSo&amp;list=PL2B7B03DC5CF1DBC9"><u>https://www.youtube.com/watch?v=0kEQx2juCSo&amp;list=PL2B7B03DC5CF1DBC9</u></a><br />
+mozart<br />
+<a
+href="https://www.youtube.com/watch?v=ew6Rm0pfd3c&amp;list=PLFJMRrNnM90zn60y_gIkFmTXt5jaKwoo3"><u>https://www.youtube.com/watch?v=ew6Rm0pfd3c&amp;list=PLFJMRrNnM90zn60y_gIkFmTXt5jaKwoo3</u></a></strong><br />
+<br />
+<strong>29 <u>L'orchestra classica</u>, analisi degli strumenti e della
+disposizione, ascolto e identificazione degli strumenti<br />
+<a
+href="https://myedu.it/wp-content/uploads/2018/06/MyEdu_SCHEMA_orchestra-moderna-580x328.jpg"><u>https://myedu.it/wp-content/uploads/2018/06/MyEdu_SCHEMA_orchestra-moderna-580x328.jpg</u></a><br />
+<br />
+<a
+href="https://www.youtube.com/watch?v=QNJcU7oOSL4"><u>https://www.youtube.com/watch?v=QNJcU7oOSL4</u></a></strong><br />
+<br />
+<strong>30 ascolto guidato della <u>quinta sinfonia di
+Beethoven</u></strong><br />
+<a
+href="https://www.youtube.com/watch?v=MIvD6fq6dZQ"><u>https://www.youtube.com/watch?v=MIvD6fq6dZQ</u></a><br />
+<br />
+<strong>31 storia della musica: <u>il romanticismo</u>, spiegazione del
+contesto storico e sociale, dei nuovi linguaggi e strumenti, del nuovo
+ruolo del compositore, ascolto e discussione di alcuni principali
+compositori, distinzione tra intimismo e virtuosismo <u>(Rossini,
+Chopin, Paganini, Liszt)</u></strong><u><br />
+<br />
+</u><strong>32 Ascolto e analisi in classe dell'opera <u>"La
+Cenerentola" di Rossini</u> *5<br />
+27.2 <u>classificazione delle voci umane</u><br />
+27.3 <u>le chiavi musicali di do</u></strong><u><br />
+</u><br />
+<strong>33 Ascolto e analisi in classe del <u>concerto n.1 per violino e
+orchestra di Niccolò Paganini</u></strong><br />
+<br />
+<strong>34 La <u>musica del 900</u>, approfondimento su
+<u>Stravinskij</u></strong><u><br />
+</u><br />
+<strong>35 Il <u>Jazz</u>, spiegazione e ascolto guidato dei vari
+stili</strong></p>
+
+</section>
+</main>
+
+<script>
+  const GAMES = {"test-ingresso.html": "Test d'Ingresso", "acuto-o-grave.html": "Acuto, Grave o Unisono?", "recita-le-note.html": "Recita le Note", "leggi-la-nota.html": "Leggi la Nota", "figure-ritmiche.html": "Figure Ritmiche", "costruttore-di-battute.html": "Costruttore di Battute", "tastierapianoforte.html": "Le Note sul Pianoforte", "imita-il-ritmo.html": "Imita il Ritmo", "qualita-del-suono.html": "Le Qualità del Suono", "nomina-intervalli.html": "Nomina gli Intervalli", "ascolta-intervalli.html": "Ascolta gli Intervalli", "ascolta-scala.html": "Ascolta la Scala", "identifica-tonalita.html": "Identifica la Tonalità", "nomina-triade.html": "Nomina la Triade", "triadi-tonali.html": "Triadi in Contesto Tonale", "costruisci-triade.html": "Costruisci la Triade", "identifica-accordi.html": "Identifica gli Accordi", "ascolta-accordi.html": "Ascolta gli Accordi", "note-uno.html": "Note-UNO", "spartiti.html": "Spartiti", "diabelli.html": "Diabelli", "berens.html": "Berens", "primi-brani.html": "Primi Brani", "sonatina-do-maggiore.html": "Sonatina in Do Maggiore"};
+
+  /* numero della lezione evidenziato (anche quando segue un a capo dentro il grassetto) */
+  document.querySelectorAll('main strong').forEach(s => {
+    Array.from(s.childNodes).forEach(node => {
+      if (node.nodeType !== 3) return;
+      const prev = node.previousSibling;
+      if (prev && prev.nodeName !== 'BR') return;
+      const m = node.textContent.match(/^(\s*)(\d{1,2})(\s|$)/);
+      if (!m) return;
+      node.textContent = node.textContent.slice(m[0].length - m[3].length);
+      const b = document.createElement('span');
+      b.className = 'num';
+      b.textContent = m[2];
+      s.insertBefore(b, node);
+    });
+  });
+
+  /* link lunghi trasformati in etichette compatte */
+  function labelFor(url) {
+    let u;
+    try { u = new URL(url); } catch (e) { return null; }
+    const host = u.hostname.replace(/^www\./, '');
+    const last = decodeURIComponent(u.pathname.split('/').filter(Boolean).pop() || '');
+    const noExt = last.replace(/\.(png|jpe?g|webp|gif|html?|pdf)$/i, '');
+    if (host === 'musicapeyron.github.io') {
+      return { cls: 'site', text: '🎮 ' + (GAMES[last] || noExt || 'Sito') };
+    }
+    if (host.includes('githubusercontent.com') || host === 'github.com') {
+      return { cls: '', text: '🖼 ' + noExt };
+    }
+    if (host.includes('youtube.com') || host === 'youtu.be') {
+      return { cls: 'yt', text: '▶ YouTube' };
+    }
+    if (/\.(png|jpe?g|webp|gif)$/i.test(last)) {
+      return { cls: '', text: '🖼 ' + host };
+    }
+    return { cls: '', text: '🔗 ' + host + (noExt ? ' · ' + noExt.slice(0, 28) : '') };
+  }
+  document.querySelectorAll('main a[href]').forEach(a => {
+    a.target = '_blank';
+    a.rel = 'noopener';
+    if (!/^\s*https?:\/\//.test(a.textContent)) return;
+    const l = labelFor(a.href);
+    if (!l) return;
+    a.textContent = l.text;
+    a.title = a.href;
+    a.className = 'chip ' + l.cls;
+  });
+
+  /* pulsante della classe visibile evidenziato */
+  const navLinks = document.querySelectorAll('nav.classi a');
+  const obs = new IntersectionObserver(entries => {
+    entries.forEach(en => {
+      if (!en.isIntersecting) return;
+      navLinks.forEach(n => n.classList.toggle('active', n.getAttribute('href') === '#' + en.target.id));
+    });
+  }, { rootMargin: '-40% 0px -55% 0px' });
+  document.querySelectorAll('main section').forEach(s => obs.observe(s));
+</script>
+</body>
+</html>

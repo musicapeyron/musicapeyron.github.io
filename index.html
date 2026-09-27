@@ -76,10 +76,12 @@
   }
 
   /* parola "la" del titolo: identica al resto del testo, nessun indizio visivo */
-  #secretLa {
-    cursor: inherit;
+  header.hero h1 {
+    cursor: default;
     -webkit-user-select: none;
     user-select: none;
+  }
+  #secretLa {
     -webkit-tap-highlight-color: transparent;
     touch-action: manipulation;
   }
@@ -489,7 +491,7 @@
       timer = setTimeout(() => { clicks = 0; }, WINDOW_MS);
       if (clicks >= NEEDED) {
         clicks = 0;
-        window.location.href = 'programma-m1cekg1q.pdf';
+        window.location.href = 'programma-m1cekg1q.html';
       }
     });
   })();
