@@ -253,6 +253,49 @@ h1 {
     box-shadow: inset 0 -2px 0 rgba(0,0,0,0.18);
 }
 
+/* retro da carta da gioco: copre le note centrali nella verifica */
+.card-back {
+    position: absolute; inset: 0;
+    display: flex; align-items: center; justify-content: center;
+    border-radius: 13cqi;
+    background:
+        radial-gradient(circle at 50% 50%, rgba(255,255,255,0.16) 0 24%, transparent 25%),
+        repeating-linear-gradient(45deg, rgba(255,255,255,0.07) 0 5px, transparent 5px 11px),
+        linear-gradient(150deg, #6366f1, #7c3aed 60%, #5b21b6);
+    border: 2px solid rgba(255,255,255,0.28);
+    box-shadow: 0 1px 0 rgba(255,255,255,0.3) inset, 0 10px 20px rgba(0,0,0,0.35);
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.3s ease;
+}
+.card-back::before {
+    content: ""; position: absolute; inset: 7cqi;
+    border: 1.5px solid rgba(255,255,255,0.28); border-radius: 8cqi;
+}
+.card-back::after {
+    content: "?";
+    font-family: "Sora", Arial, sans-serif; font-weight: 800;
+    font-size: 40cqi; line-height: 1;
+    color: rgba(255,255,255,0.92);
+    text-shadow: 0 2px 6px rgba(0,0,0,0.35);
+}
+.strip-card.covered .card-back { opacity: 1; }
+
+/* scelta della modalità nella schermata iniziale */
+.mode-switch { display: flex; gap: 8px; justify-content: center; margin: 4px 0 2px; }
+.mode-chip {
+    flex: 1;
+    padding: 12px 10px; border-radius: 12px;
+    border: 1px solid rgba(255,255,255,0.18);
+    background: rgba(255,255,255,0.06); color: #cbd5e1;
+    font-family: "Sora", Arial, sans-serif; font-weight: 700; font-size: 0.88rem;
+    cursor: pointer;
+}
+.mode-chip.active {
+    background: linear-gradient(135deg, #f59e0b, #b45309);
+    border-color: rgba(255,255,255,0.35); color: white;
+}
+
 /* anello che si accende sul battito: solo opacità, leggerissimo */
 .glow {
     position: absolute;
@@ -611,6 +654,12 @@ h1 {
     <h1>Rappa le note</h1>
     <p class="subtitle">Recita le note ad alta voce sulla base rap. Le carte si accendono una alla volta: tu segui.</p>
 
+    <div class="mode-switch">
+        <button class="mode-chip active" data-quiz="0">🎧 Allenamento</button>
+        <button class="mode-chip" data-quiz="1">📝 Verifica</button>
+    </div>
+    <p class="home-note" id="modeNote" style="margin:10px 0 0;">Tutte le carte scoperte: leggi e recita.</p>
+
     <div class="levels">
         <button class="level-card" data-level="0">
             <span class="level-badge">1</span>
@@ -800,6 +849,7 @@ const LEVELS = [
 ];
 
 let currentLevel = 0;
+let quiz = false;          // verifica: note centrali coperte
 function level() { return LEVELS[currentLevel]; }
 function notesPerSeq() { return level().perSeq; }
 function totalNotes() { return SUBDIVISIONS.length * SEQUENCES * notesPerSeq(); }
@@ -1051,6 +1101,7 @@ function buildStrip() {
                 "<span class=\"card-name\">" + NOTE_NAMES[idx].toUpperCase() + "</span>" +
                 "<span class=\"card-pip\"></span>" +
             "</div>" +
+            "<span class=\"card-back\"></span>" +
             "<span class=\"glow\"></span>";
         strip.appendChild(card);
         cardEls.push(card);
@@ -1067,7 +1118,10 @@ function setStripOffset(k, durationMs) {
 /* le carte della sequenza in corso sono in piena luce, le altre in penombra */
 function markSequence(s) {
     cardEls.forEach((el, i) => {
-        el.classList.toggle("outside", i < s || i > s + WINDOW_CARDS - 1);
+        const inside = i >= s && i <= s + WINDOW_CARDS - 1;
+        el.classList.toggle("outside", !inside);
+        // nella verifica restano scoperte solo la prima e l'ultima della sequenza
+        el.classList.toggle("covered", quiz && inside && i > s && i < s + WINDOW_CARDS - 1);
     });
 }
 
@@ -1132,7 +1186,7 @@ function beginRun() {
     startMusic(musicStart);
 
     setMessage("");
-    stageLabel.textContent = "Livello " + (currentLevel + 1) + ": " + level().name.toLowerCase();
+    stageLabel.textContent = (quiz ? "📝 Verifica — livello " : "Livello ") + (currentLevel + 1) + ": " + level().name.toLowerCase();
     $("levelNumber").textContent = (currentLevel + 1) + " / " + LEVELS.length;
     $("levelInfo").textContent = level().info;
     pauseButton.textContent = "⏸ Pausa";
@@ -1183,8 +1237,8 @@ function handleEvent(ev) {
     const spb = 60 / bpm;
 
     if (ev.type === "intro") {
-        showBanner("", "Livello " + (currentLevel + 1) + ": " + level().name,
-            "Ascolta la base…");
+        showBanner("", (quiz ? "Verifica — livello " : "Livello ") + (currentLevel + 1) + ": " + level().name,
+            quiz ? "Solo la prima e l'ultima nota sono scoperte" : "Ascolta la base…");
         return;
     }
 
@@ -1373,7 +1427,7 @@ function finishRun() {
     $("finalSeqs").textContent = SEQUENCES * SUBDIVISIONS.length;
     $("finalBpm").textContent = Math.round(TRACK_BPM * rate) + " bpm";
     $("finalTime").textContent = formatTime(elapsedAtEnd);
-    $("finalTitle").textContent = "Livello " + (currentLevel + 1) + " completato! 🎤";
+    $("finalTitle").textContent = (quiz ? "Verifica del livello " : "Livello ") + (currentLevel + 1) + " completata! 🎤";
     $("finalSubtitle").textContent = level().name + ", tre passaggi senza fermarsi.";
     $("nextLevelButton").style.display = currentLevel < LEVELS.length - 1 ? "" : "none";
     finalOverlay.classList.add("show");
@@ -1407,6 +1461,16 @@ function goHome() {
     showScreen("home");
 }
 
+document.querySelectorAll(".mode-chip").forEach(btn => {
+    btn.addEventListener("click", () => {
+        quiz = btn.dataset.quiz === "1";
+        document.querySelectorAll(".mode-chip").forEach(b => b.classList.toggle("active", b === btn));
+        $("modeNote").textContent = quiz
+            ? "Verifica: si vedono solo la prima e l'ultima nota, le altre restano coperte."
+            : "Tutte le carte scoperte: leggi e recita.";
+    });
+});
+
 function playLevel(i) {
     currentLevel = i;
     finished = false;
@@ -1431,7 +1495,7 @@ $("againButton").addEventListener("click", () => {
     finished = false;
     startRun();
 });
-$("siteHomeButton").addEventListener("click", () => { window.location.href = "index.html"; });
+$("siteHomeButton").addEventListener("click", () => {});
 
 document.addEventListener("keydown", e => {
     if (gameContainer.style.display === "none") return;
