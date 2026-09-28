@@ -229,7 +229,7 @@ h1 {
 .answer.lit,
 .note-column.waiting .answer.lit {
     opacity: 1;
-    box-shadow: 0 0 0 3px rgba(255,255,255,0.9), 0 0 22px 3px var(--glow), 0 5px 0 rgba(0,0,0,0.25);
+    box-shadow: 0 0 0 3px rgba(255,255,255,0.6), 0 5px 0 rgba(0,0,0,0.25);
     animation: litPop 0.35s var(--ease-spring);
 }
 @keyframes litPop { 0% { scale: 1; } 40% { scale: 1.08; } 100% { scale: 1; } }
@@ -249,12 +249,7 @@ h1 {
 
 /* suggerimento dopo alcuni errori sulla stessa carta */
 .answer.hint {
-    box-shadow: 0 0 0 4px rgba(255,255,255,0.85), 0 0 20px 3px var(--glow), 0 5px 0 rgba(0,0,0,0.25);
-    animation: hintPulse 0.8s ease-in-out 3;
-}
-@keyframes hintPulse {
-    0%, 100% { scale: 1; }
-    50% { scale: 1.08; }
+    box-shadow: 0 0 0 4px rgba(255,255,255,0.7), 0 5px 0 rgba(0,0,0,0.25);
 }
 
 /* PALCO */
@@ -439,7 +434,7 @@ h1 {
 }
 
 .card-slot.current .card-back {
-    box-shadow: 0 0 0 3px #facc15, 0 0 18px rgba(250,204,21,0.6), 0 12px 22px rgba(0,0,0,0.4);
+    box-shadow: 0 0 0 3px #facc15, 0 12px 22px rgba(0,0,0,0.4);
 }
 
 .card-slot.current .card-back.oops,
@@ -479,27 +474,6 @@ h1 {
     background: var(--note-color);
     transform: rotate(-22deg);
     box-shadow: inset 0 -2px 0 rgba(0,0,0,0.18);
-}
-
-/* riflesso luminoso per il giro perfetto */
-.card-front::after {
-    content: "";
-    position: absolute;
-    top: -20%;
-    bottom: -20%;
-    width: 40%;
-    left: -60%;
-    background: linear-gradient(100deg, transparent, rgba(255,255,255,0.85), transparent);
-    transform: skewX(-12deg);
-    opacity: 0;
-}
-.card-slot.shine .card-front::after {
-    animation: shineSweep 0.9s ease-out forwards;
-    animation-delay: calc(var(--i) * 70ms);
-}
-@keyframes shineSweep {
-    0% { left: -60%; opacity: 1; }
-    100% { left: 130%; opacity: 1; }
 }
 
 /* piccoli movimenti delle carte */
@@ -1975,11 +1949,11 @@ function spawnFx(el, lifetime) {
 function sparkleAt(i) {
     const { x, y } = cardGeometry(i);
     const color = NOTE_COLORS[roundNotes[i].idx];
-    for (let k = 0; k < 6; k++) {
+    for (let k = 0; k < 5; k++) {
         const s = document.createElement("span");
         s.className = "spark";
         s.textContent = k % 3 === 0 ? "★" : "✦";
-        const angle = (k / 6) * Math.PI * 2 + Math.random() * 0.4;
+        const angle = (k / 5) * Math.PI * 2 + Math.random() * 0.4;
         const dist = 38 + Math.random() * 30;
         s.style.left = x + "px";
         s.style.top = y + "px";
@@ -2057,7 +2031,14 @@ function setMessage(text, kind) {
     if (text) restartClass(message, "pop");
 }
 
+let lastLit = 0;
+
+/* La luce sul pulsante non si accende più di tre volte al secondo: anche
+   giocando velocissimo non si creano lampi ripetuti. Il suono resta sempre. */
 function lightButton(idx) {
+    const now = performance.now();
+    if (now - lastLit < 340) return;
+    lastLit = now;
     const btn = noteButtons[idx];
     restartClass(btn, "lit");
     clearTimeout(btn._litTimer);
@@ -2435,8 +2416,11 @@ async function victoryRun(tok, withReturn) {
         for (let i = CARDS - 1; i >= 0; i--) order.push(i);
     }
     for (const i of order) {
-        playCard(i, { light: true, short: true });
-        await sleep(withReturn ? 115 : 140, tok);
+        // niente pulsanti accesi qui: a questa velocità sarebbero nove
+        // lampi al secondo. Restano il suono e il saltello delle carte,
+        // che è un movimento, non uno sbalzo di luce.
+        playCard(i, { light: false, short: true });
+        await sleep(withReturn ? 130 : 150, tok);
     }
     await sleep(180, tok, false);
 }
@@ -2455,7 +2439,6 @@ async function endRound(tok) {
 
     playJingle();
     burstConfetti(perfect ? 26 : 16);
-    if (perfect) slotEls.forEach(s => s.classList.add("shine"));
     setMessage(perfect ? pick(PERFECT_MESSAGES) : pick(GOOD_MESSAGES), "correct-message");
 
     await sleep(1100, tok, false);
@@ -2493,7 +2476,6 @@ async function endChainStep(tok) {
 
     playJingle();
     burstConfetti(perfect ? 20 : 12);
-    if (perfect) slotEls.forEach(s => s.classList.add("shine"));
     setMessage(perfect
         ? pick(["Scala perfetta! ✨", "Impeccabile! 🌟", "Senza sbavature! 🎯"])
         : pick(["Scala completata! 🎉", "Ben fatto! 👏", "Un gradino in più! 🪜"]),
@@ -3079,7 +3061,7 @@ $("verificaButton").addEventListener("click", () => startMode("verifica"));
 homeMenuButtons.forEach(btn => btn.addEventListener("click", goHome));
 
 // pulsante verso il sito che ospita il gioco: da collegare in seguito
-$("siteHomeButton").addEventListener("click", () => { window.location.href = "index.html"; });
+$("siteHomeButton").addEventListener("click", () => {});
 
 /* =========================================================
    AVVIO

@@ -229,7 +229,7 @@ h1 {
 .answer.lit,
 .note-column.waiting .answer.lit {
     opacity: 1;
-    box-shadow: 0 0 0 3px rgba(255,255,255,0.9), 0 0 22px 3px var(--glow), 0 5px 0 rgba(0,0,0,0.25);
+    box-shadow: 0 0 0 3px rgba(255,255,255,0.6), 0 5px 0 rgba(0,0,0,0.25);
     animation: litPop 0.35s var(--ease-spring);
 }
 @keyframes litPop { 0% { scale: 1; } 40% { scale: 1.08; } 100% { scale: 1; } }
@@ -249,12 +249,7 @@ h1 {
 
 /* suggerimento dopo alcuni errori sulla stessa carta */
 .answer.hint {
-    box-shadow: 0 0 0 4px rgba(255,255,255,0.85), 0 0 20px 3px var(--glow), 0 5px 0 rgba(0,0,0,0.25);
-    animation: hintPulse 0.8s ease-in-out 3;
-}
-@keyframes hintPulse {
-    0%, 100% { scale: 1; }
-    50% { scale: 1.08; }
+    box-shadow: 0 0 0 4px rgba(255,255,255,0.7), 0 5px 0 rgba(0,0,0,0.25);
 }
 
 /* PALCO */
@@ -439,7 +434,7 @@ h1 {
 }
 
 .card-slot.current .card-back {
-    box-shadow: 0 0 0 3px #facc15, 0 0 18px rgba(250,204,21,0.6), 0 12px 22px rgba(0,0,0,0.4);
+    box-shadow: 0 0 0 3px #facc15, 0 12px 22px rgba(0,0,0,0.4);
 }
 
 .card-slot.current .card-back.oops,
@@ -479,27 +474,6 @@ h1 {
     background: var(--note-color);
     transform: rotate(-22deg);
     box-shadow: inset 0 -2px 0 rgba(0,0,0,0.18);
-}
-
-/* riflesso luminoso per il giro perfetto */
-.card-front::after {
-    content: "";
-    position: absolute;
-    top: -20%;
-    bottom: -20%;
-    width: 40%;
-    left: -60%;
-    background: linear-gradient(100deg, transparent, rgba(255,255,255,0.85), transparent);
-    transform: skewX(-12deg);
-    opacity: 0;
-}
-.card-slot.shine .card-front::after {
-    animation: shineSweep 0.9s ease-out forwards;
-    animation-delay: calc(var(--i) * 70ms);
-}
-@keyframes shineSweep {
-    0% { left: -60%; opacity: 1; }
-    100% { left: 130%; opacity: 1; }
 }
 
 /* piccoli movimenti delle carte */
@@ -918,6 +892,9 @@ h1 {
 
 .overlay-card {
     width: min(420px, 100%);
+    max-height: calc(100vh - 40px);
+    max-height: calc(100dvh - 40px);
+    overflow-y: auto;
     padding: 26px 24px;
     background: linear-gradient(180deg, rgba(49,46,129,0.96), rgba(15,23,42,0.97));
     border: 1px solid rgba(255,255,255,0.18);
@@ -1062,7 +1039,7 @@ h1 {
 .site-home-button {
     position: fixed;
     top: 18px;
-    left: 18px;
+    right: 18px;
     z-index: 50;
     width: 44px;
     height: 44px;
@@ -1146,6 +1123,91 @@ h1 {
     }
     .level-footer { flex-wrap: wrap; }
     .trophy-panel { right: 16px; }
+}
+
+/* TELEFONO IN ORIZZONTALE
+   L'area di gioco è alta esattamente quanto la parte visibile dello
+   schermo (dvh esclude la barra dell'indirizzo di Chrome) e i 7
+   pulsanti si dividono quell'altezza, così nessuno resta tagliato. */
+@media (orientation: landscape) and (max-height: 520px) {
+    body { padding: 10px 16px 24px; }
+
+    /* il pulsante del sito scorre via con la pagina e non copre la colonna */
+    .site-home-button { position: absolute; top: 8px; right: 10px; width: 38px; height: 38px; font-size: 1rem; }
+
+    h1 { font-size: 1.4rem; }
+    .game > h1 { margin: 0 48px; }
+    .game > .subtitle { display: none; }
+
+    .stats { gap: 6px; margin: 10px auto; }
+    .stat { padding: 6px 4px 5px; }
+    .stat-label { font-size: 0.55rem; margin-bottom: 1px; }
+    .stat-value { font-size: 1rem; }
+
+    .level-box { padding: 8px 14px 9px; margin-bottom: 10px; }
+    .level-header { margin-bottom: 6px; }
+
+    .play-area {
+        height: calc(100vh - 12px);
+        height: calc(100dvh - 12px);
+        min-height: 240px;
+        gap: 10px;
+        margin-bottom: 12px;
+    }
+
+    .note-column { gap: 5px; justify-content: stretch; }
+    .answer {
+        flex: 1 1 0;
+        min-height: 26px;
+        width: 84px;
+        padding: 0 4px;
+        font-size: 1rem;
+        border-radius: 10px;
+        box-shadow: 0 1px 0 rgba(255,255,255,0.28) inset, 0 3px 0 rgba(0,0,0,0.25), 0 5px 10px rgba(0,0,0,0.25);
+    }
+    .answer:hover { transform: none; }
+
+    .stage { padding: 8px 12px 6px; }
+    .stage-header { min-height: 30px; }
+
+    .cards {
+        --step: 6px;
+        grid-template-columns: repeat(8, minmax(0, 1fr));
+        padding-top: calc(7 * var(--step) + 42px);
+        padding-bottom: 2px;
+    }
+    /* le carte si rimpiccioliscono anche in base all'altezza disponibile */
+    .card-slot {
+        justify-self: center;
+        width: 100%;
+        max-width: calc((100vh - 190px) * 5 / 7);
+        max-width: calc((100dvh - 190px) * 5 / 7);
+    }
+
+    .message { min-height: 24px; margin-top: 2px; font-size: 0.92rem; }
+
+    .stage-banner { padding: 8px; }
+    .stage-banner-card { padding: 10px 18px 12px; }
+    .banner-badge { font-size: 1.4rem; margin-bottom: 2px; }
+    .banner-title { font-size: 1.15rem; }
+    .banner-text { font-size: 0.8rem; }
+    .banner-start { margin-top: 8px; padding: 8px 22px; }
+
+    .overlay { padding: 10px; }
+    .overlay-card { width: min(560px, 100%); padding: 14px 18px; max-height: calc(100vh - 20px); max-height: calc(100dvh - 20px); }
+    .overlay-card h2 { font-size: 1.2rem; margin-bottom: 4px; }
+    .overlay-card p { margin-bottom: 10px; }
+    .final-stats { grid-template-columns: repeat(3, 1fr); gap: 6px; margin-bottom: 12px; }
+    .final-stat { padding: 6px 10px; }
+    .final-stat strong { font-size: 1rem; }
+
+    .toolbar { margin-top: 12px; }
+
+    .hero-badge { width: 54px; height: 54px; font-size: 1.5rem; margin-bottom: 8px; }
+    .hero-scale { height: 56px; margin-top: 8px; }
+    .mode-grid { gap: 10px; margin-top: 12px; }
+    .mode-button { padding: 11px 18px; }
+    .mode-divider { margin: 8px 0 0; }
 }
 
 @media (prefers-reduced-motion: reduce) {
@@ -1887,11 +1949,11 @@ function spawnFx(el, lifetime) {
 function sparkleAt(i) {
     const { x, y } = cardGeometry(i);
     const color = NOTE_COLORS[roundNotes[i].idx];
-    for (let k = 0; k < 6; k++) {
+    for (let k = 0; k < 5; k++) {
         const s = document.createElement("span");
         s.className = "spark";
         s.textContent = k % 3 === 0 ? "★" : "✦";
-        const angle = (k / 6) * Math.PI * 2 + Math.random() * 0.4;
+        const angle = (k / 5) * Math.PI * 2 + Math.random() * 0.4;
         const dist = 38 + Math.random() * 30;
         s.style.left = x + "px";
         s.style.top = y + "px";
@@ -1969,7 +2031,14 @@ function setMessage(text, kind) {
     if (text) restartClass(message, "pop");
 }
 
+let lastLit = 0;
+
+/* La luce sul pulsante non si accende più di tre volte al secondo: anche
+   giocando velocissimo non si creano lampi ripetuti. Il suono resta sempre. */
 function lightButton(idx) {
+    const now = performance.now();
+    if (now - lastLit < 340) return;
+    lastLit = now;
     const btn = noteButtons[idx];
     restartClass(btn, "lit");
     clearTimeout(btn._litTimer);
@@ -2347,8 +2416,11 @@ async function victoryRun(tok, withReturn) {
         for (let i = CARDS - 1; i >= 0; i--) order.push(i);
     }
     for (const i of order) {
-        playCard(i, { light: true, short: true });
-        await sleep(withReturn ? 115 : 140, tok);
+        // niente pulsanti accesi qui: a questa velocità sarebbero nove
+        // lampi al secondo. Restano il suono e il saltello delle carte,
+        // che è un movimento, non uno sbalzo di luce.
+        playCard(i, { light: false, short: true });
+        await sleep(withReturn ? 130 : 150, tok);
     }
     await sleep(180, tok, false);
 }
@@ -2367,7 +2439,6 @@ async function endRound(tok) {
 
     playJingle();
     burstConfetti(perfect ? 26 : 16);
-    if (perfect) slotEls.forEach(s => s.classList.add("shine"));
     setMessage(perfect ? pick(PERFECT_MESSAGES) : pick(GOOD_MESSAGES), "correct-message");
 
     await sleep(1100, tok, false);
@@ -2405,7 +2476,6 @@ async function endChainStep(tok) {
 
     playJingle();
     burstConfetti(perfect ? 20 : 12);
-    if (perfect) slotEls.forEach(s => s.classList.add("shine"));
     setMessage(perfect
         ? pick(["Scala perfetta! ✨", "Impeccabile! 🌟", "Senza sbavature! 🎯"])
         : pick(["Scala completata! 🎉", "Ben fatto! 👏", "Un gradino in più! 🪜"]),
@@ -2955,6 +3025,17 @@ const MODE_SETTINGS = {
     }
 };
 
+/* in orizzontale porta l'area di gioco al centro dello schermo */
+const playArea = document.querySelector(".play-area");
+const shortLandscape = window.matchMedia("(orientation: landscape) and (max-height: 520px)");
+
+function fitPlayArea() {
+    if (!shortLandscape.matches || gameContainer.style.display === "none") return;
+    requestAnimationFrame(() => playArea.scrollIntoView({ block: "center", behavior: "smooth" }));
+}
+
+shortLandscape.addEventListener("change", fitPlayArea);
+
 function startMode(mode) {
     getAudioContext();
     appMode = mode;
@@ -2970,6 +3051,7 @@ function startMode(mode) {
 
     showScreen("game");
     newGame();
+    fitPlayArea();
 }
 
 $("tutorialButton").addEventListener("click", () => startMode("tutorial"));
