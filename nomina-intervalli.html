@@ -546,6 +546,135 @@ h1 {
 
 .mode-grid { display: flex; flex-direction: column; gap: 14px; margin-top: 28px; }
 
+.tutorial-cta {
+    display: flex; align-items: center; gap: 14px; width: 100%; margin: 0 0 24px; padding: 16px 18px;
+    border: none; border-radius: 18px; cursor: pointer; text-align: left;
+    background: #d97706; box-shadow: none;
+    transition: transform 0.18s var(--ease-spring);
+}
+.tutorial-cta:hover { transform: translateY(-2px); }
+.tutorial-cta:active { transform: translateY(0); }
+.tutorial-cta-icon { font-size: 2.1rem; flex: 0 0 auto; }
+.tutorial-cta-text { display: flex; flex-direction: column; gap: 3px; }
+.tutorial-cta-title { font-family: "Sora", "Inter", Arial, sans-serif; font-size: 1.05rem; font-weight: 800; color: #fff; letter-spacing: 0.1px; }
+.tutorial-cta-desc { font-size: 0.8rem; color: rgba(255,255,255,0.9); font-weight: 500; }
+
+/* SELEZIONE TUTORIAL */
+.tutorial-select-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; margin-top: 8px; }
+.tutorial-tile {
+    padding: 18px 12px; border-radius: 14px; border: 1px solid rgba(255,255,255,0.16); background: rgba(255,255,255,0.06);
+    color: #e2e8f0; font-family: "Sora", "Inter", Arial, sans-serif; font-weight: 800; font-size: 0.95rem; cursor: pointer;
+    text-align: center; transition: transform 0.15s var(--ease-out-soft), background 0.15s, box-shadow 0.15s;
+    box-shadow: 0 6px 16px rgba(0,0,0,0.22);
+    display: flex; flex-direction: column; gap: 4px; align-items: center;
+}
+.tutorial-tile:hover:not(:disabled) { transform: translateY(-3px); background: rgba(255,255,255,0.12); }
+.tutorial-tile .tt-badge { font-size: 1.6rem; }
+.tutorial-tile .tt-soon { font-size: 0.66rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.4px; color: #fbbf24; opacity: 0.85; }
+.tutorial-tile:disabled { opacity: 0.4; cursor: not-allowed; transform: none; }
+.tutorial-tile.tt-ready { background: linear-gradient(150deg, rgba(245,158,11,0.24), rgba(180,83,9,0.16)); border-color: rgba(251,191,36,0.4); }
+
+/* SCHERMATA LEZIONE */
+.tutorial-screen { width: min(640px, 100%); max-width: 100%; text-align: left; position: relative; z-index: 1; }
+.tutorial-top { display: flex; align-items: center; justify-content: space-between; gap: 10px; margin-bottom: 14px; }
+.tutorial-exit { border: 1px solid rgba(255,255,255,0.18); background: rgba(255,255,255,0.06); color: #cbd5e1; font-family: "Sora", Arial, sans-serif; font-size: 0.78rem; font-weight: 700; padding: 8px 14px; border-radius: 10px; cursor: pointer; }
+.tutorial-exit:hover { background: rgba(255,255,255,0.12); }
+.tutorial-progress-label { font-size: 0.74rem; color: #a5b4fc; font-weight: 700; }
+.tutorial-topic-dots { display: flex; justify-content: center; gap: 7px; margin-bottom: 22px; flex-wrap: wrap; }
+.tutorial-dot { width: 11px; height: 11px; border-radius: 50%; background: rgba(255,255,255,0.14); border: 1px solid rgba(255,255,255,0.18); transition: background 0.25s, transform 0.25s, border-color 0.25s; }
+.tutorial-dot.dot-current { background: linear-gradient(135deg, #f59e0b, #facc15); border-color: rgba(255,255,255,0.4); transform: scale(1.35); box-shadow: 0 0 8px rgba(245,158,11,0.6); }
+.tutorial-dot.dot-done { background: #22c55e; border-color: rgba(134,239,172,0.5); }
+
+.tutorial-card {
+    background: linear-gradient(180deg, rgba(255,255,255,0.07), rgba(255,255,255,0.03)); border: 1px solid rgba(255,255,255,0.12);
+    border-radius: 20px; padding: 22px 22px 24px; box-shadow: 0 16px 40px rgba(0,0,0,0.3);
+}
+.tutorial-step-title { font-family: "Sora", Arial, sans-serif; font-size: 1.25rem; font-weight: 800; margin: 0 0 12px; color: #fef3c7; }
+.tutorial-step-body { font-size: 0.94rem; line-height: 1.65; color: #e2e8f0; }
+.tutorial-step-body p { margin: 0 0 12px; }
+.tutorial-step-body strong { color: #fde68a; }
+.tutorial-step-body .hl { color: #7dd3fc; font-weight: 700; }
+.tutorial-step-body ul { margin: 0 0 12px; padding-left: 22px; }
+.tutorial-step-body li { margin-bottom: 6px; }
+
+.tutorial-diagram-wrap { margin: 16px 0; padding: 14px; background: linear-gradient(180deg, #fdfaf3, #f2e9d8); border-radius: 14px; display: flex; justify-content: center; box-shadow: 0 1px 0 rgba(255,255,255,0.4) inset, 0 10px 24px rgba(0,0,0,0.25); }
+.tutorial-diagram-wrap svg { max-width: 100%; height: auto; display: block; }
+.tutorial-diagram-caption { text-align: center; font-size: 0.76rem; color: #94a3b8; margin-top: -8px; margin-bottom: 14px; }
+
+.shift-demo { display: flex; flex-direction: column; align-items: center; gap: 4px; margin: 16px 0 18px; }
+.shift-stage { display: flex; flex-direction: column; align-items: center; gap: 8px; width: 100%; }
+.shift-stage-label { font-size: 0.68rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.4px; color: #94a3b8; }
+.shift-diagram { background: linear-gradient(180deg, #fdfaf3, #f2e9d8); border-radius: 14px; padding: 8px 10px; box-shadow: 0 1px 0 rgba(255,255,255,0.4) inset, 0 10px 22px rgba(0,0,0,0.25); }
+.shift-diagram svg { display: block; max-width: 180px; height: auto; }
+.shift-quality { font-family: "Sora", "Inter", Arial, sans-serif; font-weight: 800; font-size: 1.3rem; padding: 8px 22px; border-radius: 12px; }
+.shift-quality.quality-neutral { background: rgba(99,102,241,0.22); color: #c7d2fe; border: 1px solid rgba(165,180,252,0.45); }
+.shift-quality.quality-widen { background: rgba(249,115,22,0.24); color: #fed7aa; border: 1px solid rgba(253,186,116,0.55); }
+.shift-quality.quality-narrow { background: rgba(14,165,233,0.22); color: #bae6fd; border: 1px solid rgba(125,211,252,0.5); }
+.shift-quality.quality-same { background: rgba(34,197,94,0.22); color: #bbf7d0; border: 1px solid rgba(134,239,172,0.5); }
+.shift-arrow-block { display: flex; flex-direction: column; align-items: center; gap: 2px; margin: 8px 0; }
+.shift-arrow-glyph { font-size: 2.2rem; line-height: 1; font-weight: 800; }
+.shift-arrow-block.shift-widen .shift-arrow-glyph { color: #fb923c; }
+.shift-arrow-block.shift-narrow .shift-arrow-glyph { color: #38bdf8; }
+.shift-arrow-block.shift-same .shift-arrow-glyph { color: #4ade80; }
+.shift-demo-heading { font-family: "Sora", Arial, sans-serif; font-weight: 800; font-size: 1rem; color: #fde68a; text-align: center; margin-top: 18px; }
+.shift-arrow-label { font-size: 0.8rem; font-weight: 700; color: #e2e8f0; text-align: center; max-width: 220px; }
+
+.letter-sequence { display: flex; justify-content: center; gap: 6px; margin: 16px 0; flex-wrap: wrap; }
+.letter-box {
+    width: 42px; height: 42px; border-radius: 10px; display: flex; align-items: center; justify-content: center;
+    font-family: "Sora", Arial, sans-serif; font-weight: 800; font-size: 1rem; background: rgba(255,255,255,0.08); color: #cbd5e1;
+    border: 1px solid rgba(255,255,255,0.16); transition: background 0.2s, color 0.2s, transform 0.2s;
+}
+.letter-box.lb-active { background: linear-gradient(135deg, #6366f1, #4338ca); color: white; border-color: rgba(255,255,255,0.4); transform: scale(1.08); }
+.letter-box.lb-endpoint { background: linear-gradient(135deg, #f59e0b, #b45309); color: white; border-color: rgba(255,255,255,0.4); }
+
+.tutorial-options { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 18px; }
+.tutorial-opt-btn {
+    flex: 1 1 auto; min-width: 120px; padding: 13px 16px; border-radius: 12px; border: 1px solid rgba(255,255,255,0.18);
+    background: rgba(255,255,255,0.07); color: #e2e8f0; font-family: "Sora", Arial, sans-serif; font-weight: 700; font-size: 0.88rem; cursor: pointer;
+    transition: transform 0.12s var(--ease-out-soft), background 0.15s;
+}
+.tutorial-opt-btn:hover:not(:disabled) { background: rgba(255,255,255,0.14); transform: translateY(-2px); }
+.tutorial-opt-btn.opt-correct { background: linear-gradient(135deg, #22c55e, #15803d) !important; border-color: rgba(255,255,255,0.35); }
+.tutorial-opt-btn.opt-wrong { background: linear-gradient(135deg, #ef4444, #b91c1c) !important; border-color: rgba(255,255,255,0.35); animation: buttonShake 0.4s ease-in-out; }
+.tutorial-opt-btn:disabled { cursor: not-allowed; }
+
+.tutorial-feedback { margin-top: 16px; padding: 14px 16px; border-radius: 12px; font-size: 0.88rem; line-height: 1.55; display: none; }
+.tutorial-feedback.show { display: block; }
+.tutorial-feedback.fb-correct { background: rgba(34,197,94,0.14); border-left: 3px solid #4ade80; color: #dcfce7; }
+.tutorial-feedback.fb-wrong { background: rgba(239,68,68,0.14); border-left: 3px solid #f87171; color: #fee2e2; }
+
+.tutorial-nav { display: flex; justify-content: flex-end; gap: 10px; margin-top: 22px; }
+.tutorial-next-btn {
+    border: none; padding: 13px 28px; border-radius: 12px; background: #16a34a; color: white;
+    font-family: "Sora", Arial, sans-serif; font-weight: 800; font-size: 0.9rem; cursor: pointer;
+    box-shadow: none; transition: transform 0.15s var(--ease-out-soft), opacity 0.15s;
+}
+.tutorial-next-btn:hover { transform: translateY(-2px); }
+.tutorial-next-btn:disabled { opacity: 0.35; cursor: not-allowed; background: rgba(255,255,255,0.1); box-shadow: none; }
+
+.tutorial-end-card { text-align: center; padding: 10px 0; }
+.tutorial-stats-list { display: flex; flex-direction: column; gap: 10px; margin: 16px 0; text-align: left; }
+.tutorial-stat-card { background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.12); border-radius: 14px; padding: 12px 14px; }
+.tutorial-stat-card-title { font-family: "Sora", Arial, sans-serif; font-weight: 800; font-size: 0.94rem; color: #fde68a; margin-bottom: 6px; }
+.tutorial-stat-card-row { display: flex; flex-wrap: wrap; gap: 12px; margin-bottom: 10px; }
+.tutorial-stat-item { font-size: 0.82rem; color: #cbd5e1; }
+.tutorial-stat-item strong { color: #e2e8f0; font-size: 0.92rem; }
+.tutorial-retry-btn {
+    display: block; width: 100%; border: 1px solid rgba(251,191,36,0.4); background: rgba(245,158,11,0.16); color: #fde68a;
+    font-family: "Sora", Arial, sans-serif; font-size: 0.82rem; font-weight: 700; padding: 10px 14px; border-radius: 10px; cursor: pointer;
+    transition: background 0.15s;
+}
+.tutorial-retry-btn:hover { background: rgba(245,158,11,0.3); }
+
+.tutorial-reexplain-btn {
+    display: block; margin: 14px auto 0; border: 1px solid rgba(165,180,252,0.35); background: rgba(99,102,241,0.12);
+    color: #c7d2fe; font-family: "Sora", Arial, sans-serif; font-size: 0.78rem; font-weight: 700; padding: 8px 16px; border-radius: 10px;
+    cursor: pointer; transition: background 0.15s;
+}
+.tutorial-reexplain-btn:hover { background: rgba(99,102,241,0.22); }
+.tutorial-end-emoji { font-size: 3rem; margin-bottom: 10px; }
+
 .theme-grid {
     display: grid;
     grid-template-columns: repeat(3, 1fr);
@@ -722,6 +851,14 @@ h1 {
     <div class="hero-badge">🎼</div>
     <h1>Nomina gli intervalli</h1>
     <p class="subtitle">Scegli su cosa fare pratica, oppure mettiti alla prova nella Verifica.</p>
+
+    <button class="tutorial-cta" id="tutorialOpenButton">
+        <span class="tutorial-cta-icon">📚</span>
+        <span class="tutorial-cta-text">
+            <span class="tutorial-cta-title">Tutorial: impara a riconoscere gli intervalli</span>
+            <span class="tutorial-cta-desc">Un percorso guidato passo passo, con esempi e spiegazioni</span>
+        </span>
+    </button>
     <div class="answer-mode-title">Cosa vuoi indovinare?</div>
     <div class="options-pair answer-mode-pair">
         <button class="options-choice active" id="fullModeButton" data-mode="full">Numero e qualità</button>
@@ -749,6 +886,27 @@ h1 {
             <span class="mode-button-desc">14 livelli, dagli intervalli più semplici a tutti quelli alterati: scopri il tuo voto finale</span>
         </button>
     </div>
+</div>
+
+<!-- SELEZIONE TUTORIAL -->
+<div class="menu-screen" id="tutorialSelectScreen" style="display: none;">
+    <div class="hero-badge">📚</div>
+    <h1>Tutorial</h1>
+    <p class="subtitle">Scegli l'intervallo su cui vuoi fare il percorso guidato.</p>
+    <div class="tutorial-select-grid" id="tutorialSelectGrid"></div>
+    <div class="mode-grid" style="margin-top: 20px;">
+        <button class="menu-button" id="tutorialSelectBack">⬅️ Torna al menu</button>
+    </div>
+</div>
+
+<!-- SCHERMATA LEZIONE TUTORIAL -->
+<div class="tutorial-screen" id="tutorialScreen" style="display: none;">
+    <div class="tutorial-top">
+        <button class="tutorial-exit" id="tutorialExitButton">✕ Esci dal tutorial</button>
+        <span class="tutorial-progress-label" id="tutorialProgressLabel"></span>
+    </div>
+    <div class="tutorial-topic-dots" id="tutorialTopicDots"></div>
+    <div class="tutorial-card" id="tutorialCard"></div>
 </div>
 
 <div class="menu-screen" id="selectScreen" style="display: none;">
@@ -1127,6 +1285,15 @@ const fullModeButton = document.getElementById("fullModeButton");
 const numberModeButton = document.getElementById("numberModeButton");
 const customButton = document.getElementById("customButton");
 const selectScreen = document.getElementById("selectScreen");
+const tutorialOpenButton = document.getElementById("tutorialOpenButton");
+const tutorialSelectScreen = document.getElementById("tutorialSelectScreen");
+const tutorialSelectGrid = document.getElementById("tutorialSelectGrid");
+const tutorialSelectBack = document.getElementById("tutorialSelectBack");
+const tutorialScreen = document.getElementById("tutorialScreen");
+const tutorialExitButton = document.getElementById("tutorialExitButton");
+const tutorialProgressLabel = document.getElementById("tutorialProgressLabel");
+const tutorialTopicDots = document.getElementById("tutorialTopicDots");
+const tutorialCard = document.getElementById("tutorialCard");
 const checkGrid = document.getElementById("checkGrid");
 const selectBackButton = document.getElementById("selectBackButton");
 const selectStartButton = document.getElementById("selectStartButton");
@@ -1865,6 +2032,1614 @@ function showFinalScreen() {
     finalErrors.textContent = errors;
     gameOver.classList.add("show");
 }
+/* =========================================================
+   CONTENUTI DEI TUTORIAL (scriptati passo-passo)
+   ========================================================= */
+
+// -- dati verificati per le due batterie di domande della Seconda --
+
+const SOLFEGE_LOCAL = ["Do", "Re", "Mi", "Fa", "Sol", "La", "Si"];
+const SECONDA_NATURAL_BATTERY = [
+    { name: "Do-Re", l1: 0, l2: 1, o2: 0 }, { name: "Mi-Fa", l1: 2, l2: 3, o2: 0 },
+    { name: "Re-Mi", l1: 1, l2: 2, o2: 0 }, { name: "Si-Do", l1: 6, l2: 0, o2: 1 },
+    { name: "Fa-Sol", l1: 3, l2: 4, o2: 0 }, { name: "Mi-Fa", l1: 2, l2: 3, o2: 0 },
+    { name: "Sol-La", l1: 4, l2: 5, o2: 0 }, { name: "Si-Do", l1: 6, l2: 0, o2: 1 },
+    { name: "La-Si", l1: 5, l2: 6, o2: 0 }, { name: "Mi-Fa", l1: 2, l2: 3, o2: 0 },
+    { name: "Do-Re", l1: 0, l2: 1, o2: 0 }, { name: "Si-Do", l1: 6, l2: 0, o2: 1 },
+    { name: "Re-Mi", l1: 1, l2: 2, o2: 0 }, { name: "Mi-Fa", l1: 2, l2: 3, o2: 0 },
+    { name: "Sol-La", l1: 4, l2: 5, o2: 0 }
+];
+
+const SECONDA_ALTERED_BATTERY = [
+    { cat: 0, desc: "diesis sulla nota superiore", name: "Do-Re#", l1: 0, a1: 0, l2: 1, a2: 1, o1: 4, o2: 4 },
+    { cat: 0, desc: "diesis sulla nota superiore", name: "Re-Mi#", l1: 1, a1: 0, l2: 2, a2: 1, o1: 4, o2: 4 },
+    { cat: 0, desc: "diesis sulla nota superiore", name: "Mi-Fa#", l1: 2, a1: 0, l2: 3, a2: 1, o1: 4, o2: 4 },
+    { cat: 0, desc: "diesis sulla nota superiore", name: "Fa-Sol#", l1: 3, a1: 0, l2: 4, a2: 1, o1: 4, o2: 4 },
+    { cat: 0, desc: "diesis sulla nota superiore", name: "Sol-La#", l1: 4, a1: 0, l2: 5, a2: 1, o1: 4, o2: 4 },
+    { cat: 0, desc: "diesis sulla nota superiore", name: "La-Si#", l1: 5, a1: 0, l2: 6, a2: 1, o1: 4, o2: 4 },
+    { cat: 0, desc: "diesis sulla nota superiore", name: "Si-Do#", l1: 6, a1: 0, l2: 0, a2: 1, o1: 4, o2: 5 },
+    { cat: 0, desc: "diesis sulla nota superiore", name: "Do-Re#", l1: 0, a1: 0, l2: 1, a2: 1, o1: 5, o2: 5 },
+    { cat: 1, desc: "diesis sulla nota inferiore", name: "Do#-Re", l1: 0, a1: 1, l2: 1, a2: 0, o1: 4, o2: 4 },
+    { cat: 1, desc: "diesis sulla nota inferiore", name: "Re#-Mi", l1: 1, a1: 1, l2: 2, a2: 0, o1: 4, o2: 4 },
+    { cat: 1, desc: "diesis sulla nota inferiore", name: "Mi#-Fa", l1: 2, a1: 1, l2: 3, a2: 0, o1: 4, o2: 4 },
+    { cat: 1, desc: "diesis sulla nota inferiore", name: "Fa#-Sol", l1: 3, a1: 1, l2: 4, a2: 0, o1: 4, o2: 4 },
+    { cat: 1, desc: "diesis sulla nota inferiore", name: "Sol#-La", l1: 4, a1: 1, l2: 5, a2: 0, o1: 4, o2: 4 },
+    { cat: 1, desc: "diesis sulla nota inferiore", name: "La#-Si", l1: 5, a1: 1, l2: 6, a2: 0, o1: 4, o2: 4 },
+    { cat: 1, desc: "diesis sulla nota inferiore", name: "Si#-Do", l1: 6, a1: 1, l2: 0, a2: 0, o1: 4, o2: 5 },
+    { cat: 1, desc: "diesis sulla nota inferiore", name: "Do#-Re", l1: 0, a1: 1, l2: 1, a2: 0, o1: 5, o2: 5 },
+    { cat: 2, desc: "bemolle sulla nota superiore", name: "Do-Reb", l1: 0, a1: 0, l2: 1, a2: -1, o1: 4, o2: 4 },
+    { cat: 2, desc: "bemolle sulla nota superiore", name: "Re-Mib", l1: 1, a1: 0, l2: 2, a2: -1, o1: 4, o2: 4 },
+    { cat: 2, desc: "bemolle sulla nota superiore", name: "Mi-Fab", l1: 2, a1: 0, l2: 3, a2: -1, o1: 4, o2: 4 },
+    { cat: 2, desc: "bemolle sulla nota superiore", name: "Fa-Solb", l1: 3, a1: 0, l2: 4, a2: -1, o1: 4, o2: 4 },
+    { cat: 2, desc: "bemolle sulla nota superiore", name: "Sol-Lab", l1: 4, a1: 0, l2: 5, a2: -1, o1: 4, o2: 4 },
+    { cat: 2, desc: "bemolle sulla nota superiore", name: "La-Sib", l1: 5, a1: 0, l2: 6, a2: -1, o1: 4, o2: 4 },
+    { cat: 2, desc: "bemolle sulla nota superiore", name: "Si-Dob", l1: 6, a1: 0, l2: 0, a2: -1, o1: 4, o2: 5 },
+    { cat: 2, desc: "bemolle sulla nota superiore", name: "Do-Reb", l1: 0, a1: 0, l2: 1, a2: -1, o1: 5, o2: 5 },
+    { cat: 3, desc: "bemolle sulla nota inferiore", name: "Dob-Re", l1: 0, a1: -1, l2: 1, a2: 0, o1: 4, o2: 4 },
+    { cat: 3, desc: "bemolle sulla nota inferiore", name: "Reb-Mi", l1: 1, a1: -1, l2: 2, a2: 0, o1: 4, o2: 4 },
+    { cat: 3, desc: "bemolle sulla nota inferiore", name: "Mib-Fa", l1: 2, a1: -1, l2: 3, a2: 0, o1: 4, o2: 4 },
+    { cat: 3, desc: "bemolle sulla nota inferiore", name: "Fab-Sol", l1: 3, a1: -1, l2: 4, a2: 0, o1: 4, o2: 4 },
+    { cat: 3, desc: "bemolle sulla nota inferiore", name: "Solb-La", l1: 4, a1: -1, l2: 5, a2: 0, o1: 4, o2: 4 },
+    { cat: 3, desc: "bemolle sulla nota inferiore", name: "Lab-Si", l1: 5, a1: -1, l2: 6, a2: 0, o1: 4, o2: 4 },
+    { cat: 3, desc: "bemolle sulla nota inferiore", name: "Sib-Do", l1: 6, a1: -1, l2: 0, a2: 0, o1: 4, o2: 5 },
+    { cat: 3, desc: "bemolle sulla nota inferiore", name: "Dob-Re", l1: 0, a1: -1, l2: 1, a2: 0, o1: 5, o2: 5 },
+    { cat: 4, desc: "diesis sopra e bemolle sotto", name: "Mib-Fa#", l1: 2, a1: -1, l2: 3, a2: 1, o1: 4, o2: 4 },
+    { cat: 4, desc: "diesis sopra e bemolle sotto", name: "Sib-Do#", l1: 6, a1: -1, l2: 0, a2: 1, o1: 4, o2: 5 },
+    { cat: 4, desc: "diesis sopra e bemolle sotto", name: "Mib-Fa#", l1: 2, a1: -1, l2: 3, a2: 1, o1: 4, o2: 4 },
+    { cat: 4, desc: "diesis sopra e bemolle sotto", name: "Sib-Do#", l1: 6, a1: -1, l2: 0, a2: 1, o1: 4, o2: 5 },
+    { cat: 4, desc: "diesis sopra e bemolle sotto", name: "Mib-Fa#", l1: 2, a1: -1, l2: 3, a2: 1, o1: 4, o2: 4 },
+    { cat: 4, desc: "diesis sopra e bemolle sotto", name: "Sib-Do#", l1: 6, a1: -1, l2: 0, a2: 1, o1: 4, o2: 5 },
+    { cat: 4, desc: "diesis sopra e bemolle sotto", name: "Mib-Fa#", l1: 2, a1: -1, l2: 3, a2: 1, o1: 4, o2: 4 },
+    { cat: 4, desc: "diesis sopra e bemolle sotto", name: "Sib-Do#", l1: 6, a1: -1, l2: 0, a2: 1, o1: 4, o2: 5 },
+    { cat: 5, desc: "bemolle sopra e diesis sotto", name: "Do#-Reb", l1: 0, a1: 1, l2: 1, a2: -1, o1: 4, o2: 4 },
+    { cat: 5, desc: "bemolle sopra e diesis sotto", name: "Re#-Mib", l1: 1, a1: 1, l2: 2, a2: -1, o1: 4, o2: 4 },
+    { cat: 5, desc: "bemolle sopra e diesis sotto", name: "Fa#-Solb", l1: 3, a1: 1, l2: 4, a2: -1, o1: 4, o2: 4 },
+    { cat: 5, desc: "bemolle sopra e diesis sotto", name: "Sol#-Lab", l1: 4, a1: 1, l2: 5, a2: -1, o1: 4, o2: 4 },
+    { cat: 5, desc: "bemolle sopra e diesis sotto", name: "La#-Sib", l1: 5, a1: 1, l2: 6, a2: -1, o1: 4, o2: 4 },
+    { cat: 5, desc: "bemolle sopra e diesis sotto", name: "Do#-Reb", l1: 0, a1: 1, l2: 1, a2: -1, o1: 4, o2: 4 },
+    { cat: 5, desc: "bemolle sopra e diesis sotto", name: "Re#-Mib", l1: 1, a1: 1, l2: 2, a2: -1, o1: 4, o2: 4 },
+    { cat: 5, desc: "bemolle sopra e diesis sotto", name: "Fa#-Solb", l1: 3, a1: 1, l2: 4, a2: -1, o1: 4, o2: 4 },
+    { cat: 6, desc: "stessa alterazione su entrambe", name: "Do#-Re#", l1: 0, a1: 1, l2: 1, a2: 1, o1: 4, o2: 4 },
+    { cat: 6, desc: "stessa alterazione su entrambe", name: "Reb-Mib", l1: 1, a1: -1, l2: 2, a2: -1, o1: 4, o2: 4 },
+    { cat: 6, desc: "stessa alterazione su entrambe", name: "Mi#-Fa#", l1: 2, a1: 1, l2: 3, a2: 1, o1: 4, o2: 4 },
+    { cat: 6, desc: "stessa alterazione su entrambe", name: "Fab-Solb", l1: 3, a1: -1, l2: 4, a2: -1, o1: 4, o2: 4 },
+    { cat: 6, desc: "stessa alterazione su entrambe", name: "Sol#-La#", l1: 4, a1: 1, l2: 5, a2: 1, o1: 4, o2: 4 },
+    { cat: 6, desc: "stessa alterazione su entrambe", name: "Lab-Sib", l1: 5, a1: -1, l2: 6, a2: -1, o1: 4, o2: 4 },
+    { cat: 6, desc: "stessa alterazione su entrambe", name: "Si#-Do#", l1: 6, a1: 1, l2: 0, a2: 1, o1: 4, o2: 5 },
+    { cat: 6, desc: "stessa alterazione su entrambe", name: "Dob-Reb", l1: 0, a1: -1, l2: 1, a2: -1, o1: 4, o2: 4 }
+];
+
+const SECONDA_CATEGORY_SHORT_LABELS = [
+    "Diesis sopra", "Diesis sotto", "Bemolle sopra", "Bemolle sotto",
+    "Diesis sopra + bemolle sotto", "Bemolle sopra + diesis sotto", "Stessa alterazione"
+];
+
+const SECONDA_ALTERATION_CATEGORIES = [
+    {
+        title: "Caso 1 di 7: diesis sulla nota superiore",
+        body: "<p>Quando la nota <strong>superiore</strong> ha il diesis, l'intervallo si allarga di un semitono. Segui bene i due passaggi qui sotto: prima valutiamo la coppia senza alterazioni, poi aggiungiamo il diesis e vediamo cosa cambia.</p>",
+        shiftDemo: {
+            naturalNote1: { letter: 0, acc: 0, octave: 4 }, naturalNote2: { letter: 1, acc: 0, octave: 4 }, naturalQuality: "Maggiore",
+            alteredNote1: { letter: 0, acc: 0, octave: 4 }, alteredNote2: { letter: 1, acc: 1, octave: 4 }, resultQuality: "Aumentata (o eccedente)",
+            direction: "widen", triggerLabel: "Diesis sulla nota superiore → allarga"
+        }
+    },
+    {
+        title: "Caso 2 di 7: diesis sulla nota inferiore",
+        body: "<p>Quando invece è la nota <strong>inferiore</strong> ad avere il diesis, l'intervallo si stringe di un semitono. Stessa coppia di partenza di prima, ma questa volta il diesis va sulla nota sotto:</p>",
+        shiftDemo: {
+            naturalNote1: { letter: 0, acc: 0, octave: 4 }, naturalNote2: { letter: 1, acc: 0, octave: 4 }, naturalQuality: "Maggiore",
+            alteredNote1: { letter: 0, acc: 1, octave: 4 }, alteredNote2: { letter: 1, acc: 0, octave: 4 }, resultQuality: "Minore",
+            direction: "narrow", triggerLabel: "Diesis sulla nota inferiore → stringe"
+        }
+    },
+    {
+        title: "Caso 3 di 7: bemolle sulla nota superiore",
+        body: "<p>Un bemolle funziona al contrario di un diesis. Sulla nota <strong>superiore</strong>, il bemolle stringe l'intervallo, perché abbassa la nota superiore avvicinandola a quella inferiore.</p>",
+        shiftDemo: {
+            naturalNote1: { letter: 1, acc: 0, octave: 4 }, naturalNote2: { letter: 2, acc: 0, octave: 4 }, naturalQuality: "Maggiore",
+            alteredNote1: { letter: 1, acc: 0, octave: 4 }, alteredNote2: { letter: 2, acc: -1, octave: 4 }, resultQuality: "Minore",
+            direction: "narrow", triggerLabel: "Bemolle sulla nota superiore → stringe"
+        }
+    },
+    {
+        title: "Caso 4 di 7: bemolle sulla nota inferiore",
+        body: "<p>Sulla nota <strong>inferiore</strong> invece, il bemolle allarga l'intervallo, perché abbassa ulteriormente la nota di partenza, aumentando la distanza.</p>",
+        shiftDemo: {
+            naturalNote1: { letter: 2, acc: 0, octave: 4 }, naturalNote2: { letter: 3, acc: 0, octave: 4 }, naturalQuality: "Minore",
+            alteredNote1: { letter: 2, acc: -1, octave: 4 }, alteredNote2: { letter: 3, acc: 0, octave: 4 }, resultQuality: "Maggiore",
+            direction: "widen", triggerLabel: "Bemolle sulla nota inferiore → allarga"
+        }
+    },
+    {
+        title: "Caso 5 di 7: diesis sopra e bemolle sotto",
+        body: "<p>Quando <strong>entrambe</strong> le note sono alterate, applichi gli spostamenti uno dopo l'altro. Diesis sopra e bemolle sotto allargano entrambi: due spostamenti nella stessa direzione.</p>",
+        shiftDemo: {
+            naturalNote1: { letter: 2, acc: 0, octave: 4 }, naturalNote2: { letter: 3, acc: 0, octave: 4 }, naturalQuality: "Minore",
+            alteredNote1: { letter: 2, acc: -1, octave: 4 }, alteredNote2: { letter: 3, acc: 1, octave: 4 }, resultQuality: "Aumentata (o eccedente)",
+            direction: "widen", triggerLabel: "Bemolle sotto + diesis sopra → allarga due volte"
+        }
+    },
+    {
+        title: "Caso 6 di 7: bemolle sopra e diesis sotto",
+        body: "<p>Al contrario, bemolle sopra e diesis sotto stringono entrambi: due spostamenti nella stessa direzione, ma verso il lato opposto della scala.</p>",
+        shiftDemo: {
+            naturalNote1: { letter: 0, acc: 0, octave: 4 }, naturalNote2: { letter: 1, acc: 0, octave: 4 }, naturalQuality: "Maggiore",
+            alteredNote1: { letter: 0, acc: 1, octave: 4 }, alteredNote2: { letter: 1, acc: -1, octave: 4 }, resultQuality: "Diminuita",
+            direction: "narrow", triggerLabel: "Diesis sotto + bemolle sopra → stringe due volte"
+        }
+    },
+    {
+        title: "Caso 7 di 7: la stessa alterazione su entrambe le note",
+        body: "<p>Ultimo caso, il più semplice: se <strong>entrambe</strong> le note hanno lo stesso tipo di alterazione, la distanza tra loro non cambia rispetto alla coppia naturale, perché si spostano insieme, nella stessa direzione, della stessa quantità.</p>",
+        shiftDemo: {
+            naturalNote1: { letter: 0, acc: 0, octave: 4 }, naturalNote2: { letter: 1, acc: 0, octave: 4 }, naturalQuality: "Maggiore",
+            alteredNote1: { letter: 0, acc: 1, octave: 4 }, alteredNote2: { letter: 1, acc: 1, octave: 4 }, resultQuality: "Maggiore",
+            direction: "same", triggerLabel: "Stessa alterazione su entrambe → non cambia nulla"
+        }
+    }
+];
+
+const TUTORIAL_QUALITY_LABEL = { d: "Diminuita", m: "Minore", M: "Maggiore", a: "Aumentata (o eccedente)" };
+
+function secondaSemitones(l1, a1, o1, l2, a2, o2) {
+    const NATURAL_OFFSET_T = [0, 2, 4, 5, 7, 9, 11];
+    const m1 = o1 * 12 + NATURAL_OFFSET_T[l1] + a1;
+    const m2 = o2 * 12 + NATURAL_OFFSET_T[l2] + a2;
+    return m2 - m1;
+}
+function secondaQualityFromSemitones(s) {
+    if (s === 0) return "d"; if (s === 1) return "m"; if (s === 2) return "M"; if (s === 3) return "a";
+    return "M";
+}
+
+function buildNaturalSecondQuestions() {
+    return SECONDA_NATURAL_BATTERY.map((p, i) => {
+        const semis = secondaSemitones(p.l1, 0, 4, p.l2, 0, 4 + p.o2);
+        const isMajor = semis === 2;
+        const correct = isMajor ? "M" : "m";
+        return {
+            topic: "naturali",
+            topicLabel: "Seconde naturali",
+            kind: "question",
+            title: "Seconda naturale — domanda " + (i + 1) + " di 15",
+            question: "<p>Che qualità ha questa seconda naturale (senza alterazioni)?</p>",
+            diagram: { type: "interval", note1: { letter: p.l1, acc: 0, octave: 4 }, note2: { letter: p.l2, acc: 0, octave: 4 + p.o2 }, clef: "treble" },
+            options: [ { id: "M", label: "Maggiore" }, { id: "m", label: "Minore" } ],
+            correct: correct,
+            feedback: {
+                M: isMajor
+                    ? ("Esatto! " + p.name + ": c'è un tasto nero di mezzo, quindi 1 tono di distanza, maggiore.")
+                    : ("Non è corretto: " + p.name + " è una delle due eccezioni (come Mi-Fa e Si-Do). Guarda la tastiera qui sotto: non c'è nessun tasto nero tra le due note, quindi la distanza è di solo 1 semitono, minore."),
+                m: !isMajor
+                    ? ("Esatto! " + p.name + " è una delle due eccezioni: non c'è nessun tasto nero di mezzo, quindi minore.")
+                    : ("Non è corretto: le uniche due eccezioni minori sono Mi-Fa e Si-Do. " + p.name + " non è tra queste: guarda la tastiera qui sotto, c'è un tasto nero di mezzo, quindi 1 tono, maggiore.")
+            },
+            wrongHelpDiagram: { type: "keyboard", config: { numWhiteKeys: 8, baseOctave: 4, highlights: [
+                { letter: p.l1, acc: 0, octave: 4, label: SOLFEGE_LOCAL[p.l1], color: "#f59e0b" },
+                { letter: p.l2, acc: 0, octave: 4 + p.o2, label: SOLFEGE_LOCAL[p.l2], color: "#f59e0b" }
+            ] } }
+        };
+    });
+}
+
+function buildAlteredSecondQuestion(p, indexInCategory, totalInCategory) {
+    const semis = secondaSemitones(p.l1, p.a1, p.o1, p.l2, p.a2, p.o2);
+    const correctId = secondaQualityFromSemitones(semis);
+    const allOptions = [ { id: "d", label: "Diminuita" }, { id: "m", label: "Minore" }, { id: "M", label: "Maggiore" }, { id: "a", label: "Aumentata (o eccedente)" } ];
+    const isSameAlterationCase = p.cat === 6;
+    const naturalSemis = isSameAlterationCase ? secondaSemitones(p.l1, 0, p.o1, p.l2, 0, p.o2) : null;
+    const naturalName = isSameAlterationCase ? (SOLFEGE_LOCAL[p.l1] + "-" + SOLFEGE_LOCAL[p.l2]) : null;
+    const naturalQualityLabel = isSameAlterationCase ? TUTORIAL_QUALITY_LABEL[secondaQualityFromSemitones(naturalSemis)].toLowerCase() : null;
+    return {
+        topic: "cat" + p.cat,
+        topicLabel: SECONDA_CATEGORY_SHORT_LABELS[p.cat],
+        kind: "question",
+        title: "Esercizio " + (indexInCategory + 1) + " di " + totalInCategory,
+        question: "<p>Questa seconda ha: <strong>" + p.desc + "</strong>. Che qualità ha?</p>",
+        diagram: { type: "interval", note1: { letter: p.l1, acc: p.a1, octave: p.o1 }, note2: { letter: p.l2, acc: p.a2, octave: p.o2 }, clef: "treble" },
+        options: allOptions,
+        correct: correctId,
+        feedback: allOptions.reduce((acc, opt) => {
+            if (opt.id === correctId) {
+                acc[opt.id] = isSameAlterationCase
+                    ? "Esatto! Con la stessa alterazione su entrambe le note, puoi ignorarle del tutto: " + naturalName + " naturale è " + naturalQualityLabel + ", e quindi lo resta anche qui."
+                    : "Esatto! " + p.name + " (" + p.desc + ") dà " + semis + " semitoni: " + TUTORIAL_QUALITY_LABEL[correctId].toLowerCase() + ".";
+            } else {
+                acc[opt.id] = isSameAlterationCase
+                    ? "Non è corretto. Il trucco qui: quando le due note hanno la <strong>stessa</strong> alterazione, puoi ignorarla completamente e trattarle come se fossero naturali, perché si spostano insieme della stessa quantità, nella stessa direzione, e la distanza tra loro non cambia. " + naturalName + " naturale è " + naturalQualityLabel + ": questa è la risposta, esattamente come per la coppia alterata."
+                    : "Non è corretto: " + p.name + " (" + p.desc + ") dà " + semis + " semitoni, che corrisponde a " + TUTORIAL_QUALITY_LABEL[correctId].toLowerCase() + ", non a " + TUTORIAL_QUALITY_LABEL[opt.id].toLowerCase() + ". Riparti dalla coppia naturale e applica lo spostamento per ogni alterazione presente.";
+            }
+            return acc;
+        }, {})
+    };
+}
+
+// intreccia, per ciascuno dei 7 casi: spiegazione specifica + le sue domande
+// passo esplicativo (senza esercizi) sui casi "piu' che diminuita" e
+// "piu' che aumentata": li mostriamo con esempi, ma non li quizziamo
+function buildPiuCheStep(intervalWord, demos, curiosityHtml) {
+    return {
+        kind: "explain",
+        title: "Un passo in più: più che diminuita e più che aumentata",
+        body: "<p>Nei casi 5 e 6 hai visto che, quando due alterazioni spingono nella <strong>stessa direzione</strong>, si fanno <strong>due spostamenti</strong>. Negli esercizi abbiamo scelto apposta coppie di partenza che ti facevano fermare a Diminuita o ad Aumentata. Ma se si parte da una qualità già vicina a un estremo, due spostamenti possono portare <strong>oltre</strong>!</p>" +
+              "<p>La scala delle qualità, infatti, continua da entrambi i lati:</p>" +
+              "<div style='text-align:center; font-weight:800; font-size:1.02rem; margin:16px 0; color:#e2e8f0; line-height:1.9;'>" +
+              "<span style='color:#38bdf8;'>Più che diminuita</span> ⟵ Diminuita ⟵ Minore ⟵ Maggiore ⟶ Aumentata (o eccedente) ⟶ <span style='color:#fb923c;'>Più che aumentata</span></div>" +
+              "<p>Il procedimento non cambia di una virgola: prima valuti la " + intervalWord + " naturale, poi fai uno spostamento per ogni alterazione. Guarda questi due esempi:</p>",
+        shiftDemos: demos,
+        bodyAfter: (curiosityHtml || "") +
+              "<div class='trick-box'>😌 Tranquillo: in questo tutorial <strong>non</strong> ci saranno esercizi sui casi più che diminuiti o più che aumentati. Li affronteremo più avanti nel programma. Per ora ti basta sapere che esistono e che si trovano con lo stesso identico procedimento.</div>"
+    };
+}
+
+const SECONDA_PIU_CHE_DEMOS = [
+    {
+        heading: "Esempio 1: si allarga oltre l'aumentata",
+        naturalNote1: { letter: 0, acc: 0, octave: 4 }, naturalNote2: { letter: 1, acc: 0, octave: 4 }, naturalQuality: "Maggiore",
+        alteredNote1: { letter: 0, acc: -1, octave: 4 }, alteredNote2: { letter: 1, acc: 1, octave: 4 }, resultQuality: "Più che aumentata",
+        direction: "widen", triggerLabel: "Bemolle sotto + diesis sopra → allarga due volte: Maggiore → Aumentata → Più che aumentata"
+    },
+    {
+        heading: "Esempio 2: si stringe oltre la diminuita",
+        naturalNote1: { letter: 2, acc: 0, octave: 4 }, naturalNote2: { letter: 3, acc: 0, octave: 4 }, naturalQuality: "Minore",
+        alteredNote1: { letter: 2, acc: 1, octave: 4 }, alteredNote2: { letter: 3, acc: -1, octave: 4 }, resultQuality: "Più che diminuita",
+        direction: "narrow", triggerLabel: "Diesis sotto + bemolle sopra → stringe due volte: Minore → Diminuita → Più che diminuita"
+    }
+];
+
+const TERZA_PIU_CHE_DEMOS = [
+    {
+        heading: "Esempio 1: si allarga oltre l'aumentata",
+        naturalNote1: { letter: 0, acc: 0, octave: 4 }, naturalNote2: { letter: 2, acc: 0, octave: 4 }, naturalQuality: "Maggiore",
+        alteredNote1: { letter: 0, acc: -1, octave: 4 }, alteredNote2: { letter: 2, acc: 1, octave: 4 }, resultQuality: "Più che aumentata",
+        direction: "widen", triggerLabel: "Bemolle sotto + diesis sopra → allarga due volte: Maggiore → Aumentata → Più che aumentata"
+    },
+    {
+        heading: "Esempio 2: si stringe oltre la diminuita",
+        naturalNote1: { letter: 1, acc: 0, octave: 4 }, naturalNote2: { letter: 3, acc: 0, octave: 4 }, naturalQuality: "Minore",
+        alteredNote1: { letter: 1, acc: 1, octave: 4 }, alteredNote2: { letter: 3, acc: -1, octave: 4 }, resultQuality: "Più che diminuita",
+        direction: "narrow", triggerLabel: "Diesis sotto + bemolle sopra → stringe due volte: Minore → Diminuita → Più che diminuita"
+    }
+];
+
+function buildAlteredSecondSection() {
+    const steps = [];
+    SECONDA_ALTERATION_CATEGORIES.forEach((cat, catIndex) => {
+        steps.push({
+            kind: "explain",
+            title: cat.title,
+            body: cat.body,
+            shiftDemo: cat.shiftDemo,
+            topic: "cat" + catIndex,
+            topicLabel: SECONDA_CATEGORY_SHORT_LABELS[catIndex]
+        });
+        const questionsInCategory = SECONDA_ALTERED_BATTERY.filter(p => p.cat === catIndex);
+        questionsInCategory.forEach((p, i) => {
+            steps.push(buildAlteredSecondQuestion(p, i, questionsInCategory.length));
+        });
+        if (catIndex === 5) {
+            steps.push(buildPiuCheStep("seconda", SECONDA_PIU_CHE_DEMOS,
+                "<p>Curiosità: nell'esempio 2 la nota scritta sopra (Fab) suona addirittura un semitono <strong>più in basso</strong> di quella scritta sotto (Mi#)! È un caso estremo, che nella pratica si incontra pochissimo.</p>"));
+        }
+    });
+    return steps;
+}
+
+function buildSecondaSteps() {
+    const steps = [];
+
+    steps.push({
+        kind: "explain",
+        title: "La seconda: due lettere consecutive",
+        body: "<p>La seconda è l'intervallo che ha <strong>numero 2</strong>: le due note occupano <span class='hl'>due lettere consecutive</span> nell'alfabeto musicale (Do, Re, Mi, Fa, Sol, La, Si, poi di nuovo Do...).</p>" +
+              "<p>Per contare il numero, conta le lettere <strong>a partire dalla prima nota compresa</strong>, fino alla seconda nota compresa.</p>" +
+              "<p style='text-align:center; font-weight:800; font-size:1.05rem; color:#fde68a; margin:14px 0;'>Per trovare il NUMERO, ignora sempre diesis e bemolli: guarda solo le lettere.</p>",
+        diagram: { type: "letters", config: { sequence: [0, 1], highlightIndices: [0, 1], endpointIndices: [0, 1] } },
+        diagramCaption: "Do (1) - Re (2): due lettere contate → numero 2, una seconda."
+    });
+
+    steps.push({
+        kind: "explain",
+        title: "Le seconde naturali",
+        topic: "naturali",
+        topicLabel: "Seconde naturali",
+        body: "<p>Scopriamo ora la qualità, partendo dalle seconde <strong>naturali</strong>, cioè senza nessuna alterazione.</p>" +
+              "<p>La maggior parte delle seconde <span class='hl'>naturali</span> sono <strong>maggiori</strong> (distanza di 1 tono, cioè 2 semitoni). Ma ci sono <span class='hl'>due eccezioni</span> che sono <strong>minori</strong> (distanza di 1 solo semitono): <strong>Mi-Fa</strong> e <strong>Si-Do</strong>.</p>" +
+              "<p>Perché proprio queste due? Guardiamolo sulla tastiera.</p>"
+    });
+
+    steps.push({
+        kind: "explain",
+        title: "La tastiera spiega tutto",
+        topic: "naturali",
+        topicLabel: "Seconde naturali",
+        body: "<p>Guarda i tasti bianchi del pianoforte: tra la maggior parte di essi c'è un tasto <strong>nero</strong> di mezzo. Ma tra <strong>Mi e Fa</strong>, e tra <strong>Si e Do</strong>, i tasti bianchi sono <span class='hl'>attaccati</span>, senza nessun tasto nero in mezzo.</p>",
+        diagram: { type: "keyboard", config: { numWhiteKeys: 8, baseOctave: 4, highlights: [
+            { letter: 0, acc: 0, octave: 4, label: "Do", color: "#8b5cf6" }, { letter: 1, acc: 0, octave: 4, label: "Re", color: "#8b5cf6" },
+            { letter: 2, acc: 0, octave: 4, label: "Mi", color: "#f59e0b" }, { letter: 3, acc: 0, octave: 4, label: "Fa", color: "#f59e0b" },
+            { letter: 4, acc: 0, octave: 4, label: "Sol", color: "#8b5cf6" }, { letter: 5, acc: 0, octave: 4, label: "La", color: "#8b5cf6" },
+            { letter: 6, acc: 0, octave: 4, label: "Si", color: "#f59e0b" }, { letter: 0, acc: 0, octave: 5, label: "Do", color: "#f59e0b" }
+        ] } },
+        diagramCaption: "Tra Mi-Fa e tra Si-Do (in arancione) non c'è nessun tasto nero: sono le uniche due coppie \"attaccate\"."
+    });
+
+    steps.push({
+        kind: "explain",
+        title: "Esempio: Do-Re (maggiore)",
+        topic: "naturali",
+        topicLabel: "Seconde naturali",
+        body: "<p>Tra Do e Re c'è un tasto nero di mezzo: sono distanti <strong>1 tono</strong> (2 semitoni). Seconda <strong>maggiore</strong>.</p>",
+        diagram: { type: "interval", note1: { letter: 0, acc: 0, octave: 4 }, note2: { letter: 1, acc: 0, octave: 4 }, clef: "treble" },
+        diagramCaption: "Do-Re: seconda maggiore.",
+        diagram2: { type: "keyboard", config: { numWhiteKeys: 5, baseOctave: 4, highlights: [
+            { letter: 0, acc: 0, octave: 4, label: "Do", color: "#6366f1" }, { letter: 1, acc: 0, octave: 4, label: "Re", color: "#6366f1" },
+            { letter: 0, acc: 1, octave: 4, label: "1 tono", color: "#f59e0b" }
+        ] } },
+        diagramCaption2: "Il tasto nero (Do#, in arancione) è il semitono di passaggio: da Do a Re ce ne sono due, cioè 1 tono intero."
+    });
+
+    steps.push({
+        kind: "explain",
+        title: "Esempio: Mi-Fa (minore)",
+        topic: "naturali",
+        topicLabel: "Seconde naturali",
+        body: "<p>Tra Mi e Fa <strong>non c'è nessun tasto nero</strong>: sono distanti solo <strong>1 semitono</strong>. Seconda <strong>minore</strong>.</p>",
+        diagram: { type: "interval", note1: { letter: 2, acc: 0, octave: 4 }, note2: { letter: 3, acc: 0, octave: 4 }, clef: "treble" },
+        diagramCaption: "Mi-Fa: seconda minore, l'eccezione.",
+        diagram2: { type: "keyboard", config: { numWhiteKeys: 5, baseOctave: 4, highlights: [
+            { letter: 2, acc: 0, octave: 4, label: "Mi", color: "#6366f1" }, { letter: 3, acc: 0, octave: 4, label: "Fa", color: "#f59e0b" }
+        ] } },
+        diagramCaption2: "Nessun tasto nero di passaggio: da Mi a Fa c'è un solo semitono."
+    });
+
+    buildNaturalSecondQuestions().forEach(q => steps.push(q));
+
+    steps.push({
+        kind: "explain",
+        title: "Ora applica le alterazioni",
+        body: "<p>Ottimo, ora sai riconoscere le seconde naturali! Ma cosa succede quando una nota è alterata? Si parte sempre dalla qualità naturale (quella che hai appena imparato a trovare), e si applica questa regola generale, che vedremo caso per caso nelle prossime pagine:</p>" +
+              "<div style='text-align:center; font-weight:800; font-size:1.15rem; margin:16px 0; color:#e2e8f0;'>Diminuita &nbsp;⟵&nbsp; Minore &nbsp;⟵&nbsp; <span class='hl'>Maggiore</span> &nbsp;⟶&nbsp; Aumentata (o eccedente)</div>" +
+              "<ul><li><strong>Ti sposti a destra</strong> (l'intervallo si allarga di un semitono) se: c'è un <strong>diesis sulla nota superiore</strong>, oppure un <strong>bemolle sulla nota inferiore</strong>.</li>" +
+              "<li><strong>Ti sposti a sinistra</strong> (l'intervallo si stringe di un semitono) se: c'è un <strong>bemolle sulla nota superiore</strong>, oppure un <strong>diesis sulla nota inferiore</strong>.</li></ul>" +
+              "<p>Se ci sono alterazioni su <strong>entrambe</strong> le note, applichi gli spostamenti uno dopo l'altro. Vediamo ora un caso alla volta, con qualche domanda di pratica subito dopo ciascuno.</p>"
+    });
+
+    buildAlteredSecondSection().forEach(s => steps.push(s));
+
+    return steps;
+}
+const SOLFEGE_LOCAL_T3 = ["Do", "Re", "Mi", "Fa", "Sol", "La", "Si"];
+
+const TERZA_NATURAL_BATTERY = [
+    { name: "Do-Mi", l1: 0, l2: 2, o2: 0 }, { name: "Re-Fa", l1: 1, l2: 3, o2: 0 },
+    { name: "Fa-La", l1: 3, l2: 5, o2: 0 }, { name: "Mi-Sol", l1: 2, l2: 4, o2: 0 },
+    { name: "Sol-Si", l1: 4, l2: 6, o2: 0 }, { name: "La-Do", l1: 5, l2: 0, o2: 1 },
+    { name: "Do-Mi", l1: 0, l2: 2, o2: 0 }, { name: "Si-Re", l1: 6, l2: 1, o2: 1 },
+    { name: "Fa-La", l1: 3, l2: 5, o2: 0 }, { name: "Re-Fa", l1: 1, l2: 3, o2: 0 },
+    { name: "Sol-Si", l1: 4, l2: 6, o2: 0 }, { name: "Mi-Sol", l1: 2, l2: 4, o2: 0 },
+    { name: "Do-Mi", l1: 0, l2: 2, o2: 0 }, { name: "La-Do", l1: 5, l2: 0, o2: 1 },
+    { name: "Si-Re", l1: 6, l2: 1, o2: 1 }
+];
+
+const TERZA_CATEGORY_SHORT_LABELS = [
+    "Diesis sopra", "Diesis sotto", "Bemolle sopra", "Bemolle sotto",
+    "Diesis sopra + bemolle sotto", "Bemolle sopra + diesis sotto", "Stessa alterazione"
+];
+
+const TERZA_ALTERATION_CATEGORIES = [
+    {
+        title: "Caso 1 di 7: diesis sulla nota superiore",
+        body: "<p>Quando la nota <strong>superiore</strong> ha il diesis, l'intervallo si allarga di un semitono. Segui bene i due passaggi: prima valutiamo la coppia senza alterazioni, poi aggiungiamo il diesis.</p>",
+        shiftDemo: {
+            naturalNote1: { letter: 0, acc: 0, octave: 4 }, naturalNote2: { letter: 2, acc: 0, octave: 4 }, naturalQuality: "Maggiore",
+            alteredNote1: { letter: 0, acc: 0, octave: 4 }, alteredNote2: { letter: 2, acc: 1, octave: 4 }, resultQuality: "Aumentata (o eccedente)",
+            direction: "widen", triggerLabel: "Diesis sulla nota superiore → allarga"
+        }
+    },
+    {
+        title: "Caso 2 di 7: diesis sulla nota inferiore",
+        body: "<p>Quando invece è la nota <strong>inferiore</strong> ad avere il diesis, l'intervallo si stringe di un semitono.</p>",
+        shiftDemo: {
+            naturalNote1: { letter: 0, acc: 0, octave: 4 }, naturalNote2: { letter: 2, acc: 0, octave: 4 }, naturalQuality: "Maggiore",
+            alteredNote1: { letter: 0, acc: 1, octave: 4 }, alteredNote2: { letter: 2, acc: 0, octave: 4 }, resultQuality: "Minore",
+            direction: "narrow", triggerLabel: "Diesis sulla nota inferiore → stringe"
+        }
+    },
+    {
+        title: "Caso 3 di 7: bemolle sulla nota superiore",
+        body: "<p>Un bemolle funziona al contrario di un diesis. Sulla nota <strong>superiore</strong>, il bemolle stringe l'intervallo.</p>",
+        shiftDemo: {
+            naturalNote1: { letter: 1, acc: 0, octave: 4 }, naturalNote2: { letter: 3, acc: 0, octave: 4 }, naturalQuality: "Minore",
+            alteredNote1: { letter: 1, acc: 0, octave: 4 }, alteredNote2: { letter: 3, acc: -1, octave: 4 }, resultQuality: "Diminuita",
+            direction: "narrow", triggerLabel: "Bemolle sulla nota superiore → stringe"
+        }
+    },
+    {
+        title: "Caso 4 di 7: bemolle sulla nota inferiore",
+        body: "<p>Sulla nota <strong>inferiore</strong> invece, il bemolle allarga l'intervallo.</p>",
+        shiftDemo: {
+            naturalNote1: { letter: 1, acc: 0, octave: 4 }, naturalNote2: { letter: 3, acc: 0, octave: 4 }, naturalQuality: "Minore",
+            alteredNote1: { letter: 1, acc: -1, octave: 4 }, alteredNote2: { letter: 3, acc: 0, octave: 4 }, resultQuality: "Maggiore",
+            direction: "widen", triggerLabel: "Bemolle sulla nota inferiore → allarga"
+        }
+    },
+    {
+        title: "Caso 5 di 7: diesis sopra e bemolle sotto",
+        body: "<p>Quando <strong>entrambe</strong> le note sono alterate, applichi gli spostamenti uno dopo l'altro. Diesis sopra e bemolle sotto allargano entrambi.</p>",
+        shiftDemo: {
+            naturalNote1: { letter: 1, acc: 0, octave: 4 }, naturalNote2: { letter: 3, acc: 0, octave: 4 }, naturalQuality: "Minore",
+            alteredNote1: { letter: 1, acc: -1, octave: 4 }, alteredNote2: { letter: 3, acc: 1, octave: 4 }, resultQuality: "Aumentata (o eccedente)",
+            direction: "widen", triggerLabel: "Bemolle sotto + diesis sopra → allarga due volte"
+        }
+    },
+    {
+        title: "Caso 6 di 7: bemolle sopra e diesis sotto",
+        body: "<p>Al contrario, bemolle sopra e diesis sotto stringono entrambi.</p>",
+        shiftDemo: {
+            naturalNote1: { letter: 0, acc: 0, octave: 4 }, naturalNote2: { letter: 2, acc: 0, octave: 4 }, naturalQuality: "Maggiore",
+            alteredNote1: { letter: 0, acc: 1, octave: 4 }, alteredNote2: { letter: 2, acc: -1, octave: 4 }, resultQuality: "Diminuita",
+            direction: "narrow", triggerLabel: "Diesis sotto + bemolle sopra → stringe due volte"
+        }
+    },
+    {
+        title: "Caso 7 di 7: la stessa alterazione su entrambe le note",
+        body: "<p>Ultimo caso, il più semplice: se <strong>entrambe</strong> le note hanno lo stesso tipo di alterazione, la distanza tra loro non cambia rispetto alla coppia naturale.</p>",
+        shiftDemo: {
+            naturalNote1: { letter: 0, acc: 0, octave: 4 }, naturalNote2: { letter: 2, acc: 0, octave: 4 }, naturalQuality: "Maggiore",
+            alteredNote1: { letter: 0, acc: 1, octave: 4 }, alteredNote2: { letter: 2, acc: 1, octave: 4 }, resultQuality: "Maggiore",
+            direction: "same", triggerLabel: "Stessa alterazione su entrambe → non cambia nulla"
+        }
+    }
+];
+
+const TERZA_ALTERED_BATTERY = [
+    { cat: 0, desc: "diesis sulla nota superiore", name: "Do-Mi#", l1: 0, a1: 0, l2: 2, a2: 1, o1: 4, o2: 4 },
+    { cat: 0, desc: "diesis sulla nota superiore", name: "Re-Fa#", l1: 1, a1: 0, l2: 3, a2: 1, o1: 4, o2: 4 },
+    { cat: 0, desc: "diesis sulla nota superiore", name: "Mi-Sol#", l1: 2, a1: 0, l2: 4, a2: 1, o1: 4, o2: 4 },
+    { cat: 0, desc: "diesis sulla nota superiore", name: "Fa-La#", l1: 3, a1: 0, l2: 5, a2: 1, o1: 4, o2: 4 },
+    { cat: 0, desc: "diesis sulla nota superiore", name: "Sol-Si#", l1: 4, a1: 0, l2: 6, a2: 1, o1: 4, o2: 4 },
+    { cat: 0, desc: "diesis sulla nota superiore", name: "La-Do#", l1: 5, a1: 0, l2: 0, a2: 1, o1: 4, o2: 5 },
+    { cat: 0, desc: "diesis sulla nota superiore", name: "Si-Re#", l1: 6, a1: 0, l2: 1, a2: 1, o1: 4, o2: 5 },
+    { cat: 0, desc: "diesis sulla nota superiore", name: "Do-Mi#", l1: 0, a1: 0, l2: 2, a2: 1, o1: 5, o2: 5 },
+    { cat: 1, desc: "diesis sulla nota inferiore", name: "Do#-Mi", l1: 0, a1: 1, l2: 2, a2: 0, o1: 4, o2: 4 },
+    { cat: 1, desc: "diesis sulla nota inferiore", name: "Re#-Fa", l1: 1, a1: 1, l2: 3, a2: 0, o1: 4, o2: 4 },
+    { cat: 1, desc: "diesis sulla nota inferiore", name: "Mi#-Sol", l1: 2, a1: 1, l2: 4, a2: 0, o1: 4, o2: 4 },
+    { cat: 1, desc: "diesis sulla nota inferiore", name: "Fa#-La", l1: 3, a1: 1, l2: 5, a2: 0, o1: 4, o2: 4 },
+    { cat: 1, desc: "diesis sulla nota inferiore", name: "Sol#-Si", l1: 4, a1: 1, l2: 6, a2: 0, o1: 4, o2: 4 },
+    { cat: 1, desc: "diesis sulla nota inferiore", name: "La#-Do", l1: 5, a1: 1, l2: 0, a2: 0, o1: 4, o2: 5 },
+    { cat: 1, desc: "diesis sulla nota inferiore", name: "Si#-Re", l1: 6, a1: 1, l2: 1, a2: 0, o1: 4, o2: 5 },
+    { cat: 1, desc: "diesis sulla nota inferiore", name: "Do#-Mi", l1: 0, a1: 1, l2: 2, a2: 0, o1: 5, o2: 5 },
+    { cat: 2, desc: "bemolle sulla nota superiore", name: "Do-Mib", l1: 0, a1: 0, l2: 2, a2: -1, o1: 4, o2: 4 },
+    { cat: 2, desc: "bemolle sulla nota superiore", name: "Re-Fab", l1: 1, a1: 0, l2: 3, a2: -1, o1: 4, o2: 4 },
+    { cat: 2, desc: "bemolle sulla nota superiore", name: "Mi-Solb", l1: 2, a1: 0, l2: 4, a2: -1, o1: 4, o2: 4 },
+    { cat: 2, desc: "bemolle sulla nota superiore", name: "Fa-Lab", l1: 3, a1: 0, l2: 5, a2: -1, o1: 4, o2: 4 },
+    { cat: 2, desc: "bemolle sulla nota superiore", name: "Sol-Sib", l1: 4, a1: 0, l2: 6, a2: -1, o1: 4, o2: 4 },
+    { cat: 2, desc: "bemolle sulla nota superiore", name: "La-Dob", l1: 5, a1: 0, l2: 0, a2: -1, o1: 4, o2: 5 },
+    { cat: 2, desc: "bemolle sulla nota superiore", name: "Si-Reb", l1: 6, a1: 0, l2: 1, a2: -1, o1: 4, o2: 5 },
+    { cat: 2, desc: "bemolle sulla nota superiore", name: "Do-Mib", l1: 0, a1: 0, l2: 2, a2: -1, o1: 5, o2: 5 },
+    { cat: 3, desc: "bemolle sulla nota inferiore", name: "Dob-Mi", l1: 0, a1: -1, l2: 2, a2: 0, o1: 4, o2: 4 },
+    { cat: 3, desc: "bemolle sulla nota inferiore", name: "Reb-Fa", l1: 1, a1: -1, l2: 3, a2: 0, o1: 4, o2: 4 },
+    { cat: 3, desc: "bemolle sulla nota inferiore", name: "Mib-Sol", l1: 2, a1: -1, l2: 4, a2: 0, o1: 4, o2: 4 },
+    { cat: 3, desc: "bemolle sulla nota inferiore", name: "Fab-La", l1: 3, a1: -1, l2: 5, a2: 0, o1: 4, o2: 4 },
+    { cat: 3, desc: "bemolle sulla nota inferiore", name: "Solb-Si", l1: 4, a1: -1, l2: 6, a2: 0, o1: 4, o2: 4 },
+    { cat: 3, desc: "bemolle sulla nota inferiore", name: "Lab-Do", l1: 5, a1: -1, l2: 0, a2: 0, o1: 4, o2: 5 },
+    { cat: 3, desc: "bemolle sulla nota inferiore", name: "Sib-Re", l1: 6, a1: -1, l2: 1, a2: 0, o1: 4, o2: 5 },
+    { cat: 3, desc: "bemolle sulla nota inferiore", name: "Dob-Mi", l1: 0, a1: -1, l2: 2, a2: 0, o1: 5, o2: 5 },
+    { cat: 4, desc: "diesis sopra e bemolle sotto", name: "Reb-Fa#", l1: 1, a1: -1, l2: 3, a2: 1, o1: 4, o2: 4 },
+    { cat: 4, desc: "diesis sopra e bemolle sotto", name: "Mib-Sol#", l1: 2, a1: -1, l2: 4, a2: 1, o1: 4, o2: 4 },
+    { cat: 4, desc: "diesis sopra e bemolle sotto", name: "Lab-Do#", l1: 5, a1: -1, l2: 0, a2: 1, o1: 4, o2: 5 },
+    { cat: 4, desc: "diesis sopra e bemolle sotto", name: "Sib-Re#", l1: 6, a1: -1, l2: 1, a2: 1, o1: 4, o2: 5 },
+    { cat: 4, desc: "diesis sopra e bemolle sotto", name: "Reb-Fa#", l1: 1, a1: -1, l2: 3, a2: 1, o1: 4, o2: 4 },
+    { cat: 4, desc: "diesis sopra e bemolle sotto", name: "Mib-Sol#", l1: 2, a1: -1, l2: 4, a2: 1, o1: 4, o2: 4 },
+    { cat: 4, desc: "diesis sopra e bemolle sotto", name: "Lab-Do#", l1: 5, a1: -1, l2: 0, a2: 1, o1: 4, o2: 5 },
+    { cat: 4, desc: "diesis sopra e bemolle sotto", name: "Sib-Re#", l1: 6, a1: -1, l2: 1, a2: 1, o1: 4, o2: 5 },
+    { cat: 5, desc: "bemolle sopra e diesis sotto", name: "Do#-Mib", l1: 0, a1: 1, l2: 2, a2: -1, o1: 4, o2: 4 },
+    { cat: 5, desc: "bemolle sopra e diesis sotto", name: "Fa#-Lab", l1: 3, a1: 1, l2: 5, a2: -1, o1: 4, o2: 4 },
+    { cat: 5, desc: "bemolle sopra e diesis sotto", name: "Sol#-Sib", l1: 4, a1: 1, l2: 6, a2: -1, o1: 4, o2: 4 },
+    { cat: 5, desc: "bemolle sopra e diesis sotto", name: "Do#-Mib", l1: 0, a1: 1, l2: 2, a2: -1, o1: 4, o2: 4 },
+    { cat: 5, desc: "bemolle sopra e diesis sotto", name: "Fa#-Lab", l1: 3, a1: 1, l2: 5, a2: -1, o1: 4, o2: 4 },
+    { cat: 5, desc: "bemolle sopra e diesis sotto", name: "Sol#-Sib", l1: 4, a1: 1, l2: 6, a2: -1, o1: 4, o2: 4 },
+    { cat: 5, desc: "bemolle sopra e diesis sotto", name: "Do#-Mib", l1: 0, a1: 1, l2: 2, a2: -1, o1: 4, o2: 4 },
+    { cat: 5, desc: "bemolle sopra e diesis sotto", name: "Fa#-Lab", l1: 3, a1: 1, l2: 5, a2: -1, o1: 4, o2: 4 },
+    { cat: 6, desc: "stessa alterazione su entrambe", name: "Do#-Mi#", l1: 0, a1: 1, l2: 2, a2: 1, o1: 4, o2: 4 },
+    { cat: 6, desc: "stessa alterazione su entrambe", name: "Reb-Fab", l1: 1, a1: -1, l2: 3, a2: -1, o1: 4, o2: 4 },
+    { cat: 6, desc: "stessa alterazione su entrambe", name: "Mi#-Sol#", l1: 2, a1: 1, l2: 4, a2: 1, o1: 4, o2: 4 },
+    { cat: 6, desc: "stessa alterazione su entrambe", name: "Fab-Lab", l1: 3, a1: -1, l2: 5, a2: -1, o1: 4, o2: 4 },
+    { cat: 6, desc: "stessa alterazione su entrambe", name: "Sol#-Si#", l1: 4, a1: 1, l2: 6, a2: 1, o1: 4, o2: 4 },
+    { cat: 6, desc: "stessa alterazione su entrambe", name: "Lab-Dob", l1: 5, a1: -1, l2: 0, a2: -1, o1: 4, o2: 5 },
+    { cat: 6, desc: "stessa alterazione su entrambe", name: "Si#-Re#", l1: 6, a1: 1, l2: 1, a2: 1, o1: 4, o2: 5 },
+    { cat: 6, desc: "stessa alterazione su entrambe", name: "Dob-Mib", l1: 0, a1: -1, l2: 2, a2: -1, o1: 4, o2: 4 }
+];
+
+function terzaSemitones(l1, a1, o1, l2, a2, o2) {
+    const NATURAL_OFFSET_T = [0, 2, 4, 5, 7, 9, 11];
+    return (o2 * 12 + NATURAL_OFFSET_T[l2] + a2) - (o1 * 12 + NATURAL_OFFSET_T[l1] + a1);
+}
+function terzaQualityFromSemitones(s) {
+    if (s === 2) return "d"; if (s === 3) return "m"; if (s === 4) return "M"; if (s === 5) return "a";
+    return "M";
+}
+
+function buildNaturalThirdQuestions() {
+    return TERZA_NATURAL_BATTERY.map((p, i) => {
+        const semis = terzaSemitones(p.l1, 0, 4, p.l2, 0, 4 + p.o2);
+        const isMajor = semis === 4;
+        const correct = isMajor ? "M" : "m";
+        return {
+            topic: "naturali",
+            topicLabel: "Terze naturali",
+            kind: "question",
+            title: "Terza naturale — domanda " + (i + 1) + " di 15",
+            question: "<p>Che qualità ha questa terza naturale (senza alterazioni)?</p>",
+            diagram: { type: "interval", note1: { letter: p.l1, acc: 0, octave: 4 }, note2: { letter: p.l2, acc: 0, octave: 4 + p.o2 }, clef: "treble" },
+            options: [ { id: "M", label: "Maggiore" }, { id: "m", label: "Minore" } ],
+            correct: correct,
+            feedback: {
+                M: isMajor
+                    ? ("Esatto! " + p.name + ": nel suo percorso sulla tastiera non si incontra mai una coppia di tasti bianchi attaccati (Mi-Fa o Si-Do), quindi è maggiore.")
+                    : ("Non è corretto: " + p.name + " attraversa una delle due coppie di tasti bianchi attaccati (Mi-Fa o Si-Do). Guarda la tastiera qui sotto: c'è un punto senza tasto nero di mezzo, quindi minore."),
+                m: !isMajor
+                    ? ("Esatto! " + p.name + " attraversa una delle due coppie attaccate (Mi-Fa o Si-Do): niente tasto nero in quel punto, quindi minore.")
+                    : ("Non è corretto: " + p.name + " non attraversa mai Mi-Fa né Si-Do. Guarda la tastiera qui sotto: non c'è nessun punto senza il tasto nero, quindi è maggiore.")
+            },
+            wrongHelpDiagram: { type: "keyboard", config: { numWhiteKeys: 8, baseOctave: 4, highlights: [
+                { letter: p.l1, acc: 0, octave: 4, label: SOLFEGE_LOCAL_T3[p.l1], color: "#f59e0b" },
+                { letter: (p.l1 + 1) % 7, acc: 0, octave: p.l1 === 6 ? 5 : 4, label: SOLFEGE_LOCAL_T3[(p.l1 + 1) % 7], color: "#8b5cf6" },
+                { letter: p.l2, acc: 0, octave: 4 + p.o2, label: SOLFEGE_LOCAL_T3[p.l2], color: "#f59e0b" }
+            ] } }
+        };
+    });
+}
+
+function buildAlteredThirdQuestion(p, indexInCategory, totalInCategory) {
+    const semis = terzaSemitones(p.l1, p.a1, p.o1, p.l2, p.a2, p.o2);
+    const correctId = terzaQualityFromSemitones(semis);
+    const allOptions = [ { id: "d", label: "Diminuita" }, { id: "m", label: "Minore" }, { id: "M", label: "Maggiore" }, { id: "a", label: "Aumentata (o eccedente)" } ];
+    const isSameAlterationCase = p.cat === 6;
+    const naturalSemis = isSameAlterationCase ? terzaSemitones(p.l1, 0, p.o1, p.l2, 0, p.o2) : null;
+    const naturalName = isSameAlterationCase ? (SOLFEGE_LOCAL_T3[p.l1] + "-" + SOLFEGE_LOCAL_T3[p.l2]) : null;
+    const naturalQualityLabel = isSameAlterationCase ? TUTORIAL_QUALITY_LABEL[terzaQualityFromSemitones(naturalSemis)].toLowerCase() : null;
+    return {
+        topic: "cat" + p.cat,
+        topicLabel: TERZA_CATEGORY_SHORT_LABELS[p.cat],
+        kind: "question",
+        title: "Esercizio " + (indexInCategory + 1) + " di " + totalInCategory,
+        question: "<p>Questa terza ha: <strong>" + p.desc + "</strong>. Che qualità ha?</p>",
+        diagram: { type: "interval", note1: { letter: p.l1, acc: p.a1, octave: p.o1 }, note2: { letter: p.l2, acc: p.a2, octave: p.o2 }, clef: "treble" },
+        options: allOptions,
+        correct: correctId,
+        feedback: allOptions.reduce((acc, opt) => {
+            if (opt.id === correctId) {
+                acc[opt.id] = isSameAlterationCase
+                    ? "Esatto! Con la stessa alterazione su entrambe le note, puoi ignorarle del tutto: " + naturalName + " naturale è " + naturalQualityLabel + ", e quindi lo resta anche qui."
+                    : "Esatto! " + p.name + " (" + p.desc + ") dà " + semis + " semitoni: " + TUTORIAL_QUALITY_LABEL[correctId].toLowerCase() + ".";
+            } else {
+                acc[opt.id] = isSameAlterationCase
+                    ? "Non è corretto. Il trucco qui: quando le due note hanno la <strong>stessa</strong> alterazione, puoi ignorarla completamente e trattarle come se fossero naturali. " + naturalName + " naturale è " + naturalQualityLabel + ": questa è la risposta."
+                    : "Non è corretto: " + p.name + " (" + p.desc + ") dà " + semis + " semitoni, che corrisponde a " + TUTORIAL_QUALITY_LABEL[correctId].toLowerCase() + ", non a " + TUTORIAL_QUALITY_LABEL[opt.id].toLowerCase() + ". Riparti dalla coppia naturale e applica lo spostamento per ogni alterazione presente.";
+            }
+            return acc;
+        }, {})
+    };
+}
+
+function buildAlteredThirdSection() {
+    const steps = [];
+    TERZA_ALTERATION_CATEGORIES.forEach((cat, catIndex) => {
+        steps.push({
+            kind: "explain",
+            title: cat.title,
+            body: cat.body,
+            shiftDemo: cat.shiftDemo,
+            topic: "cat" + catIndex,
+            topicLabel: TERZA_CATEGORY_SHORT_LABELS[catIndex]
+        });
+        const questionsInCategory = TERZA_ALTERED_BATTERY.filter(p => p.cat === catIndex);
+        questionsInCategory.forEach((p, i) => {
+            steps.push(buildAlteredThirdQuestion(p, i, questionsInCategory.length));
+        });
+        if (catIndex === 5) {
+            steps.push(buildPiuCheStep("terza", TERZA_PIU_CHE_DEMOS, ""));
+        }
+    });
+    return steps;
+}
+
+function buildTerzaSteps() {
+    const steps = [];
+
+    steps.push({
+        kind: "explain",
+        title: "La terza: si salta una lettera",
+        body: "<p>La terza è l'intervallo che ha <strong>numero 3</strong>: tra le due note c'è <span class='hl'>una lettera saltata</span> nell'alfabeto musicale (Do-Re-Mi: si salta Re).</p>" +
+              "<p>Per contare il numero, conta le lettere a partire dalla prima nota compresa, fino alla seconda compresa.</p>" +
+              "<p style='text-align:center; font-weight:800; font-size:1.05rem; color:#fde68a; margin:14px 0;'>Per trovare il NUMERO, ignora sempre diesis e bemolli: guarda solo le lettere.</p>",
+        diagram: { type: "letters", config: { sequence: [0, 1, 2], highlightIndices: [0, 2], endpointIndices: [0, 2] } },
+        diagramCaption: "Do (1) - Re - Mi (3): tre lettere, ma Re viene saltata. Numero 3, una terza."
+    });
+
+    steps.push({
+        kind: "explain",
+        title: "Le terze naturali",
+        body: "<p>Scopriamo ora la qualità, partendo dalle terze <strong>naturali</strong>. Qui c'è un trucco elegante per capire subito se sono maggiori o minori, usando la tastiera.</p>" +
+              "<p style='text-align:center; font-weight:800; font-size:1.02rem; color:#fde68a; margin:14px 0;'>Se la terza <span class='hl'>NATURALE</span>, nel suo percorso, attraversa una delle due coppie di tasti bianchi <span class='hl'>attaccati</span> (Mi-Fa oppure Si-Do), è <strong>minore</strong>. Se non le attraversa mai, è <strong>maggiore</strong>.</p>"
+    });
+
+    steps.push({
+        kind: "explain",
+        title: "La tastiera spiega tutto",
+        body: "<p>Ricorda: tra Mi e Fa, e tra Si e Do, i tasti bianchi sono attaccati, senza nessun tasto nero in mezzo. Una terza che passa sopra uno di questi due punti \"si stringe\" naturalmente, diventando minore.</p>",
+        diagram: { type: "keyboard", config: { numWhiteKeys: 8, baseOctave: 4, highlights: [
+            { letter: 0, acc: 0, octave: 4, label: "Do", color: "#8b5cf6" }, { letter: 1, acc: 0, octave: 4, label: "Re", color: "#8b5cf6" },
+            { letter: 2, acc: 0, octave: 4, label: "Mi", color: "#f59e0b" }, { letter: 3, acc: 0, octave: 4, label: "Fa", color: "#f59e0b" },
+            { letter: 4, acc: 0, octave: 4, label: "Sol", color: "#8b5cf6" }, { letter: 5, acc: 0, octave: 4, label: "La", color: "#8b5cf6" },
+            { letter: 6, acc: 0, octave: 4, label: "Si", color: "#f59e0b" }, { letter: 0, acc: 0, octave: 5, label: "Do", color: "#f59e0b" }
+        ] } },
+        diagramCaption: "Le due coppie attaccate (in arancione): Mi-Fa e Si-Do. Attraversarle rende la terza minore."
+    });
+
+    steps.push({
+        kind: "explain",
+        title: "Esempio: Do-Mi (maggiore)",
+        body: "<p>Da Do a Mi si passa per Re. Il percorso Do-Re-Mi non tocca mai Mi-Fa né Si-Do: nessuna coppia attaccata. Terza <strong>maggiore</strong>.</p>",
+        diagram: { type: "interval", note1: { letter: 0, acc: 0, octave: 4 }, note2: { letter: 2, acc: 0, octave: 4 }, clef: "treble" },
+        diagramCaption: "Do-Mi: terza maggiore.",
+        diagram2: { type: "keyboard", config: { numWhiteKeys: 5, baseOctave: 4, highlights: [
+            { letter: 0, acc: 0, octave: 4, label: "Do", color: "#6366f1" }, { letter: 1, acc: 0, octave: 4, label: "Re", color: "#94a3b8" },
+            { letter: 2, acc: 0, octave: 4, label: "Mi", color: "#6366f1" }
+        ] } },
+        diagramCaption2: "Il percorso Do-Re-Mi ha un tasto nero tra ogni coppia: nessun punto \"attaccato\"."
+    });
+
+    steps.push({
+        kind: "explain",
+        title: "Esempio: Re-Fa (minore)",
+        body: "<p>Da Re a Fa si passa per Mi. Il percorso Re-Mi-Fa tocca proprio Mi-Fa, la coppia attaccata! Terza <strong>minore</strong>.</p>",
+        diagram: { type: "interval", note1: { letter: 1, acc: 0, octave: 4 }, note2: { letter: 3, acc: 0, octave: 4 }, clef: "treble" },
+        diagramCaption: "Re-Fa: terza minore, perché attraversa Mi-Fa.",
+        diagram2: { type: "keyboard", config: { numWhiteKeys: 5, baseOctave: 4, highlights: [
+            { letter: 1, acc: 0, octave: 4, label: "Re", color: "#6366f1" }, { letter: 2, acc: 0, octave: 4, label: "Mi", color: "#f59e0b" },
+            { letter: 3, acc: 0, octave: 4, label: "Fa", color: "#6366f1" }
+        ] } },
+        diagramCaption2: "Tra Mi e Fa non c'è il tasto nero: il percorso Re-Mi-Fa attraversa la coppia attaccata."
+    });
+
+    buildNaturalThirdQuestions().forEach(q => steps.push(q));
+
+    steps.push({
+        kind: "explain",
+        title: "Ora applica le alterazioni",
+        body: "<p>Ottimo, ora sai riconoscere le terze naturali! Quando una nota è alterata, si parte sempre dalla qualità naturale e si applica questa regola generale, che vedremo caso per caso:</p>" +
+              "<div style='text-align:center; font-weight:800; font-size:1.15rem; margin:16px 0; color:#e2e8f0;'>Diminuita &nbsp;⟵&nbsp; Minore &nbsp;⟵&nbsp; <span class='hl'>Maggiore</span> &nbsp;⟶&nbsp; Aumentata (o eccedente)</div>" +
+              "<ul><li><strong>Ti sposti a destra</strong> (si allarga) se: diesis sulla nota superiore, oppure bemolle sulla nota inferiore.</li>" +
+              "<li><strong>Ti sposti a sinistra</strong> (si stringe) se: bemolle sulla nota superiore, oppure diesis sulla nota inferiore.</li></ul>" +
+              "<p>Se ci sono alterazioni su <strong>entrambe</strong> le note, applichi gli spostamenti uno dopo l'altro. Vediamo un caso alla volta, con qualche domanda di pratica subito dopo ciascuno.</p>"
+    });
+
+    buildAlteredThirdSection().forEach(s => steps.push(s));
+
+    return steps;
+}
+
+// ===================== TUTORIAL QUARTA =====================
+
+TUTORIAL_QUALITY_LABEL.p = "Perfetta";
+
+const Q4_SOLFEGE = ["Do", "Re", "Mi", "Fa", "Sol", "La", "Si"];
+// coppie naturali di quarta: [nota inferiore, nota superiore, la superiore e' all'ottava sopra?]
+const Q4_PAIRS = { DoFa: [0, 3, 0], ReSol: [1, 4, 0], MiLa: [2, 5, 0], FaSi: [3, 6, 0], SolDo: [4, 0, 1], LaRe: [5, 1, 1], SiMi: [6, 2, 1] };
+
+const QUARTA_NATURAL_ORDER = ["DoFa", "FaSi", "ReSol", "SolDo", "MiLa", "FaSi", "LaRe", "SiMi", "ReSol", "FaSi", "DoFa", "SolDo", "FaSi", "LaRe", "SiMi"];
+
+const QUARTA_CATEGORY_SHORT_LABELS = ["Diesis sopra", "Diesis sotto", "Bemolle sopra", "Bemolle sotto", "Stessa alterazione"];
+
+// [desc, ordine coppie, alterazione inferiore, alterazione superiore, stessa alterazione alternata?]
+const QUARTA_CATEGORY_SPECS = [
+    ["diesis sulla nota superiore", ["DoFa", "ReSol", "MiLa", "SolDo", "LaRe", "SiMi", "ReSol", "MiLa"], 0, 1, false],
+    ["diesis sulla nota inferiore", ["DoFa", "FaSi", "ReSol", "MiLa", "FaSi", "SolDo", "LaRe", "SiMi"], 1, 0, false],
+    ["bemolle sulla nota superiore", ["ReSol", "FaSi", "DoFa", "MiLa", "FaSi", "SolDo", "LaRe", "SiMi"], 0, -1, false],
+    ["bemolle sulla nota inferiore", ["DoFa", "ReSol", "MiLa", "SolDo", "LaRe", "SiMi", "ReSol", "MiLa"], -1, 0, false],
+    ["stessa alterazione su entrambe", ["DoFa", "FaSi", "ReSol", "MiLa", "FaSi", "SolDo", "LaRe", "SiMi"], 0, 0, true]
+];
+
+function q4Name(l, a) { return Q4_SOLFEGE[l] + (a === 0 ? "" : (a > 0 ? "#" : "b")); }
+function q4Semitones(l1, a1, o1, l2, a2, o2) {
+    const NO = [0, 2, 4, 5, 7, 9, 11];
+    return (o2 * 12 + NO[l2] + a2) - (o1 * 12 + NO[l1] + a1);
+}
+function q4Quality(s) { return s === 4 ? "d" : s === 5 ? "p" : s === 6 ? "a" : "p"; }
+
+const QUARTA_ALTERED_BATTERY = [];
+QUARTA_CATEGORY_SPECS.forEach((spec, cat) => {
+    const [desc, order, a1, a2, alternate] = spec;
+    order.forEach((key, i) => {
+        const [l1, l2, wrap] = Q4_PAIRS[key];
+        const A1 = alternate ? (i % 2 === 0 ? 1 : -1) : a1;
+        const A2 = alternate ? (i % 2 === 0 ? 1 : -1) : a2;
+        QUARTA_ALTERED_BATTERY.push({ cat: cat, desc: desc, name: q4Name(l1, A1) + "-" + q4Name(l2, A2), l1: l1, a1: A1, l2: l2, a2: A2, o1: 4, o2: 4 + wrap });
+    });
+});
+
+const QUARTA_ALTERATION_CATEGORIES = [
+    {
+        title: "Caso 1 di 5: diesis sulla nota superiore",
+        body: "<p>Quando la nota <strong>superiore</strong> ha il diesis, l'intervallo si allarga di un semitono. Prima valutiamo la quarta senza alterazioni, poi aggiungiamo il diesis.</p>",
+        bodyAfter: "<div class='trick-box'>⚠️ In questo caso negli esercizi non troverai Fa-Si: è già aumentata, e con un diesis sopra diventerebbe <strong>più che aumentata</strong>, che non tratteremo ora.</div>",
+        shiftDemo: {
+            naturalNote1: { letter: 0, acc: 0, octave: 4 }, naturalNote2: { letter: 3, acc: 0, octave: 4 }, naturalQuality: "Perfetta",
+            alteredNote1: { letter: 0, acc: 0, octave: 4 }, alteredNote2: { letter: 3, acc: 1, octave: 4 }, resultQuality: "Aumentata (o eccedente)",
+            direction: "widen", triggerLabel: "Diesis sulla nota superiore → allarga"
+        }
+    },
+    {
+        title: "Caso 2 di 5: diesis sulla nota inferiore",
+        body: "<p>Quando è la nota <strong>inferiore</strong> ad avere il diesis, l'intervallo si stringe di un semitono.</p>",
+        bodyAfter: "<div class='trick-box'>💡 Attenzione a Fa-Si: partendo da aumentata, stringendo si arriva a <strong>perfetta</strong> (Fa#-Si), non a diminuita!</div>",
+        shiftDemo: {
+            naturalNote1: { letter: 0, acc: 0, octave: 4 }, naturalNote2: { letter: 3, acc: 0, octave: 4 }, naturalQuality: "Perfetta",
+            alteredNote1: { letter: 0, acc: 1, octave: 4 }, alteredNote2: { letter: 3, acc: 0, octave: 4 }, resultQuality: "Diminuita",
+            direction: "narrow", triggerLabel: "Diesis sulla nota inferiore → stringe"
+        }
+    },
+    {
+        title: "Caso 3 di 5: bemolle sulla nota superiore",
+        body: "<p>Un bemolle sulla nota <strong>superiore</strong> stringe l'intervallo. Guarda cosa succede proprio all'eccezione Fa-Si:</p>",
+        bodyAfter: "<div class='trick-box'>💡 Per tutte le altre quarte naturali (che sono perfette), un bemolle sopra porta invece a <strong>diminuita</strong>.</div>",
+        shiftDemo: {
+            naturalNote1: { letter: 3, acc: 0, octave: 4 }, naturalNote2: { letter: 6, acc: 0, octave: 4 }, naturalQuality: "Aumentata (o eccedente)",
+            alteredNote1: { letter: 3, acc: 0, octave: 4 }, alteredNote2: { letter: 6, acc: -1, octave: 4 }, resultQuality: "Perfetta",
+            direction: "narrow", triggerLabel: "Bemolle sulla nota superiore → stringe"
+        }
+    },
+    {
+        title: "Caso 4 di 5: bemolle sulla nota inferiore",
+        body: "<p>Un bemolle sulla nota <strong>inferiore</strong> allarga l'intervallo.</p>",
+        bodyAfter: "<div class='trick-box'>⚠️ Anche qui negli esercizi non troverai Fa-Si: con un bemolle sotto diventerebbe <strong>più che aumentata</strong>.</div>",
+        shiftDemo: {
+            naturalNote1: { letter: 1, acc: 0, octave: 4 }, naturalNote2: { letter: 4, acc: 0, octave: 4 }, naturalQuality: "Perfetta",
+            alteredNote1: { letter: 1, acc: -1, octave: 4 }, alteredNote2: { letter: 4, acc: 0, octave: 4 }, resultQuality: "Aumentata (o eccedente)",
+            direction: "widen", triggerLabel: "Bemolle sulla nota inferiore → allarga"
+        }
+    },
+    {
+        title: "Caso 5 di 5: la stessa alterazione su entrambe le note",
+        body: "<p>Ultimo caso, il più semplice: se <strong>entrambe</strong> le note hanno lo stesso tipo di alterazione, la distanza non cambia rispetto alla quarta naturale. Puoi ignorare le alterazioni.</p>",
+        shiftDemo: {
+            naturalNote1: { letter: 0, acc: 0, octave: 4 }, naturalNote2: { letter: 3, acc: 0, octave: 4 }, naturalQuality: "Perfetta",
+            alteredNote1: { letter: 0, acc: 1, octave: 4 }, alteredNote2: { letter: 3, acc: 1, octave: 4 }, resultQuality: "Perfetta",
+            direction: "same", triggerLabel: "Stessa alterazione su entrambe → non cambia nulla"
+        }
+    }
+];
+
+function q4PathHighlights(l1) {
+    const out = [];
+    for (let k = 0; k < 4; k++) {
+        const letter = (l1 + k) % 7;
+        const octave = 4 + Math.floor((l1 + k) / 7);
+        const endpoint = k === 0 || k === 3;
+        out.push({ letter: letter, acc: 0, octave: octave, label: Q4_SOLFEGE[letter], color: endpoint ? "#6366f1" : "#94a3b8" });
+    }
+    // evidenzio in arancione la coppia di tasti attaccati attraversata (Mi-Fa o Si-Do), se c'e'
+    for (let k = 0; k < 3; k++) {
+        const a = out[k], b = out[k + 1];
+        if ((a.letter === 2 && b.letter === 3) || (a.letter === 6 && b.letter === 0)) { a.color = "#f59e0b"; b.color = "#f59e0b"; }
+    }
+    return out;
+}
+
+function buildNaturalFourthQuestions() {
+    return QUARTA_NATURAL_ORDER.map((key, i) => {
+        const [l1, l2, wrap] = Q4_PAIRS[key];
+        const name = Q4_SOLFEGE[l1] + "-" + Q4_SOLFEGE[l2];
+        const isFaSi = key === "FaSi";
+        return {
+            topic: "naturali",
+            topicLabel: "Quarte naturali",
+            kind: "question",
+            title: "Quarta naturale — domanda " + (i + 1) + " di 15",
+            question: "<p>Che qualità ha questa quarta naturale (senza alterazioni)?</p>",
+            diagram: { type: "interval", note1: { letter: l1, acc: 0, octave: 4 }, note2: { letter: l2, acc: 0, octave: 4 + wrap }, clef: "treble" },
+            options: [ { id: "p", label: "Perfetta" }, { id: "a", label: "Aumentata (o eccedente)" } ],
+            correct: isFaSi ? "a" : "p",
+            feedback: isFaSi ? {
+                a: "Esatto! Fa-Si è l'unica quarta naturale aumentata: nel percorso Fa-Sol-La-Si non c'è nessuna coppia di tasti attaccati, sono tre toni interi.",
+                p: "Non è corretto: Fa-Si è proprio l'eccezione! È l'unica quarta naturale aumentata (o eccedente). Guarda la tastiera qui sotto: Fa-Sol-La-Si, tre toni interi, nessuna coppia attaccata."
+            } : {
+                p: "Esatto! " + name + " è perfetta, come tutte le quarte naturali tranne Fa-Si.",
+                a: "Non è corretto: tutte le quarte naturali sono perfette, tranne una sola, Fa-Si. " + name + " non è Fa-Si, quindi è perfetta. Guarda la tastiera qui sotto: nel percorso c'è una coppia di tasti attaccati (in arancione)."
+            },
+            wrongHelpDiagram: { type: "keyboard", config: { numWhiteKeys: 10, baseOctave: 4, highlights: q4PathHighlights(l1) } }
+        };
+    });
+}
+
+function buildAlteredFourthQuestion(p, indexInCategory, totalInCategory) {
+    const semis = q4Semitones(p.l1, p.a1, p.o1, p.l2, p.a2, p.o2);
+    const correctId = q4Quality(semis);
+    const allOptions = [ { id: "d", label: "Diminuita" }, { id: "p", label: "Perfetta" }, { id: "a", label: "Aumentata (o eccedente)" } ];
+    const isSame = p.cat === 4;
+    const natName = Q4_SOLFEGE[p.l1] + "-" + Q4_SOLFEGE[p.l2];
+    const natQuality = TUTORIAL_QUALITY_LABEL[q4Quality(q4Semitones(p.l1, 0, p.o1, p.l2, 0, p.o2))].toLowerCase();
+    return {
+        topic: "cat" + p.cat,
+        topicLabel: QUARTA_CATEGORY_SHORT_LABELS[p.cat],
+        kind: "question",
+        title: "Esercizio " + (indexInCategory + 1) + " di " + totalInCategory,
+        question: "<p>Questa quarta ha: <strong>" + p.desc + "</strong>. Che qualità ha?</p>",
+        diagram: { type: "interval", note1: { letter: p.l1, acc: p.a1, octave: p.o1 }, note2: { letter: p.l2, acc: p.a2, octave: p.o2 }, clef: "treble" },
+        options: allOptions,
+        correct: correctId,
+        feedback: allOptions.reduce((acc, opt) => {
+            if (opt.id === correctId) {
+                acc[opt.id] = isSame
+                    ? "Esatto! Con la stessa alterazione su entrambe le note puoi ignorarle: " + natName + " naturale è " + natQuality + ", e lo resta anche qui."
+                    : "Esatto! " + natName + " naturale è " + natQuality + "; con " + p.desc + " diventa " + TUTORIAL_QUALITY_LABEL[correctId].toLowerCase() + " (" + semis + " semitoni).";
+            } else {
+                acc[opt.id] = isSame
+                    ? "Non è corretto. Il trucco: quando le due note hanno la <strong>stessa</strong> alterazione, puoi ignorarla e trattarle come naturali. " + natName + " naturale è " + natQuality + ": questa è la risposta."
+                    : "Non è corretto. Parti dalla quarta naturale: " + natName + " è " + natQuality + (natName === "Fa-Si" ? " (l'eccezione!)" : "") + ". Poi applica lo spostamento per " + p.desc + ": il risultato è " + TUTORIAL_QUALITY_LABEL[correctId].toLowerCase() + ", non " + TUTORIAL_QUALITY_LABEL[opt.id].toLowerCase() + ".";
+            }
+            return acc;
+        }, {})
+    };
+}
+
+function buildQuartaDoubleStep() {
+    return {
+        kind: "explain",
+        title: "E con due alterazioni che spingono nella stessa direzione?",
+        body: "<p>Con seconde e terze hai visto due casi in più: <strong>diesis sopra e bemolle sotto</strong> (allargano entrambi) e <strong>bemolle sopra e diesis sotto</strong> (stringono entrambi). Con le quarte, però, succede una cosa particolare.</p>" +
+              "<p>La scala delle qualità delle quarte è più corta: dalla perfetta basta <strong>un solo</strong> spostamento per arrivare a diminuita o aumentata. Quindi due spostamenti nella stessa direzione portano quasi sempre <strong>oltre</strong>:</p>" +
+              "<div style='text-align:center; font-weight:800; font-size:1.02rem; margin:16px 0; color:#e2e8f0; line-height:1.9;'>" +
+              "<span style='color:#38bdf8;'>Più che diminuita</span> ⟵ Diminuita ⟵ <span class='hl'>Perfetta</span> ⟶ Aumentata (o eccedente) ⟶ <span style='color:#fb923c;'>Più che aumentata</span></div>",
+        shiftDemos: [
+            {
+                heading: "Diesis sopra e bemolle sotto",
+                naturalNote1: { letter: 0, acc: 0, octave: 4 }, naturalNote2: { letter: 3, acc: 0, octave: 4 }, naturalQuality: "Perfetta",
+                alteredNote1: { letter: 0, acc: -1, octave: 4 }, alteredNote2: { letter: 3, acc: 1, octave: 4 }, resultQuality: "Più che aumentata",
+                direction: "widen", triggerLabel: "Allarga due volte: Perfetta → Aumentata → Più che aumentata"
+            },
+            {
+                heading: "Bemolle sopra e diesis sotto",
+                naturalNote1: { letter: 0, acc: 0, octave: 4 }, naturalNote2: { letter: 3, acc: 0, octave: 4 }, naturalQuality: "Perfetta",
+                alteredNote1: { letter: 0, acc: 1, octave: 4 }, alteredNote2: { letter: 3, acc: -1, octave: 4 }, resultQuality: "Più che diminuita",
+                direction: "narrow", triggerLabel: "Stringe due volte: Perfetta → Diminuita → Più che diminuita"
+            },
+            {
+                heading: "L'unica eccezione: Fa-Si",
+                naturalNote1: { letter: 3, acc: 0, octave: 4 }, naturalNote2: { letter: 6, acc: 0, octave: 4 }, naturalQuality: "Aumentata (o eccedente)",
+                alteredNote1: { letter: 3, acc: 1, octave: 4 }, alteredNote2: { letter: 6, acc: -1, octave: 4 }, resultQuality: "Diminuita",
+                direction: "narrow", triggerLabel: "Stringe due volte: Aumentata → Perfetta → Diminuita"
+            }
+        ],
+        bodyAfter: "<p>Fa-Si parte già da aumentata, quindi stringendo due volte resta nel campo e arriva a diminuita. Il procedimento è sempre lo stesso: prima la quarta naturale, poi uno spostamento per ogni alterazione.</p>" +
+              "<div class='trick-box'>😌 Tranquillo: siccome questi casi portano quasi sempre a più che aumentata o più che diminuita, sulle quarte <strong>non</strong> ci saranno esercizi su di loro. I casi più che diminuiti e più che aumentati li affronteremo più avanti nel programma.</div>"
+    };
+}
+
+function buildQuartaSteps() {
+    const steps = [];
+
+    steps.push({
+        kind: "explain",
+        title: "La quarta: quattro lettere",
+        body: "<p>La quarta è l'intervallo che ha <strong>numero 4</strong>: contando le lettere dalla prima nota alla seconda (entrambe comprese) ne trovi <span class='hl'>quattro</span>. Per esempio Do-Re-Mi-Fa: da Do a Fa è una quarta.</p>" +
+              "<p style='text-align:center; font-weight:800; font-size:1.05rem; color:#fde68a; margin:14px 0;'>Per trovare il NUMERO, ignora sempre diesis e bemolli: guarda solo le lettere.</p>",
+        diagram: { type: "letters", config: { sequence: [0, 1, 2, 3], highlightIndices: [0, 3], endpointIndices: [0, 3] } },
+        diagramCaption: "Do (1) - Re (2) - Mi (3) - Fa (4): numero 4, una quarta."
+    });
+
+    steps.push({
+        kind: "explain",
+        title: "Attenzione: niente maggiore e minore!",
+        body: "<p>Qui c'è una differenza importante rispetto a seconde e terze. Le quarte <strong>non possono essere maggiori o minori</strong>: fanno parte della famiglia degli intervalli <span class='hl'>perfetti</span> (insieme a unisono, quinta e ottava).</p>" +
+              "<p>Confronta le due scale delle qualità:</p>" +
+              "<table class='interval-scheme'><tr><th>Seconde e terze</th></tr><tr><td>Diminuita ⟵ Minore ⟵ Maggiore ⟶ Aumentata (o eccedente)</td></tr></table>" +
+              "<table class='interval-scheme'><tr><th>Quarte</th></tr><tr><td>Diminuita ⟵ <strong>Perfetta</strong> ⟶ Aumentata (o eccedente)</td></tr></table>" +
+              "<p>Al posto di maggiore e minore c'è un'unica qualità centrale: <strong>perfetta</strong> (5 semitoni). Un semitono in meno è diminuita (4), uno in più è aumentata (6).</p>" +
+              "<div class='trick-box'>💡 Se mentre ragioni su una quarta ti viene da dire \"maggiore\" o \"minore\", fermati: per le quarte quelle parole non esistono.</div>"
+    });
+
+    steps.push({
+        kind: "question",
+        title: "Verifichiamo subito",
+        question: "<p>Una quarta può essere minore?</p>",
+        options: [ { id: "si", label: "Sì" }, { id: "no", label: "No" } ],
+        correct: "no",
+        feedback: {
+            no: "Esatto! Le quarte sono intervalli perfetti: possono essere diminuite, perfette o aumentate (o eccedenti), ma mai maggiori o minori.",
+            si: "Non è corretto: maggiore e minore valgono per seconde e terze (e anche seste e settime), ma non per le quarte. Le quarte sono intervalli perfetti: diminuita, perfetta o aumentata (o eccedente)."
+        }
+    });
+
+    steps.push({
+        kind: "explain",
+        title: "Le quarte naturali: il trucco",
+        topic: "naturali",
+        topicLabel: "Quarte naturali",
+        body: "<p>Ora le quarte <strong>naturali</strong>, cioè senza alterazioni. Il trucco è semplicissimo:</p>" +
+              "<p style='text-align:center; font-weight:800; font-size:1.05rem; color:#fde68a; margin:14px 0;'>Le quarte <span class='hl'>naturali</span> sono tutte <strong>perfette</strong>, tranne una: <strong>Fa-Si</strong>, che è <strong>aumentata (o eccedente)</strong>.</p>" +
+              "<p>Basta ricordarsi questa sola eccezione!</p>"
+    });
+
+    steps.push({
+        kind: "explain",
+        title: "Perché proprio Fa-Si? La tastiera",
+        topic: "naturali",
+        topicLabel: "Quarte naturali",
+        body: "<p>Ricordi le coppie di tasti bianchi <strong>attaccati</strong>, Mi-Fa e Si-Do? Ogni quarta naturale perfetta ne attraversa esattamente <strong>una</strong> nel suo percorso. Fa-Si è l'unica che non ne attraversa nessuna: è fatta di tre toni interi, e per questo è un semitono più larga delle altre.</p>",
+        diagram: { type: "keyboard", config: { numWhiteKeys: 8, baseOctave: 4, highlights: [
+            { letter: 2, acc: 0, octave: 4, label: "Mi", color: "#f59e0b" }, { letter: 3, acc: 0, octave: 4, label: "Fa", color: "#22c55e" },
+            { letter: 4, acc: 0, octave: 4, label: "Sol", color: "#22c55e" }, { letter: 5, acc: 0, octave: 4, label: "La", color: "#22c55e" },
+            { letter: 6, acc: 0, octave: 4, label: "Si", color: "#22c55e" }, { letter: 0, acc: 0, octave: 5, label: "Do", color: "#f59e0b" }
+        ] } },
+        diagramCaption: "In verde Fa-Sol-La-Si: si sta proprio in mezzo alle due coppie attaccate (in arancione), senza toccarle."
+    });
+
+    steps.push({
+        kind: "explain",
+        title: "Esempio: Do-Fa (perfetta)",
+        topic: "naturali",
+        topicLabel: "Quarte naturali",
+        body: "<p>Da Do a Fa il percorso è Do-Re-Mi-Fa, e attraversa la coppia attaccata Mi-Fa. Quarta <strong>perfetta</strong>.</p>",
+        diagram: { type: "interval", note1: { letter: 0, acc: 0, octave: 4 }, note2: { letter: 3, acc: 0, octave: 4 }, clef: "treble" },
+        diagramCaption: "Do-Fa: quarta perfetta.",
+        diagram2: { type: "keyboard", config: { numWhiteKeys: 5, baseOctave: 4, highlights: q4PathHighlights(0) } },
+        diagramCaption2: "Do-Re-Mi-Fa: c'è la coppia attaccata Mi-Fa (in arancione). Quarta perfetta."
+    });
+
+    steps.push({
+        kind: "explain",
+        title: "Esempio: Fa-Si (aumentata)",
+        topic: "naturali",
+        topicLabel: "Quarte naturali",
+        body: "<p>Da Fa a Si il percorso è Fa-Sol-La-Si: tra ogni coppia c'è un tasto nero, nessuna coppia attaccata. Quarta <strong>aumentata (o eccedente)</strong>.</p>",
+        diagram: { type: "interval", note1: { letter: 3, acc: 0, octave: 4 }, note2: { letter: 6, acc: 0, octave: 4 }, clef: "treble" },
+        diagramCaption: "Fa-Si: quarta aumentata (o eccedente), l'unica eccezione.",
+        diagram2: { type: "keyboard", config: { numWhiteKeys: 8, baseOctave: 4, highlights: q4PathHighlights(3) } },
+        diagramCaption2: "Fa-Sol-La-Si: tre toni interi, nessuna coppia attaccata."
+    });
+
+    buildNaturalFourthQuestions().forEach(q => steps.push(q));
+
+    steps.push({
+        kind: "explain",
+        title: "Ora applica le alterazioni",
+        body: "<p>Ottimo, ora sai riconoscere le quarte naturali! Con le alterazioni si procede esattamente come per seconde e terze: si parte dalla qualità naturale e ci si sposta lungo la scala delle qualità. Solo che, per le quarte, la scala è questa:</p>" +
+              "<div style='text-align:center; font-weight:800; font-size:1.15rem; margin:16px 0; color:#e2e8f0;'>Diminuita &nbsp;⟵&nbsp; <span class='hl'>Perfetta</span> &nbsp;⟶&nbsp; Aumentata (o eccedente)</div>" +
+              "<ul><li><strong>Ti sposti a destra</strong> (si allarga) se: diesis sulla nota superiore, oppure bemolle sulla nota inferiore.</li>" +
+              "<li><strong>Ti sposti a sinistra</strong> (si stringe) se: bemolle sulla nota superiore, oppure diesis sulla nota inferiore.</li></ul>" +
+              "<p>Ricorda di partire sempre dalla quarta naturale: quasi sempre perfetta, ma <strong>Fa-Si parte da aumentata</strong>! Vediamo un caso alla volta.</p>"
+    });
+
+    QUARTA_ALTERATION_CATEGORIES.forEach((cat, catIndex) => {
+        steps.push({
+            kind: "explain",
+            title: cat.title,
+            body: cat.body,
+            bodyAfter: cat.bodyAfter,
+            shiftDemo: cat.shiftDemo,
+            topic: "cat" + catIndex,
+            topicLabel: QUARTA_CATEGORY_SHORT_LABELS[catIndex]
+        });
+        const questions = QUARTA_ALTERED_BATTERY.filter(p => p.cat === catIndex);
+        questions.forEach((p, i) => steps.push(buildAlteredFourthQuestion(p, i, questions.length)));
+        if (catIndex === 3) steps.push(buildQuartaDoubleStep());
+    });
+
+    return steps;
+}
+
+const TUTORIALS = {
+
+1: { // UNISONO
+    steps: [
+        {
+            kind: "explain",
+            topic: "unisono",
+            topicLabel: "Unisono",
+            title: "Cos'è un intervallo?",
+            body: "<p>Un <strong>intervallo</strong> è la distanza tra due note. Per descriverlo servono sempre due informazioni:</p>" +
+                  "<ul><li><span class='hl'>Il numero</span>: quante lettere musicali si contano dalla prima nota alla seconda (Seconda, Terza, Quarta...)</li>" +
+                  "<li><span class='hl'>La qualità</span>: quanto sono esattamente distanti in semitoni (Minore, Maggiore, Perfetto, Diminuito, Eccedente)</li></ul>" +
+                  "<p>In questo tutorial impariamo a riconoscere l'intervallo più semplice di tutti: <strong>l'unisono</strong>.</p>"
+        },
+        {
+            kind: "explain",
+            topic: "unisono",
+            topicLabel: "Unisono",
+            title: "L'unisono: numero 1",
+            body: "<p>L'unisono è l'intervallo che ha <strong>numero 1</strong>: significa che le due note hanno <span class='hl'>la stessa lettera</span>, cioè si trovano sulla stessa riga o nello stesso spazio del pentagramma.</p>",
+            diagram: { type: "interval", note1: { letter: 0, acc: 0, octave: 4 }, note2: { letter: 0, acc: 0, octave: 4 }, clef: "treble" },
+            diagramCaption: "Due volte la stessa nota (Do e Do): sono sulla stessa posizione del pentagramma."
+        },
+        {
+            kind: "explain",
+            topic: "unisono",
+            topicLabel: "Unisono",
+            title: "Passo 1: guarda solo le lettere",
+            body: "<p>Questa è la regola più importante di tutte, e vale per <strong>ogni</strong> intervallo, non solo per l'unisono:</p>" +
+                  "<p style='text-align:center; font-weight:800; font-size:1.05rem; color:#fde68a; margin:14px 0;'>Per trovare il NUMERO dell'intervallo, ignora completamente diesis e bemolli. Guarda solo le lettere.</p>" +
+                  "<p>Quindi anche se una delle due note ha un'alterazione, se la <strong>lettera</strong> è la stessa, il numero resta sempre 1.</p>",
+            diagram: { type: "interval", note1: { letter: 3, acc: 0, octave: 4 }, note2: { letter: 3, acc: 1, octave: 4 }, clef: "treble" },
+            diagramCaption: "Fa e Fa#: la lettera è FA in entrambe le note. Il diesis non cambia il numero: è comunque un unisono."
+        },
+        {
+            kind: "question",
+            topic: "unisono",
+            topicLabel: "Unisono",
+            title: "Mettiamoci alla prova",
+            question: "<p>Osserva queste due note. Che numero di intervallo è?</p>",
+            diagram: { type: "interval", note1: { letter: 4, acc: 0, octave: 4 }, note2: { letter: 4, acc: 1, octave: 4 }, clef: "treble" },
+            options: [
+                { id: "n1", label: "Numero 1 (Unisono)" },
+                { id: "n2", label: "Numero 2 (Seconda)" },
+                { id: "boh", label: "Non si può dire senza guardare le alterazioni" }
+            ],
+            correct: "n1",
+            feedback: {
+                n1: "Esatto! Le due note sono entrambe SOL (una naturale, una diesis): stessa lettera, quindi numero 1, un unisono.",
+                n2: "Non è corretto: le due note sono entrambe SOL, solo una con il diesis. La lettera è la stessa, quindi il numero è sempre 1, mai 2. Il simbolo di alterazione non cambia mai il numero dell'intervallo, solo la sua qualità.",
+                boh: "In realtà si può dire benissimo, ed è più facile di quanto sembri: per il NUMERO dell'intervallo le alterazioni non contano nulla. Guarda solo le lettere: qui sono entrambe SOL, quindi numero 1."
+            }
+        },
+        {
+            kind: "explain",
+            topic: "unisono",
+            topicLabel: "Unisono",
+            title: "Passo 2: ora la qualità",
+            body: "<p>Una volta stabilito che è un unisono (numero 1), dobbiamo capire <strong>quanto sono esattamente distanti</strong> le due note. Qui, finalmente, le alterazioni contano!</p>" +
+                  "<p>Per l'unisono esistono solo due possibilità:</p>" +
+                  "<ul><li><strong>Perfetto</strong>: le due note sono esattamente identiche (0 semitoni di distanza)</li>" +
+                  "<li><strong>Aumentato</strong>: le due note sono a 1 semitono di distanza (una delle due è alterata rispetto all'altra)</li></ul>"
+        },
+        {
+            kind: "explain",
+            topic: "unisono",
+            topicLabel: "Unisono",
+            title: "Sulla tastiera: l'unisono perfetto",
+            body: "<p>Se le due note sono davvero identiche, sulla tastiera del pianoforte corrispondono <strong>allo stesso identico tasto</strong>.</p>",
+            diagram: { type: "keyboard", config: { numWhiteKeys: 8, baseOctave: 4, highlights: [ { letter: 0, acc: 0, octave: 4, label: "Do", color: "#6366f1" } ] } },
+            diagramCaption: "Do e Do: stesso tasto, 0 semitoni di distanza → intervallo PERFETTO."
+        },
+        {
+            kind: "explain",
+            topic: "unisono",
+            topicLabel: "Unisono",
+            title: "Sulla tastiera: l'unisono aumentato",
+            body: "<p>Se invece una nota è alterata, sulla tastiera vedrai <strong>due tasti diversi, adiacenti</strong> (a volte uno bianco e uno nero, a volte due bianchi vicini come Mi-Fa).</p>",
+            diagram: { type: "keyboard", config: { numWhiteKeys: 8, baseOctave: 4, highlights: [
+                { letter: 3, acc: 0, octave: 4, label: "Fa", color: "#6366f1" },
+                { letter: 3, acc: 1, octave: 4, label: "Fa#", color: "#f59e0b" }
+            ] } },
+            diagramCaption: "Fa e Fa#: un tasto (nero) di differenza, 1 semitono → intervallo AUMENTATO."
+        },
+        {
+            kind: "explain",
+            topic: "unisono",
+            topicLabel: "Unisono",
+            title: "Riassumendo",
+            body: "<table class='interval-scheme'><tr><th>Qualità</th><th>Semitoni</th></tr>" +
+                  "<tr><td>Perfetto</td><td>0</td></tr><tr><td>Aumentato</td><td>1</td></tr></table>" +
+                  "<div class='trick-box'>💡 In questo gioco l'unisono è sempre perfetto o aumentato: non esiste un \"unisono diminuito\" nella pratica musicale comune, quindi non lo troverai mai tra le domande.</div>"
+        },
+        {
+            kind: "question",
+            topic: "unisono",
+            topicLabel: "Unisono",
+            title: "Prova pratica 1",
+            question: "<p>Che qualità ha questo intervallo?</p>",
+            diagram: { type: "interval", note1: { letter: 5, acc: 0, octave: 4 }, note2: { letter: 5, acc: 0, octave: 4 }, clef: "treble" },
+            options: [ { id: "p", label: "Perfetto" }, { id: "a", label: "Aumentato" } ],
+            correct: "p",
+            feedback: {
+                p: "Esatto! Due La identici, nessuna alterazione: stesso tasto della tastiera, 0 semitoni, quindi perfetto.",
+                a: "Non è corretto: le due note sono entrambe LA naturale, senza nessuna alterazione. Sono identiche, quindi la distanza è 0 semitoni: è un unisono perfetto, non aumentato."
+            }
+        },
+        {
+            kind: "question",
+            topic: "unisono",
+            topicLabel: "Unisono",
+            title: "Prova pratica 2",
+            question: "<p>E questo?</p>",
+            diagram: { type: "interval", note1: { letter: 4, acc: 0, octave: 4 }, note2: { letter: 4, acc: 1, octave: 4 }, clef: "treble" },
+            options: [ { id: "p", label: "Perfetto" }, { id: "a", label: "Aumentato" } ],
+            correct: "a",
+            feedback: {
+                a: "Esatto! Sol e Sol#: stessa lettera (numero 1) ma una delle due è alterata dal diesis, quindi sono a 1 semitono di distanza: aumentato.",
+                p: "Non è corretto: guarda bene, la seconda nota ha il diesis. Le due note non sono identiche: c'è 1 semitono di differenza tra Sol e Sol#, quindi l'intervallo è aumentato, non perfetto."
+            }
+        }
+    ]
+},
+
+2: { // SECONDA
+    steps: buildSecondaSteps()
+},
+
+3: { // TERZA
+    steps: buildTerzaSteps()
+},
+
+4: { // QUARTA
+    steps: buildQuartaSteps()
+}
+
+};
+
+/* =========================================================
+   TUTORIAL: renderer dei diagrammi (tastiera, intervallo,
+   sequenza di lettere) e motore a passi
+   ========================================================= */
+
+function svgElNS(tag, attrs) {
+    const el = document.createElementNS("http://www.w3.org/2000/svg", tag);
+    for (const k in attrs) el.setAttribute(k, attrs[k]);
+    return el;
+}
+
+// tastiera del pianoforte, con la possibilita' di evidenziare ed
+// etichettare note specifiche (usata per spiegare toni/semitoni)
+function renderKeyboardDiagram(container, cfg) {
+    const WHITE_W = 42, WHITE_H = 130, BLACK_W = 26, BLACK_H = 82;
+    const numWhite = cfg.numWhiteKeys || 8;
+    const baseOctave = cfg.baseOctave !== undefined ? cfg.baseOctave : 4;
+    const svgW = numWhite * WHITE_W + 2;
+    const svgH = WHITE_H + 36;
+
+    const NATURAL_OFFSET_K = [0, 2, 4, 5, 7, 9, 11];
+    const WHITE_PC = { 0: 0, 2: 1, 4: 2, 5: 3, 7: 4, 9: 5, 11: 6 };
+    const BLACK_AFTER_WHITE = { 1: 0, 3: 1, 6: 3, 8: 4, 10: 5 };
+
+    container.innerHTML = "";
+    const svg = svgElNS("svg", { viewBox: "0 0 " + svgW + " " + svgH, style: "width:100%; max-width:" + Math.min(numWhite * 44, 440) + "px; display:block;" });
+
+    for (let i = 0; i < numWhite; i++) {
+        svg.appendChild(svgElNS("rect", { x: i * WHITE_W + 1, y: 1, width: WHITE_W - 2, height: WHITE_H - 2, fill: "#fffdf7", stroke: "#3b3226", "stroke-width": 1.3, rx: 3 }));
+    }
+    for (let i = 0; i < numWhite - 1; i++) {
+        const letterIdx = i % 7;
+        if (letterIdx !== 2 && letterIdx !== 6) { // niente tasto nero dopo Mi e Si
+            const x = (i + 1) * WHITE_W - BLACK_W / 2;
+            svg.appendChild(svgElNS("rect", { x: x, y: 1, width: BLACK_W, height: BLACK_H, fill: "#241f1a", stroke: "#000", "stroke-width": 1, rx: 2 }));
+        }
+    }
+
+    function xForPitchClass(pc, octaveOffset) {
+        const baseWhiteIndex = octaveOffset * 7;
+        if (pc in WHITE_PC) return (baseWhiteIndex + WHITE_PC[pc]) * WHITE_W;
+        const whiteBefore = baseWhiteIndex + BLACK_AFTER_WHITE[pc];
+        return (whiteBefore + 1) * WHITE_W - BLACK_W / 2;
+    }
+
+    (cfg.highlights || []).forEach(h => {
+        const pc = ((NATURAL_OFFSET_K[h.letter] + h.acc) % 12 + 12) % 12;
+        const octaveOffset = h.octave - baseOctave;
+        const isWhite = pc in WHITE_PC;
+        const x = xForPitchClass(pc, octaveOffset);
+        const w = isWhite ? WHITE_W - 2 : BLACK_W;
+        const keyH = isWhite ? WHITE_H - 2 : BLACK_H;
+        const highlightH = isWhite ? 42 : 30;
+        const color = h.color || "#6366f1";
+
+        svg.appendChild(svgElNS("rect", {
+            x: x + (isWhite ? 1 : 0), y: keyH - highlightH + 1, width: w, height: highlightH - 2,
+            fill: color, opacity: 0.85, rx: 3
+        }));
+        if (h.label) {
+            const t = svgElNS("text", {
+                x: x + w / 2, y: keyH + 19, "text-anchor": "middle", "font-size": 13, "font-weight": "800",
+                fill: isWhite ? "#1f2937" : "#e2e8f0", "font-family": "Sora, Arial, sans-serif"
+            });
+            t.textContent = h.label;
+            svg.appendChild(t);
+        }
+    });
+
+    container.appendChild(svg);
+}
+
+// coppia di note sul pentagramma (riusa vexKey/accidentalSuffix gia'
+// definiti nel motore principale del gioco)
+function renderTutorialInterval(container, note1, note2, clefForDiagram) {
+    container.innerHTML = "";
+    if (typeof Vex === "undefined") return;
+    const { Renderer, Stave, StaveNote, Accidental, Voice, Formatter } = Vex.Flow;
+    const useClef = clefForDiagram || "treble";
+
+    const renderer = new Renderer(container, Renderer.Backends.SVG);
+    renderer.resize(220, 200);
+    const context = renderer.getContext();
+    const stave = new Stave(6, 20, 190, { spacing_between_lines_px: 13 });
+    stave.addClef(useClef);
+    stave.setContext(context).draw();
+
+    function makeNote(note) {
+        const sn = new StaveNote({ keys: [vexKey(note)], duration: "q", clef: useClef, stem_direction: 1 });
+        if (note.acc !== 0) sn.addModifier(new Accidental(accidentalSuffix(note.acc)), 0);
+        return sn;
+    }
+    const notes = [makeNote(note1), makeNote(note2)];
+    const voice = new Voice({ num_beats: 2, beat_value: 4 });
+    voice.setMode(Voice.Mode.SOFT);
+    voice.addTickables(notes);
+    new Formatter().joinVoices([voice]).format([voice], 130);
+    voice.draw(context, stave);
+}
+
+// mostra metodicamente il passaggio "prima senza alterazioni, poi con
+// l'alterazione applicata", con una freccia colorata che indica se la
+// qualità sale (si allarga), scende (si stringe) o resta invariata
+function renderShiftDemo(container, cfg) {
+    container.innerHTML = "";
+    const wrap = document.createElement("div");
+    wrap.className = "shift-demo";
+
+    function makeStage(note1, note2, quality, qualityClass, stageLabel) {
+        const stage = document.createElement("div");
+        stage.className = "shift-stage";
+        const labelDiv = document.createElement("div");
+        labelDiv.className = "shift-stage-label";
+        labelDiv.textContent = stageLabel;
+        stage.appendChild(labelDiv);
+        const diagramDiv = document.createElement("div");
+        diagramDiv.className = "shift-diagram";
+        stage.appendChild(diagramDiv);
+        const qualityDiv = document.createElement("div");
+        qualityDiv.className = "shift-quality " + qualityClass;
+        qualityDiv.textContent = quality;
+        stage.appendChild(qualityDiv);
+        wrap.appendChild(stage);
+        renderTutorialInterval(diagramDiv, note1, note2, "treble");
+    }
+
+    makeStage(cfg.naturalNote1, cfg.naturalNote2, cfg.naturalQuality, "quality-neutral", "1. Senza alterazioni");
+
+    const arrowBlock = document.createElement("div");
+    arrowBlock.className = "shift-arrow-block shift-" + cfg.direction;
+    const glyph = document.createElement("span");
+    glyph.className = "shift-arrow-glyph";
+    glyph.textContent = cfg.direction === "widen" ? "↑" : cfg.direction === "narrow" ? "↓" : "=";
+    arrowBlock.appendChild(glyph);
+    const label = document.createElement("span");
+    label.className = "shift-arrow-label";
+    label.textContent = cfg.triggerLabel;
+    arrowBlock.appendChild(label);
+    wrap.appendChild(arrowBlock);
+
+    makeStage(cfg.alteredNote1, cfg.alteredNote2, cfg.resultQuality, "quality-" + cfg.direction, "2. Con l'alterazione");
+
+    container.appendChild(wrap);
+}
+
+// sequenza di "caselle lettera" per spiegare il conteggio del numero
+// dell'intervallo (es. Do-Re-Mi evidenziando Do e Mi per una terza)
+const TUTORIAL_SOLFEGE = ["Do", "Re", "Mi", "Fa", "Sol", "La", "Si"];
+function renderLetterSequence(container, cfg) {
+    container.innerHTML = "";
+    const wrap = document.createElement("div");
+    wrap.className = "letter-sequence";
+    const seq = cfg.sequence;
+    seq.forEach((letterIdx, i) => {
+        const box = document.createElement("div");
+        box.className = "letter-box";
+        if (cfg.highlightIndices && cfg.highlightIndices.includes(i)) box.classList.add("lb-active");
+        if (cfg.endpointIndices && cfg.endpointIndices.includes(i)) box.classList.add("lb-endpoint");
+        box.textContent = TUTORIAL_SOLFEGE[letterIdx];
+        wrap.appendChild(box);
+    });
+    container.appendChild(wrap);
+}
+
+/* ---- Motore a passi ---- */
+
+let currentTutorialNumber = null;
+let currentTutorialSteps = [];
+let currentStepIndex = 0;
+
+let topicStats = {};
+let topicOrder = [];
+let retryMode = false;
+let rispiegaloMode = false;
+let rispiegaloRangeEnd = -1;
+let retryRangeEnd = -1;
+
+let topicExpectedCount = {};
+
+function startTutorial(number) {
+    currentTutorialNumber = number;
+    currentTutorialSteps = TUTORIALS[number].steps;
+    currentStepIndex = 0;
+    topicStats = {};
+    topicOrder = [];
+    topicExpectedCount = {};
+    retryMode = false;
+    retryRangeEnd = -1;
+    rispiegaloMode = false;
+    rispiegaloRangeEnd = -1;
+    currentTutorialSteps.forEach(s => {
+        if (s.topic && !topicStats[s.topic]) {
+            topicStats[s.topic] = { label: s.topicLabel || s.topic, total: 0, errors: 0, firstTryCorrect: 0 };
+            topicOrder.push(s.topic);
+            topicExpectedCount[s.topic] = 0;
+        }
+        if (s.topic && s.kind === "question") topicExpectedCount[s.topic]++;
+    });
+    homeScreen.style.display = "none";
+    tutorialSelectScreen.style.display = "none";
+    selectScreen.style.display = "none";
+    gameContainer.style.display = "none";
+    tutorialScreen.style.display = "block";
+    renderTutorialStep();
+}
+
+function renderTopicDots(currentTopic) {
+    tutorialTopicDots.innerHTML = "";
+    topicOrder.forEach(key => {
+        const dot = document.createElement("span");
+        dot.className = "tutorial-dot";
+        if (key === currentTopic) {
+            dot.classList.add("dot-current");
+        } else if (topicStats[key] && topicStats[key].total >= (topicExpectedCount[key] || Infinity) && topicExpectedCount[key] > 0) {
+            dot.classList.add("dot-done");
+        }
+        tutorialTopicDots.appendChild(dot);
+    });
+}
+
+function retryTopic(topicKey) {
+    const indices = [];
+    currentTutorialSteps.forEach((s, i) => { if (s.topic === topicKey) indices.push(i); });
+    if (indices.length === 0) return;
+    const label = topicStats[topicKey] ? topicStats[topicKey].label : topicKey;
+    topicStats[topicKey] = { label: label, total: 0, errors: 0, firstTryCorrect: 0 };
+    retryMode = true;
+    retryRangeEnd = indices[indices.length - 1];
+    currentStepIndex = indices[0];
+    renderTutorialStep();
+}
+
+// "Rispiegalo": richiamabile DURANTE gli esercizi. Torna alla
+// spiegazione di quell'argomento e rifa' i suoi esercizi da capo,
+// azzerandone le statistiche. Se eravamo gia' in un retry dalla
+// schermata finale, a fine rispiegalo si torna comunque li' (gestito
+// nel gestore del pulsante Avanti, che controlla anche retryMode).
+function rispiegaloTopic(topicKey) {
+    const indices = [];
+    currentTutorialSteps.forEach((s, i) => { if (s.topic === topicKey) indices.push(i); });
+    if (indices.length === 0) return;
+    const label = topicStats[topicKey] ? topicStats[topicKey].label : topicKey;
+    topicStats[topicKey] = { label: label, total: 0, errors: 0, firstTryCorrect: 0 };
+    rispiegaloMode = true;
+    rispiegaloRangeEnd = indices[indices.length - 1];
+    currentStepIndex = indices[0];
+    renderTutorialStep();
+}
+
+function renderTutorialStep() {
+    const step = currentTutorialSteps[currentStepIndex];
+    tutorialProgressLabel.textContent = step.topicLabel || "";
+    renderTopicDots(step.topic);
+
+    let html = '<div class="tutorial-step-title">' + step.title + "</div>";
+    html += '<div class="tutorial-step-body">' + (step.body || step.question || "") + "</div>";
+    if (step.shiftDemo || step.shiftDemos) {
+        html += '<div id="tutorialShiftDemoWrap"></div>';
+    }
+    if (step.bodyAfter) {
+        html += '<div class="tutorial-step-body">' + step.bodyAfter + "</div>";
+    }
+    html += '<div class="tutorial-diagram-wrap" id="tutorialDiagramWrap" style="display:none;"></div>';
+    html += '<p class="tutorial-diagram-caption" id="tutorialDiagramCaption" style="display:none;"></p>';
+    if (step.diagram2) {
+        html += '<div class="tutorial-diagram-wrap" id="tutorialDiagramWrap2" style="display:none;"></div>';
+        html += '<p class="tutorial-diagram-caption" id="tutorialDiagramCaption2" style="display:none;"></p>';
+    }
+    if (step.kind === "question") {
+        html += '<div class="tutorial-options" id="tutorialOptionsRow"></div>';
+        html += '<div class="tutorial-feedback" id="tutorialFeedback"></div>';
+        if (step.wrongHelpDiagram) {
+            html += '<div class="tutorial-diagram-wrap" id="tutorialWrongHelpWrap" style="display:none;"></div>';
+        }
+        if (step.topic) {
+            html += '<button class="tutorial-reexplain-btn" id="tutorialReexplainBtn">↩️ Rispiegalo</button>';
+        }
+    }
+    const isRispiegaloEnd = rispiegaloMode && currentStepIndex === rispiegaloRangeEnd;
+    const isRetryEnd = !rispiegaloMode && retryMode && currentStepIndex === retryRangeEnd;
+    const isTutorialEnd = !rispiegaloMode && !retryMode && currentStepIndex === currentTutorialSteps.length - 1;
+    const willReturnToStats = isRispiegaloEnd && retryMode && currentStepIndex === retryRangeEnd;
+    html += '<div class="tutorial-nav"><button class="tutorial-next-btn" id="tutorialNextBtn">' +
+        (willReturnToStats ? "Torna alle statistiche 📊" : isRispiegaloEnd ? "Continua il tutorial ▶️" : isRetryEnd ? "Torna alle statistiche 📊" : isTutorialEnd ? "Concludi ✅" : "Avanti ▶️") + "</button></div>";
+
+    tutorialCard.innerHTML = html;
+
+    if (step.shiftDemo) {
+        renderShiftDemo(document.getElementById("tutorialShiftDemoWrap"), step.shiftDemo);
+    }
+    if (step.shiftDemos) {
+        const multiWrap = document.getElementById("tutorialShiftDemoWrap");
+        step.shiftDemos.forEach(demo => {
+            if (demo.heading) {
+                const h = document.createElement("div");
+                h.className = "shift-demo-heading";
+                h.textContent = demo.heading;
+                multiWrap.appendChild(h);
+            }
+            const one = document.createElement("div");
+            multiWrap.appendChild(one);
+            renderShiftDemo(one, demo);
+        });
+    }
+    if (step.kind === "question" && step.topic) {
+        document.getElementById("tutorialReexplainBtn").addEventListener("click", () => rispiegaloTopic(step.topic));
+    }
+
+    function renderOneDiagram(diagram, wrap) {
+        if (diagram.type === "keyboard") {
+            renderKeyboardDiagram(wrap, diagram.config);
+        } else if (diagram.type === "interval") {
+            renderTutorialInterval(wrap, diagram.note1, diagram.note2, diagram.clef);
+        } else if (diagram.type === "letters") {
+            renderLetterSequence(wrap, diagram.config);
+        }
+    }
+
+    if (step.diagram) {
+        const wrap = document.getElementById("tutorialDiagramWrap");
+        wrap.style.display = "flex";
+        renderOneDiagram(step.diagram, wrap);
+        if (step.diagramCaption) {
+            const cap = document.getElementById("tutorialDiagramCaption");
+            cap.style.display = "block";
+            cap.textContent = step.diagramCaption;
+        }
+    }
+    if (step.diagram2) {
+        const wrap2 = document.getElementById("tutorialDiagramWrap2");
+        wrap2.style.display = "flex";
+        renderOneDiagram(step.diagram2, wrap2);
+        if (step.diagramCaption2) {
+            const cap2 = document.getElementById("tutorialDiagramCaption2");
+            cap2.style.display = "block";
+            cap2.textContent = step.diagramCaption2;
+        }
+    }
+
+    const nextBtn = document.getElementById("tutorialNextBtn");
+
+    if (step.kind === "question") {
+        nextBtn.disabled = true;
+        const row = document.getElementById("tutorialOptionsRow");
+        const feedback = document.getElementById("tutorialFeedback");
+        let answeredCorrectly = false;
+        let wrongHelpShown = false;
+        let questionErrorCount = 0;
+        step.options.forEach(opt => {
+            const btn = document.createElement("button");
+            btn.className = "tutorial-opt-btn";
+            btn.textContent = opt.label;
+            btn.addEventListener("click", () => {
+                if (answeredCorrectly) return;
+                const isCorrect = opt.id === step.correct;
+                if (isCorrect) {
+                    answeredCorrectly = true;
+                    btn.classList.add("opt-correct");
+                    row.querySelectorAll(".tutorial-opt-btn").forEach(b => { if (b !== btn) b.disabled = true; });
+                    feedback.className = "tutorial-feedback show fb-correct";
+                    feedback.innerHTML = "✅ " + (step.feedback[opt.id] || "Esatto!");
+                    nextBtn.disabled = false;
+                    if (step.topic && topicStats[step.topic]) {
+                        topicStats[step.topic].total++;
+                        topicStats[step.topic].errors += questionErrorCount;
+                        if (questionErrorCount === 0) topicStats[step.topic].firstTryCorrect++;
+                    }
+                } else {
+                    questionErrorCount++;
+                    btn.classList.add("opt-wrong");
+                    setTimeout(() => btn.classList.remove("opt-wrong"), 500);
+                    feedback.className = "tutorial-feedback show fb-wrong";
+                    feedback.innerHTML = "❌ " + (step.feedback[opt.id] || "Non è corretto, riprova.");
+                    if (step.wrongHelpDiagram && !wrongHelpShown) {
+                        wrongHelpShown = true;
+                        const helpWrap = document.getElementById("tutorialWrongHelpWrap");
+                        helpWrap.style.display = "flex";
+                        renderOneDiagram(step.wrongHelpDiagram, helpWrap);
+                    }
+                }
+            });
+            row.appendChild(btn);
+        });
+    }
+
+    nextBtn.addEventListener("click", () => {
+        if (rispiegaloMode && currentStepIndex === rispiegaloRangeEnd) {
+            rispiegaloMode = false;
+            if (retryMode && currentStepIndex === retryRangeEnd) {
+                retryMode = false;
+                showTutorialEnd();
+                return;
+            }
+            if (currentStepIndex < currentTutorialSteps.length - 1) {
+                currentStepIndex++;
+                renderTutorialStep();
+            } else {
+                showTutorialEnd();
+            }
+            return;
+        }
+        if (retryMode && currentStepIndex === retryRangeEnd) {
+            retryMode = false;
+            showTutorialEnd();
+            return;
+        }
+        if (currentStepIndex < currentTutorialSteps.length - 1) {
+            currentStepIndex++;
+            renderTutorialStep();
+        } else {
+            showTutorialEnd();
+        }
+    });
+}
+
+function showTutorialEnd() {
+    let cards = "";
+    topicOrder.forEach(key => {
+        const s = topicStats[key];
+        const accuracy = s.total > 0 ? Math.round((s.firstTryCorrect / s.total) * 100) : 0;
+        cards +=
+            '<div class="tutorial-stat-card">' +
+            '<div class="tutorial-stat-card-title">' + s.label + "</div>" +
+            '<div class="tutorial-stat-card-row">' +
+            '<span class="tutorial-stat-item"><strong>' + s.total + "</strong> domande</span>" +
+            '<span class="tutorial-stat-item"><strong>' + s.errors + "</strong> errori</span>" +
+            '<span class="tutorial-stat-item"><strong>' + accuracy + "%</strong> precisione</span>" +
+            "</div>" +
+            '<button class="tutorial-retry-btn" data-retry-topic="' + key + '">🔄 Riprova questo argomento</button>' +
+            "</div>";
+    });
+
+    tutorialCard.innerHTML =
+        '<div class="tutorial-end-card">' +
+        '<div class="tutorial-end-emoji">🎉</div>' +
+        '<div class="tutorial-step-title" style="text-align:center;">Tutorial completato!</div>' +
+        '<div class="tutorial-step-body" style="text-align:center;"><p>Ecco come è andata, argomento per argomento. Puoi rifare singolarmente un argomento se vuoi esercitarti ancora.</p></div>' +
+        '<div class="tutorial-stats-list">' +
+        cards +
+        "</div>" +
+        '<div class="tutorial-nav" style="justify-content:center;">' +
+        '<button class="tutorial-next-btn" id="tutorialEndHome">🏠 Torna al menu</button>' +
+        "</div></div>";
+
+    document.getElementById("tutorialEndHome").addEventListener("click", goHome);
+    tutorialCard.querySelectorAll(".tutorial-retry-btn").forEach(btn => {
+        btn.addEventListener("click", () => retryTopic(btn.getAttribute("data-retry-topic")));
+    });
+}
+
+/* ---- Selezione del tutorial (schermata a tile, 1 per numero) ---- */
+
+tutorialOpenButton.addEventListener("click", () => {
+    homeScreen.style.display = "none";
+    tutorialSelectScreen.style.display = "block";
+    tutorialSelectGrid.innerHTML = "";
+    NUMBER_ORDER.forEach(n => {
+        const ready = !!(TUTORIALS[n] && TUTORIALS[n].steps && TUTORIALS[n].steps.length);
+        const tile = document.createElement("button");
+        tile.className = "tutorial-tile" + (ready ? " tt-ready" : "");
+        tile.disabled = !ready;
+        tile.innerHTML = '<span class="tt-badge">' + (ready ? "▶️" : "🔒") + "</span><span>" + NUMBER_NAMES[n] + "</span>" +
+            (ready ? "" : '<span class="tt-soon">Presto disponibile</span>');
+        if (ready) tile.addEventListener("click", () => startTutorial(n));
+        tutorialSelectGrid.appendChild(tile);
+    });
+});
+tutorialSelectBack.addEventListener("click", goHome);
+tutorialExitButton.addEventListener("click", goHome);
+
 
 /* =========================================================
    NAVIGAZIONE SCHERMATE E OPZIONI
@@ -1879,6 +3654,8 @@ function showGame() {
 function goHome() {
     gameContainer.style.display = "none";
     selectScreen.style.display = "none";
+    tutorialSelectScreen.style.display = "none";
+    tutorialScreen.style.display = "none";
     homeScreen.style.display = "block";
     optionsPanel.classList.remove("show");
     gameOver.classList.remove("show");
