@@ -214,31 +214,7 @@ h1 {
 
 .confetti-layer { position: absolute; inset: 0; pointer-events: none; overflow: hidden; }
 
-.play-button {
-    display: block;
-    margin: 14px auto 20px;
-    width: 52px;
-    height: 52px;
-    border-radius: 50%;
-    border: 1px solid rgba(255,255,255,0.18);
-    background: linear-gradient(180deg, rgba(255,255,255,0.14), rgba(255,255,255,0.05));
-    color: #e2e8f0;
-    font-size: 1.35rem;
-    cursor: pointer;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    box-shadow: 0 1px 0 rgba(255,255,255,0.2) inset, 0 8px 18px rgba(0,0,0,0.3);
-    transition: transform 0.15s var(--ease-spring), background 0.15s, box-shadow 0.15s;
-}
-.play-button:hover { background: linear-gradient(180deg, rgba(255,255,255,0.22), rgba(255,255,255,0.08)); transform: translateY(-2px); }
-.play-button:active { transform: scale(0.92); }
-.play-button.playing { animation: playButtonPulse 0.4s var(--ease-spring); }
-@keyframes playButtonPulse {
-    0% { transform: scale(1); }
-    40% { transform: scale(1.18); }
-    100% { transform: scale(1); }
-}
+
 
 .confetti-piece {
     position: absolute; top: 45%; left: 50%;
@@ -515,6 +491,21 @@ h1 {
 .final-stat { padding: 10px 12px; border-radius: 10px; background: rgba(255,255,255,0.06); border: 1px solid var(--border-soft); }
 .final-stat span { display: block; font-size: 0.65rem; text-transform: uppercase; color: #94a3b8; margin-bottom: 3px; }
 .final-stat strong { font-family: "Sora", Arial, sans-serif; font-size: 1.15rem; }
+.final-per-interval { margin: -8px 0 20px; text-align: left; }
+.fpi-title { font-size: 0.65rem; text-transform: uppercase; letter-spacing: 0.4px; color: #a5b4fc; font-weight: 700; margin-bottom: 6px; }
+.fpi-row { display: flex; flex-wrap: wrap; justify-content: space-between; align-items: baseline; gap: 4px 10px; padding: 9px 12px; border-radius: 10px; background: rgba(255,255,255,0.06); border: 1px solid var(--border-soft); margin-bottom: 6px; }
+.fpi-name { font-family: "Sora", Arial, sans-serif; font-weight: 800; font-size: 0.9rem; color: #fde68a; }
+.fpi-values { font-size: 0.78rem; color: #cbd5e1; }
+.fpi-values strong { color: #e2e8f0; }
+.verifica-preset-btn {
+    display: flex; flex-direction: column; gap: 4px; width: 100%; padding: 16px 18px; margin: 0 0 6px;
+    border: none; border-radius: 16px; background: #db2777; color: white; text-align: left; cursor: pointer;
+    transition: transform 0.15s var(--ease-out-soft);
+}
+.verifica-preset-btn:hover { transform: translateY(-2px); }
+.vp-title { font-family: "Sora", "Inter", Arial, sans-serif; font-size: 1.02rem; font-weight: 800; }
+.vp-desc { font-size: 0.8rem; color: rgba(255,255,255,0.9); }
+.verifica-preset-or { font-size: 0.78rem; color: #94a3b8; margin: 12px 0 10px; }
 
 /* SCHERMATA INIZIALE */
 .menu-screen {
@@ -913,6 +904,13 @@ h1 {
     <div class="hero-badge">🎯</div>
     <h1>Scegli gli intervalli</h1>
     <p class="subtitle">Seleziona quali numeri di intervallo vuoi allenare, poi premi Inizia.</p>
+    <div id="verificaPresetWrap" style="display: none;">
+        <button class="verifica-preset-btn" id="verificaPresetButton">
+            <span class="vp-title">📝 Verifica su seconde, terze e quarte</span>
+            <span class="vp-desc">45 domande mescolate su seconde, terze e quarte</span>
+        </button>
+        <p class="verifica-preset-or">oppure scegli tu gli intervalli:</p>
+    </div>
     <div class="check-grid" id="checkGrid"></div>
     <div class="mode-grid" style="margin-top: 22px;">
         <button class="menu-button" id="selectBackButton">⬅️ Indietro</button>
@@ -956,16 +954,14 @@ h1 {
         </div>
     </div>
 
-    <button class="play-button" id="playButton" title="Ascolta l'intervallo">🔊</button>
-
     <div class="answer-section">
-        <div id="qualitySection">
-            <div class="answer-section-title">Qualità</div>
-            <div class="choice-row quality-row" id="qualityRow"></div>
-        </div>
         <div id="numberSection">
             <div class="answer-section-title">Numero</div>
             <div class="choice-row number-row" id="numberRow"></div>
+        </div>
+        <div id="qualitySection">
+            <div class="answer-section-title">Qualità</div>
+            <div class="choice-row quality-row" id="qualityRow"></div>
         </div>
     </div>
 
@@ -999,8 +995,10 @@ h1 {
     </div>
     <div class="options-group-title">Modalità di risposta</div>
     <button class="options-choice options-full active" id="submitModeToggle">✅ Pulsante "Invia"</button>
-    <div class="options-group-title">Serve una mano?</div>
-    <button class="options-choice options-full" id="helpOpenButton">❓ Aiuto</button>
+    <div id="helpOptionsGroup">
+        <div class="options-group-title">Serve una mano?</div>
+        <button class="options-choice options-full" id="helpOpenButton">❓ Aiuto</button>
+    </div>
 </div>
 
 <!-- SCELTA INTERVALLO PER L'AIUTO (solo se la modalita' ne prevede piu' di uno) -->
@@ -1043,13 +1041,26 @@ h1 {
         <div class="final-stats">
             <div class="final-stat"><span>Livello raggiunto</span><strong id="finalLevel">1</strong></div>
             <div class="final-stat"><span>Accuratezza</span><strong id="finalAccuracy">0%</strong></div>
-            <div class="final-stat"><span>Risposte corrette</span><strong id="finalCorrect">0</strong></div>
+            <div class="final-stat"><span id="finalCorrectLabel">Risposte corrette</span><strong id="finalCorrect">0</strong></div>
             <div class="final-stat"><span>Errori</span><strong id="finalErrors">0</strong></div>
             <div class="final-stat" id="finalGradeBox" style="display: none;"><span>Voto</span><strong id="finalGrade">-</strong></div>
         </div>
+        <div class="final-per-interval" id="finalPerInterval" style="display: none;"></div>
         <div class="overlay-buttons">
             <button class="menu-button" id="finalMenuButton">🏠 Menu</button>
             <button class="new-game" id="playAgainButton">🔄 Gioca ancora</button>
+        </div>
+    </div>
+</div>
+
+<!-- CONFERMA PRIMA DI TORNARE AL MENU DALLE STATISTICHE DELLA VERIFICA -->
+<div class="overlay" id="menuConfirmOverlay">
+    <div class="overlay-card">
+        <h2>⚠️ Attenzione</h2>
+        <p>Sicuro di voler tornare al menù? Non potrai più visualizzare queste statistiche.</p>
+        <div class="overlay-buttons">
+            <button class="menu-button" id="menuConfirmCancel">Annulla</button>
+            <button class="finish-button" id="menuConfirmOk">Torna al menù</button>
         </div>
     </div>
 </div>
@@ -1281,6 +1292,11 @@ let useSubmitButton = true;
 const homeScreen = document.getElementById("homeScreen");
 const gameContainer = document.getElementById("gameContainer");
 const verificaButton = document.getElementById("verificaButton");
+const verificaPresetWrap = document.getElementById("verificaPresetWrap");
+const verificaPresetButton = document.getElementById("verificaPresetButton");
+const finalPerInterval = document.getElementById("finalPerInterval");
+const finalGrade = document.getElementById("finalGrade");
+const finalGradeBox = document.getElementById("finalGradeBox");
 const fullModeButton = document.getElementById("fullModeButton");
 const numberModeButton = document.getElementById("numberModeButton");
 const customButton = document.getElementById("customButton");
@@ -1302,7 +1318,6 @@ const siteHomeButton = document.getElementById("siteHomeButton");
 const homeMenuButton = document.getElementById("homeMenuButton");
 
 const staffInner = document.getElementById("staffInner");
-const playButton = document.getElementById("playButton");
 const confettiLayer = document.getElementById("confettiLayer");
 const qualitySection = document.getElementById("qualitySection");
 const qualityRow = document.getElementById("qualityRow");
@@ -1341,10 +1356,22 @@ const finalCorrect = document.getElementById("finalCorrect");
 const finalErrors = document.getElementById("finalErrors");
 const finalMenuButton = document.getElementById("finalMenuButton");
 const playAgainButton = document.getElementById("playAgainButton");
+const finalCorrectLabel = document.getElementById("finalCorrectLabel");
+const menuConfirmOverlay = document.getElementById("menuConfirmOverlay");
+const menuConfirmCancel = document.getElementById("menuConfirmCancel");
+const menuConfirmOk = document.getElementById("menuConfirmOk");
 
 const volumeSlider = document.getElementById("volumeSlider");
 const optionsButton = document.getElementById("optionsButton");
 const helpOpenButton = document.getElementById("helpOpenButton");
+const helpOptionsGroup = document.getElementById("helpOptionsGroup");
+
+function applyModeRestrictions() {
+    const isVerifica = mode === "verifica";
+    finishButton.style.display = isVerifica ? "none" : "";
+    restartButton.style.display = isVerifica ? "none" : "";
+    helpOptionsGroup.style.display = isVerifica ? "none" : "";
+}
 const helpPickerOverlay = document.getElementById("helpPickerOverlay");
 const helpPickerRow = document.getElementById("helpPickerRow");
 const helpPickerCancel = document.getElementById("helpPickerCancel");
@@ -1650,9 +1677,131 @@ let selectedNumber = null;
 // modalità tematiche: 100 domande, un livello ogni 10 risposte corrette)
 let sessionPool = [];
 let progress = 0;
-const SESSION_TARGET = 100;
-const QUESTIONS_PER_LEVEL = 10;
-const THEME_LEVELS = SESSION_TARGET / QUESTIONS_PER_LEVEL;
+// variabili (non costanti): la "Verifica su seconde, terze e quarte"
+// usa 45 domande con un livello ogni 5 risposte corrette
+let SESSION_TARGET = 100;
+let QUESTIONS_PER_LEVEL = 10;
+let THEME_LEVELS = SESSION_TARGET / QUESTIONS_PER_LEVEL;
+function setSessionShape(target, perLevel) {
+    SESSION_TARGET = target;
+    QUESTIONS_PER_LEVEL = perLevel;
+    THEME_LEVELS = Math.ceil(target / perLevel);
+}
+
+// verifica preimpostata: mazzo fisso di 45 domande mescolate
+const PRESET_VERIFICA_NUMBERS = [2, 3, 4];
+const PRESET_PER_NUMBER = 15;
+let presetVerifica = false;
+let presetDeck = [];
+
+// statistiche per tipo di intervallo (mostrate nel riepilogo della Verifica)
+let perNumberStats = {};
+let currentQuestionHadError = false;
+
+function resetPerNumberStats(numbers) {
+    perNumberStats = {};
+    (numbers || []).forEach(n => { perNumberStats[n] = { total: 0, errors: 0, firstTryCorrect: 0 }; });
+}
+function ensureNumberStats(n) {
+    if (!perNumberStats[n]) perNumberStats[n] = { total: 0, errors: 0, firstTryCorrect: 0 };
+    return perNumberStats[n];
+}
+// un errore viene contato una sola volta per domanda (le statistiche
+// per tipo di intervallo si mostrano solo nella Verifica)
+function recordQuestionError() {
+    if (!currentQuestion) return;
+    if (!currentQuestionHadError) ensureNumberStats(currentQuestion.number).errors++;
+    currentQuestionHadError = true;
+}
+
+// risposta sbagliata: in Verifica la domanda diventa "errore" alla prima
+// risposta sbagliata, e i tentativi successivi non contano piu' nulla;
+// negli allenamenti si conta ogni tentativo, come prima
+function registerWrongAttempt() {
+    if (mode !== "verifica" || !currentQuestionHadError) {
+        total++;
+        errors++;
+    }
+    recordQuestionError();
+    streak = 0;
+}
+function recordQuestionCorrect() {
+    if (!currentQuestion) return;
+    const s = ensureNumberStats(currentQuestion.number);
+    s.total++;
+    if (!currentQuestionHadError) s.firstTryCorrect++;
+}
+
+// Mazzo della verifica preimpostata. Seconde e terze: 15 ciascuna con
+// le qualita' distribuite in modo equilibrato. Quarte: 5 diminuite,
+// 5 giuste e 5 aumentate, di cui 4 sono sempre la quarta naturale Fa-Si.
+const PRESET_FA_SI_COUNT = 4;
+function buildPresetDeck() {
+    const deck = [];
+    [2, 3].forEach(n => {
+        const qualities = validQualitiesForNumber(n);
+        for (let i = 0; i < PRESET_PER_NUMBER; i++) deck.push({ q: qualities[i % qualities.length], n: n });
+    });
+    const perQuality = PRESET_PER_NUMBER / 3;
+    for (let i = 0; i < perQuality; i++) {
+        deck.push({ q: "d", n: 4 });
+        deck.push({ q: "p", n: 4 });
+    }
+    for (let i = 0; i < PRESET_FA_SI_COUNT; i++) deck.push({ q: "a", n: 4, fixed: "FaSi" });
+    for (let i = PRESET_FA_SI_COUNT; i < perQuality; i++) deck.push({ q: "a", n: 4 });
+    return shuffle(deck);
+}
+
+// ---- intervalli mai ripetuti nella verifica preimpostata ----
+// due domande sono "lo stesso intervallo" se hanno le stesse due note
+// (lettera + alterazione), a prescindere dall'ottava
+let presetUsedKeys = new Set();
+const FA_SI_KEY = "3:0-6:0";
+function spellingKey(question) {
+    return question.root.letter + ":" + question.root.acc + "-" + question.target.letter + ":" + question.target.acc;
+}
+
+// colloca una coppia di note gia' decisa (stesse lettere e alterazioni)
+// nell'estensione della chiave corrente, scegliendo un'ottava valida
+function placeSpellingInClef(root, target, quality, number) {
+    const range = CLEF_RANGE[clef];
+    const options = [];
+    for (let oc = 1; oc <= 7; oc++) {
+        const raw = root.letter + number - 1;
+        const tOct = oc + Math.floor(raw / 7);
+        const rMidi = naturalMidi(root.letter, oc) + root.acc;
+        const tMidi = naturalMidi(target.letter, tOct) + target.acc;
+        if (rMidi >= range.low && tMidi <= range.high) options.push({ oc: oc, tOct: tOct });
+    }
+    if (options.length === 0) return null;
+    const pick = options[Math.floor(Math.random() * options.length)];
+    return {
+        root: { letter: root.letter, acc: root.acc, octave: pick.oc },
+        target: { letter: target.letter, acc: target.acc, octave: pick.tOct },
+        quality: quality,
+        number: number
+    };
+}
+
+function presetQuestionFor(spec) {
+    if (spec.fixed === "FaSi") {
+        const q = placeSpellingInClef({ letter: 3, acc: 0 }, { letter: 6, acc: 0 }, "a", 4);
+        if (q) return q;
+    }
+    let fallback = null;
+    for (let attempt = 0; attempt < 300; attempt++) {
+        const q = generateQuestionForSpec(spec);
+        if (!q) continue;
+        const key = spellingKey(q);
+        if (spec.n === 4 && spec.q === "a" && key === FA_SI_KEY) continue; // Fa-Si solo nelle sue 4 domande
+        if (!fallback) fallback = q;
+        if (presetUsedKeys.has(key)) continue;
+        presetUsedKeys.add(key);
+        return q;
+    }
+    // non dovrebbe mai succedere: ci sono molti piu' intervalli disponibili di quelli richiesti
+    return fallback || generateQuestionForSpec(spec);
+}
 
 function shuffle(array) {
     const copy = [...array];
@@ -1725,6 +1874,7 @@ function clearSelectionVisuals() {
 
 function presentQuestion(question, animated) {
     currentQuestion = question;
+    currentQuestionHadError = false;
     selectedQuality = qualityIsRequired() ? null : question.quality;
     selectedNumber = numberIsRequired() ? null : question.number;
     lastWrongKey = null;
@@ -1745,11 +1895,34 @@ function presentQuestion(question, animated) {
 function startVerifica(pool) {
     mode = "verifica";
     themeNumber = null;
+    presetVerifica = false;
+    setSessionShape(100, 10);
     total = 0; correct = 0; errors = 0; streak = 0; record = 0; finished = false;
     progress = 0;
     sessionPool = pool;
+    resetPerNumberStats([...new Set(pool.map(s => s.n))].sort((a, b) => a - b));
+    applyModeRestrictions();
     renderChoiceButtons();
     presentQuestion(generateQuestionForSpec(sessionPool[Math.floor(Math.random() * sessionPool.length)]), false);
+    updatePageHeading();
+    updateStats();
+}
+
+function startPresetVerifica() {
+    mode = "verifica";
+    themeNumber = null;
+    presetVerifica = true;
+    setSessionShape(PRESET_VERIFICA_NUMBERS.length * PRESET_PER_NUMBER, 5);
+    total = 0; correct = 0; errors = 0; streak = 0; record = 0; finished = false;
+    progress = 0;
+    presetDeck = buildPresetDeck();
+    presetUsedKeys = new Set();
+    sessionPool = [];
+    PRESET_VERIFICA_NUMBERS.forEach(n => validQualitiesForNumber(n).forEach(q => sessionPool.push({ q: q, n: n })));
+    resetPerNumberStats(PRESET_VERIFICA_NUMBERS);
+    applyModeRestrictions();
+    renderChoiceButtons();
+    presentQuestion(presetQuestionFor(presetDeck[0]), false);
     updatePageHeading();
     updateStats();
 }
@@ -1757,9 +1930,13 @@ function startVerifica(pool) {
 function startTheme(numberOrAll) {
     mode = "theme";
     themeNumber = numberOrAll;
+    presetVerifica = false;
+    setSessionShape(100, 10);
     total = 0; correct = 0; errors = 0; streak = 0; record = 0; finished = false;
     progress = 0;
+    resetPerNumberStats([]);
     sessionPool = buildThemePool(numberOrAll);
+    applyModeRestrictions();
     renderChoiceButtons();
     presentQuestion(generateQuestionForSpec(sessionPool[Math.floor(Math.random() * sessionPool.length)]), false);
     updatePageHeading();
@@ -1767,7 +1944,9 @@ function startTheme(numberOrAll) {
 }
 
 function restartCurrent() {
-    if (mode === "verifica") {
+    if (presetVerifica) {
+        startPresetVerifica();
+    } else if (mode === "verifica") {
         startVerifica(sessionPool);
     } else {
         startTheme(themeNumber);
@@ -1775,6 +1954,7 @@ function restartCurrent() {
 }
 
 function themeModeMeta() {
+    if (presetVerifica) return { title: "Verifica: seconde, terze e quarte", subtitle: "45 domande mescolate su seconde, terze e quarte." };
     if (mode === "verifica") return NUMBER_MODE_META.verifica;
     if (themeNumber === "custom") {
         const names = [...customNumbers].sort((a, b) => a - b).map(n => NUMBER_NAMES[n]);
@@ -1812,12 +1992,14 @@ function updateStats() {
     const pct = progress >= SESSION_TARGET ? 100 : ((progress % QUESTIONS_PER_LEVEL) / QUESTIONS_PER_LEVEL) * 100;
     progressFill.style.width = pct + "%";
     levelNumber.textContent = themeLevel + " / " + THEME_LEVELS;
-    levelInfo.textContent = progress + " / " + SESSION_TARGET + " risposte corrette";
+    levelInfo.textContent = progress + " / " + SESSION_TARGET + (mode === "verifica" ? " risposte" : " risposte corrette");
     levelName.textContent = themeModeMeta() ? themeModeMeta().title : "";
 
     if (mode === "verifica") {
         levelIntervalsInfo.classList.remove("hidden");
-        levelIntervalsInfo.innerHTML = "<b>Intervalli in verifica:</b> " + sessionPool.map(formatIntervalLabel).join(", ");
+        levelIntervalsInfo.innerHTML = presetVerifica
+            ? "<b>Intervalli in verifica:</b> seconde, terze e quarte, in tutte le qualità"
+            : "<b>Intervalli in verifica:</b> " + sessionPool.map(formatIntervalLabel).join(", ");
     } else {
         levelIntervalsInfo.classList.add("hidden");
     }
@@ -1906,9 +2088,7 @@ function submitAnswer() {
     if (qualityIsRequired()) {
         const allowedQualities = validQualitiesForNumber(selectedNumber);
         if (!allowedQualities.includes(selectedQuality)) {
-            total++;
-            errors++;
-            streak = 0;
+            registerWrongAttempt();
             playWrongSound();
             animateStat(errorsBox, "bump");
             if (qBtn) qBtn.classList.add("wrong-flash");
@@ -1925,21 +2105,27 @@ function submitAnswer() {
         }
     }
 
-    total++;
     const wasCorrect = (!qualityIsRequired() || selectedQuality === currentQuestion.quality) && selectedNumber === currentQuestion.number;
+    // in Verifica una risposta giusta dopo un errore chiude la domanda ma non
+    // conta come corretta (la domanda resta un errore nelle statistiche)
+    const countsAsCorrect = wasCorrect && !(mode === "verifica" && currentQuestionHadError);
 
     if (wasCorrect) {
         answering = false;
         submitButton.disabled = true;
-        correct++;
-        streak++;
+        recordQuestionCorrect();
+        if (countsAsCorrect) {
+            total++;
+            correct++;
+            streak++;
+        }
         if (streak > record) record = streak;
 
         playIntervalSound(currentQuestion);
-        animateStat(correctBox, "bump");
+        if (countsAsCorrect) animateStat(correctBox, "bump");
         if (qBtn) qBtn.classList.add("correct-flash");
         if (nBtn) nBtn.classList.add("correct-flash");
-        message.textContent = "Corretto!";
+        message.textContent = countsAsCorrect ? "Corretto!" : "Giusto, ma questa domanda resta contata come errore.";
         message.className = "message correct-message";
 
         // sia in "Verifica" sia nelle modalità tematiche si avanza allo
@@ -1958,14 +2144,15 @@ function submitAnswer() {
                 playLevelUpSound();
                 animateStat(levelBox, "bump");
             }
-            const nextSpec = sessionPool[Math.floor(Math.random() * sessionPool.length)];
-            presentQuestion(generateQuestionForSpec(nextSpec), justLeveledUp);
+            const nextSpec = presetVerifica
+                ? presetDeck[progress]
+                : sessionPool[Math.floor(Math.random() * sessionPool.length)];
+            presentQuestion(presetVerifica ? presetQuestionFor(nextSpec) : generateQuestionForSpec(nextSpec), justLeveledUp);
             updateStats();
         }, 650);
 
     } else {
-        errors++;
-        streak = 0;
+        registerWrongAttempt();
         playWrongSound();
         animateStat(errorsBox, "bump");
         if (qBtn) qBtn.classList.add("wrong-flash");
@@ -1985,14 +2172,14 @@ function submitAnswer() {
 /* =========================================================
    VOTO (solo modalita' Verifica)
 
-   Voto in decimi da 4 a 10, con mezzi voti, calcolato in modo
-   lineare sull'accuratezza. Mostrato solo se sufficiente (>= 6).
+   Voto in decimi = 10 x accuratezza (6 al 60%, 10 al 100%), con
+   mezzi voti, tra 4 e 10. Mostrato solo se sufficiente (>= 6).
    ========================================================= */
 
 function computeGrade() {
     if (total === 0) return 4;
     const accuracy = correct / total;
-    const raw = 4 + 6 * accuracy;
+    const raw = 10 * accuracy;
     const clamped = Math.min(10, Math.max(4, raw));
     return Math.round(clamped * 2) / 2;
 }
@@ -2028,9 +2215,39 @@ function showFinalScreen() {
 
     finalLevel.textContent = Math.min(THEME_LEVELS, Math.floor(progress / QUESTIONS_PER_LEVEL) + 1) + " / " + THEME_LEVELS;
     finalAccuracy.textContent = total > 0 ? Math.round((correct / total) * 100) + "%" : "0%";
-    finalCorrect.textContent = correct;
+    if (mode === "verifica") {
+        finalCorrectLabel.textContent = "Risposte";
+        finalCorrect.textContent = total;
+        playAgainButton.style.display = "none";
+    } else {
+        finalCorrectLabel.textContent = "Risposte corrette";
+        finalCorrect.textContent = correct;
+        playAgainButton.style.display = "";
+    }
     finalErrors.textContent = errors;
+    renderPerIntervalSummary();
     gameOver.classList.add("show");
+}
+
+function renderPerIntervalSummary() {
+    const numbers = Object.keys(perNumberStats).map(Number).sort((a, b) => a - b);
+    if (mode !== "verifica" || numbers.length === 0) {
+        finalPerInterval.style.display = "none";
+        finalPerInterval.innerHTML = "";
+        return;
+    }
+    let html = '<div class="fpi-title">Risultati per tipo di intervallo</div>';
+    numbers.forEach(n => {
+        const s = perNumberStats[n];
+        const accuracy = s.total > 0 ? Math.round((s.firstTryCorrect / s.total) * 100) : 0;
+        const done = String(s.total);
+        html += '<div class="fpi-row">' +
+            '<span class="fpi-name">' + NUMBER_MODE_META[n].title + "</span>" +
+            '<span class="fpi-values"><strong>' + done + "</strong> " + (s.total === 1 ? "risposta" : "risposte") + " · <strong>" + s.errors + "</strong> " + (s.errors === 1 ? "errore" : "errori") + " · <strong>" + accuracy + "%</strong> corrette</span>" +
+            "</div>";
+    });
+    finalPerInterval.innerHTML = html;
+    finalPerInterval.style.display = "";
 }
 /* =========================================================
    CONTENUTI DEI TUTORIAL (scriptati passo-passo)
@@ -3663,6 +3880,7 @@ function goHome() {
 
 function showSelectScreen(flow) {
     selectFlow = flow;
+    verificaPresetWrap.style.display = flow === "verifica" ? "" : "none";
     homeScreen.style.display = "none";
     selectScreen.style.display = "block";
     customNumbers.clear();
@@ -3698,6 +3916,10 @@ document.querySelectorAll(".theme-tile").forEach(tile => {
     });
 });
 verificaButton.addEventListener("click", () => showSelectScreen("verifica"));
+verificaPresetButton.addEventListener("click", () => {
+    showGame();
+    startPresetVerifica();
+});
 
 function setAnswerMode(newMode) {
     answerMode = newMode;
@@ -3719,15 +3941,7 @@ selectStartButton.addEventListener("click", () => {
 });
 siteHomeButton.addEventListener("click", () => { window.location.href = "index.html"; });
 
-playButton.addEventListener("click", () => {
-    if (!currentQuestion) return;
-    playButton.classList.remove("playing");
-    void playButton.offsetWidth;
-    playButton.classList.add("playing");
-    playIntervalSound(currentQuestion);
-});
-
-finishButton.addEventListener("click", () => confirmOverlay.classList.add("show"));
+finishButton.addEventListener("click", () => { if (mode === "verifica") return; confirmOverlay.classList.add("show"); });
 cancelFinish.addEventListener("click", () => confirmOverlay.classList.remove("show"));
 confirmFinish.addEventListener("click", () => {
     confirmOverlay.classList.remove("show");
@@ -3738,9 +3952,19 @@ confirmOverlay.addEventListener("click", e => {
 });
 
 submitButton.addEventListener("click", submitAnswer);
-restartButton.addEventListener("click", restartCurrent);
+restartButton.addEventListener("click", () => { if (mode === "verifica") return; restartCurrent(); });
 playAgainButton.addEventListener("click", restartCurrent);
 finalMenuButton.addEventListener("click", () => {
+    if (mode === "verifica") {
+        menuConfirmOverlay.classList.add("show");
+        return;
+    }
+    gameOver.classList.remove("show");
+    goHome();
+});
+menuConfirmCancel.addEventListener("click", () => menuConfirmOverlay.classList.remove("show"));
+menuConfirmOk.addEventListener("click", () => {
+    menuConfirmOverlay.classList.remove("show");
     gameOver.classList.remove("show");
     goHome();
 });
@@ -3802,6 +4026,7 @@ function showHelpPicker(numbers) {
 }
 
 helpOpenButton.addEventListener("click", () => {
+    if (mode === "verifica") return;
     optionsPanel.classList.remove("show");
     const numbers = availableHelpNumbers();
     if (numbers.length <= 1) {
@@ -3818,7 +4043,19 @@ intervalHelpOverlay.addEventListener("click", e => { if (e.target === intervalHe
 function refreshQuestionForClefChange() {
     if (!currentQuestion || finished) return;
     const spec = { q: currentQuestion.quality, n: currentQuestion.number };
-    presentQuestion(generateQuestionForSpec(spec), false);
+    const hadError = currentQuestionHadError;
+    let next = null;
+    if (presetVerifica) {
+        next = placeSpellingInClef(currentQuestion.root, currentQuestion.target, spec.q, spec.n);
+        if (!next) {
+            if (spellingKey(currentQuestion) !== FA_SI_KEY) presetUsedKeys.delete(spellingKey(currentQuestion));
+            next = presetQuestionFor(presetDeck[progress]);
+        }
+    } else {
+        next = generateQuestionForSpec(spec);
+    }
+    presentQuestion(next, false);
+    currentQuestionHadError = hadError;
 }
 
 function setClef(newClef) {
