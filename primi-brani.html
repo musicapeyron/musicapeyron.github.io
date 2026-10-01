@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <!-- Nome del sito: Musica Peyron -->
 <title>Primi Brani - prima parte — Musica Peyron</title>
-<meta name="description" content="Primi Brani, prima parte: ascolto e spartiti.">
+<meta name="description" content="Primi Brani, prima parte: ascolto e spartiti in quattro versioni.">
 
 <!--
   ============================================================
@@ -281,6 +281,22 @@
     pointer-events: none; /* lascia passare il click al contenitore, anche sopra il visualizzatore PDF nativo */
   }
 
+  .versions {
+    display: flex; flex-wrap: wrap; gap: 6px;
+    margin-top: 16px;
+  }
+  .versions button {
+    font-family: 'Manrope', sans-serif; font-weight: 700; font-size: 12px;
+    color: #EAF2FF; cursor: pointer;
+    padding: 6px 13px; border-radius: 999px;
+    border: 1px solid rgba(255,255,255,0.16);
+    background: rgba(255,255,255,0.05);
+    transition: background 0.15s ease, color 0.15s ease;
+  }
+  .versions button:hover { background: rgba(255,255,255,0.12); }
+  .versions button.active { background: #5EC8D8; color: #061323; border-color: #5EC8D8; }
+  .versions + .score-wrap { margin-top: 10px; }
+
   .score-dl {
     display: inline-block;
     margin-top: 12px;
@@ -330,7 +346,7 @@
 <header class="hero">
   <a class="breadcrumb" href="spartiti.html">← Spartiti</a>
   <h1>Primi Brani - prima parte</h1>
-  <p>Melodia con accompagnamento, solo accompagnamento, e spartito.</p>
+  <p>Melodia con accompagnamento, solo accompagnamento, e spartito in quattro versioni: standard, con i colori, con i nomi delle note, oppure con colori e nomi.</p>
 </header>
 
 <main id="brani-container"></main>
@@ -355,8 +371,12 @@
       accompagnamenti: [
         { label: "Accompagnamento", src: "media/primi-brani/brano1-accompagnamento.mp3" }
       ],
-      scoreType: "pdf",
-      scoreSrc: "media/primi-brani/brano1.pdf"
+      versioni: [
+        { label: "Standard", src: "media/primi-brani/brano1.pdf" },
+        { label: "Colori", src: "media/primi-brani/brano1-colori.pdf" },
+        { label: "Nomi delle note", src: "media/primi-brani/brano1-nomi.pdf" },
+        { label: "Colori e nomi", src: "media/primi-brani/brano1-colori-nomi.pdf" }
+      ]
     },
     {
       numero: 2,
@@ -364,8 +384,12 @@
       accompagnamenti: [
         { label: "Accompagnamento", src: "media/primi-brani/brano2-accompagnamento.mp3" }
       ],
-      scoreType: "pdf",
-      scoreSrc: "media/primi-brani/brano2.pdf"
+      versioni: [
+        { label: "Standard", src: "media/primi-brani/brano2.pdf" },
+        { label: "Colori", src: "media/primi-brani/brano2-colori.pdf" },
+        { label: "Nomi delle note", src: "media/primi-brani/brano2-nomi.pdf" },
+        { label: "Colori e nomi", src: "media/primi-brani/brano2-colori-nomi.pdf" }
+      ]
     },
     {
       numero: 3,
@@ -373,8 +397,12 @@
       accompagnamenti: [
         { label: "Accompagnamento", src: "media/primi-brani/brano3-accompagnamento.mp3" }
       ],
-      scoreType: "pdf",
-      scoreSrc: "media/primi-brani/brano3.pdf"
+      versioni: [
+        { label: "Standard", src: "media/primi-brani/brano3.pdf" },
+        { label: "Colori", src: "media/primi-brani/brano3-colori.pdf" },
+        { label: "Nomi delle note", src: "media/primi-brani/brano3-nomi.pdf" },
+        { label: "Colori e nomi", src: "media/primi-brani/brano3-colori-nomi.pdf" }
+      ]
     },
     {
       numero: 4,
@@ -382,8 +410,9 @@
       accompagnamenti: [
         { label: "Accompagnamento", src: "media/primi-brani/brano4-accompagnamento.mp3" }
       ],
-      scoreType: "pdf",
-      scoreSrc: "media/primi-brani/brano4.pdf"
+      versioni: [
+        { label: "Standard", src: "media/primi-brani/brano4.pdf" }
+      ]
     },
     {
       numero: 5,
@@ -391,8 +420,9 @@
       accompagnamenti: [
         { label: "Accompagnamento", src: "media/primi-brani/brano5-accompagnamento.mp3" }
       ],
-      scoreType: "pdf",
-      scoreSrc: "media/primi-brani/brano5.pdf"
+      versioni: [
+        { label: "Standard", src: "media/primi-brani/brano5.pdf" }
+      ]
     },
     {
       numero: 6,
@@ -400,8 +430,9 @@
       accompagnamenti: [
         { label: "Accompagnamento", src: "media/primi-brani/brano6-accompagnamento.mp3" }
       ],
-      scoreType: "pdf",
-      scoreSrc: "media/primi-brani/brano6.pdf"
+      versioni: [
+        { label: "Standard", src: "media/primi-brani/brano6.pdf" }
+      ]
     }
   ];
 
@@ -410,10 +441,8 @@
   const lightboxInner = document.getElementById('lightboxInner');
   const lightboxClose = document.getElementById('lightboxClose');
 
-  function openLightbox(b) {
-    lightboxInner.innerHTML = b.scoreType === 'pdf'
-      ? `<embed src="${b.scoreSrc}" type="application/pdf">`
-      : `<img src="${b.scoreSrc}" alt="">`;
+  function openLightbox(src) {
+    lightboxInner.innerHTML = `<embed src="${src}" type="application/pdf">`;
     lightbox.classList.add('open');
   }
   function closeLightbox() {
@@ -433,9 +462,10 @@
     const card = document.createElement('div');
     card.className = 'brano-card';
 
-    const scoreHTML = b.scoreType === 'pdf'
-      ? `<embed src="${b.scoreSrc}" type="application/pdf">`
-      : `<img src="${b.scoreSrc}" alt="Spartito di ${title}">`;
+    let current = b.versioni[0].src;
+    const versionButtons = b.versioni.length < 2 ? '' : b.versioni.map((v, i) =>
+      `<button type="button" data-src="${v.src}" class="${i === 0 ? 'active' : ''}">${v.label}</button>`
+    ).join('');
 
     const melodiaRow = b.audioFull
       ? `<div class="player-row">
@@ -447,7 +477,9 @@
         </div>`
       : `<div class="player-row coming-soon">Melodia + accompagnamento: in arrivo</div>`;
 
-    const accompRows = b.accompagnamenti.map(a => `
+    const accompRows = b.accompagnamenti.length === 0
+      ? `<div class="player-row coming-soon">Solo accompagnamento: in arrivo</div>`
+      : b.accompagnamenti.map(a => `
       <div class="player-row">
         <div class="label-row">
           <span class="label">${a.label}</span>
@@ -464,11 +496,22 @@
 
       ${accompRows}
 
-      <div class="score-wrap" data-index="${b.numero}">${scoreHTML}</div>
-      <a class="score-dl" href="${b.scoreSrc}" download>Scarica spartito</a>
+      ${versionButtons ? `<div class="versions">${versionButtons}</div>` : ''}
+      <div class="score-wrap" data-index="${b.numero}"><embed src="${current}" type="application/pdf"></div>
+      <a class="score-dl" href="${current}" download>Scarica spartito</a>
     `;
 
-    card.querySelector('.score-wrap').addEventListener('click', () => openLightbox(b));
+    const wrap = card.querySelector('.score-wrap');
+    const dl = card.querySelector('.score-dl');
+    card.querySelectorAll('.versions button').forEach(btn => {
+      btn.addEventListener('click', () => {
+        current = btn.dataset.src;
+        card.querySelectorAll('.versions button').forEach(x => x.classList.toggle('active', x === btn));
+        wrap.innerHTML = `<embed src="${current}" type="application/pdf">`;
+        dl.href = current;
+      });
+    });
+    wrap.addEventListener('click', () => openLightbox(current));
     container.appendChild(card);
   });
 

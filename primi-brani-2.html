@@ -459,7 +459,7 @@
     card.className = 'brano-card';
 
     let current = b.versioni[0].src;
-    const versionButtons = b.versioni.map((v, i) =>
+    const versionButtons = b.versioni.length < 2 ? '' : b.versioni.map((v, i) =>
       `<button type="button" data-src="${v.src}" class="${i === 0 ? 'active' : ''}">${v.label}</button>`
     ).join('');
 
@@ -492,7 +492,7 @@
 
       ${accompRows}
 
-      <div class="versions">${versionButtons}</div>
+      ${versionButtons ? `<div class="versions">${versionButtons}</div>` : ''}
       <div class="score-wrap" data-index="${b.numero}"><embed src="${current}" type="application/pdf"></div>
       <a class="score-dl" href="${current}" download>Scarica spartito</a>
     `;
