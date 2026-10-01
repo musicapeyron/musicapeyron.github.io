@@ -334,13 +334,14 @@ h1 {
     100% { transform: translateX(0); }
 }
 
-.answer.do { background: #ef4444; }
-.answer.re { background: #f97316; }
-.answer.mi { background: #eab308; }
-.answer.fa { background: #22c55e; }
-.answer.sol { background: #06b6d4; }
-.answer.la { background: #3b82f6; }
-.answer.si { background: #8b5cf6; }
+/* Colori delle note (do re mi fa sol la si): tavolozza ufficiale del sito */
+.answer.do { background: #E21C48; }
+.answer.re { background: #F99D1C; color: #1F2430; text-shadow: none; }
+.answer.mi { background: #FFF428; color: #1F2430; text-shadow: none; }
+.answer.fa { background: #BED958; color: #1F2430; text-shadow: none; }
+.answer.sol { background: #009C95; }
+.answer.la { background: #5E50A1; }
+.answer.si { background: #CF3E96; }
 
 .message { min-height: 34px; font-size: 1.1rem; font-weight: 700; letter-spacing: 0.1px; }
 .correct-message { color: #86efac; }
@@ -1568,14 +1569,15 @@ function drawReferenceStaff(clefToUse) {
        note più alte. Ogni nome è colorato come il pulsante
        corrispondente, per un riferimento immediato.
     */
+    // stessa tinta dei pulsanti, scurita quanto basta per leggersi sul pentagramma
     const nameColors = {
-        Do: "#dc2626",
-        Re: "#ea580c",
-        Mi: "#b45309",
-        Fa: "#16a34a",
-        Sol: "#0891b2",
-        La: "#2563eb",
-        Si: "#7c3aed"
+        Do: "#E21C48",
+        Re: "#A66912",
+        Mi: "#7F7913",
+        Fa: "#6E7D33",
+        Sol: "#00847E",
+        La: "#5E50A1",
+        Si: "#CC3D94"
     };
 
     context.save();
