@@ -881,7 +881,7 @@ document.querySelectorAll(".mode-button[data-mode]").forEach(btn => {
 
 function restartCurrent() { startMode(mode); }
 
-siteHomeButton.addEventListener("click", () => {});
+siteHomeButton.addEventListener("click", () => { window.location.href = "index.html"; });
 finishButton.addEventListener("click", () => confirmOverlay.classList.add("show"));
 cancelFinish.addEventListener("click", () => confirmOverlay.classList.remove("show"));
 confirmFinish.addEventListener("click", () => { confirmOverlay.classList.remove("show"); showFinalScreen(); });

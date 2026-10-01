@@ -1006,7 +1006,7 @@ function goHome() {
 
 startButton.addEventListener("click", () => { showGame(); startSession("theme"); });
 verificaButton.addEventListener("click", () => { showGame(); startSession("verifica"); });
-siteHomeButton.addEventListener("click", () => {});
+siteHomeButton.addEventListener("click", () => { window.location.href = "index.html"; });
 
 finishButton.addEventListener("click", () => confirmOverlay.classList.add("show"));
 cancelFinish.addEventListener("click", () => confirmOverlay.classList.remove("show"));
