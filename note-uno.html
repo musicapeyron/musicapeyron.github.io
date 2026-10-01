@@ -19978,6 +19978,51 @@ global.VexFlow = VexflowNS.default || VexflowNS;
     });
   }
 
+  // Pianoforte delle carte: stesso timbro di "Leggi la nota" (5 sinusoidi
+  // + filtro che si scurisce). I suoni di gioco restano su playTone.
+  let pianoGain = null;
+  function playPianoNote(midi, when, simultaneousNotes){
+    const ctx = ensureAudio();
+    if(!ctx || midi == null) return;
+    if(!pianoGain){
+      pianoGain = ctx.createGain();
+      pianoGain.gain.value = 0.75;
+      pianoGain.connect(ctx.destination);
+    }
+    const now = (when === undefined ? ctx.currentTime : when);
+    const duration = 1.9;
+    const freq = 440 * Math.pow(2, (midi - 69) / 12);
+    const voiceScale = 1 / Math.max(1, simultaneousNotes || 1);
+
+    const filter = ctx.createBiquadFilter();
+    filter.type = "lowpass";
+    filter.frequency.setValueAtTime(6500, now);
+    filter.frequency.exponentialRampToValueAtTime(800, now + duration);
+    filter.Q.value = 0.6;
+    filter.connect(pianoGain);
+
+    const harmonics = [
+      { mult: 1, gain: 0.5,  decay: duration },
+      { mult: 2, gain: 0.24, decay: duration * 0.8 },
+      { mult: 3, gain: 0.14, decay: duration * 0.6 },
+      { mult: 4, gain: 0.08, decay: duration * 0.45 },
+      { mult: 6, gain: 0.04, decay: duration * 0.3 }
+    ];
+    harmonics.forEach(h=>{
+      const osc = ctx.createOscillator();
+      const gain = ctx.createGain();
+      osc.type = "sine";
+      osc.frequency.value = freq * h.mult;
+      gain.gain.setValueAtTime(0.0001, now);
+      gain.gain.exponentialRampToValueAtTime(h.gain * voiceScale, now + 0.01);
+      gain.gain.exponentialRampToValueAtTime(0.0001, now + h.decay);
+      osc.connect(gain);
+      gain.connect(filter);
+      osc.start(now);
+      osc.stop(now + h.decay + 0.05);
+    });
+  }
+
   // Suono per le carte azione: breve motivo riconoscibile, non una nota del mazzo
   function playActionSound(type){
     const ctx = ensureAudio();
@@ -20078,8 +20123,7 @@ global.VexFlow = VexflowNS.default || VexflowNS;
     if(!ctx) return;
     if(ctx.state === "suspended") ctx.resume();
     if(card.type === "note"){
-      const f = freqFromCard(card);
-      if(f) playTone(f, ctx.currentTime, 1.2, 0.24);
+      if(card.midi != null) playPianoNote(card.midi, ctx.currentTime, 1);
     } else {
       playActionSound(card.type);
     }
@@ -21454,10 +21498,9 @@ global.VexFlow = VexflowNS.default || VexflowNS;
     if(!ctx) return;
     if(ctx.state === "suspended") ctx.resume();
     const t = ctx.currentTime;
-    const f1 = a && freqFromCard(a);
-    const f2 = b && freqFromCard(b);
-    if(f1) playTone(f1, t, 0.75, 0.19);
-    if(f2) playTone(f2, t + 0.5, 1.1, 0.19);
+    // note in sequenza che si sovrappongono: volume diviso per 2
+    if(a && a.midi != null) playPianoNote(a.midi, t, 2);
+    if(b && b.midi != null) playPianoNote(b.midi, t + 0.5, 2);
   }
 
   function flyIntervalToDiscard(onDone){
@@ -22474,10 +22517,8 @@ global.VexFlow = VexflowNS.default || VexflowNS;
     if(ctx.state === "suspended") ctx.resume();
     const t = ctx.currentTime;
     // tutte e tre allo stesso istante: si sente l'accordo, non un arpeggio
-    cards.forEach(c=>{
-      const f = freqFromCard(c);
-      if(f) playTone(f, t, 1.6, 0.15);
-    });
+    const notes = cards.filter(c => c && c.midi != null);
+    notes.forEach(c => playPianoNote(c.midi, t, notes.length));
   }
 
   function showQuiz(card){

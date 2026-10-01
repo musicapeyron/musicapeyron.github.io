@@ -551,64 +551,42 @@ function getAudioContext() {
         audioContext = new (window.AudioContext || window.webkitAudioContext)();
         masterGain = audioContext.createGain();
         masterGain.gain.value = masterVolume;
-        const compressor = audioContext.createDynamicsCompressor();
-        compressor.threshold.setValueAtTime(-20, audioContext.currentTime);
-        compressor.knee.setValueAtTime(24, audioContext.currentTime);
-        compressor.ratio.setValueAtTime(8, audioContext.currentTime);
-        compressor.attack.setValueAtTime(0.003, audioContext.currentTime);
-        compressor.release.setValueAtTime(0.25, audioContext.currentTime);
-        masterGain.connect(compressor);
-        compressor.connect(audioContext.destination);
+        masterGain.connect(audioContext.destination);
     }
-    if (audioContext.state === "suspended") { audioContext.resume(); }
+    if (audioContext.state === "suspended") audioContext.resume();
     return audioContext;
 }
 function frequencyForMidi(midi) { return 440 * Math.pow(2, (midi - 69) / 12); }
 
-function playPianoNote(midi, delay) {
+/*
+   Pianoforte: stesso timbro di "Leggi la nota".
+   Somma di 5 sinusoidi (fondamentale + armoniche 2, 3, 4 e 6)
+   con un filtro che si scurisce durante la nota.
+   simultaneousNotes = quante note suonano insieme o si
+   sovrappongono: il volume di ciascuna viene diviso per
+   non andare in distorsione.
+*/
+function playPianoNote(midi, delay, simultaneousNotes) {
     const ctx = getAudioContext();
     const now = ctx.currentTime + (delay || 0);
-    const duration = 1.3;
-    const freq = frequencyForMidi(midi);
+    const duration = 1.9;
+    const freq = 440 * Math.pow(2, (midi - 69) / 12);
+    // più note insieme = volume diviso, per non andare in distorsione
+    const voiceScale = 1 / Math.max(1, simultaneousNotes || 1);
 
     const filter = ctx.createBiquadFilter();
     filter.type = "lowpass";
-    filter.frequency.setValueAtTime(6000, now);
-    filter.frequency.exponentialRampToValueAtTime(500, now + duration);
-    filter.Q.value = 0.3;
+    filter.frequency.setValueAtTime(6500, now);
+    filter.frequency.exponentialRampToValueAtTime(800, now + duration);
+    filter.Q.value = 0.6;
     filter.connect(masterGain);
 
-    // brevissimo "tocco" del martelletto, discreto (un solo impulso,
-    // non uno per ogni armonico: piu' pulito quando suonano piu' note)
-    const noiseDuration = 0.012;
-    const bufferSize = Math.max(1, Math.ceil(ctx.sampleRate * noiseDuration));
-    const noiseBuffer = ctx.createBuffer(1, bufferSize, ctx.sampleRate);
-    const noiseData = noiseBuffer.getChannelData(0);
-    for (let i = 0; i < bufferSize; i++) noiseData[i] = (Math.random() * 2 - 1) * (1 - i / bufferSize);
-    const noiseSrc = ctx.createBufferSource();
-    noiseSrc.buffer = noiseBuffer;
-    const noiseFilter = ctx.createBiquadFilter();
-    noiseFilter.type = "bandpass";
-    noiseFilter.frequency.value = Math.min(6000, freq * 3);
-    noiseFilter.Q.value = 0.6;
-    const noiseGain = ctx.createGain();
-    noiseGain.gain.setValueAtTime(0.05, now);
-    noiseGain.gain.exponentialRampToValueAtTime(0.0001, now + noiseDuration);
-    noiseSrc.connect(noiseFilter);
-    noiseFilter.connect(noiseGain);
-    noiseGain.connect(masterGain);
-    noiseSrc.start(now);
-    noiseSrc.stop(now + noiseDuration + 0.01);
-
-    // corpo del suono: fondamentale + armonici, UN oscillatore ciascuno
-    // (niente piu' coppie scordate per ogni armonico: erano troppe,
-    // specialmente quando suonano piu' note insieme in un accordo)
     const harmonics = [
-        { mult: 1, gain: 0.34, decay: duration },
-        { mult: 2, gain: 0.16, decay: duration * 0.85 },
-        { mult: 3, gain: 0.09, decay: duration * 0.65 },
-        { mult: 4, gain: 0.05, decay: duration * 0.5 },
-        { mult: 5, gain: 0.025, decay: duration * 0.35 }
+        { mult: 1, gain: 0.5,  decay: duration },
+        { mult: 2, gain: 0.24, decay: duration * 0.8 },
+        { mult: 3, gain: 0.14, decay: duration * 0.6 },
+        { mult: 4, gain: 0.08, decay: duration * 0.45 },
+        { mult: 6, gain: 0.04, decay: duration * 0.3 }
     ];
     harmonics.forEach(h => {
         const osc = ctx.createOscillator();
@@ -616,28 +594,13 @@ function playPianoNote(midi, delay) {
         osc.type = "sine";
         osc.frequency.value = freq * h.mult;
         gain.gain.setValueAtTime(0.0001, now);
-        gain.gain.exponentialRampToValueAtTime(h.gain, now + 0.006);
+        gain.gain.exponentialRampToValueAtTime(h.gain * voiceScale, now + 0.01);
         gain.gain.exponentialRampToValueAtTime(0.0001, now + h.decay);
         osc.connect(gain);
         gain.connect(filter);
         osc.start(now);
         osc.stop(now + h.decay + 0.05);
     });
-
-    // una seconda "corda" leggermente scordata SOLO sul fondamentale,
-    // per un accenno di corpo/battimento pianistico senza moltiplicare
-    // il numero di oscillatori per ogni armonico
-    const osc2 = ctx.createOscillator();
-    const gain2 = ctx.createGain();
-    osc2.type = "sine";
-    osc2.frequency.value = freq * 1.0015;
-    gain2.gain.setValueAtTime(0.0001, now);
-    gain2.gain.exponentialRampToValueAtTime(0.16, now + 0.006);
-    gain2.gain.exponentialRampToValueAtTime(0.0001, now + duration);
-    osc2.connect(gain2);
-    gain2.connect(filter);
-    osc2.start(now);
-    osc2.stop(now + duration + 0.05);
 }
 function tone(freq, duration, type, delay) {
     const ctx = getAudioContext();
@@ -662,9 +625,9 @@ function playVictorySound() {
     const chordStart = run.length * 0.1 + 0.06;
     [1046.50, 1318.51, 1567.98, 2093.00].forEach(f => { tone(f, 1.3, "sine", chordStart); tone(f * 2, 0.7, "sine", chordStart); });
 }
-function playChordSound(notes) { notes.forEach((n, i) => playPianoNote(noteMidi(n), i * 0.09)); }
-function playSimultaneous(notes) { notes.forEach(n => playPianoNote(noteMidi(n), 0)); }
-function playArpeggio(notes) { notes.forEach((n, i) => playPianoNote(noteMidi(n), i * 0.32)); }
+function playChordSound(notes) { notes.forEach((n, i) => playPianoNote(noteMidi(n), i * 0.09, notes.length)); }
+function playSimultaneous(notes) { notes.forEach(n => playPianoNote(noteMidi(n), 0, notes.length)); }
+function playArpeggio(notes) { notes.forEach((n, i) => playPianoNote(noteMidi(n), i * 0.32, 2)); }
 
 /* =========================================================
    DISEGNO (interamente VexFlow: rigo, armatura, accordo)

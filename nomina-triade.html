@@ -640,7 +640,7 @@ function getAudioContext() {
         masterGain.gain.value = masterVolume;
         masterGain.connect(audioContext.destination);
     }
-    if (audioContext.state === "suspended") { audioContext.resume(); }
+    if (audioContext.state === "suspended") audioContext.resume();
     return audioContext;
 }
 
@@ -662,70 +662,55 @@ function tone(freq, duration, type, delay) {
 
 function frequencyForMidi(midi) { return 440 * Math.pow(2, (midi - 69) / 12); }
 
-function playPianoNote(midi, delay) {
+/*
+   Pianoforte: stesso timbro di "Leggi la nota".
+   Somma di 5 sinusoidi (fondamentale + armoniche 2, 3, 4 e 6)
+   con un filtro che si scurisce durante la nota.
+   simultaneousNotes = quante note suonano insieme o si
+   sovrappongono: il volume di ciascuna viene diviso per
+   non andare in distorsione.
+*/
+function playPianoNote(midi, delay, simultaneousNotes) {
     const ctx = getAudioContext();
     const now = ctx.currentTime + (delay || 0);
-    const duration = 1.4;
-    const freq = frequencyForMidi(midi);
+    const duration = 1.9;
+    const freq = 440 * Math.pow(2, (midi - 69) / 12);
+    // più note insieme = volume diviso, per non andare in distorsione
+    const voiceScale = 1 / Math.max(1, simultaneousNotes || 1);
 
     const filter = ctx.createBiquadFilter();
     filter.type = "lowpass";
-    filter.frequency.setValueAtTime(7200, now);
-    filter.frequency.exponentialRampToValueAtTime(650, now + duration);
-    filter.Q.value = 0.5;
+    filter.frequency.setValueAtTime(6500, now);
+    filter.frequency.exponentialRampToValueAtTime(800, now + duration);
+    filter.Q.value = 0.6;
     filter.connect(masterGain);
 
-    const noiseDuration = 0.018;
-    const bufferSize = Math.max(1, Math.ceil(ctx.sampleRate * noiseDuration));
-    const noiseBuffer = ctx.createBuffer(1, bufferSize, ctx.sampleRate);
-    const noiseData = noiseBuffer.getChannelData(0);
-    for (let i = 0; i < bufferSize; i++) noiseData[i] = Math.random() * 2 - 1;
-    const noiseSrc = ctx.createBufferSource();
-    noiseSrc.buffer = noiseBuffer;
-    const noiseFilter = ctx.createBiquadFilter();
-    noiseFilter.type = "bandpass";
-    noiseFilter.frequency.value = Math.min(9000, freq * 4);
-    noiseFilter.Q.value = 0.7;
-    const noiseGain = ctx.createGain();
-    noiseGain.gain.setValueAtTime(0.16, now);
-    noiseGain.gain.exponentialRampToValueAtTime(0.0001, now + noiseDuration);
-    noiseSrc.connect(noiseFilter);
-    noiseFilter.connect(noiseGain);
-    noiseGain.connect(masterGain);
-    noiseSrc.start(now);
-    noiseSrc.stop(now + noiseDuration + 0.01);
-
     const harmonics = [
-        { mult: 1, gain: 0.5, decay: duration },
-        { mult: 2, gain: 0.26, decay: duration * 0.82 },
-        { mult: 3, gain: 0.15, decay: duration * 0.62 },
-        { mult: 4, gain: 0.09, decay: duration * 0.46 },
-        { mult: 5, gain: 0.05, decay: duration * 0.34 },
-        { mult: 6, gain: 0.03, decay: duration * 0.26 }
+        { mult: 1, gain: 0.5,  decay: duration },
+        { mult: 2, gain: 0.24, decay: duration * 0.8 },
+        { mult: 3, gain: 0.14, decay: duration * 0.6 },
+        { mult: 4, gain: 0.08, decay: duration * 0.45 },
+        { mult: 6, gain: 0.04, decay: duration * 0.3 }
     ];
-    const detunes = [-0.0018, 0.0018];
-
     harmonics.forEach(h => {
-        detunes.forEach(d => {
-            const osc = ctx.createOscillator();
-            const gain = ctx.createGain();
-            osc.type = "sine";
-            osc.frequency.value = freq * h.mult * (1 + d);
-            gain.gain.setValueAtTime(0.0001, now);
-            gain.gain.exponentialRampToValueAtTime(h.gain / 2, now + 0.004);
-            gain.gain.exponentialRampToValueAtTime(0.0001, now + h.decay);
-            osc.connect(gain);
-            gain.connect(filter);
-            osc.start(now);
-            osc.stop(now + h.decay + 0.05);
-        });
+        const osc = ctx.createOscillator();
+        const gain = ctx.createGain();
+        osc.type = "sine";
+        osc.frequency.value = freq * h.mult;
+        gain.gain.setValueAtTime(0.0001, now);
+        gain.gain.exponentialRampToValueAtTime(h.gain * voiceScale, now + 0.01);
+        gain.gain.exponentialRampToValueAtTime(0.0001, now + h.decay);
+        osc.connect(gain);
+        gain.connect(filter);
+        osc.start(now);
+        osc.stop(now + h.decay + 0.05);
     });
 }
 
 // suona la triade leggermente arpeggiata (piu' chiaro all'orecchio
 // che un blocco perfettamente simultaneo)
 function playTriadSound(question) {
-    question.displayNotes.forEach((note, i) => playPianoNote(noteMidi(note), i * 0.09));
+    question.displayNotes.forEach((note, i) => playPianoNote(noteMidi(note), i * 0.09, question.displayNotes.length));
 }
 
 function playWrongSound() { tone(180, 0.22, "sawtooth", 0); }
