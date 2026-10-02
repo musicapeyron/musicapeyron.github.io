@@ -1,0 +1,3005 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Riconosci lo strumento</title>
+<meta name="description" content="Gioco di ascolto: riconosci gli strumenti dell'orchestra da un breve passaggio musicale.">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='.9em' font-size='90'%3E%F0%9F%8E%BB%3C/text%3E%3C/svg%3E">
+<style>
+*, *::before, *::after { box-sizing: border-box; }
+
+:root {
+    --ease-out-soft: cubic-bezier(0.16, 1, 0.3, 1);
+    --ease-spring: cubic-bezier(.34, 1.56, .64, 1);
+    --border-soft: rgba(255,255,255,0.10);
+    --border-softer: rgba(255,255,255,0.06);
+}
+
+html, body { margin: 0; padding: 0; min-height: 100%; }
+html { background: #0f172a; }   /* niente fondo bianco quando la pagina scorre */
+
+body {
+    min-height: 100vh;
+    padding: 20px 18px 32px;
+    font-family: "Inter", "Segoe UI", Arial, Helvetica, sans-serif;
+    font-size: 15px;
+    line-height: 1.5;
+    -webkit-font-smoothing: antialiased;
+    color: white;
+    background:
+        radial-gradient(circle at 50% 0%, #3730a3 0%, transparent 45%),
+        linear-gradient(135deg, #0f172a, #1e1b4b);
+    background-attachment: fixed;
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+    overflow-x: hidden;
+    position: relative;
+}
+
+body::before {
+    content: "";
+    position: fixed;
+    inset: 0;
+    z-index: 0;
+    pointer-events: none;
+    opacity: 0.5;
+    background-image: radial-gradient(rgba(255,255,255,0.035) 1px, transparent 1px);
+    background-size: 3px 3px;
+    mix-blend-mode: overlay;
+}
+
+.game {
+    position: relative;
+    z-index: 1;
+    width: min(900px, 100%);
+    max-width: 100%;
+    text-align: center;
+    transition: width 0.25s var(--ease-out-soft);
+}
+
+.game.wide {
+    width: min(1700px, 100%);
+}
+
+h1 {
+    margin: 0;
+    font-family: "Sora", "Inter", Arial, sans-serif;
+    font-size: 1.9rem;
+    font-weight: 700;
+    letter-spacing: -0.02em;
+    text-shadow: 0 3px 10px rgba(0,0,0,0.35);
+}
+
+.subtitle {
+    margin: 6px 0 16px;
+    color: #cbd5e1;
+    font-size: 0.98rem;
+    opacity: 0.85;
+}
+
+/* STATISTICHE */
+.stats {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    gap: 10px;
+    margin: 0 auto 14px;
+}
+
+.stat {
+    position: relative;
+    padding: 9px 8px 9px;
+    border-radius: 14px;
+    background: linear-gradient(180deg, rgba(255,255,255,0.08), rgba(255,255,255,0.045));
+    border: 1px solid var(--border-soft);
+    box-shadow: 0 1px 0 rgba(255,255,255,0.05) inset, 0 10px 24px rgba(0,0,0,0.20);
+    overflow: hidden;
+    transition: transform 0.25s var(--ease-out-soft);
+}
+
+.stat::before { content: ""; position: absolute; left: 0; right: 0; top: 0; height: 3px; background: #64748b; }
+.stat.total::before { background: #38bdf8; }
+.stat.correct::before { background: #22c55e; }
+.stat.errors::before { background: #ef4444; }
+.stat.streak::before { background: linear-gradient(90deg, #f59e0b, #fde047, #f59e0b); }
+.stat.record::before { background: linear-gradient(90deg, #a16207, #facc15, #a16207); }
+
+.stat.correct.bump { animation: correctBounce 0.5s var(--ease-spring); }
+.stat.errors.bump { animation: wrongShake 0.5s ease-in-out; }
+
+@keyframes correctBounce {
+    0% { transform: scale(1) translateY(0); }
+    30% { transform: scale(1.06) translateY(-5px); }
+    100% { transform: scale(1) translateY(0); }
+}
+@keyframes wrongShake {
+    0% { transform: translateX(0); }
+    20% { transform: translateX(-5px); }
+    40% { transform: translateX(5px); }
+    60% { transform: translateX(-4px); }
+    80% { transform: translateX(3px); }
+    100% { transform: translateX(0); }
+}
+
+.stat-label { display: block; color: #cbd5e1; font-size: 0.62rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 5px; }
+.stat-value { font-family: "Sora", "Inter", Arial, sans-serif; font-size: 1.35rem; font-weight: 700; font-variant-numeric: tabular-nums; }
+.stat.total .stat-value { color: #7dd3fc; }
+.stat.correct .stat-value { color: #86efac; }
+.stat.errors .stat-value { color: #fca5a5; }
+.stat.streak .stat-value { color: #fde68a; }
+.stat.record .stat-value { color: #facc15; }
+
+/* LIVELLO */
+.level-box {
+    margin: 0 auto 14px;
+    padding: 12px 20px 13px;
+    background: linear-gradient(180deg, rgba(255,255,255,0.09), rgba(255,255,255,0.05));
+    border: 1px solid var(--border-soft);
+    border-radius: 16px;
+    box-shadow: 0 1px 0 rgba(255,255,255,0.06) inset, 0 14px 34px rgba(0,0,0,0.24);
+    backdrop-filter: blur(14px) saturate(130%);
+    transition: transform 0.25s var(--ease-spring);
+}
+.level-box.bump { transform: scale(1.02); }
+
+.level-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; }
+.level-title { font-size: 0.78rem; font-weight: 700; letter-spacing: 0.6px; text-transform: uppercase; color: #fef3c7; opacity: 0.9; }
+.level-number { font-size: 1rem; font-weight: 700; color: #fde68a; }
+
+.progress-bar { position: relative; width: 100%; height: 12px; background: rgba(15,23,42,0.85); border-radius: 999px; overflow: hidden; border: 1px solid rgba(255,255,255,0.07); box-shadow: inset 0 2px 5px rgba(0,0,0,0.45); }
+.progress-fill { height: 100%; width: 0%; border-radius: 999px; background: linear-gradient(90deg, #f59e0b, #facc15, #fde68a); box-shadow: 0 0 12px rgba(250,204,21,0.55); transition: width 0.45s var(--ease-out-soft); }
+.level-info { margin-top: 8px; font-size: 0.74rem; color: #94a3b8; }
+
+.confetti-layer {
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    overflow: hidden;
+}
+
+.confetti-piece {
+    position: absolute;
+    top: 45%;
+    left: 50%;
+    width: 8px;
+    height: 8px;
+    border-radius: 2px;
+    opacity: 1;
+    animation: confettiBurst 0.9s ease-out forwards;
+}
+
+@keyframes confettiBurst {
+    0% {
+        transform: translate(-50%, -50%) rotate(0deg);
+        opacity: 1;
+    }
+    100% {
+        transform:
+            translate(
+                calc(-50% + var(--dx)),
+                calc(-50% + var(--dy))
+            )
+            rotate(var(--rot));
+        opacity: 0;
+    }
+}
+
+/* RISPOSTE */
+.answers {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    align-content: center;
+    gap: 8px;
+    max-width: 880px;   /* 6 pulsanti per riga: 21 strumenti stanno su 4 righe */
+    margin: 0 auto 20px;
+}
+
+.answer {
+    position: relative;
+    overflow: hidden;
+    flex: 0 0 auto;
+    width: 136px;
+    min-height: 50px;
+    border: none;
+    border-radius: 12px;
+    padding: 10px 6px;
+    color: white;
+    font-family: "Sora", "Inter", Arial, sans-serif;
+    font-size: 1rem;
+    line-height: 1.15;
+    font-weight: 800;
+    cursor: pointer;
+    box-shadow: 0 1px 0 rgba(255,255,255,0.28) inset, 0 5px 0 rgba(0,0,0,0.25), 0 8px 16px rgba(0,0,0,0.28);
+    transition: transform 0.12s var(--ease-out-soft), filter 0.15s, box-shadow 0.12s;
+    text-shadow:
+        -1px -1px 0 rgba(0,0,0,0.65),
+        1px -1px 0 rgba(0,0,0,0.65),
+        -1px 1px 0 rgba(0,0,0,0.65),
+        1px 1px 0 rgba(0,0,0,0.65),
+        0 2px 5px rgba(0,0,0,0.4);
+}
+.answer::after { content: ""; position: absolute; inset: 0; background: linear-gradient(180deg, rgba(255,255,255,0.22), rgba(255,255,255,0) 55%); pointer-events: none; }
+.answer:hover { filter: brightness(1.1); transform: translateY(-3px); }
+.answer:active { transform: translateY(3px); }
+.answer.locked { display: none; }
+
+.answer.wrong-flash { animation: buttonShake 0.4s ease-in-out; }
+
+@keyframes buttonShake {
+    0% { transform: translateX(0); }
+    20% { transform: translateX(-6px); }
+    40% { transform: translateX(6px); }
+    60% { transform: translateX(-4px); }
+    80% { transform: translateX(3px); }
+    100% { transform: translateX(0); }
+}
+
+
+.message { min-height: 34px; font-size: 1.1rem; font-weight: 700; letter-spacing: 0.1px; }
+.correct-message { color: #86efac; }
+.wrong-message { color: #fca5a5; }
+
+/* PULSANTI */
+.game-buttons { display: flex; justify-content: center; align-items: center; gap: 10px; margin-top: 6px; flex-wrap: wrap; }
+
+.menu-button, .finish-button, .new-game {
+    border: 1px solid rgba(255,255,255,0.18);
+    padding: 12px 22px;
+    border-radius: 12px;
+    background: rgba(255,255,255,0.06);
+    color: #e2e8f0;
+    font-family: "Sora", "Inter", Arial, sans-serif;
+    font-size: 0.88rem;
+    font-weight: 700;
+    cursor: pointer;
+    transition: transform 0.15s var(--ease-out-soft), background 0.15s;
+}
+.menu-button:hover, .finish-button:hover { background: rgba(255,255,255,0.12); transform: translateY(-2px); }
+
+.new-game { border: none; background: linear-gradient(135deg, #ffffff, #e2e8f0); color: #312e81; box-shadow: 0 6px 16px rgba(0,0,0,0.18); }
+.new-game:hover { transform: translateY(-2px); box-shadow: 0 10px 22px rgba(0,0,0,0.22); }
+
+.finish-button { border-color: rgba(248,113,113,0.35); background: rgba(127,29,29,0.25); color: #fca5a5; }
+.finish-button:hover { background: rgba(127,29,29,0.4); }
+
+/* BARRA STRUMENTI */
+.toolbar { display: flex; align-items: center; justify-content: center; gap: 14px; margin: 20px auto 0; }
+
+.volume-control { display: flex; align-items: center; gap: 8px; }
+.volume-icon { font-size: 1.05rem; }
+.volume-slider {
+    width: 120px; height: 6px;
+    -webkit-appearance: none; appearance: none;
+    background: linear-gradient(90deg, #a855f7, #7c3aed);
+    border-radius: 999px; outline: none; cursor: pointer;
+}
+.volume-slider::-webkit-slider-thumb {
+    -webkit-appearance: none; width: 16px; height: 16px; border-radius: 50%;
+    background: #f5f3ff; border: 2px solid #a855f7; cursor: pointer;
+}
+
+.toolbar-button {
+    width: 42px; height: 42px; border-radius: 50%;
+    border: 1px solid rgba(255,255,255,0.18);
+    background: linear-gradient(180deg, rgba(255,255,255,0.1), rgba(255,255,255,0.04));
+    color: #e2e8f0; font-size: 1.1rem;
+    display: flex; align-items: center; justify-content: center;
+    cursor: pointer; box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+    transition: transform 0.12s var(--ease-out-soft), background 0.15s;
+}
+.toolbar-button:hover { background: linear-gradient(180deg, rgba(255,255,255,0.2), rgba(255,255,255,0.08)); }
+.toolbar-button.bump { animation: toolbarBump 0.25s var(--ease-spring); }
+.options-choice.bump { animation: toolbarBump 0.25s var(--ease-spring); }
+@keyframes toolbarBump { 0% { transform: scale(1); } 45% { transform: scale(0.82); } 100% { transform: scale(1); } }
+
+/* PANNELLO TROFEI */
+.trophy-panel {
+    position: fixed; top: 90px; right: 24px; z-index: 200;
+    width: 300px; max-width: calc(100vw - 32px);
+    padding: 16px;
+    background: linear-gradient(180deg, rgba(49,46,129,0.9), rgba(15,23,42,0.92));
+    border: 1px solid rgba(255,255,255,0.18);
+    border-radius: 16px;
+    box-shadow: 0 20px 45px rgba(0,0,0,0.5);
+    backdrop-filter: blur(12px) saturate(140%);
+    opacity: 0; transform: translateY(-8px) scale(0.96); pointer-events: none;
+    transition: opacity 0.2s ease, transform 0.2s var(--ease-out-soft);
+}
+
+/* PANNELLO OPZIONI: centrale e traslucido, non un overlay opaco */
+.options-panel {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    z-index: 250;
+    width: 300px;
+    max-width: calc(100vw - 32px);
+    padding: 18px;
+    background: linear-gradient(180deg, rgba(49,46,129,0.72), rgba(15,23,42,0.75));
+    border: 1px solid rgba(255,255,255,0.2);
+    border-radius: 16px;
+    box-shadow: 0 20px 45px rgba(0,0,0,0.45);
+    backdrop-filter: blur(10px) saturate(140%);
+    opacity: 0;
+    transform: translate(-50%, -50%) scale(0.95);
+    pointer-events: none;
+    transition: opacity 0.2s ease, transform 0.2s var(--ease-out-soft);
+}
+.options-panel.show { opacity: 1; transform: translate(-50%, -50%) scale(1); pointer-events: auto; }
+
+.options-panel-title {
+    font-size: 0.82rem; font-weight: 700; letter-spacing: 0.5px; text-transform: uppercase;
+    color: #fef3c7; opacity: 0.9; margin-bottom: 14px; text-align: center;
+}
+
+.options-toggle-row {
+    display: flex; align-items: center; justify-content: space-between; gap: 12px;
+    padding: 10px 12px;
+    border-radius: 10px;
+    background: rgba(255,255,255,0.06);
+    border: 1px solid rgba(255,255,255,0.12);
+    font-family: "Sora", "Inter", Arial, sans-serif;
+    font-weight: 600; font-size: 0.88rem; color: #e2e8f0;
+    cursor: pointer;
+}
+.options-toggle-row input[type="checkbox"] {
+    width: 20px; height: 20px; accent-color: #a855f7; cursor: pointer;
+}
+
+.options-group-title {
+    font-size: 0.66rem; font-weight: 700; letter-spacing: 0.5px; text-transform: uppercase;
+    color: #a5b4fc; opacity: 0.85; margin: 16px 0 8px; text-align: left;
+}
+.options-group-title:first-of-type { margin-top: 0; }
+
+.options-pair {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+}
+
+.options-choice {
+    padding: 12px 8px;
+    border-radius: 10px;
+    border: 1px solid rgba(255,255,255,0.16);
+    background: rgba(255,255,255,0.06);
+    color: #e2e8f0;
+    font-family: "Sora", "Inter", Arial, sans-serif;
+    font-weight: 700;
+    font-size: 0.82rem;
+    cursor: pointer;
+    transition: background 0.15s, box-shadow 0.15s;
+}
+.options-choice:hover { background: rgba(255,255,255,0.12); }
+.options-choice.active {
+    background: linear-gradient(135deg, #22c55e, #15803d);
+    border-color: rgba(255,255,255,0.35);
+    box-shadow: 0 4px 12px rgba(34,197,94,0.4), inset 0 0 0 2px rgba(255,255,255,0.2);
+}
+
+.trophy-panel.show { opacity: 1; transform: translateY(0) scale(1); pointer-events: auto; }
+.trophy-panel-title { font-size: 0.8rem; font-weight: 700; text-transform: uppercase; color: #fef3c7; margin-bottom: 12px; text-align: center; }
+.trophy-row { display: flex; flex-direction: column; gap: 3px; padding: 9px 11px; border-radius: 10px; background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); font-family: "Sora", "Inter", Arial, sans-serif; font-size: 0.82rem; font-weight: 600; color: #cbd5e1; margin-bottom: 7px; }
+.trophy-row-main { display: flex; justify-content: space-between; align-items: center; }
+.trophy-row-details { font-size: 0.7rem; font-weight: 500; color: #94a3b8; }
+.trophy-row.done .trophy-row-details { color: #bbf7d0; }
+.trophy-row.in-loop { border-color: rgba(245,158,11,0.55); background: linear-gradient(135deg, rgba(245,158,11,0.16), rgba(180,83,9,0.1)); }
+
+.trophy-loop-controls {
+    display: none;
+    margin-bottom: 14px;
+    padding: 10px 11px;
+    border-radius: 10px;
+    background: rgba(245,158,11,0.08);
+    border: 1px solid rgba(245,158,11,0.25);
+}
+.trophy-loop-controls.visible { display: block; }
+
+.trophy-loop-title {
+    font-size: 0.7rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.4px;
+    color: #fde68a; margin-bottom: 8px;
+}
+
+.trophy-loop-row {
+    display: flex; align-items: center; gap: 6px;
+}
+.trophy-loop-row select {
+    flex: 1;
+    padding: 6px 4px;
+    border-radius: 8px;
+    border: 1px solid rgba(255,255,255,0.16);
+    background: rgba(15,23,42,0.6);
+    color: #e2e8f0;
+    font-family: "Sora", "Inter", Arial, sans-serif;
+    font-size: 0.78rem;
+    font-weight: 600;
+}
+.trophy-loop-row span { color: #cbd5e1; font-size: 0.8rem; }
+.trophy-loop-row .options-choice {
+    flex: 0 0 auto;
+    padding: 7px 10px;
+    font-size: 0.74rem;
+}
+.trophy-loop-row .options-choice.active {
+    background: linear-gradient(135deg, #f59e0b, #b45309);
+    box-shadow: 0 4px 12px rgba(245,158,11,0.4), inset 0 0 0 2px rgba(255,255,255,0.2);
+}
+.trophy-row.done { background: linear-gradient(135deg, rgba(34,197,94,0.22), rgba(21,128,61,0.14)); border-color: rgba(134,239,172,0.4); color: #dcfce7; }
+
+/* OVERLAY CONFERMA / SCHERMATA FINALE */
+.overlay {
+    position: fixed; inset: 0; z-index: 300;
+    background: rgba(2,6,23,0.72);
+    display: flex; align-items: center; justify-content: center;
+    opacity: 0; pointer-events: none;
+    transition: opacity 0.2s ease;
+    padding: 20px;
+}
+.overlay.show { opacity: 1; pointer-events: auto; }
+
+/* deve sempre comparire sopra alla schermata di riepilogo,
+   indipendentemente dall'ordine nel documento */
+#finalHomeConfirmOverlay { z-index: 350; }
+
+.overlay-card {
+    width: min(420px, 100%);
+    padding: 26px 24px;
+    background: linear-gradient(180deg, rgba(49,46,129,0.96), rgba(15,23,42,0.97));
+    border: 1px solid rgba(255,255,255,0.18);
+    border-radius: 20px;
+    box-shadow: 0 24px 60px rgba(0,0,0,0.5);
+    text-align: center;
+}
+
+.overlay-card h2 { margin: 0 0 8px; font-family: "Sora", Arial, sans-serif; font-size: 1.5rem; }
+.overlay-card p { color: #cbd5e1; margin: 0 0 20px; }
+
+.overlay-buttons { display: flex; justify-content: center; gap: 10px; }
+
+.final-stats { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin: 0 0 22px; text-align: left; }
+.final-stat { padding: 10px 12px; border-radius: 10px; background: rgba(255,255,255,0.06); border: 1px solid var(--border-soft); }
+.final-stat span { display: block; font-size: 0.65rem; text-transform: uppercase; color: #94a3b8; margin-bottom: 3px; }
+.final-stat strong { font-family: "Sora", Arial, sans-serif; font-size: 1.15rem; }
+
+@media (max-width: 640px) {
+    .stats { grid-template-columns: repeat(5, 1fr); gap: 6px; }
+    .stat { padding: 10px 4px; }
+    .stat-value { font-size: 1.05rem; }
+    .answer { width: calc(50% - 5px); max-width: 170px; padding: 13px 4px; font-size: 0.92rem; }
+    .listen-card { min-height: 230px; }
+}
+
+/* =========================================================
+   SCHERMATE DI SELEZIONE MODALITÀ
+========================================================= */
+
+.menu-screen {
+    position: relative;
+    z-index: 1;
+    width: min(520px, 100%);
+    text-align: center;
+    animation: menuScreenIn 0.5s var(--ease-out-soft);
+}
+
+@keyframes menuScreenIn {
+    from { opacity: 0; transform: translateY(14px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+.hero-badge {
+    width: 76px;
+    height: 76px;
+    margin: 0 auto 16px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 2.1rem;
+    background: linear-gradient(145deg, #4f46e5, #7c3aed);
+    box-shadow: 0 1px 0 rgba(255,255,255,0.3) inset, 0 14px 30px rgba(79,70,229,0.45);
+    animation: heroBadgeFloat 3.2s ease-in-out infinite;
+}
+
+@keyframes heroBadgeFloat {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-6px); }
+}
+
+.mode-grid {
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+    margin-top: 28px;
+}
+
+.mode-divider {
+    margin: 22px 0 4px;
+    border: none;
+    border-top: 1px solid var(--border-soft);
+}
+
+.mode-button {
+    border: none;
+    padding: 20px 22px;
+    border-radius: 16px;
+    color: white;
+    font-family: "Sora", "Inter", Arial, sans-serif;
+    font-size: 1.05rem;
+    font-weight: 700;
+    letter-spacing: 0.1px;
+    text-align: left;
+    cursor: pointer;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    box-shadow: 0 1px 0 rgba(255,255,255,0.22) inset, 0 10px 22px rgba(0,0,0,0.3);
+    transition: transform 0.15s var(--ease-out-soft), filter 0.15s, box-shadow 0.15s;
+}
+.mode-button:hover { transform: translateY(-3px); filter: brightness(1.08); box-shadow: 0 1px 0 rgba(255,255,255,0.25) inset, 0 16px 30px rgba(0,0,0,0.35); }
+.mode-button:active { transform: translateY(1px); }
+
+.mode-button-title { font-size: 1.08rem; font-weight: 800; }
+.mode-button-desc { font-size: 0.78rem; font-weight: 500; opacity: 0.85; letter-spacing: 0.1px; }
+
+.mode-button.training-1 { background: linear-gradient(135deg, #0ea5e9, #0369a1); }
+.mode-button.verifica { background: linear-gradient(135deg, #ec4899, #a21caf); }
+
+.back-button {
+    margin-top: 22px;
+    border: 1px solid rgba(255,255,255,0.18);
+    padding: 12px 22px;
+    border-radius: 12px;
+    background: rgba(255,255,255,0.06);
+    color: #e2e8f0;
+    font-family: "Sora", "Inter", Arial, sans-serif;
+    font-size: 0.88rem;
+    font-weight: 700;
+    cursor: pointer;
+    transition: transform 0.15s var(--ease-out-soft), background 0.15s;
+}
+.back-button:hover { background: rgba(255,255,255,0.12); transform: translateY(-2px); }
+
+/* PULSANTE HOME (verso il sito che ospita il gioco) */
+.site-home-button {
+    position: fixed;
+    top: 18px;
+    left: 18px;
+    z-index: 50;
+    width: 44px;
+    height: 44px;
+    border-radius: 50%;
+    border: 1px solid rgba(255,255,255,0.18);
+    background: linear-gradient(180deg, rgba(255,255,255,0.1), rgba(255,255,255,0.04));
+    color: #e2e8f0;
+    font-size: 1.15rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+    transition: transform 0.15s var(--ease-out-soft), background 0.15s;
+}
+.site-home-button:hover { background: linear-gradient(180deg, rgba(255,255,255,0.2), rgba(255,255,255,0.08)); transform: translateY(-2px); }
+
+/* TIMER e PULSANTE MENU IN PARTITA */
+.level-footer {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+    margin-top: 8px;
+}
+.level-timer {
+    font-family: "Sora", "Inter", Arial, sans-serif;
+    font-size: 0.76rem;
+    font-weight: 700;
+    color: #94a3b8;
+    letter-spacing: 0.3px;
+    white-space: nowrap;
+}
+
+.home-menu-button {
+    display: none;
+}
+.home-menu-button.visible {
+    display: inline-flex;
+}
+
+/* =========================================================
+   FAMIGLIE DELL'ORCHESTRA
+========================================================= */
+:root {
+    --archi: #ea580c;
+    --legni: #16a34a;
+    --ottoni: #ca8a04;
+    --percussioni: #7c3aed;
+    --archi-dark: #9a3412;
+    --legni-dark: #166534;
+    --ottoni-dark: #854d0e;
+    --percussioni-dark: #5b21b6;
+}
+
+.answer.archi { background: var(--archi); }
+.answer.legni { background: var(--legni); }
+.answer.ottoni { background: var(--ottoni); }
+.answer.percussioni { background: var(--percussioni); }
+
+.answer.locked { display: none; }
+
+/* legenda colori sotto i pulsanti */
+.family-legend {
+    display: flex;
+    justify-content: center;
+    flex-wrap: wrap;
+    gap: 6px 16px;
+    margin: -8px auto 18px;
+    font-size: 0.74rem;
+    color: #94a3b8;
+}
+.family-legend span { display: inline-flex; align-items: center; gap: 6px; }
+.family-legend i { width: 10px; height: 10px; border-radius: 3px; display: inline-block; }
+.family-legend span.hidden { display: none; }
+
+/* =========================================================
+   RIQUADRO DI ASCOLTO
+========================================================= */
+.listen-row {
+    display: flex;
+    justify-content: center;
+    margin: 0 auto 14px;
+}
+
+.listen-card {
+    position: relative;
+    overflow: hidden;
+    width: 420px;
+    max-width: 100%;
+    padding: 18px 14px;
+    background:
+        radial-gradient(circle at 50% 38%, rgba(99,102,241,0.28), transparent 62%),
+        linear-gradient(180deg, rgba(255,255,255,0.09), rgba(255,255,255,0.035));
+    border: 1px solid var(--border-soft);
+    border-radius: 18px;
+    box-shadow: 0 1px 0 rgba(255,255,255,0.07) inset, 0 16px 34px rgba(0,0,0,0.3);
+    min-height: 188px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #e2e8f0;
+}
+
+.listen-inner {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 14px;
+    width: 100%;
+    transition: transform 0.32s var(--ease-out-soft), opacity 0.32s ease;
+}
+.listen-inner.slide-out { opacity: 0; transform: scale(0.85); }
+.listen-inner.slide-in-start { transition: none; opacity: 0; transform: translateX(-130%); }
+.listen-inner.slide-in { opacity: 1; transform: translateX(0); }
+
+.play-button {
+    width: 92px;
+    height: 92px;
+    border-radius: 50%;
+    border: none;
+    cursor: pointer;
+    color: white;
+    font-size: 2.6rem;
+    line-height: 1;
+    padding-left: 8px;
+    background: radial-gradient(circle at 35% 30%, #a5b4fc, #6366f1 45%, #4338ca 80%);
+    box-shadow: 0 1px 0 rgba(255,255,255,0.35) inset, 0 6px 0 #312e81, 0 0 0 6px rgba(129,140,248,0.12), 0 14px 30px rgba(67,56,202,0.55);
+    transition: transform 0.12s var(--ease-out-soft), box-shadow 0.12s, filter 0.15s;
+}
+.play-button:hover { filter: brightness(1.08); transform: translateY(-2px); }
+.play-button:active { transform: translateY(4px); box-shadow: 0 1px 0 rgba(255,255,255,0.35) inset, 0 2px 0 #312e81, 0 8px 16px rgba(49,46,129,0.4); }
+.play-button.playing { animation: playPulse 1.4s ease-in-out infinite; }
+
+@keyframes playPulse {
+    0%, 100% { box-shadow: 0 1px 0 rgba(255,255,255,0.35) inset, 0 6px 0 #312e81, 0 0 0 0 rgba(99,102,241,0.45); }
+    50% { box-shadow: 0 1px 0 rgba(255,255,255,0.35) inset, 0 6px 0 #312e81, 0 0 0 16px rgba(99,102,241,0); }
+}
+
+/* barre "equalizzatore": si muovono solo mentre il suono è in riproduzione */
+.eq {
+    display: flex;
+    align-items: flex-end;
+    gap: 5px;
+    height: 34px;
+}
+.eq span {
+    width: 7px;
+    height: 6px;
+    border-radius: 4px;
+    background: #a5b4fc;
+    opacity: 0.3;
+    transition: height 0.3s, opacity 0.3s;
+}
+.eq.on span { opacity: 1; animation: eqBounce 0.9s ease-in-out infinite; }
+.eq.on span:nth-child(2) { animation-delay: -0.2s; }
+.eq.on span:nth-child(3) { animation-delay: -0.5s; }
+.eq.on span:nth-child(4) { animation-delay: -0.1s; }
+.eq.on span:nth-child(5) { animation-delay: -0.65s; }
+.eq.on span:nth-child(6) { animation-delay: -0.35s; }
+.eq.on span:nth-child(7) { animation-delay: -0.8s; }
+
+@keyframes eqBounce {
+    0%, 100% { height: 6px; }
+    50% { height: 32px; }
+}
+
+.listen-caption {
+    font-family: "Sora", "Inter", Arial, sans-serif;
+    font-size: 0.95rem;
+    font-weight: 700;
+    color: #cbd5e1;
+}
+
+.family-hint {
+    min-height: 26px;
+    font-size: 0.85rem;
+    font-weight: 700;
+}
+.family-hint span {
+    display: inline-block;
+    padding: 3px 12px;
+    border-radius: 999px;
+    color: white;
+}
+
+/* nome dello strumento mostrato per un attimo dopo la risposta giusta */
+.reveal {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    background: linear-gradient(180deg, #fdfaf3, #f2e9d8);
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.15s ease;
+}
+.reveal.show { opacity: 1; }
+.reveal-name {
+    font-family: "Sora", "Inter", Arial, sans-serif;
+    font-size: 2rem;
+    font-weight: 800;
+    transform: scale(0.8);
+    transition: transform 0.35s var(--ease-spring);
+}
+.reveal.show .reveal-name { transform: scale(1); }
+.reveal-family { font-size: 0.85rem; font-weight: 700; color: #6b5d3f; }
+
+/* =========================================================
+   STATO DEI SUONI NEL MENU
+========================================================= */
+.sound-status {
+    margin: 22px auto 0;
+    padding: 12px 16px;
+    border-radius: 12px;
+    background: rgba(255,255,255,0.05);
+    border: 1px solid var(--border-soft);
+    font-size: 0.85rem;
+    color: #cbd5e1;
+    text-align: left;
+}
+.sound-status.ok { border-color: rgba(134,239,172,0.3); }
+.sound-status.warn { border-color: rgba(250,204,21,0.4); background: rgba(250,204,21,0.06); }
+.sound-status code {
+    font-size: 0.8rem;
+    padding: 1px 6px;
+    border-radius: 6px;
+    background: rgba(15,23,42,0.7);
+    color: #fde68a;
+}
+.sound-status .missing { margin-top: 6px; color: #94a3b8; font-size: 0.8rem; }
+
+.mode-button:disabled { opacity: 0.45; cursor: not-allowed; transform: none; filter: none; }
+
+.mode-button.group-a { background: linear-gradient(135deg, #f97316, #15803d); }
+.mode-button.group-b { background: linear-gradient(135deg, #ca8a04, #6d28d9); }
+.mode-button.group-all { background: linear-gradient(135deg, #6366f1, #4338ca); }
+
+:focus-visible { outline: 3px solid #fde68a; outline-offset: 3px; }
+
+@media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after { animation-duration: 0.01ms !important; animation-iteration-count: 1 !important; transition-duration: 0.01ms !important; }
+}
+
+/* =========================================================
+   SCHEDA GRANDE DELLO STRUMENTO
+========================================================= */
+.inst-overlay {
+    position: fixed;
+    inset: 0;
+    z-index: 50;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 16px;
+    background: rgba(8, 10, 32, 0.72);
+    backdrop-filter: blur(3px);
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.2s ease;
+}
+.inst-overlay.show { opacity: 1; pointer-events: auto; }
+
+.inst-card {
+    width: min(640px, 100%);
+    max-height: 100%;
+    overflow-y: auto;
+    padding: 18px 22px 22px;
+    border-radius: 22px;
+    background: linear-gradient(180deg, #fdfaf3, #f2e9d8);
+    box-shadow: 0 1px 0 rgba(255,255,255,0.5) inset, 0 24px 60px rgba(0,0,0,0.5);
+    color: #3f3520;
+    text-align: center;
+    transform: scale(0.92);
+    transition: transform 0.3s var(--ease-spring);
+}
+.inst-overlay.show .inst-card { transform: scale(1); }
+
+.inst-img {
+    display: block;
+    margin: 6px auto 4px;
+    max-width: 100%;
+    height: auto;
+    filter: drop-shadow(0 4px 6px rgba(60,45,20,0.35)) drop-shadow(0 0 1px rgba(60,45,20,0.45));
+}
+.inst-name {
+    margin-top: 4px;
+    font-family: "Sora", "Inter", Arial, sans-serif;
+    font-size: 2.1rem;
+    font-weight: 800;
+    line-height: 1.1;
+}
+.inst-family { font-size: 0.9rem; font-weight: 700; color: #6b5d3f; margin-top: 2px; }
+.inst-sachs-info { font-size: 0.88rem; font-weight: 600; color: #6b5d3f; margin-top: 6px; }
+.inst-sachs-info:empty { display: none; }
+.inst-question {
+    margin-top: 10px;
+    font-family: "Sora", "Inter", Arial, sans-serif;
+    font-size: 1.05rem;
+    font-weight: 700;
+    color: #57482a;
+}
+.inst-sachs-answers { margin: 12px auto 0; }
+
+.inst-actions { display: flex; justify-content: center; gap: 10px; margin-top: 16px; }
+.inst-actions button {
+    border: none;
+    border-radius: 12px;
+    padding: 12px 22px;
+    font-family: "Sora", "Inter", Arial, sans-serif;
+    font-size: 1rem;
+    font-weight: 800;
+    cursor: pointer;
+    transition: transform 0.12s var(--ease-out-soft), filter 0.15s;
+}
+.inst-actions button:hover { transform: translateY(-2px); filter: brightness(1.06); }
+.inst-replay { background: #e7dcc4; color: #57482a; }
+.inst-next {
+    color: white;
+    background: linear-gradient(135deg, #6366f1, #4338ca);
+    box-shadow: 0 4px 0 #312e81, 0 10px 20px rgba(49,46,129,0.35);
+}
+
+/* nella scheda grande si mostra solo cio' che serve al momento */
+.inst-overlay.mode-step .inst-orchestra-note,
+.inst-overlay.mode-step .inst-sachs-info,
+.inst-overlay.mode-step .inst-family,
+.inst-overlay.mode-step .inst-actions { display: none; }
+.inst-overlay.mode-reveal .inst-question,
+.inst-overlay.mode-reveal .inst-sachs-answers { display: none; }
+.inst-overlay.auto .inst-actions { display: none; }
+
+/* durante le domande su sezione e classe la scheda copre la pagina:
+   da qui si puo' comunque terminare */
+.inst-finish {
+    display: none;
+    margin: 14px auto 0;
+    border: none;
+    background: none;
+    color: #8a7a5a;
+    font-size: 0.8rem;
+    font-weight: 600;
+    text-decoration: underline;
+    cursor: pointer;
+}
+.inst-overlay.mode-step .inst-finish { display: block; }
+
+/* errore su sezione o classe: breve spiegazione della categoria scelta */
+.step-error {
+    max-width: 440px;
+    margin: 0 auto;
+    max-height: 0;
+    overflow: hidden;
+    opacity: 0;
+    border-radius: 12px;
+    background: #fde8e8;
+    border: 1px solid #f5b5b5;
+    color: #8a1f1f;
+    font-size: 0.9rem;
+    font-weight: 600;
+    line-height: 1.35;
+    transition: opacity 0.2s ease, max-height 0.25s ease, margin 0.25s ease, padding 0.25s ease;
+    padding: 0 14px;
+}
+.step-error.show { opacity: 1; max-height: 120px; margin: 10px auto 0; padding: 9px 14px; }
+.step-error strong { letter-spacing: 0.4px; }
+.inst-overlay.mode-reveal .step-error { display: none; }
+
+/* tutti i pulsanti di risposta hanno lo stesso colore neutro:
+   il colore non deve suggerire la sezione dell'orchestra */
+.answer.neutral { background: linear-gradient(160deg, #64748b, #3b4558); }
+.inst-card .answer.neutral { width: 128px; padding-left: 4px; padding-right: 4px; font-size: 0.95rem; }
+.family-legend { display: none; }
+
+.mode-button.practice { background: linear-gradient(135deg, #14b8a6, #0f766e); }
+.home-option-next { margin-top: 10px; }
+
+.home-option {
+    margin-top: 18px;
+    text-align: left;
+}
+.home-option strong { display: block; font-size: 0.92rem; }
+.home-option small { display: block; margin-top: 2px; font-size: 0.76rem; font-weight: 500; color: #94a3b8; }
+
+.credits-link {
+    margin-top: 16px;
+    border: none;
+    background: none;
+    color: #94a3b8;
+    font-size: 0.78rem;
+    text-decoration: underline;
+    cursor: pointer;
+}
+.credits-link:hover { color: #e2e8f0; }
+.credits-card { max-width: 560px; text-align: left; }
+.credits-card h2 { text-align: center; }
+.credits-list { max-height: 55vh; overflow-y: auto; font-size: 0.8rem; line-height: 1.45; color: #cbd5e1; margin-bottom: 18px; }
+.credits-list h3 { font-size: 0.8rem; text-transform: uppercase; letter-spacing: 0.5px; color: #a5b4fc; margin: 14px 0 6px; }
+.credits-list a { color: #93c5fd; }
+.credits-list li { margin-bottom: 4px; }
+.mode-button.explore { background: linear-gradient(135deg, #f59e0b, #c2410c); }
+
+.explore-screen { width: min(1000px, 100%); }
+.orchestra-wrap {
+    margin: 4px auto 0;
+    padding: 14px 10px 6px;
+    border-radius: 18px;
+    border: 1px solid var(--border-soft);
+    background:
+        radial-gradient(circle at 50% 100%, rgba(99,102,241,0.18), transparent 60%),
+        linear-gradient(180deg, rgba(255,255,255,0.06), rgba(255,255,255,0.025));
+}
+#orchestraMap { width: 100%; height: auto; display: block; }
+.orch-zone { cursor: pointer; }
+.orch-zone path {
+    stroke: #1b2140;
+    stroke-width: 3;
+    transition: filter 0.15s, transform 0.15s;
+}
+.orch-zone:hover path, .orch-zone:focus path { filter: brightness(1.15) saturate(1.1); }
+.orch-zone:focus { outline: none; }
+.orch-zone:focus path { stroke: #ffffff; }
+.orch-zone.playing path { stroke: #ffffff; stroke-width: 4; }
+.orch-zone text {
+    font-family: "Sora", "Inter", Arial, sans-serif;
+    font-weight: 800;
+    fill: #1f2433;
+    pointer-events: none;
+    text-anchor: middle;
+    dominant-baseline: central;
+}
+.orch-conductor path { fill: rgba(255,255,255,0.12); stroke: rgba(255,255,255,0.25); stroke-width: 2; }
+.orch-conductor text { fill: #cbd5e1; font-family: "Sora", Arial, sans-serif; font-weight: 700; font-size: 17px; text-anchor: middle; }
+.orch-audience { fill: #94a3b8; font-family: "Sora", Arial, sans-serif; font-size: 15px; text-anchor: middle; letter-spacing: 3px; }
+.orchestra-legend {
+    display: flex; flex-wrap: wrap; justify-content: center; gap: 8px 18px;
+    margin: 12px 0 4px; color: #cbd5e1; font-size: 0.85rem; font-weight: 600;
+}
+.orchestra-note { max-width: 720px; margin: 6px auto 0; color: #94a3b8; font-size: 0.82rem; line-height: 1.45; }
+.orchestra-legend span { display: inline-flex; align-items: center; gap: 7px; }
+.orchestra-legend i { width: 14px; height: 14px; border-radius: 4px; display: inline-block; }
+
+/* scheda dello strumento nella modalita' "Ascoltali tutti!" */
+.inst-other { display: none; }
+.inst-overlay.explore .inst-other { display: inline-block; }
+.inst-orchestra-note { font-size: 0.85rem; font-weight: 600; color: #6b5d3f; margin-top: 6px; font-style: italic; }
+.inst-orchestra-note:empty { display: none; }
+.mode-card { cursor: default; }
+.mode-card:hover { transform: none; filter: none; }
+.mode-sub { display: flex; gap: 10px; margin-top: 10px; }
+.sub-button {
+    flex: 1;
+    border: none;
+    border-radius: 11px;
+    padding: 11px 10px;
+    font-family: "Sora", "Inter", Arial, sans-serif;
+    font-size: 0.98rem;
+    font-weight: 800;
+    color: #1f2433;
+    background: rgba(255,255,255,0.92);
+    box-shadow: 0 3px 0 rgba(0,0,0,0.22);
+    cursor: pointer;
+    transition: transform 0.12s var(--ease-out-soft), background 0.15s;
+}
+.sub-button:hover { transform: translateY(-2px); background: #ffffff; }
+.sub-button:active { transform: translateY(1px); }
+.sub-button:disabled { opacity: 0.5; cursor: not-allowed; transform: none; }
+.mode-help { margin: 14px 0 0; color: #94a3b8; font-size: 0.8rem; line-height: 1.45; text-align: left; }
+.mode-help strong { color: #cbd5e1; }
+
+/* modalita' Osserva: al posto del pulsante play c'e' la foto dello strumento */
+.question-img { display: none; }
+.game.observe .question-img {
+    display: block;
+    max-width: 100%;
+    height: auto;
+    filter: drop-shadow(0 4px 6px rgba(60,45,20,0.35)) drop-shadow(0 0 1px rgba(60,45,20,0.45));
+}
+.game.observe .play-button, .game.observe .eq { display: none; }
+.game.observe .listen-card {
+    width: 560px;
+    min-height: 318px;
+    background: linear-gradient(180deg, #fdfaf3, #f2e9d8);
+    border-color: transparent;
+}
+.game.observe .listen-caption { color: #57482a; }
+</style>
+</head>
+<body>
+
+<button class="site-home-button" id="siteHomeButton" title="Torna al sito">🏠</button>
+
+<!-- SCHERMATA INIZIALE -->
+<div class="menu-screen" id="homeScreen">
+
+    <div class="hero-badge">🎻</div>
+    <h1>Riconosci lo strumento</h1>
+    <p class="subtitle">Ascolta e osserva gli strumenti dell'orchestra e impara a riconoscerli.</p>
+
+    <div class="mode-grid">
+        <button class="mode-button explore" id="exploreButton" disabled>
+            <span class="mode-button-title">🎧 Ascoltali tutti!</span>
+            <span class="mode-button-desc">Ascolta e guarda ogni strumento, e scopri dove siede in orchestra</span>
+        </button>
+        <div class="mode-button mode-card training-1">
+            <span class="mode-button-title">📘 Tutorial</span>
+            <span class="mode-button-desc">Impara gli strumenti con calma, un livello alla volta</span>
+            <div class="mode-sub">
+                <button class="sub-button" id="trainingButton" disabled>🎧 Ascolta</button>
+                <button class="sub-button" id="trainingWatchButton" disabled>👀 Osserva</button>
+            </div>
+        </div>
+        <div class="mode-button mode-card practice">
+            <span class="mode-button-title">🎯 Allenamento</span>
+            <span class="mode-button-desc">Due domande per ogni strumento, senza livelli</span>
+            <div class="mode-sub">
+                <button class="sub-button" id="practiceButton" disabled>🎧 Ascolta</button>
+                <button class="sub-button" id="practiceWatchButton" disabled>👀 Osserva</button>
+            </div>
+        </div>
+        <hr class="mode-divider">
+        <div class="mode-button mode-card verifica">
+            <span class="mode-button-title">📝 Verifica</span>
+            <span class="mode-button-desc">Due domande per ogni strumento, con il voto finale</span>
+            <div class="mode-sub">
+                <button class="sub-button" id="verificaButton" disabled>🎧 Ascolta</button>
+                <button class="sub-button" id="verificaWatchButton" disabled>👀 Osserva</button>
+            </div>
+        </div>
+        <p class="mode-help"><strong>Ascolta</strong>: senti il passaggio e riconosci lo strumento.
+        <strong>Osserva</strong>: guardi lo strumento e scegli il suo nome; dopo la risposta giusta ne ascolti il suono.</p>
+    </div>
+
+    <label class="options-toggle-row home-option">
+        <span>
+            <strong>🎼 Sezioni dell'orchestra</strong>
+            <small>Dopo lo strumento, indica anche la sua sezione: archi, legni, ottoni o percussioni</small>
+        </span>
+        <input type="checkbox" id="sectionToggle">
+    </label>
+
+    <label class="options-toggle-row home-option home-option-next">
+        <span>
+            <strong>🔎 Classificazione Sachs-Hornbostel</strong>
+            <small>Dopo lo strumento, indica anche a quale classe appartiene</small>
+        </span>
+        <input type="checkbox" id="sachsToggle">
+    </label>
+
+    <div class="sound-status" id="soundStatus">⏳ Preparo i suoni…</div>
+
+    <button class="credits-link" id="creditsButton">Crediti di immagini e suoni</button>
+
+</div>
+
+<!-- ASCOLTALI TUTTI: PIANTA DELL'ORCHESTRA -->
+<div class="menu-screen explore-screen" id="exploreScreen" style="display: none;">
+    <h1>🎧 Ascoltali tutti!</h1>
+    <p class="subtitle">Tocca uno strumento per ascoltarlo e vederlo. La pianta mostra dove siedono i musicisti in un'orchestra sinfonica.</p>
+    <div class="orchestra-wrap">
+        <svg id="orchestraMap" viewBox="-70 30 1140 640" role="group" aria-label="Pianta dell'orchestra"></svg>
+    </div>
+    <div class="orchestra-legend" id="orchestraLegend"></div>
+    <p class="orchestra-note">È la disposizione più diffusa, detta "all'americana". I direttori possono cambiarla: per esempio
+    alcuni mettono i violini secondi a destra, di fronte ai primi, oppure scambiano viole e violoncelli.</p>
+    <button class="back-button" id="exploreBackButton">← Menu</button>
+</div>
+
+<!-- GIOCO -->
+<div class="game" id="gameContainer" style="display: none;">
+
+    <h1>🎻 Riconosci lo strumento</h1>
+    <p class="subtitle" id="gameSubtitle">Ascolta il passaggio e scegli lo strumento che lo suona.</p>
+
+    <div class="stats">
+        <div class="stat total"><span class="stat-label">Risposte</span><span class="stat-value" id="total">0</span></div>
+        <div class="stat correct" id="correctBox"><span class="stat-label">Corrette</span><span class="stat-value" id="correct">0</span></div>
+        <div class="stat errors" id="errorsBox"><span class="stat-label">Errori</span><span class="stat-value" id="errors">0</span></div>
+        <div class="stat streak"><span class="stat-label">🏆 Serie</span><span class="stat-value" id="streak">0</span></div>
+        <div class="stat record"><span class="stat-label">👑 Record</span><span class="stat-value" id="record">0</span></div>
+    </div>
+
+    <div class="level-box" id="levelBox">
+        <div class="level-header">
+            <span class="level-title" id="levelTitle">⭐ Livello</span>
+            <span class="level-number" id="levelNumber">1 / 1</span>
+        </div>
+        <div class="progress-bar"><div class="progress-fill" id="progressFill"></div></div>
+        <div class="level-footer">
+            <span class="level-info" id="levelInfo"></span>
+            <span class="level-timer" id="timerDisplay">⏱ 0:00</span>
+        </div>
+    </div>
+
+    <div class="listen-row">
+        <div class="listen-card">
+            <div class="listen-inner" id="listenInner">
+                <img class="question-img" id="questionImg" alt="Strumento da riconoscere">
+                <button class="play-button" id="playButton" aria-label="Ascolta di nuovo">▶</button>
+                <div class="eq" id="eq" aria-hidden="true"><span></span><span></span><span></span><span></span><span></span><span></span><span></span></div>
+                <div class="listen-caption" id="listenCaption">In ascolto…</div>
+            </div>
+            <div class="confetti-layer" id="confettiLayer"></div>
+        </div>
+    </div>
+
+    <div class="answers" id="answers"></div>
+
+    <div class="family-legend" id="familyLegend">
+        <span data-family="archi"><i style="background: var(--archi)"></i>Archi</span>
+        <span data-family="legni"><i style="background: var(--legni)"></i>Legni</span>
+        <span data-family="ottoni"><i style="background: var(--ottoni)"></i>Ottoni</span>
+        <span data-family="percussioni"><i style="background: var(--percussioni)"></i>Percussioni</span>
+    </div>
+
+    <div class="game-buttons">
+        <button class="menu-button home-menu-button" id="homeMenuButton">🏠 Menu</button>
+        <button class="menu-button" id="finishButton">Termina partita</button>
+        <button class="new-game" id="restartButton">🔄 Ricomincia</button>
+    </div>
+
+    <div class="toolbar">
+        <div class="volume-control">
+            <span class="volume-icon">🔊</span>
+            <input type="range" class="volume-slider" id="volumeSlider" min="0" max="100" value="75" aria-label="Volume">
+        </div>
+        <button class="toolbar-button" id="trophyButton" title="Livelli completati">🏆</button>
+    </div>
+
+</div>
+
+<!-- PANNELLO TROFEI -->
+<div class="trophy-panel" id="trophyPanel">
+    <div class="trophy-panel-title">Livelli completati</div>
+
+    <div class="trophy-loop-controls" id="trophyLoopControls">
+        <div class="trophy-loop-title">🔁 Loop livelli (tutorial)</div>
+        <div class="trophy-loop-row">
+            <select id="loopStartSelect"></select>
+            <span>→</span>
+            <select id="loopEndSelect"></select>
+            <button class="options-choice" id="loopToggleButton">Attiva</button>
+        </div>
+    </div>
+
+    <div id="trophyList"></div>
+</div>
+
+<!-- CONFERMA FINE PARTITA -->
+<div class="overlay" id="confirmOverlay">
+    <div class="overlay-card">
+        <h2 id="confirmFinishTitle">Terminare la partita?</h2>
+        <p id="confirmFinishText">Le statistiche attuali verranno mostrate nel riepilogo finale.</p>
+        <div class="overlay-buttons">
+            <button class="menu-button" id="cancelFinish">Annulla</button>
+            <button class="finish-button" id="confirmFinish">Termina</button>
+        </div>
+    </div>
+</div>
+
+<!-- CONFERMA RITORNO AL MENU DALLA SCHERMATA FINALE (solo verifica) -->
+<div class="overlay" id="finalHomeConfirmOverlay">
+    <div class="overlay-card">
+        <h2>Tornare al menu?</h2>
+        <p>Sei sicuro di voler chiudere la schermata di riepilogo e tornare al menu?</p>
+        <div class="overlay-buttons">
+            <button class="menu-button" id="cancelFinalHome">Annulla</button>
+            <button class="finish-button" id="confirmFinalHome">Torna al menu</button>
+        </div>
+    </div>
+</div>
+
+<!-- SCHEDA GRANDE DELLO STRUMENTO (dopo la risposta giusta) -->
+<div class="inst-overlay" id="reveal">
+    <div class="inst-card">
+        <img class="inst-img" id="revealImg" alt="">
+        <div class="inst-name" id="revealName"></div>
+        <div class="inst-family" id="revealFamily"></div>
+        <div class="inst-sachs-info" id="revealSachs"></div>
+        <div class="inst-orchestra-note" id="revealOrchestraNote"></div>
+        <div class="inst-question" id="sachsQuestion">A quale classe appartiene?</div>
+        <div class="step-error" id="stepError" role="status" aria-live="polite"></div>
+        <div class="answers inst-sachs-answers" id="sachsAnswers"></div>
+        <button class="inst-finish" id="cardFinish">Termina partita</button>
+        <div class="inst-actions" id="revealActions">
+            <button class="inst-replay" id="revealReplay">🔊 Riascolta</button>
+            <button class="inst-replay inst-other" id="revealOther">⏭ Altro passaggio</button>
+            <button class="inst-next" id="revealNext">Avanti ▶</button>
+        </div>
+    </div>
+</div>
+
+<!-- CREDITI -->
+<div class="overlay" id="creditsOverlay">
+    <div class="overlay-card credits-card">
+        <h2>Crediti</h2>
+        <div class="credits-list" id="creditsList"></div>
+        <div class="overlay-buttons">
+            <button class="menu-button" id="closeCredits">Chiudi</button>
+        </div>
+    </div>
+</div>
+
+<!-- SCHERMATA FINALE -->
+<div class="overlay" id="gameOver">
+    <div class="overlay-card">
+        <h2 id="resultTitle">Partita conclusa</h2>
+        <p id="resultSubtitle">Ecco come è andata.</p>
+        <div class="final-stats">
+            <div class="final-stat"><span id="finalLevelLabel">Livello raggiunto</span><strong id="finalLevel">1</strong></div>
+            <div class="final-stat"><span>Accuratezza</span><strong id="finalAccuracy">0%</strong></div>
+            <div class="final-stat"><span>Risposte corrette</span><strong id="finalCorrect">0</strong></div>
+            <div class="final-stat"><span>Errori</span><strong id="finalErrors">0</strong></div>
+            <div class="final-stat"><span>Tempo impiegato</span><strong id="finalTime">0:00</strong></div>
+            <div class="final-stat"><span>Riascolti</span><strong id="finalReplays">0</strong></div>
+            <div class="final-stat" id="finalUnansweredBox" style="display: none;"><span>Risposte non date</span><strong id="finalUnanswered">0</strong></div>
+            <div class="final-stat" id="finalSectionBox" style="display: none;"><span>Errori sulle sezioni</span><strong id="finalSection">0</strong></div>
+            <div class="final-stat" id="finalSachsBox" style="display: none;"><span>Errori Sachs-Hornbostel</span><strong id="finalSachs">0</strong></div>
+            <div class="final-stat" id="finalGradeBox" style="display: none;"><span>Voto</span><strong id="finalGrade">-</strong></div>
+        </div>
+        <div class="overlay-buttons">
+            <button class="menu-button home-menu-button" id="finalMenuButton">🏠 Menu</button>
+            <button class="new-game" id="playAgainButton">🔄 Gioca ancora</button>
+        </div>
+    </div>
+</div>
+
+<script>
+
+/* =========================================================
+   STRUMENTI
+
+   I suoni e le immagini NON sono dentro questo file: il gioco
+   cerca le immagini nella cartella "immagini" (immagini/violino.webp…)
+   e i suoni
+   nella cartella "audio", che deve stare accanto a questo
+   html. Ogni strumento ha la sua sottocartella, con i file
+   numerati a partire da 1:
+
+       audio/violino/1.mp3
+       audio/violino/2.mp3
+       audio/tromba/1.mp3
+       ...
+
+   Il gioco prova 1.mp3, 2.mp3, 3.mp3… e si ferma al primo
+   numero che manca. Gli strumenti senza nessun file vengono
+   semplicemente esclusi dal gioco.
+
+   L'ordine dell'elenco qui sotto è l'ordine in cui gli
+   strumenti vengono introdotti nei livelli: si parte da tre
+   timbri molto diversi tra loro e si arriva via via a quelli
+   più facili da confondere.
+========================================================= */
+
+const AUDIO_FOLDER = "media/strumenti/audio";
+const MAX_CLIPS_PER_INSTRUMENT = 20;
+const SHORT_CLIP_SECONDS = 6;
+
+const IMAGE_FOLDER = "media/strumenti/immagini";
+
+const INSTRUMENTS = [
+    { id: "violino",      name: "Violino",      family: "archi",       sachs: "cordofoni" },
+    { id: "flauto",       name: "Flauto",       family: "legni",       sachs: "aerofoni" },
+    { id: "tromba",       name: "Tromba",       family: "ottoni",      sachs: "aerofoni" },
+    { id: "pianoforte",   name: "Pianoforte",   family: "tastiere",    sachs: "cordofoni", noSection: true,
+      sachsNote: "Cordofono: i martelletti percuotono delle corde tese",
+      orchestraNote: "In orchestra il pianoforte compare in alcuni brani; è il protagonista nei concerti per pianoforte e orchestra." },
+    { id: "violoncello",  name: "Violoncello",  family: "archi",       sachs: "cordofoni" },
+    { id: "clarinetto",   name: "Clarinetto",   family: "legni",       sachs: "aerofoni" },
+    { id: "trombone",     name: "Trombone",     family: "ottoni",      sachs: "aerofoni" },
+    { id: "timpani",      name: "Timpani",      family: "percussioni", sachs: "membranofoni" },
+    { id: "arpa",         name: "Arpa",         family: "arpa",        sachs: "cordofoni", noSection: true,
+      sachsNote: "Cordofono: si pizzicano delle corde tese" },
+    { id: "oboe",         name: "Oboe",         family: "legni",       sachs: "aerofoni" },
+    { id: "corno",        name: "Corno",        family: "ottoni",      sachs: "aerofoni" },
+    { id: "sassofono",    name: "Sassofono",    family: "legni",       sachs: "aerofoni",
+      sachsNote: "Aerofono: vibra una colonna d'aria, messa in vibrazione da un'ancia come nel clarinetto",
+      orchestraNote: "Il sassofono non fa parte stabilmente dell'orchestra sinfonica: compare solo in alcuni brani." },
+    { id: "contrabbasso", name: "Contrabbasso", family: "archi",       sachs: "cordofoni" },
+    { id: "rullante",     name: "Rullante",     family: "percussioni", sachs: "membranofoni" },
+    { id: "fagotto",      name: "Fagotto",      family: "legni",       sachs: "aerofoni" },
+    { id: "xilofono",     name: "Xilofono",     family: "percussioni", sachs: "idiofoni" },
+    { id: "piatti",       name: "Piatti",       family: "percussioni", sachs: "idiofoni" },
+    { id: "viola",        name: "Viola",        family: "archi",       sachs: "cordofoni" },
+    { id: "glockenspiel", name: "Glockenspiel", family: "percussioni", sachs: "idiofoni" },
+    { id: "triangolo",    name: "Triangolo",    family: "percussioni", sachs: "idiofoni" },
+    { id: "tuba",         name: "Tuba",         family: "ottoni",      sachs: "aerofoni" }
+];
+/* arpa e pianoforte non appartengono a una delle quattro sezioni:
+   per loro la domanda sulla sezione non viene fatta (noSection) */
+
+/*
+   Classificazione di Hornbostel e Sachs (1914): le quattro classi
+   originali, nell'ordine in cui la presentano gli autori.
+*/
+const SACHS_ORDER = ["idiofoni", "membranofoni", "cordofoni", "aerofoni"];
+
+/* domande che possono seguire quella sullo strumento */
+const STEPS = {
+    section: {
+        question: "A quale sezione dell'orchestra appartiene?",
+        order: ["archi", "legni", "ottoni", "percussioni"],
+        labels: { archi: "Archi", legni: "Legni", ottoni: "Ottoni", percussioni: "Percussioni" },
+        answerOf: inst => inst.family
+    },
+    sachs: {
+        question: "A quale classe Sachs-Hornbostel appartiene?",
+        order: ["idiofoni", "membranofoni", "cordofoni", "aerofoni"],
+        labels: { idiofoni: "Idiofoni", membranofoni: "Membranofoni", cordofoni: "Cordofoni", aerofoni: "Aerofoni" },
+        answerOf: inst => inst.sachs
+    }
+};
+const QUESTIONS_PER_INSTRUMENT = 2;   // allenamento e verifica: ogni strumento esce due volte
+
+/* spiegazione mostrata quando si sceglie la categoria sbagliata */
+const STEP_EXPLANATIONS = {
+    archi:        { art: "gli", text: "sono strumenti a corde che si suonano con l'arco" },
+    legni:        { art: "i",   text: "sono strumenti a fiato in cui il suono nasce da un'ancia o dal soffio sul bordo dell'imboccatura, come nel flauto (anche se oggi è di metallo)" },
+    ottoni:       { art: "gli", text: "sono strumenti a fiato in cui vibrano le labbra del musicista appoggiate a un bocchino" },
+    percussioni:  { art: "le",  text: "sono strumenti che si suonano percuotendoli" },
+    idiofoni:     { art: "gli", text: "sono strumenti in cui vibra il corpo stesso dello strumento" },
+    membranofoni: { art: "i",   text: "sono strumenti in cui vibra una membrana tesa" },
+    cordofoni:    { art: "i",   text: "sono strumenti in cui vibrano delle corde tese" },
+    aerofoni:     { art: "gli", text: "sono strumenti in cui vibra una colonna d'aria" }
+};
+const STEP_ERROR_MS = 4500;
+let stepErrorTimer = null;
+
+/* allenamento e verifica: 30 domande su tutti gli strumenti, senza livelli */
+function isQuizMode() {
+    return appMode === "practice" || appMode === "verifica";
+}
+const SACHS_LABELS = { idiofoni: "Idiofoni", membranofoni: "Membranofoni", cordofoni: "Cordofoni", aerofoni: "Aerofoni" };
+const SACHS_INFO = {
+    idiofoni: "Idiofono: vibra il corpo stesso dello strumento",
+    membranofoni: "Membranofono: vibra una membrana tesa",
+    cordofoni: "Cordofono: vibrano delle corde tese",
+    aerofoni: "Aerofono: vibra una colonna d'aria"
+};
+
+const CREDITS_IMAGES = [
+    {
+        "name": "Violino",
+        "title": "Violin front.jpg",
+        "author": "A. Kniesel",
+        "license": "CC BY-SA 3.0",
+        "url": "https://commons.wikimedia.org/wiki/File:Violin_front.jpg"
+    },
+    {
+        "name": "Viola",
+        "title": "Bratsche-Museum für Kunst und Gewerbe Hamburg-2012.200.tif",
+        "author": "Museum für Kunst und Gewerbe Hamburg",
+        "license": "CC0",
+        "url": "https://commons.wikimedia.org/wiki/File:Bratsche-Museum_für_Kunst_und_Gewerbe_Hamburg-2012.200.tif"
+    },
+    {
+        "name": "Violoncello",
+        "title": "Violoncello-Museum für Kunst und Gewerbe Hamburg-1893.455.tif",
+        "author": "Museum für Kunst und Gewerbe Hamburg",
+        "license": "CC0",
+        "url": "https://commons.wikimedia.org/wiki/File:Violoncello-Museum_für_Kunst_und_Gewerbe_Hamburg-1893.455.tif"
+    },
+    {
+        "name": "Contrabbasso",
+        "title": "AGK bass1 full.jpg",
+        "author": "User:AndrewKepert",
+        "license": "CC BY-SA 3.0",
+        "url": "https://commons.wikimedia.org/wiki/File:AGK_bass1_full.jpg"
+    },
+    {
+        "name": "Arpa",
+        "title": "Salvi harp Diana.jpg",
+        "author": "N.S.M. s.p.a.",
+        "license": "CC BY-SA 4.0",
+        "url": "https://commons.wikimedia.org/wiki/File:Salvi_harp_Diana.jpg"
+    },
+    {
+        "name": "Pianoforte",
+        "title": "Steinway & Sons concert grand piano, model D-274, manufactured at Steinway's factory in Hamburg, Germany.png",
+        "author": "Steinway & Sons, 10 Rondenbarg, Hamburg D-22525, Germany, eu.steinway.com.Steinway & Sons, 1 Steinway Place, Long Island",
+        "license": "CC BY-SA 3.0",
+        "url": "https://commons.wikimedia.org/wiki/File:Steinway_&_Sons_concert_grand_piano,_model_D-274,_manufactured_at_Steinway's_factory_in_Hamburg,_Germany.png"
+    },
+    {
+        "name": "Flauto",
+        "title": "Yamaha Flute YFL-482H.tif",
+        "author": "Yamaha Corporation",
+        "license": "CC BY-SA 4.0",
+        "url": "https://commons.wikimedia.org/wiki/File:Yamaha_Flute_YFL-482H.tif"
+    },
+    {
+        "name": "Oboe",
+        "title": "Yamaha Oboe YOB-831.tif",
+        "author": "Yamaha Corporation",
+        "license": "CC BY-SA 4.0",
+        "url": "https://commons.wikimedia.org/wiki/File:Yamaha_Oboe_YOB-831.tif"
+    },
+    {
+        "name": "Clarinetto",
+        "title": "Yamaha Clarinet YCL-457II-22.png",
+        "author": "Yamaha Corporation",
+        "license": "CC BY-SA 4.0",
+        "url": "https://commons.wikimedia.org/wiki/File:Yamaha_Clarinet_YCL-457II-22.png"
+    },
+    {
+        "name": "Sassofono",
+        "title": "Yamaha Saxophone YAS-62.tif",
+        "author": "Yamaha Corporation",
+        "license": "CC BY-SA 4.0",
+        "url": "https://commons.wikimedia.org/wiki/File:Yamaha_Saxophone_YAS-62.tif"
+    },
+    {
+        "name": "Fagotto",
+        "title": "Yamaha Bassoon YFG-812 II.tif",
+        "author": "Yamaha Corporation",
+        "license": "CC BY-SA 4.0",
+        "url": "https://commons.wikimedia.org/wiki/File:Yamaha_Bassoon_YFG-812_II.tif"
+    },
+    {
+        "name": "Corno",
+        "title": "Yamaha Horn YHR-667V.png",
+        "author": "Yamaha Corporation",
+        "license": "CC BY-SA 4.0",
+        "url": "https://commons.wikimedia.org/wiki/File:Yamaha_Horn_YHR-667V.png"
+    },
+    {
+        "name": "Tromba",
+        "title": "Yamaha Trumpet YTR-8335LA.tif",
+        "author": "Yamaha Corporation",
+        "license": "CC BY-SA 4.0",
+        "url": "https://commons.wikimedia.org/wiki/File:Yamaha_Trumpet_YTR-8335LA.tif"
+    },
+    {
+        "name": "Trombone",
+        "title": "Yamaha Tenor trombone YSL-882OR.tif",
+        "author": "Yamaha Corporation",
+        "license": "CC BY-SA 4.0",
+        "url": "https://commons.wikimedia.org/wiki/File:Yamaha_Tenor_trombone_YSL-882OR.tif"
+    },
+    {
+        "name": "Tuba",
+        "title": "Yamaha Bass tuba YFB-822.tif",
+        "author": "Yamaha Corporation",
+        "license": "CC BY-SA 4.0",
+        "url": "https://commons.wikimedia.org/wiki/File:Yamaha_Bass_tuba_YFB-822.tif"
+    },
+    {
+        "name": "Timpani",
+        "title": "HardtkePauken.jpg",
+        "author": "Guido Rückel",
+        "license": "CC BY-SA 3.0",
+        "url": "https://commons.wikimedia.org/wiki/File:HardtkePauken.jpg"
+    },
+    {
+        "name": "Rullante",
+        "title": "Werbel stalowy MPSST-0554 10x5.5\" firmy Mapex.jpg",
+        "author": "http://muzyczny.pl",
+        "license": "CC BY-SA 4.0",
+        "url": "https://commons.wikimedia.org/wiki/File:Werbel_stalowy_MPSST-0554_10x5.5\"_firmy_Mapex.jpg"
+    },
+    {
+        "name": "Piatti",
+        "title": "Clash cymbals.jpg",
+        "author": "Andrewa",
+        "license": "CC BY-SA 3.0",
+        "url": "https://commons.wikimedia.org/wiki/File:Clash_cymbals.jpg"
+    },
+    {
+        "name": "Xilofono",
+        "title": "C 39.jpg",
+        "author": "Gramorimba",
+        "license": "CC BY-SA 4.0",
+        "url": "https://commons.wikimedia.org/wiki/File:C_39.jpg"
+    },
+    {
+        "name": "Glockenspiel",
+        "title": "Glockenspiel-malletech.jpg",
+        "author": "flamurai",
+        "license": "Public domain",
+        "url": "https://commons.wikimedia.org/wiki/File:Glockenspiel-malletech.jpg"
+    },
+    {
+        "name": "Triangolo",
+        "title": "F5 Triangel.tif",
+        "author": "Sofi Sykfont",
+        "license": "CC0",
+        "url": "https://commons.wikimedia.org/wiki/File:F5_Triangel.tif"
+    }
+];
+
+const FAMILY_ORDER = ["archi", "legni", "ottoni", "percussioni", "arpa", "tastiere"];
+const FAMILY_LABELS = { archi: "Archi", legni: "Legni", ottoni: "Ottoni", percussioni: "Percussioni", arpa: "Strumento a corde pizzicate", tastiere: "Strumento a tastiera" };
+const FAMILY_TEXT_COLORS = {
+    archi: "var(--archi-dark)", legni: "var(--legni-dark)",
+    ottoni: "var(--ottoni-dark)", percussioni: "var(--percussioni-dark)",
+    arpa: "#9d174d", tastiere: "#1e3a8a"
+};
+
+// gruppi selezionabili nella verifica
+const VERIFICA_GROUPS = {
+    a: ["archi", "legni"],
+    b: ["ottoni", "percussioni"],
+    all: ["archi", "legni", "ottoni", "percussioni", "arpa", "tastiere"]
+};
+
+/* =========================================================
+   STATO
+========================================================= */
+
+let availableInstruments = []; // strumenti con almeno un file audio trovato
+let activeInstruments = [];    // quelli usati nella partita in corso (in ordine di introduzione)
+let totalLevels = 1;
+
+let appMode = "training";
+let level = 1;
+let total = 0;
+let correct = 0;
+let errors = 0;
+let streak = 0;
+let record = 0;
+let answering = false;
+let finished = false;
+let currentQuestion = null;
+let completedLevels = [];
+let levelErrorCounts = {};
+let levelCompletionCounts = {};
+
+let loopActive = false;
+let loopStart = 1;
+let loopEnd = 1;
+
+let levelSequence = [];
+let levelIndex = 0;
+let unlockedIds = [];
+
+let questionsShownCount = 0;
+let replayCount = 0;
+const clipMode = "short"; // si ascoltano i primi secondi del passaggio
+let lastClipByInstrument = {};
+
+let viewMode = "ascolta";         // "ascolta": si sente il passaggio | "osserva": si vede lo strumento
+let sachsMode = false;            // chiedere anche la classe Sachs-Hornbostel
+let sectionMode = false;          // chiedere anche la sezione dell'orchestra
+let extraSteps = [];              // es. ["section", "sachs"]
+let questionStage = "instrument"; // "instrument" oppure il nome del passaggio in corso
+let stepIndex = -1;
+let sachsErrors = 0;
+let sectionErrors = 0;
+
+/* =========================================================
+   ELEMENTI
+========================================================= */
+
+const $ = id => document.getElementById(id);
+
+const homeScreen = $("homeScreen");
+const gameContainer = $("gameContainer");
+const trainingButton = $("trainingButton");
+const trainingWatchButton = $("trainingWatchButton");
+const practiceWatchButton = $("practiceWatchButton");
+const verificaWatchButton = $("verificaWatchButton");
+const questionImg = $("questionImg");
+const verificaButton = $("verificaButton");
+const soundStatus = $("soundStatus");
+const siteHomeButton = $("siteHomeButton");
+
+const totalEl = $("total");
+const correctEl = $("correct");
+const errorsEl = $("errors");
+const streakEl = $("streak");
+const recordEl = $("record");
+const correctBox = $("correctBox");
+const errorsBox = $("errorsBox");
+const levelBox = $("levelBox");
+const levelNumber = $("levelNumber");
+const progressFill = $("progressFill");
+const levelInfo = $("levelInfo");
+const timerDisplay = $("timerDisplay");
+
+const listenInner = $("listenInner");
+const playButton = $("playButton");
+const eq = $("eq");
+const listenCaption = $("listenCaption");
+const reveal = $("reveal");
+const revealName = $("revealName");
+const revealFamily = $("revealFamily");
+const revealImg = $("revealImg");
+const revealSachs = $("revealSachs");
+const revealReplay = $("revealReplay");
+const revealOther = $("revealOther");
+const revealOrchestraNote = $("revealOrchestraNote");
+const exploreButton = $("exploreButton");
+const exploreScreen = $("exploreScreen");
+const orchestraMap = $("orchestraMap");
+const stepError = $("stepError");
+const revealNext = $("revealNext");
+const sachsAnswersBox = $("sachsAnswers");
+const sachsToggle = $("sachsToggle");
+const sectionToggle = $("sectionToggle");
+const practiceButton = $("practiceButton");
+const sachsQuestion = $("sachsQuestion");
+const levelTitle = $("levelTitle");
+const finalLevelLabel = $("finalLevelLabel");
+const finalSectionBox = $("finalSectionBox");
+const finalSection = $("finalSection");
+const gameSubtitle = $("gameSubtitle");
+const finalSachsBox = $("finalSachsBox");
+const finalSachs = $("finalSachs");
+const creditsButton = $("creditsButton");
+const creditsOverlay = $("creditsOverlay");
+const creditsList = $("creditsList");
+const closeCredits = $("closeCredits");
+const confettiLayer = $("confettiLayer");
+const answersBox = $("answers");
+const familyLegend = $("familyLegend");
+
+const finishButton = $("finishButton");
+const restartButton = $("restartButton");
+const homeMenuButtons = document.querySelectorAll(".home-menu-button");
+const volumeSlider = $("volumeSlider");
+const trophyButton = $("trophyButton");
+const trophyPanel = $("trophyPanel");
+const trophyList = $("trophyList");
+const trophyLoopControls = $("trophyLoopControls");
+const loopStartSelect = $("loopStartSelect");
+const loopEndSelect = $("loopEndSelect");
+const loopToggleButton = $("loopToggleButton");
+
+const confirmOverlay = $("confirmOverlay");
+const confirmFinishTitle = $("confirmFinishTitle");
+const confirmFinishText = $("confirmFinishText");
+const finalUnansweredBox = $("finalUnansweredBox");
+const finalUnanswered = $("finalUnanswered");
+const cancelFinish = $("cancelFinish");
+const confirmFinish = $("confirmFinish");
+const finalHomeConfirmOverlay = $("finalHomeConfirmOverlay");
+const cancelFinalHome = $("cancelFinalHome");
+const confirmFinalHome = $("confirmFinalHome");
+const gameOver = $("gameOver");
+const resultTitle = $("resultTitle");
+const resultSubtitle = $("resultSubtitle");
+const finalLevel = $("finalLevel");
+const finalAccuracy = $("finalAccuracy");
+const finalCorrect = $("finalCorrect");
+const finalErrors = $("finalErrors");
+const finalTime = $("finalTime");
+const finalReplays = $("finalReplays");
+const finalGradeBox = $("finalGradeBox");
+const finalGrade = $("finalGrade");
+const playAgainButton = $("playAgainButton");
+
+/* =========================================================
+   RICERCA DEI FILE AUDIO
+========================================================= */
+
+function clipExists(url) {
+    return new Promise(resolve => {
+        const probe = new Audio();
+        let settled = false;
+        const finish = ok => {
+            if (settled) return;
+            settled = true;
+            probe.removeAttribute("src");
+            resolve(ok);
+        };
+        probe.preload = "metadata";
+        probe.addEventListener("loadedmetadata", () => finish(true));
+        probe.addEventListener("error", () => finish(false));
+        setTimeout(() => finish(false), 6000);
+        probe.src = url;
+    });
+}
+
+async function discoverClips(instrument) {
+    const clips = [];
+    for (let i = 1; i <= MAX_CLIPS_PER_INSTRUMENT; i++) {
+        const url = AUDIO_FOLDER + "/" + instrument.id + "/" + i + ".mp3";
+        if (await clipExists(url)) {
+            clips.push(url);
+        } else {
+            break;
+        }
+    }
+    return clips;
+}
+
+async function loadSounds() {
+    const results = await Promise.all(INSTRUMENTS.map(discoverClips));
+    availableInstruments = [];
+    const missing = [];
+    INSTRUMENTS.forEach((inst, i) => {
+        if (results[i].length > 0) {
+            availableInstruments.push({ ...inst, clips: results[i] });
+        } else {
+            missing.push(inst);
+        }
+    });
+    renderSoundStatus(missing);
+}
+
+function renderSoundStatus(missing) {
+    const found = availableInstruments.length;
+    const clipCount = availableInstruments.reduce((sum, inst) => sum + inst.clips.length, 0);
+    const enough = found >= 3;
+
+    trainingButton.disabled = !enough;
+    [trainingWatchButton, practiceWatchButton, verificaWatchButton].forEach(b => { b.disabled = !enough; });
+    exploreButton.disabled = found === 0;
+    practiceButton.disabled = !enough;
+    verificaButton.disabled = !enough;
+
+    if (found === INSTRUMENTS.length) {
+        soundStatus.className = "sound-status ok";
+        soundStatus.innerHTML = "🎧 " + found + " strumenti pronti, " + clipCount + " passaggi da ascoltare.";
+    } else if (enough) {
+        soundStatus.className = "sound-status warn";
+        soundStatus.innerHTML =
+            "🎧 " + found + " strumenti pronti su " + INSTRUMENTS.length + ". Gli altri vengono saltati." +
+            "<div class=\"missing\">Senza suoni: " + missing.map(m => m.name).join(", ") + ".</div>";
+    } else {
+        soundStatus.className = "sound-status warn";
+        soundStatus.innerHTML =
+            "⚠️ Servono i suoni di almeno 3 strumenti per giocare (trovati: " + found + ")." +
+            "<div class=\"missing\">Metti i file nella cartella <code>" + AUDIO_FOLDER + "</code> accanto a questa pagina, " +
+            "una sottocartella per strumento con i file numerati: <code>" + AUDIO_FOLDER + "/violino/1.mp3</code>, " +
+            "<code>" + AUDIO_FOLDER + "/violino/2.mp3</code>…</div>";
+    }
+
+}
+
+function instrumentsForFamilies(families) {
+    return availableInstruments.filter(inst => families.includes(inst.family));
+}
+
+/* =========================================================
+   AUDIO: effetti sonori (WebAudio) e riproduzione dei passaggi
+========================================================= */
+
+let audioContext = null;
+let masterGain = null;
+let masterVolume = 0.75;
+
+function getAudioContext() {
+    if (!audioContext) {
+        audioContext = new (window.AudioContext || window.webkitAudioContext)();
+        masterGain = audioContext.createGain();
+        masterGain.gain.value = masterVolume;
+        masterGain.connect(audioContext.destination);
+    }
+    if (audioContext.state === "suspended") audioContext.resume();
+    return audioContext;
+}
+
+function tone(freq, duration, type, delay, peak) {
+    const ctx = getAudioContext();
+    const osc = ctx.createOscillator();
+    const gain = ctx.createGain();
+    osc.type = type || "sine";
+    osc.frequency.value = freq;
+    const startTime = ctx.currentTime + (delay || 0);
+    gain.gain.setValueAtTime(0.0001, startTime);
+    gain.gain.exponentialRampToValueAtTime(peak || 0.35, startTime + 0.01);
+    gain.gain.exponentialRampToValueAtTime(0.0001, startTime + duration);
+    osc.connect(gain);
+    gain.connect(masterGain);
+    osc.start(startTime);
+    osc.stop(startTime + duration + 0.05);
+}
+
+function playClickSound() { tone(520, 0.08, "triangle", 0); }
+function playWrongSound() { tone(180, 0.22, "sawtooth", 0, 0.2); }
+function playCorrectSound() { tone(880, 0.12, "sine", 0); tone(1318.5, 0.22, "sine", 0.08); }
+function playLevelUpSound() { [523, 659, 784, 1047].forEach((f, i) => tone(f, 0.18, "sine", i * 0.09)); }
+
+function playVictorySound() {
+    const run = [523.25, 659.25, 783.99, 1046.50, 1318.51, 1567.98, 2093.00];
+    run.forEach((f, i) => tone(f, 0.32, "triangle", i * 0.1));
+    const chordStart = run.length * 0.1 + 0.06;
+    [1046.50, 1318.51, 1567.98, 2093.00].forEach(f => {
+        tone(f, 1.3, "sine", chordStart);
+        tone(f * 2, 0.7, "sine", chordStart);
+    });
+}
+
+let currentAudio = null;
+let clipStopTimer = null;
+let fadeTimer = null;
+
+function setPlayingUI(on) {
+    eq.classList.toggle("on", on);
+    playButton.classList.toggle("playing", on);
+    listenCaption.textContent = viewMode === "osserva" ? "Che strumento è?"
+        : (on ? "In ascolto…" : "Premi ▶ per ascoltare di nuovo");
+}
+
+function stopClip() {
+    clearTimeout(clipStopTimer);
+    clearInterval(fadeTimer);
+    if (currentAudio) {
+        currentAudio.pause();
+        currentAudio.onended = null;
+        currentAudio = null;
+    }
+    setPlayingUI(false);
+}
+
+function fadeOutAndStop(audio) {
+    clearInterval(fadeTimer);
+    const steps = 12;
+    let step = 0;
+    const startVolume = audio.volume;
+    fadeTimer = setInterval(() => {
+        step++;
+        audio.volume = Math.max(0, startVolume * (1 - step / steps));
+        if (step >= steps) {
+            clearInterval(fadeTimer);
+            if (audio === currentAudio) stopClip();
+            else audio.pause();
+        }
+    }, 40);
+}
+
+function playClip(url, full) {
+    stopClip();
+    const audio = new Audio(url);
+    audio.volume = masterVolume;
+    currentAudio = audio;
+    audio.onended = () => { if (audio === currentAudio) setPlayingUI(false); };
+    audio.play().then(() => {
+        if (audio !== currentAudio) return;
+        setPlayingUI(true);
+        if (clipMode === "short" && !full) {
+            clipStopTimer = setTimeout(() => {
+                if (audio === currentAudio) fadeOutAndStop(audio);
+            }, SHORT_CLIP_SECONDS * 1000);
+        }
+    }).catch(() => {
+        if (audio === currentAudio) setPlayingUI(false);
+    });
+}
+
+/* =========================================================
+   LIVELLI
+
+   Livello 1: i primi tre strumenti dell'elenco. Ogni livello
+   successivo ne aggiunge uno. In ogni livello ogni strumento
+   sbloccato compare una volta, in ordine casuale, con un
+   passaggio scelto a caso tra quelli disponibili.
+========================================================= */
+
+function computeTotalLevels() {
+    if (isQuizMode()) return 1;
+    return Math.max(1, activeInstruments.length - 2);
+}
+
+function unlockedForLevel(lv) {
+    if (isQuizMode()) return activeInstruments.slice();
+    return activeInstruments.slice(0, Math.min(activeInstruments.length, lv + 2));
+}
+
+function shuffle(array) {
+    const copy = [...array];
+    for (let i = copy.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [copy[i], copy[j]] = [copy[j], copy[i]];
+    }
+    return copy;
+}
+
+function pickClip(inst) {
+    const clips = inst.clips;
+    if (clips.length === 1) return clips[0];
+    let choice;
+    do {
+        choice = clips[Math.floor(Math.random() * clips.length)];
+    } while (choice === lastClipByInstrument[inst.id]);
+    lastClipByInstrument[inst.id] = choice;
+    return choice;
+}
+
+/*
+   Allenamento: 30 domande. Ogni strumento esce due volte (14 x 2 = 28)
+   e due strumenti a caso una terza volta (28 + 2 = 30). Lo stesso
+   strumento non esce mai due volte di fila.
+*/
+function buildPracticeSequence() {
+    const insts = activeInstruments;
+    const pool = [];
+    const totalQuestions = QUESTIONS_PER_INSTRUMENT * insts.length;
+    const perInst = QUESTIONS_PER_INSTRUMENT;
+    insts.forEach(inst => { for (let i = 0; i < perInst; i++) pool.push(inst); });
+    shuffle(insts).slice(0, totalQuestions - pool.length).forEach(inst => pool.push(inst));
+    let seq = shuffle(pool);
+    for (let tries = 0; tries < 5000; tries++) {
+        if (seq.every((inst, i) => i === 0 || inst.id !== seq[i - 1].id)) break;
+        seq = shuffle(pool);
+    }
+    return seq.map(inst => ({ inst, clip: pickClip(inst) }));
+}
+
+function generateLevelSequence() {
+    if (isQuizMode()) {
+        unlockedIds = activeInstruments.map(i => i.id);
+        levelSequence = buildPracticeSequence();
+        levelIndex = 0;
+        return;
+    }
+    const unlocked = unlockedForLevel(level);
+    unlockedIds = unlocked.map(i => i.id);
+    levelSequence = shuffle(unlocked).map(inst => ({ inst, clip: pickClip(inst) }));
+    levelIndex = 0;
+}
+
+/*
+   I pulsanti sono sempre ordinati per famiglia (archi, legni,
+   ottoni, percussioni), come le sezioni in partitura: così lo
+   studente impara anche a collocare ogni strumento.
+*/
+function buildAnswerButtons() {
+    answersBox.innerHTML = "";
+    // con la domanda sulle sezioni l'ordine per sezione darebbe la risposta: ordine alfabetico
+    const ordered = sectionMode
+        ? [...activeInstruments].sort((a, b) => a.name.localeCompare(b.name, "it"))
+        : [...activeInstruments].sort((a, b) => {
+        const fa = FAMILY_ORDER.indexOf(a.family);
+        const fb = FAMILY_ORDER.indexOf(b.family);
+        if (fa !== fb) return fa - fb;
+        return INSTRUMENTS.findIndex(i => i.id === a.id) - INSTRUMENTS.findIndex(i => i.id === b.id);
+    });
+    ordered.forEach(inst => {
+        const btn = document.createElement("button");
+        btn.className = "answer neutral locked";
+        btn.dataset.id = inst.id;
+        btn.textContent = inst.name;
+        btn.addEventListener("click", () => {
+            if (btn.classList.contains("locked")) return;
+            checkAnswer(inst.id, btn);
+        });
+        answersBox.appendChild(btn);
+    });
+}
+
+function renderAnswerButtons() {
+    answersBox.querySelectorAll(".answer").forEach(btn => {
+        btn.classList.toggle("locked", !unlockedIds.includes(btn.dataset.id));
+    });
+    const familiesShown = new Set(unlockedForLevel(level).map(i => i.family));
+    familyLegend.querySelectorAll("span").forEach(span => {
+        span.classList.toggle("hidden", !familiesShown.has(span.dataset.family));
+    });
+}
+
+function questionWasShown() {
+    questionsShownCount++;
+}
+
+/* la domanda si presenta col suono (Ascolta) o con la foto (Osserva) */
+function presentQuestion() {
+    if (viewMode === "osserva") showQuestionImage();
+    else playClip(currentQuestion.clip);
+}
+
+function sizeQuestionImage() {
+    if (!questionImg.naturalWidth) return;
+    const card = document.querySelector(".listen-card");
+    const s = Math.min(0.75, (card.clientWidth - 40) / IMAGE_MAX_WIDTH, 262 / IMAGE_MAX_HEIGHT);
+    questionImg.style.width = Math.round(questionImg.naturalWidth * s) + "px";
+}
+
+function showQuestionImage() {
+    stopClip();
+    questionImg.src = imageUrl(currentQuestion.inst);
+    if (questionImg.complete) sizeQuestionImage();
+    listenCaption.textContent = "Che strumento è?";
+}
+questionImg.addEventListener("load", sizeQuestionImage);
+window.addEventListener("resize", sizeQuestionImage);
+
+function loadCurrentQuestion() {
+    questionStage = "instrument";
+    hideSachsStep();
+    currentQuestion = levelSequence[levelIndex];
+    questionWasShown();
+    presentQuestion();
+    answering = true;
+}
+
+function startLevel(animated) {
+    questionStage = "instrument";
+    hideSachsStep();
+    generateLevelSequence();
+    renderAnswerButtons();
+    currentQuestion = levelSequence[levelIndex];
+
+    if (animated) {
+        stopClip();
+        animateLevelTransition(() => {
+            questionWasShown();
+            presentQuestion();
+            answering = true;
+        });
+    } else {
+        questionWasShown();
+        presentQuestion();
+        answering = true;
+    }
+}
+
+/* =========================================================
+   ANIMAZIONI
+========================================================= */
+
+const confettiColors = ["#f59e0b", "#22c55e", "#3b82f6", "#ec4899", "#a855f7", "#facc15", "#06b6d4"];
+
+function spawnConfetti() {
+    for (let i = 0; i < 26; i++) {
+        const piece = document.createElement("span");
+        piece.className = "confetti-piece";
+        const angle = Math.random() * Math.PI * 2;
+        const distance = 60 + Math.random() * 90;
+        piece.style.setProperty("--dx", Math.cos(angle) * distance + "px");
+        piece.style.setProperty("--dy", Math.sin(angle) * distance - 20 + "px");
+        piece.style.setProperty("--rot", (Math.random() * 480 - 240) + "deg");
+        piece.style.background = confettiColors[i % confettiColors.length];
+        piece.style.width = (5 + Math.random() * 5) + "px";
+        piece.style.height = piece.style.width;
+        piece.style.animationDelay = (Math.random() * 0.08) + "s";
+        confettiLayer.appendChild(piece);
+        setTimeout(() => piece.remove(), 1100);
+    }
+}
+
+function animateLevelTransition(onDone) {
+    listenInner.classList.add("slide-out");
+    spawnConfetti();
+    setTimeout(() => {
+        listenInner.classList.remove("slide-out");
+        listenInner.classList.add("slide-in-start");
+        requestAnimationFrame(() => {
+            requestAnimationFrame(() => {
+                listenInner.classList.remove("slide-in-start");
+                listenInner.classList.add("slide-in");
+                setTimeout(() => {
+                    listenInner.classList.remove("slide-in");
+                    if (onDone) onDone();
+                }, 350);
+            });
+        });
+    }, 300);
+}
+
+function imageUrl(inst) {
+    return IMAGE_FOLDER + "/" + inst.id + ".webp";
+}
+
+/*
+   Le immagini sono tutte alla stessa scala (il contrabbasso e' il piu' alto).
+   Si ingrandiscono tutte dello stesso fattore, scelto in base allo schermo:
+   cosi' restano visibili le differenze di dimensione tra gli strumenti.
+*/
+const IMAGE_MAX_HEIGHT = 464;  // contrabbasso
+const IMAGE_MAX_WIDTH = 476;   // pianoforte
+
+function imageScale() {
+    const cardInner = Math.min(640, window.innerWidth - 32) - 44;
+    return Math.min(1.3, (window.innerHeight * 0.6) / IMAGE_MAX_HEIGHT, cardInner / IMAGE_MAX_WIDTH);
+}
+
+function sizeInstrumentImage() {
+    if (!revealImg.naturalWidth) return;
+    revealImg.style.width = Math.round(revealImg.naturalWidth * imageScale()) + "px";
+}
+revealImg.addEventListener("load", sizeInstrumentImage);
+window.addEventListener("resize", sizeInstrumentImage);
+
+function fillInstrumentCard(inst) {
+    revealImg.src = imageUrl(inst);
+    if (revealImg.complete) sizeInstrumentImage();
+    revealImg.alt = inst.name;
+    revealName.textContent = inst.name;
+    revealFamily.textContent = FAMILY_LABELS[inst.family];
+}
+
+/* scheda dopo la risposta giusta: nel tutorial resta aperta fino ad "Avanti",
+   nella verifica si chiude da sola */
+function showReveal(inst) {
+    reveal.classList.remove("explore");
+    revealNext.textContent = "Avanti ▶";
+    revealOrchestraNote.textContent = "";
+    hideStepError();
+    fillInstrumentCard(inst);
+    revealSachs.textContent = sachsMode ? (inst.sachsNote || SACHS_INFO[inst.sachs]) : "";
+    revealName.style.color = FAMILY_TEXT_COLORS[inst.family];
+    reveal.classList.remove("mode-step");
+    reveal.classList.add("mode-reveal");
+    // in Osserva la scheda resta aperta (con "Avanti") per lasciar ascoltare il passaggio
+    reveal.classList.toggle("auto", appMode !== "training" && viewMode !== "osserva");
+    reveal.classList.add("show");
+}
+
+/* passaggi successivi (sezione, classe): nella stessa scheda, sotto la foto */
+function showStep(inst, stepName) {
+    reveal.classList.remove("explore");
+    const step = STEPS[stepName];
+    $("cardFinish").textContent = finishButton.textContent;
+    hideStepError();
+    fillInstrumentCard(inst);
+    revealName.style.color = "#3f3520";   // colore neutro: non deve suggerire la sezione
+    sachsQuestion.textContent = step.question;
+    sachsAnswersBox.innerHTML = "";
+    step.order.forEach(value => {
+        const btn = document.createElement("button");
+        btn.className = "answer neutral";
+        btn.textContent = step.labels[value];
+        btn.addEventListener("click", () => checkStep(value, btn));
+        sachsAnswersBox.appendChild(btn);
+    });
+    reveal.classList.remove("mode-reveal", "auto");
+    reveal.classList.add("mode-step");
+    reveal.classList.add("show");
+}
+
+function showStepError(value) {
+    const e = STEP_EXPLANATIONS[value];
+    if (!e) return;
+    const label = (STEPS.section.labels[value] || STEPS.sachs.labels[value]).toUpperCase();
+    stepError.innerHTML = "No, " + e.art + " <strong>" + label + "</strong> " + e.text + ".";
+    stepError.classList.remove("show");
+    void stepError.offsetWidth;
+    stepError.classList.add("show");
+    clearTimeout(stepErrorTimer);
+    stepErrorTimer = setTimeout(hideStepError, STEP_ERROR_MS);
+}
+
+function hideStepError() {
+    clearTimeout(stepErrorTimer);
+    stepError.classList.remove("show");
+}
+
+function hideSachsStep() {
+    hideStepError();
+    reveal.classList.remove("show");
+}
+
+function preloadImages() {
+    INSTRUMENTS.forEach(inst => { const im = new Image(); im.src = imageUrl(inst); });
+}
+
+function hideReveal() {
+    reveal.classList.remove("show");
+}
+
+function animateStat(el, className) {
+    el.classList.remove(className);
+    void el.offsetWidth;
+    el.classList.add(className);
+}
+
+/* =========================================================
+   STATISTICHE E TROFEI
+========================================================= */
+
+function updateStats() {
+    totalEl.textContent = total;
+    correctEl.textContent = correct;
+    errorsEl.textContent = errors;
+    streakEl.textContent = streak;
+    recordEl.textContent = record;
+
+    const target = levelSequence.length || 1;
+    progressFill.style.width = Math.min(100, Math.round((levelIndex / target) * 100)) + "%";
+    if (isQuizMode()) {
+        levelTitle.textContent = (appMode === "verifica" ? "📝 Verifica" : "🎯 Allenamento") + (viewMode === "osserva" ? " · osserva" : " · ascolta");
+        levelNumber.textContent = levelIndex + " / " + target;
+        levelInfo.textContent = "domande completate";
+    } else {
+        levelTitle.textContent = "⭐ Livello" + (viewMode === "osserva" ? " · osserva" : "");
+        levelNumber.textContent = level + " / " + totalLevels;
+        levelInfo.textContent = levelIndex + " / " + target + " strumenti di questo livello";
+    }
+}
+
+function populateLoopSelects() {
+    const options = selected => {
+        let html = "";
+        for (let i = 1; i <= totalLevels; i++) {
+            html += "<option value=\"" + i + "\"" + (i === selected ? " selected" : "") + ">Livello " + i + "</option>";
+        }
+        return html;
+    };
+    loopStartSelect.innerHTML = options(loopStart);
+    loopEndSelect.innerHTML = options(loopEnd);
+}
+
+function renderTrophyList() {
+    trophyLoopControls.classList.toggle("visible", appMode === "training");
+    if (appMode === "training") {
+        populateLoopSelects();
+        loopToggleButton.textContent = loopActive ? "Disattiva" : "Attiva";
+        loopToggleButton.classList.toggle("active", loopActive);
+    }
+
+    trophyList.innerHTML = "";
+    for (let i = 1; i <= totalLevels; i++) {
+        const row = document.createElement("div");
+        const done = completedLevels.includes(i);
+        const attempted = levelErrorCounts[i] !== undefined || done || i === level;
+        const completions = levelCompletionCounts[i] || 0;
+        const inLoop = loopActive && i >= loopStart && i <= loopEnd;
+
+        row.className = "trophy-row" + (done ? " done" : "") + (inLoop ? " in-loop" : "");
+
+        // per ogni livello si indica lo strumento che introduce
+        const newInst = i === 1
+            ? unlockedForLevel(1).map(x => x.name).join(", ")
+            : "+ " + (activeInstruments[i + 1] ? activeInstruments[i + 1].name : "");
+
+        let errorsLabel = "";
+        if (attempted) {
+            const count = levelErrorCounts[i] || 0;
+            errorsLabel = count === 0 ? "0 errori" : count + (count === 1 ? " errore" : " errori");
+        }
+        const completionsLabel = completions > 0
+            ? "completato " + completions + (completions === 1 ? " volta" : " volte")
+            : "";
+        const details = [newInst, errorsLabel, completionsLabel].filter(Boolean).join(" · ");
+        const icon = inLoop ? "🔁" : (done ? "✅" : "🔒");
+
+        row.innerHTML =
+            "<div class=\"trophy-row-main\"><span>Livello " + i + "</span><span>" + icon + "</span></div>" +
+            "<div class=\"trophy-row-details\">" + details + "</div>";
+        trophyList.appendChild(row);
+    }
+}
+
+/* =========================================================
+   RISPOSTA
+========================================================= */
+
+const NEXT_QUESTION_DELAY = 1800; // verifica: quanto resta aperta la scheda dello strumento
+let advancePending = false;
+
+function registerCorrect() {
+    total++;
+    correct++;
+    streak++;
+    if (streak > record) record = streak;
+    playCorrectSound();
+    animateStat(correctBox, "bump");
+}
+
+function registerError(btnEl) {
+    total++;
+    errors++;
+    streak = 0;
+    levelErrorCounts[level] = (levelErrorCounts[level] || 0) + 1;
+    playWrongSound();
+    animateStat(errorsBox, "bump");
+    if (btnEl) animateStat(btnEl, "wrong-flash");
+    updateStats();
+}
+
+function checkAnswer(selectedId, btnEl) {
+    if (!answering || finished || questionStage !== "instrument") return;
+    const inst = currentQuestion.inst;
+
+    if (selectedId !== inst.id) {
+        registerError(btnEl);
+        return;
+    }
+
+    registerCorrect();
+    if (viewMode === "osserva") playClip(currentQuestion.clip);   // ora si ascolta lo strumento indovinato
+    else stopClip();
+    nextStepOrComplete(inst, 0);
+}
+
+/* domande che seguono lo strumento, per questo strumento */
+function stepsFor(inst) {
+    return extraSteps.filter(st => !(st === "section" && inst.noSection));
+}
+
+function nextStepOrComplete(inst, idx) {
+    const steps = stepsFor(inst);
+    if (idx < steps.length) {
+        stepIndex = idx;
+        questionStage = steps[idx];
+        showStep(inst, questionStage);
+        updateStats();
+        return;
+    }
+    completeQuestion(inst);
+}
+
+function checkStep(value, btnEl) {
+    if (!answering || finished || questionStage === "instrument") return;
+    const inst = currentQuestion.inst;
+
+    if (value !== STEPS[questionStage].answerOf(inst)) {
+        if (questionStage === "sachs") sachsErrors++;
+        if (questionStage === "section") sectionErrors++;
+        registerError(btnEl);
+        showStepError(value);
+        return;
+    }
+
+    registerCorrect();
+    nextStepOrComplete(inst, stepIndex + 1);
+}
+
+function completeQuestion(inst) {
+    answering = false;
+    questionStage = "instrument";
+    stepIndex = -1;
+    showReveal(inst);
+
+    levelIndex++;
+    updateStats();
+
+    advancePending = true;
+    if (appMode !== "training" && viewMode !== "osserva") setTimeout(goNext, NEXT_QUESTION_DELAY);
+}
+
+function goNext() {
+    if (!advancePending) return;
+    advancePending = false;
+    stopClip();
+            hideReveal();
+            if (finished) return;
+
+            if (levelIndex >= levelSequence.length) {
+                levelCompletionCounts[level] = (levelCompletionCounts[level] || 0) + 1;
+                if (!completedLevels.includes(level)) completedLevels.push(level);
+
+                if (appMode === "training" && loopActive && level === loopEnd) {
+                    level = loopStart;
+                    playLevelUpSound();
+                    animateStat(levelBox, "bump");
+                    startLevel(true);
+                    updateStats();
+                    return;
+                }
+
+                if (level >= totalLevels) {
+                    updateStats();
+                    playVictorySound();
+                    spawnConfetti();
+                    showFinalScreen();
+                    return;
+                }
+
+                level++;
+                playLevelUpSound();
+                animateStat(levelBox, "bump");
+                startLevel(true);
+                updateStats();
+                return;
+            }
+
+            loadCurrentQuestion();
+            updateStats();
+}
+
+revealNext.addEventListener("click", () => {
+    if (exploreInst) { closeExploreCard(); return; }
+    goNext();
+});
+revealReplay.addEventListener("click", () => {
+    if (exploreInst) { playExploreClip(); return; }
+    if (!currentQuestion || finished) return;
+    replayCount++;
+    playClip(currentQuestion.clip);
+});
+document.addEventListener("keydown", e => {
+    if (!advancePending || (appMode !== "training" && viewMode !== "osserva")) return;
+    if (e.key === "Enter" || e.key === " ") { e.preventDefault(); goNext(); }
+});
+
+playButton.addEventListener("click", () => {
+    if (!currentQuestion || finished) return;
+    replayCount++;
+    playClip(currentQuestion.clip);
+});
+
+/* =========================================================
+   TIMER E VOTO
+========================================================= */
+
+let timerInterval = null;
+let startTimestamp = null;
+
+function formatTime(sec) {
+    return Math.floor(sec / 60) + ":" + String(sec % 60).padStart(2, "0");
+}
+
+function updateTimerDisplay() {
+    if (!startTimestamp) return;
+    timerDisplay.textContent = "⏱ " + formatTime(Math.floor((Date.now() - startTimestamp) / 1000));
+}
+
+function startTimer() {
+    clearInterval(timerInterval);
+    startTimestamp = Date.now();
+    updateTimerDisplay();
+    timerInterval = setInterval(updateTimerDisplay, 500);
+}
+
+function stopTimer() {
+    clearInterval(timerInterval);
+    timerInterval = null;
+    return startTimestamp ? Math.floor((Date.now() - startTimestamp) / 1000) : 0;
+}
+
+/* voto da 4 a 10 con mezzi voti, lineare sull'accuratezza;
+   mostrato solo se sufficiente */
+function computeGrade() {
+    if (total === 0) return 4;
+    const raw = 4 + 6 * (correct / total);
+    return Math.round(Math.min(10, Math.max(4, raw)) * 2) / 2;
+}
+
+function formatGrade(g) {
+    return Number.isInteger(g) ? String(g) : g.toFixed(1).replace(".", ",");
+}
+
+/* =========================================================
+   FINE PARTITA
+========================================================= */
+
+/* risposte che mancano per completare la verifica (domande saltate e
+   passaggi ancora da fare nella domanda in corso) */
+function countUnanswered() {
+    // levelIndex = domande gia' completate; quelle da levelIndex in poi sono da fare
+    let missing = 0;
+    levelSequence.slice(levelIndex).forEach(q => { missing += 1 + stepsFor(q.inst).length; });
+    // nella domanda in corso, lo strumento (ed eventualmente qualche passaggio) e' gia' stato fatto
+    if (!advancePending && questionStage !== "instrument") missing -= stepIndex + 1;
+    return missing;
+}
+
+function showFinalScreen() {
+    if (finished) return;
+    hideReveal();
+    let unanswered = 0;
+    if (appMode === "verifica") {
+        unanswered = countUnanswered();
+        total += unanswered;
+        errors += unanswered;
+    }
+    finished = true;
+    answering = false;
+    advancePending = false;
+    stopClip();
+    hideReveal();
+    hideSachsStep();
+
+    const elapsed = stopTimer();
+    const accuracy = total > 0 ? Math.round((correct / total) * 100) : 0;
+    const grade = computeGrade();
+
+    resultSubtitle.textContent = "";
+    resultTitle.textContent = appMode === "verifica" ? "Verifica conclusa"
+        : appMode === "practice" ? "Allenamento concluso" : "Partita conclusa";
+    resultSubtitle.textContent = "Modalità " + (viewMode === "osserva" ? "Osserva" : "Ascolta") + ". Ecco il tuo riepilogo.";
+    if (isQuizMode()) {
+        finalLevelLabel.textContent = "Domande completate";
+        finalLevel.textContent = levelIndex + " / " + levelSequence.length;
+    } else {
+        finalLevelLabel.textContent = "Livello raggiunto";
+        finalLevel.textContent = level + " / " + totalLevels;
+    }
+    finalAccuracy.textContent = accuracy + "%";
+    finalCorrect.textContent = correct;
+    finalErrors.textContent = errors;
+    finalTime.textContent = formatTime(elapsed);
+    finalReplays.textContent = replayCount;
+    finalUnansweredBox.style.display = appMode === "verifica" ? "" : "none";
+    finalUnanswered.textContent = unanswered;
+
+    finalSachsBox.style.display = sachsMode ? "" : "none";
+    finalSachs.textContent = sachsErrors;
+    finalSectionBox.style.display = sectionMode ? "" : "none";
+    finalSection.textContent = sectionErrors;
+
+    // il voto c'e' solo nella verifica (e, come prima, solo se sufficiente)
+    if (appMode === "verifica" && grade >= 6) {
+        finalGrade.textContent = formatGrade(grade);
+        finalGradeBox.style.display = "";
+    } else {
+        finalGradeBox.style.display = "none";
+    }
+
+    homeMenuButtons.forEach(btn => btn.classList.toggle("visible", appMode !== "verifica"));
+    playAgainButton.textContent = appMode === "verifica" ? "🏠 Vai al menu" : "🔄 Gioca ancora";
+
+    gameOver.classList.add("show");
+}
+
+function newGame() {
+    finished = false;
+    total = 0;
+    correct = 0;
+    errors = 0;
+    streak = 0;
+    record = 0;
+    level = 1;
+    completedLevels = [];
+    levelErrorCounts = {};
+    questionsShownCount = 0;
+    replayCount = 0;
+    sachsErrors = 0;
+    sectionErrors = 0;
+    stepIndex = -1;
+    advancePending = false;
+    questionStage = "instrument";
+    lastClipByInstrument = {};
+    totalLevels = computeTotalLevels();
+    if (loopEnd > totalLevels) loopEnd = totalLevels;
+    if (loopStart > loopEnd) loopStart = loopEnd;
+    hideReveal();
+    hideSachsStep();
+    gameOver.classList.remove("show");
+    buildAnswerButtons();
+    const asks = [];
+    if (sectionMode) asks.push("la sezione");
+    if (sachsMode) asks.push("la classe Sachs-Hornbostel");
+    gameContainer.classList.toggle("observe", viewMode === "osserva");
+    if (viewMode === "osserva") {
+        gameSubtitle.textContent = "Guarda lo strumento e scegli il suo nome" +
+            (asks.length ? "; poi ascoltalo e indica " + asks.join(" e ") + "." : ", poi ascoltalo.");
+    } else {
+        gameSubtitle.textContent = asks.length
+            ? "Ascolta il passaggio, scegli lo strumento e poi " + asks.join(" e ") + "."
+            : "Ascolta il passaggio e scegli lo strumento che lo suona.";
+    }
+    trophyButton.style.display = isQuizMode() ? "none" : "";
+    startTimer();
+    startLevel(false);
+    updateStats();
+}
+
+finishButton.addEventListener("click", () => confirmOverlay.classList.add("show"));
+$("cardFinish").addEventListener("click", () => {
+    $("cardFinish").textContent = finishButton.textContent;
+    confirmOverlay.classList.add("show");
+});
+cancelFinish.addEventListener("click", () => confirmOverlay.classList.remove("show"));
+confirmFinish.addEventListener("click", () => {
+    confirmOverlay.classList.remove("show");
+    showFinalScreen();
+});
+confirmOverlay.addEventListener("click", e => {
+    if (e.target === confirmOverlay) confirmOverlay.classList.remove("show");
+});
+restartButton.addEventListener("click", newGame);
+
+playAgainButton.addEventListener("click", () => {
+    if (appMode === "verifica") finalHomeConfirmOverlay.classList.add("show");
+    else newGame();
+});
+cancelFinalHome.addEventListener("click", () => finalHomeConfirmOverlay.classList.remove("show"));
+confirmFinalHome.addEventListener("click", () => {
+    finalHomeConfirmOverlay.classList.remove("show");
+    goHome();
+});
+finalHomeConfirmOverlay.addEventListener("click", e => {
+    if (e.target === finalHomeConfirmOverlay) finalHomeConfirmOverlay.classList.remove("show");
+});
+
+/* =========================================================
+   VOLUME, OPZIONI, TROFEI
+========================================================= */
+
+volumeSlider.addEventListener("input", () => {
+    masterVolume = volumeSlider.value / 100;
+    if (masterGain) masterGain.gain.value = masterVolume;
+    if (currentAudio) currentAudio.volume = masterVolume;
+});
+
+function bumpButton(btn) { animateStat(btn, "bump"); }
+
+trophyButton.addEventListener("click", e => {
+    e.stopPropagation();
+    playClickSound();
+    bumpButton(trophyButton);
+    if (!trophyPanel.classList.contains("show")) renderTrophyList();
+    trophyPanel.classList.toggle("show");
+});
+
+loopStartSelect.addEventListener("click", e => e.stopPropagation());
+loopEndSelect.addEventListener("click", e => e.stopPropagation());
+
+loopStartSelect.addEventListener("change", () => {
+    loopStart = parseInt(loopStartSelect.value, 10);
+    if (loopStart > loopEnd) loopEnd = loopStart;
+    if (loopActive) applyLoopJump();
+    renderTrophyList();
+});
+
+loopEndSelect.addEventListener("change", () => {
+    loopEnd = parseInt(loopEndSelect.value, 10);
+    if (loopEnd < loopStart) loopStart = loopEnd;
+    if (loopActive) applyLoopJump();
+    renderTrophyList();
+});
+
+function applyLoopJump() {
+    if (level === loopStart) return;
+    level = loopStart;
+    playLevelUpSound();
+    animateStat(levelBox, "bump");
+    startLevel(true);
+    updateStats();
+}
+
+loopToggleButton.addEventListener("click", e => {
+    e.stopPropagation();
+    playClickSound();
+    bumpButton(loopToggleButton);
+    loopActive = !loopActive;
+    if (loopActive) applyLoopJump();
+    renderTrophyList();
+});
+
+document.addEventListener("click", e => {
+    if (!trophyPanel.contains(e.target) && e.target !== trophyButton) trophyPanel.classList.remove("show");
+});
+
+/* =========================================================
+   NAVIGAZIONE
+========================================================= */
+
+function showScreen(name) {
+    homeScreen.style.display = name === "home" ? "" : "none";
+    exploreScreen.style.display = name === "explore" ? "" : "none";
+    gameContainer.style.display = name === "game" ? "" : "none";
+}
+
+function goHome() {
+    clearInterval(timerInterval);
+    stopClip();
+    advancePending = false;
+    hideReveal();
+    finished = true;
+    answering = false;
+    gameOver.classList.remove("show");
+    confirmOverlay.classList.remove("show");
+    trophyPanel.classList.remove("show");
+    showScreen("home");
+}
+
+function readOptions() {
+    sectionMode = sectionToggle.checked;
+    sachsMode = sachsToggle.checked;
+    extraSteps = [];
+    if (sectionMode) extraSteps.push("section");
+    if (sachsMode) extraSteps.push("sachs");
+}
+
+function startTraining(view) {
+    viewMode = view === "osserva" ? "osserva" : "ascolta";
+    getAudioContext();
+    appMode = "training";
+    readOptions();
+    activeInstruments = instrumentsForFamilies(VERIFICA_GROUPS.all);
+    loopActive = false;
+    loopStart = 1;
+    loopEnd = 1;
+    homeMenuButtons.forEach(btn => btn.classList.add("visible"));
+    restartButton.style.display = "";
+    finishButton.textContent = "Termina partita";
+    confirmFinishTitle.textContent = "Terminare la partita?";
+    confirmFinishText.textContent = "Le statistiche attuali verranno mostrate nel riepilogo finale.";
+    showScreen("game");
+    newGame();
+}
+
+function startPractice(view) {
+    viewMode = view === "osserva" ? "osserva" : "ascolta";
+    getAudioContext();
+    appMode = "practice";
+    readOptions();
+    activeInstruments = instrumentsForFamilies(VERIFICA_GROUPS.all);
+    loopActive = false;
+    homeMenuButtons.forEach(btn => btn.classList.add("visible"));
+    restartButton.style.display = "";
+    finishButton.textContent = "Termina allenamento";
+    confirmFinishTitle.textContent = "Terminare l'allenamento?";
+    confirmFinishText.textContent = "Le statistiche attuali verranno mostrate nel riepilogo finale.";
+    showScreen("game");
+    newGame();
+}
+
+function startVerifica(view) {
+    viewMode = view === "osserva" ? "osserva" : "ascolta";
+    getAudioContext();
+    appMode = "verifica";
+    readOptions();
+    activeInstruments = instrumentsForFamilies(VERIFICA_GROUPS.all);
+    loopActive = false;
+    homeMenuButtons.forEach(btn => btn.classList.remove("visible"));
+    restartButton.style.display = "none";
+    finishButton.textContent = "Fine verifica";
+    confirmFinishTitle.textContent = "Terminare la verifica?";
+    confirmFinishText.textContent = "Le domande a cui non hai ancora risposto verranno contate come errori.";
+    showScreen("game");
+    newGame();
+}
+
+/* =========================================================
+   ASCOLTALI TUTTI! - PIANTA DELL'ORCHESTRA
+   Ogni zona: [strumento, raggio interno, raggio esterno, angolo da, angolo a]
+   (angoli in gradi: 180 = sinistra del direttore, 0 = destra)
+========================================================= */
+const ORCH_CX = 500, ORCH_CY = 600;
+/*
+   Disposizione "all'americana", la piu' diffusa oggi (vista dal direttore):
+   - archi davanti: violini primi a sinistra, violini secondi dietro di loro,
+     viole e violoncelli a destra, contrabbassi dietro i violoncelli, all'estrema destra;
+   - legni al centro su due file: flauti e oboi davanti, clarinetti (dietro i flauti)
+     e fagotti (dietro gli oboi) dietro;
+   - corni a sinistra accanto ai clarinetti, trombe a destra accanto ai fagotti,
+     tromboni e tuba in fondo a destra;
+   - percussioni in fondo a sinistra, timpani in fondo al centro;
+   - arpa nell'angolo in alto a sinistra degli archi, pianoforte accanto.
+   Ogni zona: [strumento, etichetta, raggio interno, raggio esterno, angolo da, angolo a]
+*/
+const ORCHESTRA_LAYOUT = [
+    ["violino",      "Violini primi",   95, 210, 180, 100],
+    ["viola",        "Viole",           95, 300, 100,  48],
+    ["violoncello",  "Violoncelli",     95, 210,  48,   0],
+    ["violino",      "Violini secondi", 210, 300, 180, 100],
+    ["contrabbasso", "Contrabbassi",   210, 385,  48,   0],
+    ["pianoforte",   "Pianoforte",     300, 385, 180, 160],
+    ["arpa",         "Arpa",           300, 385, 160, 136],
+    ["flauto",       "Flauti",         300, 385, 136,  92],
+    ["oboe",         "Oboi",           300, 385,  92,  48],
+    ["corno",        "Corni",          385, 470, 180, 130],
+    ["clarinetto",   "Clarinetti",     385, 470, 130, 104],
+    ["sassofono",    "Sassofono",      385, 470, 104,  90],
+    ["fagotto",      "Fagotti",        385, 470,  90,  52],
+    ["tromba",       "Trombe",         385, 470,  52,   0],
+    ["xilofono",     "Xilofono",       470, 555, 180, 164],
+    ["glockenspiel", "Glockenspiel",   470, 555, 164, 148],
+    ["triangolo",    "Triangolo",      470, 555, 148, 136],
+    ["piatti",       "Piatti",         470, 555, 136, 124],
+    ["rullante",     "Rullante",       470, 555, 124, 110],
+    ["timpani",      "Timpani",        470, 555, 110,  78],
+    ["trombone",     "Tromboni",       470, 555,  78,  36],
+    ["tuba",         "Tuba",           470, 555,  36,   0]
+];
+const SECTION_COLORS = {
+    archi: "#ee8f6a", legni: "#6fd3a3", ottoni: "#f2cd64",
+    percussioni: "#bfa2f0", arpa: "#7cb8ee", tastiere: "#7cb8ee"
+};
+const LEGEND = [["archi", "Archi"], ["legni", "Legni"], ["ottoni", "Ottoni"], ["percussioni", "Percussioni"], ["arpa", "Arpa e pianoforte"]];
+
+let exploreInst = null;
+let exploreClipIndex = 0;
+
+function polar(r, deg) {
+    const a = deg * Math.PI / 180;
+    return [ORCH_CX + r * Math.cos(a), ORCH_CY - r * Math.sin(a)];
+}
+
+function sectorPath(r1, r2, a1, a2) {
+    const large = Math.abs(a1 - a2) > 180 ? 1 : 0;
+    const [x1, y1] = polar(r1, a1), [x2, y2] = polar(r2, a1);
+    const [x3, y3] = polar(r2, a2), [x4, y4] = polar(r1, a2);
+    if (r1 === 0) return `M ${ORCH_CX} ${ORCH_CY} L ${x2} ${y2} A ${r2} ${r2} 0 ${large} 1 ${x3} ${y3} Z`;
+    return `M ${x1} ${y1} L ${x2} ${y2} A ${r2} ${r2} 0 ${large} 1 ${x3} ${y3} L ${x4} ${y4} A ${r1} ${r1} 0 ${large} 0 ${x1} ${y1} Z`;
+}
+
+function buildOrchestraMap() {
+    const NS = "http://www.w3.org/2000/svg";
+    orchestraMap.innerHTML = "";
+    ORCHESTRA_LAYOUT.forEach(([id, label, r1, r2, a1, a2]) => {
+        const inst = availableInstruments.find(i => i.id === id);
+        if (!inst) return;
+        const g = document.createElementNS(NS, "g");
+        g.setAttribute("class", "orch-zone");
+        g.setAttribute("tabindex", "0");
+        g.setAttribute("role", "button");
+        g.setAttribute("aria-label", label);
+        g.dataset.id = id;
+        const path = document.createElementNS(NS, "path");
+        path.setAttribute("d", sectorPath(r1, r2, a1, a2));
+        path.setAttribute("fill", SECTION_COLORS[inst.family]);
+        g.appendChild(path);
+        // etichetta: si misura lo spazio vero dentro la zona, in orizzontale e lungo il raggio,
+        // si sceglie la direzione con piu' spazio e si centra il testo in quello spazio
+        const rm = (r1 + r2) / 2, am = (a1 + a2) / 2;
+        const [cx0, cy0] = polar(rm, am);
+        const inside = (x, y) => {
+            const r = Math.hypot(x - ORCH_CX, ORCH_CY - y);
+            const ang = Math.atan2(ORCH_CY - y, x - ORCH_CX) * 180 / Math.PI;
+            return r >= r1 + 6 && r <= r2 - 6 && ang <= a1 - 0.5 && ang >= a2 + 0.5 && y <= ORCH_CY - 4;
+        };
+        const reach = (dx, dy) => { let d = 0; while (d < 700 && inside(cx0 + dx * (d + 1), cy0 + dy * (d + 1))) d++; return d; };
+        // tre direzioni possibili: orizzontale, lungo il raggio, lungo l'arco (inclinata come la fascia)
+        const ar = am * Math.PI / 180;
+        const dirs = [
+            { dx: 1, dy: 0, rot: 0, pref: 1.15 },                                   // orizzontale: preferita a parita' di spazio
+            { dx: Math.cos(ar), dy: -Math.sin(ar), rot: -am },                     // radiale
+            { dx: Math.sin(ar), dy: Math.cos(ar), rot: 90 - am }                   // tangente all'arco
+        ].map(d => {
+            const fw = reach(d.dx, d.dy), bw = reach(-d.dx, -d.dy);
+            let rot = d.rot; while (rot > 90) rot -= 180; while (rot <= -90) rot += 180;
+            return { ...d, rot, fw, bw, room: (fw + bw - 8) * (d.pref || 1) };
+        });
+        const best = dirs.reduce((x, y) => (y.room > x.room ? y : x));
+        const room = best.fw + best.bw - 8;
+        const tx = cx0 + best.dx * (best.fw - best.bw) / 2, ty = cy0 + best.dy * (best.fw - best.bw) / 2;
+        const text = document.createElementNS(NS, "text");
+        text.setAttribute("x", tx); text.setAttribute("y", ty);
+        if (Math.abs(best.rot) > 0.5) text.setAttribute("transform", `rotate(${best.rot.toFixed(1)} ${tx} ${ty})`);
+        const size = Math.max(11, Math.min(22, room / (label.length * 0.62)));
+        text.setAttribute("font-size", size.toFixed(1));
+        text.textContent = label;
+        g.appendChild(text);
+        text.dataset.room = room;
+        g.addEventListener("click", () => openExploreCard(inst));
+        g.addEventListener("keydown", e => {
+            if (e.key === "Enter" || e.key === " ") { e.preventDefault(); openExploreCard(inst); }
+        });
+        orchestraMap.appendChild(g);
+    });
+    // direttore e pubblico
+    const c = document.createElementNS(NS, "g"); c.setAttribute("class", "orch-conductor");
+    const cp = document.createElementNS(NS, "path"); cp.setAttribute("d", sectorPath(0, 85, 180, 0)); c.appendChild(cp);
+    const ct = document.createElementNS(NS, "text"); ct.setAttribute("x", ORCH_CX); ct.setAttribute("y", ORCH_CY - 30); ct.textContent = "Direttore"; c.appendChild(ct);
+    orchestraMap.appendChild(c);
+    const au = document.createElementNS(NS, "text"); au.setAttribute("class", "orch-audience");
+    au.setAttribute("x", ORCH_CX); au.setAttribute("y", ORCH_CY + 32); au.textContent = "▼  PUBBLICO  ▼";
+    orchestraMap.appendChild(au);
+    // la larghezza vera del testo si conosce solo dopo il disegno: se non entra, si rimpicciolisce
+    orchestraMap.querySelectorAll(".orch-zone text").forEach(t => {
+        const len = t.getComputedTextLength(), room = parseFloat(t.dataset.room);
+        if (len > room) t.setAttribute("font-size", (parseFloat(t.getAttribute("font-size")) * room / len).toFixed(1));
+    });
+    $("orchestraLegend").innerHTML = LEGEND.map(([f, label]) =>
+        `<span><i style="background:${SECTION_COLORS[f]}"></i>${label}</span>`).join("");
+}
+
+function markPlayingZone(id) {
+    orchestraMap.querySelectorAll(".orch-zone").forEach(z => z.classList.toggle("playing", z.dataset.id === id));
+}
+
+function playExploreClip() {
+    if (!exploreInst) return;
+    playClip(exploreInst.clips[exploreClipIndex % exploreInst.clips.length], true);
+}
+
+function openExploreCard(inst) {
+    getAudioContext();
+    exploreInst = inst;
+    exploreClipIndex = 0;
+    fillInstrumentCard(inst);
+    revealName.style.color = FAMILY_TEXT_COLORS[inst.family];
+    revealSachs.textContent = inst.sachsNote || SACHS_INFO[inst.sachs];
+    revealOrchestraNote.textContent = inst.orchestraNote || "";
+    revealNext.textContent = "Chiudi";
+    revealOther.style.display = inst.clips.length > 1 ? "" : "none";
+    reveal.classList.remove("mode-step", "auto");
+    reveal.classList.add("mode-reveal", "explore", "show");
+    markPlayingZone(inst.id);
+    playExploreClip();
+}
+
+function closeExploreCard() {
+    stopClip();
+    exploreInst = null;
+    reveal.classList.remove("show", "explore");
+    markPlayingZone(null);
+}
+
+revealOther.addEventListener("click", () => {
+    if (!exploreInst) return;
+    exploreClipIndex++;
+    playExploreClip();
+});
+reveal.addEventListener("click", e => { if (exploreInst && e.target === reveal) closeExploreCard(); });
+document.addEventListener("keydown", e => { if (exploreInst && e.key === "Escape") closeExploreCard(); });
+
+exploreButton.addEventListener("click", () => {
+    getAudioContext();
+    showScreen("explore");      // prima si mostra la schermata, poi si disegna (serve per misurare i testi)
+    buildOrchestraMap();
+});
+$("exploreBackButton").addEventListener("click", () => { closeExploreCard(); showScreen("home"); });
+
+trainingButton.addEventListener("click", () => startTraining("ascolta"));
+trainingWatchButton.addEventListener("click", () => startTraining("osserva"));
+practiceButton.addEventListener("click", () => startPractice("ascolta"));
+practiceWatchButton.addEventListener("click", () => startPractice("osserva"));
+verificaButton.addEventListener("click", () => startVerifica("ascolta"));
+verificaWatchButton.addEventListener("click", () => startVerifica("osserva"));
+homeMenuButtons.forEach(btn => btn.addEventListener("click", goHome));
+
+/* crediti di immagini e suoni (necessari per le licenze CC BY e CC BY-SA) */
+function renderCredits() {
+    const esc = t => String(t).replace(/[&<>"]/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]));
+    let html = "<h3>Immagini (Wikimedia Commons)</h3><ul>";
+    CREDITS_IMAGES.forEach(c => {
+        html += "<li><strong>" + esc(c.name) + "</strong>: <a href=\"" + esc(c.url) + "\" target=\"_blank\" rel=\"noopener\">" +
+            esc(c.title) + "</a>, " + esc(c.author) + ", " + esc(c.license) + ". Sfondo rimosso e immagine ritagliata.</li>";
+    });
+    html += "</ul><h3>Suoni</h3><ul>" +
+        "<li>Melodie originali scritte per questo gioco.</li>" +
+        "<li>Note di archi, legni e ottoni: Philharmonia Orchestra, " +
+        "<a href=\"https://philharmonia.co.uk/resources/sound-samples/\" target=\"_blank\" rel=\"noopener\">Sound samples</a>.</li>" +
+        "<li>Pianoforte e glockenspiel: University of Iowa Electronic Music Studios, " +
+        "<a href=\"https://theremin.music.uiowa.edu/MIS.html\" target=\"_blank\" rel=\"noopener\">Musical Instrument Samples</a>, uso libero.</li>" +
+        "<li>Timpani, xilofono, arpa e piatto sospeso: VSCO 2 Community Edition (Versilian Studios), " +
+        "<a href=\"https://github.com/sgossner/VSCO-2-CE\" target=\"_blank\" rel=\"noopener\">CC0</a>.</li></ul>";
+    creditsList.innerHTML = html;
+}
+creditsButton.addEventListener("click", () => { renderCredits(); creditsOverlay.classList.add("show"); });
+closeCredits.addEventListener("click", () => creditsOverlay.classList.remove("show"));
+creditsOverlay.addEventListener("click", e => { if (e.target === creditsOverlay) creditsOverlay.classList.remove("show"); });
+
+// pulsante verso il sito che ospita il gioco: da collegare
+siteHomeButton.addEventListener("click", () => { window.location.href = "index.html"; });
+
+/* =========================================================
+   AVVIO
+========================================================= */
+
+showScreen("home");
+preloadImages();
+loadSounds();
+</script>
+</body>
+</html>

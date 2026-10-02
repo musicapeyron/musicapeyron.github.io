@@ -5,6 +5,9 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <!-- Nome del sito: Musica Peyron (nessuna intestazione visibile a schermo, il nome resta solo qui e nel <title>) -->
 <title>Musica Peyron</title>
+<link rel="icon" href="favicon.svg" type="image/svg+xml">
+<link rel="icon" href="favicon-32.png" type="image/png" sizes="32x32">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
 <meta name="description" content="Raccolta di giochi didattici di educazione musicale.">
 
 <!--
@@ -192,6 +195,23 @@
     margin: 0 0 16px;
   }
 
+  /* ---------- sezioni ---------- */
+  .group { margin-top: 22px; }
+  .group:first-of-type { margin-top: 4px; }
+  .group-title {
+    display: flex; align-items: center; gap: 8px;
+    font-family: 'Manrope', sans-serif; font-weight: 800;
+    font-size: 12px; letter-spacing: 0.08em; text-transform: uppercase;
+    color: #cbd5e1; margin: 0 0 10px; padding-left: 10px;
+    border-left: 3px solid var(--accent);
+  }
+  .group-giochi    { --accent: #F99D1C; }
+  .group-base      { --accent: #5EC8D8; }
+  .group-avanzati  { --accent: #a78bfa; }
+  .group .card { border-top: 2px solid var(--accent); }
+  .group .card .label { color: var(--accent); background: color-mix(in srgb, var(--accent) 14%, transparent); }
+  .group-giochi .card { background: linear-gradient(180deg, rgba(249,157,28,0.08), rgba(255,255,255,0.03)); }
+
   .card {
     position: relative;
     background: rgba(255,255,255,0.035);
@@ -334,8 +354,20 @@
     </div>
     <span class="arrow">→</span>
   </a>
-  <div class="divider"></div>
-  <div class="grid" id="grid"></div>
+  <section class="group group-giochi">
+    <h3 class="group-title"><span>🎲</span> Giochi</h3>
+    <div class="grid" id="grid-giochi"></div>
+  </section>
+
+  <section class="group group-base">
+    <h3 class="group-title">Suono, note e ritmo</h3>
+    <div class="grid" id="grid-base"></div>
+  </section>
+
+  <section class="group group-avanzati">
+    <h3 class="group-title">Intervalli, scale e accordi</h3>
+    <div class="grid" id="grid-avanzati"></div>
+  </section>
 </main>
 
 <footer></footer>
@@ -344,7 +376,35 @@
   /* ============================================================
      I TUOI STRUMENTI / GIOCHI — modifica qui
      ============================================================ */
-  const tools = [
+  /* Tre gruppi, mostrati in sezioni separate:
+     - giochi:  giochi da fare anche in gruppo (in alto)
+     - base:    suono, note e ritmo
+     - avanzati: da "Nomina gli Intervalli" in poi */
+  const giochi = [
+    {
+      title: "Note-UNO",
+      icon: "🃏",
+      label: "Note",
+      desc: "Un gioco di carte in stile UNO per allenarsi con le note musicali.",
+      url: "note-uno.html"
+    },
+    {
+      title: "Memory delle Note",
+      icon: "🎴",
+      label: "Note",
+      desc: "Trova le coppie: nota e nome, due note uguali o la stessa nota in due chiavi. Da 1 a 4 giocatori.",
+      url: "memory-note.html"
+    },
+    {
+      title: "Memory degli Strumenti",
+      icon: "🎷",
+      label: "Strumenti",
+      desc: "Trova le coppie di foto, nomi e suoni degli strumenti dell'orchestra. Da 1 a 4 giocatori.",
+      url: "memory-strumenti.html"
+    }
+  ];
+
+  const base = [
     {
       title: "Test d'Ingresso",
       icon: "📝",
@@ -416,6 +476,16 @@
       url: "qualita-del-suono.html"
     },
     {
+      title: "Riconosci lo Strumento",
+      icon: "🎺",
+      label: "Ascolto",
+      desc: "Riconosci gli strumenti dell'orchestra dal suono o dalla foto, con sezioni e classificazione.",
+      url: "riconosci-lo-strumento.html"
+    }
+  ];
+
+  const avanzati = [
+    {
       title: "Nomina gli Intervalli",
       icon: "📏",
       label: "Teoria",
@@ -477,13 +547,6 @@
       label: "Ascolto",
       desc: "Riconosci a orecchio la qualità degli accordi, anche nei loro rivolti.",
       url: "ascolta-accordi.html"
-    },
-    {
-      title: "Note-UNO",
-      icon: "🃏",
-      label: "Teoria",
-      desc: "Un gioco di carte in stile UNO per allenarsi con le note musicali.",
-      url: "note-uno.html"
     }
   ];
 
@@ -503,27 +566,32 @@
     });
   })();
 
-  const grid = document.getElementById('grid');
-
-  tools.forEach(t => {
-    const card = document.createElement('div');
-    card.className = 'card';
-    card.innerHTML = `
-      <div class="top-row">
-        <div class="icon">${t.icon}</div>
-        <span class="label">${t.label}</span>
-      </div>
-      <h2>${t.title}</h2>
-      <p>${t.desc}</p>
-      <a class="open" href="${t.url}">Apri →</a>
-    `;
-    grid.appendChild(card);
-  });
-
-  const empty = document.createElement('div');
-  empty.className = 'card empty';
-  empty.innerHTML = `<div class="plus">+</div><div>Prossimo strumento in arrivo</div>`;
-  grid.appendChild(empty);
+  function fillGrid(id, list, withEmpty) {
+    const grid = document.getElementById(id);
+    list.forEach(t => {
+      const card = document.createElement('div');
+      card.className = 'card';
+      card.innerHTML = `
+        <div class="top-row">
+          <div class="icon">${t.icon}</div>
+          <span class="label">${t.label}</span>
+        </div>
+        <h2>${t.title}</h2>
+        <p>${t.desc}</p>
+        <a class="open" href="${t.url}">Apri →</a>
+      `;
+      grid.appendChild(card);
+    });
+    if (withEmpty) {
+      const empty = document.createElement('div');
+      empty.className = 'card empty';
+      empty.innerHTML = `<div class="plus">+</div><div>Prossimo strumento in arrivo</div>`;
+      grid.appendChild(empty);
+    }
+  }
+  fillGrid('grid-giochi', giochi, false);
+  fillGrid('grid-base', base, false);
+  fillGrid('grid-avanzati', avanzati, true);
 </script>
 
 </body>

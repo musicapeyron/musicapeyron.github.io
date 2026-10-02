@@ -1,0 +1,1216 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Memory – note musicali</title>
+<meta name="description" content="Memory con le note sul pentagramma, in chiave di violino e di basso.">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='.9em' font-size='90'%3E%F0%9F%83%8F%3C/text%3E%3C/svg%3E">
+<!-- VexFlow (disegno dei pentagrammi): file locale accanto a questa pagina -->
+<script src="vexflow.js"></script>
+<style>
+*, *::before, *::after { box-sizing: border-box; }
+:root {
+    --ease-out-soft: cubic-bezier(0.16, 1, 0.3, 1);
+    --ease-spring: cubic-bezier(.34, 1.56, .64, 1);
+    --border-soft: rgba(255,255,255,0.10);
+    --archi-dark: #9a3412; --legni-dark: #166534; --ottoni-dark: #854d0e; --percussioni-dark: #5b21b6;
+    --p1: #38bdf8; --p2: #f472b6; --p3: #4ade80; --p4: #fbbf24;
+}
+html { background: #0f172a; }
+html, body { margin: 0; padding: 0; min-height: 100%; }
+body {
+    min-height: 100vh;
+    padding: 18px 14px 28px;
+    font-family: "Inter", "Segoe UI", Arial, Helvetica, sans-serif;
+    font-size: 15px;
+    line-height: 1.5;
+    -webkit-font-smoothing: antialiased;
+    color: white;
+    background:
+        radial-gradient(circle at 50% 0%, #3730a3 0%, transparent 45%),
+        linear-gradient(135deg, #0f172a, #1e1b4b);
+    background-attachment: fixed;
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+    overflow-x: hidden;
+}
+h1 { margin: 0; font-family: "Sora", "Inter", Arial, sans-serif; font-size: 2rem; font-weight: 700; letter-spacing: -0.02em; text-shadow: 0 3px 10px rgba(0,0,0,0.35); }
+.subtitle { margin: 6px 0 18px; color: #cbd5e1; font-size: 0.98rem; opacity: 0.9; }
+.screen { width: min(560px, 100%); text-align: center; animation: screenIn 0.4s var(--ease-out-soft); }
+.screen.wide { width: min(1180px, 100%); }
+@keyframes screenIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: none; } }
+
+/* ---------- menu ---------- */
+.hero-badge {
+    width: 76px; height: 76px; margin: 4px auto 14px; border-radius: 50%;
+    display: flex; align-items: center; justify-content: center; font-size: 2.3rem;
+    background: radial-gradient(circle at 35% 30%, #818cf8, #4338ca 75%);
+    box-shadow: 0 1px 0 rgba(255,255,255,0.3) inset, 0 14px 30px rgba(79,70,229,0.45);
+}
+.big-choice {
+    width: 100%; border: none; margin: 0 0 14px; padding: 20px 22px; border-radius: 18px;
+    color: white; text-align: left; cursor: pointer; display: flex; gap: 16px; align-items: center;
+    font-family: "Sora", "Inter", Arial, sans-serif;
+    box-shadow: 0 1px 0 rgba(255,255,255,0.22) inset, 0 10px 22px rgba(0,0,0,0.3);
+    transition: transform 0.15s var(--ease-out-soft), filter 0.15s;
+}
+.big-choice:hover { transform: translateY(-3px); filter: brightness(1.07); }
+.big-choice:active { transform: translateY(1px); }
+.big-choice .icon { font-size: 2.4rem; line-height: 1; }
+.big-choice strong { display: block; font-size: 1.2rem; }
+.big-choice small { display: block; font-size: 0.82rem; opacity: 0.9; font-weight: 500; margin-top: 3px; font-family: "Inter", Arial, sans-serif; }
+.big-choice.instr { background: linear-gradient(135deg, #f59e0b, #c2410c); }
+.big-choice.notes { background: linear-gradient(135deg, #14b8a6, #0f766e); }
+
+.panel {
+    text-align: left; margin: 0 0 14px; padding: 14px 16px; border-radius: 16px;
+    background: linear-gradient(180deg, rgba(255,255,255,0.08), rgba(255,255,255,0.035));
+    border: 1px solid var(--border-soft);
+}
+.panel-title { font-size: 0.7rem; font-weight: 800; letter-spacing: 0.6px; text-transform: uppercase; color: #a5b4fc; margin: 0 0 10px; }
+.choice-list { display: flex; flex-direction: column; gap: 8px; }
+.choice {
+    display: flex; gap: 12px; align-items: center; width: 100%; padding: 11px 13px; border-radius: 12px; cursor: pointer;
+    border: 2px solid rgba(255,255,255,0.12); background: rgba(255,255,255,0.04); color: #e2e8f0; text-align: left;
+    font-family: inherit; transition: border-color 0.15s, background 0.15s;
+}
+.choice:hover { background: rgba(255,255,255,0.08); }
+.choice.selected { border-color: #a5b4fc; background: rgba(129,140,248,0.18); }
+.choice .ico { font-size: 1.35rem; min-width: 64px; text-align: center; letter-spacing: 1px; }
+.choice strong { display: block; font-family: "Sora", Arial, sans-serif; font-size: 0.98rem; color: white; }
+.choice small { display: block; font-size: 0.8rem; color: #cbd5e1; line-height: 1.35; }
+.seg { display: flex; gap: 8px; }
+.seg button {
+    flex: 1; padding: 10px 8px; border-radius: 11px; cursor: pointer; font-family: "Sora", Arial, sans-serif; font-weight: 700; font-size: 0.92rem;
+    border: 2px solid rgba(255,255,255,0.12); background: rgba(255,255,255,0.04); color: #e2e8f0;
+}
+.seg button.selected { border-color: #a5b4fc; background: rgba(129,140,248,0.2); color: white; }
+.panel-note { margin: 8px 0 0; font-size: 0.78rem; color: #94a3b8; line-height: 1.4; }
+.toggle-row {
+    display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 9px 4px; cursor: pointer;
+    font-family: "Sora", Arial, sans-serif; font-weight: 600; font-size: 0.9rem; color: #e2e8f0;
+}
+.toggle-row + .toggle-row { border-top: 1px solid rgba(255,255,255,0.07); }
+.toggle-row small { display: block; font-family: "Inter", Arial, sans-serif; font-weight: 500; font-size: 0.76rem; color: #94a3b8; }
+.toggle-row input { width: 20px; height: 20px; accent-color: #a855f7; cursor: pointer; flex: none; }
+.toggle-row.disabled { opacity: 0.45; cursor: not-allowed; }
+.toggle-row.disabled input { cursor: not-allowed; }
+.primary {
+    border: none; padding: 14px 34px; border-radius: 14px; cursor: pointer; color: white;
+    font-family: "Sora", Arial, sans-serif; font-weight: 800; font-size: 1.1rem;
+    background: linear-gradient(135deg, #6366f1, #4338ca); box-shadow: 0 5px 0 #312e81, 0 12px 24px rgba(49,46,129,0.45);
+    transition: transform 0.12s var(--ease-out-soft), filter 0.15s;
+}
+.primary:hover { transform: translateY(-2px); filter: brightness(1.08); }
+.primary:active { transform: translateY(3px); box-shadow: 0 2px 0 #312e81; }
+.ghost {
+    border: 1px solid rgba(255,255,255,0.18); padding: 11px 18px; border-radius: 12px; cursor: pointer;
+    background: rgba(255,255,255,0.06); color: #e2e8f0; font-family: "Sora", Arial, sans-serif; font-weight: 700; font-size: 0.88rem;
+}
+.ghost:hover { background: rgba(255,255,255,0.12); }
+.row-buttons { display: flex; gap: 10px; justify-content: center; align-items: center; margin-top: 6px; flex-wrap: wrap; }
+.credits-link { margin-top: 14px; border: none; background: none; color: #94a3b8; font-size: 0.78rem; text-decoration: underline; cursor: pointer; }
+
+/* ---------- barra di gioco ---------- */
+.hud { display: flex; align-items: center; gap: 10px; margin: 0 auto 10px; flex-wrap: wrap; justify-content: center; }
+.hud-title { font-family: "Sora", Arial, sans-serif; font-weight: 800; font-size: 1.15rem; margin-right: 4px; }
+.chip {
+    padding: 7px 12px; border-radius: 12px; font-size: 0.85rem; font-weight: 700; color: #e2e8f0;
+    background: linear-gradient(180deg, rgba(255,255,255,0.09), rgba(255,255,255,0.04)); border: 1px solid var(--border-soft);
+}
+.chip b { font-family: "Sora", Arial, sans-serif; color: white; font-size: 1rem; margin-left: 4px; }
+.chip.player { border-width: 2px; transition: transform 0.25s var(--ease-out-soft), background 0.25s, border-color 0.25s; }
+.chip.player { border-color: var(--pcb); }
+.chip.player .dot { display: inline-block; width: 10px; height: 10px; border-radius: 50%; background: var(--pc); margin-right: 6px; vertical-align: 1px; }
+.chip.player.active { border-color: var(--pc); background: var(--pcf); transform: scale(1.06); }
+.seg.players button { font-size: 0.88rem; padding-left: 4px; padding-right: 4px; }
+.icon-btn { border: 1px solid rgba(255,255,255,0.16); background: rgba(255,255,255,0.06); color: white; border-radius: 12px; padding: 7px 11px; cursor: pointer; font-size: 0.95rem; }
+.turn-msg { min-height: 22px; font-family: "Sora", Arial, sans-serif; font-weight: 700; font-size: 0.92rem; margin: -4px 0 8px; }
+
+/* ---------- tavolo e carte ---------- */
+.table-area { position: relative; margin: 0 auto; display: flex; gap: 14px; align-items: flex-start; justify-content: center; }
+.deck { position: relative; flex: none; width: 64px; height: 88px; pointer-events: none; z-index: 1; transition: opacity 0.3s; margin-top: 4px; }
+.deck .card-back-static { position: absolute; inset: 0; border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 0.55em; }
+.deck.empty { width: 0 !important; margin-right: -14px; opacity: 0; }
+.deck .card-back-static:nth-child(2) { transform: translate(3px, -3px); }
+.deck .card-back-static:nth-child(3) { transform: translate(6px, -6px); }
+.deck-count { position: absolute; left: 0; right: 0; bottom: -20px; text-align: center; font-size: 0.72rem; color: #cbd5e1; font-weight: 700; }
+.board { display: flex; flex-wrap: wrap; justify-content: center; align-content: flex-start; gap: 10px; }
+.card {
+    position: relative; border: none; padding: 0; background: none; cursor: pointer;
+    perspective: 900px; border-radius: 12px;
+    transition: transform 0.45s var(--ease-out-soft), opacity 0.35s;
+}
+.card:focus-visible { outline: 3px solid #a5b4fc; outline-offset: 3px; }
+.card-inner { position: absolute; inset: 0; transform-style: preserve-3d; transition: transform 0.42s var(--ease-out-soft); }
+.card.flipped .card-inner { transform: rotateY(180deg); }
+.card-face {
+    position: absolute; inset: 0; border-radius: 12px; overflow: hidden;
+    backface-visibility: hidden; -webkit-backface-visibility: hidden;
+    display: flex; align-items: center; justify-content: center;
+    box-shadow: 0 4px 0 rgba(0,0,0,0.25), 0 8px 16px rgba(0,0,0,0.28);
+}
+.card-back, .card-back-static {
+    background:
+        radial-gradient(circle at 50% 50%, rgba(255,255,255,0.16) 0 26%, transparent 27%),
+        repeating-linear-gradient(45deg, rgba(255,255,255,0.05) 0 6px, transparent 6px 12px),
+        linear-gradient(145deg, #6366f1, #3730a3);
+    border: 3px solid rgba(255,255,255,0.85);
+}
+.card-back::after, .card-back-static::after { content: "♪"; font-size: 2.1em; color: rgba(255,255,255,0.92); font-weight: 700; }
+.card-front { transform: rotateY(180deg); background: linear-gradient(180deg, #fdfaf3, #f0e6d2); border: 3px solid #fff; color: #3f3520; }
+.card-front img { max-width: 88%; max-height: 88%; object-fit: contain; filter: drop-shadow(0 2px 3px rgba(60,45,20,0.3)); }
+.name-face { font-family: "Sora", Arial, sans-serif; font-weight: 800; font-size: 1em; padding: 6px; line-height: 1.15; text-align: center; color: #3f3520; word-break: break-word; }
+.sound-face { display: flex; flex-direction: column; align-items: center; gap: 2px; font-family: "Sora", Arial, sans-serif; font-weight: 700; color: #4338ca; font-size: 0.8em; }
+.sound-face .big { font-size: 2.4em; line-height: 1; }
+.card.playing .sound-face .big { transform: scale(1.12); transition: transform 0.2s; }
+.staff-face svg { width: 100%; height: 100%; }
+.notename-face { position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; font-family: "Sora", Arial, sans-serif; font-weight: 800; font-size: 2.1em; text-shadow: 0 1px 0 rgba(0,0,0,0.12); }
+.clef-tag { position: absolute; top: 4px; left: 0; right: 0; text-align: center; font-size: 0.55em; font-weight: 700; color: #8a7a5a; text-transform: uppercase; letter-spacing: 0.4px; }
+.card.matched { cursor: default; }
+.card.matched .card-front { border-color: #86efac; }
+.card.pop { animation: pop 0.5s var(--ease-spring); }
+@keyframes pop { 0% { transform: scale(1); } 45% { transform: scale(1.1); } 100% { transform: scale(1); } }
+.card.shake { animation: shake 0.42s ease-in-out; }
+@keyframes shake { 0%,100% { transform: translateX(0); } 25% { transform: translateX(-5px); } 75% { transform: translateX(5px); } }
+.card.gone { opacity: 0; transform: scale(0.85); pointer-events: none; }
+.card.dealing { transition: none; }
+
+/* ---------- schede sopra il tavolo ---------- */
+.overlay {
+    position: fixed; inset: 0; z-index: 50; display: flex; align-items: center; justify-content: center; padding: 16px;
+    background: rgba(8, 10, 32, 0.74); opacity: 0; pointer-events: none; transition: opacity 0.2s ease;
+}
+.overlay.show { opacity: 1; pointer-events: auto; }
+.sheet {
+    width: min(620px, 100%); max-height: 100%; overflow-y: auto; padding: 18px 22px 20px; border-radius: 22px;
+    background: linear-gradient(180deg, #fdfaf3, #f2e9d8); color: #3f3520; text-align: center;
+    box-shadow: 0 24px 60px rgba(0,0,0,0.5); transform: scale(0.94); transition: transform 0.3s var(--ease-spring);
+}
+.overlay.show .sheet { transform: scale(1); }
+.sheet.dark { background: linear-gradient(180deg, #1e1b4b, #0f172a); color: #e2e8f0; border: 1px solid var(--border-soft); }
+.inst-img { display: block; margin: 4px auto; max-width: 100%; height: auto; filter: drop-shadow(0 4px 6px rgba(60,45,20,0.35)); }
+.inst-name { font-family: "Sora", Arial, sans-serif; font-size: 2rem; font-weight: 800; line-height: 1.1; margin-top: 4px; }
+.inst-info { margin-top: 8px; display: flex; flex-direction: column; gap: 4px; font-size: 0.92rem; font-weight: 600; color: #6b5d3f; }
+.inst-info span:empty { display: none; }
+.inst-info .tag { display: inline-block; padding: 2px 10px; border-radius: 999px; background: #ede3cc; color: #57482a; font-weight: 700; margin: 0 auto; }
+.question { margin-top: 10px; font-family: "Sora", Arial, sans-serif; font-size: 1.05rem; font-weight: 700; color: #57482a; }
+.answers { display: flex; flex-wrap: wrap; justify-content: center; gap: 8px; margin: 10px auto 0; }
+.answer {
+    min-width: 124px; padding: 11px 10px; border: none; border-radius: 12px; cursor: pointer; color: white;
+    font-family: "Sora", Arial, sans-serif; font-weight: 800; font-size: 0.95rem;
+    background: linear-gradient(160deg, #64748b, #3b4558);
+    box-shadow: 0 4px 0 rgba(0,0,0,0.25), 0 8px 14px rgba(0,0,0,0.2);
+    text-shadow: 0 1px 2px rgba(0,0,0,0.5);
+    transition: transform 0.12s var(--ease-out-soft), filter 0.15s;
+}
+.answer:hover { transform: translateY(-2px); filter: brightness(1.1); }
+.answer.wrong { animation: shake 0.4s ease-in-out; }
+.answer.note-btn { min-width: 66px; padding-left: 6px; padding-right: 6px; text-shadow: none; }
+.step-error {
+    max-width: 460px; margin: 0 auto; max-height: 0; overflow: hidden; opacity: 0; border-radius: 12px;
+    background: #fde8e8; border: 1px solid #f5b5b5; color: #8a1f1f; font-size: 0.9rem; font-weight: 600; line-height: 1.35;
+    padding: 0 14px; transition: opacity 0.2s ease, max-height 0.25s ease, margin 0.25s ease, padding 0.25s ease;
+}
+.step-error.show { opacity: 1; max-height: 140px; margin: 10px auto 0; padding: 9px 14px; }
+.step-ok { margin-top: 10px; font-family: "Sora", Arial, sans-serif; font-weight: 800; font-size: 1.1rem; color: #166534; min-height: 1.4em; }
+.sheet-actions { display: flex; justify-content: center; gap: 10px; margin-top: 14px; }
+.btn-soft { border: none; border-radius: 12px; padding: 11px 20px; font-family: "Sora", Arial, sans-serif; font-weight: 800; font-size: 0.98rem; cursor: pointer; background: #e7dcc4; color: #57482a; }
+.btn-main { border: none; border-radius: 12px; padding: 11px 22px; font-family: "Sora", Arial, sans-serif; font-weight: 800; font-size: 0.98rem; cursor: pointer; color: white; background: linear-gradient(135deg, #6366f1, #4338ca); box-shadow: 0 4px 0 #312e81; }
+.quiz-staves { display: flex; justify-content: center; gap: 14px; flex-wrap: wrap; }
+.quiz-staff { width: 230px; height: 200px; background: #fffdf8; border-radius: 14px; border: 2px solid #ede3cc; position: relative; }
+.quiz-staff svg { width: 100%; height: 100%; }
+.stars { font-size: 2.6rem; letter-spacing: 6px; margin: 4px 0 6px; }
+.stars .on { color: #facc15; text-shadow: 0 2px 8px rgba(250,204,21,0.35); }
+.stars .off { color: rgba(255,255,255,0.18); }
+.final-stats { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin: 10px 0 16px; text-align: left; }
+.final-stats div { padding: 9px 12px; border-radius: 10px; background: rgba(255,255,255,0.06); border: 1px solid var(--border-soft); }
+.final-stats span { display: block; font-size: 0.65rem; text-transform: uppercase; color: #94a3b8; }
+.final-stats strong { font-family: "Sora", Arial, sans-serif; font-size: 1.15rem; color: white; }
+.toast {
+    position: fixed; left: 50%; top: 42%; z-index: 40; transform: translate(-50%, -50%) scale(0.8); opacity: 0;
+    padding: 14px 30px; border-radius: 18px; font-family: "Sora", Arial, sans-serif; font-weight: 800; font-size: 1.7rem;
+    box-shadow: 0 16px 34px rgba(0,0,0,0.4); pointer-events: none; transition: opacity 0.2s, transform 0.3s var(--ease-spring);
+}
+.toast.show { opacity: 1; transform: translate(-50%, -50%) scale(1); }
+.confetti-layer { position: fixed; inset: 0; pointer-events: none; z-index: 60; overflow: hidden; }
+.confetti-piece { position: absolute; top: -12px; width: 9px; height: 13px; border-radius: 2px; animation: fall 2.6s ease-in forwards; }
+@keyframes fall { to { transform: translate(var(--dx), 105vh) rotate(var(--rot)); opacity: 0.9; } }
+.credits-list { max-height: 55vh; overflow-y: auto; font-size: 0.8rem; line-height: 1.45; text-align: left; color: #cbd5e1; }
+.credits-list h3 { font-size: 0.8rem; text-transform: uppercase; letter-spacing: 0.5px; color: #a5b4fc; margin: 12px 0 6px; }
+.credits-list a { color: #93c5fd; }
+
+/* niente movimento per chi lo ha chiesto nelle impostazioni del dispositivo */
+@media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after { animation-duration: 0.01ms !important; animation-iteration-count: 1 !important; transition-duration: 0.01ms !important; }
+}
+
+/* ---------- menu piu' colorati ---------- */
+.setup-badge { width: 70px; height: 70px; margin: 0 auto 10px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 2.1rem;
+    box-shadow: 0 1px 0 rgba(255,255,255,0.3) inset, 0 12px 26px rgba(0,0,0,0.35); }
+#setupScreen.theme-instr .setup-badge { background: radial-gradient(circle at 35% 30%, #fcd34d, #ea580c 75%); }
+#setupScreen.theme-notes .setup-badge { background: radial-gradient(circle at 35% 30%, #5eead4, #0f766e 75%); }
+#setupScreen.theme-instr .panel { border-top: 3px solid rgba(251,146,60,0.65); }
+#setupScreen.theme-notes .panel { border-top: 3px solid rgba(45,212,191,0.65); }
+#setupScreen.theme-instr .panel-title { color: #fdba74; }
+#setupScreen.theme-notes .panel-title { color: #5eead4; }
+#setupScreen.theme-instr .primary { background: linear-gradient(135deg, #f59e0b, #c2410c); box-shadow: 0 5px 0 #7c2d12, 0 12px 24px rgba(194,65,12,0.45); }
+#setupScreen.theme-notes .primary { background: linear-gradient(135deg, #14b8a6, #0f766e); box-shadow: 0 5px 0 #134e4a, 0 12px 24px rgba(15,118,110,0.45); }
+.choice .ico {
+    min-width: 66px; height: 46px; border-radius: 11px; display: flex; align-items: center; justify-content: center;
+    background: linear-gradient(135deg, var(--c1), var(--c2)); color: white; font-size: 1.2rem;
+    box-shadow: 0 1px 0 rgba(255,255,255,0.3) inset, 0 4px 10px rgba(0,0,0,0.25); text-shadow: 0 1px 2px rgba(0,0,0,0.3);
+}
+.choice.selected { border-color: var(--c1); background: var(--tint); }
+.choice.selected strong::after { content: "  ✓"; color: var(--c1); }
+.seg button.selected { color: white; border-color: transparent; background: linear-gradient(135deg, var(--c1, #818cf8), var(--c2, #4338ca)); box-shadow: 0 3px 10px rgba(0,0,0,0.25); }
+#setupScreen.theme-instr .toggle-row input { accent-color: #f97316; }
+#setupScreen.theme-notes .toggle-row input { accent-color: #14b8a6; }
+.chip.timer b { font-variant-numeric: tabular-nums; }
+
+/* PULSANTE "TORNA AL SITO" FISSO (porta a index.html) */
+.site-home-button {
+    position: fixed; top: 18px; left: 18px; z-index: 30000;
+    width: 44px; height: 44px; border-radius: 50%;
+    border: 1px solid rgba(255,255,255,0.18);
+    background: linear-gradient(180deg, rgba(255,255,255,0.12), rgba(255,255,255,0.04));
+    color: #e2e8f0; font-size: 1.15rem; display: flex; align-items: center; justify-content: center;
+    cursor: pointer; text-decoration: none; box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+    transition: transform 0.15s ease, background 0.15s ease;
+}
+.site-home-button:hover { background: linear-gradient(180deg, rgba(255,255,255,0.22), rgba(255,255,255,0.08)); transform: translateY(-2px); }
+</style>
+</head>
+<body>
+<a class="site-home-button" href="index.html" aria-label="Torna al sito" title="Torna al sito">🏠</a>
+
+
+<!-- ============ MENU ============ -->
+<div class="screen" id="homeScreen" style="display:none">
+    <div class="hero-badge">🃏</div>
+    <h1>Memory musicale</h1>
+    <p class="subtitle">Scopri le carte, trova le coppie e impara strumenti e note.</p>
+    <button class="big-choice instr" id="chooseInstr"><span class="icon">🎻</span><span><strong>Memory – strumenti musicali</strong><small>Gli strumenti dell'orchestra: foto, nomi e suoni</small></span></button>
+    <button class="big-choice notes" id="chooseNotes"><span class="icon">🎼</span><span><strong>Memory – note musicali</strong><small>Le note sul pentagramma, in chiave di violino e di basso</small></span></button>
+    <button class="credits-link" id="creditsButton">Crediti di immagini e suoni</button>
+</div>
+
+<!-- ============ IMPOSTAZIONI ============ -->
+<div class="screen" id="setupScreen" style="display:none">
+    <div class="setup-badge" id="setupBadge"></div>
+    <h1 id="setupTitle"></h1>
+    <p class="subtitle" id="setupSubtitle"></p>
+    <div class="panel">
+        <div class="panel-title">Come si formano le coppie</div>
+        <div class="choice-list" id="pairingList"></div>
+    </div>
+    <div class="panel" id="clefPanel">
+        <div class="panel-title">Chiave</div>
+        <div class="seg" id="clefSeg">
+            <button data-v="treble" style="--c1:#f43f5e;--c2:#be123c">𝄞 Violino</button><button data-v="bass" style="--c1:#3b82f6;--c2:#1d4ed8">𝄢 Basso</button><button data-v="both" style="--c1:#a855f7;--c2:#6d28d9">𝄞 + 𝄢 Entrambe</button>
+        </div>
+        <p class="panel-note" id="clefNote"></p>
+    </div>
+    <div class="panel" id="optionsPanel">
+        <div class="panel-title">Domande dopo ogni coppia</div>
+        <div id="optionsList"></div>
+    </div>
+    <div class="panel">
+        <div class="panel-title">Giocatori</div>
+        <div class="seg players" id="playersSeg">
+            <button data-v="1" style="--c1:#38bdf8;--c2:#0369a1">👤 1</button>
+            <button data-v="2" style="--c1:#f472b6;--c2:#be185d">👥 2</button>
+            <button data-v="3" style="--c1:#4ade80;--c2:#15803d">👥 3</button>
+            <button data-v="4" style="--c1:#fbbf24;--c2:#b45309">👥 4</button>
+        </div>
+        <p class="panel-note">Da 2 a 4 giocatori si gioca a turno: chi trova una coppia guadagna un punto e gioca ancora, chi sbaglia passa il turno al successivo.</p>
+    </div>
+    <div class="row-buttons">
+        <button class="ghost" id="setupBack">← Indietro</button>
+        <button class="primary" id="startButton">Gioca!</button>
+    </div>
+    <button class="credits-link" id="creditsButton2">Crediti di immagini e suoni</button>
+</div>
+
+<!-- ============ GIOCO ============ -->
+<div class="screen wide" id="gameScreen" style="display:none">
+    <div class="hud" id="hud"></div>
+    <div class="turn-msg" id="turnMsg"></div>
+    <div class="table-area" id="tableArea">
+        <div class="deck" id="deck"><div class="card-back-static"></div><div class="card-back-static"></div><div class="card-back-static"></div><div class="deck-count" id="deckCount"></div></div>
+        <div class="board" id="board"></div>
+    </div>
+</div>
+
+<!-- scheda strumento -->
+<div class="overlay" id="instOverlay">
+    <div class="sheet">
+        <img class="inst-img" id="instImg" alt="">
+        <div class="inst-name" id="instName"></div>
+        <div class="question" id="instQuestion"></div>
+        <div class="step-error" id="instError" role="status" aria-live="polite"></div>
+        <div class="answers" id="instAnswers"></div>
+        <div class="inst-info" id="instInfo"></div>
+        <div class="sheet-actions" id="instActions">
+            <button class="btn-soft" id="instReplay">🔊 Riascolta</button>
+            <button class="btn-main" id="instContinue">Continua ▶</button>
+        </div>
+    </div>
+</div>
+
+<!-- quiz sul nome della nota -->
+<div class="overlay" id="noteOverlay">
+    <div class="sheet">
+        <div class="quiz-staves" id="quizStaves"></div>
+        <div class="question">Che nota è?</div>
+        <div class="step-error" id="noteError" role="status" aria-live="polite"></div>
+        <div class="answers" id="noteAnswers"></div>
+        <div class="step-ok" id="noteOk"></div>
+    </div>
+</div>
+
+<!-- fine partita -->
+<div class="overlay" id="endOverlay">
+    <div class="sheet dark">
+        <h1 id="endTitle"></h1>
+        <div class="stars" id="endStars"></div>
+        <p class="subtitle" id="endSubtitle"></p>
+        <div class="final-stats" id="endStats"></div>
+        <div class="row-buttons">
+            <button class="ghost" id="endMenu">🏠 Menu</button>
+            <button class="primary" id="endAgain">🔄 Gioca ancora</button>
+        </div>
+    </div>
+</div>
+
+<!-- conferma uscita -->
+<div class="overlay" id="quitOverlay">
+    <div class="sheet dark">
+        <h1 style="font-size:1.4rem">Uscire dalla partita?</h1>
+        <p class="subtitle">La partita in corso andrà persa.</p>
+        <div class="row-buttons"><button class="ghost" id="quitNo">Annulla</button><button class="primary" id="quitYes">Esci</button></div>
+    </div>
+</div>
+
+<!-- crediti -->
+<div class="overlay" id="creditsOverlay">
+    <div class="sheet dark">
+        <h1 style="font-size:1.4rem">Crediti</h1>
+        <div class="credits-list" id="creditsList"></div>
+        <div class="row-buttons" style="margin-top:12px"><button class="ghost" id="creditsClose">Chiudi</button></div>
+    </div>
+</div>
+
+<div class="toast" id="toast"></div>
+<div class="confetti-layer" id="confetti"></div>
+
+<script>
+"use strict";
+const GAME = "notes";      // "instr" = memory strumenti, "notes" = memory note
+/* =========================================================
+   DATI (dal gioco "Riconosci lo strumento")
+========================================================= */
+const INSTRUMENTS = [
+    { id: "violino",      name: "Violino",      family: "archi",       sachs: "cordofoni" },
+    { id: "flauto",       name: "Flauto",       family: "legni",       sachs: "aerofoni" },
+    { id: "tromba",       name: "Tromba",       family: "ottoni",      sachs: "aerofoni" },
+    { id: "pianoforte",   name: "Pianoforte",   family: "tastiere",    sachs: "cordofoni", noSection: true,
+      sachsNote: "Cordofono: i martelletti percuotono delle corde tese",
+      orchestraNote: "In orchestra il pianoforte compare in alcuni brani; è il protagonista nei concerti per pianoforte e orchestra." },
+    { id: "violoncello",  name: "Violoncello",  family: "archi",       sachs: "cordofoni" },
+    { id: "clarinetto",   name: "Clarinetto",   family: "legni",       sachs: "aerofoni" },
+    { id: "trombone",     name: "Trombone",     family: "ottoni",      sachs: "aerofoni" },
+    { id: "timpani",      name: "Timpani",      family: "percussioni", sachs: "membranofoni" },
+    { id: "arpa",         name: "Arpa",         family: "arpa",        sachs: "cordofoni", noSection: true,
+      sachsNote: "Cordofono: si pizzicano delle corde tese" },
+    { id: "oboe",         name: "Oboe",         family: "legni",       sachs: "aerofoni" },
+    { id: "corno",        name: "Corno",        family: "ottoni",      sachs: "aerofoni" },
+    { id: "sassofono",    name: "Sassofono",    family: "legni",       sachs: "aerofoni",
+      sachsNote: "Aerofono: vibra una colonna d'aria, messa in vibrazione da un'ancia come nel clarinetto",
+      orchestraNote: "Il sassofono non fa parte stabilmente dell'orchestra sinfonica: compare solo in alcuni brani." },
+    { id: "contrabbasso", name: "Contrabbasso", family: "archi",       sachs: "cordofoni" },
+    { id: "rullante",     name: "Rullante",     family: "percussioni", sachs: "membranofoni" },
+    { id: "fagotto",      name: "Fagotto",      family: "legni",       sachs: "aerofoni" },
+    { id: "xilofono",     name: "Xilofono",     family: "percussioni", sachs: "idiofoni" },
+    { id: "piatti",       name: "Piatti",       family: "percussioni", sachs: "idiofoni" },
+    { id: "viola",        name: "Viola",        family: "archi",       sachs: "cordofoni" },
+    { id: "glockenspiel", name: "Glockenspiel", family: "percussioni", sachs: "idiofoni" },
+    { id: "triangolo",    name: "Triangolo",    family: "percussioni", sachs: "idiofoni" },
+    { id: "tuba",         name: "Tuba",         family: "ottoni",      sachs: "aerofoni" }
+];
+
+const CLIP_COUNT = { piatti: 2 };   // tutti gli altri strumenti hanno 3 passaggi
+const IMAGE_MAX_HEIGHT = 464, IMAGE_MAX_WIDTH = 476;
+
+const FAMILY_LABELS = { archi: "Archi", legni: "Legni", ottoni: "Ottoni", percussioni: "Percussioni", arpa: "Strumento a corde pizzicate", tastiere: "Strumento a tastiera" };
+const FAMILY_TEXT_COLORS = { archi: "#9a3412", legni: "#166534", ottoni: "#854d0e", percussioni: "#5b21b6", arpa: "#9d174d", tastiere: "#1e3a8a" };
+const SACHS_INFO = {
+    idiofoni: "Idiofono: vibra il corpo stesso dello strumento",
+    membranofoni: "Membranofono: vibra una membrana tesa",
+    cordofoni: "Cordofono: vibrano delle corde tese",
+    aerofoni: "Aerofono: vibra una colonna d'aria"
+};
+const STEPS = {
+    section: { question: "A quale sezione dell'orchestra appartiene?", order: ["archi", "legni", "ottoni", "percussioni"],
+               labels: { archi: "Archi", legni: "Legni", ottoni: "Ottoni", percussioni: "Percussioni" }, answerOf: i => i.family },
+    sachs:   { question: "A quale classe Sachs-Hornbostel appartiene?", order: ["idiofoni", "membranofoni", "cordofoni", "aerofoni"],
+               labels: { idiofoni: "Idiofoni", membranofoni: "Membranofoni", cordofoni: "Cordofoni", aerofoni: "Aerofoni" }, answerOf: i => i.sachs }
+};
+const STEP_EXPLANATIONS = {
+    archi: { art: "gli", text: "sono strumenti a corde che si suonano con l'arco" },
+    legni: { art: "i", text: "sono strumenti a fiato in cui il suono nasce da un'ancia o dal soffio sul bordo dell'imboccatura, come nel flauto (anche se oggi è di metallo)" },
+    ottoni: { art: "gli", text: "sono strumenti a fiato in cui vibrano le labbra del musicista appoggiate a un bocchino" },
+    percussioni: { art: "le", text: "sono strumenti che si suonano percuotendoli" },
+    idiofoni: { art: "gli", text: "sono strumenti in cui vibra il corpo stesso dello strumento" },
+    membranofoni: { art: "i", text: "sono strumenti in cui vibra una membrana tesa" },
+    cordofoni: { art: "i", text: "sono strumenti in cui vibrano delle corde tese" },
+    aerofoni: { art: "gli", text: "sono strumenti in cui vibra una colonna d'aria" }
+};
+const CREDITS_IMAGES = [
+    {
+        "name": "Violino",
+        "title": "Violin front.jpg",
+        "author": "A. Kniesel",
+        "license": "CC BY-SA 3.0",
+        "url": "https://commons.wikimedia.org/wiki/File:Violin_front.jpg"
+    },
+    {
+        "name": "Viola",
+        "title": "Bratsche-Museum für Kunst und Gewerbe Hamburg-2012.200.tif",
+        "author": "Museum für Kunst und Gewerbe Hamburg",
+        "license": "CC0",
+        "url": "https://commons.wikimedia.org/wiki/File:Bratsche-Museum_für_Kunst_und_Gewerbe_Hamburg-2012.200.tif"
+    },
+    {
+        "name": "Violoncello",
+        "title": "Violoncello-Museum für Kunst und Gewerbe Hamburg-1893.455.tif",
+        "author": "Museum für Kunst und Gewerbe Hamburg",
+        "license": "CC0",
+        "url": "https://commons.wikimedia.org/wiki/File:Violoncello-Museum_für_Kunst_und_Gewerbe_Hamburg-1893.455.tif"
+    },
+    {
+        "name": "Contrabbasso",
+        "title": "AGK bass1 full.jpg",
+        "author": "User:AndrewKepert",
+        "license": "CC BY-SA 3.0",
+        "url": "https://commons.wikimedia.org/wiki/File:AGK_bass1_full.jpg"
+    },
+    {
+        "name": "Arpa",
+        "title": "Salvi harp Diana.jpg",
+        "author": "N.S.M. s.p.a.",
+        "license": "CC BY-SA 4.0",
+        "url": "https://commons.wikimedia.org/wiki/File:Salvi_harp_Diana.jpg"
+    },
+    {
+        "name": "Pianoforte",
+        "title": "Steinway & Sons concert grand piano, model D-274, manufactured at Steinway's factory in Hamburg, Germany.png",
+        "author": "Steinway & Sons, 10 Rondenbarg, Hamburg D-22525, Germany, eu.steinway.com.Steinway & Sons, 1 Steinway Place, Long Island",
+        "license": "CC BY-SA 3.0",
+        "url": "https://commons.wikimedia.org/wiki/File:Steinway_&_Sons_concert_grand_piano,_model_D-274,_manufactured_at_Steinway's_factory_in_Hamburg,_Germany.png"
+    },
+    {
+        "name": "Flauto",
+        "title": "Yamaha Flute YFL-482H.tif",
+        "author": "Yamaha Corporation",
+        "license": "CC BY-SA 4.0",
+        "url": "https://commons.wikimedia.org/wiki/File:Yamaha_Flute_YFL-482H.tif"
+    },
+    {
+        "name": "Oboe",
+        "title": "Yamaha Oboe YOB-831.tif",
+        "author": "Yamaha Corporation",
+        "license": "CC BY-SA 4.0",
+        "url": "https://commons.wikimedia.org/wiki/File:Yamaha_Oboe_YOB-831.tif"
+    },
+    {
+        "name": "Clarinetto",
+        "title": "Yamaha Clarinet YCL-457II-22.png",
+        "author": "Yamaha Corporation",
+        "license": "CC BY-SA 4.0",
+        "url": "https://commons.wikimedia.org/wiki/File:Yamaha_Clarinet_YCL-457II-22.png"
+    },
+    {
+        "name": "Sassofono",
+        "title": "Yamaha Saxophone YAS-62.tif",
+        "author": "Yamaha Corporation",
+        "license": "CC BY-SA 4.0",
+        "url": "https://commons.wikimedia.org/wiki/File:Yamaha_Saxophone_YAS-62.tif"
+    },
+    {
+        "name": "Fagotto",
+        "title": "Yamaha Bassoon YFG-812 II.tif",
+        "author": "Yamaha Corporation",
+        "license": "CC BY-SA 4.0",
+        "url": "https://commons.wikimedia.org/wiki/File:Yamaha_Bassoon_YFG-812_II.tif"
+    },
+    {
+        "name": "Corno",
+        "title": "Yamaha Horn YHR-667V.png",
+        "author": "Yamaha Corporation",
+        "license": "CC BY-SA 4.0",
+        "url": "https://commons.wikimedia.org/wiki/File:Yamaha_Horn_YHR-667V.png"
+    },
+    {
+        "name": "Tromba",
+        "title": "Yamaha Trumpet YTR-8335LA.tif",
+        "author": "Yamaha Corporation",
+        "license": "CC BY-SA 4.0",
+        "url": "https://commons.wikimedia.org/wiki/File:Yamaha_Trumpet_YTR-8335LA.tif"
+    },
+    {
+        "name": "Trombone",
+        "title": "Yamaha Tenor trombone YSL-882OR.tif",
+        "author": "Yamaha Corporation",
+        "license": "CC BY-SA 4.0",
+        "url": "https://commons.wikimedia.org/wiki/File:Yamaha_Tenor_trombone_YSL-882OR.tif"
+    },
+    {
+        "name": "Tuba",
+        "title": "Yamaha Bass tuba YFB-822.tif",
+        "author": "Yamaha Corporation",
+        "license": "CC BY-SA 4.0",
+        "url": "https://commons.wikimedia.org/wiki/File:Yamaha_Bass_tuba_YFB-822.tif"
+    },
+    {
+        "name": "Timpani",
+        "title": "HardtkePauken.jpg",
+        "author": "Guido Rückel",
+        "license": "CC BY-SA 3.0",
+        "url": "https://commons.wikimedia.org/wiki/File:HardtkePauken.jpg"
+    },
+    {
+        "name": "Rullante",
+        "title": "Werbel stalowy MPSST-0554 10x5.5\" firmy Mapex.jpg",
+        "author": "http://muzyczny.pl",
+        "license": "CC BY-SA 4.0",
+        "url": "https://commons.wikimedia.org/wiki/File:Werbel_stalowy_MPSST-0554_10x5.5\"_firmy_Mapex.jpg"
+    },
+    {
+        "name": "Piatti",
+        "title": "Clash cymbals.jpg",
+        "author": "Andrewa",
+        "license": "CC BY-SA 3.0",
+        "url": "https://commons.wikimedia.org/wiki/File:Clash_cymbals.jpg"
+    },
+    {
+        "name": "Xilofono",
+        "title": "C 39.jpg",
+        "author": "Gramorimba",
+        "license": "CC BY-SA 4.0",
+        "url": "https://commons.wikimedia.org/wiki/File:C_39.jpg"
+    },
+    {
+        "name": "Glockenspiel",
+        "title": "Glockenspiel-malletech.jpg",
+        "author": "flamurai",
+        "license": "Public domain",
+        "url": "https://commons.wikimedia.org/wiki/File:Glockenspiel-malletech.jpg"
+    },
+    {
+        "name": "Triangolo",
+        "title": "F5 Triangel.tif",
+        "author": "Sofi Sykfont",
+        "license": "CC0",
+        "url": "https://commons.wikimedia.org/wiki/File:F5_Triangel.tif"
+    }
+];
+
+/* note: nomi e colori (Do rosso, Re arancio, Mi giallo, Fa verde chiaro, Sol verde acqua, La viola, Si rosa) */
+const LETTERS = ["c", "d", "e", "f", "g", "a", "b"];
+const NOTE_NAMES = { c: "Do", d: "Re", e: "Mi", f: "Fa", g: "Sol", a: "La", b: "Si" };
+const NOTE_COLORS = { c: "#E21C48", d: "#F99D1C", e: "#FFF428", f: "#BED958", g: "#009C95", a: "#5E50A1", b: "#CF3E96" };
+const NOTE_TEXT = { c: "#ffffff", d: "#3a2300", e: "#3a3500", f: "#22320a", g: "#ffffff", a: "#ffffff", b: "#ffffff" };
+const CLEF_LABEL = { treble: "Chiave di violino", bass: "Chiave di basso" };
+/* note usate: al massimo poco fuori dal pentagramma (un taglio addizionale, o lo spazio subito sopra/sotto)
+   violino: Do4 (un taglio sotto) – La5 (un taglio sopra);  basso: Mi2 (un taglio sotto) – Do4 (un taglio sopra) */
+function keyRange(fromLetter, fromOct, count) {
+    const out = []; let i = LETTERS.indexOf(fromLetter), o = fromOct;
+    for (let n = 0; n < count; n++) { out.push(LETTERS[i] + "/" + o); i++; if (i === 7) { i = 0; o++; } }
+    return out;
+}
+const CLEF_KEYS = { treble: keyRange("c", 4, 13), bass: keyRange("e", 2, 13) };
+// per ogni chiave e ogni nome, le posizioni disponibili (es. violino, Do: Do4 e Do5)
+const KEYS_BY_LETTER = {};
+["treble", "bass"].forEach(cl => {
+    KEYS_BY_LETTER[cl] = {};
+    LETTERS.forEach(l => { KEYS_BY_LETTER[cl][l] = CLEF_KEYS[cl].filter(k => k[0] === l); });
+});
+
+const PAIRINGS = {
+    instr: [
+        { v: "photo-photo", c: ["#f59e0b", "#d97706", "rgba(245,158,11,0.16)"], ico: "📷 📷", title: "Foto + foto", desc: "Trova le due foto uguali." },
+        { v: "photo-name", c: ["#3b82f6", "#1d4ed8", "rgba(59,130,246,0.16)"], ico: "📷 🔤", title: "Foto + nome", desc: "Abbina ogni foto al nome dello strumento." },
+        { v: "photo-sound", c: ["#a855f7", "#7e22ce", "rgba(168,85,247,0.16)"], ico: "📷 🔊", title: "Foto + suono", desc: "Abbina ogni foto alla carta che suona quello strumento. Le foto sono mute: devi riconoscerlo dal suono." }
+    ],
+    notes: [
+        { v: "note-name", c: ["#ec4899", "#be185d", "rgba(236,72,153,0.16)"], ico: "𝅘𝅥 Do", title: "Nota + nome", desc: "Abbina la nota sul pentagramma al suo nome." },
+        { v: "note-note", c: ["#14b8a6", "#0f766e", "rgba(20,184,166,0.16)"], ico: "𝅘𝅥 𝅘𝅥", title: "Nota + nota", desc: "Trova le due carte con la stessa nota." },
+        { v: "two-clefs", c: ["#6366f1", "#4338ca", "rgba(99,102,241,0.18)"], ico: "𝄞 𝄢", title: "Due chiavi", desc: "Abbina una nota in chiave di violino alla nota con lo stesso nome in chiave di basso. Conta il nome, non l'ottava." }
+    ]
+};
+
+/* =========================================================
+   STATO
+========================================================= */
+const $ = id => document.getElementById(id);
+const settings = {
+    instr: { pairing: "photo-photo", section: false, sachs: false, players: 1 },
+    notes: { pairing: "note-name", clef: "treble", askName: false, players: 1 }
+};
+let mode = "instr";
+let G = null;                 // partita in corso
+let soundOn = true;
+let timerId = null;
+const PLAYER_RGB = ["56,189,248", "244,114,182", "74,222,128", "251,191,36"];   // blu, rosa, verde, giallo
+
+/* timer che sale: parte con la partita, si ferma alla fine (aggiorna il testo una volta al secondo) */
+function fmtTime(ms) { const s = Math.floor(ms / 1000); return Math.floor(s / 60) + ":" + String(s % 60).padStart(2, "0"); }
+function elapsed() { return G ? (G.end || Date.now()) - G.start : 0; }
+function tickTimer() { const el = $("hudTime"); if (el) el.textContent = fmtTime(elapsed()); }
+function startTimer() { stopTimer(); timerId = setInterval(tickTimer, 1000); tickTimer(); }
+function stopTimer() { clearInterval(timerId); timerId = null; }
+
+/* =========================================================
+   AUDIO: un solo passaggio alla volta
+========================================================= */
+let currentAudio = null, currentAudioCard = null;
+function stopAudio() {
+    if (currentAudio) { currentAudio.pause(); currentAudio = null; }
+    if (currentAudioCard) { currentAudioCard.el.classList.remove("playing"); currentAudioCard = null; }
+}
+function playUrl(url, card) {
+    stopAudio();                                   // la carta nuova interrompe il passaggio precedente
+    if (!soundOn) return;
+    const a = new Audio(url); currentAudio = a;
+    if (card) { currentAudioCard = card; card.el.classList.add("playing"); }
+    a.onended = () => { if (currentAudio === a) stopAudio(); };
+    a.play().catch(() => {});
+}
+document.addEventListener("visibilitychange", () => { if (document.hidden) stopAudio(); });
+
+let actx = null;
+function ctx() {
+    if (!actx) { try { actx = new (window.AudioContext || window.webkitAudioContext)(); } catch (e) { return null; } }
+    if (actx.state === "suspended") actx.resume();
+    return actx;
+}
+function tone(f, start, dur, peak, type) {
+    const c = ctx(); if (!c || !soundOn) return;
+    const t = c.currentTime + (start || 0);
+    const o = c.createOscillator(), g = c.createGain();
+    o.type = type || "sine"; o.frequency.value = f;
+    g.gain.setValueAtTime(0.0001, t); g.gain.exponentialRampToValueAtTime(peak || 0.1, t + 0.015);
+    g.gain.exponentialRampToValueAtTime(0.0001, t + dur);
+    o.connect(g); g.connect(c.destination); o.start(t); o.stop(t + dur + 0.05);
+}
+const sfx = {
+    match() { tone(784, 0, 0.18, 0.07); tone(1046.5, 0.09, 0.28, 0.07); },
+    miss() { tone(220, 0, 0.18, 0.05, "triangle"); },
+    wrong() { tone(180, 0, 0.2, 0.06, "triangle"); },
+    deal() { tone(1200, 0, 0.04, 0.012, "triangle"); },
+    win() { [523.25, 659.25, 783.99, 1046.5].forEach((f, i) => tone(f, i * 0.12, 0.4, 0.07)); }
+};
+
+/* =========================================================
+   PENTAGRAMMI CON VEXFLOW (come in "Note-UNO")
+========================================================= */
+const staffCache = {};
+const vfHost = document.createElement("div");
+vfHost.style.cssText = "position:absolute;left:-9999px;top:-9999px";
+document.body.appendChild(vfHost);
+function staffSVG(clef, key) {
+    const ck = clef + "|" + key;
+    if (staffCache[ck]) return staffCache[ck];
+    vfHost.innerHTML = "";
+    const VF = Vex.Flow;
+    const r = new VF.Renderer(vfHost, VF.Renderer.Backends.SVG); r.resize(124, 160);
+    const c = r.getContext();
+    const stave = new VF.Stave(0, 20, 100); stave.addClef(clef); stave.setContext(c).draw();
+    const note = new VF.StaveNote({ clef, keys: [key], duration: "w" });
+    VF.Formatter.FormatAndDraw(c, stave, [note]);
+    const svg = vfHost.querySelector("svg");
+    // finestra fissa e stretta attorno al disegno: il pentagramma ha la stessa grandezza su tutte
+    // le carte ed entra anche con tre tagli addizionali sopra o sotto
+    let minX = -4, minY = -10; const W = 112, H = 104;
+    try { const bb = svg.getBBox(); minY = bb.y + bb.height / 2 - H / 2; minX = bb.x + bb.width / 2 - W / 2; } catch (e) {}
+    svg.setAttribute("viewBox", `${minX} ${minY} ${W} ${H}`);
+    svg.setAttribute("preserveAspectRatio", "xMidYMid meet");
+    svg.removeAttribute("width"); svg.removeAttribute("height");
+    return (staffCache[ck] = svg.outerHTML);
+}
+const noteUrl = key => "media/memory-note/" + key.replace("/", "") + ".mp3";
+
+/* =========================================================
+   PREPARAZIONE DEI MAZZI
+========================================================= */
+function shuffle(a) { const b = [...a]; for (let i = b.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [b[i], b[j]] = [b[j], b[i]]; } return b; }
+const randClip = id => "media/strumenti/audio/" + id + "/" + (1 + Math.floor(Math.random() * (CLIP_COUNT[id] || 3))) + ".mp3";
+
+function buildInstrRounds(pairing) {
+    const insts = shuffle(INSTRUMENTS);
+    const pairsOf = list => list.map(inst => {
+        const a = { kind: "photo", inst, pairKey: inst.id, clip: randClip(inst.id) };
+        const b = pairing === "photo-photo" ? { kind: "photo", inst, pairKey: inst.id, clip: randClip(inst.id) }
+                : pairing === "photo-name" ? { kind: "name", inst, pairKey: inst.id }
+                : { kind: "sound", inst, pairKey: inst.id, clip: randClip(inst.id) };
+        if (pairing === "photo-sound") a.mute = true;              // foto mute: si riconosce dal suono
+        return [a, b];
+    });
+    return [pairsOf(insts.slice(0, 10)), pairsOf(insts.slice(10))]; // 10 coppie, poi le altre 11
+}
+
+/* sceglie per ogni nome due posizioni diverse (una per mano), se ce ne sono due */
+function twoPicks(list) {
+    const sh = shuffle(list);
+    return [sh[0], sh[1 % sh.length]];
+}
+
+function buildNoteRounds(pairing, clef) {
+    if (pairing === "two-clefs") {
+        // conta il nome: la stessa nota in chiave di violino e in chiave di basso, anche in ottave diverse
+        const picks = LETTERS.map(l => ({ t: twoPicks(KEYS_BY_LETTER.treble[l]), b: twoPicks(KEYS_BY_LETTER.bass[l]) }));
+        return [0, 1].map(r => shuffle(LETTERS.map((l, i) => [
+            { kind: "staff", clef: "treble", key: picks[i].t[r], pairKey: l },
+            { kind: "staff", clef: "bass", key: picks[i].b[r], pairKey: l }
+        ])));
+    }
+    // ogni nome compare una volta per mano; nelle due mani cambia posizione (ottava o chiave), quando possibile
+    const clefs = clef === "both" ? ["treble", "bass"] : [clef];
+    const picks = LETTERS.map(l => {
+        const options = clefs.flatMap(c => KEYS_BY_LETTER[c][l].map(key => ({ clef: c, key })));
+        return twoPicks(options);
+    });
+    return [0, 1].map(r => picks.map(p => {
+        const { clef: c, key } = p[r];
+        return pairing === "note-name"
+            ? [{ kind: "staff", clef: c, key, pairKey: key }, { kind: "notename", key, pairKey: key }]
+            : [{ kind: "staff", clef: c, key, pairKey: c + key }, { kind: "staff", clef: c, key, pairKey: c + key }];
+    }));
+}
+
+/* =========================================================
+   CARTE
+========================================================= */
+function faceHTML(c) {
+    switch (c.kind) {
+        case "photo": return `<img src="media/strumenti/immagini/${c.inst.id}.webp" alt="${c.inst.name}" draggable="false">`;
+        case "name": return `<div class="name-face">${c.inst.name}</div>`;
+        case "sound": return `<div class="sound-face"><span class="big">🔊</span><span>Ascolta</span></div>`;
+        case "staff": return `<div class="staff-face" style="position:absolute;inset:10% 3% 2%">${staffSVG(c.clef, c.key)}</div>` +
+                             (G.type === "notes" && (G.pairing === "two-clefs" || G.clef === "both") ? `<div class="clef-tag">${c.clef === "treble" ? "violino" : "basso"}</div>` : "");
+        case "notename": { const l = c.key[0]; return `<div class="notename-face" style="background:${NOTE_COLORS[l]};color:${NOTE_TEXT[l]}">${NOTE_NAMES[l]}</div>`; }
+    }
+}
+function cardLabel(c) { return c.kind === "photo" ? "carta strumento" : c.kind === "sound" ? "carta suono" : c.kind === "name" ? "carta nome" : "carta nota"; }
+
+/* disposizione: si sceglie il numero di colonne che rende le carte piu' grandi possibile */
+function layoutBoard(n) {
+    const board = $("board"), area = $("tableArea");
+    const small = window.innerWidth < 600;
+    const gap = small ? 7 : 10;
+    const ratio = G && G.type === "notes" ? 1.18 : 0.74;   // note: carte orizzontali, come il pentagramma
+    const top = area.getBoundingClientRect().top + window.scrollY;
+    const H = Math.max(260, window.innerHeight - top - 14);
+    let best = { w: 0, cols: 1 };
+    for (let cols = 2; cols <= 11; cols++) {
+        const rows = Math.ceil(n / cols);
+        const hw = ((H - gap * (rows - 1)) / rows) * ratio;
+        // il mazzo occupa una colonna stretta a sinistra (circa 0,62 carte)
+        const W = Math.min(window.innerWidth - 28, 1180) - 14;
+        const w = Math.min((W - gap * (cols - 1)) / (cols + 0.62), hw, ratio > 1 ? 230 : 165);
+        if (w > best.w + 0.5) best = { w, cols };
+    }
+    const w = Math.floor(best.w), h = Math.floor(w / ratio);
+    board.style.gap = gap + "px";
+    board.style.width = (best.cols * w + gap * (best.cols - 1)) + "px";
+    board.style.fontSize = Math.max(11, Math.round(Math.min(w, h * 0.9) / 7.2)) + "px";
+    $("deck").style.fontSize = board.style.fontSize;
+    return { w, h };
+}
+
+function renderRound(animate) {
+    const board = $("board"); board.innerHTML = "";
+    const n = G.cards.length;
+    const { w, h } = layoutBoard(n);
+    G.cards.forEach((c, i) => {
+        const el = document.createElement("button");
+        el.className = "card"; el.style.width = w + "px"; el.style.height = h + "px";
+        el.setAttribute("aria-label", cardLabel(c) + " coperta");
+        el.innerHTML = `<span class="card-inner"><span class="card-face card-back"></span><span class="card-face card-front">${faceHTML(c)}</span></span>`;
+        el.addEventListener("click", () => onCardClick(c));
+        c.el = el; board.appendChild(el);
+    });
+    const deck = $("deck");
+    deck.style.width = Math.round(w * 0.62) + "px"; deck.style.height = Math.round(h * 0.62) + "px";
+    updateDeckCount();
+    if (!animate || matchMedia("(prefers-reduced-motion: reduce)").matches) { G.dealing = false; return; }
+    // animazione: le carte partono dal mazzo e volano al loro posto, una dopo l'altra
+    G.dealing = true;
+    const d = deck.getBoundingClientRect();
+    G.cards.forEach(c => {
+        const r = c.el.getBoundingClientRect();
+        c.el.classList.add("dealing");
+        c.el.style.transform = `translate(${d.left + d.width / 2 - (r.left + r.width / 2)}px, ${d.top + d.height / 2 - (r.top + r.height / 2)}px) scale(0.6) rotate(${(Math.random() * 16 - 8).toFixed(1)}deg)`;
+        c.el.style.opacity = "0";
+    });
+    void board.offsetWidth;
+    G.cards.forEach((c, i) => {
+        setTimeout(() => {
+            c.el.classList.remove("dealing");
+            c.el.style.transform = ""; c.el.style.opacity = "";
+            if (i % 3 === 0) sfx.deal();
+            G.dealt++; updateDeckCount();
+        }, 120 + i * 70);
+    });
+    setTimeout(() => { G.dealing = false; }, 120 + n * 70 + 450);
+}
+function updateDeckCount() {
+    const left = G.totalCards - G.dealt;
+    $("deckCount").textContent = left > 0 ? left + " carte" : "";
+    $("deck").classList.toggle("empty", left <= 0);
+}
+
+/* =========================================================
+   PARTITA
+========================================================= */
+function startGame() {
+    const s = settings[mode];
+    G = {
+        type: mode, pairing: s.pairing, clef: s.clef, players: s.players,
+        askSection: mode === "instr" && s.section, askSachs: mode === "instr" && s.sachs,
+        askName: mode === "notes" && s.askName && s.pairing !== "note-name",
+        rounds: mode === "instr" ? buildInstrRounds(s.pairing) : buildNoteRounds(s.pairing, s.clef),
+        round: 0, cards: [], open: [], busy: false, moves: 0, found: 0,
+        scores: Array(s.players).fill(0), turn: 0, errors: { section: 0, sachs: 0, name: 0 }, start: Date.now(), dealt: 0, dealing: false
+    };
+    G.totalPairs = G.rounds.reduce((t, r) => t + r.length, 0);
+    G.totalCards = G.totalPairs * 2;
+    showScreen("game");
+    startTimer();
+    renderHud();
+    nextRound(true);
+}
+function nextRound() {
+    G.cards = shuffle(G.rounds[G.round].flat()).map(c => ({ ...c }));
+    G.open = []; G.busy = false;
+    renderRound(true);
+    renderHud();
+}
+
+function onCardClick(c) {
+    if (!G || G.busy || G.dealing || c.matched || c.open) return;
+    ctx();
+    c.open = true; c.el.classList.add("flipped");
+    c.el.setAttribute("aria-label", cardLabel(c) + " scoperta");
+    // ogni carta scoperta suona (la nuova interrompe quella di prima)
+    if (G.type === "instr") { if (c.clip && !c.mute) playUrl(c.clip, c); else stopAudio(); }
+    else if (c.kind === "staff") playUrl(noteUrl(c.key), c);
+    else stopAudio();
+    G.open.push(c);
+    if (G.open.length < 2) return;
+    G.moves++; G.busy = true; renderHud();
+    const [a, b] = G.open;
+    if (a.pairKey === b.pairKey) setTimeout(() => onMatch(a, b), 520);
+    else setTimeout(() => onMiss(a, b), 1150);
+}
+
+function onMiss(a, b) {
+    sfx.miss();
+    [a, b].forEach(c => { c.el.classList.remove("shake"); void c.el.offsetWidth; c.el.classList.add("shake"); });
+    setTimeout(() => {
+        [a, b].forEach(c => { c.open = false; c.el.classList.remove("flipped", "shake"); c.el.setAttribute("aria-label", cardLabel(c) + " coperta"); });
+        G.open = []; G.busy = false;
+        if (G.players > 1) { G.turn = (G.turn + 1) % G.players; renderHud(true); }
+    }, 520);
+}
+
+function onMatch(a, b) {
+    sfx.match();
+    [a, b].forEach(c => { c.matched = true; c.el.classList.add("matched", "pop"); c.el.setAttribute("aria-label", cardLabel(c) + " indovinata"); });
+    G.found++;
+    G.scores[G.players > 1 ? G.turn : 0]++;
+    renderHud();
+    const done = () => { G.open = []; G.busy = false; afterMatch(); };
+    if (G.type === "instr") setTimeout(() => openInstrSheet(a.inst, a.clip || b.clip, done), 380);
+    else if (G.askName) setTimeout(() => openNoteQuiz(a, b, done), 380);
+    else { const l = a.key[0]; showToast(NOTE_NAMES[l], NOTE_COLORS[l], NOTE_TEXT[l]); setTimeout(done, 900); }
+}
+
+function afterMatch() {
+    if (G.cards.every(c => c.matched)) {
+        if (G.round + 1 < G.rounds.length) {
+            G.busy = true;
+            const rest = G.rounds[G.round + 1].length;
+            showToast(`Ottimo! Ecco le altre ${rest} coppie`, "#4338ca", "#fff", 1600, true);
+            G.cards.forEach((c, i) => setTimeout(() => c.el.classList.add("gone"), i * 25));
+            setTimeout(() => { G.round++; nextRound(); }, 1500);
+        } else setTimeout(endGame, 500);
+    }
+}
+
+function renderHud(turnChanged) {
+    const hud = $("hud");
+    const t = G.type === "instr" ? "🎻 Strumenti" : "🎼 Note";
+    let h = `<span class="hud-title">${t}</span>`;
+    if (G.players > 1) {
+        // con 3-4 giocatori le etichette si accorciano (G1, G2...) per stare nella barra
+        const label = i => G.players > 2 ? "G" + (i + 1) : "Giocatore " + (i + 1);
+        G.scores.forEach((sc, i) => {
+            const rgb = PLAYER_RGB[i];
+            h += `<span class="chip player ${G.turn === i ? "active" : ""}" style="--pc:rgb(${rgb});--pcb:rgba(${rgb},0.35);--pcf:rgba(${rgb},0.22)"><span class="dot"></span>${label(i)}<b>${sc}</b></span>`;
+        });
+    } else {
+        h += `<span class="chip">Mosse<b>${G.moves}</b></span>`;
+    }
+    h += `<span class="chip timer">⏱<b id="hudTime">${fmtTime(elapsed())}</b></span>`;
+    h += `<span class="chip">Coppie<b>${G.found} / ${G.totalPairs}</b></span>`;
+    if (G.rounds.length > 1) h += `<span class="chip">Mano<b>${G.round + 1} / ${G.rounds.length}</b></span>`;
+    h += `<button class="icon-btn" id="muteBtn" title="Audio">${soundOn ? "🔊" : "🔇"}</button>`;
+    h += `<button class="icon-btn" id="quitBtn" title="Menu">🏠</button>`;
+    hud.innerHTML = h;
+    $("muteBtn").onclick = () => { soundOn = !soundOn; if (!soundOn) stopAudio(); renderHud(); };
+    $("quitBtn").onclick = () => $("quitOverlay").classList.add("show");
+    const tm = $("turnMsg");
+    if (G.players > 1) {
+        tm.textContent = `Tocca a: Giocatore ${G.turn + 1}`;
+        tm.style.color = `var(--p${G.turn + 1})`;
+    } else tm.textContent = "";
+}
+
+function showToast(text, bg, fg, ms, small) {
+    const t = $("toast");
+    t.textContent = text; t.style.background = bg; t.style.color = fg; t.style.fontSize = small ? "1.15rem" : "";
+    t.classList.add("show");
+    clearTimeout(t._h); t._h = setTimeout(() => t.classList.remove("show"), ms || 850);
+}
+
+/* =========================================================
+   SCHEDA STRUMENTO (come nel gioco precedente)
+========================================================= */
+let sheet = null;
+function imageScale() {
+    const inner = Math.min(620, window.innerWidth - 32) - 44;
+    return Math.min(1.0, (window.innerHeight * 0.42) / IMAGE_MAX_HEIGHT, inner / IMAGE_MAX_WIDTH);
+}
+$("instImg").addEventListener("load", () => { const i = $("instImg"); i.style.width = Math.round(i.naturalWidth * imageScale()) + "px"; });
+
+function openInstrSheet(inst, clip, onClose) {
+    const steps = [];
+    if (G.askSection && !inst.noSection) steps.push("section");
+    if (G.askSachs) steps.push("sachs");
+    sheet = { inst, clip, steps, idx: 0, onClose };
+    $("instImg").src = "media/strumenti/immagini/" + inst.id + ".webp"; $("instImg").alt = inst.name;
+    $("instName").textContent = inst.name;
+    $("instName").style.color = steps.length ? "#3f3520" : FAMILY_TEXT_COLORS[inst.family];
+    $("instOverlay").classList.add("show");
+    showSheetStep();
+}
+function showSheetStep() {
+    const s = sheet; hideStepError("instError");
+    const box = $("instAnswers"); box.innerHTML = "";
+    if (s.idx < s.steps.length) {
+        const st = STEPS[s.steps[s.idx]];
+        $("instQuestion").textContent = st.question;
+        st.order.forEach(v => {
+            const b = document.createElement("button"); b.className = "answer"; b.textContent = st.labels[v];
+            b.onclick = () => answerSheet(v, b); box.appendChild(b);
+        });
+        $("instInfo").innerHTML = ""; $("instActions").style.display = "none";
+    } else {
+        // tutto risposto (o nessuna domanda): la scheda mostra sezione e classificazione
+        const inst = s.inst;
+        $("instQuestion").textContent = "";
+        $("instName").style.color = FAMILY_TEXT_COLORS[inst.family];
+        $("instInfo").innerHTML = `<span class="tag">${FAMILY_LABELS[inst.family]}</span><span>${inst.sachsNote || SACHS_INFO[inst.sachs]}</span><span style="font-style:italic">${inst.orchestraNote || ""}</span>`;
+        $("instActions").style.display = "";
+    }
+}
+function answerSheet(v, btn) {
+    const s = sheet, key = s.steps[s.idx], st = STEPS[key];
+    if (v !== st.answerOf(s.inst)) {
+        G.errors[key]++; sfx.wrong();
+        btn.classList.remove("wrong"); void btn.offsetWidth; btn.classList.add("wrong");
+        const e = STEP_EXPLANATIONS[v];
+        showStepError("instError", `No, ${e.art} <strong>${st.labels[v].toUpperCase()}</strong> ${e.text}.`);
+        return;
+    }
+    sfx.match(); s.idx++; showSheetStep();
+}
+$("instReplay").onclick = () => { if (sheet) playUrl(sheet.clip); };
+$("instContinue").onclick = () => { $("instOverlay").classList.remove("show"); stopAudio(); const f = sheet.onClose; sheet = null; f(); };
+function showStepError(id, html) {
+    const e = $(id); e.innerHTML = html; e.classList.remove("show"); void e.offsetWidth; e.classList.add("show");
+    clearTimeout(e._h); e._h = setTimeout(() => e.classList.remove("show"), 4500);
+}
+function hideStepError(id) { const e = $(id); clearTimeout(e._h); e.classList.remove("show"); }
+
+/* =========================================================
+   QUIZ: CHE NOTA E'?
+========================================================= */
+function openNoteQuiz(a, b, onClose) {
+    const cards = a.clef !== b.clef ? [a, b] : [a];          // due chiavi: si vedono entrambe
+    $("quizStaves").innerHTML = cards.map(c => `<div class="quiz-staff"><div class="clef-tag" style="font-size:0.7rem">${CLEF_LABEL[c.clef]}</div>${staffSVG(c.clef, c.key)}</div>`).join("");
+    hideStepError("noteError"); $("noteOk").textContent = "";
+    const letter = a.key[0], box = $("noteAnswers"); box.innerHTML = "";
+    LETTERS.forEach(l => {
+        const btn = document.createElement("button"); btn.className = "answer note-btn"; btn.textContent = NOTE_NAMES[l];
+        btn.style.background = NOTE_COLORS[l]; btn.style.color = NOTE_TEXT[l];
+        btn.onclick = () => {
+            if (l !== letter) {
+                G.errors.name++; sfx.wrong();
+                btn.classList.remove("wrong"); void btn.offsetWidth; btn.classList.add("wrong");
+                showStepError("noteError", `No, non è un <strong>${NOTE_NAMES[l].toUpperCase()}</strong>. Riprova!`);
+                return;
+            }
+            sfx.match(); hideStepError("noteError");
+            $("noteOk").textContent = `Sì, è un ${NOTE_NAMES[letter]}!`;
+            box.querySelectorAll("button").forEach(x => x.disabled = true);
+            playUrl(noteUrl(a.key));
+            setTimeout(() => { $("noteOverlay").classList.remove("show"); onClose(); }, 1100);
+        };
+        box.appendChild(btn);
+    });
+    $("noteOverlay").classList.add("show");
+}
+
+/* =========================================================
+   FINE PARTITA
+========================================================= */
+function endGame() {
+    G.end = Date.now(); stopTimer(); tickTimer();
+    stopAudio(); sfx.win(); confetti();
+    const time = fmtTime(elapsed());
+    const stats = [];
+    if (G.players > 1) {
+        const best = Math.max(...G.scores);
+        const winners = G.scores.map((sc, i) => sc === best ? i + 1 : 0).filter(Boolean);
+        $("endTitle").textContent = winners.length === 1 ? `Vince il Giocatore ${winners[0]}!`
+            : winners.length === G.players ? "Pareggio!"
+            : "Pareggio tra i Giocatori " + winners.slice(0, -1).join(", ") + " e " + winners[winners.length - 1] + "!";
+        $("endStars").innerHTML = winners.length === 1 ? "🏆" : "🤝";
+        $("endSubtitle").textContent = "Classifica";
+        // classifica: a pari punti, stessa medaglia
+        const order = G.scores.map((sc, i) => ({ sc, i })).sort((a, b) => b.sc - a.sc);
+        const medals = ["🥇", "🥈", "🥉", "4°"];
+        let place = 0;
+        order.forEach((o, k) => {
+            if (k > 0 && o.sc < order[k - 1].sc) place = k;
+            stats.push([`${medals[place]} Giocatore ${o.i + 1}`, o.sc + (o.sc === 1 ? " coppia" : " coppie")]);
+        });
+    } else {
+        // stelle: con la memoria perfetta servono tante mosse quante le coppie
+        const ratio = G.moves / G.totalPairs, n = ratio <= 1.6 ? 3 : ratio <= 2.3 ? 2 : 1;
+        $("endTitle").textContent = n === 3 ? "Memoria di ferro!" : n === 2 ? "Molto bene!" : "Ce l'hai fatta!";
+        $("endStars").innerHTML = [0, 1, 2].map(i => `<span class="${i < n ? "on" : "off"}">★</span>`).join("");
+        $("endSubtitle").textContent = "Hai trovato tutte le coppie.";
+        stats.push(["Mosse", G.moves]);
+    }
+    stats.unshift(["⏱ Tempo impiegato", time]);
+    stats.push(["Coppie", G.totalPairs]);
+    if (G.askSection) stats.push(["Errori sulle sezioni", G.errors.section]);
+    if (G.askSachs) stats.push(["Errori Sachs-Hornbostel", G.errors.sachs]);
+    if (G.askName) stats.push(["Errori sul nome della nota", G.errors.name]);
+    $("endStats").innerHTML = stats.map(([k, v]) => `<div><span>${k}</span><strong>${v}</strong></div>`).join("");
+    $("endOverlay").classList.add("show");
+}
+function confetti() {
+    if (matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+    const layer = $("confetti"), colors = Object.values(NOTE_COLORS);
+    for (let i = 0; i < 36; i++) {            // pochi pezzi, una volta sola: niente lampeggi, poco lavoro per il telefono
+        const p = document.createElement("span"); p.className = "confetti-piece";
+        p.style.left = Math.random() * 100 + "vw"; p.style.background = colors[i % colors.length];
+        p.style.setProperty("--dx", (Math.random() * 120 - 60) + "px"); p.style.setProperty("--rot", (Math.random() * 540 - 270) + "deg");
+        p.style.animationDelay = (Math.random() * 0.6) + "s";
+        layer.appendChild(p); setTimeout(() => p.remove(), 3400);
+    }
+}
+$("endAgain").onclick = () => { $("endOverlay").classList.remove("show"); startGame(); };
+$("endMenu").onclick = () => { $("endOverlay").classList.remove("show"); goHome(); };
+$("quitNo").onclick = () => $("quitOverlay").classList.remove("show");
+$("quitYes").onclick = () => { $("quitOverlay").classList.remove("show"); goHome(); };
+
+/* =========================================================
+   MENU E IMPOSTAZIONI
+========================================================= */
+function showScreen(name) {
+    ["home", "setup", "game"].forEach(n => { $(n + "Screen").style.display = n === name ? "" : "none"; });
+    window.scrollTo(0, 0);
+}
+function goHome() {
+    stopAudio(); stopTimer(); G = null;
+    ["instOverlay", "noteOverlay"].forEach(id => $(id).classList.remove("show"));
+    if (GAME) openSetup(GAME); else showScreen("home");
+}
+
+function openSetup(m) {
+    mode = m; const s = settings[m];
+    $("setupScreen").className = "screen theme-" + m;
+    $("setupBadge").textContent = m === "instr" ? "🎻" : "🎼";
+    $("setupTitle").textContent = m === "instr" ? "Memory – strumenti" : "Memory – note";
+    $("setupSubtitle").textContent = m === "instr"
+        ? "21 coppie: prima ne arrivano 10, poi le altre 11. Ogni carta scoperta suona il suo strumento."
+        : "Due mani da 7 coppie. Ogni nota scoperta suona al pianoforte.";
+    $("pairingList").innerHTML = PAIRINGS[m].map(p =>
+        `<button class="choice ${s.pairing === p.v ? "selected" : ""}" data-v="${p.v}" style="--c1:${p.c[0]};--c2:${p.c[1]};--tint:${p.c[2]}"><span class="ico">${p.ico}</span><span><strong>${p.title}</strong><small>${p.desc}</small></span></button>`).join("");
+    $("pairingList").querySelectorAll(".choice").forEach(b => b.onclick = () => { s.pairing = b.dataset.v; openSetup(m); });
+    $("clefPanel").style.display = m === "notes" ? "" : "none";
+    if (m === "notes") {
+        const two = s.pairing === "two-clefs";
+        $("clefSeg").querySelectorAll("button").forEach(b => { b.classList.toggle("selected", !two && b.dataset.v === s.clef); b.disabled = two; b.style.opacity = two ? 0.45 : ""; });
+        $("clefNote").textContent = two ? "Con «Due chiavi» si usano sempre entrambe le chiavi." : "";
+    }
+    const opts = m === "instr"
+        ? [["section", "🎼 Chiedi la sezione dell'orchestra", "Archi, legni, ottoni o percussioni", false],
+           ["sachs", "🔎 Chiedi la classificazione Sachs-Hornbostel", "Idiofoni, membranofoni, cordofoni o aerofoni", false]]
+        : [["askName", "🔤 Chiedi il nome della nota", s.pairing === "note-name" ? "Non serve con «Nota + nome»: il nome è già sulle carte." : "Dopo ogni coppia scegli il nome della nota.", s.pairing === "note-name"]];
+    $("optionsList").innerHTML = opts.map(([k, t, d, dis]) =>
+        `<label class="toggle-row ${dis ? "disabled" : ""}"><span>${t}<small>${d}</small></span><input type="checkbox" data-k="${k}" ${s[k] && !dis ? "checked" : ""} ${dis ? "disabled" : ""}></label>`).join("");
+    if (m === "instr") $("optionsList").insertAdjacentHTML("beforeend", `<p class="panel-note">Se le domande sono spente, sezione e classificazione compaiono comunque nella scheda dello strumento.</p>`);
+    $("optionsList").querySelectorAll("input").forEach(i => i.onchange = () => { s[i.dataset.k] = i.checked; });
+    $("playersSeg").querySelectorAll("button").forEach(b => b.classList.toggle("selected", +b.dataset.v === s.players));
+    showScreen("setup");
+}
+$("clefSeg").querySelectorAll("button").forEach(b => b.onclick = () => { settings.notes.clef = b.dataset.v; openSetup("notes"); });
+$("playersSeg").querySelectorAll("button").forEach(b => b.onclick = () => { settings[mode].players = +b.dataset.v; openSetup(mode); });
+$("chooseInstr").onclick = () => openSetup("instr");
+$("chooseNotes").onclick = () => openSetup("notes");
+$("setupBack").onclick = () => showScreen("home");
+$("startButton").onclick = () => { ctx(); startGame(); };
+window.addEventListener("resize", () => {
+    if (!G || !G.cards.length) return;
+    const { w, h } = layoutBoard(G.cards.length);
+    G.cards.forEach(c => { c.el.style.width = w + "px"; c.el.style.height = h + "px"; });
+});
+
+/* crediti */
+function showCredits() {
+    const esc = t => String(t).replace(/[&<>"]/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]));
+    let h = GAME === "notes" ? "" : "<h3>Immagini (Wikimedia Commons)</h3><ul>" + CREDITS_IMAGES.map(c =>
+        `<li><strong>${esc(c.name)}</strong>: <a href="${esc(c.url)}" target="_blank" rel="noopener">${esc(c.title)}</a>, ${esc(c.author)}, ${esc(c.license)}. Sfondo rimosso e immagine ritagliata.</li>`).join("") + "</ul>";
+    if (GAME === "notes") h += "<h3>Suoni</h3><ul><li>Note del pianoforte (Steinway gran coda): University of Iowa Electronic Music Studios, <a href=\"https://theremin.music.uiowa.edu/MIS.html\" target=\"_blank\" rel=\"noopener\">Musical Instrument Samples</a>, uso libero senza restrizioni.</li></ul>" +
+        "<h3>Pentagrammi</h3><ul><li>VexFlow 4.2.2, © Mohit Muthanna Cheppudira, licenza MIT.</li></ul>";
+    else {
+    h += "<h3>Suoni</h3><ul><li>Melodie originali scritte per il gioco «Riconosci lo strumento».</li>" +
+        "<li>Archi, legni, ottoni, sassofono, rullante, piatti a due e triangolo: Philharmonia Orchestra, <a href=\"https://philharmonia.co.uk/resources/sound-samples/\" target=\"_blank\" rel=\"noopener\">Sound samples</a>.</li>" +
+        "<li>Pianoforte e glockenspiel: University of Iowa Electronic Music Studios, <a href=\"https://theremin.music.uiowa.edu/MIS.html\" target=\"_blank\" rel=\"noopener\">Musical Instrument Samples</a>.</li>" +
+        "<li>Timpani, xilofono, arpa e piatto sospeso: VSCO 2 Community Edition, <a href=\"https://github.com/sgossner/VSCO-2-CE\" target=\"_blank\" rel=\"noopener\">CC0</a>.</li></ul>" +
+        "";
+    }
+    $("creditsList").innerHTML = h; $("creditsOverlay").classList.add("show");
+}
+$("creditsButton").onclick = showCredits;
+$("creditsButton2").onclick = showCredits;
+$("creditsClose").onclick = () => $("creditsOverlay").classList.remove("show");
+
+if (GAME) {                                  // gioco singolo: si parte dalle impostazioni
+    $("setupBack").style.display = "none";
+    openSetup(GAME);
+} else {
+    $("creditsButton2").style.display = "none";
+}
+</script>
+</body>
+</html>
