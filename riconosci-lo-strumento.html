@@ -1983,14 +1983,17 @@ function generateLevelSequence() {
 }
 
 /*
-   I pulsanti sono sempre ordinati per famiglia (archi, legni,
-   ottoni, percussioni), come le sezioni in partitura: così lo
-   studente impara anche a collocare ogni strumento.
+   Ordine dei pulsanti:
+   - Allenamento e Verifica: sempre alfabetico (sul telefono, con poche
+     colonne, e' il modo piu' rapido per trovare uno strumento);
+   - Tutorial: per famiglia (archi, legni, ottoni, percussioni...), come
+     le sezioni in partitura, per imparare a collocare ogni strumento;
+     alfabetico se e' attiva la domanda sulle sezioni, che altrimenti
+     sarebbe suggerita dall'ordine.
 */
 function buildAnswerButtons() {
     answersBox.innerHTML = "";
-    // con la domanda sulle sezioni l'ordine per sezione darebbe la risposta: ordine alfabetico
-    const ordered = sectionMode
+    const ordered = (isQuizMode() || sectionMode)
         ? [...activeInstruments].sort((a, b) => a.name.localeCompare(b.name, "it"))
         : [...activeInstruments].sort((a, b) => {
         const fa = FAMILY_ORDER.indexOf(a.family);
