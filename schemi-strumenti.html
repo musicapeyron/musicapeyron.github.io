@@ -397,11 +397,25 @@
   .viewer-bar a:hover, .viewer-bar button:hover { background: rgba(255,255,255,0.22); }
   .viewer-hint { flex: 1; font-size: 12px; color: #9FB3CE; }
   /* una sezione per strumento; le card restano della stessa larghezza */
-  #strumenti { display: grid; grid-template-columns: repeat(2, 1fr); gap: 18px 24px; align-items: start; }
-  @media (max-width: 760px) { #strumenti { grid-template-columns: 1fr; } }
-  .strumento, .strumento:first-child { margin-top: 0; }
-  .strumento .grid { grid-template-columns: repeat(2, 1fr); }
-  @media (max-width: 420px) { .strumento .grid { grid-template-columns: 1fr; } }
+  /* un rigo per strumento; ogni strumento ha il suo colore */
+  .strumento { margin-top: 22px; }
+  .strumento:first-child { margin-top: 4px; }
+  .strumento .grid { grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); }
+  @media (max-width: 420px) { .strumento .grid { grid-template-columns: 1fr 1fr; } }
+  .st-flauto-dolce { --accent: rgb(94,200,216); --tint: rgba(94,200,216,0.13); --edge: rgba(94,200,216,0.38); --chip: rgba(94,200,216,0.16); }
+  .st-chitarra { --accent: rgb(249,157,28); --tint: rgba(249,157,28,0.13); --edge: rgba(249,157,28,0.38); --chip: rgba(249,157,28,0.16); }
+  .st-ukulele { --accent: rgb(190,217,88); --tint: rgba(190,217,88,0.13); --edge: rgba(190,217,88,0.38); --chip: rgba(190,217,88,0.16); }
+  .st-tastiera { --accent: rgb(167,139,250); --tint: rgba(167,139,250,0.13); --edge: rgba(167,139,250,0.38); --chip: rgba(167,139,250,0.16); }
+  .st-basso { --accent: rgb(226,28,72); --tint: rgba(226,28,72,0.13); --edge: rgba(226,28,72,0.38); --chip: rgba(226,28,72,0.16); }
+  .strumento .group-title { border-left-color: var(--accent); color: #e2e8f0; }
+  .strumento .card, .strumento .card:hover {
+    border-color: var(--edge);
+    border-top: 2px solid var(--accent);
+  }
+  .strumento .card { background: linear-gradient(180deg, var(--tint), rgba(255,255,255,0.03)); }
+  .strumento .card:hover { background: linear-gradient(180deg, var(--chip), rgba(255,255,255,0.05)); }
+  .strumento .card .icon { background: var(--chip); }
+  .strumento .card .label { color: var(--accent); background: var(--chip); }
   .strumento .group-title span { font-size: 15px; }
 </style>
 </head>
@@ -502,7 +516,8 @@
   const main = document.getElementById('strumenti');
   strumenti.forEach(st => {
     const sec = document.createElement('section');
-    sec.className = 'group group-schemi strumento';
+    const chiave = st.schemi[0].url.match(/schema-[a-z]+-(.+)\.png$/)[1];
+    sec.className = 'group strumento st-' + chiave;
     sec.innerHTML = `<h3 class="group-title"><span>${st.icona}</span> ${st.nome}</h3><div class="grid"></div>`;
     const grid = sec.querySelector('.grid');
     st.schemi.forEach(t => {
@@ -533,7 +548,7 @@
     document.getElementById('viewerScroll').scrollTo(0, 0);
     document.body.style.overflow = 'hidden';
   }
-  function closeViewer() { viewer.classList.remove('open'); document.body.style.overflow = ''; }
+  function closeViewer() { viewer.classList.remove('open'); document.body.style.overflow = ''; if (document.activeElement) document.activeElement.blur(); }
   document.querySelectorAll('a.card[data-immagine]').forEach(c => c.addEventListener('click', e => {
     e.preventDefault(); openViewer(c.dataset.immagine, c.closest('section').querySelector('.group-title').textContent.trim() + ' — ' + c.querySelector('h2').textContent);
   }));
