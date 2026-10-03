@@ -4,16 +4,18 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <!-- Nome del sito: Musica Peyron (nessuna intestazione visibile a schermo, il nome resta solo qui e nel <title>) -->
-<title>Schemi — Musica Peyron</title>
+<title>Strumenti — Schemi — Musica Peyron</title>
 <link rel="icon" href="favicon.svg" type="image/svg+xml">
 <link rel="icon" href="favicon-32.png" type="image/png" sizes="32x32">
 <link rel="apple-touch-icon" href="apple-touch-icon.png">
-<meta name="description" content="Vari schemi per le note musicali, gli accordi e altro.">
+<meta name="description" content="Schemi delle note e degli accordi per flauto dolce, chitarra, ukulele, tastiera e basso elettrico.">
 
 <!--
   ============================================================
-  PAGINA SCHEMI — una card per ogni gruppo di schemi.
-  "Strumenti" porta a schemi-strumenti.html.
+  SCHEMI — STRUMENTI. Ogni strumento è una sezione con i suoi
+  schemi. Per aggiungere uno schema: carica l'immagine in
+  media/schemi e aggiungi una riga in "schemi" dello strumento
+  giusto, nell'elenco "strumenti" in fondo alla pagina.
   ============================================================
 -->
 
@@ -371,6 +373,36 @@
   .breadcrumb { display: inline-block; font-size: 12px; font-weight: 600; color: #7FD8E4; text-decoration: none; margin-bottom: 8px; }
   .breadcrumb:hover { text-decoration: underline; }
   .group-schemi { --accent: #BED958; }
+  /* visore a tutto schermo per gli schemi */
+  .viewer { display: none; position: fixed; inset: 0; z-index: 200; background: rgba(5,8,20,0.96); }
+  .viewer.open { display: block; }
+  .viewer-scroll { position: absolute; top: 56px; left: 0; right: 0; bottom: 0; overflow: auto; -webkit-overflow-scrolling: touch; padding: 4px 12px 24px; text-align: center; }
+  /* schema intero: si adatta sia alla larghezza sia all'altezza dello schermo, senza scorrere */
+  .viewer:not(.zoom) .viewer-scroll { display: flex; align-items: center; justify-content: center; }
+  .viewer img {
+    max-width: 100%;
+    max-height: calc(100vh - 88px);
+    max-height: calc(100dvh - 88px);
+    width: auto; height: auto;
+    background: #fff; border-radius: 8px; cursor: zoom-in;
+  }
+  /* ingrandito: più grande dello schermo, si scorre col dito o con la rotellina */
+  .viewer.zoom img { max-width: none; max-height: none; width: max(200%, 1000px); cursor: zoom-out; }
+  .viewer-bar { position: absolute; top: 0; left: 0; right: 0; height: 56px; z-index: 201; display: flex; align-items: center; gap: 8px; padding: 0 12px; background: rgba(5,8,20,0.9); border-bottom: 1px solid rgba(255,255,255,0.08); }
+  .viewer-bar a, .viewer-bar button {
+    font-family: 'Manrope', sans-serif; font-weight: 700; font-size: 13px;
+    color: #EAF2FF; background: rgba(255,255,255,0.12); border: 1px solid rgba(255,255,255,0.22);
+    border-radius: 999px; padding: 8px 14px; text-decoration: none; cursor: pointer;
+  }
+  .viewer-bar a:hover, .viewer-bar button:hover { background: rgba(255,255,255,0.22); }
+  .viewer-hint { flex: 1; font-size: 12px; color: #9FB3CE; }
+  /* una sezione per strumento; le card restano della stessa larghezza */
+  #strumenti { display: grid; grid-template-columns: repeat(2, 1fr); gap: 18px 24px; align-items: start; }
+  @media (max-width: 760px) { #strumenti { grid-template-columns: 1fr; } }
+  .strumento, .strumento:first-child { margin-top: 0; }
+  .strumento .grid { grid-template-columns: repeat(2, 1fr); }
+  @media (max-width: 420px) { .strumento .grid { grid-template-columns: 1fr; } }
+  .strumento .group-title span { font-size: 15px; }
 </style>
 </head>
 <body>
@@ -378,7 +410,8 @@
 <a class="site-home-button" href="index.html" aria-label="Torna al sito" title="Torna al sito">🏠</a>
 
 <header class="hero">
-  <h1>Schemi</h1>
+  <a class="breadcrumb" href="schemi.html">← Schemi</a>
+  <h1>Strumenti</h1>
 
   <div class="staff" aria-hidden="true">
     <svg viewBox="0 0 300 32" preserveAspectRatio="none">
@@ -393,11 +426,15 @@
   </div>
 </header>
 
-<main>
-  <section class="group group-schemi">
-    <div class="grid" id="grid"></div>
-  </section>
-</main>
+<main id="strumenti"></main>
+<div class="viewer" id="viewer" role="dialog" aria-modal="true">
+  <div class="viewer-bar">
+    <span class="viewer-hint">Tocca lo schema per ingrandirlo</span>
+    <a id="viewerDownload" href="#" download>Scarica</a>
+    <button type="button" id="viewerClose" aria-label="Chiudi">✕</button>
+  </div>
+  <div class="viewer-scroll" id="viewerScroll"><img id="viewerImg" alt=""></div>
+</div>
 
 
 <footer></footer>
@@ -421,31 +458,88 @@
   /* ============================================================
      ELENCO — per aggiungerne uno, copia un blocco { ... }
      ============================================================ */
-  const elenco = [
+  const strumenti = [
     {
-      title: "Strumenti",
-      icon: "🎸",
-      desc: "Flauto dolce, chitarra, ukulele, tastiera e basso elettrico: note e accordi.",
-      url: "schemi-strumenti.html"
+      nome: "Flauto dolce",
+      icona: "🎵",
+      schemi: [
+        { title: "Schema note", icon: "📄", label: "Note", desc: "Ogni nota sul pentagramma, con il suo nome e la posizione sullo strumento.", url: "media/schemi/schema-note-flauto-dolce.png" }
+      ]
+    },
+    {
+      nome: "Chitarra",
+      icona: "🎸",
+      schemi: [
+        { title: "Schema note", icon: "📄", label: "Note", desc: "Ogni nota sul pentagramma, con il suo nome e la posizione sullo strumento.", url: "media/schemi/schema-note-chitarra.png" },
+        { title: "Schema accordi", icon: "🎼", label: "Accordi", desc: "Gli accordi principali: maggiori, minori e di settima, con le dita da usare.", url: "media/schemi/schema-accordi-chitarra.png" }
+      ]
+    },
+    {
+      nome: "Ukulele",
+      icona: "🪕",
+      schemi: [
+        { title: "Schema note", icon: "📄", label: "Note", desc: "Ogni nota sul pentagramma, con il suo nome e la posizione sullo strumento.", url: "media/schemi/schema-note-ukulele.png" },
+        { title: "Schema accordi", icon: "🎼", label: "Accordi", desc: "Gli accordi principali: maggiori, minori e di settima, con le dita da usare.", url: "media/schemi/schema-accordi-ukulele.png" }
+      ]
+    },
+    {
+      nome: "Tastiera",
+      icona: "🎹",
+      schemi: [
+        { title: "Schema note", icon: "📄", label: "Note", desc: "Ogni nota sul pentagramma, con il suo nome e la posizione sullo strumento.", url: "media/schemi/schema-note-tastiera.png" },
+        { title: "Schema accordi", icon: "🎼", label: "Accordi", desc: "Gli accordi principali: maggiori, minori e di settima, con le dita da usare.", url: "media/schemi/schema-accordi-tastiera.png" }
+      ]
+    },
+    {
+      nome: "Basso elettrico",
+      icona: "🎸",
+      schemi: [
+        { title: "Schema note", icon: "📄", label: "Note", desc: "Ogni nota sul pentagramma, con il suo nome e la posizione sullo strumento.", url: "media/schemi/schema-note-basso.png" }
+      ]
     }
   ];
 
-  const grid = document.getElementById('grid');
-  elenco.forEach(t => {
-    const card = document.createElement('a');
-    card.className = 'card';
-    card.href = t.url;
-    if (t.immagine) card.dataset.immagine = t.url;
-    card.innerHTML = `
-      <div class="top-row">
-        <div class="icon">${t.icon}</div>
-        ${t.label ? `<span class="label">${t.label}</span>` : ''}
-      </div>
-      <h2>${t.title}</h2>
-      ${t.desc ? `<p>${t.desc}</p>` : ''}
-    `;
-    grid.appendChild(card);
+  const main = document.getElementById('strumenti');
+  strumenti.forEach(st => {
+    const sec = document.createElement('section');
+    sec.className = 'group group-schemi strumento';
+    sec.innerHTML = `<h3 class="group-title"><span>${st.icona}</span> ${st.nome}</h3><div class="grid"></div>`;
+    const grid = sec.querySelector('.grid');
+    st.schemi.forEach(t => {
+      const card = document.createElement('a');
+      card.className = 'card';
+      card.href = t.url;
+      card.dataset.immagine = t.url;
+      card.innerHTML = `
+        <div class="top-row">
+          <div class="icon">${t.icon}</div>
+          <span class="label">${t.label}</span>
+        </div>
+        <h2>${t.title}</h2>
+        <p>${t.desc}</p>
+      `;
+      grid.appendChild(card);
+    });
+    main.appendChild(sec);
   });
+
+  /* Visore: la card apre lo schema a tutto schermo (tocca per ingrandire, ✕ o Esc per chiudere) */
+  const viewer = document.getElementById('viewer');
+  const vImg = document.getElementById('viewerImg');
+  function openViewer(src, title) {
+    vImg.src = src; vImg.alt = title;
+    document.getElementById('viewerDownload').href = src;
+    viewer.classList.remove('zoom'); viewer.classList.add('open');
+    document.getElementById('viewerScroll').scrollTo(0, 0);
+    document.body.style.overflow = 'hidden';
+  }
+  function closeViewer() { viewer.classList.remove('open'); document.body.style.overflow = ''; }
+  document.querySelectorAll('a.card[data-immagine]').forEach(c => c.addEventListener('click', e => {
+    e.preventDefault(); openViewer(c.dataset.immagine, c.closest('section').querySelector('.group-title').textContent.trim() + ' — ' + c.querySelector('h2').textContent);
+  }));
+  vImg.addEventListener('click', () => viewer.classList.toggle('zoom'));
+  document.getElementById('viewerClose').addEventListener('click', closeViewer);
+  document.addEventListener('keydown', e => { if (e.key === 'Escape') closeViewer(); });
 </script>
 
 </body>
