@@ -2163,7 +2163,9 @@ function showReveal(inst) {
     revealOrchestraNote.textContent = "";
     hideStepError();
     fillInstrumentCard(inst);
-    revealSachs.textContent = sachsMode ? (inst.sachsNote || SACHS_INFO[inst.sachs]) : "";
+    // sezione e classificazione compaiono sempre nella scheda finale:
+    // con le opzioni attive dopo le domande, con le opzioni spente subito
+    revealSachs.textContent = inst.sachsNote || SACHS_INFO[inst.sachs];
     revealName.style.color = FAMILY_TEXT_COLORS[inst.family];
     reveal.classList.remove("mode-step");
     reveal.classList.add("mode-reveal");

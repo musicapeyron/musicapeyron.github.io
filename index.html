@@ -224,6 +224,20 @@
     flex-shrink: 0;
   }
 
+  .featured-row {
+    display: grid; grid-template-columns: 1fr 1fr; gap: 10px;
+    margin-bottom: 16px;
+  }
+  .featured-row .featured-card { margin-bottom: 0; }
+  @media (max-width: 600px) { .featured-row { grid-template-columns: 1fr; } }
+  .featured-giochi {
+    background: linear-gradient(135deg, rgba(249,157,28,0.14), rgba(255,255,255,0.035));
+    border-color: rgba(249,157,28,0.4);
+  }
+  .featured-giochi:hover { border-color: rgba(249,157,28,0.65); background: linear-gradient(135deg, rgba(249,157,28,0.2), rgba(255,255,255,0.05)); }
+  .featured-giochi .icon { background: rgba(249,157,28,0.18); }
+  .featured-giochi .arrow { color: #F99D1C; }
+
   .divider {
     height: 1px;
     background: rgba(255,255,255,0.09);
@@ -366,18 +380,24 @@
 </header>
 
 <main>
-  <a class="featured-card" href="spartiti.html">
-    <div class="icon">🎧</div>
-    <div class="featured-text">
-      <h2>Spartiti</h2>
-      <p>Ascolta i brani e consulta i relativi spartiti.</p>
-    </div>
-    <span class="arrow">→</span>
-  </a>
-  <section class="group group-giochi">
-    <h3 class="group-title"><span>🎲</span> Giochi</h3>
-    <div class="grid" id="grid-giochi"></div>
-  </section>
+  <div class="featured-row">
+    <a class="featured-card" href="spartiti.html">
+      <div class="icon">🎧</div>
+      <div class="featured-text">
+        <h2>Spartiti</h2>
+        <p>Ascolta i brani e consulta i relativi spartiti.</p>
+      </div>
+      <span class="arrow">→</span>
+    </a>
+    <a class="featured-card featured-giochi" href="giochi.html">
+      <div class="icon">🎲</div>
+      <div class="featured-text">
+        <h2>Giochi</h2>
+        <p>Note-UNO e memory, anche a squadre.</p>
+      </div>
+      <span class="arrow">→</span>
+    </a>
+  </div>
 
   <section class="group group-base">
     <h3 class="group-title">Suono, note e ritmo</h3>
@@ -396,33 +416,11 @@
   /* ============================================================
      I TUOI STRUMENTI / GIOCHI — modifica qui
      ============================================================ */
-  /* Tre gruppi, mostrati in sezioni separate:
-     - giochi:  giochi da fare anche in gruppo (in alto)
+  /* Due gruppi, mostrati in sezioni separate:
      - base:    suono, note e ritmo
-     - avanzati: da "Nomina gli Intervalli" in poi */
-  const giochi = [
-    {
-      title: "Note-UNO",
-      icon: "🃏",
-      label: "Note",
-      desc: "Un gioco di carte in stile UNO per allenarsi con le note musicali.",
-      url: "note-uno.html"
-    },
-    {
-      title: "Memory delle Note",
-      icon: "🎴",
-      label: "Note",
-      desc: "Trova le coppie: nota e nome, due note uguali o la stessa nota in due chiavi. Da 1 a 4 giocatori.",
-      url: "memory-note.html"
-    },
-    {
-      title: "Memory degli Strumenti",
-      icon: "🎷",
-      label: "Strumenti",
-      desc: "Trova le coppie di foto, nomi e suoni degli strumenti dell'orchestra. Da 1 a 4 giocatori.",
-      url: "memory-strumenti.html"
-    }
-  ];
+     - avanzati: da "Nomina gli Intervalli" in poi
+     (i giochi sono nella pagina giochi.html) */
+
 
   const base = [
     {
@@ -461,6 +459,13 @@
       url: "leggi-la-nota.html"
     },
     {
+      title: "Le Note sul Pianoforte",
+      icon: "🎹",
+      label: "Teoria",
+      desc: "Riconosci le note sulla tastiera, tasto dopo tasto.",
+      url: "tastierapianoforte.html"
+    },
+    {
       title: "Figure Ritmiche",
       icon: "🎼",
       label: "Ritmo",
@@ -475,11 +480,11 @@
       url: "costruttore-di-battute.html"
     },
     {
-      title: "Le Note sul Pianoforte",
-      icon: "🎹",
-      label: "Teoria",
-      desc: "Riconosci le note sulla tastiera, tasto dopo tasto.",
-      url: "tastierapianoforte.html"
+      title: "Dettato Ritmico",
+      icon: "✍️",
+      label: "Ritmo",
+      desc: "Ascolta il ritmo e trascrivilo sul rigo.",
+      url: "dettato-ritmico.html"
     },
     {
       title: "Imita il Ritmo",
@@ -624,7 +629,6 @@
       grid.appendChild(empty);
     }
   }
-  fillGrid('grid-giochi', giochi, false);
   fillGrid('grid-base', base, false);
   fillGrid('grid-avanzati', avanzati, true);
 </script>
