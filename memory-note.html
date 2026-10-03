@@ -739,6 +739,10 @@ function staffSVG(clef, key) {
     svg.setAttribute("viewBox", `${minX} ${minY} ${W} ${H}`);
     svg.setAttribute("preserveAspectRatio", "xMidYMid meet");
     svg.removeAttribute("width"); svg.removeAttribute("height");
+    // VexFlow scrive anche una dimensione fissa nello stile (124x160 px): va tolta,
+    // altrimenti sui telefoni il disegno esce dalla carta invece di adattarsi
+    svg.removeAttribute("style");
+    svg.style.width = "100%"; svg.style.height = "100%"; svg.style.display = "block";
     return (staffCache[ck] = svg.outerHTML);
 }
 const noteUrl = key => "media/memory-note/" + key.replace("/", "") + ".mp3";
