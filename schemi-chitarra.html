@@ -4,22 +4,17 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <!-- Nome del sito: Musica Peyron (nessuna intestazione visibile a schermo, il nome resta solo qui e nel <title>) -->
-<title>Musica Peyron</title>
+<title>Chitarra — Schemi — Musica Peyron</title>
 <link rel="icon" href="favicon.svg" type="image/svg+xml">
 <link rel="icon" href="favicon-32.png" type="image/png" sizes="32x32">
 <link rel="apple-touch-icon" href="apple-touch-icon.png">
-<meta name="description" content="Raccolta di giochi didattici di educazione musicale.">
+<meta name="description" content="Schemi per chitarra: le note sullo strumento.">
 
 <!--
   ============================================================
-  COME AGGIUNGERE UN NUOVO GIOCO/STRUMENTO
-  ============================================================
-  1) Carica il file .html del gioco nella stessa cartella di
-     questa pagina (accanto a index.html).
-  2) Aggiungi un nuovo blocco { ... } dentro l'array "tools"
-     qui sotto, nel tag <script>: titolo, descrizione breve,
-     etichetta (es. "Teoria", "Ritmo"), un'emoji e "url" col
-     nome del file appena caricato.
+  SCHEMI — CHITARRA. Per aggiungere uno schema: carica
+  l'immagine in media/schemi e aggiungi un blocco { ... }
+  all'elenco in fondo alla pagina (con immagine: true).
   ============================================================
 -->
 
@@ -225,7 +220,7 @@
   }
 
   .featured-row {
-    display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px;
+    display: grid; grid-template-columns: 1fr 1fr; gap: 10px;
     margin-bottom: 16px;
   }
   .featured-row .featured-card { margin-bottom: 0; }
@@ -237,13 +232,6 @@
   .featured-giochi:hover { border-color: rgba(249,157,28,0.65); background: linear-gradient(135deg, rgba(249,157,28,0.2), rgba(255,255,255,0.05)); }
   .featured-giochi .icon { background: rgba(249,157,28,0.18); }
   .featured-giochi .arrow { color: #F99D1C; }
-  .featured-schemi {
-    background: linear-gradient(135deg, rgba(190,217,88,0.13), rgba(255,255,255,0.035));
-    border-color: rgba(190,217,88,0.4);
-  }
-  .featured-schemi:hover { border-color: rgba(190,217,88,0.65); background: linear-gradient(135deg, rgba(190,217,88,0.19), rgba(255,255,255,0.05)); }
-  .featured-schemi .icon { background: rgba(190,217,88,0.18); }
-  .featured-schemi .arrow { color: #BED958; }
 
   .divider {
     height: 1px;
@@ -366,12 +354,47 @@
     font-size: 10.5px;
     color: #5C7091;
   }
+
+  /* casetta per tornare alla pagina principale */
+  .site-home-button {
+    position: fixed; top: 14px; left: 14px; z-index: 50;
+    width: 40px; height: 40px; border-radius: 50%;
+    border: 1px solid rgba(255,255,255,0.18);
+    background: linear-gradient(180deg, rgba(255,255,255,0.12), rgba(255,255,255,0.04));
+    color: #e2e8f0; font-size: 1.05rem; text-decoration: none;
+    display: flex; align-items: center; justify-content: center;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+    transition: transform 0.15s ease, background 0.15s ease;
+  }
+  .site-home-button:hover { background: rgba(255,255,255,0.2); transform: translateY(-2px); }
+  @media (max-width: 600px) { header.hero { padding-top: 58px; } }
+
+  .breadcrumb { display: inline-block; font-size: 12px; font-weight: 600; color: #7FD8E4; text-decoration: none; margin-bottom: 8px; }
+  .breadcrumb:hover { text-decoration: underline; }
+  .group-schemi { --accent: #BED958; }
+  /* visore a tutto schermo per gli schemi */
+  .viewer { display: none; position: fixed; inset: 0; z-index: 200; background: rgba(5,8,20,0.96); }
+  .viewer.open { display: block; }
+  .viewer-scroll { position: absolute; top: 56px; left: 0; right: 0; bottom: 0; overflow: auto; -webkit-overflow-scrolling: touch; padding: 4px 12px 24px; text-align: center; }
+  .viewer img { max-width: 100%; height: auto; background: #fff; border-radius: 8px; cursor: zoom-in; }
+  .viewer.zoom img { max-width: none; width: max(200%, 1000px); cursor: zoom-out; }
+  .viewer-bar { position: absolute; top: 0; left: 0; right: 0; height: 56px; z-index: 201; display: flex; align-items: center; gap: 8px; padding: 0 12px; background: rgba(5,8,20,0.9); border-bottom: 1px solid rgba(255,255,255,0.08); }
+  .viewer-bar a, .viewer-bar button {
+    font-family: 'Manrope', sans-serif; font-weight: 700; font-size: 13px;
+    color: #EAF2FF; background: rgba(255,255,255,0.12); border: 1px solid rgba(255,255,255,0.22);
+    border-radius: 999px; padding: 8px 14px; text-decoration: none; cursor: pointer;
+  }
+  .viewer-bar a:hover, .viewer-bar button:hover { background: rgba(255,255,255,0.22); }
+  .viewer-hint { flex: 1; font-size: 12px; color: #9FB3CE; }
 </style>
 </head>
 <body>
 
+<a class="site-home-button" href="index.html" aria-label="Torna al sito" title="Torna al sito">🏠</a>
+
 <header class="hero">
-  <h1>Strumenti interattivi per imparare <span id="secretLa">la</span> musica</h1>
+  <a class="breadcrumb" href="schemi.html">← Schemi</a>
+  <h1>Chitarra</h1>
 
   <div class="staff" aria-hidden="true">
     <svg viewBox="0 0 300 32" preserveAspectRatio="none">
@@ -387,227 +410,24 @@
 </header>
 
 <main>
-  <div class="featured-row">
-    <a class="featured-card" href="spartiti.html">
-      <div class="icon">🎧</div>
-      <div class="featured-text">
-        <h2>Spartiti</h2>
-        <p>Ascolta i brani e consulta i relativi spartiti.</p>
-      </div>
-      <span class="arrow">→</span>
-    </a>
-    <a class="featured-card featured-giochi" href="giochi.html">
-      <div class="icon">🎲</div>
-      <div class="featured-text">
-        <h2>Giochi</h2>
-        <p>Note-UNO e memory, anche a squadre.</p>
-      </div>
-      <span class="arrow">→</span>
-    </a>
-    <a class="featured-card featured-schemi" href="schemi.html">
-      <div class="icon">🗂️</div>
-      <div class="featured-text">
-        <h2>Schemi</h2>
-        <p>Le note su flauto, chitarra, ukulele, tastiera e basso.</p>
-      </div>
-      <span class="arrow">→</span>
-    </a>
-  </div>
-
-  <section class="group group-base">
-    <h3 class="group-title">Suono, note e ritmo</h3>
-    <div class="grid" id="grid-base"></div>
-  </section>
-
-  <section class="group group-avanzati">
-    <h3 class="group-title">Intervalli, scale e accordi</h3>
-    <div class="grid" id="grid-avanzati"></div>
+  <section class="group group-schemi">
+    <div class="grid" id="grid"></div>
   </section>
 </main>
+<div class="viewer" id="viewer" role="dialog" aria-modal="true">
+  <div class="viewer-bar">
+    <span class="viewer-hint">Tocca lo schema per ingrandirlo</span>
+    <a id="viewerDownload" href="#" download>Scarica</a>
+    <button type="button" id="viewerClose" aria-label="Chiudi">✕</button>
+  </div>
+  <div class="viewer-scroll" id="viewerScroll"><img id="viewerImg" alt=""></div>
+</div>
+
 
 <footer></footer>
 
 <script>
-  /* ============================================================
-     I TUOI STRUMENTI / GIOCHI — modifica qui
-     ============================================================ */
-  /* Due gruppi, mostrati in sezioni separate:
-     - base:    suono, note e ritmo
-     - avanzati: da "Nomina gli Intervalli" in poi
-     (i giochi sono nella pagina giochi.html) */
-
-
-  const base = [
-    {
-      title: "Test d'Ingresso",
-      icon: "📝",
-      label: "Verifica",
-      desc: "Una versione breve di quattro giochi didattici, per testare le conoscenze di partenza.",
-      url: "test-ingresso.html"
-    },
-    {
-      title: "Acuto, Grave o Unisono?",
-      icon: "👂",
-      label: "Ascolto",
-      desc: "Allena l'orecchio a distinguere suoni acuti, gravi e all'unisono.",
-      url: "acuto-o-grave.html"
-    },
-    {
-      title: "Recita le Note",
-      icon: "🗣️",
-      label: "Teoria",
-      desc: "Impara a recitare la scala do-re-mi-fa-sol-la-si-do e ritorno, partendo da ogni nota.",
-      url: "recita-le-note.html"
-    },
-    {
-      title: "Rap con le Note",
-      icon: "🎤",
-      label: "Ritmo",
-      desc: "Recita le sequenze di note a tempo su una base rap: una nota per battito, poi due, poi quattro.",
-      url: "rap-con-le-note.html"
-    },
-    {
-      title: "Leggi la Nota",
-      icon: "🎵",
-      label: "Teoria",
-      desc: "Impara a leggere le note sul pentagramma, una alla volta.",
-      url: "leggi-la-nota.html"
-    },
-    {
-      title: "Le Note sul Pianoforte",
-      icon: "🎹",
-      label: "Teoria",
-      desc: "Riconosci le note sulla tastiera, tasto dopo tasto.",
-      url: "tastierapianoforte.html"
-    },
-    {
-      title: "Figure Ritmiche",
-      icon: "🎼",
-      label: "Ritmo",
-      desc: "Riconosci nomi, pause e valori delle figure musicali.",
-      url: "figure-ritmiche.html"
-    },
-    {
-      title: "Costruttore di Battute",
-      icon: "🥁",
-      label: "Ritmo",
-      desc: "Componi battute scegliendo e disponendo le figure ritmiche.",
-      url: "costruttore-di-battute.html"
-    },
-    {
-      title: "Dettato Ritmico",
-      icon: "✍️",
-      label: "Ritmo",
-      desc: "Ascolta il ritmo e trascrivilo sul rigo.",
-      url: "dettato-ritmico.html"
-    },
-    {
-      title: "Imita il Ritmo",
-      icon: "👏",
-      label: "Ritmo",
-      desc: "Ascolta uno schema ritmico e riproducilo battendo il tempo.",
-      url: "imita-il-ritmo.html"
-    },
-    {
-      title: "Le Qualità del Suono",
-      icon: "🌊",
-      label: "Teoria",
-      desc: "Esplora altezza, intensità, timbro e come viaggia un'onda sonora.",
-      url: "qualita-del-suono.html"
-    },
-    {
-      title: "Riconosci lo Strumento",
-      icon: "🎺",
-      label: "Ascolto",
-      desc: "Riconosci gli strumenti dell'orchestra dal suono o dalla foto, con sezioni e classificazione.",
-      url: "riconosci-lo-strumento.html"
-    }
-  ];
-
-  const avanzati = [
-    {
-      title: "Nomina gli Intervalli",
-      icon: "📏",
-      label: "Teoria",
-      desc: "Riconosci e nomina gli intervalli musicali sul pentagramma.",
-      url: "nomina-intervalli.html"
-    },
-    {
-      title: "Ascolta gli Intervalli",
-      icon: "👂",
-      label: "Ascolto",
-      desc: "Allena l'orecchio a riconoscere gli intervalli, ascendenti o discendenti.",
-      url: "ascolta-intervalli.html"
-    },
-    {
-      title: "Ascolta la Scala",
-      icon: "👂",
-      label: "Ascolto",
-      desc: "Riconosci a orecchio il tipo di scala: maggiore o minore, naturale, armonica o melodica.",
-      url: "ascolta-scala.html"
-    },
-    {
-      title: "Identifica la Tonalità",
-      icon: "🔑",
-      label: "Teoria",
-      desc: "Due modalità: nomina la tonalità dall'armatura, oppure scegli l'armatura corretta per una tonalità data.",
-      url: "identifica-tonalita.html"
-    },
-    {
-      title: "Nomina la Triade",
-      icon: "🎶",
-      label: "Teoria",
-      desc: "Riconosci e nomina le triadi, con armature fino a due alterazioni.",
-      url: "nomina-triade.html"
-    },
-    {
-      title: "Triadi in Contesto Tonale",
-      icon: "🎻",
-      label: "Teoria",
-      desc: "Costruisci tutte le triadi diatoniche di una scala maggiore o minore.",
-      url: "triadi-tonali.html"
-    },
-    {
-      title: "Costruisci la Triade",
-      icon: "🔨",
-      label: "Teoria",
-      desc: "Posiziona le note sul pentagramma e usa le frecce per alterarle e formare la triade.",
-      url: "costruisci-triade.html"
-    },
-    {
-      title: "Identifica gli Accordi",
-      icon: "🎯",
-      label: "Teoria",
-      desc: "Riconosci a colpo d'occhio la qualità degli accordi, anche nei loro rivolti.",
-      url: "identifica-accordi.html"
-    },
-    {
-      title: "Ascolta gli Accordi",
-      icon: "👂",
-      label: "Ascolto",
-      desc: "Riconosci a orecchio la qualità degli accordi, anche nei loro rivolti.",
-      url: "ascolta-accordi.html"
-    }
-  ];
-
-  /* Accesso nascosto: 6 clic ravvicinati sulla parola "la" del titolo */
-  (function () {
-    const target = document.getElementById('secretLa');
-    const NEEDED = 6, WINDOW_MS = 2500;
-    let clicks = 0, timer = null;
-    target.addEventListener('click', () => {
-      clicks++;
-      clearTimeout(timer);
-      timer = setTimeout(() => { clicks = 0; }, WINDOW_MS);
-      if (clicks >= NEEDED) {
-        clicks = 0;
-        window.location.href = 'programma/programma-m1cekg1q.html';
-      }
-    });
-  })();
-
-  function fillGrid(id, list, withEmpty) {
-    /* Titolo su una sola riga: se non ci sta, riduce la dimensione del testo
+  /* Titolo su una sola riga: se non ci sta, riduce la dimensione del testo
      quanto basta (dipende dalla larghezza dello schermo e dal carattere caricato) */
   function fitTitle() {
     const h1 = document.querySelector('header.hero h1');
@@ -622,30 +442,54 @@
   if (document.fonts && document.fonts.ready) document.fonts.ready.then(fitTitle);
   window.addEventListener('resize', fitTitle);
 
-    const grid = document.getElementById(id);
-    list.forEach(t => {
-      const card = document.createElement('a');
-      card.className = 'card';
-      card.href = t.url;
-      card.innerHTML = `
-        <div class="top-row">
-          <div class="icon">${t.icon}</div>
-          <span class="label">${t.label}</span>
-        </div>
-        <h2>${t.title}</h2>
-        <p>${t.desc}</p>
-      `;
-      grid.appendChild(card);
-    });
-    if (withEmpty) {
-      const empty = document.createElement('div');
-      empty.className = 'card empty';
-      empty.innerHTML = `<div class="plus">+</div><div>Prossimo strumento in arrivo</div>`;
-      grid.appendChild(empty);
+  /* ============================================================
+     ELENCO — per aggiungerne uno, copia un blocco { ... }
+     ============================================================ */
+  const elenco = [
+    {
+      title: "Schema note",
+      icon: "📄",
+      label: "Chitarra",
+      desc: "Ogni nota sul pentagramma, con il suo nome e la posizione sullo strumento.",
+      url: "media/schemi/schema-note-chitarra.png",
+      immagine: true
     }
+  ];
+
+  const grid = document.getElementById('grid');
+  elenco.forEach(t => {
+    const card = document.createElement('a');
+    card.className = 'card';
+    card.href = t.url;
+    if (t.immagine) card.dataset.immagine = t.url;
+    card.innerHTML = `
+      <div class="top-row">
+        <div class="icon">${t.icon}</div>
+        ${t.label ? `<span class="label">${t.label}</span>` : ''}
+      </div>
+      <h2>${t.title}</h2>
+      ${t.desc ? `<p>${t.desc}</p>` : ''}
+    `;
+    grid.appendChild(card);
+  });
+
+  /* Visore: la card apre lo schema a tutto schermo (tocca per ingrandire, ✕ o Esc per chiudere) */
+  const viewer = document.getElementById('viewer');
+  const vImg = document.getElementById('viewerImg');
+  function openViewer(src, title) {
+    vImg.src = src; vImg.alt = title;
+    document.getElementById('viewerDownload').href = src;
+    viewer.classList.remove('zoom'); viewer.classList.add('open');
+    document.getElementById('viewerScroll').scrollTo(0, 0);
+    document.body.style.overflow = 'hidden';
   }
-  fillGrid('grid-base', base, false);
-  fillGrid('grid-avanzati', avanzati, true);
+  function closeViewer() { viewer.classList.remove('open'); document.body.style.overflow = ''; }
+  document.querySelectorAll('a.card[data-immagine]').forEach(c => c.addEventListener('click', e => {
+    e.preventDefault(); openViewer(c.dataset.immagine, c.querySelector('h2').textContent);
+  }));
+  vImg.addEventListener('click', () => viewer.classList.toggle('zoom'));
+  document.getElementById('viewerClose').addEventListener('click', closeViewer);
+  document.addEventListener('keydown', e => { if (e.key === 'Escape') closeViewer(); });
 </script>
 
 </body>
