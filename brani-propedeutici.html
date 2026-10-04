@@ -446,6 +446,30 @@
   .carta-nome { font-family: 'Fredoka', 'Manrope', sans-serif; font-weight: 700; text-align: center; line-height: 1;
     -webkit-text-stroke: 1.5px #1F2430; paint-order: stroke fill; margin: 0 0 6px; }
   .lim-lato .bp-disegno { transition: none; }
+  /* telefono: spartito prima di tutto, poi schema; titolo, novità e disegno piccoli */
+  .tel { width: 100%; height: 100%; background: #fff; color: #1F2430; display: grid; gap: 6px; padding: 8px; box-sizing: border-box; overflow: hidden; }
+  .tel-vert { grid-template-rows: auto auto minmax(0, 1fr) auto; }
+  .tel-oriz { grid-template-columns: minmax(180px, 30%) minmax(0, 1fr); grid-template-rows: minmax(0, 1fr); }
+  .tel-lato { display: flex; flex-direction: column; gap: 6px; overflow: hidden; min-height: 0; }
+  .tel-testa { display: flex; align-items: center; gap: 6px; padding-right: 46px; min-height: 34px; }
+  .tel-oriz .tel-testa { padding-right: 0; }
+  .tel-numero { flex: none; width: 24px; height: 24px; border-radius: 50%; background: #5E50A1; color: #fff; display: grid; place-items: center;
+    font-family: 'Fredoka', 'Manrope', sans-serif; font-weight: 700; font-size: 13px; }
+  .tel-titolo { margin: 0; font-family: 'Fredoka', 'Manrope', sans-serif; font-weight: 700; font-size: 17px; line-height: 1.05; flex: 1; }
+  .tel-titolo span { -webkit-text-stroke: 1.2px #1F2430; paint-order: stroke fill; }
+  .tel-disegno { flex: none; width: 34px; height: 34px; }
+  .tel .bp-riquadro { font-size: 10.5px; line-height: 1.3; padding: 4px 8px 5px 26px; border-radius: 10px; border-width: 1.5px; }
+  .tel .bp-riquadro + .bp-riquadro { margin-top: 4px; }
+  .tel .bp-riquadro::before { font-size: 13px; left: 7px; top: 4px; }
+  .tel .bp-riquadro .etichetta { font-size: 12.5px; }
+  .tel-spartito { display: flex; align-items: center; justify-content: center; overflow: hidden; min-height: 0; min-width: 0; }
+  .lightbox .tel-spartito .spartito { width: 100%; max-width: none; max-height: none; overflow: visible; padding: 0; background: transparent; display: flex; justify-content: center; }
+  .tel-carte { display: grid; gap: 6px; justify-content: center; }
+  .tel-oriz .tel-carte { margin-top: auto; }
+  .tel .carta-nota { padding: 3px 3px 5px; border-radius: 10px; }
+  .tel .carta-nome { margin-bottom: 3px; -webkit-text-stroke: 1px #1F2430; }
+  .lightbox.bp-lim .lightbox-close { width: 36px; height: 36px; top: 8px; right: 8px; font-size: 16px; }
+  @media (min-width: 761px) and (min-height: 501px) { .lightbox.bp-lim .lightbox-close { width: 40px; height: 40px; top: 18px; right: 18px; font-size: 18px; } }
   .lim-spartito { display: flex; align-items: center; justify-content: center; padding: 18px 26px 18px 18px; overflow: hidden; }
   .lightbox .lim-spartito .spartito { width: 100%; max-width: none; max-height: none; overflow: visible; padding: 0; background: transparent; }
   .lim-spartito svg { display: block; margin: 0 auto; }
@@ -542,11 +566,64 @@
 
   /* ---------- schermo intero per la LIM ---------- */
   const lightbox = document.getElementById('lightbox'), lightboxInner = document.getElementById('lightboxInner');
-  function chiudi() { lightbox.classList.remove('open'); lightboxInner.innerHTML = ''; document.body.style.overflow = ''; }
+  function chiudi() { lightbox.classList.remove('open'); lightboxInner.innerHTML = ''; document.body.style.overflow = ''; limAperta = null; }
   document.getElementById('lightboxClose').addEventListener('click', chiudi);
   document.addEventListener('keydown', e => { if (e.key === 'Escape') chiudi(); });
 
+  /* ---------- schermo intero sul telefono: lo spartito prima di tutto ----------
+     Vale solo per schermi piccoli (larghi meno di 760 px o alti meno di 500 px): LIM e computer non cambiano. */
+  const eTelefono = () => matchMedia('(max-width: 760px), (max-height: 500px)').matches;
+  let limAperta = null;
+  async function apriTelefono(n, versione) {
+    const brano = await caricaBrano(n), note = MotoreSchemi.noteUsate(brano);
+    const verticale = window.innerHeight > window.innerWidth;
+    const testa = `<div class="tel-testa"><span class="tel-numero">${n}</span><h2 class="tel-titolo">${titoloColorato(brano.titoloBreve)}</h2><img class="tel-disegno" src="${disegno(n)}" alt=""></div>`;
+    const riquadri = brano.riquadri.map(riquadroHTML).join("");
+    lightboxInner.innerHTML = verticale
+      ? `<div class="tel tel-vert">${testa}<div class="tel-riquadri">${riquadri}</div><div class="tel-spartito"><div class="spartito"></div></div><div class="tel-carte lim-carte"></div></div>`
+      : `<div class="tel tel-oriz"><div class="tel-lato">${testa}<div class="tel-riquadri">${riquadri}</div><div class="tel-carte lim-carte"></div></div><div class="tel-spartito"><div class="spartito"></div></div></div>`;
+    lightbox.classList.add('open'); document.body.style.overflow = 'hidden';
+    const carte = lightboxInner.querySelector('.tel-carte');
+    MotoreSchemi.disegnaCarte(carte, strumento.id, note);
+    const gap = 6, nNote = note.length;
+    const applica = (colonne, w) => {
+      carte.style.gridTemplateColumns = `repeat(${colonne}, ${w}px)`;
+      carte.querySelectorAll('.carta-nota').forEach(c => { c.style.width = w + 'px'; c.querySelector('.carta-nome').style.fontSize = Math.max(11, w * 0.17) + 'px'; });
+    };
+    if (verticale) {
+      // una sola fila di carte, alta al massimo un quarto dello schermo
+      const largUtile = lightboxInner.querySelector('.tel').clientWidth - 16;
+      let w = Math.min(130, (largUtile - gap * (nNote - 1)) / nNote);
+      applica(nNote, w);
+      while (w > 40 && carte.getBoundingClientRect().height > window.innerHeight * 0.25) { w *= 0.93; applica(nNote, w); }
+    } else {
+      // colonna stretta: carte il più grandi possibile senza uscire dallo schermo
+      const lato = lightboxInner.querySelector('.tel-lato'), largUtile = lato.clientWidth;
+      let migliore = null;
+      for (let colonne = 1; colonne <= nNote; colonne++) {
+        let w = Math.min(160, (largUtile - gap * (colonne - 1)) / colonne);
+        while (w >= 36) { applica(colonne, w); if (lato.scrollHeight <= lato.clientHeight + 1) break; w *= 0.94; }
+        if (w >= 36 && (!migliore || w > migliore.w)) migliore = { colonne, w };
+      }
+      migliore = migliore || { colonne: nNote, w: 36 };
+      applica(migliore.colonne, migliore.w);
+    }
+    // lo spartito occupa tutto lo spazio rimasto, intero e senza scorrere
+    const area = lightboxInner.querySelector('.tel-spartito'), div = area.querySelector('.spartito');
+    const ad = MotoreSchemi.adattaBrano(div, brano, opzioni(versione, {}, n), area.clientWidth - 4, area.clientHeight - 4);
+    const vb = ad.svg.viewBox.baseVal, scala = Math.min(ad.scala, 2.6);
+    ad.svg.style.width = (vb.width * scala) + "px"; ad.svg.style.height = (vb.height * scala) + "px";
+  }
+  // se si ruota il telefono (o si ridimensiona la finestra) con lo spartito aperto, si ridisegna
+  let attesaLim;
+  window.addEventListener('resize', () => {
+    if (!limAperta || !lightbox.classList.contains('open')) return;
+    clearTimeout(attesaLim); attesaLim = setTimeout(() => apriLim(limAperta.n, limAperta.versione), 250);
+  });
+
   async function apriLim(n, versione) {
+    limAperta = { n, versione };
+    if (eTelefono()) return apriTelefono(n, versione);
     const brano = await caricaBrano(n);
     lightboxInner.innerHTML = `<div class="lim">
       <div class="lim-lato">
