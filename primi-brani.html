@@ -300,6 +300,39 @@
   .versions button.active { background: #5EC8D8; color: #061323; border-color: #5EC8D8; }
   .versions + .score-wrap { margin-top: 10px; }
 
+  /* barra degli strumenti: resta visibile mentre si scorre */
+  .strumenti-bar {
+    position: sticky; top: 0; z-index: 40;
+    display: flex; flex-wrap: wrap; justify-content: center; align-items: center; gap: 6px;
+    padding: 10px 64px;
+    background: rgba(15, 23, 42, 0.85);
+    backdrop-filter: blur(8px);
+    border-bottom: 1px solid rgba(255,255,255,0.08);
+  }
+  .strumenti-bar .bar-label {
+    font-size: 11px; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase;
+    color: #9FB3CE; margin-right: 4px;
+  }
+  .strumenti-bar button {
+    font-family: 'Manrope', sans-serif; font-weight: 700; font-size: 13px;
+    color: #EAF2FF; cursor: pointer; padding: 7px 14px; border-radius: 999px;
+    border: 1px solid rgba(255,255,255,0.16); background: rgba(255,255,255,0.06);
+  }
+  .strumenti-bar button:hover { background: rgba(255,255,255,0.12); }
+  .strumenti-bar button.active { background: #F99D1C; color: #1F2430; border-color: #F99D1C; }
+  .strumenti-bar .corto { display: none; }
+  @media (max-width: 600px) {
+    .strumenti-bar { padding: 8px 8px 8px 60px; gap: 4px; flex-wrap: nowrap; justify-content: flex-start; }
+    .strumenti-bar .bar-label, .strumenti-bar .lungo { display: none; }
+    .strumenti-bar .corto { display: inline; }
+    .strumenti-bar button { font-size: 12px; padding: 6px 10px; flex-shrink: 0; }
+    .strumenti-bar { overflow-x: auto; }
+  }
+  @media (max-width: 360px) {
+    .strumenti-bar { padding-left: 56px; gap: 3px; }
+    .strumenti-bar button { font-size: 11px; padding: 5px 8px; }
+  }
+
   .score-dl {
     display: inline-block;
     margin-top: 12px;
@@ -349,8 +382,10 @@
 <header class="hero">
   <a class="breadcrumb" href="spartiti.html">← Spartiti</a>
   <h1>Primi Brani - prima parte</h1>
-  <p>Melodia con accompagnamento, solo accompagnamento, e spartito in quattro versioni: standard, con i colori, con i nomi delle note, oppure con colori e nomi.</p>
+  <p>Scegli il tuo strumento: per ogni brano trovi melodia con accompagnamento, solo accompagnamento e lo spartito in quattro versioni (standard, colori, nomi delle note, colori e nomi).</p>
 </header>
+
+<nav class="strumenti-bar" id="strumentiBar" aria-label="Scegli lo strumento"></nav>
 
 <main id="brani-container"></main>
 
@@ -373,12 +408,6 @@
       audioFull: "media/primi-brani/brano1-completo.mp3",
       accompagnamenti: [
         { label: "Accompagnamento", src: "media/primi-brani/brano1-accompagnamento.mp3" }
-      ],
-      versioni: [
-        { label: "Standard", src: "media/primi-brani/brano1.pdf" },
-        { label: "Colori", src: "media/primi-brani/brano1-colori.pdf" },
-        { label: "Nomi delle note", src: "media/primi-brani/brano1-nomi.pdf" },
-        { label: "Colori e nomi", src: "media/primi-brani/brano1-colori-nomi.pdf" }
       ]
     },
     {
@@ -386,12 +415,6 @@
       audioFull: "media/primi-brani/brano2-completo.mp3",
       accompagnamenti: [
         { label: "Accompagnamento", src: "media/primi-brani/brano2-accompagnamento.mp3" }
-      ],
-      versioni: [
-        { label: "Standard", src: "media/primi-brani/brano2.pdf" },
-        { label: "Colori", src: "media/primi-brani/brano2-colori.pdf" },
-        { label: "Nomi delle note", src: "media/primi-brani/brano2-nomi.pdf" },
-        { label: "Colori e nomi", src: "media/primi-brani/brano2-colori-nomi.pdf" }
       ]
     },
     {
@@ -399,12 +422,6 @@
       audioFull: "media/primi-brani/brano3-completo.mp3",
       accompagnamenti: [
         { label: "Accompagnamento", src: "media/primi-brani/brano3-accompagnamento.mp3" }
-      ],
-      versioni: [
-        { label: "Standard", src: "media/primi-brani/brano3.pdf" },
-        { label: "Colori", src: "media/primi-brani/brano3-colori.pdf" },
-        { label: "Nomi delle note", src: "media/primi-brani/brano3-nomi.pdf" },
-        { label: "Colori e nomi", src: "media/primi-brani/brano3-colori-nomi.pdf" }
       ]
     },
     {
@@ -412,12 +429,6 @@
       audioFull: "media/primi-brani/brano4-completo.mp3",
       accompagnamenti: [
         { label: "Accompagnamento", src: "media/primi-brani/brano4-accompagnamento.mp3" }
-      ],
-      versioni: [
-        { label: "Standard", src: "media/primi-brani/brano4.pdf" },
-        { label: "Colori", src: "media/primi-brani/brano4-colori.pdf" },
-        { label: "Nomi delle note", src: "media/primi-brani/brano4-nomi.pdf" },
-        { label: "Colori e nomi", src: "media/primi-brani/brano4-colori-nomi.pdf" }
       ]
     },
     {
@@ -425,12 +436,6 @@
       audioFull: "media/primi-brani/brano5-completo.mp3",
       accompagnamenti: [
         { label: "Accompagnamento", src: "media/primi-brani/brano5-accompagnamento.mp3" }
-      ],
-      versioni: [
-        { label: "Standard", src: "media/primi-brani/brano5.pdf" },
-        { label: "Colori", src: "media/primi-brani/brano5-colori.pdf" },
-        { label: "Nomi delle note", src: "media/primi-brani/brano5-nomi.pdf" },
-        { label: "Colori e nomi", src: "media/primi-brani/brano5-colori-nomi.pdf" }
       ]
     },
     {
@@ -438,12 +443,6 @@
       audioFull: "media/primi-brani/brano6-completo.mp3",
       accompagnamenti: [
         { label: "Accompagnamento", src: "media/primi-brani/brano6-accompagnamento.mp3" }
-      ],
-      versioni: [
-        { label: "Standard", src: "media/primi-brani/brano6.pdf" },
-        { label: "Colori", src: "media/primi-brani/brano6-colori.pdf" },
-        { label: "Nomi delle note", src: "media/primi-brani/brano6-nomi.pdf" },
-        { label: "Colori e nomi", src: "media/primi-brani/brano6-colori-nomi.pdf" }
       ]
     }
   ];
@@ -469,14 +468,48 @@
     if (e.key === 'Escape') closeLightbox();
   });
 
+  /* Strumenti e versioni: lo spartito è la combinazione dei due.
+     I PDF del flauto stanno in media/primi-brani/, gli altri in una
+     sottocartella per strumento, con gli stessi nomi di file. */
+  const STRUMENTI = [
+    { id: "flauto",   label: "Flauto dolce", corto: "Flauto", cartella: "media/primi-brani/" },
+    { id: "tastiera", label: "Tastiera",     cartella: "media/primi-brani/tastiera/" },
+    { id: "chitarra", label: "Chitarra",     cartella: "media/primi-brani/chitarra/" },
+    { id: "ukulele",  label: "Ukulele",      cartella: "media/primi-brani/ukulele/" }
+  ];
+  const VERSIONI = [
+    { suffisso: "",             label: "Standard" },
+    { suffisso: "-colori",      label: "Colori" },
+    { suffisso: "-nomi",        label: "Nomi delle note" },
+    { suffisso: "-colori-nomi", label: "Colori e nomi" }
+  ];
+  let strumento = STRUMENTI[0];
+  try {
+    const salvato = localStorage.getItem('primiBrani.strumento');
+    strumento = STRUMENTI.find(x => x.id === salvato) || STRUMENTI[0];
+  } catch (e) {}
+  const pdf = (numero, versione) => strumento.cartella + "brano" + numero + versione.suffisso + ".pdf";
+  const aggiornamenti = [];
+
+  const bar = document.getElementById('strumentiBar');
+  bar.innerHTML = '<span class="bar-label">Strumento</span>' + STRUMENTI.map(x =>
+    `<button type="button" data-id="${x.id}" class="${x === strumento ? 'active' : ''}"><span class="lungo">${x.label}</span><span class="corto">${x.corto || x.label}</span></button>`).join('');
+  bar.querySelectorAll('button').forEach(btn => btn.addEventListener('click', () => {
+    strumento = STRUMENTI.find(x => x.id === btn.dataset.id);
+    try { localStorage.setItem('primiBrani.strumento', strumento.id); } catch (e) {}
+    bar.querySelectorAll('button').forEach(x => x.classList.toggle('active', x === btn));
+    aggiornamenti.forEach(f => f());
+  }));
+
   brani.forEach(b => {
     const title = `Brano ${b.numero}`;
     const card = document.createElement('div');
     card.className = 'brano-card';
 
-    let current = b.versioni[0].src;
-    const versionButtons = b.versioni.length < 2 ? '' : b.versioni.map((v, i) =>
-      `<button type="button" data-src="${v.src}" class="${i === 0 ? 'active' : ''}">${v.label}</button>`
+    let versione = VERSIONI[0];
+    let current = pdf(b.numero, versione);
+    const versionButtons = VERSIONI.map((v, i) =>
+      `<button type="button" data-v="${i}" class="${i === 0 ? 'active' : ''}">${v.label}</button>`
     ).join('');
 
     const melodiaRow = b.audioFull
@@ -515,12 +548,17 @@
 
     const wrap = card.querySelector('.score-wrap');
     const dl = card.querySelector('.score-dl');
+    const mostra = () => {
+      current = pdf(b.numero, versione);
+      wrap.innerHTML = `<embed src="${current}" type="application/pdf">`;
+      dl.href = current;
+    };
+    aggiornamenti.push(mostra);
     card.querySelectorAll('.versions button').forEach(btn => {
       btn.addEventListener('click', () => {
-        current = btn.dataset.src;
+        versione = VERSIONI[+btn.dataset.v];
         card.querySelectorAll('.versions button').forEach(x => x.classList.toggle('active', x === btn));
-        wrap.innerHTML = `<embed src="${current}" type="application/pdf">`;
-        dl.href = current;
+        mostra();
       });
     });
     wrap.addEventListener('click', () => openLightbox(current));

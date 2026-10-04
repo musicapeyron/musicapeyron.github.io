@@ -255,6 +255,281 @@ h1 { margin: 0; font-family: "Sora", "Inter", Arial, sans-serif; font-size: 2rem
     .staff-wrap { margin-bottom: 10px; padding: 6px; }
     .message { min-height: 20px; }
 }
+/* =========================================================
+   TUTORIAL — stile (stessa grafica del gioco)
+   ========================================================= */
+
+/* pulsante Tutorial nella schermata iniziale */
+.mode-button.tutorial { background: linear-gradient(135deg, #f97316, #c2410c); margin: 4px 0 4px; width: 100%; }
+
+/* pulsanti dei nomi di nota: colori ufficiali delle note */
+.nota-btn { background: var(--nota) !important; color: var(--nota-testo) !important; border-color: rgba(255,255,255,0.25); min-width: 64px; }
+.nota-btn:hover { filter: brightness(1.08); }
+.choice-row.ha-selezione .nota-btn:not(.selected) { opacity: 0.5; }
+.nota-btn.selected { outline: 3px solid #fff; outline-offset: 2px; transform: translateY(-2px); box-shadow: 0 6px 16px rgba(0,0,0,0.4); }
+.nota-btn.correct-flash, .nota-btn.wrong-flash { opacity: 1 !important; }
+.nota-btn.correct-flash { outline-color: #22c55e; }
+.nota-btn.wrong-flash { outline-color: #ef4444; }
+
+/* armature disegnate: niente ritaglio, pulsanti con spazio per le etichette */
+.signature-btn { position: relative; padding: 4px 6px 10px; }
+.signature-btn svg { width: auto; }
+
+/* etichette di abbinamento (verde = giusto, rosso = sbagliato) */
+.pair-label {
+    position: absolute; left: 50%; bottom: 0; transform: translate(-50%, 58%); z-index: 5;
+    padding: 2px 9px; border-radius: 999px; white-space: nowrap; pointer-events: none;
+    font-family: "Sora", "Inter", Arial, sans-serif; font-size: 0.72rem; font-weight: 800; color: #fff;
+    box-shadow: 0 3px 10px rgba(0,0,0,0.35); animation: pairIn 0.18s var(--ease-out-soft);
+}
+.pair-label.ok { background: #16a34a; }
+.pair-label.ko { background: #dc2626; }
+@keyframes pairIn { from { opacity: 0; transform: translate(-50%, 90%); } to { opacity: 1; transform: translate(-50%, 58%); } }
+.choice-btn { position: relative; }
+.choice-btn.pair-ok { background: linear-gradient(135deg, #22c55e, #15803d) !important; color: #fff !important; }
+.choice-btn.pair-ko { background: linear-gradient(135deg, #ef4444, #b91c1c) !important; color: #fff !important; }
+.signature-btn.pair-ok { border-color: #22c55e !important; box-shadow: 0 0 0 3px rgba(34,197,94,0.55) !important; }
+.signature-btn.pair-ko { border-color: #ef4444 !important; box-shadow: 0 0 0 3px rgba(239,68,68,0.55) !important; }
+
+/* scheda rossa con l'armatura della tonalità scritta per sbaglio */
+.pair-chip {
+    position: absolute; z-index: 6; display: flex; flex-direction: column; align-items: center; gap: 2px;
+    padding: 4px 6px 5px; border-radius: 10px; background: #fff5f5; border: 2px solid #ef4444;
+    box-shadow: 0 6px 16px rgba(0,0,0,0.35); pointer-events: none; animation: chipIn 0.18s var(--ease-out-soft);
+}
+.pair-chip span { font-family: "Sora", Arial, sans-serif; font-size: 0.7rem; font-weight: 800; color: #b91c1c; white-space: nowrap; }
+.pair-chip.testo { padding: 6px 10px; }
+@keyframes chipIn { from { opacity: 0; transform: scale(0.9); } to { opacity: 1; transform: scale(1); } }
+.staff-wrap, .tut-qstaff { position: relative; }
+#staffContainer { transition: transform 0.15s var(--ease-out-soft); }
+
+/* pulsante schema nel gioco */
+.schema-button { border: 1px solid rgba(251,191,36,0.45); padding: 12px 22px; border-radius: 12px; background: rgba(251,191,36,0.12);
+    color: #fde68a; font-family: "Sora", "Inter", Arial, sans-serif; font-size: 0.86rem; font-weight: 700; cursor: pointer; }
+.schema-button:hover { background: rgba(251,191,36,0.22); }
+.schema-card { width: min(560px, 100%); max-height: 92vh; overflow-y: auto; position: relative; padding-top: 22px; }
+.schema-card h2 { font-size: 1.2rem !important; }
+
+/* =========================================================
+   LO SCHEMA (tabella armature / tonalità)
+   ========================================================= */
+.schema { display: grid; gap: 4px; font-family: "Sora", "Inter", Arial, sans-serif; color: #e2e8f0; text-align: left; }
+.schema.due-colonne { grid-template-columns: 1fr 1fr; column-gap: 8px; }
+.schema.per-colonne { grid-auto-flow: column; grid-template-rows: repeat(4, auto); }
+.schema-testa { font-size: 0.68rem; font-weight: 800; color: #fde68a; padding: 0 4px; }
+.schema-riga {
+    display: flex; align-items: center; gap: 6px; padding: 2px 6px 2px 2px; border-radius: 10px;
+    background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.08); min-width: 0;
+}
+.schema-riga.intera { grid-column: 1 / -1; justify-self: center; min-width: 50%; }
+.schema-riga .schema-arm { flex: 0 0 auto; background: linear-gradient(180deg, #fdfaf3, #f2e9d8); border-radius: 7px; padding: 1px 3px; display: flex; }
+.schema-riga .schema-nomi { display: flex; flex-direction: column; line-height: 1.2; font-size: 0.74rem; font-weight: 700; min-width: 0; }
+.schema-riga .schema-nomi small { font-weight: 600; color: #a5b4fc; font-size: 0.68rem; }
+.schema-riga.verde { background: rgba(34,197,94,0.28); border-color: #22c55e; }
+.schema-riga.rosso { background: rgba(239,68,68,0.3); border-color: #ef4444; }
+.schema-riga.arancio { background: rgba(249,115,22,0.3); border-color: #f97316; }
+.schema-legenda { font-size: 0.72rem; color: #cbd5e1; margin-top: 6px; display: flex; gap: 12px; flex-wrap: wrap; justify-content: center; }
+.schema-legenda i { display: inline-block; width: 10px; height: 10px; border-radius: 3px; margin-right: 4px; vertical-align: -1px; }
+
+/* =========================================================
+   SCHERMATA DEL TUTORIAL
+   ========================================================= */
+.tut-screen { position: relative; z-index: 1; width: min(1100px, 100%); text-align: center; }
+.tut-head { display: flex; align-items: baseline; justify-content: center; gap: 10px; margin: 0 0 4px; }
+.tut-head h1 { font-size: 1.35rem; }
+.tut-head span { font-size: 0.8rem; color: #94a3b8; }
+.tut-layout { display: flex; justify-content: center; align-items: flex-start; gap: 16px; }
+.tut-main { width: min(640px, 100%); flex: 0 1 640px; min-width: 0; }
+.tut-side {
+    flex: 0 0 auto; width: 410px; padding: 10px 10px 12px; border-radius: 16px; text-align: left;
+    background: linear-gradient(180deg, rgba(255,255,255,0.08), rgba(255,255,255,0.04)); border: 1px solid var(--border-soft);
+}
+.tut-side[hidden] { display: none; }
+.tut-side-title { font-family: "Sora", Arial, sans-serif; font-weight: 800; font-size: 0.86rem; color: #fde68a; margin: 0 0 6px 4px; }
+
+/* pannello della lezione (ambra) */
+.tut-panel {
+    text-align: left; padding: 10px 14px 10px; border-radius: 16px; margin-bottom: 8px;
+    background: linear-gradient(135deg, rgba(251,191,36,0.22), rgba(217,119,6,0.16));
+    border: 1px solid rgba(251,191,36,0.45); box-shadow: 0 10px 24px rgba(0,0,0,0.25);
+}
+.tut-topics-row { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
+.tut-topics { display: flex; gap: 5px; flex-wrap: wrap; }
+.tut-topic {
+    border: 1px solid rgba(253,230,138,0.25); background: rgba(15,23,42,0.35); color: #fcd34d; opacity: 0.75;
+    font-family: "Sora", Arial, sans-serif; font-size: 0.7rem; font-weight: 700; padding: 3px 9px; border-radius: 999px; cursor: pointer;
+}
+.tut-topic.fatto { color: #86efac; border-color: rgba(134,239,172,0.4); opacity: 0.9; }
+.tut-topic.corrente { background: #fbbf24; color: #3b2506; opacity: 1; border-color: #fde68a; }
+.tut-topic-bar { flex: 1 1 60px; min-width: 60px; height: 6px; border-radius: 999px; background: rgba(15,23,42,0.6); overflow: hidden; }
+.tut-topic-bar div { height: 100%; width: 0; background: linear-gradient(90deg, #f59e0b, #fde68a); border-radius: 999px; transition: width 0.35s var(--ease-out-soft); }
+.tut-title { font-family: "Sora", Arial, sans-serif; font-size: 1.08rem; margin: 7px 0 3px; color: #fef3c7; }
+.tut-text { font-size: 0.88rem; line-height: 1.45; color: #f8fafc; }
+.tut-text b { color: #fde68a; }
+.tut-text p { margin: 0 0 3px; }
+.tut-nav { display: flex; justify-content: flex-end; gap: 8px; margin-top: 6px; }
+.tut-nav button {
+    border: none; padding: 7px 16px; border-radius: 10px; font-family: "Sora", Arial, sans-serif; font-weight: 800; font-size: 0.8rem; cursor: pointer;
+    box-shadow: 0 1px 0 rgba(255,255,255,0.25) inset, 0 4px 10px rgba(0,0,0,0.25);
+}
+.tut-nav .tut-prev { background: rgba(255,255,255,0.12); color: #fef3c7; }
+.tut-nav .tut-next { background: linear-gradient(135deg, #fbbf24, #d97706); color: #3b2506; }
+.tut-nav button:disabled { opacity: 0.35; cursor: not-allowed; }
+
+/* area centrale */
+.tut-stage { min-height: 120px; }
+.tut-consegna { font-size: 0.8rem; color: #cbd5e1; margin: 0 auto 4px; font-weight: 600; }
+.tut-qstaff {
+    display: flex; justify-content: center; align-items: center; margin: 0 auto 14px; padding: 4px 14px 14px;
+    background: linear-gradient(180deg, #fdfaf3, #f2e9d8); border-radius: 16px; box-shadow: 0 10px 24px rgba(0,0,0,0.3); max-width: 420px;
+}
+.tut-qstaff .tut-staff { transition: transform 0.15s var(--ease-out-soft); display: flex; }
+.tut-qname { position: relative; margin: 0 auto 14px; padding: 10px 16px 12px; border-radius: 14px; max-width: 380px;
+    background: linear-gradient(135deg, rgba(99,102,241,0.35), rgba(124,58,237,0.28)); border: 1px solid rgba(255,255,255,0.18); }
+.tut-qname .question-label { margin-bottom: 2px; }
+.tut-qname .question-text { font-size: 1.2rem; }
+.tut-answers { margin: 0 auto; }
+.tut-answers .answer-section-title { margin-bottom: 4px; }
+.tut-answers .choice-row { margin-bottom: 8px; gap: 6px; }
+.tut-answers .choice-btn { padding: 9px 12px; min-width: 76px; }
+.tut-answers .nota-btn { min-width: 58px; }
+.tut-row-pair { display: flex; justify-content: center; gap: 22px; flex-wrap: wrap; }
+.tut-answers .submit-button { margin: 2px auto 4px; padding: 10px 30px; }
+.tut-answers .signature-grid { margin-bottom: 8px; }
+.choice-btn.bloccato { opacity: 0.3; }
+
+.tut-dots { display: flex; justify-content: center; gap: 14px; min-height: 12px; margin: 6px 0 2px; }
+.tut-dots .gruppo { display: flex; gap: 5px; }
+.tut-dots i { width: 9px; height: 9px; border-radius: 50%; background: rgba(255,255,255,0.18); }
+.tut-dots i.fatto { background: #22c55e; }
+.tut-dots i.primo-no { background: #f59e0b; }
+.tut-dots i.ora { background: #fde68a; box-shadow: 0 0 0 3px rgba(253,230,138,0.3); }
+
+.tut-msg { min-height: 24px; font-size: 0.86rem; line-height: 1.35; font-weight: 700; margin: 2px 0 6px; }
+.tut-msg.con-barra { display: flex; align-items: center; justify-content: center; gap: 10px; text-align: left; flex-wrap: wrap; }
+.tut-msg.con-barra .msg-testo { flex: 1 1 240px; max-width: 330px; }
+.tut-msg.con-barra .barra-rel { margin-top: 0; }
+.tut-msg.ok { color: #86efac; } .tut-msg.ko { color: #fca5a5; } .tut-msg.info { color: #fde68a; }
+.tut-msg .barra-rel { display: flex; justify-content: center; align-items: center; gap: 4px; margin-top: 4px; flex-wrap: nowrap; }
+.tut-footer { display: flex; justify-content: center; gap: 10px; flex-wrap: wrap; }
+.tut-footer .menu-button { padding: 8px 18px; }
+.tut-test { border: 1px dashed #fbbf24; color: #fde68a; background: transparent; padding: 8px 14px; border-radius: 12px; cursor: pointer; font-weight: 700; }
+
+/* illustrazioni */
+.tut-illu { display: flex; flex-direction: column; align-items: center; gap: 8px; }
+.tut-card-staff { background: linear-gradient(180deg, #fdfaf3, #f2e9d8); border-radius: 16px; padding: 6px 14px; box-shadow: 0 10px 24px rgba(0,0,0,0.3); display: inline-flex; max-width: 100%; }
+.tut-card-staff svg, .tut-qstaff svg, .tut-tastiera svg { max-width: 100%; height: auto; min-width: 0; }
+.tut-fig { max-width: 100%; }
+.tut-legenda { display: flex; gap: 14px; flex-wrap: wrap; justify-content: center; font-size: 0.8rem; font-weight: 700; }
+.tut-legenda span { display: inline-flex; align-items: center; gap: 5px; }
+.tut-legenda i { width: 12px; height: 12px; border-radius: 3px; display: inline-block; }
+.tut-row { display: flex; gap: 14px; justify-content: center; align-items: center; flex-wrap: wrap; }
+.tut-fig { display: flex; flex-direction: column; align-items: center; gap: 4px; }
+.tut-fig small { color: #cbd5e1; font-size: 0.74rem; font-weight: 600; }
+.tut-nome {
+    display: inline-flex; align-items: center; gap: 7px; padding: 6px 12px; border-radius: 12px; white-space: nowrap;
+    background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.2);
+    font-family: "Sora", Arial, sans-serif; font-weight: 800; font-size: 1rem;
+}
+.tut-nome i { width: 12px; height: 12px; border-radius: 50%; display: inline-block; box-shadow: 0 0 0 2px rgba(255,255,255,0.35); }
+.tut-nome.piccolo { font-size: 0.82rem; padding: 4px 9px; }
+.tut-chip-nota { display: inline-block; padding: 2px 8px; border-radius: 7px; font-weight: 800; font-size: 0.82rem; font-family: "Sora", Arial, sans-serif; }
+
+/* uguaglianze: sempre su una riga sola */
+.tut-eq { display: flex; flex-wrap: nowrap; align-items: center; justify-content: center; gap: 10px; white-space: nowrap; }
+.tut-eq-op { font-family: "Sora", Arial, sans-serif; font-size: 1.6rem; font-weight: 800; color: #fde68a; }
+.tut-eq-box { display: flex; flex-direction: column; align-items: center; gap: 4px; }
+.tut-eq-box small { font-size: 0.72rem; color: #cbd5e1; font-weight: 600; }
+.tut-fit { max-width: 100%; }
+
+.tut-demo .choice-btn { cursor: default; pointer-events: none; }
+.tut-demo .choice-btn.selected { background: linear-gradient(135deg, #6366f1, #4338ca); }
+.tut-tastiera svg { display: block; max-width: 100%; height: auto; }
+
+/* barra di aiuto negli esercizi di relazione */
+.rel-cella { display: inline-flex; flex-direction: column; align-items: center; gap: 1px; }
+.rel-chip { min-width: 38px; padding: 3px 4px; border-radius: 7px; font-size: 0.74rem; font-weight: 800; font-family: "Sora", Arial, sans-serif; border: 2px dashed rgba(255,255,255,0.35); color: #cbd5e1; }
+.rel-chip.pieno { border-style: solid; }
+.rel-chip.ultimo { box-shadow: 0 0 0 2px #f97316; }
+.rel-cella small { font-size: 0.6rem; color: #fdba74; font-weight: 700; height: 10px; line-height: 10px; }
+.rel-esito { font-size: 0.8rem; color: #fde68a; margin-left: 6px; white-space: nowrap; }
+
+/* finestra "Ripassa lo schema" */
+.ripasso-card { width: min(560px, 100%); max-height: 94vh; overflow-y: auto; padding: 16px 16px 16px; }
+.ripasso-card h2 { font-size: 1.15rem !important; margin-bottom: 4px !important; }
+.ripasso-domanda { display: flex; justify-content: center; margin: 4px 0 8px; }
+.ripasso-card .overlay-buttons { margin-top: 10px; }
+.ripasso-card .new-game { padding: 10px 20px; }
+
+/* =========================================================
+   STATISTICHE FINALI
+   ========================================================= */
+.tut-stats { width: min(980px, 100%); margin: 0 auto; text-align: left; }
+.tut-stats[hidden] { display: none; }
+.st-head { display: flex; align-items: center; justify-content: space-between; gap: 10px; flex-wrap: wrap; margin-bottom: 8px; }
+.st-head h2 { margin: 0; font-family: "Sora", Arial, sans-serif; font-size: 1.25rem; }
+.st-head .st-bottoni { display: flex; gap: 8px; flex-wrap: wrap; }
+.st-head .st-bottoni button { padding: 8px 14px; font-size: 0.8rem; }
+.st-esito { padding: 8px 12px; border-radius: 12px; margin-bottom: 8px; font-weight: 800; font-size: 0.9rem; }
+.st-esito.ok { background: rgba(34,197,94,0.2); border: 1px solid #22c55e; color: #bbf7d0; }
+.st-esito.ko { background: rgba(249,115,22,0.18); border: 1px solid #f97316; color: #fed7aa; }
+.st-numeri { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin-bottom: 8px; }
+.st-num { padding: 6px 10px; border-radius: 12px; background: rgba(255,255,255,0.07); border: 1px solid var(--border-soft); text-align: center; }
+.st-num strong { display: block; font-family: "Sora", Arial, sans-serif; font-size: 1.35rem; color: #fde68a; }
+.st-num span { font-size: 0.72rem; color: #cbd5e1; }
+.st-liste { display: grid; grid-template-columns: 1fr 1.4fr; gap: 8px; margin-bottom: 8px; }
+.st-box { padding: 8px 10px; border-radius: 12px; background: rgba(255,255,255,0.05); border: 1px solid var(--border-soft); min-width: 0; }
+.st-box h3 { margin: 0 0 5px; font-family: "Sora", Arial, sans-serif; font-size: 0.86rem; }
+.st-box ul { list-style: none; margin: 0; padding: 0; max-height: 148px; overflow-y: auto; }
+.st-box li { display: flex; justify-content: space-between; align-items: center; gap: 8px; padding: 3px 0; font-size: 0.78rem; border-bottom: 1px solid rgba(255,255,255,0.06); }
+.st-box li button { flex: 0 0 auto; border: none; border-radius: 8px; padding: 4px 9px; font-weight: 800; font-size: 0.72rem; cursor: pointer; background: linear-gradient(135deg, #fbbf24, #d97706); color: #3b2506; }
+.st-vuoto { color: #94a3b8; font-size: 0.78rem; }
+.st-dettaglio { display: grid; grid-template-columns: 1fr 1.3fr 1fr; gap: 8px; }
+.st-dettaglio .st-box { max-height: 270px; overflow-y: auto; }
+.st-barra { display: grid; grid-template-columns: minmax(0, 1fr) 70px 38px; align-items: center; gap: 6px; font-size: 0.72rem; margin-bottom: 3px; }
+.st-barra span:first-child { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.st-barra .st-b { height: 8px; background: rgba(15,23,42,0.7); border-radius: 999px; overflow: hidden; }
+.st-barra .st-b div { height: 100%; border-radius: 999px; }
+.st-barra em { font-style: normal; color: #94a3b8; text-align: right; }
+
+/* =========================================================
+   DIMENSIONI: computer e telefono
+   ========================================================= */
+@media (min-width: 640px) {
+    .tut-screen { margin-top: -4px; }
+}
+@media (max-width: 1080px) {
+    .tut-layout { flex-direction: column; align-items: center; }
+    .tut-side { width: min(640px, 100%); }
+}
+@media (max-width: 560px) {
+    .tut-head h1 { font-size: 1.15rem; }
+    .tut-head span { display: none; }
+    .tut-answers .choice-btn { padding: 8px 8px; min-width: 64px; font-size: 0.8rem; }
+    .tut-answers .nota-btn { min-width: 44px; }
+    .tut-row-pair { gap: 10px; }
+    .st-liste, .st-dettaglio { grid-template-columns: 1fr; }
+    .st-numeri strong { font-size: 1.1rem; }
+    .schema-riga .schema-nomi { font-size: 0.68rem; }
+    .tut-side { padding: 8px 6px; }
+    .options-row-7 .options-choice { padding: 10px 2px; }
+}
+@media (prefers-reduced-motion: reduce) {
+    .pair-label, .pair-chip { animation: none; }
+}
+
+.tut-answers .choice-btn.num-btn { min-width: 54px; padding: 9px 10px; font-size: 0.95rem; }
+@media (min-width: 900px) and (min-height: 560px) {
+    .tut-stats { height: calc(100vh - 72px); display: flex; flex-direction: column; }
+    .st-dettaglio { flex: 1 1 auto; min-height: 0; }
+    .st-dettaglio .st-box { max-height: none; height: 100%; }
+    .st-liste .st-box ul { max-height: 132px; }
+}
+@media (max-width: 560px) {
+    .tut-msg .barra-rel svg { width: 170px; height: auto; }
+    .tut-msg.con-barra { flex-direction: column; text-align: center; }
+}
+
 </style>
 </head>
 <body>
@@ -266,6 +541,11 @@ h1 { margin: 0; font-family: "Sora", "Inter", Arial, sans-serif; font-size: 2rem
     <div class="hero-badge">🔑</div>
     <h1>Identifica la tonalità</h1>
     <p class="subtitle" id="homeSubtitle">Identifica la tonalità maggiore e minore dall'armatura di chiave.</p>
+
+    <button class="mode-button tutorial" id="tutorialButton">
+        <span class="mode-button-title">🎓 Tutorial</span>
+        <span class="mode-button-desc">Impara passo passo a riconoscere la tonalità dall'armatura</span>
+    </button>
 
     <div class="answer-mode-title">Modalità</div>
     <div class="toggle-list" id="gameModeGroup">
@@ -362,6 +642,7 @@ h1 { margin: 0; font-family: "Sora", "Inter", Arial, sans-serif; font-size: 2rem
     <div class="message" id="message"></div>
 
     <div class="game-buttons">
+        <button class="schema-button" id="schemaButton">📋 Schema</button>
         <button class="finish-button" id="finishButton">Termina partita</button>
     </div>
 
@@ -372,6 +653,62 @@ h1 { margin: 0; font-family: "Sora", "Inter", Arial, sans-serif; font-size: 2rem
         </div>
     </div>
 
+</div>
+
+<!-- TUTORIAL -->
+<div class="tut-screen" id="tutorialScreen" style="display: none;">
+    <div class="tut-head"><h1>🎓 Tutorial</h1><span>Identifica la tonalità</span></div>
+    <div class="tut-layout" id="tutLayout">
+        <div class="tut-main">
+            <section class="tut-panel">
+                <div class="tut-topics-row">
+                    <div class="tut-topics" id="tutTopics"></div>
+                    <div class="tut-topic-bar"><div id="tutTopicFill"></div></div>
+                </div>
+                <h2 class="tut-title" id="tutTitle"></h2>
+                <div class="tut-text" id="tutText"></div>
+                <div class="tut-nav">
+                    <button class="tut-prev" id="tutPrev">◀ Indietro</button>
+                    <button class="tut-next" id="tutNext">Avanti ▶</button>
+                </div>
+            </section>
+            <div class="tut-stage" id="tutStage"></div>
+            <div class="tut-dots" id="tutDots"></div>
+            <div class="tut-msg" id="tutMsg"></div>
+            <div class="tut-footer">
+                <button class="menu-button" id="tutMenu">🏠 Menu</button>
+                <button class="menu-button" id="tutBackStats" hidden>📊 Torna alle statistiche</button>
+                <button class="tut-test" id="tutTestBtn" hidden>🧪 Test: statistiche</button>
+            </div>
+        </div>
+        <aside class="tut-side" id="tutSide" hidden>
+            <div class="tut-side-title">📋 Lo schema</div>
+            <div id="tutSideSchema"></div>
+        </aside>
+    </div>
+    <div class="tut-stats" id="tutStats" hidden></div>
+</div>
+
+<!-- TUTORIAL: RIPASSA LO SCHEMA -->
+<div class="overlay" id="ripassoOverlay">
+    <div class="overlay-card ripasso-card">
+        <h2>Ripassa lo schema</h2>
+        <p style="margin:0 0 4px">La domanda era questa:</p>
+        <div class="ripasso-domanda" id="ripassoDomanda"></div>
+        <div id="ripassoSchema"></div>
+        <div id="ripassoBarra"></div>
+        <div class="overlay-buttons"><button class="new-game" id="ripassoChiudi">Ho capito, riprovo</button></div>
+    </div>
+</div>
+
+<!-- SCHEMA (pulsante 📋 nel gioco) -->
+<div class="overlay" id="schemaOverlay">
+    <div class="overlay-card schema-card">
+        <button class="help-close" id="schemaClose">✕</button>
+        <h2>📋 Lo schema</h2>
+        <p style="margin:0 0 10px">Le armature in gioco, con la tonalità maggiore e la relativa minore.</p>
+        <div id="schemaBody"></div>
+    </div>
 </div>
 
 <!-- CONFERMA FINE PARTITA -->
@@ -686,15 +1023,7 @@ function renderMiniSignature(container, signature, clef) {
     if (typeof Vex === "undefined") return;
     const { Renderer, Stave } = Vex.Flow;
 
-    const width = miniWidthFor(signature);
-    const renderer = new Renderer(container, Renderer.Backends.SVG);
-    renderer.resize(width, MINI_SVG_H);
-    const context = renderer.getContext();
-
-    const stave = new Stave(2, 8, width - 6, { spacing_between_lines_px: 7 });
-    stave.addClef(clef);
-    stave.addKeySignature(signature.name);
-    stave.setContext(context).draw();
+    disegnaArmatura(container, signature, clef, { scala: 0.62 });
 }
 
 /* =========================================================
@@ -770,7 +1099,9 @@ function renderChoiceButtons() {
     letterRow.innerHTML = "";
     SOLFEGE_NAMES.forEach((name, letterIdx) => {
         const btn = document.createElement("button");
-        btn.className = "choice-btn";
+        btn.className = "choice-btn nota-btn";
+        btn.style.setProperty("--nota", COLORI_NOTE[letterIdx]);
+        btn.style.setProperty("--nota-testo", TESTO_NOTE[letterIdx]);
         btn.textContent = name;
         btn.dataset.letter = letterIdx;
         btn.addEventListener("click", () => onLetterClicked(letterIdx, btn));
@@ -807,6 +1138,7 @@ function updateQualityButtonsState() {
 }
 
 function clearSelectionVisuals() {
+    letterRow.classList.remove("ha-selezione");
     letterRow.querySelectorAll(".choice-btn").forEach(b => b.classList.remove("selected", "correct-flash", "wrong-flash"));
     accidentalRow.querySelectorAll(".choice-btn").forEach(b => b.classList.remove("selected", "correct-flash", "wrong-flash"));
     qualityRow.querySelectorAll(".choice-btn").forEach(b => b.classList.remove("selected", "correct-flash", "wrong-flash"));
@@ -828,6 +1160,7 @@ function presentQuestion() {
     answering = true;
     refreshSubmitState();
     renderSignature();
+    staffContainer.parentElement.querySelectorAll(".pair-label, .pair-chip").forEach(e => e.remove());
 }
 
 /* ---- Modalità "Identifica le alterazioni in chiave" ---- */
@@ -881,6 +1214,7 @@ function onSignatureButtonClicked(sig, btnEl) {
         if (streak > record) record = streak;
         animateStat(correctBox, "bump");
         btnEl.classList.add("correct-flash");
+        etichettaAbbinamento(btnEl, nomeTonalita(currentSignatureQuestion.signature, currentSignatureQuestion.quality === "major" ? "M" : "m"), "ok");
         message.textContent = "Corretto! " + signatureLabelFor(currentSignatureQuestion.signature);
         message.className = "message correct-message";
 
@@ -906,6 +1240,7 @@ function onSignatureButtonClicked(sig, btnEl) {
         playWrongSound();
         animateStat(errorsBox, "bump");
         btnEl.classList.add("wrong-flash");
+        etichettaAbbinamento(btnEl, nomeTonalita(sig, currentSignatureQuestion.quality === "major" ? "M" : "m"), "ko", 1000);
         message.textContent = "Sbagliato, riprova";
         message.className = "message wrong-message";
         setTimeout(() => btnEl.classList.remove("wrong-flash"), 400);
@@ -955,6 +1290,7 @@ function onLetterClicked(letterIdx, btnEl) {
         letterRow.querySelectorAll(".choice-btn").forEach(b => b.classList.remove("selected"));
         btnEl.classList.add("selected");
     }
+    letterRow.classList.toggle("ha-selezione", selectedLetter !== null);
     refreshSubmitState();
 }
 function onAccidentalClicked(acc, btnEl) {
@@ -1003,6 +1339,12 @@ function submitAnswer() {
         if (lBtn) lBtn.classList.add("correct-flash");
         if (aBtn) aBtn.classList.add("correct-flash");
         if (qBtn) qBtn.classList.add("correct-flash");
+        {
+            const nomiFatti = [];
+            if (selectedQuality === "major" || majorDone) nomiFatti.push(nomeTonalita(currentSignature, "M"));
+            if (selectedQuality === "minor" || minorDone) nomiFatti.push(nomeTonalita(currentSignature, "m"));
+            etichettaRigo(staffContainer.parentElement, nomiFatti.join(" · "));
+        }
 
         const qualityLabel = selectedQuality === "major" ? "maggiore" : "minore";
         const tonicName = noteFullName(target.letter, target.acc);
@@ -1049,6 +1391,12 @@ function submitAnswer() {
         if (lBtn) lBtn.classList.add("wrong-flash");
         if (aBtn) aBtn.classList.add("wrong-flash");
         if (qBtn) qBtn.classList.add("wrong-flash");
+        {
+            const qq = selectedQuality === "major" ? "M" : "m";
+            const scritta = trovaTonalita(selectedLetter, effectiveAcc, qq);
+            schedaRossa(staffContainer.parentElement, staffContainer, scritta, qq, currentClef,
+                nomeNota(selectedLetter, effectiveAcc) + (qq === "M" ? " maggiore" : " minore") + ": non c'è", 1000);
+        }
         message.textContent = "Sbagliato, riprova";
         message.className = "message wrong-message";
         setTimeout(() => {
@@ -1106,6 +1454,7 @@ mixedClefButton.addEventListener("click", () => setClefMode("mixed"));
 
 function showGame() { homeScreen.style.display = "none"; gameContainer.style.display = "block"; }
 function goHome() {
+    document.getElementById("tutorialScreen").style.display = "none";
     gameContainer.style.display = "none";
     homeScreen.style.display = "block";
     gameOver.classList.remove("show");
@@ -1264,6 +1613,1410 @@ helpOverlay.addEventListener("click", e => { if (e.target === helpOverlay) helpO
    ========================================================= */
 
 goHome();
+
+</script>
+<script>
+
+/* =========================================================
+   TUTORIAL — DATI COMUNI (usati anche dal gioco)
+   ========================================================= */
+
+// colori ufficiali delle note: Do, Re, Mi, Fa, Sol, La, Si
+const COLORI_NOTE = ["#E21C48", "#F99D1C", "#FFF428", "#BED958", "#009C95", "#5E50A1", "#CF3E96"];
+const TESTO_NOTE = ["#ffffff", "#1f2937", "#1f2937", "#1f2937", "#ffffff", "#ffffff", "#ffffff"];
+// ordine in cui entrano diesis e bemolli (indici di SOLFEGE_NAMES)
+const ORDINE_DIESIS = [3, 0, 4, 1, 5, 2, 6];
+const ORDINE_BEMOLLI = [6, 2, 5, 1, 4, 0, 3];
+// ordine logico delle armature: nessuna, poi diesis da 1 a 7, poi bemolli da 1 a 7
+const ORDINE_ARMATURE = ["C", "G", "D", "A", "E", "B", "F#", "C#", "F", "Bb", "Eb", "Ab", "Db", "Gb", "Cb"];
+const NOMI_DIESIS = ["G", "D", "A", "E", "B", "F#", "C#"];
+const ARM = {};
+KEY_SIGNATURES.forEach(s => { ARM[s.name] = s; });
+
+function simbolo(acc) { return acc === 1 ? "♯" : acc === -1 ? "♭" : ""; }
+function nomeNota(letter, acc) { return SOLFEGE_NAMES[letter] + simbolo(acc); }
+function famigliaDi(sig) { return sig.count === 0 ? "nessuna" : NOMI_DIESIS.includes(sig.name) ? "diesis" : "bemolli"; }
+function siglaArmatura(sig) { return sig.count === 0 ? "0" : sig.count + (famigliaDi(sig) === "diesis" ? "♯" : "♭"); }
+function noteAlterate(sig) {
+    const fam = famigliaDi(sig);
+    if (fam === "nessuna") return [];
+    const ordine = fam === "diesis" ? ORDINE_DIESIS : ORDINE_BEMOLLI;
+    const acc = fam === "diesis" ? 1 : -1;
+    return ordine.slice(0, sig.count).map(l => ({ letter: l, acc: acc }));
+}
+function descArmatura(sig) {
+    if (sig.count === 0) return "nessuna alterazione";
+    const parola = famigliaDi(sig) === "diesis" ? "diesis" : (sig.count === 1 ? "bemolle" : "bemolli");
+    return sig.count + " " + parola + " (" + noteAlterate(sig).map(n => nomeNota(n.letter, n.acc)).join(", ") + ")";
+}
+function contaArmatura(sig) {
+    if (sig.count === 0) return "nessuna alterazione";
+    const fam = famigliaDi(sig);
+    return sig.count + " " + (fam === "diesis" ? "diesis" : (sig.count === 1 ? "bemolle" : "bemolli"));
+}
+function tonicaDi(sig, q) { return q === "M" ? sig.major : sig.minor; }
+function nomeTonalita(sig, q) { const t = tonicaDi(sig, q); return nomeNota(t.letter, t.acc) + (q === "M" ? " maggiore" : " minore"); }
+function trovaTonalita(letter, acc, q) {
+    return KEY_SIGNATURES.find(s => { const t = tonicaDi(s, q); return t.letter === letter && t.acc === acc; }) || null;
+}
+function classeAltezza(letter, acc) { return (NATURAL_OFFSET[letter] + acc + 120) % 12; }
+function htmlNomeTon(sig, q, piccolo) {
+    const t = tonicaDi(sig, q);
+    return '<span class="tut-nome' + (piccolo ? " piccolo" : "") + '"><i style="background:' + COLORI_NOTE[t.letter] + '"></i>' + nomeTonalita(sig, q) + "</span>";
+}
+function htmlChipNota(letter, acc) {
+    return '<span class="tut-chip-nota" style="background:' + COLORI_NOTE[letter] + ";color:" + TESTO_NOTE[letter] + '">' + nomeNota(letter, acc) + "</span>";
+}
+function creaEl(html) { const t = document.createElement("template"); t.innerHTML = html.trim(); return t.content.firstChild; }
+
+/* =========================================================
+   DISEGNO DELL'ARMATURA (VexFlow, stesso stile del gioco)
+   ========================================================= */
+
+const SVG_NS = "http://www.w3.org/2000/svg";
+function svgEl(tag, attr) { const e = document.createElementNS(SVG_NS, tag); for (const k in attr) e.setAttribute(k, attr[k]); return e; }
+
+// opz: scala, parti (colori per rigo/chiave/armatura), coloriNote, etichette (nome sotto ogni alterazione),
+//      evidenzia { indice, testo } (alterazione cerchiata in arancione)
+function disegnaArmatura(cont, sig, chiave, opz) {
+    opz = opz || {};
+    cont.innerHTML = "";
+    if (typeof Vex === "undefined") return null;
+    const { Renderer, Stave } = Vex.Flow;
+    const renderer = new Renderer(cont, Renderer.Backends.SVG);
+    renderer.resize(420, 160);
+    const ctx = renderer.getContext();
+    const stave = new Stave(1, 0, 400);
+    stave.addClef(chiave);
+    stave.addKeySignature(sig.name);
+    const larg = stave.getNoteStartX() + (opz.coda != null ? opz.coda : 14);
+    stave.setWidth(larg - 1);
+    stave.setContext(ctx).draw();
+
+    const svg = cont.querySelector("svg");
+    const gruppoArm = svg.querySelector(".vf-keysignature");
+    const glifi = gruppoArm ? Array.from(gruppoArm.children) : [];
+    const note = noteAlterate(sig);
+    let y0 = 18, h = 82;
+
+    if (opz.parti) {
+        svg.querySelectorAll(".vf-stave, .vf-stavebarline").forEach(g => { g.setAttribute("stroke", "#64748b"); g.setAttribute("fill", "#64748b"); });
+        svg.querySelectorAll(".vf-stave path").forEach(p => p.setAttribute("stroke", "#64748b"));
+        const clef = svg.querySelector(".vf-clef"); if (clef) clef.setAttribute("fill", "#2563eb");
+        if (gruppoArm) gruppoArm.setAttribute("fill", "#dc2626");
+    }
+    if (opz.coloriNote) {
+        glifi.forEach((g, i) => {
+            g.setAttribute("fill", COLORI_NOTE[note[i].letter]);
+            g.setAttribute("stroke", "#1f2937"); g.setAttribute("stroke-width", "0.8"); g.style.paintOrder = "stroke";
+        });
+    }
+    if (opz.evidenzia && glifi[opz.evidenzia.indice]) {
+        const g = glifi[opz.evidenzia.indice];
+        const bb = g.getBBox();
+        const r = svgEl("rect", { x: bb.x - 2.5, y: bb.y - 2.5, width: bb.width + 5, height: bb.height + 5, rx: 4, fill: "rgba(249,115,22,0.28)", stroke: "#f97316", "stroke-width": 1.4 });
+        gruppoArm.insertBefore(r, g);
+        if (opz.evidenzia.testo) {
+            const ty = Math.min(bb.y - 6, 22);
+            const t = svgEl("text", { x: bb.x + bb.width / 2, y: ty, "text-anchor": "middle", stroke: "none", "font-size": 8.5, "font-weight": 800, fill: "#c2410c", "font-family": "Sora, Arial, sans-serif" });
+            t.textContent = opz.evidenzia.testo;
+            svg.appendChild(t);
+            y0 = Math.min(y0, ty - 10);
+        }
+    }
+    if (opz.etichette) {
+        glifi.forEach((g, i) => {
+            const bb = g.getBBox();
+            const cx = bb.x + bb.width / 2;
+            const riga = i % 2;
+            const cy = 103 + riga * 13;
+            const lab = nomeNota(note[i].letter, note[i].acc);
+            const w = 6 + lab.length * 4.6;
+            svg.appendChild(svgEl("line", { x1: cx, y1: bb.y + bb.height + 1, x2: cx, y2: cy - 5, stroke: "rgba(31,41,55,0.25)", "stroke-width": 0.6 }));
+            svg.appendChild(svgEl("rect", { x: cx - w / 2, y: cy - 5, width: w, height: 11, rx: 3, fill: COLORI_NOTE[note[i].letter], stroke: "rgba(31,41,55,0.35)", "stroke-width": 0.5 }));
+            const t = svgEl("text", { x: cx, y: cy + 3, "text-anchor": "middle", stroke: "none", "font-size": 7.6, "font-weight": 800, fill: TESTO_NOTE[note[i].letter], "font-family": "Sora, Arial, sans-serif" });
+            t.textContent = lab;
+            svg.appendChild(t);
+        });
+        if (glifi.length) h = (glifi.length > 1 ? 122 : 109) - y0;
+    }
+    const altezza = Math.max(h, 100 - y0);
+    svg.setAttribute("viewBox", "-1 " + y0 + " " + (larg + 3) + " " + altezza);
+    const s = opz.scala || 1;
+    svg.setAttribute("width", Math.round((larg + 3) * s));
+    svg.setAttribute("height", Math.round(altezza * s));
+    svg.style.width = ""; svg.style.height = "";
+    return svg;
+}
+
+/* =========================================================
+   TASTIERA (per i semitoni)
+   ========================================================= */
+
+// opz: da, a (midi, tasti bianchi), evid { midi: { colore, testo, testoColore } },
+//      numeri { midi: n }, arco { da, a, testo }, scala
+function disegnaTastiera(cont, opz) {
+    const WW = 24, WH = 84, BW = 15, BH = 52;
+    const top = opz.arco ? 30 : 4;
+    const nere = [1, 3, 6, 8, 10];
+    const pos = {};
+    let x = 0;
+    for (let m = opz.da; m <= opz.a; m++) {
+        if (nere.includes(m % 12)) pos[m] = { x: x - BW / 2, nero: true };
+        else { pos[m] = { x: x, nero: false }; x += WW; }
+    }
+    const larghezza = x + 2;
+    const svg = svgEl("svg", { viewBox: "-1 0 " + (larghezza + 1) + " " + (top + WH + 4), width: Math.round((larghezza + 1) * (opz.scala || 1)), height: Math.round((top + WH + 4) * (opz.scala || 1)) });
+    const evid = opz.evid || {};
+    const centro = m => pos[m].x + (pos[m].nero ? BW / 2 : WW / 2);
+    const disegnaTasto = (m) => {
+        const p = pos[m]; const e = evid[m];
+        const w = p.nero ? BW : WW, hh = p.nero ? BH : WH;
+        svg.appendChild(svgEl("rect", { x: p.x, y: top, width: w, height: hh, rx: 3, fill: e ? e.colore : (p.nero ? "#1e293b" : "#fdfaf3"), stroke: "#334155", "stroke-width": 1 }));
+        if (e && e.testo) {
+            const t = svgEl("text", { x: p.x + w / 2, y: top + hh - (p.nero ? 6 : 8), "text-anchor": "middle", "font-size": p.nero ? 7.5 : 9, "font-weight": 800, fill: e.testoColore || "#111827", "font-family": "Sora, Arial, sans-serif" });
+            t.textContent = e.testo; svg.appendChild(t);
+        }
+    };
+    const disegnaNumero = (m) => {
+        const p = pos[m]; const w = p.nero ? BW : WW;
+        if (opz.numeri && opz.numeri[m]) {
+            const cy = top + (p.nero ? BH - 22 : WH - 26);
+            svg.appendChild(svgEl("circle", { cx: p.x + w / 2, cy: cy, r: 6.5, fill: "#f97316" }));
+            const t = svgEl("text", { x: p.x + w / 2, y: cy + 3, "text-anchor": "middle", "font-size": 8, "font-weight": 800, fill: "#fff", "font-family": "Sora, Arial, sans-serif" });
+            t.textContent = opz.numeri[m]; svg.appendChild(t);
+        }
+    };
+    for (let m = opz.da; m <= opz.a; m++) if (!pos[m].nero) disegnaTasto(m);
+    for (let m = opz.da; m <= opz.a; m++) if (pos[m].nero) disegnaTasto(m);
+    for (let m = opz.da; m <= opz.a; m++) disegnaNumero(m);
+    if (opz.arco) {
+        const x1 = centro(opz.arco.da), x2 = centro(opz.arco.a);
+        const ym = 8;
+        svg.appendChild(svgEl("path", { d: "M" + x1 + " " + (top - 2) + " Q" + ((x1 + x2) / 2) + " " + (ym - 6) + " " + x2 + " " + (top - 2), fill: "none", stroke: "#f97316", "stroke-width": 2 }));
+        const dir = x2 > x1 ? -1 : 1;
+        svg.appendChild(svgEl("path", { d: "M" + x2 + " " + (top - 1) + " l" + (dir * 6) + " -6 M" + x2 + " " + (top - 1) + " l" + (dir * 1) + " -8", stroke: "#f97316", "stroke-width": 2, fill: "none" }));
+        const t = svgEl("text", { x: (x1 + x2) / 2, y: ym + 2, "text-anchor": "middle", "font-size": 9, "font-weight": 800, fill: "#fdba74", "font-family": "Sora, Arial, sans-serif" });
+        t.textContent = opz.arco.testo; svg.appendChild(t);
+    }
+    cont.appendChild(svg);
+    return svg;
+}
+// midi di una nota (ottava 4) per la tastiera
+function midiNota(letter, acc, ottava) { return naturalMidi(letter, ottava == null ? 4 : ottava) + acc; }
+
+/* =========================================================
+   LO SCHEMA (tutte le armature, con maggiore e relativa minore)
+   ========================================================= */
+
+// opz: famiglia "diesis" | "bemolli" | "tutto", minori (bool), chiave, evid { id: "verde"|"rosso"|"arancio" }
+function disegnaSchema(cont, opz) {
+    cont.innerHTML = "";
+    const fam = opz.famiglia || "tutto";
+    const evid = opz.evid || {};
+    const chiave = opz.chiave || "treble";
+    const scala = opz.scala || 0.42;
+    const box = document.createElement("div");
+    box.className = "schema due-colonne" + (fam === "tutto" ? "" : " per-colonne");
+    cont.appendChild(box);
+    const riga = (id, intera) => {
+        const sig = ARM[id];
+        const r = document.createElement("div");
+        r.className = "schema-riga" + (intera ? " intera" : "") + (evid[id] ? " " + evid[id] : "");
+        r.dataset.id = id;
+        const arm = document.createElement("div"); arm.className = "schema-arm";
+        r.appendChild(arm);
+        const nomi = document.createElement("div"); nomi.className = "schema-nomi";
+        nomi.innerHTML = "<span>" + nomeTonalita(sig, "M") + "</span>" + (opz.minori ? "<small>" + nomeTonalita(sig, "m") + "</small>" : "<small>" + contaArmatura(sig) + "</small>");
+        r.appendChild(nomi);
+        box.appendChild(r);
+        disegnaArmatura(arm, sig, chiave, { scala: scala });
+        return r;
+    };
+    const max = opz.max != null ? opz.max : 7;
+    if (fam === "tutto") {
+        riga("C", true);
+        const t1 = creaEl('<div class="schema-testa">Con i diesis ♯</div>'); box.appendChild(t1);
+        const t2 = creaEl('<div class="schema-testa">Con i bemolli ♭</div>'); box.appendChild(t2);
+        for (let i = 1; i <= max; i++) { riga(ORDINE_ARMATURE[i]); riga(ORDINE_ARMATURE[i + 7]); }
+    } else {
+        const ids = (fam === "diesis" ? ORDINE_ARMATURE.slice(0, 8) : ["C"].concat(ORDINE_ARMATURE.slice(8))).filter(id => ARM[id].count <= max);
+        if (ids.length <= 4) box.classList.remove("per-colonne", "due-colonne");
+        ids.forEach(id => riga(id));
+    }
+    return box;
+}
+function evidenziaRigaSchema(cont, id, colore, durata) {
+    const r = cont.querySelector('.schema-riga[data-id="' + id + '"]');
+    if (!r) return;
+    r.classList.add(colore);
+    if (durata) setTimeout(() => r.classList.remove(colore), durata);
+}
+
+/* =========================================================
+   ABBINAMENTO VISIVO (etichette verdi e rosse sui pulsanti)
+   ========================================================= */
+
+function etichettaAbbinamento(btn, testo, tipo, durata) {
+    btn.querySelectorAll(".pair-label").forEach(e => e.remove());
+    const lab = document.createElement("span");
+    lab.className = "pair-label " + tipo;
+    lab.textContent = testo;
+    btn.appendChild(lab);
+    btn.classList.add(tipo === "ok" ? "pair-ok" : "pair-ko");
+    if (durata) {
+        setTimeout(() => { lab.remove(); btn.classList.remove("pair-ko"); }, durata);
+    }
+    return lab;
+}
+
+// scheda rossa a destra del rigo: mostra l'armatura della tonalità scritta per sbaglio
+// (il rigo si sposta a sinistra solo se serve e solo quanto serve)
+function schedaRossa(card, rigo, sig, q, chiave, testoSenzaArmatura, durata) {
+    card.querySelectorAll(".pair-chip").forEach(e => e.remove());
+    const chip = document.createElement("div");
+    chip.className = "pair-chip" + (sig ? "" : " testo");
+    card.appendChild(chip);
+    if (sig) {
+        const m = document.createElement("div"); chip.appendChild(m);
+        disegnaArmatura(m, sig, chiave, { scala: 0.48 });
+        const s = document.createElement("span"); s.textContent = nomeTonalita(sig, q); chip.appendChild(s);
+    } else {
+        const s = document.createElement("span"); s.textContent = testoSenzaArmatura; chip.appendChild(s);
+    }
+    const rc = card.getBoundingClientRect(), rr = rigo.getBoundingClientRect();
+    const cw = chip.offsetWidth, ch = chip.offsetHeight;
+    chip.style.top = Math.max(4, (rc.height - ch) / 2) + "px";
+    chip.style.right = "6px";
+    const libero = rc.right - rr.right - 6 - 6;
+    let spostamento = 0;
+    if (libero < cw) {
+        spostamento = Math.min(cw - libero, Math.max(0, rr.left - rc.left - 4));
+        rigo.style.transform = "translateX(" + (-spostamento) + "px)";
+        const ancora = cw - libero - spostamento;
+        if (ancora > 0) { chip.style.transformOrigin = "right center"; chip.style.transform = "scale(" + Math.max(0.6, (cw - ancora) / cw) + ")"; }
+    }
+    setTimeout(() => { chip.remove(); rigo.style.transform = ""; }, durata || 1000);
+    return chip;
+}
+// etichetta verde sotto il rigo (abbinamento giusto per le risposte scritte)
+function etichettaRigo(card, testo) {
+    card.querySelectorAll(".pair-label").forEach(e => e.remove());
+    const lab = document.createElement("span");
+    lab.className = "pair-label ok";
+    lab.textContent = testo;
+    card.appendChild(lab);
+    return lab;
+}
+
+// adatta le uguaglianze alla larghezza disponibile senza mai andare a capo
+function adattaUguaglianze(radice) {
+    radice.querySelectorAll(".tut-eq, .tut-fit").forEach(eq => {
+        eq.style.zoom = "";
+        const disp = eq.parentElement.clientWidth;
+        const serve = eq.scrollWidth;
+        if (serve > disp && disp > 0) eq.style.zoom = (disp / serve).toFixed(3);
+    });
+}
+
+
+/* =========================================================
+   TUTORIAL — ARGOMENTI, LEZIONI ED ESERCIZI
+   ========================================================= */
+
+// il tutorial arriva fino a questo numero di alterazioni in chiave
+const MAX_ALT = 2;
+const ARMATURE_TUTORIAL = ORDINE_ARMATURE.filter(id => ARM[id].count <= MAX_ALT);
+
+const ARGOMENTI = [
+    { id: "base", nome: "L'armatura" },
+    { id: "diesis", nome: "I diesis" },
+    { id: "bemolli", nome: "I bemolli" },
+    { id: "minori", nome: "Le minori" },
+    { id: "ripasso", nome: "Ripasso" }
+];
+
+const TIPI_DOMANDA = {
+    a2M: { nome: "Armatura → maggiore", domanda: "arm", risposta: "nome", q: "M" },
+    M2a: { nome: "Maggiore → armatura", domanda: "nome", risposta: "arm", q: "M" },
+    a2m: { nome: "Armatura → minore", domanda: "arm", risposta: "nome", q: "m" },
+    m2a: { nome: "Minore → armatura", domanda: "nome", risposta: "arm", q: "m" },
+    cnt: { nome: "Quante alterazioni?", domanda: "nome", risposta: "num", q: "M" },
+    rel: { nome: "Maggiore → relativa minore", domanda: "nome", risposta: "nome", q: "M", qr: "m" }
+};
+
+// quante domande per turno, in base a quanti elementi sono in gioco
+function domandePerTurno(n) { return n <= 3 ? 3 : 4; }
+
+/* ---- piccoli costruttori di illustrazioni ---- */
+
+function cardArmatura(sig, chiave, opz, didascalia) {
+    const fig = creaEl('<div class="tut-fig"><div class="tut-card-staff"></div>' + (didascalia ? "<small>" + didascalia + "</small>" : "") + "</div>");
+    return { fig: fig, dentro: fig.querySelector(".tut-card-staff"), sig: sig, chiave: chiave, opz: opz };
+}
+function montaCard(stage, c) { stage.appendChild(c.fig); disegnaArmatura(c.dentro, c.sig, c.chiave, c.opz); return c.fig; }
+function illu(stage) { const d = creaEl('<div class="tut-illu"></div>'); stage.appendChild(d); return d; }
+function rigaFiltrastrocca(ordine, acc) {
+    return '<div class="tut-row">' + ordine.map(l => htmlChipNota(l, acc)).join("") + "</div>";
+}
+function eqBox(contenuto, didascalia) { return '<div class="tut-eq-box">' + contenuto + (didascalia ? "<small>" + didascalia + "</small>" : "") + "</div>"; }
+function eqOp(s) { return '<span class="tut-eq-op">' + s + "</span>"; }
+function tastieraIn(d, opz) { const t = creaEl('<div class="tut-tastiera"></div>'); d.appendChild(t); disegnaTastiera(t, opz); return t; }
+
+/* ---- presentazione di una tonalità maggiore (l'elemento da solo, grande) ---- */
+
+function illustraPresentazione(id, conEvidenza) {
+    return stage => {
+        const sig = ARM[id];
+        const d = illu(stage);
+        const fam = famigliaDi(sig);
+        let ev = null;
+        if (conEvidenza && fam === "diesis") ev = { indice: sig.count - 1, testo: "ultimo" };
+        if (conEvidenza && fam === "bemolli" && sig.count >= 2) ev = { indice: sig.count - 2, testo: "penultimo" };
+        montaCard(d, cardArmatura(sig, "treble", { scala: 2.3, coloriNote: true, etichette: sig.count > 0, evidenzia: ev }));
+        d.appendChild(creaEl('<div class="tut-row">' + htmlNomeTon(sig, "M") + "</div>"));
+    };
+}
+
+/* ---- testi delle presentazioni ---- */
+
+const TESTI_DIESIS = {
+    G: "Un solo diesis: il <b>Fa♯</b>. Questa armatura è <b>Sol maggiore</b>.",
+    D: "Due diesis: <b>Fa♯</b> e <b>Do♯</b>, i primi due della filastrocca. Questa armatura è <b>Re maggiore</b>.",
+    A: "Tre diesis: Fa♯, Do♯, Sol♯. L'ultimo è <b>Sol♯</b>: un semitono sopra c'è <b>La</b>. È <b>La maggiore</b>.",
+    E: "Quattro diesis: Fa♯, Do♯, Sol♯, Re♯. L'ultimo è <b>Re♯</b>: un semitono sopra c'è <b>Mi</b>. È <b>Mi maggiore</b>.",
+    B: "Cinque diesis, fino a La♯. L'ultimo è <b>La♯</b>: un semitono sopra c'è <b>Si</b>. È <b>Si maggiore</b>.",
+    "F#": "Sei diesis, fino a Mi♯. Un semitono sopra Mi♯ c'è <b>Fa♯</b>: la tonica ha anche lei il diesis! È <b>Fa♯ maggiore</b>.",
+    "C#": "Sette diesis: tutte le note sono alterate. L'ultimo è <b>Si♯</b>: un semitono sopra c'è <b>Do♯</b>. È <b>Do♯ maggiore</b>."
+};
+const TESTI_BEMOLLI = {
+    F: "Un solo bemolle: il <b>Si♭</b>. Questa armatura è <b>Fa maggiore</b>. Va ricordata a memoria: <b>un bemolle = Fa maggiore</b>.",
+    Bb: "Due bemolli: <b>Si♭</b> e <b>Mi♭</b>, i primi due dell'ordine dei bemolli. Questa armatura è <b>Si♭ maggiore</b>.",
+    Eb: "Tre bemolli: Si♭, Mi♭, La♭. Il penultimo è <b>Mi♭</b>: è proprio la tonica. È <b>Mi♭ maggiore</b>.",
+    Ab: "Quattro bemolli: Si♭, Mi♭, La♭, Re♭. Il penultimo è <b>La♭</b>. È <b>La♭ maggiore</b>.",
+    Db: "Cinque bemolli, fino a Sol♭. Il penultimo è <b>Re♭</b>. È <b>Re♭ maggiore</b>.",
+    Gb: "Sei bemolli, fino a Do♭. Il penultimo è <b>Sol♭</b>. È <b>Sol♭ maggiore</b>.",
+    Cb: "Sette bemolli: tutte le note sono alterate. Il penultimo è <b>Do♭</b>. È <b>Do♭ maggiore</b>."
+};
+const NUMERI_PAROLA = ["", "1 diesis", "2 diesis", "3 diesis", "4 diesis", "5 diesis", "6 diesis", "7 diesis"];
+const NUMERI_PAROLA_B = ["", "1 bemolle", "2 bemolli", "3 bemolli", "4 bemolli", "5 bemolli", "6 bemolli", "7 bemolli"];
+
+/* ---- costruzione del percorso ---- */
+
+function costruisciPercorso() {
+    const P = [];
+    const L = (key, arg, titolo, testo, illus, tag) => P.push({ tipo: "lez", key, arg, titolo, testo, illus, tag: tag || {} });
+    const E = (key, arg, titolo, testo, opz) => P.push(Object.assign({ tipo: "es", key, arg, titolo, testo, clef: "treble" }, opz));
+    const DIESIS = NOMI_DIESIS.slice(0, MAX_ALT);
+    const BEMOLLI = ORDINE_ARMATURE.slice(8, 8 + MAX_ALT);
+
+    /* ===== 1. L'ARMATURA ===== */
+    L("b-armatura", "base", "Che cos'è l'armatura di chiave",
+        "Subito dopo la <b>chiave</b>, all'inizio del rigo, ci sono dei diesis ♯ o dei bemolli ♭: è l'<b>armatura di chiave</b>. Vale per tutto il brano: ogni nota con quel nome si suona alterata.",
+        stage => {
+            const d = illu(stage);
+            montaCard(d, cardArmatura(ARM.D, "treble", { scala: 2.7, parti: true }));
+            d.appendChild(creaEl('<div class="tut-legenda"><span><i style="background:#64748b"></i>pentagramma</span><span><i style="background:#2563eb"></i>chiave</span><span><i style="background:#dc2626"></i>armatura di chiave</span></div>'));
+        });
+    L("b-tipi", "base", "Diesis o bemolli, mai insieme",
+        "Un'armatura ha <b>solo diesis</b> oppure <b>solo bemolli</b>. Per riconoscere la tonalità, per prima cosa guarda <b>di che tipo</b> sono e <b>quanti</b> sono.",
+        stage => {
+            const d = illu(stage);
+            const r = creaEl('<div class="tut-row"></div>'); d.appendChild(r);
+            montaCard(r, cardArmatura(ARM.D, "treble", { scala: 2.3 }, "2 diesis ♯"));
+            montaCard(r, cardArmatura(ARM.Bb, "treble", { scala: 2.3 }, "2 bemolli ♭"));
+        });
+    L("b-do", "base", "Nessuna alterazione: Do maggiore",
+        "Se dopo la chiave non c'è nessuna alterazione, la tonalità è <b>Do maggiore</b>. Questa si ricorda a memoria: <b>rigo vuoto = Do maggiore</b>.",
+        illustraPresentazione("C"), { el: ["C"] });
+    L("b-risposta", "base", "Come si risponde",
+        "Nel gioco scrivi il nome con i pulsanti <b>Nota</b>, <b>Alterazione</b> e <b>Qualità</b>, poi tocchi <b>Invia</b>. Se la tonica non ha alterazioni, non toccare né Bemolle né Diesis. Al contrario, quando leggi un nome, tocchi l'<b>armatura giusta</b>.",
+        stage => {
+            const d = illu(stage);
+            d.classList.add("tut-demo");
+            const si = '<button class="choice-btn nota-btn selected" style="--nota:' + COLORI_NOTE[6] + ";--nota-testo:" + TESTO_NOTE[6] + '">Si</button>';
+            d.appendChild(creaEl('<div class="tut-eq">' + eqBox(si, "Nota") + eqOp("+") + eqBox('<button class="choice-btn selected">Bemolle</button>', "Alterazione") + eqOp("+") +
+                eqBox('<button class="choice-btn selected">Maggiore</button>', "Qualità") + eqOp("=") + eqBox(htmlNomeTon(ARM.Bb, "M"), "la risposta") + "</div>"));
+            const r2 = creaEl('<div class="tut-eq">' + eqBox(htmlNomeTon(ARM.G, "M"), "il nome") + eqOp("=") + '<div class="tut-eq-box"><button class="signature-btn"><div class="mini"></div></button><small>tocca l\'armatura</small></div></div>');
+            d.appendChild(r2);
+            disegnaArmatura(r2.querySelector(".mini"), ARM.G, "treble", { scala: 0.62 });
+        });
+
+    /* ===== 2. I DIESIS ===== */
+    L("d-ordine", "diesis", "L'ordine dei diesis",
+        "I diesis entrano nell'armatura sempre nello stesso ordine: <b>Fa, Do, Sol, Re, La, Mi, Si</b>. Ripetilo come una filastrocca! Il primo è sempre il <b>Fa♯</b>, il secondo il <b>Do♯</b>: negli esercizi useremo questi due.",
+        stage => {
+            const d = illu(stage);
+            montaCard(d, cardArmatura(ARM["C#"], "treble", { scala: 2.3, coloriNote: true, etichette: true }));
+            d.appendChild(creaEl(rigaFiltrastrocca(ORDINE_DIESIS, 1)));
+        }, { tipi: ["M2a", "cnt"] });
+
+    const pool = ["C"];
+    DIESIS.forEach((id, i) => {
+        const n = i + 1;
+        pool.push(id);
+        L("d-" + id, "diesis", NUMERI_PAROLA[n] + ": " + nomeTonalita(ARM[id], "M"), TESTI_DIESIS[id], illustraPresentazione(id, n >= 3), { el: [id] });
+        if (id === "G") {
+            L("d-regola", "diesis", "La regola dei diesis",
+                "Guarda l'<b>ultimo diesis</b>, quello più a destra. Sali di <b>un semitono</b>, cioè al tasto subito sopra: trovi la <b>tonica</b>, il nome della tonalità. L'ultimo diesis è Fa♯: un semitono sopra c'è Sol.",
+                stage => {
+                    const d = illu(stage);
+                    d.appendChild(creaEl('<div class="tut-eq">' + eqBox(htmlChipNota(3, 1), "ultimo diesis") + eqOp("+") + eqBox('<span class="tut-nome piccolo">1 semitono</span>', "il tasto sopra") + eqOp("=") + eqBox(htmlNomeTon(ARM.G, "M"), "la tonalità") + "</div>"));
+                    const ev = {}; ev[midiNota(3, 1)] = { colore: "#f97316", testo: "Fa♯", testoColore: "#fff" }; ev[midiNota(4, 0)] = { colore: COLORI_NOTE[4], testo: "Sol", testoColore: "#fff" };
+                    tastieraIn(d, { da: midiNota(0, 0), a: midiNota(6, 0), evid: ev, arco: { da: midiNota(3, 1), a: midiNota(4, 0), testo: "+1 semitono" }, scala: 1.9 });
+                }, { el: ["G"], tipi: ["a2M"] });
+        }
+        if (id === "D") {
+            L("d-regola2", "diesis", "Perché è Re maggiore?",
+                "Con 2 diesis l'ultimo è il <b>Do♯</b>. Un semitono sopra Do♯ c'è <b>Re</b>: è Re maggiore. La regola vale per tutte le armature con i diesis.",
+                stage => {
+                    const d = illu(stage);
+                    d.appendChild(creaEl('<div class="tut-eq">' + eqBox(htmlChipNota(0, 1), "ultimo diesis") + eqOp("+") + eqBox('<span class="tut-nome piccolo">1 semitono</span>', "il tasto sopra") + eqOp("=") + eqBox(htmlNomeTon(ARM.D, "M"), "la tonalità") + "</div>"));
+                    const ev = {}; ev[midiNota(0, 1)] = { colore: "#f97316", testo: "Do♯", testoColore: "#fff" }; ev[midiNota(1, 0)] = { colore: COLORI_NOTE[1], testo: "Re" };
+                    tastieraIn(d, { da: midiNota(0, 0), a: midiNota(6, 0), evid: ev, arco: { da: midiNota(0, 1), a: midiNota(1, 0), testo: "+1 semitono" }, scala: 1.9 });
+                }, { el: ["D"], tipi: ["a2M"] });
+        }
+        const np = domandePerTurno(pool.length);
+        const elenco = pool.map(x => SOLFEGE_NAMES[ARM[x].major.letter]).join(", ").replace(/, ([^,]*)$/, " e $1");
+        E("d-es-" + id, "diesis", "Esercizio: " + elenco,
+            "Prima guarda l'armatura e scrivi la tonalità maggiore. Poi <b>al contrario</b>: leggi il nome e tocca l'armatura giusta.",
+            { pool: pool.slice(), turni: [{ tipo: "a2M", n: np }, { tipo: "M2a", n: np }] });
+    });
+
+    /* ===== 3. I BEMOLLI ===== */
+    L("b2-ordine", "bemolli", "L'ordine dei bemolli",
+        "Anche i bemolli entrano sempre nello stesso ordine: <b>Si, Mi, La, Re, Sol, Do, Fa</b>. È la filastrocca dei diesis <b>letta al contrario</b>! Il primo è sempre il <b>Si♭</b>, il secondo il <b>Mi♭</b>: negli esercizi useremo questi due.",
+        stage => {
+            const d = illu(stage);
+            montaCard(d, cardArmatura(ARM.Cb, "treble", { scala: 2.3, coloriNote: true, etichette: true }));
+            d.appendChild(creaEl(rigaFiltrastrocca(ORDINE_BEMOLLI, -1)));
+        }, { tipi: ["M2a", "cnt"] });
+    const poolB = ["C"];
+    BEMOLLI.forEach((id, i) => {
+        const n = i + 1;
+        poolB.push(id);
+        L("b2-" + id, "bemolli", NUMERI_PAROLA_B[n] + ": " + nomeTonalita(ARM[id], "M"), TESTI_BEMOLLI[id], illustraPresentazione(id, n >= 3),
+            { el: [id], tipi: id === "F" ? ["a2M"] : [] });
+        if (id === "Bb") {
+            L("b2-regola", "bemolli", "La regola dei bemolli",
+                "Con due bemolli guarda il <b>penultimo</b>, cioè il primo da sinistra: è già il nome della tonica, bemolle compreso. Qui è Si♭: <b>Si♭ maggiore</b>. Con un solo bemolle non c'è il penultimo: per questo Fa maggiore si ricorda.",
+                stage => {
+                    const d = illu(stage);
+                    montaCard(d, cardArmatura(ARM.Bb, "treble", { scala: 2.1, coloriNote: true, evidenzia: { indice: 0, testo: "penultimo" } }));
+                    d.appendChild(creaEl('<div class="tut-eq">' + eqBox(htmlChipNota(6, -1), "penultimo bemolle") + eqOp("=") + eqBox(htmlNomeTon(ARM.Bb, "M"), "la tonalità") + "</div>"));
+                }, { el: ["Bb"], tipi: ["a2M"] });
+        }
+        const np = domandePerTurno(poolB.length);
+        const elenco = poolB.map(x => nomeNota(ARM[x].major.letter, ARM[x].major.acc)).join(", ").replace(/, ([^,]*)$/, " e $1");
+        E("b2-es-" + id, "bemolli", "Esercizio: " + elenco,
+            "Prima guarda l'armatura e scrivi la tonalità maggiore. Poi <b>al contrario</b>: leggi il nome e tocca l'armatura giusta.",
+            { pool: poolB.slice(), turni: [{ tipo: "a2M", n: np }, { tipo: "M2a", n: np }] });
+    });
+    L("b2-schema", "bemolli", "Lo schema: diesis e bemolli",
+        "Ecco tutte le armature viste finora, una accanto all'altra. Nei prossimi due esercizi conterai le alterazioni: prima con lo schema accanto, poi senza.",
+        stage => { const d = illu(stage); const c = creaEl('<div style="width:min(520px,100%)"></div>'); d.appendChild(c); disegnaSchema(c, { famiglia: "tutto", max: MAX_ALT, scala: 0.62 }); },
+        { tipi: ["cnt", "M2a"] });
+    E("b2-cnt1", "bemolli", "Quante alterazioni? Con lo schema",
+        "Leggi la tonalità e tocca quante alterazioni ha la sua armatura. Lo schema è qui accanto: usalo!",
+        { pool: ARMATURE_TUTORIAL.slice(), turni: [{ tipo: "cnt", n: 8 }], schema: "tutto", aiuto: "accanto", relazione: true, famCnt: "tutte", parte: "con" });
+    E("b2-cnt2", "bemolli", "Quante alterazioni? Senza schema",
+        "Stesse domande, ma senza schema: <b>immagina lo schema</b>. Se sbagli, lo schema ricompare.",
+        { pool: ARMATURE_TUTORIAL.slice(), turni: [{ tipo: "cnt", n: 8 }], schema: "tutto", aiuto: "errore", relazione: true, famCnt: "tutte", parte: "senza" });
+
+    /* ===== 4. LE MINORI ===== */
+    L("min-due", "minori", "Un'armatura, due tonalità",
+        "Ogni armatura vale per <b>due tonalità</b>: una maggiore e la sua <b>relativa minore</b>, con le stesse alterazioni. Il rigo vuoto è Do maggiore, ma è anche <b>La minore</b>.",
+        stage => {
+            const d = illu(stage);
+            montaCard(d, cardArmatura(ARM.C, "treble", { scala: 2.4 }));
+            d.appendChild(creaEl('<div class="tut-row">' + eqBox(htmlNomeTon(ARM.C, "M"), "maggiore") + eqBox(htmlNomeTon(ARM.C, "m"), "relativa minore") + "</div>"));
+        }, { el: ["C"], tipi: ["a2m", "m2a"] });
+    L("min-tre", "minori", "La relativa minore: 3 semitoni sotto",
+        "Parti dalla tonica maggiore e <b>scendi di 3 semitoni</b> (un tono e mezzo): Do, Si, Si♭, <b>La</b>. Funziona con tutte le armature, con i diesis e con i bemolli.",
+        stage => {
+            const d = illu(stage);
+            d.appendChild(creaEl('<div class="tut-eq">' + eqBox(htmlNomeTon(ARM.C, "M"), "maggiore") + eqOp("−") + eqBox('<span class="tut-nome piccolo">3 semitoni</span>', "in giù") + eqOp("=") + eqBox(htmlNomeTon(ARM.C, "m"), "relativa minore") + "</div>"));
+            const ev = {}; ev[midiNota(0, 0, 5)] = { colore: COLORI_NOTE[0], testo: "Do", testoColore: "#fff" }; ev[midiNota(5, 0)] = { colore: COLORI_NOTE[5], testo: "La", testoColore: "#fff" };
+            const num = {}; num[midiNota(6, 0)] = 1; num[midiNota(6, -1)] = 2; num[midiNota(5, 0)] = 3;
+            tastieraIn(d, { da: midiNota(3, 0), a: midiNota(1, 0, 5), evid: ev, numeri: num, arco: { da: midiNota(0, 0, 5), a: midiNota(5, 0), testo: "−3 semitoni" }, scala: 1.9 });
+        }, { tipi: ["a2m", "m2a", "rel"] });
+    E("min-rel1", "minori", "Trova la relativa minore, con lo schema",
+        "Leggi la tonalità maggiore e scrivi la sua <b>relativa minore</b>. Lo schema accanto mostra tutte le coppie.",
+        { pool: ARMATURE_TUTORIAL.slice(), turni: [{ tipo: "rel", n: 8 }], schema: "tutto", aiuto: "accanto", relazione: true, parte: "con" });
+    E("min-rel2", "minori", "Trova la relativa minore, senza schema",
+        "Ora senza schema: dalla maggiore <b>scendi di 3 semitoni</b>. Se sbagli, lo schema ricompare.",
+        { pool: ARMATURE_TUTORIAL.slice(), turni: [{ tipo: "rel", n: 8 }], schema: "tutto", aiuto: "errore", relazione: true, parte: "senza" });
+    E("min-es-d", "minori", "Esercizio: le minori con i diesis",
+        "Guarda l'armatura e scrivi la tonalità <b>minore</b>. Poi al contrario: leggi la minore e tocca l'armatura giusta.",
+        { pool: ["C"].concat(DIESIS), turni: [{ tipo: "a2m", n: 3 }, { tipo: "m2a", n: 3 }] });
+    E("min-es-b", "minori", "Esercizio: le minori con i bemolli",
+        "Guarda l'armatura e scrivi la tonalità <b>minore</b>. Poi al contrario: leggi la minore e tocca l'armatura giusta.",
+        { pool: ["C"].concat(BEMOLLI), turni: [{ tipo: "a2m", n: 3 }, { tipo: "m2a", n: 3 }] });
+
+    /* ===== 5. RIPASSO ===== */
+    L("r-basso", "ripasso", "Anche in chiave di basso",
+        "Nel gioco l'armatura può essere anche in <b>chiave di basso</b>. Le alterazioni stanno più in basso, ma l'ordine e le regole sono gli stessi.",
+        stage => {
+            const d = illu(stage);
+            const r = creaEl('<div class="tut-row"></div>'); d.appendChild(r);
+            montaCard(r, cardArmatura(ARM.D, "treble", { scala: 2.2, coloriNote: true }, "chiave di violino"));
+            montaCard(r, cardArmatura(ARM.D, "bass", { scala: 2.2, coloriNote: true }, "chiave di basso"));
+            d.appendChild(creaEl('<div class="tut-row">' + htmlNomeTon(ARM.D, "M") + htmlNomeTon(ARM.D, "m") + "</div>"));
+        });
+    E("r-es-basso", "ripasso", "Esercizio: in chiave di basso",
+        "Le stesse domande di prima, in chiave di basso: prima scrivi la maggiore, poi al contrario tocca l'armatura giusta.",
+        { pool: ARMATURE_TUTORIAL.filter(id => id !== "C"), turni: [{ tipo: "a2M", n: 4 }, { tipo: "M2a", n: 4 }], clef: "bass" });
+    L("r-schema", "ripasso", "Lo schema riassuntivo",
+        "Qui accanto c'è lo schema di tutte le armature, con la maggiore e la relativa minore. Nel gioco lo ritrovi con il pulsante <b>📋 Schema</b>. Ora l'ultimo ripasso: prima con lo schema accanto, poi senza.",
+        stage => {
+            const d = illu(stage);
+            d.appendChild(creaEl('<div class="tut-eq tut-demo">' + eqBox('<div class="game-buttons" style="margin:0"><button class="schema-button">📋 Schema</button><button class="finish-button">Termina partita</button></div>', "nel gioco, sotto le risposte") + "</div>"));
+            d.appendChild(creaEl('<p class="tut-consegna" style="max-width:420px">Toccalo durante la partita: si apre lo stesso schema che vedi qui accanto (sul telefono, qui sotto).</p>'));
+        },
+        { tipi: ["a2M", "M2a", "a2m", "m2a", "cnt", "rel"] });
+    P[P.length - 1].lato = "tutto";
+    E("r-con", "ripasso", "Ripasso con lo schema",
+        "Domande miste su tutto, ogni volta di un tipo diverso. Lo schema è qui accanto.",
+        { pool: ARMATURE_TUTORIAL.slice(), misto: true, n: 8, clef: "mixed", schema: "tutto", aiuto: "accanto", parte: "con" });
+    E("r-senza", "ripasso", "Ripasso finale",
+        "Ultime 8 domande miste, senza schema: <b>immagina lo schema</b>. Se sbagli, si apre per farti ripassare.",
+        { pool: ARMATURE_TUTORIAL.slice(), misto: true, n: 8, clef: "mixed", schema: "tutto", aiuto: "errore", parte: "senza", ultimo: true });
+    return P;
+}
+
+
+/* =========================================================
+   TUTORIAL — STATO E NAVIGAZIONE
+   ========================================================= */
+
+const PERCORSO = costruisciPercorso();
+
+const tutorialScreen = document.getElementById("tutorialScreen");
+const tutLayout = document.getElementById("tutLayout");
+const tutTopics = document.getElementById("tutTopics");
+const tutTopicFill = document.getElementById("tutTopicFill");
+const tutTitle = document.getElementById("tutTitle");
+const tutText = document.getElementById("tutText");
+const tutPrev = document.getElementById("tutPrev");
+const tutNext = document.getElementById("tutNext");
+const tutStage = document.getElementById("tutStage");
+const tutDots = document.getElementById("tutDots");
+const tutMsg = document.getElementById("tutMsg");
+const tutSide = document.getElementById("tutSide");
+const tutSideSchema = document.getElementById("tutSideSchema");
+const tutMenu = document.getElementById("tutMenu");
+const tutBackStats = document.getElementById("tutBackStats");
+const tutTestBtn = document.getElementById("tutTestBtn");
+const tutStats = document.getElementById("tutStats");
+const ripassoOverlay = document.getElementById("ripassoOverlay");
+const ripassoDomanda = document.getElementById("ripassoDomanda");
+const ripassoSchema = document.getElementById("ripassoSchema");
+const ripassoBarra = document.getElementById("ripassoBarra");
+const ripassoChiudi = document.getElementById("ripassoChiudi");
+
+const T = {
+    passi: PERCORSO, i: 0, max: 0, completati: new Set(), tentativi: [], inizio: 0, fine: 0,
+    recuperati: {}, tentatiMirati: {}, mirato: null, salvato: null, gen: 0, ex: null, finito: false
+};
+
+function dopo(ms, fn) { const g = T.gen; setTimeout(() => { if (g === T.gen) fn(); }, ms * (window.__velocitaTest || 1)); }
+
+function apriTutorial() {
+    T.passi = PERCORSO; T.i = 0; T.max = 0; T.completati = new Set(); T.tentativi = [];
+    T.inizio = Date.now(); T.fine = 0; T.recuperati = {}; T.tentatiMirati = {}; T.mirato = null; T.finito = false;
+    homeScreen.style.display = "none";
+    gameContainer.style.display = "none";
+    helpButton.style.display = "none";
+    tutorialScreen.style.display = "block";
+    tutStats.hidden = true;
+    tutLayout.style.display = "";
+    tutTestBtn.hidden = !/[?&]test\b/.test(location.search);
+    vaiA(0);
+}
+function chiudiTutorial() {
+    T.gen++;
+    ripassoOverlay.classList.remove("show");
+    tutorialScreen.style.display = "none";
+    helpButton.style.display = "";
+    goHome();
+}
+
+function vaiA(i) {
+    T.gen++;
+    T.i = Math.max(0, Math.min(T.passi.length - 1, i));
+    if (!T.mirato) T.max = Math.max(T.max, T.i);
+    mostraPasso();
+}
+function passoCorrente() { return T.passi[T.i]; }
+
+function mostraPasso() {
+    let step = passoCorrente();
+    T.ex = null;
+    tutStats.hidden = true;
+    tutLayout.style.display = "";
+    tutStage.innerHTML = "";
+    tutDots.innerHTML = "";
+    impostaMsg("", "");
+    tutTitle.textContent = (step.tipo === "es" ? "✏️ " : "") + step.titolo;
+    tutText.innerHTML = "<p>" + step.testo + "</p>";
+    tutBackStats.hidden = !T.mirato;
+    tutMenu.hidden = false;
+    aggiornaArgomenti(step);
+    // schema accanto al quiz
+    if ((step.tipo === "es" && step.aiuto === "accanto") || step.lato) {
+        if (step.lato) step = Object.assign({}, step, { schema: step.lato });
+        tutSide.hidden = false;
+        const evid = {}; (step.evid || []).forEach(id => { evid[id] = "arancio"; });
+        disegnaSchema(tutSideSchema, { famiglia: step.schema, minori: step.schema === "tutto" && step.arg !== "bemolli", max: MAX_ALT, evid: evid, scala: step.schema === "tutto" ? 0.46 : 0.52 });
+    } else {
+        tutSide.hidden = true;
+        tutSideSchema.innerHTML = "";
+    }
+    step = passoCorrente();
+    if (step.tipo === "lez") {
+        step.illus(tutStage);
+        adattaUguaglianze(tutStage);
+    } else {
+        avviaEsercizio(step);
+    }
+    aggiornaNav();
+}
+
+function aggiornaNav() {
+    const step = passoCorrente();
+    tutPrev.disabled = T.i === 0;
+    if (step.tipo === "lez") tutNext.disabled = false;
+    else tutNext.disabled = !T.completati.has(chiavePasso(step));
+}
+function chiavePasso(step) { return (T.mirato ? "m:" : "") + step.key; }
+
+function indiciArgomento(id) {
+    const idx = [];
+    T.passi.forEach((p, i) => { if (p.arg === id) idx.push(i); });
+    return idx;
+}
+function aggiornaArgomenti(step) {
+    tutTopics.innerHTML = "";
+    if (T.mirato) {
+        const b = creaEl('<span class="tut-topic corrente">🎯 Esercizio mirato: ' + T.mirato.etichetta + "</span>");
+        tutTopics.appendChild(b);
+        tutTopicFill.style.width = ((T.i + 1) / T.passi.length * 100) + "%";
+        return;
+    }
+    ARGOMENTI.forEach(a => {
+        const idx = indiciArgomento(a.id);
+        const ultimo = idx[idx.length - 1];
+        const fatto = T.max > ultimo || (T.finito && a.id === "ripasso");
+        const b = document.createElement("button");
+        b.className = "tut-topic" + (a.id === step.arg ? " corrente" : fatto ? " fatto" : "");
+        b.textContent = (fatto && a.id !== step.arg ? "✓ " : "") + a.nome;
+        b.title = "Vai a: " + a.nome;
+        b.addEventListener("click", () => vaiA(idx[0]));
+        tutTopics.appendChild(b);
+    });
+    const idx = indiciArgomento(step.arg);
+    const pos = idx.indexOf(T.i);
+    tutTopicFill.style.width = ((pos + 1) / idx.length * 100) + "%";
+}
+
+function impostaMsg(testo, classe) {
+    tutMsg.className = "tut-msg" + (classe ? " " + classe : "");
+    tutMsg.innerHTML = testo;
+}
+
+tutPrev.addEventListener("click", () => { if (!tutPrev.disabled) vaiA(T.i - 1); });
+tutNext.addEventListener("click", () => {
+    if (tutNext.disabled) return;
+    if (T.i === T.passi.length - 1) { if (T.mirato) tornaAlleStatistiche(); else mostraStatistiche(); return; }
+    vaiA(T.i + 1);
+});
+tutMenu.addEventListener("click", chiudiTutorial);
+tutBackStats.addEventListener("click", tornaAlleStatistiche);
+
+/* =========================================================
+   TUTORIAL — ESERCIZI
+   ========================================================= */
+
+function scegliChiave(c) { return c === "mixed" ? (Math.random() < 0.5 ? "treble" : "bass") : (c || "treble"); }
+
+function generaDomande(step) {
+    if (step.domande) return step.domande.map(d => Object.assign({ clef: scegliChiave(step.clef) }, d));
+    const pool = step.pool;
+    let sacco = [], ultimo = null;
+    const pesca = () => {
+        if (!sacco.length) sacco = shuffleArray(pool);
+        let k = sacco.findIndex(x => x !== ultimo);
+        if (k < 0) k = 0;
+        const v = sacco.splice(k, 1)[0];
+        ultimo = v;
+        return v;
+    };
+    const out = [];
+    if (step.misto) {
+        const tutti = ["a2M", "m2a", "a2m", "M2a", "rel"];
+        let tipi = [];
+        while (tipi.length < step.n) {
+            let giro = shuffleArray(tutti);
+            if (tipi.length && giro[0] === tipi[tipi.length - 1]) giro.push(giro.shift());
+            tipi = tipi.concat(giro);
+        }
+        tipi.slice(0, step.n).forEach(t => out.push({ tipo: t, id: pesca(), turno: 0, clef: scegliChiave(step.clef) }));
+    } else {
+        step.turni.forEach((t, ti) => { for (let j = 0; j < t.n; j++) out.push({ tipo: t.tipo, id: pesca(), turno: ti, clef: scegliChiave(step.clef) }); });
+    }
+    return out;
+}
+
+function avviaEsercizio(step) {
+    T.ex = { step: step, domande: generaDomande(step), k: 0, risultati: [], primo: true, attesa: false, sel: { letter: null, acc: null }, ultimoSbagliato: null };
+    mostraDomanda();
+}
+
+function disegnaPallini() {
+    const ex = T.ex;
+    tutDots.innerHTML = "";
+    let gruppo = null, turno = -1;
+    ex.domande.forEach((d, i) => {
+        if (d.turno !== turno) { gruppo = document.createElement("div"); gruppo.className = "gruppo"; tutDots.appendChild(gruppo); turno = d.turno; }
+        const p = document.createElement("i");
+        if (ex.risultati[i] === "ok") p.className = "fatto";
+        else if (ex.risultati[i] === "dopo") p.className = "primo-no";
+        else if (i === ex.k) p.className = "ora";
+        gruppo.appendChild(p);
+    });
+}
+
+function consegnaPer(q, step) {
+    switch (q.tipo) {
+        case "a2M": return "Guarda l'armatura e scrivi la tonalità maggiore.";
+        case "a2m": return "Guarda l'armatura e scrivi la tonalità minore.";
+        case "M2a": case "m2a": return "Leggi il nome e tocca l'armatura giusta.";
+        case "cnt": { const f = famCnt(q, step); return "Leggi la tonalità e tocca quant" + (f === "tutte" ? "e alterazioni" : f === "bemolli" ? "i bemolli" : "i diesis") + " ha la sua armatura."; }
+        case "rel": return "Leggi la tonalità maggiore e scrivi la sua relativa minore.";
+    }
+    return "";
+}
+function famCnt(q, step) {
+    if (step.famCnt) return step.famCnt;
+    const f = famigliaDi(ARM[q.id]);
+    return f === "nessuna" ? "diesis" : f;
+}
+
+function mostraDomanda() {
+    const ex = T.ex, step = ex.step;
+    const q = ex.domande[ex.k];
+    const tipo = TIPI_DOMANDA[q.tipo];
+    const sig = ARM[q.id];
+    ex.primo = true; ex.attesa = false; ex.sel = { letter: null, acc: null }; ex.ultimoSbagliato = null;
+    tutStage.innerHTML = "";
+    tutStage.appendChild(creaEl('<p class="tut-consegna">' + consegnaPer(q, step) + "</p>"));
+
+    // la domanda
+    if (tipo.domanda === "arm") {
+        const card = creaEl('<div class="tut-qstaff"><div class="tut-staff"></div></div>');
+        tutStage.appendChild(card);
+        disegnaArmatura(card.querySelector(".tut-staff"), sig, q.clef, { scala: 1.2 });
+        ex.card = card; ex.rigo = card.querySelector(".tut-staff");
+    } else {
+        let etichetta = "Tonalità richiesta";
+        if (q.tipo === "cnt") { const f = famCnt(q, step); etichetta = f === "tutte" ? "Quante alterazioni ha" : f === "bemolli" ? "Quanti bemolli ha" : "Quanti diesis ha"; }
+        if (q.tipo === "rel") etichetta = "Relativa minore di";
+        const card = creaEl('<div class="tut-qname"><div class="question-label">' + etichetta + '</div><div class="question-text">' + nomeTonalita(sig, tipo.q) + "</div></div>");
+        tutStage.appendChild(card);
+        ex.card = card; ex.rigo = card.querySelector(".question-text");
+    }
+
+    // le risposte (stessi pulsanti del gioco)
+    const ans = document.createElement("div");
+    ans.className = "tut-answers";
+    tutStage.appendChild(ans);
+    if (tipo.risposta === "nome") costruisciRispostaNome(ans, tipo.qr || tipo.q);
+    else if (tipo.risposta === "arm") costruisciRispostaArmatura(ans, q, step);
+    else costruisciRispostaNumero(ans, q, step);
+
+    disegnaPallini();
+    const prec = ex.domande[ex.k - 1];
+    if (prec && prec.turno !== q.turno) impostaMsg("Ora al contrario!", "info");
+    else impostaMsg("", "");
+}
+
+function costruisciRispostaNome(ans, qualita) {
+    const ex = T.ex;
+    ans.innerHTML =
+        '<div class="answer-section-title">Nota</div><div class="choice-row tut-note"></div>' +
+        '<div class="tut-row-pair"><div><div class="answer-section-title">Alterazione</div><div class="choice-row tut-alt"></div></div>' +
+        '<div><div class="answer-section-title">Qualità</div><div class="choice-row tut-qual"></div></div></div>' +
+        '<button class="submit-button tut-invia" disabled>Invia ✅</button>';
+    const rNote = ans.querySelector(".tut-note"), rAlt = ans.querySelector(".tut-alt"), rQual = ans.querySelector(".tut-qual");
+    const invia = ans.querySelector(".tut-invia");
+    SOLFEGE_NAMES.forEach((nome, l) => {
+        const b = document.createElement("button");
+        b.className = "choice-btn nota-btn";
+        b.style.setProperty("--nota", COLORI_NOTE[l]); b.style.setProperty("--nota-testo", TESTO_NOTE[l]);
+        b.textContent = nome; b.dataset.letter = l;
+        b.addEventListener("click", () => {
+            if (ex.attesa) return;
+            ex.sel.letter = ex.sel.letter === l ? null : l;
+            rNote.querySelectorAll(".choice-btn").forEach(x => x.classList.toggle("selected", +x.dataset.letter === ex.sel.letter));
+            rNote.classList.toggle("ha-selezione", ex.sel.letter !== null);
+            aggiornaInvia();
+        });
+        rNote.appendChild(b);
+    });
+    ACCIDENTAL_ORDER.forEach(acc => {
+        const b = document.createElement("button");
+        b.className = "choice-btn"; b.textContent = ACCIDENTAL_NAMES[acc]; b.dataset.acc = acc;
+        b.addEventListener("click", () => {
+            if (ex.attesa) return;
+            ex.sel.acc = ex.sel.acc === acc ? null : acc;
+            rAlt.querySelectorAll(".choice-btn").forEach(x => x.classList.toggle("selected", +x.dataset.acc === ex.sel.acc));
+            aggiornaInvia();
+        });
+        rAlt.appendChild(b);
+    });
+    [["M", "Maggiore"], ["m", "Minore"]].forEach(([k, lab]) => {
+        const b = document.createElement("button");
+        b.className = "choice-btn" + (k === qualita ? " selected" : " bloccato");
+        b.textContent = lab; b.disabled = k !== qualita;
+        b.title = k === qualita ? "La consegna chiede questa" : "Non serve in questa domanda";
+        rQual.appendChild(b);
+    });
+    invia.addEventListener("click", () => {
+        if (invia.disabled || ex.attesa) return;
+        rispondi({ letter: ex.sel.letter, acc: ex.sel.acc === null ? 0 : ex.sel.acc }, null);
+    });
+    ex.invia = invia;
+    aggiornaInvia();
+}
+function chiaveSelezione() { return T.ex.sel.letter + "|" + T.ex.sel.acc; }
+function aggiornaInvia() {
+    const ex = T.ex;
+    if (!ex || !ex.invia) return;
+    ex.invia.disabled = ex.attesa || ex.sel.letter === null || chiaveSelezione() === ex.ultimoSbagliato;
+}
+
+function costruisciRispostaArmatura(ans, q, step) {
+    const grid = document.createElement("div");
+    grid.className = "signature-grid";
+    ans.appendChild(grid);
+    const ids = ORDINE_ARMATURE.filter(id => step.pool.includes(id));
+    ids.forEach(id => {
+        const b = document.createElement("button");
+        b.className = "signature-btn"; b.dataset.id = id;
+        const m = document.createElement("div"); b.appendChild(m);
+        b.addEventListener("click", () => rispondi({ id: id }, b));
+        grid.appendChild(b);
+        disegnaArmatura(m, ARM[id], q.clef, { scala: 0.6 });
+    });
+}
+
+function costruisciRispostaNumero(ans, q, step) {
+    const row = document.createElement("div");
+    row.className = "choice-row";
+    ans.appendChild(row);
+    const fam = famCnt(q, step);
+    const ids = fam === "tutte" ? ARMATURE_TUTORIAL.slice()
+        : ["C"].concat(ORDINE_ARMATURE.filter(id => famigliaDi(ARM[id]) === fam && ARM[id].count <= MAX_ALT));
+    ids.forEach(id => {
+        const sig = ARM[id];
+        const b = document.createElement("button");
+        b.className = "choice-btn"; b.dataset.id = id;
+        b.textContent = sig.count === 0 ? "0" : sig.count + (famigliaDi(sig) === "bemolli" ? " ♭" : " ♯");
+        b.classList.add("num-btn");
+        b.addEventListener("click", () => rispondi({ id: id }, b));
+        row.appendChild(b);
+    });
+}
+
+/* ---- verifica della risposta ---- */
+
+function rispondi(r, btn) {
+    const ex = T.ex;
+    if (!ex || ex.attesa) return;
+    const step = ex.step, q = ex.domande[ex.k], tipo = TIPI_DOMANDA[q.tipo], sig = ARM[q.id];
+    let esito, sceltoSig;
+    if (tipo.risposta === "nome") {
+        const qq = tipo.qr || tipo.q;
+        const t = tonicaDi(sig, qq);
+        esito = r.letter === t.letter && r.acc === t.acc;
+        sceltoSig = trovaTonalita(r.letter, r.acc, qq);
+    } else {
+        sceltoSig = ARM[r.id];
+        esito = r.id === q.id;
+    }
+    T.tentativi.push({
+        passo: chiavePasso(step), arg: T.mirato ? "mirato" : step.arg, tipo: q.tipo, chiesto: q.id,
+        scelto: sceltoSig ? sceltoSig.name : null, esito: esito, primo: ex.primo, mirato: !!T.mirato, parte: step.parte || null
+    });
+    if (esito) rispostaGiusta(q, btn); else rispostaSbagliata(q, r, sceltoSig, btn);
+}
+
+function rispostaGiusta(q, btn) {
+    const ex = T.ex, tipo = TIPI_DOMANDA[q.tipo], sig = ARM[q.id];
+    ex.attesa = true;
+    ex.risultati[ex.k] = ex.primo ? "ok" : "dopo";
+    if (tipo.risposta === "nome") {
+        tutStage.querySelectorAll(".tut-answers .selected:not(:disabled)").forEach(b => b.classList.add("correct-flash"));
+        const testo = q.tipo === "rel" ? "relativa: " + nomeTonalita(sig, "m") : nomeTonalita(sig, tipo.qr || tipo.q);
+        etichettaRigo(ex.card, testo);
+        aggiornaInvia();
+    } else if (btn) {
+        etichettaAbbinamento(btn, nomeTonalita(sig, tipo.q), "ok");
+    }
+    impostaMsg(messaggioGiusto(q), "ok");
+    disegnaPallini();
+    dopo(1000, prossimaDomanda);
+}
+
+function prossimaDomanda() {
+    const ex = T.ex;
+    ex.k++;
+    if (ex.k >= ex.domande.length) { completaEsercizio(); return; }
+    mostraDomanda();
+}
+
+function rispostaSbagliata(q, r, sceltoSig, btn) {
+    const ex = T.ex, step = ex.step, tipo = TIPI_DOMANDA[q.tipo], sig = ARM[q.id];
+    ex.primo = false;
+    playWrongSound();
+    if (tipo.risposta === "nome") {
+        const qq = tipo.qr || tipo.q;
+        const sel = Array.from(tutStage.querySelectorAll(".tut-answers .selected:not(:disabled)"));
+        sel.forEach(b => b.classList.add("wrong-flash"));
+        setTimeout(() => sel.forEach(b => b.classList.remove("wrong-flash")), 400);
+        const testoNo = nomeNota(r.letter, r.acc) + (qq === "M" ? " maggiore" : " minore") + ": non c'è";
+        if (q.tipo === "rel") {
+            etichettaAbbinamento(ex.card, sceltoSig ? nomeTonalita(sceltoSig, "m") + " = relativa di " + nomeTonalita(sceltoSig, "M") : testoNo, "ko", 1000);
+        } else {
+            schedaRossa(ex.card, ex.rigo, sceltoSig, qq, q.clef, testoNo, 1000);
+        }
+        ex.ultimoSbagliato = chiaveSelezione();
+        aggiornaInvia();
+    } else if (btn && sceltoSig) {
+        etichettaAbbinamento(btn, nomeTonalita(sceltoSig, tipo.q), "ko", 1000);
+    }
+    const barra = barraRelazione(q, r, sceltoSig);
+    if (barra) impostaMsg('<span class="msg-testo">' + messaggioSbagliato(q, r, sceltoSig) + "</span>" + barra, "ko con-barra");
+    else impostaMsg(messaggioSbagliato(q, r, sceltoSig), "ko");
+    if (step.aiuto === "accanto" && sceltoSig) evidenziaRigaSchema(tutSideSchema, sceltoSig.name, "rosso", 1000);
+    if (step.aiuto === "errore") dopo(900, () => apriRipasso(q, sceltoSig, barra));
+}
+
+/* ---- messaggi ---- */
+
+function quiFrase(sig) {
+    if (sig.count === 0) return "qui non ci sono alterazioni";
+    return sig.count === 1 ? "qui c'è " + contaArmatura(sig) : "qui ci sono " + contaArmatura(sig);
+}
+function suggerimento(sig, qq) {
+    if (qq === "m") return "Trova la maggiore e scendi di 3 semitoni.";
+    const fam = famigliaDi(sig);
+    if (fam === "nessuna") return "Rigo vuoto: ricordi quale tonalità è?";
+    if (fam === "diesis") return "Guarda l'ultimo diesis e sali di un semitono.";
+    if (sig.count === 1) return "Un solo bemolle: è la tonalità da ricordare a memoria.";
+    return "Guarda il penultimo bemolle.";
+}
+function messaggioGiusto(q) {
+    const sig = ARM[q.id];
+    switch (q.tipo) {
+        case "a2M": return "Giusto! È " + nomeTonalita(sig, "M") + ".";
+        case "a2m": return "Giusto! È " + nomeTonalita(sig, "m") + ".";
+        case "M2a": return "Giusto! " + nomeTonalita(sig, "M") + " ha " + contaArmatura(sig) + ".";
+        case "m2a": return "Giusto! " + nomeTonalita(sig, "m") + " ha " + contaArmatura(sig) + ".";
+        case "cnt": return "Giusto! " + nomeTonalita(sig, "M") + " ha " + contaArmatura(sig) + ".";
+        case "rel": return "Giusto! " + nomeTonalita(sig, "m") + " è la relativa di " + nomeTonalita(sig, "M") + ".";
+    }
+    return "Giusto!";
+}
+function messaggioSbagliato(q, r, sceltoSig) {
+    const sig = ARM[q.id];
+    const tipo = TIPI_DOMANDA[q.tipo];
+    if (q.tipo === "a2M" || q.tipo === "a2m") {
+        const qq = tipo.q;
+        const scritto = nomeNota(r.letter, r.acc) + (qq === "M" ? " maggiore" : " minore");
+        if (!sceltoSig) return "No: " + scritto + " non è tra le tonalità del gioco. " + suggerimento(sig, qq);
+        return "No: " + scritto + " ha " + contaArmatura(sceltoSig) + ", " + quiFrase(sig) + ". " + suggerimento(sig, qq);
+    }
+    if (q.tipo === "M2a" || q.tipo === "m2a") {
+        return "No: hai scelto " + contaArmatura(sceltoSig) + ", l'armatura di " + nomeTonalita(sceltoSig, tipo.q) + ". Riprova!";
+    }
+    if (q.tipo === "cnt") {
+        const con = sceltoSig.count === 0 ? "senza alterazioni" : "con " + contaArmatura(sceltoSig);
+        const fq = famigliaDi(sig), fs = famigliaDi(sceltoSig);
+        if (fq !== "nessuna" && fs !== "nessuna" && fq !== fs)
+            return "No: " + con + " è " + nomeTonalita(sceltoSig, "M") + ". " + nomeTonalita(sig, "M") + " ha " + (fq === "diesis" ? "i diesis" : "i bemolli") + ".";
+        return "No: " + con + " è " + nomeTonalita(sceltoSig, "M") + ". Per " + nomeTonalita(sig, "M") + " ne servono di " + (sceltoSig.count < sig.count ? "più" : "meno") + ".";
+    }
+    if (q.tipo === "rel") {
+        const M = sig.major, m = sig.minor;
+        const scritto = nomeNota(r.letter, r.acc) + " minore";
+        if (classeAltezza(r.letter, r.acc) === classeAltezza(m.letter, m.acc)) {
+            return "Quasi: il suono di " + scritto + " è giusto, ma il nome deve essere due note sotto " + nomeNota(M.letter, M.acc) + ".";
+        }
+        const d = (classeAltezza(M.letter, M.acc) - classeAltezza(r.letter, r.acc) + 12) % 12;
+        if (d === 0) return "No: hai scritto la stessa nota della maggiore. Scendi di 3 semitoni.";
+        return "No: da " + nomeNota(M.letter, M.acc) + " a " + nomeNota(r.letter, r.acc) + " ci sono " + d + (d === 1 ? " semitono" : " semitoni") + " in giù. La relativa minore è 3 semitoni sotto.";
+    }
+    return "No, riprova!";
+}
+
+/* ---- schema a barre per gli esercizi di relazione ---- */
+
+function barraRelazione(q, r, sceltoSig) {
+    const sig = ARM[q.id];
+    if (q.tipo === "cnt" && sceltoSig) {
+        let fam = famCnt(q, T.ex.step);
+        if (fam === "tutte") fam = famigliaDi(sceltoSig) !== "nessuna" ? famigliaDi(sceltoSig) : (famigliaDi(sig) === "bemolli" ? "bemolli" : "diesis");
+        const ordine = (fam === "bemolli" ? ORDINE_BEMOLLI : ORDINE_DIESIS).slice(0, Math.max(MAX_ALT, sceltoSig.count));
+        const acc = fam === "bemolli" ? -1 : 1;
+        const n = sceltoSig.count;
+        const segno = fam === "bemolli" ? (n >= 2 ? n - 2 : -1) : n - 1;
+        let html = '<div class="barra-rel">';
+        ordine.forEach((l, i) => {
+            const pieno = i < n;
+            const st = pieno ? "background:" + COLORI_NOTE[l] + ";color:" + TESTO_NOTE[l] + ";border-color:" + COLORI_NOTE[l] : "";
+            html += '<span class="rel-cella"><small>' + (i === segno ? (fam === "bemolli" ? "penult." : "ultimo") : "") + '</small><span class="rel-chip' + (pieno ? " pieno" : "") + (i === segno ? " ultimo" : "") + '" style="' + st + '">' + nomeNota(l, acc) + "</span></span>";
+        });
+        html += '<span class="rel-esito">→ ' + nomeTonalita(sceltoSig, "M") + "</span></div>";
+        return html;
+    }
+    if (q.tipo === "rel") {
+        const M = sig.major;
+        const d = (classeAltezza(M.letter, M.acc) - classeAltezza(r.letter, r.acc) + 12) % 12;
+        if (d === 0 || classeAltezza(r.letter, r.acc) === classeAltezza(sig.minor.letter, sig.minor.acc)) return "";
+        let top = naturalMidi(M.letter, 4) + M.acc;
+        if (top < 66) top += 12;
+        const giu = top - d;
+        let da = giu - 1; while ([1, 3, 6, 8, 10].includes(da % 12)) da--;
+        let a = top + 1; while ([1, 3, 6, 8, 10].includes(a % 12)) a++;
+        const ev = {};
+        ev[top] = { colore: "#f97316", testo: nomeNota(M.letter, M.acc), testoColore: "#fff" };
+        ev[giu] = { colore: "#ef4444", testo: nomeNota(r.letter, r.acc), testoColore: "#fff" };
+        const num = {}; for (let k = 1; k <= d; k++) num[top - k] = k;
+        const box = document.createElement("div");
+        disegnaTastiera(box, { da: da, a: a, evid: ev, numeri: num, arco: { da: top, a: giu, testo: "−" + d + " semitoni" }, scala: 0.5 });
+        return '<div class="barra-rel">' + box.innerHTML + "</div>";
+    }
+    return "";
+}
+
+/* ---- fine esercizio ---- */
+
+function completaEsercizio() {
+    const ex = T.ex, step = ex.step;
+    T.completati.add(chiavePasso(step));
+    disegnaPallini();
+    impostaMsg("Esercizio completato! Si va avanti…", "ok");
+    aggiornaNav();
+    playLevelUpSound();
+    if (T.mirato && step.parte === "senza") {
+        const giuste = ex.risultati.filter(x => x === "ok").length;
+        const pct = Math.round(giuste / ex.domande.length * 100);
+        dopo(1500, () => fineMirato(pct));
+    } else if (!T.mirato && step.ultimo) {
+        dopo(1500, () => mostraStatistiche());
+    } else if (T.i < T.passi.length - 1) {
+        dopo(1500, () => vaiA(T.i + 1));
+    }
+}
+
+/* =========================================================
+   TUTORIAL — FINESTRA "RIPASSA LO SCHEMA"
+   ========================================================= */
+
+function apriRipasso(q, sceltoSig, barra) {
+    const step = T.ex.step;
+    const tipo = TIPI_DOMANDA[q.tipo];
+    ripassoDomanda.innerHTML = "";
+    if (tipo.domanda === "arm") {
+        const c = creaEl('<div class="tut-card-staff"></div>');
+        ripassoDomanda.appendChild(c);
+        disegnaArmatura(c, ARM[q.id], q.clef, { scala: 0.9 });
+    } else {
+        const lab = q.tipo === "cnt" ? "Quante alterazioni ha" : q.tipo === "rel" ? "Relativa minore di" : "Tonalità richiesta";
+        ripassoDomanda.appendChild(creaEl('<div class="tut-qname" style="margin:0"><div class="question-label">' + lab + '</div><div class="question-text">' + nomeTonalita(ARM[q.id], tipo.q) + "</div></div>"));
+    }
+    const evid = {}; evid[q.id] = "verde";
+    if (sceltoSig && sceltoSig.name !== q.id) evid[sceltoSig.name] = "rosso";
+    const fam = step.schema || "tutto";
+    disegnaSchema(ripassoSchema, { famiglia: fam, minori: fam === "tutto" && step.arg !== "bemolli", max: MAX_ALT, evid: evid, chiave: "treble", scala: 0.4 });
+    ripassoBarra.innerHTML = '<div class="schema-legenda"><span><i style="background:#22c55e"></i>la domanda</span>' + (evid[sceltoSig ? sceltoSig.name : ""] ? '<span><i style="background:#ef4444"></i>la tua risposta</span>' : "") + "</div>";
+    ripassoOverlay.classList.add("show");
+    ripassoChiudi.focus();
+}
+function chiudiRipasso() { ripassoOverlay.classList.remove("show"); }
+ripassoChiudi.addEventListener("click", chiudiRipasso);
+ripassoOverlay.addEventListener("click", e => { if (e.target === ripassoOverlay) chiudiRipasso(); });
+
+/* =========================================================
+   TUTORIAL — STATISTICHE FINALI
+   ========================================================= */
+
+function siglaStat(s) { return s.count === 0 ? "rigo vuoto" : siglaArmatura(s); }
+function etichettaElemento(id) { const s = ARM[id]; return nomeTonalita(s, "M") + " / " + nomeTonalita(s, "m") + " (" + siglaStat(s) + ")"; }
+function percentuale(arr) { return arr.length ? Math.round(arr.filter(x => x).length / arr.length * 100) : 0; }
+function coloreBarra(p) { return p >= 85 ? "#22c55e" : p >= 70 ? "#f59e0b" : "#ef4444"; }
+const TIPI_MINORI = ["a2m", "m2a", "rel"];
+
+function calcolaVoci() {
+    const el = {}, tp = {}, cop = {};
+    T.tentativi.forEach(t => {
+        (el[t.chiesto] = el[t.chiesto] || []).push(t.esito);
+        (tp[t.tipo] = tp[t.tipo] || []).push(t.esito);
+        if (!t.esito && t.scelto && t.scelto !== t.chiesto) {
+            const k = [t.chiesto, t.scelto].sort((a, b) => ORDINE_ARMATURE.indexOf(a) - ORDINE_ARMATURE.indexOf(b)).join("|");
+            const c = cop[k] = cop[k] || { n: 0, tipi: {} };
+            c.n++; c.tipi[t.tipo] = (c.tipi[t.tipo] || 0) + 1;
+        }
+    });
+    const voci = [];
+    ARMATURE_TUTORIAL.forEach(id => {
+        if (!el[id]) return;
+        const ult = el[id].slice(-10);
+        voci.push({ key: "el:" + id, tipo: "el", id: id, label: etichettaElemento(id), pct: percentuale(ult), giuste: ult.filter(x => x).length, tot: ult.length });
+    });
+    Object.keys(TIPI_DOMANDA).forEach(t => {
+        if (!tp[t]) return;
+        const ult = tp[t].slice(-10);
+        voci.push({ key: "tipo:" + t, tipo: "tipo", id: t, label: TIPI_DOMANDA[t].nome, pct: percentuale(ult), giuste: ult.filter(x => x).length, tot: ult.length });
+    });
+    const coppie = [];
+    Object.keys(cop).forEach(k => {
+        const c = cop[k];
+        if (c.n < 2) return;
+        const [a, b] = k.split("|");
+        const tipoMax = Object.keys(c.tipi).sort((x, y) => c.tipi[y] - c.tipi[x])[0];
+        const q = TIPI_MINORI.includes(tipoMax) ? "m" : "M";
+        const sigla = id => ARM[id].count === 0 ? "senza alterazioni" : siglaArmatura(ARM[id]);
+        const label = "Hai scambiato " + nomeTonalita(ARM[a], q) + " (" + sigla(a) + ") e " + nomeTonalita(ARM[b], q) + " (" + sigla(b) + ") " + c.n + " volte, soprattutto in " + TIPI_DOMANDA[tipoMax].nome;
+        coppie.push({ key: "cop:" + k, tipo: "cop", a: a, b: b, n: c.n, tipi: Object.keys(c.tipi).sort((x, y) => c.tipi[y] - c.tipi[x]), label: label, labelBreve: siglaArmatura(ARM[a]) + " e " + siglaArmatura(ARM[b]) });
+    });
+    coppie.sort((x, y) => y.n - x.n);
+    return { voci, coppie };
+}
+
+function tempoTesto(ms) {
+    const s = Math.round(ms / 1000), m = Math.floor(s / 60);
+    return m + " min " + String(s % 60).padStart(2, "0") + " s";
+}
+
+function mostraStatistiche(banner) {
+    T.gen++;
+    T.finito = true;
+    if (!T.fine) T.fine = Date.now();
+    tutLayout.style.display = "none";
+    tutStats.hidden = false;
+    const tent = T.tentativi;
+    const giusti = tent.filter(t => t.esito).length;
+    const domande = tent.filter(t => t.primo);
+    const primo = domande.filter(t => t.esito).length;
+    const { voci, coppie } = calcolaVoci();
+    const chiari = voci.filter(v => v.tot >= 3 && v.pct >= 85 && !T.recuperati[v.key]);
+    const daRip = voci.filter(v => v.tot >= 3 && v.pct < 70 && !T.recuperati[v.key]);
+    const copRip = coppie.filter(c => !T.recuperati[c.key]);
+    const rec = Object.keys(T.recuperati).map(k => T.recuperati[k]);
+    window.__vociCorrenti = {};
+    voci.concat(coppie).forEach(v => { window.__vociCorrenti[v.key] = v; });
+
+    const riga = (v, conBottone, testo) => "<li><span>" + (testo || v.label) + (v.tot ? " · <b>" + v.pct + "%</b>" : "") + "</span>" +
+        (conBottone ? '<button data-voce="' + v.key + '">' + (T.tentatiMirati[v.key] ? "Riprova ▶" : "Esercitati ▶") + "</button>" : "") + "</li>";
+    const lista = (arr, vuoto) => arr.length ? "<ul>" + arr.join("") + "</ul>" : '<p class="st-vuoto">' + vuoto + "</p>";
+
+    // dettaglio per argomento (solo risposte del tutorial)
+    const perArg = ARGOMENTI.map(a => {
+        const r = tent.filter(t => !t.mirato && t.arg === a.id).map(t => t.esito);
+        return r.length ? barra(a.nome, percentuale(r), r.filter(x => x).length, r.length) : "";
+    }).join("");
+    const perEl = voci.filter(v => v.tipo === "el").map(v => barra(nomeTonalita(ARM[v.id], "M") + " (" + siglaStat(ARM[v.id]) + ")", v.pct, v.giuste, v.tot)).join("");
+    const perTipo = voci.filter(v => v.tipo === "tipo").map(v => barra(v.label, v.pct, v.giuste, v.tot)).join("");
+
+    tutStats.innerHTML =
+        '<div class="st-head"><h2>📊 Come è andata</h2><div class="st-bottoni">' +
+        '<button class="new-game" id="stAllena">▶️ Vai all\'allenamento</button>' +
+        '<button class="menu-button" id="stRifai">🎓 Rifai il tutorial</button>' +
+        '<button class="menu-button" id="stMenu">🏠 Menu</button></div></div>' +
+        (banner ? '<div class="st-esito ' + banner.classe + '">' + banner.testo + "</div>" : "") +
+        '<div class="st-numeri">' +
+        '<div class="st-num"><strong>' + (tent.length ? Math.round(giusti / tent.length * 100) : 0) + '%</strong><span>Precisione (' + giusti + "/" + tent.length + " risposte)</span></div>" +
+        '<div class="st-num"><strong>' + primo + "/" + domande.length + '</strong><span>Domande indovinate al primo colpo</span></div>' +
+        '<div class="st-num"><strong>' + tempoTesto((T.fine || Date.now()) - T.inizio) + '</strong><span>Tempo impiegato</span></div></div>' +
+        '<div class="st-liste">' +
+        '<div class="st-box"><h3>✅ Hai chiaro</h3>' + lista(chiari.map(v => riga(v, false)), "Ancora niente sopra l'85%: continua ad allenarti!") + "</div>" +
+        '<div class="st-box"><h3>📌 Da ripassare</h3>' + lista(daRip.map(v => riga(v, true)).concat(copRip.map(c => riga(c, true, c.label))), "Niente da ripassare. Ottimo lavoro!") +
+        (rec.length ? '<h3 style="margin-top:8px">🎉 Recuperati</h3><ul>' + rec.map(r => "<li><span>" + r.label + " · <b>" + r.pct + "% al primo colpo</b></span></li>").join("") + "</ul>" : "") +
+        "</div></div>" +
+        '<div class="st-dettaglio">' +
+        '<div class="st-box"><h3>Per argomento</h3>' + (perArg || '<p class="st-vuoto">Nessuna risposta.</p>') + "</div>" +
+        '<div class="st-box"><h3>Per tonalità (ultime 10 risposte)</h3>' + (perEl || '<p class="st-vuoto">Nessuna risposta.</p>') + "</div>" +
+        '<div class="st-box"><h3>Per tipo di domanda (ultime 10)</h3>' + (perTipo || '<p class="st-vuoto">Nessuna risposta.</p>') + "</div></div>";
+
+    document.getElementById("stAllena").addEventListener("click", () => {
+        T.gen++; tutorialScreen.style.display = "none"; helpButton.style.display = ""; startSession();
+    });
+    document.getElementById("stRifai").addEventListener("click", apriTutorial);
+    document.getElementById("stMenu").addEventListener("click", chiudiTutorial);
+    tutStats.querySelectorAll("[data-voce]").forEach(b => b.addEventListener("click", () => avviaMirato(window.__vociCorrenti[b.dataset.voce])));
+}
+function barra(nome, pct, g, tot) {
+    return '<div class="st-barra"><span title="' + nome + '">' + nome + '</span><span class="st-b"><div style="width:' + pct + "%;background:" + coloreBarra(pct) + '"></div></span><em>' + g + "/" + tot + "</em></div>";
+}
+
+/* =========================================================
+   TUTORIAL — ESERCIZI MIRATI DI RECUPERO
+   ========================================================= */
+
+function lezioniPer(fn) { return PERCORSO.filter(p => p.tipo === "lez" && fn(p)); }
+
+function costruisciMirato(voce) {
+    let lezioni = [], tipi = [], evid = [], domandeFn;
+    const altri = (escludi) => shuffleArray(ARMATURE_TUTORIAL.filter(id => !escludi.includes(id)));
+    if (voce.tipo === "el") {
+        const X = voce.id;
+        const tx = T.tentativi.filter(t => t.chiesto === X && !t.esito);
+        const minori = tx.filter(t => TIPI_MINORI.includes(t.tipo)).length > tx.length / 2;
+        lezioni = lezioniPer(p => (p.tag.el || []).includes(X));
+        if (minori) lezioni = lezioni.concat(lezioniPer(p => ["min-due", "min-tre"].includes(p.key) && !lezioni.includes(p)));
+        const a = minori ? "a2m" : "a2M", n = minori ? "m2a" : "M2a";
+        evid = [X];
+        domandeFn = () => {
+            const o = altri([X]);
+            return [{ tipo: a, id: X, turno: 0 }, { tipo: a, id: o[0], turno: 0 }, { tipo: a, id: X, turno: 0 },
+                    { tipo: n, id: o[1], turno: 1 }, { tipo: n, id: X, turno: 1 }, { tipo: n, id: o[2], turno: 1 }];
+        };
+    } else if (voce.tipo === "tipo") {
+        const t = voce.id;
+        lezioni = lezioniPer(p => (p.tag.tipi || []).includes(t) && p.key !== "r-schema").slice(0, 3).concat(lezioniPer(p => p.key === "r-schema"));
+        domandeFn = () => { const a1 = altri([]), a2 = altri([a1[a1.length - 1]]); return a1.concat(a2).slice(0, 6).map(id => ({ tipo: t, id: id, turno: 0 })); };
+    } else {
+        const X = voce.a, Y = voce.b;
+        lezioni = lezioniPer(p => (p.tag.el || []).includes(X) || (p.tag.el || []).includes(Y));
+        evid = [X, Y];
+        const tt = voce.tipi.slice(0, 2);
+        domandeFn = () => tt.length === 1
+            ? [X, Y, X, Y, X, Y].map((id, i) => ({ tipo: tt[0], id: i % 2 ? Y : X, turno: 0 }))
+            : [{ tipo: tt[0], id: X, turno: 0 }, { tipo: tt[0], id: Y, turno: 0 }, { tipo: tt[0], id: X, turno: 0 },
+               { tipo: tt[1], id: Y, turno: 1 }, { tipo: tt[1], id: X, turno: 1 }, { tipo: tt[1], id: Y, turno: 1 }];
+    }
+    const pool = ARMATURE_TUTORIAL.slice();
+    const passi = lezioni.map(l => Object.assign({}, l, { arg: "mirato" }));
+    passi.push({ tipo: "es", key: "mir-con", arg: "mirato", titolo: "Esercizio mirato, con lo schema", testo: "Le righe dello schema di cui si parla sono in <b>arancione</b>. Usalo per rispondere.",
+        domande: domandeFn(), pool: pool, clef: "treble", schema: "tutto", aiuto: "accanto", parte: "con", evid: evid, famCnt: "tutte" });
+    passi.push({ tipo: "es", key: "mir-senza", arg: "mirato", titolo: "Esercizio mirato, senza schema", testo: "Stesse domande, senza schema: <b>immagina lo schema</b>. Se sbagli, si apre.",
+        domande: domandeFn(), pool: pool, clef: "treble", schema: "tutto", aiuto: "errore", parte: "senza", evid: evid, famCnt: "tutte" });
+    return passi;
+}
+
+function avviaMirato(voce) {
+    if (!voce) return;
+    T.salvato = { passi: T.passi, i: T.i };
+    T.mirato = { voce: voce, etichetta: voce.tipo === "cop" ? voce.labelBreve : voce.label };
+    T.tentatiMirati[voce.key] = true;
+    T.passi = costruisciMirato(voce);
+    T.completati.forEach(k => { if (k.startsWith("m:")) T.completati.delete(k); });
+    vaiA(0);
+}
+function tornaAlleStatistiche(banner) {
+    if (T.salvato) { T.passi = T.salvato.passi; T.i = T.salvato.i; }
+    T.mirato = null; T.salvato = null;
+    mostraStatistiche(banner && banner.testo ? banner : null);
+}
+function fineMirato(pct) {
+    const voce = T.mirato.voce;
+    let banner;
+    if (pct >= 85) {
+        T.recuperati[voce.key] = { label: voce.tipo === "cop" ? "Scambio " + voce.labelBreve : voce.label, pct: pct };
+        banner = { classe: "ok", testo: pct + "% al primo colpo senza schema. Problema risolto! 🎉" };
+    } else {
+        banner = { classe: "ko", testo: pct + "% al primo colpo senza schema: serve ancora un po' di allenamento. Riprova quando vuoi con \"Riprova ▶\"." };
+    }
+    tornaAlleStatistiche(banner);
+}
+
+/* =========================================================
+   TUTORIAL — TASTIERA DEL COMPUTER
+   ========================================================= */
+
+document.addEventListener("keydown", e => {
+    if (tutorialScreen.style.display === "none") return;
+    if (ripassoOverlay.classList.contains("show")) {
+        if (e.key === "Enter" || e.key === "Escape") { e.preventDefault(); chiudiRipasso(); }
+        return;
+    }
+    if (!tutStats.hidden) return;
+    if (e.key === "Enter") {
+        e.preventDefault();
+        if (T.ex && T.ex.invia && !T.ex.invia.disabled) T.ex.invia.click();
+        else if (!tutNext.disabled) tutNext.click();
+    } else if (e.key === "ArrowRight") {
+        if (!tutNext.disabled) { e.preventDefault(); tutNext.click(); }
+    } else if (e.key === "ArrowLeft") {
+        if (!tutPrev.disabled) { e.preventDefault(); tutPrev.click(); }
+    }
+});
+
+/* =========================================================
+   TUTORIAL — PROVA (solo con ?test nell'indirizzo)
+   ========================================================= */
+
+// simula un percorso con risultati mediocri e confusioni tipiche, poi apre le statistiche
+function simulaPercorso() {
+    T.tentativi = [];
+    const confusioni = { D: "G", G: "D", Bb: "F", F: "Bb" };
+    PERCORSO.filter(p => p.tipo === "es").forEach(step => {
+        generaDomande(step).forEach(q => {
+            let sbagli = 0;
+            let pErr = 0.12;
+            if (TIPI_MINORI.includes(q.tipo)) pErr = 0.45;
+            if (q.id === "Bb") pErr = 0.5;
+            if (confusioni[q.id] && q.tipo !== "cnt") pErr = Math.max(pErr, 0.4);
+            while (Math.random() < pErr && sbagli < 2) {
+                const scelto = confusioni[q.id] && step.pool.includes(confusioni[q.id]) ? confusioni[q.id] : ORDINE_ARMATURE.find(id => id !== q.id && step.pool.includes(id));
+                T.tentativi.push({ passo: step.key, arg: step.arg, tipo: q.tipo, chiesto: q.id, scelto: scelto, esito: false, primo: sbagli === 0, mirato: false, parte: step.parte || null });
+                sbagli++;
+            }
+            T.tentativi.push({ passo: step.key, arg: step.arg, tipo: q.tipo, chiesto: q.id, scelto: q.id, esito: true, primo: sbagli === 0, mirato: false, parte: step.parte || null });
+        });
+    });
+    T.max = PERCORSO.length - 1;
+    T.inizio = Date.now() - 27 * 60 * 1000 - 42000;
+    T.fine = Date.now();
+    PERCORSO.forEach(p => { if (p.tipo === "es") T.completati.add(p.key); });
+    mostraStatistiche();
+}
+tutTestBtn.addEventListener("click", simulaPercorso);
+
+// aggancio per il collaudo automatico
+window.__tut = {
+    stato() {
+        const step = T.passi[T.i];
+        const s = { vista: tutStats.hidden ? "passo" : "statistiche", i: T.i, key: step && step.key, tipo: step && step.tipo, mirato: !!T.mirato, popup: ripassoOverlay.classList.contains("show") };
+        if (T.ex && tutStats.hidden) {
+            const q = T.ex.domande[T.ex.k];
+            if (q) Object.assign(s, { q: q, attesa: T.ex.attesa, k: T.ex.k, n: T.ex.domande.length });
+        }
+        return s;
+    },
+    giusta() {
+        const q = T.ex.domande[T.ex.k], tipo = TIPI_DOMANDA[q.tipo], sig = ARM[q.id];
+        if (tipo.risposta === "nome") { const t = tonicaDi(sig, tipo.qr || tipo.q); return { letter: t.letter, acc: t.acc }; }
+        return { id: q.id };
+    },
+    T: T
+};
+
+document.getElementById("tutorialButton").addEventListener("click", apriTutorial);
+
+/* =========================================================
+   GIOCO — PULSANTE SCHEMA
+   ========================================================= */
+const schemaOverlay = document.getElementById("schemaOverlay");
+document.getElementById("schemaButton").addEventListener("click", () => {
+    schemaOverlay.classList.add("show");
+    disegnaSchema(document.getElementById("schemaBody"), { famiglia: "tutto", minori: true, max: maxAlterations, chiave: currentClef || "treble", scala: maxAlterations <= 3 ? 0.6 : 0.42 });
+});
+document.getElementById("schemaClose").addEventListener("click", () => schemaOverlay.classList.remove("show"));
+schemaOverlay.addEventListener("click", e => { if (e.target === schemaOverlay) schemaOverlay.classList.remove("show"); });
+document.addEventListener("keydown", e => { if (e.key === "Escape") schemaOverlay.classList.remove("show"); });
 
 </script>
 </body>
