@@ -528,9 +528,33 @@
   let strumento = STRUMENTI[0];
   try { strumento = STRUMENTI.find(x => x.id === localStorage.getItem('primiBrani.strumento')) || STRUMENTI[0]; } catch (e) {}
 
+  /* Novità che nei file MusicXML non hanno il loro riquadro: si aggiungono qui.
+     "prima": il riquadro va prima di quelli già presenti nel brano (es. la nota prima della figura). */
+  const NOVITA_AGGIUNTE = {
+    1:  { prima: true, testo: "NOVITÀ: la nota SI\nsi scrive sulla terza riga del pentagramma" },
+    3:  { testo: "NOVITÀ: il RITORNELLO\nquando trovi i due puntini prima della stanghetta,\ntorna indietro e suona di nuovo" },
+    4:  { testo: "NOVITÀ: la nota LA\nsi scrive nel secondo spazio del pentagramma" },
+    6:  { testo: "NOVITÀ: l'INTRODUZIONE\nla base suona da sola per 2 battute:\nascolta, conta e poi entra" },
+    7:  { prima: true, testo: "NOVITÀ: la nota SOL\nsi scrive sulla seconda riga del pentagramma" },
+    10: { testo: "NOVITÀ: la nota DO alto\nsi scrive nel terzo spazio del pentagramma" },
+    13: { testo: "NOVITÀ: la nota RE alto\nsi scrive sulla quarta riga del pentagramma" },
+    16: { testo: "NOVITÀ: più BATTUTE DI PAUSA di seguito\nconta ogni battuta di silenzio\nper rientrare al momento giusto" },
+    17: { testo: "NOVITÀ: il DIALOGO con la base\ntu fai la domanda, la base risponde:\nascolta bene, poi tocca di nuovo a te" },
+    18: { testo: "NOVITÀ: PRIMA e SECONDA VOLTA\nla prima volta suoni la casella 1.,\ndopo il ritornello salti alla casella 2." },
+    19: { testo: "NOVITÀ: DUE RITORNELLI\nogni parte chiusa tra i segni di ritornello\nsi suona due volte" },
+    20: { testo: "NOVITÀ: D.C. al FINE\nD.C. vuol dire «da capo»: torna all'inizio\ne fermati dove c'è scritto Fine" },
+    24: { testo: "NOVITÀ: il TEMPO 3/4\n3 tempi in ogni battuta:\nuno-due-tre, come un valzer" },
+    26: { testo: "NOVITÀ: la MINIMA PUNTATA in 4/4\nvale 3 tempi: nella battuta\nresta spazio per 1 tempo" }
+  };
+
   const cache = {};
   const caricaBrano = n => cache[n] || (cache[n] = fetch(CARTELLA + "brano" + due(n) + ".musicxml")
-    .then(r => r.text()).then(t => { const b = MotoreSchemi.leggiMusicXML(t); b.titolo = n + ". " + b.titoloBreve; return b; }));
+    .then(r => r.text()).then(t => {
+      const b = MotoreSchemi.leggiMusicXML(t); b.titolo = n + ". " + b.titoloBreve;
+      const agg = NOVITA_AGGIUNTE[n];
+      if (agg) b.riquadri = agg.prima ? [agg.testo, ...b.riquadri] : [...b.riquadri, agg.testo];
+      return b;
+    }));
   const PAUSE_RAGGRUPPATE = [28];        // brani in cui le battute di pausa consecutive diventano una sola, con il numero
   const opzioni = (versione, extra, n) => Object.assign({ strumento: strumento.id, colori: versione.colori, nomi: versione.nomi,
     notaBaseDita: "g4", titolo: false, schema: false, pausePiuBattute: PAUSE_RAGGRUPPATE.includes(n) }, extra);
