@@ -669,14 +669,33 @@
     else { w = larghezzaCorde(strumento, n) + 12; h = (CORDE[strumento] - 1) * 15 + 34; corpo = svgCorde(strumento, n, w / 2 + 4, 8); }
     return `<svg xmlns="${NS}" viewBox="0 0 ${w} ${h}" style="display:block;width:100%;height:auto"><g stroke="none">${corpo}</g></svg>`;
   }
-  /* carte delle note: nome colorato + diteggiatura, una carta per nota */
+  /* pentagramma con una sola nota (per le carte), come SVG */
+  function rigoNota(contenitore, n) {
+    const VF = (global.Vex && global.Vex.Flow) ? global.Vex.Flow : global.VexFlow;
+    contenitore.innerHTML = "";
+    const R = new VF.Renderer(contenitore, VF.Renderer.Backends.SVG); R.resize(150, 96);
+    const ctx = R.getContext();
+    const st = new VF.Stave(4, 2, 142); st.setBegBarType(VF.Barline.type.NONE); st.setEndBarType(VF.Barline.type.NONE);
+    st.setStyle({ strokeStyle: "#111", fillStyle: "#111" }); st.addClef("treble").setContext(ctx).draw();
+    const sn = new VF.StaveNote({ keys: [n.lettera + n.alt + "/" + n.ottava], duration: "w", clef: "treble" });
+    if (n.alt) sn.addModifier(new VF.Accidental(n.alt), 0);
+    sn.setStave(st); const tc = new VF.TickContext(); tc.addTickable(sn).preFormat(); tc.setX(95 - st.getNoteStartX()); sn.setContext(ctx).draw();
+    const svg = contenitore.querySelector("svg");
+    svg.querySelectorAll("path, rect").forEach(el => { if (el.getAttribute("stroke") === "#999999") el.setAttribute("stroke", "#111"); });
+    svg.setAttribute("viewBox", "0 0 150 96"); svg.removeAttribute("width"); svg.removeAttribute("height");
+    svg.style.width = "100%"; svg.style.height = "auto"; svg.style.display = "block";
+  }
+  /* carte delle note, come negli schemi: pentagramma con la nota, nome colorato, diteggiatura */
+  const LARGH_SCHEMA_CARTA = { flauto: 0.42, tastiera: 0.96, chitarra: 0.8, ukulele: 0.86, basso: 0.8 };
   function disegnaCarte(contenitore, strumento, note) {
     contenitore.innerHTML = "";
     note.forEach(n => {
       const carta = document.createElement("div"); carta.className = "carta-nota";
       const nome = NOMI[n.lettera].replace(/^./, c => c.toUpperCase()) + (n.alt === "b" ? "♭" : n.alt === "#" ? "♯" : "");
-      carta.innerHTML = `<div class="carta-nome" style="color:${COLORI[n.lettera]}">${nome}</div><div class="carta-schema">${schemaNota(strumento, n)}</div>`;
+      carta.innerHTML = `<div class="carta-rigo"></div><div class="carta-nome" style="color:${COLORI[n.lettera]}">${nome}</div>` +
+        `<div class="carta-schema" style="width:${Math.round((LARGH_SCHEMA_CARTA[strumento] || 0.8) * 100)}%;margin:0 auto">${schemaNota(strumento, n)}</div>`;
       contenitore.appendChild(carta);
+      rigoNota(carta.querySelector(".carta-rigo"), n);
     });
   }
 

@@ -429,19 +429,22 @@
   /* ---------- schermo intero per la LIM: due colonne, niente da scorrere ---------- */
   .lightbox.bp-lim { padding: 0; }
   .lightbox.bp-lim .lightbox-inner { width: 100vw; height: 100vh; height: 100dvh; max-width: none; flex-direction: row; }
-  .lim { width: 100%; height: 100%; background: #fff; color: #1F2430; display: grid; grid-template-columns: minmax(230px, 26%) 1fr; }
+  .lim { width: 100%; height: 100%; background: #fff; color: #1F2430; display: grid; grid-template-columns: minmax(250px, 30%) 1fr; }
   .lim-lato { padding: 22px 18px; display: flex; flex-direction: column; gap: 14px; overflow: hidden;
     background: linear-gradient(180deg, #F5F3FF, #fff); border-right: 1px solid #E2E8F0; }
   .lim-lato .bp-titolo { font-size: clamp(30px, 3vw, 50px); }
   .lim-lato .bp-numero { width: 44px; height: 44px; font-size: 20px; }
-  .lim-lato .bp-disegno { width: min(240px, 82%); height: auto; aspect-ratio: 1; margin: 4px auto; }
+  .lim-testa { display: grid; grid-template-columns: 1fr auto; gap: 8px; align-items: start; }
+  .lim-testa .bp-numero { margin-bottom: 8px; }
+  .lim-lato .bp-disegno { height: auto; aspect-ratio: 1; margin: -6px -4px 0 0; transform: rotate(5deg); }
   .lim-lato .bp-riquadro { font-size: clamp(13px, 1.1vw, 16px); }
   .lim-lato .bp-schema { max-width: 100%; margin-top: auto; align-self: center; }
   .lim-lato .bp-schema svg { margin: 0 auto !important; }
-  .lim-carte { display: grid; grid-template-columns: repeat(2, 1fr); gap: 8px; margin-top: auto; justify-items: center; }
-  .carta-nota { background: #fff; border: 1.5px solid #E2E8F0; border-radius: 12px; padding: 4px 6px 6px; max-width: 120px; justify-self: center; width: 100%; box-shadow: 0 2px 6px rgba(30,27,75,0.08); }
-  .carta-nome { font-family: 'Fredoka', 'Manrope', sans-serif; font-weight: 700; font-size: 20px; text-align: center; line-height: 1;
-    -webkit-text-stroke: 1.5px #1F2430; paint-order: stroke fill; margin: 2px 0 2px; }
+  .lim-carte { display: grid; gap: 8px; margin-top: auto; justify-content: center; }
+  .carta-nota { background: #fff; border: 1.5px solid #E2E8F0; border-radius: 14px; padding: 6px 6px 10px; box-sizing: border-box;
+    box-shadow: 0 2px 8px rgba(30,27,75,0.10); }
+  .carta-nome { font-family: 'Fredoka', 'Manrope', sans-serif; font-weight: 700; text-align: center; line-height: 1;
+    -webkit-text-stroke: 1.5px #1F2430; paint-order: stroke fill; margin: 0 0 6px; }
   .lim-lato .bp-disegno { transition: none; }
   .lim-spartito { display: flex; align-items: center; justify-content: center; padding: 18px 26px 18px 18px; overflow: hidden; }
   .lightbox .lim-spartito .spartito { width: 100%; max-width: none; max-height: none; overflow: visible; padding: 0; background: transparent; }
@@ -547,9 +550,10 @@
     const brano = await caricaBrano(n);
     lightboxInner.innerHTML = `<div class="lim">
       <div class="lim-lato">
-        <div style="display:flex;gap:10px;align-items:center"><div class="bp-numero">${n}</div></div>
-        <h2 class="bp-titolo">${titoloColorato(brano.titoloBreve)}</h2>
-        <div class="bp-disegno"><img src="${disegno(n)}" alt=""></div>
+        <div class="lim-testa">
+          <div><div class="bp-numero">${n}</div><h2 class="bp-titolo">${titoloColorato(brano.titoloBreve)}</h2></div>
+          <div class="bp-disegno"><img src="${disegno(n)}" alt=""></div>
+        </div>
         ${brano.riquadri.map(riquadroHTML).join("")}
         <div class="lim-carte"></div>
       </div>
@@ -560,16 +564,31 @@
     const lato = lightboxInner.querySelector('.lim-lato'), carte = lightboxInner.querySelector('.lim-carte');
     MotoreSchemi.disegnaCarte(carte, strumento.id, MotoreSchemi.noteUsate(brano));
     const dis = lightboxInner.querySelector('.lim-lato .bp-disegno');
-    const nNote = MotoreSchemi.noteUsate(brano).length;
-    const prove = [];
-    for (const latoDis of [170, 140, 115, 95, 80])
-      for (const colonne of [Math.min(nNote, strumento.id === 'flauto' ? 3 : 2), Math.min(nNote, 3), nNote]) prove.push([latoDis, colonne]);
-    prove.push([0, nNote]);
-    for (const [latoDis, colonne] of prove) {
+    // carte il più grandi possibile: provo quante per riga e quanto larghe, il disegno si rimpicciolisce per primo
+    const nNote = MotoreSchemi.noteUsate(brano).length, gap = 8;
+    const cs = getComputedStyle(lato), largUtile = lato.clientWidth - parseFloat(cs.paddingLeft) - parseFloat(cs.paddingRight);
+    const applica = (latoDis, colonne, w) => {
       dis.style.display = latoDis ? '' : 'none'; dis.style.width = latoDis + 'px';
-      carte.style.gridTemplateColumns = `repeat(${Math.max(1, colonne)}, 1fr)`;
-      if (lato.scrollHeight <= lato.clientHeight + 1) break;
-    }
+      carte.style.gridTemplateColumns = `repeat(${colonne}, ${w}px)`;
+      carte.querySelectorAll('.carta-nota').forEach(c => { c.style.width = w + 'px'; c.querySelector('.carta-nome').style.fontSize = Math.max(14, w * 0.17) + 'px'; });
+    };
+    const ciSta = () => lato.scrollHeight <= lato.clientHeight + 1;
+    // il disegno sta accanto al titolo; si rimpicciolisce (o si toglie) solo se le carte resterebbero troppo piccole
+    const migliorePer = latoDis => {      // carte più grandi possibili con un disegno di questa misura
+      let m = null;
+      for (let colonne = 1; colonne <= nNote; colonne++) {
+        let w = Math.min(300, (largUtile - gap * (colonne - 1)) / colonne);
+        while (w >= 56) { applica(latoDis, colonne, w); if (ciSta()) break; w *= 0.95; }
+        if (w >= 56 && (!m || w > m.w)) m = { latoDis, colonne, w };
+      }
+      return m;
+    };
+    // si tiene il disegno grande se le carte restano ben leggibili, altrimenti si prova a rimpicciolirlo
+    const prove = [112, 88, 0].map(migliorePer).filter(Boolean);
+    let migliore = prove.find(m => m.w >= 95) || prove.sort((x, y) => y.w - x.w)[0] || { latoDis: 0, colonne: nNote, w: 56 };
+    const conDisegno = prove.filter(m => m.latoDis > 0).sort((x, y) => y.w - x.w)[0];
+    if (migliore.latoDis === 0 && conDisegno && conDisegno.w >= migliore.w * 0.9) migliore = conDisegno;
+    applica(migliore.latoDis, migliore.colonne, migliore.w);
     // provo diversi numeri di battute per riga e tengo quello che rende lo spartito più grande senza scorrere
     const area = lightboxInner.querySelector('.lim-spartito'), div = area.querySelector('.spartito');
     const aw = area.clientWidth - 44, ah = area.clientHeight - 36;

@@ -14,10 +14,21 @@
   </defs>
   <g filter="url(#adesivo)">
 
-    <path d="M70 52 C 90 70, 70 110, 40 120 M150 52 C 130 70, 150 110, 180 120" fill="none" stroke="#F7A1B5" stroke-width="5" stroke-linecap="round"/>
-    <path d="M54 34 C 60 46, 80 48, 92 40 M166 34 C 160 46, 140 48, 128 40" fill="none" stroke="#F7A1B5" stroke-width="5" stroke-linecap="round"/>
-    <g transform="rotate(-14 76 140)"><path d="M48 116 Q46 186 76 196 Q106 186 104 116 Q90 104 76 104 Q62 104 48 116 Z" fill="#FFC4DA" stroke="#C2648A" stroke-width="4"/><ellipse cx="76" cy="126" rx="18" ry="14" fill="#F48FB7"/><path d="M64 114 q12 -8 24 0" fill="none" stroke="#fff" stroke-width="3"/></g>
-    <g transform="rotate(14 144 140)"><path d="M116 116 Q114 186 144 196 Q174 186 172 116 Q158 104 144 104 Q130 104 116 116 Z" fill="#FFC4DA" stroke="#C2648A" stroke-width="4"/><ellipse cx="144" cy="126" rx="18" ry="14" fill="#F48FB7"/><path d="M132 114 q12 -8 24 0" fill="none" stroke="#fff" stroke-width="3"/></g>
-    <text x="96" y="30" font-family="Fredoka, Arial Rounded MT Bold, sans-serif" font-weight="700" font-size="26" fill="#5E50A1" stroke="#fff" stroke-width="4" paint-order="stroke">3/4</text>
+    <path d="M40 112 L110 84 L180 112 L110 140 Z" fill="#FFC4DA" stroke="#C2648A" stroke-width="4" stroke-linejoin="round"/>
+    <path d="M40 112 V176 L110 204 V140 Z" fill="#F48FB7" stroke="#C2648A" stroke-width="4" stroke-linejoin="round"/>
+    <path d="M180 112 V176 L110 204 V140 Z" fill="#E86FA2" stroke="#C2648A" stroke-width="4" stroke-linejoin="round"/>
+    <path d="M52 136 L98 154 M52 152 L98 170" stroke="#FFD54A" stroke-width="4" stroke-linecap="round"/>
+    <path d="M168 136 L122 154 M168 152 L122 170" stroke="#FFD54A" stroke-width="4" stroke-linecap="round"/>
+    <circle cx="146" cy="170" r="6" fill="#FFD54A" stroke="#B9831A" stroke-width="2.5"/>
+    <path d="M146 170 L188 160 L192 176" fill="none" stroke="#B9831A" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"/>
+    <circle cx="193" cy="180" r="7" fill="#FFD54A" stroke="#B9831A" stroke-width="2.5"/>
+    <path d="M110 84 V64" stroke="#B9831A" stroke-width="4"/>
+    <ellipse cx="110" cy="62" rx="16" ry="5" fill="#FFD54A" stroke="#B9831A" stroke-width="3"/>
+    <circle cx="110" cy="40" r="11" fill="#FFD9B8" stroke="#C99A72" stroke-width="2.5"/>
+    <path d="M100 34 q10 -12 20 0" fill="#8B5E34"/>
+    <path d="M110 51 L96 62 H124 Z" fill="#CF3E96" stroke="#8F2464" stroke-width="2.5" stroke-linejoin="round"/>
+    <path d="M100 52 l-12 -10 M120 52 l12 -10" stroke="#FFD9B8" stroke-width="4" stroke-linecap="round"/>
+    <g transform="translate(40 70) scale(0.65)"><rect x="9" y="-44" width="5" height="46" rx="2" fill="#5E50A1"/><ellipse cx="2" cy="2" rx="13" ry="9.5" transform="rotate(-20 2 2)" fill="#5E50A1" stroke="#1F2430" stroke-opacity="0.35" stroke-width="2"/></g><g transform="translate(170 58) scale(0.6)"><rect x="9" y="-44" width="5" height="46" rx="2" fill="#009C95"/><ellipse cx="2" cy="2" rx="13" ry="9.5" transform="rotate(-20 2 2)" fill="#009C95" stroke="#1F2430" stroke-opacity="0.35" stroke-width="2"/></g><g transform="translate(24 108) scale(0.55)"><path d="M10 -44 v46" stroke="#E21C48" stroke-width="5" stroke-linecap="round"/><path d="M12 -44 q16 8 14 24 q-4 -10 -14 -12" fill="#E21C48"/><ellipse cx="2" cy="2" rx="13" ry="9.5" transform="rotate(-20 2 2)" fill="#E21C48"/></g>
+    <text x="150" y="104" font-family="Fredoka, Arial Rounded MT Bold, sans-serif" font-weight="700" font-size="22" fill="#5E50A1" stroke="#fff" stroke-width="4" paint-order="stroke">3/4</text>
   </g>
 </svg>
