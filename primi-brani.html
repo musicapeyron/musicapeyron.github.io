@@ -3,35 +3,29 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<!-- Nome del sito: Musica Peyron -->
+<!--
+  ============================================================
+  PRIMI BRANI - PRIMA PARTE
+  Gli spartiti non sono PDF: il sito li disegna dai file MusicXML,
+  per lo strumento e la versione scelti (colori, nomi delle note).
+  COME AGGIUNGERE UN BRANO:
+  1) In MuseScore: File → Esporta → MusicXML (non compresso).
+     Chiamalo branoN.musicxml e caricalo in media/primi-brani/.
+  2) Carica in media/primi-brani/ anche gli audio:
+     branoN-completo.mp3 e branoN-accompagnamento.mp3.
+  3) Aggiungi un blocco { numero: N, ... } all'elenco "brani"
+     in fondo alla pagina, copiando quello di un altro brano.
+  Se in MuseScore scrivi la diteggiatura su una nota, per la
+  tastiera il sito usa quella al posto del calcolo automatico.
+  ============================================================
+-->
 <title>Primi Brani - prima parte — Musica Peyron</title>
 <link rel="icon" href="favicon.svg" type="image/svg+xml">
 <link rel="icon" href="favicon-32.png" type="image/png" sizes="32x32">
 <link rel="apple-touch-icon" href="apple-touch-icon.png">
 <meta name="description" content="Primi Brani, prima parte: ascolto e spartiti in quattro versioni.">
 
-<!--
-  ============================================================
-  COME AGGIUNGERE UN NUOVO BRANO DI QUESTA RACCOLTA
-  ============================================================
-  1) Carica nella stessa cartella di questa pagina:
-     - uno o più audio di accompagnamento (anche a velocità
-       diverse: normale, media, lenta), preferibilmente .mp3
-       (molto più leggero di un .wav, stessa qualità
-       all'ascolto. Un .wav può superare i limiti di
-       caricamento di GitHub)
-     - se disponibile, l'audio con melodia + accompagnamento
-     - il file dello spartito: un'immagine (.png/.jpg) oppure
-       un PDF (.pdf)
-  2) Aggiungi un blocco { ... } dentro l'array "brani" qui
-     sotto, nel tag <script>: numero del brano, "audioFull"
-     (null se non disponibile), un elenco "accompagnamenti"
-     con un { label, src } per ogni velocità disponibile, e
-     "scoreType" ("image" oppure "pdf") con "scoreSrc".
-  3) Copia, incolla o cancella un blocco { ... } se hai meno o
-     più brani.
-  ============================================================
--->
+
 
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -252,16 +246,17 @@
     width: 40px;
     height: 40px;
     border-radius: 50%;
-    background: rgba(255,255,255,0.1);
-    border: 1px solid rgba(255,255,255,0.2);
+    background: rgba(15,23,42,0.88);
+    border: 1px solid rgba(255,255,255,0.35);
     color: #EAF2FF;
     font-size: 18px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.35);
     display: flex;
     align-items: center;
     justify-content: center;
     cursor: pointer;
   }
-  .lightbox .lightbox-close:hover { background: rgba(255,255,255,0.2); }
+  .lightbox .lightbox-close:hover { background: rgba(30,41,59,0.95); }
 
   .player-row.coming-soon {
     font-size: 12px;
@@ -333,6 +328,25 @@
     .strumenti-bar button { font-size: 11px; padding: 5px 8px; }
   }
 
+  .spartito { background: #fff; border-radius: 8px; padding: 6px 4px 10px; }
+  .spartito svg { display: block; }
+  .lightbox .lightbox-inner { flex-direction: column; }
+  .lightbox .spartito { width: 100%; max-width: 1100px; min-width: 0; max-height: 100%; overflow: auto; box-sizing: border-box; }
+  .lightbox .lightbox-inner { width: 100%; min-width: 0; }
+  .lightbox .ruota { display: none; margin: 12px 0 0; font-size: 13px; color: #cbd5e1; text-align: center; }
+  @media (max-width: 600px) and (orientation: portrait) { .lightbox .ruota { display: block; } }
+  button.score-dl { border: 0; cursor: pointer; font-family: inherit; }
+  .azioni-spartito { display: flex; gap: 8px; flex-wrap: wrap; }
+  .azioni-spartito .score-dl { margin-top: 12px; }
+  #areaStampa { display: none; }
+  @media print {
+    body.stampando > *:not(#areaStampa) { display: none !important; }
+    body.stampando #areaStampa { display: block; }
+    body.stampando { background: #fff !important; }
+    body.stampando::before, body.stampando::after { display: none !important; }
+    @page { size: A4 landscape; margin: 12mm; }
+  }
+
   .score-dl {
     display: inline-block;
     margin-top: 12px;
@@ -374,6 +388,8 @@
     color: #5C7091;
   }
 </style>
+<script src="vexflow.js"></script>
+<script src="motore-schemi.js"></script>
 </head>
 <body>
 
@@ -389,6 +405,7 @@
 
 <main id="brani-container"></main>
 
+<div id="areaStampa"></div>
 <div class="lightbox" id="lightbox">
   <button class="lightbox-close" id="lightboxClose" aria-label="Chiudi">✕</button>
   <div class="lightbox-inner" id="lightboxInner"></div>
@@ -452,9 +469,12 @@
   const lightboxInner = document.getElementById('lightboxInner');
   const lightboxClose = document.getElementById('lightboxClose');
 
-  function openLightbox(src) {
-    lightboxInner.innerHTML = `<embed src="${src}" type="application/pdf">`;
+  function openLightbox(disegna) {
+    lightboxInner.innerHTML = '<div class="spartito"></div><p class="ruota">Ruota il telefono per vederlo più grande</p>';
     lightbox.classList.add('open');
+    const div = lightboxInner.firstChild;
+    // a schermo intero sempre come da computer: 4 battute per riga, adattato alla larghezza dello schermo
+    disegna(div, Math.max(760, Math.min(1100, window.innerWidth - 60)), 4);
   }
   function closeLightbox() {
     lightbox.classList.remove('open');
@@ -468,27 +488,30 @@
     if (e.key === 'Escape') closeLightbox();
   });
 
-  /* Strumenti e versioni: lo spartito è la combinazione dei due.
-     I PDF del flauto stanno in media/primi-brani/, gli altri in una
-     sottocartella per strumento, con gli stessi nomi di file. */
+  /* Strumenti e versioni: lo spartito di ogni brano è un file MusicXML
+     (media/primi-brani/branoN.musicxml); il sito lo disegna per lo strumento
+     e la versione scelti, con lo schema delle note sotto. */
   const STRUMENTI = [
-    { id: "flauto",   label: "Flauto dolce", corto: "Flauto", cartella: "media/primi-brani/" },
-    { id: "tastiera", label: "Tastiera",     cartella: "media/primi-brani/tastiera/" },
-    { id: "chitarra", label: "Chitarra",     cartella: "media/primi-brani/chitarra/" },
-    { id: "ukulele",  label: "Ukulele",      cartella: "media/primi-brani/ukulele/" }
+    { id: "flauto",   label: "Flauto dolce", corto: "Flauto" },
+    { id: "tastiera", label: "Tastiera" },
+    { id: "chitarra", label: "Chitarra" },
+    { id: "ukulele",  label: "Ukulele" }
   ];
   const VERSIONI = [
-    { suffisso: "",             label: "Standard" },
-    { suffisso: "-colori",      label: "Colori" },
-    { suffisso: "-nomi",        label: "Nomi delle note" },
-    { suffisso: "-colori-nomi", label: "Colori e nomi" }
+    { label: "Standard",        colori: false, nomi: false },
+    { label: "Colori",          colori: true,  nomi: false },
+    { label: "Nomi delle note", colori: false, nomi: true  },
+    { label: "Colori e nomi",   colori: true,  nomi: true  }
   ];
   let strumento = STRUMENTI[0];
   try {
     const salvato = localStorage.getItem('primiBrani.strumento');
     strumento = STRUMENTI.find(x => x.id === salvato) || STRUMENTI[0];
   } catch (e) {}
-  const pdf = (numero, versione) => strumento.cartella + "brano" + numero + versione.suffisso + ".pdf";
+  /* lo spartito di ogni brano è un file MusicXML esportato da MuseScore */
+  const cache = {};
+  const caricaBrano = numero => cache[numero] || (cache[numero] =
+    fetch("media/primi-brani/brano" + numero + ".musicxml").then(r => r.text()).then(MotoreSchemi.leggiMusicXML));
   const aggiornamenti = [];
 
   const bar = document.getElementById('strumentiBar');
@@ -507,7 +530,7 @@
     card.className = 'brano-card';
 
     let versione = VERSIONI[0];
-    let current = pdf(b.numero, versione);
+    let current = null;
     const versionButtons = VERSIONI.map((v, i) =>
       `<button type="button" data-v="${i}" class="${i === 0 ? 'active' : ''}">${v.label}</button>`
     ).join('');
@@ -542,17 +565,38 @@
       ${accompRows}
 
       ${versionButtons ? `<div class="versions">${versionButtons}</div>` : ''}
-      <div class="score-wrap" data-index="${b.numero}"><embed src="${current}" type="application/pdf"></div>
-      <a class="score-dl" href="${current}" download>Scarica spartito</a>
+      <div class="score-wrap" data-index="${b.numero}"><div class="spartito"></div></div>
+      <div class="azioni-spartito">
+        <button type="button" class="score-dl" data-azione="stampa">🖨️ Stampa</button>
+        <button type="button" class="score-dl" data-azione="pdf">⬇️ Salva PDF</button>
+      </div>
     `;
 
     const wrap = card.querySelector('.score-wrap');
-    const dl = card.querySelector('.score-dl');
+    const pulsanti = card.querySelectorAll('.azioni-spartito .score-dl');
+    const disegna = (div, larghezza, perRiga) => caricaBrano(b.numero).then(brano =>
+      MotoreSchemi.disegnaBrano(div, brano, { strumento: strumento.id, colori: versione.colori, nomi: versione.nomi, larghezza, perRiga }));
     const mostra = () => {
-      current = pdf(b.numero, versione);
-      wrap.innerHTML = `<embed src="${current}" type="application/pdf">`;
-      dl.href = current;
+      const div = wrap.querySelector('.spartito');
+      return disegna(div, Math.min(760, Math.max(300, div.clientWidth - 8)));
     };
+    pulsanti[0].addEventListener('click', () => {
+      const area = document.getElementById('areaStampa');
+      area.innerHTML = '<div class="spartito"></div>';
+      area.style.width = '1000px';
+      disegna(area.firstChild, 1000).then(() => {
+        document.body.classList.add('stampando');
+        window.print();
+      });
+    });
+    pulsanti[1].addEventListener('click', async () => {
+      const btn = pulsanti[1], testo = btn.textContent;
+      btn.textContent = 'Preparo il PDF…'; btn.disabled = true;
+      try {
+        const nome = `Brano ${b.numero} - ${strumento.label} - ${versione.label}.pdf`;
+        await salvaPDF(disegna, nome);
+      } finally { btn.textContent = testo; btn.disabled = false; }
+    });
     aggiornamenti.push(mostra);
     card.querySelectorAll('.versions button').forEach(btn => {
       btn.addEventListener('click', () => {
@@ -561,8 +605,77 @@
         mostra();
       });
     });
-    wrap.addEventListener('click', () => openLightbox(current));
+    wrap.addEventListener('click', () => openLightbox(disegna));
     container.appendChild(card);
+    mostra();   // dopo l'inserimento nella pagina, così la larghezza disponibile è quella vera
+  });
+
+  /* ---------- Salva PDF: lo spartito diventa un'immagine ad alta risoluzione
+     dentro un PDF A4 orizzontale, costruito direttamente nel browser ---------- */
+  async function spartitoInImmagine(disegna) {
+    const fuori = document.createElement('div');
+    fuori.style.cssText = 'position:fixed;left:-10000px;top:0;width:1000px;background:#fff';
+    fuori.innerHTML = '<div class="spartito"></div>';
+    document.body.appendChild(fuori);
+    try {
+      await disegna(fuori.firstChild, 1000);
+      const box = fuori.getBoundingClientRect(), scala = 3;
+      const canvas = document.createElement('canvas');
+      canvas.width = Math.round(box.width * scala); canvas.height = Math.round(box.height * scala);
+      const c = canvas.getContext('2d');
+      c.fillStyle = '#fff'; c.fillRect(0, 0, canvas.width, canvas.height);
+      for (const svg of fuori.querySelectorAll('svg')) {
+        const r = svg.getBoundingClientRect();
+        const copia = svg.cloneNode(true);
+        copia.setAttribute('xmlns', 'http://www.w3.org/2000/svg');
+        copia.setAttribute('width', r.width); copia.setAttribute('height', r.height);
+        const url = URL.createObjectURL(new Blob([new XMLSerializer().serializeToString(copia)], { type: 'image/svg+xml' }));
+        const img = new Image();
+        await new Promise((ok, ko) => { img.onload = ok; img.onerror = ko; img.src = url; });
+        c.drawImage(img, (r.left - box.left) * scala, (r.top - box.top) * scala, r.width * scala, r.height * scala);
+        URL.revokeObjectURL(url);
+      }
+      return canvas;
+    } finally { fuori.remove(); }
+  }
+  function pdfDaJpeg(jpeg, wImg, hImg) {
+    // pagina A4 orizzontale (842 x 595 punti), immagine centrata con margini di 30 punti
+    const W = 842, H = 595, m = 30, k = Math.min((W - 2 * m) / wImg, (H - 2 * m) / hImg);
+    const w = wImg * k, h = hImg * k, x = (W - w) / 2, y = H - m - h;
+    const enc = new TextEncoder(), parti = [], offset = [];
+    let lung = 0;
+    const scrivi = d => { const b = typeof d === 'string' ? enc.encode(d) : d; parti.push(b); lung += b.length; };
+    const contenuto = `q ${w.toFixed(2)} 0 0 ${h.toFixed(2)} ${x.toFixed(2)} ${y.toFixed(2)} cm /Im0 Do Q`;
+    scrivi('%PDF-1.4\n');
+    const oggetto = (n, corpo) => { offset[n] = lung; scrivi(`${n} 0 obj\n${corpo}\nendobj\n`); };
+    oggetto(1, '<< /Type /Catalog /Pages 2 0 R >>');
+    oggetto(2, '<< /Type /Pages /Kids [3 0 R] /Count 1 >>');
+    oggetto(3, `<< /Type /Page /Parent 2 0 R /MediaBox [0 0 ${W} ${H}] /Resources << /XObject << /Im0 4 0 R >> >> /Contents 5 0 R >>`);
+    offset[4] = lung;
+    scrivi(`4 0 obj\n<< /Type /XObject /Subtype /Image /Width ${wImg} /Height ${hImg} /ColorSpace /DeviceRGB /BitsPerComponent 8 /Filter /DCTDecode /Length ${jpeg.length} >>\nstream\n`);
+    scrivi(jpeg); scrivi('\nendstream\nendobj\n');
+    oggetto(5, `<< /Length ${contenuto.length} >>\nstream\n${contenuto}\nendstream`);
+    const xref = lung;
+    scrivi('xref\n0 6\n0000000000 65535 f \n' + [1, 2, 3, 4, 5].map(n => String(offset[n]).padStart(10, '0') + ' 00000 n \n').join(''));
+    scrivi(`trailer\n<< /Size 6 /Root 1 0 R >>\nstartxref\n${xref}\n%%EOF`);
+    return new Blob(parti, { type: 'application/pdf' });
+  }
+  async function salvaPDF(disegna, nomeFile) {
+    const canvas = await spartitoInImmagine(disegna);
+    const dati = atob(canvas.toDataURL('image/jpeg', 0.92).split(',')[1]);
+    const jpeg = new Uint8Array(dati.length);
+    for (let i = 0; i < dati.length; i++) jpeg[i] = dati.charCodeAt(i);
+    const url = URL.createObjectURL(pdfDaJpeg(jpeg, canvas.width, canvas.height));
+    const a = document.createElement('a'); a.href = url; a.download = nomeFile;
+    document.body.appendChild(a); a.click(); a.remove();
+    setTimeout(() => URL.revokeObjectURL(url), 2000);
+  }
+
+  window.addEventListener('afterprint', () => { document.body.classList.remove('stampando'); document.getElementById('areaStampa').innerHTML = ''; });
+  let ultimaLarghezza = window.innerWidth, attesa;
+  window.addEventListener('resize', () => {
+    clearTimeout(attesa);
+    attesa = setTimeout(() => { if (Math.abs(window.innerWidth - ultimaLarghezza) > 40) { ultimaLarghezza = window.innerWidth; aggiornamenti.forEach(f => f()); } }, 250);
   });
 
   const empty = document.createElement('div');
