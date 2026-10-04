@@ -551,6 +551,8 @@
     n.setAttribute("x", x); n.setAttribute("y", y); n.setAttribute("width", w); n.setAttribute("height", h);
     n.setAttribute("viewBox", svgSorgente.getAttribute("viewBox"));
     n.setAttribute("preserveAspectRatio", (allinea || "xMidYMid") + " meet");
+    // VexFlow mette colore e spessore di base (es. i gambi delle note) sul contenitore: li porto con me
+    [...svgSorgente.attributes].forEach(a => { if (!["width", "height", "viewBox", "style", "xmlns", "x", "y", "preserveAspectRatio"].includes(a.name)) n.setAttribute(a.name, a.value); });
     n.innerHTML = svgSorgente.innerHTML;
     return n;
   }
@@ -619,7 +621,7 @@
       st.textContent = "#motoreAreaStampa{display:none}@media print{@page{size:A4 landscape;margin:0}" +
         "body.motore-stampa>*:not(#motoreAreaStampa){display:none!important}body.motore-stampa{background:#fff!important;margin:0}" +
         "body.motore-stampa::before,body.motore-stampa::after{display:none!important}" +
-        "body.motore-stampa #motoreAreaStampa{display:block}#motoreAreaStampa svg{width:297mm;height:209mm;display:block}}";
+        "body.motore-stampa #motoreAreaStampa{display:block}#motoreAreaStampa>svg{width:297mm;height:209mm;display:block}}";
       document.head.appendChild(st);
       window.addEventListener("afterprint", () => { document.body.classList.remove("motore-stampa"); area.innerHTML = ""; });
     }
