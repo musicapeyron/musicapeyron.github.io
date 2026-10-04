@@ -245,6 +245,62 @@
   .featured-schemi .icon { background: rgba(190,217,88,0.18); }
   .featured-schemi .arrow { color: #BED958; }
 
+  /* ---------- livelli: P M L ---------- */
+  .lv {
+    display: inline-flex; align-items: center; justify-content: center;
+    width: 17px; height: 17px; border-radius: 5px;
+    font-family: 'Manrope', sans-serif; font-size: 10px; font-weight: 800;
+    color: rgba(234,242,255,0.28); border: 1px solid rgba(234,242,255,0.14);
+  }
+  .lv.on { color: #0f172a; border-color: transparent; }
+  .lv-P.on { background: #f9a8d4; }
+  .lv-M.on { background: #fcd34d; }
+  .lv-L.on { background: #93c5fd; }
+  .card .livelli { display: flex; gap: 3px; margin-top: 8px; }
+
+  .livelli-bar {
+    display: flex; flex-wrap: wrap; align-items: center; gap: 6px;
+    margin: 0 0 14px;
+  }
+  .livelli-bar .bar-label {
+    font-size: 11px; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase;
+    color: #9FB3CE; margin-right: 4px;
+  }
+  .livelli-bar button {
+    display: inline-flex; align-items: center; gap: 6px;
+    font-family: 'Manrope', sans-serif; font-weight: 700; font-size: 12.5px;
+    color: #EAF2FF; cursor: pointer; padding: 6px 12px; border-radius: 999px;
+    border: 1px solid rgba(255,255,255,0.16); background: rgba(255,255,255,0.05);
+  }
+  .livelli-bar button:hover { background: rgba(255,255,255,0.12); }
+  .livelli-bar .corto { display: none; }
+  @media (max-width: 600px) {
+    .livelli-bar { gap: 4px; flex-wrap: nowrap; }
+    .livelli-bar .bar-label { display: none; }
+    .livelli-bar .lungo { display: none; }
+    .livelli-bar .corto { display: inline; }
+    .livelli-bar button { font-size: 12px; padding: 6px 10px; gap: 5px; flex-shrink: 0; }
+  }
+  @media (max-width: 360px) { .livelli-bar button { font-size: 11px; padding: 5px 8px; } }
+  .livelli-bar button.active { background: #EAF2FF; color: #0f172a; border-color: #EAF2FF; }
+
+  /* Test d'ingresso: card a parte, larga e di un altro colore */
+  #testWrap { margin-bottom: 18px; }
+  #testWrap .card-test {
+    display: grid; grid-template-columns: auto 1fr auto; grid-template-rows: auto auto; column-gap: 14px;
+    align-items: center; min-height: 0; padding: 14px 18px;
+    background: linear-gradient(135deg, rgba(249,168,212,0.16), rgba(252,211,77,0.10));
+    border: 1px solid rgba(249,168,212,0.45);
+  }
+  #testWrap .card-test:hover { border-color: rgba(249,168,212,0.75); }
+  #testWrap .card-test .top-row { grid-row: 1 / span 2; margin: 0; }
+  #testWrap .card-test .top-row .label { display: none; }
+  #testWrap .card-test .icon { width: 34px; height: 34px; font-size: 16px; background: rgba(249,168,212,0.2); }
+  #testWrap .card-test h2 { grid-column: 2; margin: 0; font-size: 15.5px; }
+  #testWrap .card-test p { grid-column: 2; margin: 2px 0 0; }
+  #testWrap .card-test .livelli { grid-column: 3; grid-row: 1 / span 2; margin: 0; }
+  [hidden] { display: none !important; }
+
   .divider {
     height: 1px;
     background: rgba(255,255,255,0.09);
@@ -392,7 +448,7 @@
       <div class="icon">🎧</div>
       <div class="featured-text">
         <h2>Spartiti</h2>
-        <p>Ascolta i brani e consulta i relativi spartiti.</p>
+        <p>Spartiti progressivi per primaria e secondaria.</p>
       </div>
       <span class="arrow">→</span>
     </a>
@@ -413,6 +469,9 @@
       <span class="arrow">→</span>
     </a>
   </div>
+
+  <div class="livelli-bar" id="livelliBar" aria-label="Per chi è"></div>
+  <div id="testWrap"></div>
 
   <section class="group group-base">
     <h3 class="group-title">Suono, note e ritmo</h3>
@@ -437,19 +496,24 @@
      (i giochi sono nella pagina giochi.html) */
 
 
-  const base = [
-    {
+  /* il Test d'ingresso ha una card tutta sua, sopra le sezioni */
+  const test =
+  {
       title: "Test d'Ingresso",
       icon: "📝",
       label: "Verifica",
       desc: "Una versione breve di quattro giochi didattici, per testare le conoscenze di partenza.",
+      livelli: ["P", "M"],
       url: "test-ingresso.html"
-    },
+  };
+
+  const base = [
     {
       title: "Acuto, Grave o Unisono?",
       icon: "👂",
       label: "Ascolto",
       desc: "Allena l'orecchio a distinguere suoni acuti, gravi e all'unisono.",
+      livelli: ["P", "M"],
       url: "acuto-o-grave.html"
     },
     {
@@ -457,6 +521,7 @@
       icon: "🗣️",
       label: "Teoria",
       desc: "Impara a recitare la scala do-re-mi-fa-sol-la-si-do e ritorno, partendo da ogni nota.",
+      livelli: ["P", "M"],
       url: "recita-le-note.html"
     },
     {
@@ -464,6 +529,7 @@
       icon: "🎤",
       label: "Ritmo",
       desc: "Recita le sequenze di note a tempo su una base rap: una nota per battito, poi due, poi quattro.",
+      livelli: ["P", "M"],
       url: "rap-con-le-note.html"
     },
     {
@@ -471,6 +537,7 @@
       icon: "🎵",
       label: "Teoria",
       desc: "Impara a leggere le note sul pentagramma, una alla volta.",
+      livelli: ["P", "M"],
       url: "leggi-la-nota.html"
     },
     {
@@ -478,6 +545,7 @@
       icon: "🎹",
       label: "Teoria",
       desc: "Riconosci le note sulla tastiera, tasto dopo tasto.",
+      livelli: ["P", "M"],
       url: "tastierapianoforte.html"
     },
     {
@@ -485,6 +553,7 @@
       icon: "🎼",
       label: "Ritmo",
       desc: "Riconosci nomi, pause e valori delle figure musicali.",
+      livelli: ["P", "M", "L"],
       url: "figure-ritmiche.html"
     },
     {
@@ -492,6 +561,7 @@
       icon: "🥁",
       label: "Ritmo",
       desc: "Componi battute scegliendo e disponendo le figure ritmiche.",
+      livelli: ["M", "L"],
       url: "costruttore-di-battute.html"
     },
     {
@@ -499,6 +569,7 @@
       icon: "✍️",
       label: "Ritmo",
       desc: "Ascolta il ritmo e trascrivilo sul rigo.",
+      livelli: ["M", "L"],
       url: "dettato-ritmico.html"
     },
     {
@@ -506,6 +577,7 @@
       icon: "👏",
       label: "Ritmo",
       desc: "Ascolta uno schema ritmico e riproducilo battendo il tempo.",
+      livelli: ["P", "M"],
       url: "imita-il-ritmo.html"
     },
     {
@@ -513,6 +585,7 @@
       icon: "🌊",
       label: "Teoria",
       desc: "Esplora altezza, intensità, timbro e come viaggia un'onda sonora.",
+      livelli: ["P", "M"],
       url: "qualita-del-suono.html"
     },
     {
@@ -520,6 +593,7 @@
       icon: "🎺",
       label: "Ascolto",
       desc: "Riconosci gli strumenti dell'orchestra dal suono o dalla foto, con sezioni e classificazione.",
+      livelli: ["P", "M"],
       url: "riconosci-lo-strumento.html"
     }
   ];
@@ -530,6 +604,7 @@
       icon: "🖊️",
       label: "Ascolto",
       desc: "Ascolta la melodia e scrivila sul pentagramma.",
+      livelli: ["M", "L"],
       url: "dettato-melodico.html"
     },
     {
@@ -537,6 +612,7 @@
       icon: "📏",
       label: "Teoria",
       desc: "Riconosci e nomina gli intervalli musicali sul pentagramma.",
+      livelli: ["M", "L"],
       url: "nomina-intervalli.html"
     },
     {
@@ -544,6 +620,7 @@
       icon: "👂",
       label: "Ascolto",
       desc: "Allena l'orecchio a riconoscere gli intervalli, ascendenti o discendenti.",
+      livelli: ["M", "L"],
       url: "ascolta-intervalli.html"
     },
     {
@@ -551,6 +628,7 @@
       icon: "👂",
       label: "Ascolto",
       desc: "Riconosci a orecchio il tipo di scala: maggiore o minore, naturale, armonica o melodica.",
+      livelli: ["L"],
       url: "ascolta-scala.html"
     },
     {
@@ -558,6 +636,7 @@
       icon: "🔑",
       label: "Teoria",
       desc: "Due modalità: nomina la tonalità dall'armatura, oppure scegli l'armatura corretta per una tonalità data.",
+      livelli: ["M", "L"],
       url: "identifica-tonalita.html"
     },
     {
@@ -565,6 +644,7 @@
       icon: "🎶",
       label: "Teoria",
       desc: "Riconosci e nomina le triadi, con armature fino a due alterazioni.",
+      livelli: ["L"],
       url: "nomina-triade.html"
     },
     {
@@ -572,6 +652,7 @@
       icon: "🎻",
       label: "Teoria",
       desc: "Costruisci tutte le triadi diatoniche di una scala maggiore o minore.",
+      livelli: ["L"],
       url: "triadi-tonali.html"
     },
     {
@@ -579,6 +660,7 @@
       icon: "🔨",
       label: "Teoria",
       desc: "Posiziona le note sul pentagramma e usa le frecce per alterarle e formare la triade.",
+      livelli: ["L"],
       url: "costruisci-triade.html"
     },
     {
@@ -586,6 +668,7 @@
       icon: "🎯",
       label: "Teoria",
       desc: "Riconosci a colpo d'occhio la qualità degli accordi, anche nei loro rivolti.",
+      livelli: ["L"],
       url: "identifica-accordi.html"
     },
     {
@@ -593,6 +676,7 @@
       icon: "👂",
       label: "Ascolto",
       desc: "Riconosci a orecchio la qualità degli accordi, anche nei loro rivolti.",
+      livelli: ["L"],
       url: "ascolta-accordi.html"
     }
   ];
@@ -613,8 +697,7 @@
     });
   })();
 
-  function fillGrid(id, list, withEmpty) {
-    /* Titolo su una sola riga: se non ci sta, riduce la dimensione del testo
+  /* Titolo su una sola riga: se non ci sta, riduce la dimensione del testo
      quanto basta (dipende dalla larghezza dello schermo e dal carattere caricato) */
   function fitTitle() {
     const h1 = document.querySelector('header.hero h1');
@@ -629,21 +712,35 @@
   if (document.fonts && document.fonts.ready) document.fonts.ready.then(fitTitle);
   window.addEventListener('resize', fitTitle);
 
+  /* ---------- livelli: P primaria, M medie, L liceo musicale ---------- */
+  const LIVELLI = [
+    { id: "P", nome: "Primaria",       chiave: "primaria" },
+    { id: "M", nome: "Medie",          chiave: "medie" },
+    { id: "L", nome: "Liceo musicale", corto: "Liceo", chiave: "liceo" }
+  ];
+  const segniLivello = lv => '<span class="livelli" aria-label="Adatto a: ' +
+    LIVELLI.filter(l => lv.includes(l.id)).map(l => l.nome).join(', ') + '">' +
+    LIVELLI.filter(l => lv.includes(l.id)).map(l => `<span class="lv lv-${l.id} on">${l.id}</span>`).join('') + '</span>';
+
+  function creaCard(t, classe) {
+    const card = document.createElement('a');
+    card.className = 'card' + (classe ? ' ' + classe : '');
+    card.href = t.url;
+    card.dataset.livelli = t.livelli.join('');
+    card.innerHTML = `
+      <div class="top-row">
+        <div class="icon">${t.icon}</div>
+        <span class="label">${t.label}</span>
+      </div>
+      <h2>${t.title}</h2>
+      <p>${t.desc}</p>
+      ${segniLivello(t.livelli)}
+    `;
+    return card;
+  }
+  function fillGrid(id, list, withEmpty) {
     const grid = document.getElementById(id);
-    list.forEach(t => {
-      const card = document.createElement('a');
-      card.className = 'card';
-      card.href = t.url;
-      card.innerHTML = `
-        <div class="top-row">
-          <div class="icon">${t.icon}</div>
-          <span class="label">${t.label}</span>
-        </div>
-        <h2>${t.title}</h2>
-        <p>${t.desc}</p>
-      `;
-      grid.appendChild(card);
-    });
+    list.forEach(t => grid.appendChild(creaCard(t)));
     if (withEmpty) {
       const empty = document.createElement('div');
       empty.className = 'card empty';
@@ -651,8 +748,35 @@
       grid.appendChild(empty);
     }
   }
+  document.getElementById('testWrap').appendChild(creaCard(test, 'card-test'));
   fillGrid('grid-base', base, false);
   fillGrid('grid-avanzati', avanzati, true);
+
+  /* ---------- filtro "Per chi è": si ricorda la scelta e si può condividere
+     con un indirizzo, es. index.html?livello=primaria ---------- */
+  const barra = document.getElementById('livelliBar');
+  barra.innerHTML =
+    '<button type="button" data-l="">Tutti</button>' +
+    LIVELLI.map(l => `<button type="button" data-l="${l.id}"><span class="lv lv-${l.id} on">${l.id}</span><span class="lungo">${l.nome}</span><span class="corto">${l.corto || l.nome}</span></button>`).join('');
+  function applicaLivello(id, salva) {
+    barra.querySelectorAll('button').forEach(b => b.classList.toggle('active', b.dataset.l === id));
+    document.querySelectorAll('a.card[data-livelli]').forEach(c => { c.hidden = !!id && !c.dataset.livelli.includes(id); });
+    document.querySelectorAll('.card.empty').forEach(c => { c.hidden = !!id; });
+    document.querySelectorAll('main section.group').forEach(sec => { sec.hidden = !sec.querySelector('a.card:not([hidden])'); });
+    if (salva) {
+      const url = new URL(location.href);
+      const l = LIVELLI.find(x => x.id === id);
+      if (l) url.searchParams.set('livello', l.chiave); else url.searchParams.delete('livello');
+      history.replaceState(null, '', url);
+    }
+  }
+  barra.querySelectorAll('button').forEach(b => b.addEventListener('click', () => applicaLivello(b.dataset.l, true)));
+  (function () {
+    const daUrl = new URL(location.href).searchParams.get('livello');
+    const l = LIVELLI.find(x => x.chiave === daUrl);
+    // all'apertura è sempre selezionato "Tutti", salvo un link del tipo index.html?livello=primaria
+    applicaLivello(l ? l.id : '', false);
+  })();
 </script>
 
 </body>

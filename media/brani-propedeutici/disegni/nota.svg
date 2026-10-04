@@ -1,0 +1,20 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 220 220" width="220" height="220">
+  <defs>
+    <filter id="adesivo" x="-20%" y="-20%" width="140%" height="150%">
+      <feMorphology in="SourceAlpha" operator="dilate" radius="5" result="bordo"/>
+      <feFlood flood-color="#ffffff"/>
+      <feComposite in2="bordo" operator="in" result="bianco"/>
+      <feGaussianBlur in="bordo" stdDeviation="4" result="sfoc"/>
+      <feOffset in="sfoc" dx="2" dy="5" result="spost"/>
+      <feFlood flood-color="#1e1b4b" flood-opacity="0.35"/>
+      <feComposite in2="spost" operator="in" result="ombra"/>
+      <feMerge><feMergeNode in="ombra"/><feMergeNode in="bianco"/><feMergeNode in="SourceGraphic"/></feMerge>
+    </filter>
+  </defs>
+  <g filter="url(#adesivo)">
+    <path d="M86 150 V52 L156 38 V136" fill="none" stroke="#5E50A1" stroke-width="10" stroke-linejoin="round"/>
+    <path d="M86 52 L156 38 V62 L86 76 Z" fill="#5E50A1"/>
+    <ellipse cx="68" cy="152" rx="24" ry="17" transform="rotate(-20 68 152)" fill="#009C95" stroke="#00675F" stroke-width="4"/>
+    <ellipse cx="138" cy="138" rx="24" ry="17" transform="rotate(-20 138 138)" fill="#CF3E96" stroke="#8F2464" stroke-width="4"/>
+  </g>
+</svg>

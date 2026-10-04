@@ -207,7 +207,9 @@
   function leggiMusicXML(testo) {
     const doc = new DOMParser().parseFromString(testo, "application/xml");
     const parte = doc.querySelector("part");
-    const brano = { titolo: (doc.querySelector("work-title, movement-title") || {}).textContent || "", armatura: 0, tempo: [4, 4], battute: [] };
+    const brano = { titolo: (doc.querySelector("work-title, movement-title") || {}).textContent || "", armatura: 0, tempo: [4, 4], battute: [], riquadri: [] };
+    const mt = doc.querySelector("movement-title");
+    brano.titoloBreve = mt ? mt.textContent.replace(/^\s*\d+\.\s*/, "").trim() : brano.titolo;
     parte.querySelectorAll(":scope > measure").forEach(m => {
       const b = { eventi: [] };
       const key = m.querySelector("attributes key fifths"); if (key) brano.armatura = +key.textContent;
@@ -223,10 +225,30 @@
           if (fineB.getAttribute("type") === "start") b.volta.inizio = true; else b.volta.fine = true;
         }
       });
-      m.querySelectorAll(":scope > note").forEach(n => {
+      let testiInAttesa = [];
+      [...m.children].forEach(n => {
+        if (n.tagName === "direction") {
+          // indicazioni scritte: andamento, "Introduzione", "Fine"... I riquadri (NOVITÀ e note) vanno a parte
+          const met = n.querySelector("metronome");
+          n.querySelectorAll("words").forEach(w => {
+            const t = (w.textContent || "").trim(); if (!t) return;
+            if (w.getAttribute("enclosure") === "rectangle") brano.riquadri.push(t);
+            else if (met && brano.battute.length === 0 && !brano.andamento) brano.andamento = t;
+            else testiInAttesa.push(t);
+          });
+          if (met && brano.battute.length === 0) brano.metronomo = { unita: (met.querySelector("beat-unit") || {}).textContent, valore: (met.querySelector("per-minute") || {}).textContent };
+          return;
+        }
+        if (n.tagName !== "note") return;
         if (n.querySelector("chord")) return;          // melodie a una voce
-        const ev = { durata: TIPI[(n.querySelector("type") || {}).textContent] || "q", punti: n.querySelectorAll("dot").length };
-        if (n.querySelector("rest")) ev.pausa = true;
+        const r = n.querySelector("rest");
+        const intera = r && (r.getAttribute("measure") === "yes" || !n.querySelector("type"));
+        const ev = { durata: intera ? "w" : (TIPI[(n.querySelector("type") || {}).textContent] || "q"), punti: n.querySelectorAll("dot").length };
+        if (intera) ev.intera = true;
+        if (testiInAttesa.length) { ev.testi = testiInAttesa; testiInAttesa = []; }
+        n.querySelectorAll(":scope > tie").forEach(t => { if (t.getAttribute("type") === "start") ev.legaInizio = true; else ev.legaFine = true; });
+        n.querySelectorAll("notations slur").forEach(sl => { if (sl.getAttribute("type") === "start") ev.portamentoInizio = true; else if (sl.getAttribute("type") === "stop") ev.portamentoFine = true; });
+        if (r) ev.pausa = true;
         else {
           const step = n.querySelector("pitch step").textContent.toLowerCase();
           const alter = +((n.querySelector("pitch alter") || {}).textContent || 0);
@@ -235,6 +257,8 @@
         }
         b.eventi.push(ev);
       });
+      // testi scritti dopo l'ultima nota della battuta (es. "Fine")
+      if (testiInAttesa.length && b.eventi.length) b.eventi[b.eventi.length - 1].testiDopo = testiInAttesa;
       brano.battute.push(b);
     });
     // le battute in mezzo a una volta non hanno segni propri: le collego
@@ -266,21 +290,32 @@
     const VF = (global.Vex && global.Vex.Flow) ? global.Vex.Flow : global.VexFlow;
     const o = Object.assign({ strumento: "flauto", colori: false, nomi: false, larghezza: 760 }, opzioni);
     const tastiera = o.strumento === "tastiera";
-    const usate = noteUsate(brano), piuGrave = usate[0];
+    const usate = noteUsate(brano);
+    const piuGrave = o.notaBaseDita ? analizza(o.notaBaseDita) : usate[0];   // diteggiatura fissa (es. "g4" = sol pollice) o dal brano
+    const conTesti = o.testi !== false;
     const W = o.larghezza;
     const perRiga = o.perRiga || (W < 520 ? 2 : 4), righe = Math.ceil(brano.battute.length / perRiga);
-    const altezzaRiga = tastiera ? 140 : 120, yPrima = 30;
+    const altezzaRiga = (tastiera ? 140 : 120) + (conTesti && o.titolo === false ? 14 : 0);
+    const yPrima = o.titolo === false ? (conTesti && (brano.andamento || brano.metronomo) ? 26 : 8) : 30;
     contenitore.innerHTML = "";
     const divRigo = document.createElement("div"); contenitore.appendChild(divRigo);
     const renderer = new VF.Renderer(divRigo, VF.Renderer.Backends.SVG);
     renderer.resize(W, yPrima + righe * altezzaRiga);
     const ctx = renderer.getContext();
-    if (brano.titolo) { ctx.save(); ctx.setFont("Georgia, serif", 18); ctx.fillText(brano.titolo, W / 2 - ctx.measureText(brano.titolo).width / 2, 20); ctx.restore(); }
+    if (brano.titolo && o.titolo !== false) { ctx.save(); ctx.setFont("Georgia, serif", 18); ctx.fillText(brano.titolo, W / 2 - ctx.measureText(brano.titolo).width / 2, 20); ctx.restore(); }
     const alterazioniInChiave = {};
     "fcgdaeb".slice(0, Math.max(0, brano.armatura)).split("").forEach(l => alterazioniInChiave[l] = "#");
     "beadgcf".slice(0, Math.max(0, -brano.armatura)).split("").forEach(l => alterazioniInChiave[l] = "b");
     const keySpec = brano.armatura ? (["F","Bb","Eb","Ab","Db","Gb","Cb"][-brano.armatura - 1] || ["G","D","A","E","B","F#","C#"][brano.armatura - 1]) : null;
 
+    const tutteLeNote = [];
+    { let aperte = [], prossima = 0;   // ogni nota sotto una legatura di portamento riceve il suo numero
+      brano.battute.forEach(b => b.eventi.forEach(e => {
+        if (e.pausa) return;
+        if (e.portamentoInizio) aperte.push(prossima++);
+        e.portamenti = aperte.slice();
+        if (e.portamentoFine) aperte.pop();
+      })); }
     for (let r = 0; r < righe; r++) {
       const battute = brano.battute.slice(r * perRiga, r * perRiga + perRiga);
       const y = yPrima + r * altezzaRiga + 10;
@@ -289,7 +324,7 @@
       const pesi = battute.map(b => Math.max(4, b.eventi.length));
       const pesoTot = brano.battute.length >= perRiga ? Math.max(pesi.reduce((a, c) => a + c, 0), 4 * perRiga) : pesi.reduce((a, c) => a + c, 0);
       const spazio = W - 20 - testa;
-      let x = 10;
+      let x = 10, sn_ultimaBattuta = null;
       const daScrivere = [];   // note della riga: nomi e dita si scrivono alla fine, alla stessa altezza
       let stRiga = null;
       battute.forEach((b, i) => {
@@ -308,7 +343,8 @@
         st.setContext(ctx).draw();
         const note = b.eventi.map(e => {
           const durata = e.durata + (e.pausa ? "r" : "");
-          const sn = new VF.StaveNote({ keys: [e.pausa ? "b/4" : e.nota.lettera + e.nota.alt + "/" + e.nota.ottava], duration: durata, dots: e.punti, clef: "treble", auto_stem: true });
+          const sn = new VF.StaveNote({ keys: [e.pausa ? (e.intera ? "d/5" : "b/4") : e.nota.lettera + e.nota.alt + "/" + e.nota.ottava], duration: durata, dots: e.punti, clef: "treble", auto_stem: true, align_center: !!e.intera });
+          sn._ev = e; sn._riga = r;
           for (let k = 0; k < e.punti; k++) VF.Dot.buildAndAttach([sn], { all: true });
           if (e.pausa) return sn;
           // alterazione scritta solo se diversa da quella in chiave
@@ -318,13 +354,14 @@
           if (o.colori) sn.setKeyStyle(0, { fillStyle: col, strokeStyle: col });
           sn._nome = NOMI[e.nota.lettera].replace(/^./, c => c.toUpperCase()) + (e.nota.alt === "b" ? "♭" : e.nota.alt === "#" ? "♯" : "");
           if (tastiera) sn._dito = e.dito || ditoTastiera(e.nota, piuGrave);
+          if (e.legaFine) { sn._nome = ""; sn._dito = ""; }   // nota legata: non si suona di nuovo
           return sn;
         });
         const beams = VF.Beam.generateBeams(note);
         VF.Formatter.FormatAndDraw(ctx, st, note, { auto_beam: false });
         beams.forEach(bm => bm.setContext(ctx).draw());
-        note.forEach(sn => daScrivere.push(sn));
-        stRiga = st;
+        note.forEach(sn => { daScrivere.push(sn); tutteLeNote.push(sn); });
+        stRiga = st; sn_ultimaBattuta = { st, note };
         x += w;
       });
       // nomi delle note e dita: in nero, tutti alla stessa altezza, sopra (o sotto) gambi e travi più sporgenti
@@ -334,7 +371,29 @@
         const ext = sn.getStemExtents ? sn.getStemExtents() : null;
         if (ext) { piuAlto = Math.min(piuAlto, ext.topY, ext.baseY); piuBasso = Math.max(piuBasso, ext.topY, ext.baseY); }
       });
-      const ySopra = Math.min(stRiga.getYForLine(0) - 14, piuAlto - 8);
+      // legature di portamento: un arco sopra le note di questa riga
+      const archi = new Map();
+      daScrivere.forEach(sn => { const e = sn._ev; if (!e || e.pausa || !e.portamenti) return;
+        e.portamenti.forEach(id => { if (!archi.has(id)) archi.set(id, []); archi.get(id).push(sn); }); });
+      let cimaArchi = Infinity;
+      const disegniArchi = [];
+      archi.forEach(note => {
+        if (note.length < 2) return;
+        const cx = sn => sn.getAbsoluteX() + sn.getGlyphWidth() / 2;
+        const alto = sn => { const ext = sn.getStemExtents(); const testa = sn.getYs()[0] - 6;
+          return sn.getStemDirection() === 1 ? Math.min(ext.topY, ext.baseY, testa) : testa; };
+        const x1 = cx(note[0]), x2 = cx(note[note.length - 1]);
+        const yBase = Math.min(...note.map(alto)) - 5, picco = yBase - Math.min(16, 6 + (x2 - x1) * 0.04);
+        cimaArchi = Math.min(cimaArchi, picco);
+        disegniArchi.push([x1, x2, yBase, picco]);
+      });
+      disegniArchi.forEach(([x1, x2, yb, pk]) => {
+        const xm = (x1 + x2) / 2, c = 2 * pk - yb;   // punto di controllo per avere il picco giusto
+        ctx.save(); ctx.setFillStyle("#111"); ctx.beginPath();
+        ctx.moveTo(x1, yb); ctx.quadraticCurveTo(xm, c, x2, yb); ctx.quadraticCurveTo(xm, c - 2.6, x1, yb);
+        ctx.closePath(); ctx.fill(); ctx.restore();
+      });
+      const ySopra = Math.min(stRiga.getYForLine(0) - 14, piuAlto - 8, cimaArchi - 6);
       const ySotto = Math.max(stRiga.getYForLine(4) + 30, piuBasso + 18);
       const testo = (t, xc, yy, font) => { ctx.save(); ctx.setFont(font[0], font[1]); ctx.setFillStyle("#111");
         ctx.fillText(t, xc - ctx.measureText(t).width / 2, yy); ctx.restore(); };
@@ -346,13 +405,63 @@
           if (o.nomi) testo(sn._nome, xc, ySotto, ["Georgia, serif", 12]);
         } else if (o.nomi) testo(sn._nome, xc, ySopra, ["Georgia, serif", 12]);
       });
+      // indicazioni scritte, in corsivo, sopra nomi e dita
+      if (conTesti) {
+        const yTesti = ySopra - ((tastiera || o.nomi) ? 18 : 4);
+        const scrivi = (t, xx, allinea) => { ctx.save(); ctx.setFont("Georgia, serif", 12, "normal", "italic"); ctx.setFillStyle("#334155");
+          const w = ctx.measureText(t).width; ctx.fillText(t, allinea === "destra" ? xx - w : xx, yTesti); ctx.restore(); };
+        daScrivere.forEach(sn => {
+          const e = sn._ev; if (!e) return;
+          // per le pause di battuta intera (centrate) il testo parte dall'inizio della battuta
+          if (e.testi) scrivi(e.testi.join("  "), e.intera ? sn.getStave().getNoteStartX() : sn.getAbsoluteX() - 4);
+          if (e.testiDopo) scrivi(e.testiDopo.join("  "), sn.getStave().getX() + sn.getStave().getWidth() - 4, "destra");
+        });
+        if (r === 0 && (brano.andamento || brano.metronomo)) {
+          const nota = brano.metronomo ? ({ quarter: "♩", half: "𝅗𝅥", eighth: "♪" }[brano.metronomo.unita] || "♩") + " = " + brano.metronomo.valore : "";
+          const t = [brano.andamento, nota].filter(Boolean).join("   ");
+          ctx.save(); ctx.setFont("Georgia, serif", 13, "bold"); ctx.setFillStyle("#111"); ctx.fillText(t, 14, yTesti - 18); ctx.restore();
+        }
+      }
     }
+    // legature di valore e di portamento (anche da una riga all'altra)
+    const suonate = tutteLeNote.filter(sn => !sn._ev.pausa);
+    const collega = (da, a, tipo) => {
+      if (!a) return;
+      if (tipo === "valore") {
+        if (da._riga === a._riga) new VF.StaveTie({ first_note: da, last_note: a, first_indices: [0], last_indices: [0] }).setContext(ctx).draw();
+        else {
+          new VF.StaveTie({ first_note: da, last_note: null, first_indices: [0], last_indices: [0] }).setContext(ctx).draw();
+          new VF.StaveTie({ first_note: null, last_note: a, first_indices: [0], last_indices: [0] }).setContext(ctx).draw();
+        }
+      } else {
+        const curva = (x1, x2) => new VF.Curve(x1, x2, { cps: [{ x: 0, y: 12 }, { x: 0, y: 12 }] }).setContext(ctx).draw();
+        if (da._riga === a._riga) curva(da, a);
+        else {
+          const fineRiga = suonate.filter(n => n._riga === da._riga).pop();
+          const inizioRiga = suonate.find(n => n._riga === a._riga);
+          if (fineRiga !== da) curva(da, fineRiga);
+          if (inizioRiga !== a) curva(inizioRiga, a);
+        }
+      }
+    };
+    suonate.forEach((sn, i) => {
+      if (sn._ev.legaInizio) collega(sn, suonate[i + 1], "valore");
+      // le legature di portamento sono già disegnate riga per riga come archi sopra le note
+    });
     const svg = divRigo.querySelector("svg");
     svg.querySelectorAll("path, rect").forEach(el => { if (el.getAttribute("stroke") === "#999999") el.setAttribute("stroke", "#111"); });
-    svg.setAttribute("viewBox", `0 0 ${W} ${yPrima + righe * altezzaRiga}`);
+    // riquadro adattato a tutto ciò che è disegnato (archi, testi, nomi possono sporgere)
+    let vb = [0, 0, W, yPrima + righe * altezzaRiga];
+    try {
+      const bb = svg.getBBox();
+      const top = Math.min(0, bb.y - 6), bottom = Math.max(vb[3], bb.y + bb.height + 6);
+      vb = [0, top, W, bottom - top];
+    } catch (e) {}
+    svg.setAttribute("viewBox", vb.join(" "));
     svg.setAttribute("width", "100%"); svg.removeAttribute("height");
     svg.style.width = "100%"; svg.style.height = "auto";   // VexFlow fissa la larghezza in pixel: lo spartito deve adattarsi al contenitore
 
+    if (o.schema === false) return contenitore;
     // schema dello strumento con le note usate nel brano
     const divSchema = document.createElement("div"); divSchema.className = "schema-brano"; contenitore.appendChild(divSchema);
     const g = disegnaGruppo(divSchema, o.strumento, usate);

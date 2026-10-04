@@ -1,0 +1,36 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 220 220" width="220" height="220">
+  <defs>
+    <filter id="adesivo" x="-20%" y="-20%" width="140%" height="150%">
+      <feMorphology in="SourceAlpha" operator="dilate" radius="5" result="bordo"/>
+      <feFlood flood-color="#ffffff"/>
+      <feComposite in2="bordo" operator="in" result="bianco"/>
+      <feGaussianBlur in="bordo" stdDeviation="4" result="sfoc"/>
+      <feOffset in="sfoc" dx="2" dy="5" result="spost"/>
+      <feFlood flood-color="#1e1b4b" flood-opacity="0.35"/>
+      <feComposite in2="spost" operator="in" result="ombra"/>
+      <feMerge><feMergeNode in="ombra"/><feMergeNode in="bianco"/><feMergeNode in="SourceGraphic"/></feMerge>
+    </filter>
+    
+  </defs>
+  <g filter="url(#adesivo)">
+    <g transform="translate(78 112) rotate(-18)">
+      <path d="M-40 52 Q-38 -10 0 -30 Q38 -10 40 52 L50 62 L-50 62 Z" fill="#F6C445" stroke="#B9831A" stroke-width="4" stroke-linejoin="round"/>
+      <path d="M-26 40 Q-24 -4 -2 -20" fill="none" stroke="#FFF0B3" stroke-width="7" stroke-linecap="round" opacity="0.85"/>
+      <path d="M-50 62 L50 62 L45 70 L-45 70 Z" fill="#D9A21F" stroke="#B9831A" stroke-width="4" stroke-linejoin="round"/>
+      <circle cx="0" cy="78" r="10" fill="#C98A1C" stroke="#8F5E0E" stroke-width="3"/>
+      <rect x="-7" y="-42" width="14" height="14" rx="5" fill="#D9A21F" stroke="#B9831A" stroke-width="3"/>
+    </g>    <g transform="translate(142 112) rotate(16)">
+      <path d="M-40 52 Q-38 -10 0 -30 Q38 -10 40 52 L50 62 L-50 62 Z" fill="#F8CF5C" stroke="#B9831A" stroke-width="4" stroke-linejoin="round"/>
+      <path d="M-26 40 Q-24 -4 -2 -20" fill="none" stroke="#FFF0B3" stroke-width="7" stroke-linecap="round" opacity="0.85"/>
+      <path d="M-50 62 L50 62 L45 70 L-45 70 Z" fill="#DDAA2A" stroke="#B9831A" stroke-width="4" stroke-linejoin="round"/>
+      <circle cx="0" cy="78" r="10" fill="#C98A1C" stroke="#8F5E0E" stroke-width="3"/>
+      <rect x="-7" y="-42" width="14" height="14" rx="5" fill="#DDAA2A" stroke="#B9831A" stroke-width="3"/>
+    </g>
+    <path d="M110 58 C 92 40, 72 48, 84 62 C 92 70, 104 64, 110 58 Z" fill="#E21C48" stroke="#9E1031" stroke-width="3" stroke-linejoin="round"/>
+    <path d="M110 58 C 128 40, 148 48, 136 62 C 128 70, 116 64, 110 58 Z" fill="#E21C48" stroke="#9E1031" stroke-width="3" stroke-linejoin="round"/>
+    <path d="M106 64 L96 96 L104 92 L108 100 Z M114 64 L124 96 L116 92 L112 100 Z" fill="#C8173E" stroke="#9E1031" stroke-width="2.5" stroke-linejoin="round"/>
+    <circle cx="110" cy="60" r="8" fill="#F23B62" stroke="#9E1031" stroke-width="3"/>
+    <path d="M32 72 q-10 14 0 28 M22 64 q-14 22 0 44" fill="none" stroke="#009C95" stroke-width="5" stroke-linecap="round"/>
+    <path d="M188 72 q10 14 0 28 M198 64 q14 22 0 44" fill="none" stroke="#009C95" stroke-width="5" stroke-linecap="round"/>
+  </g>
+</svg>
