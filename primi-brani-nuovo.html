@@ -596,8 +596,8 @@
       });
     });
     wrap.addEventListener('click', () => openLightbox(disegna));
-    mostra();
     container.appendChild(card);
+    mostra();   // dopo l'inserimento nella pagina, così la larghezza disponibile è quella vera
   });
 
   window.addEventListener('afterprint', () => { document.body.classList.remove('stampando'); document.getElementById('areaStampa').innerHTML = ''; });
