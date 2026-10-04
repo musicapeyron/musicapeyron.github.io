@@ -1,0 +1,29 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 220 220" width="220" height="220">
+  <defs>
+    <filter id="adesivo" x="-20%" y="-20%" width="140%" height="150%">
+      <feMorphology in="SourceAlpha" operator="dilate" radius="5" result="bordo"/>
+      <feFlood flood-color="#ffffff"/>
+      <feComposite in2="bordo" operator="in" result="bianco"/>
+      <feGaussianBlur in="bordo" stdDeviation="4" result="sfoc"/>
+      <feOffset in="sfoc" dx="2" dy="5" result="spost"/>
+      <feFlood flood-color="#1e1b4b" flood-opacity="0.35"/>
+      <feComposite in2="spost" operator="in" result="ombra"/>
+      <feMerge><feMergeNode in="ombra"/><feMergeNode in="bianco"/><feMergeNode in="SourceGraphic"/></feMerge>
+    </filter>
+    
+  </defs>
+  <g filter="url(#adesivo)">
+<rect x="22" y="120" width="64" height="70" fill="#FFE9C7" stroke="#7A4B2A" stroke-width="3.5"/>
+    <path d="M14 122 L54.0 84.8 L94 122 Z" fill="#E21C48" stroke="#7A4B2A" stroke-width="3.5" stroke-linejoin="round"/>
+    <rect x="45.0" y="162" width="18" height="28" rx="8" fill="#8B5E34" stroke="#7A4B2A" stroke-width="3"/>
+    <rect x="30" y="132" width="14" height="14" fill="#BDE7FF" stroke="#7A4B2A" stroke-width="2.5"/><rect x="134" y="108" width="66" height="82" fill="#FFF6D6" stroke="#7A4B2A" stroke-width="3.5"/>
+    <path d="M126 110 L167.0 71.69999999999999 L208 110 Z" fill="#009C95" stroke="#7A4B2A" stroke-width="3.5" stroke-linejoin="round"/>
+    <rect x="158.0" y="162" width="18" height="28" rx="8" fill="#8B5E34" stroke="#7A4B2A" stroke-width="3"/>
+    <rect x="142" y="120" width="14" height="14" fill="#BDE7FF" stroke="#7A4B2A" stroke-width="2.5"/>
+    <path d="M14 70 Q110 112 206 70" fill="none" stroke="#5B4636" stroke-width="3"/>
+    <path d="M30 78 l8 20 l10 -16 Z" fill="#E21C48"/><path d="M56 88 l6 20 l12 -14 Z" fill="#F99D1C"/><path d="M82 95 l6 20 l12 -16 Z" fill="#FFF428" stroke="#C9B80A" stroke-width="1.5"/>
+    <path d="M110 97 l4 20 l12 -18 Z" fill="#BED958"/><path d="M136 93 l4 20 l12 -18 Z" fill="#009C95"/><path d="M160 86 l2 20 l14 -16 Z" fill="#5E50A1"/><path d="M182 76 l2 20 l12 -16 Z" fill="#CF3E96"/>
+    <path d="M10 196 h200" stroke="#7FB35A" stroke-width="8" stroke-linecap="round"/>
+    <g transform="translate(102 190) scale(0.8)"><path d="M10 -44 v46" stroke="#5E50A1" stroke-width="5" stroke-linecap="round"/><path d="M12 -44 q16 8 14 24 q-4 -10 -14 -12" fill="#5E50A1"/><ellipse cx="2" cy="2" rx="13" ry="9.5" transform="rotate(-20 2 2)" fill="#5E50A1"/></g>
+  </g>
+</svg>

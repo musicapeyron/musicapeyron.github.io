@@ -1,0 +1,23 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 220 220" width="220" height="220">
+  <defs>
+    <filter id="adesivo" x="-20%" y="-20%" width="140%" height="150%">
+      <feMorphology in="SourceAlpha" operator="dilate" radius="5" result="bordo"/>
+      <feFlood flood-color="#ffffff"/>
+      <feComposite in2="bordo" operator="in" result="bianco"/>
+      <feGaussianBlur in="bordo" stdDeviation="4" result="sfoc"/>
+      <feOffset in="sfoc" dx="2" dy="5" result="spost"/>
+      <feFlood flood-color="#1e1b4b" flood-opacity="0.35"/>
+      <feComposite in2="spost" operator="in" result="ombra"/>
+      <feMerge><feMergeNode in="ombra"/><feMergeNode in="bianco"/><feMergeNode in="SourceGraphic"/></feMerge>
+    </filter>
+    
+  </defs>
+  <g filter="url(#adesivo)">
+
+    <path d="M70 52 C 90 70, 70 110, 40 120 M150 52 C 130 70, 150 110, 180 120" fill="none" stroke="#F7A1B5" stroke-width="5" stroke-linecap="round"/>
+    <path d="M54 34 C 60 46, 80 48, 92 40 M166 34 C 160 46, 140 48, 128 40" fill="none" stroke="#F7A1B5" stroke-width="5" stroke-linecap="round"/>
+    <g transform="rotate(-14 76 140)"><path d="M48 116 Q46 186 76 196 Q106 186 104 116 Q90 104 76 104 Q62 104 48 116 Z" fill="#FFC4DA" stroke="#C2648A" stroke-width="4"/><ellipse cx="76" cy="126" rx="18" ry="14" fill="#F48FB7"/><path d="M64 114 q12 -8 24 0" fill="none" stroke="#fff" stroke-width="3"/></g>
+    <g transform="rotate(14 144 140)"><path d="M116 116 Q114 186 144 196 Q174 186 172 116 Q158 104 144 104 Q130 104 116 116 Z" fill="#FFC4DA" stroke="#C2648A" stroke-width="4"/><ellipse cx="144" cy="126" rx="18" ry="14" fill="#F48FB7"/><path d="M132 114 q12 -8 24 0" fill="none" stroke="#fff" stroke-width="3"/></g>
+    <text x="96" y="30" font-family="Fredoka, Arial Rounded MT Bold, sans-serif" font-weight="700" font-size="26" fill="#5E50A1" stroke="#fff" stroke-width="4" paint-order="stroke">3/4</text>
+  </g>
+</svg>

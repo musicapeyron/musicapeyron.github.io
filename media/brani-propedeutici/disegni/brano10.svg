@@ -1,0 +1,27 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 220 220" width="220" height="220">
+  <defs>
+    <filter id="adesivo" x="-20%" y="-20%" width="140%" height="150%">
+      <feMorphology in="SourceAlpha" operator="dilate" radius="5" result="bordo"/>
+      <feFlood flood-color="#ffffff"/>
+      <feComposite in2="bordo" operator="in" result="bianco"/>
+      <feGaussianBlur in="bordo" stdDeviation="4" result="sfoc"/>
+      <feOffset in="sfoc" dx="2" dy="5" result="spost"/>
+      <feFlood flood-color="#1e1b4b" flood-opacity="0.35"/>
+      <feComposite in2="spost" operator="in" result="ombra"/>
+      <feMerge><feMergeNode in="ombra"/><feMergeNode in="bianco"/><feMergeNode in="SourceGraphic"/></feMerge>
+    </filter>
+    
+  </defs>
+  <g filter="url(#adesivo)">
+
+    <path d="M60 120 L76 200 H144 L160 120 Z" fill="#F99D1C" stroke="#A66912" stroke-width="4" stroke-linejoin="round"/>
+    <path d="M80 124 L90 198 M110 124 V198 M140 124 L130 198" stroke="#FFD08A" stroke-width="4"/>
+    <path d="M48 124 Q40 96 68 92 Q66 64 96 66 Q104 40 130 54 Q156 56 154 84 Q182 90 172 118 Q170 128 158 126 H62 Q50 128 48 124 Z" fill="#FFC4DA" stroke="#C2648A" stroke-width="4" stroke-linejoin="round"/>
+    <path d="M70 102 q20 10 40 0 q20 -10 40 2" fill="none" stroke="#fff" stroke-width="5" stroke-linecap="round" opacity="0.8"/>
+    <rect x="80" y="80" width="8" height="4" rx="2" fill="#5E50A1" transform="rotate(30 84 82)"/><rect x="128" y="74" width="8" height="4" rx="2" fill="#009C95" transform="rotate(-20 132 76)"/>
+    <rect x="104" y="92" width="8" height="4" rx="2" fill="#FFF428" transform="rotate(60 108 94)"/><rect x="142" y="100" width="8" height="4" rx="2" fill="#BED958"/>
+    <path d="M112 44 q4 -20 22 -24" fill="none" stroke="#4FA83D" stroke-width="4" stroke-linecap="round"/>
+    <circle cx="108" cy="46" r="15" fill="#E21C48" stroke="#8F1230" stroke-width="3.5"/><ellipse cx="103" cy="41" rx="4" ry="3" fill="#fff" opacity="0.7"/>
+    <text x="108" y="52" text-anchor="middle" font-family="Fredoka, Arial Rounded MT Bold, sans-serif" font-weight="700" font-size="14" fill="#fff">Do</text>
+  </g>
+</svg>

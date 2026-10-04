@@ -294,7 +294,18 @@
     const piuGrave = o.notaBaseDita ? analizza(o.notaBaseDita) : usate[0];   // diteggiatura fissa (es. "g4" = sol pollice) o dal brano
     const conTesti = o.testi !== false;
     const W = o.larghezza;
-    const perRiga = o.perRiga || (W < 520 ? 2 : 4), righe = Math.ceil(brano.battute.length / perRiga);
+    // battute di sola pausa consecutive -> una sola battuta con il numero (pausa di più battute), se richiesto
+    const unita = [];
+    brano.battute.forEach(b => {
+      const soloPausa = b.eventi.length > 0 && b.eventi.every(e => e.intera);
+      // solo se richiesto (opzione pausePiuBattute): di base ogni battuta di pausa resta separata
+      const unibile = !!o.pausePiuBattute && soloPausa && !b.inizioRitornello && !b.fineRitornello && !b.volta && !b.fine;
+      const haTesti = b.eventi.some(e => e.testi || e.testiDopo);
+      const prec = unita[unita.length - 1];
+      if (unibile && prec && prec.unibile && !haTesti) { prec.n++; prec.battute.push(b); }
+      else unita.push({ b, n: 1, unibile, battute: [b] });
+    });
+    const perRiga = o.perRiga || (W < 520 ? 2 : 4), righe = Math.ceil(unita.length / perRiga);
     const altezzaRiga = (tastiera ? 140 : 120) + (conTesti && o.titolo === false ? 14 : 0);
     const yPrima = o.titolo === false ? (conTesti && (brano.andamento || brano.metronomo) ? 26 : 8) : 30;
     contenitore.innerHTML = "";
@@ -317,30 +328,33 @@
         if (e.portamentoFine) aperte.pop();
       })); }
     for (let r = 0; r < righe; r++) {
-      const battute = brano.battute.slice(r * perRiga, r * perRiga + perRiga);
+      const battute = unita.slice(r * perRiga, r * perRiga + perRiga);
       const y = yPrima + r * altezzaRiga + 10;
       const testa = (r === 0 ? 92 : 50) + (brano.armatura ? Math.abs(brano.armatura) * 10 : 0);
       // le battute con più note ricevono più spazio (minimo come 4 note)
-      const pesi = battute.map(b => Math.max(4, b.eventi.length));
-      const pesoTot = brano.battute.length >= perRiga ? Math.max(pesi.reduce((a, c) => a + c, 0), 4 * perRiga) : pesi.reduce((a, c) => a + c, 0);
+      const pesi = battute.map(u => u.n > 1 ? 4 : Math.max(4, u.b.eventi.length));
+      const pesoTot = unita.length >= perRiga ? Math.max(pesi.reduce((a, c) => a + c, 0), 4 * perRiga) : pesi.reduce((a, c) => a + c, 0);
       const spazio = W - 20 - testa;
       let x = 10, sn_ultimaBattuta = null;
       const daScrivere = [];   // note della riga: nomi e dita si scrivono alla fine, alla stessa altezza
       let stRiga = null;
-      battute.forEach((b, i) => {
+      const volteRiga = [], testiPause = [];
+      battute.forEach((u, i) => {
+        const b = u.b, ultima = u.battute[u.battute.length - 1];
         const w = spazio * pesi[i] / pesoTot + (i === 0 ? testa : 0);
         const st = new VF.Stave(x, y, w);
         if (i === 0) { st.addClef("treble"); if (keySpec) st.addKeySignature(keySpec); if (r === 0) st.addTimeSignature(brano.tempo.join("/")); }
         if (b.inizioRitornello) st.setBegBarType(VF.Barline.type.REPEAT_BEGIN);
-        if (b.volta) {
-          const T = VF.VoltaType || (VF.Volta && VF.Volta.type);
-          const tipo = b.volta.inizio && b.volta.fine ? T.BEGIN_END : b.volta.inizio ? T.BEGIN : b.volta.fine ? T.END : T.MID;
-          st.setVoltaType(tipo, b.volta.numero + ".", 21);   // appena sopra i nomi delle note
-        }
-        if (b.fineRitornello) st.setEndBarType(VF.Barline.type.REPEAT_END);
-        else if (b.fine || (r === righe - 1 && i === battute.length - 1)) st.setEndBarType(VF.Barline.type.END);
+        if (b.volta) volteRiga.push({ st, volta: b.volta });   // le volte si disegnano dopo, sopra i nomi
+        if (ultima.fineRitornello) st.setEndBarType(VF.Barline.type.REPEAT_END);
+        else if (ultima.fine || (r === righe - 1 && i === battute.length - 1)) st.setEndBarType(VF.Barline.type.END);
         st.setStyle({ strokeStyle: "#111", fillStyle: "#111" });
         st.setContext(ctx).draw();
+        if (u.n > 1) {   // pausa di più battute: barra con il numero sopra
+          new VF.MultiMeasureRest(u.n, { number_of_measures: u.n }).setStave(st).setContext(ctx).draw();
+          const t = b.eventi[0].testi; if (t) testiPause.push({ t: t.join("  "), x: st.getNoteStartX() });
+          stRiga = st; x += w; return;
+        }
         const note = b.eventi.map(e => {
           const durata = e.durata + (e.pausa ? "r" : "");
           const sn = new VF.StaveNote({ keys: [e.pausa ? (e.intera ? "d/5" : "b/4") : e.nota.lettera + e.nota.alt + "/" + e.nota.ottava], duration: durata, dots: e.punti, clef: "treble", auto_stem: true, align_center: !!e.intera });
@@ -406,8 +420,19 @@
         } else if (o.nomi) testo(sn._nome, xc, ySopra, ["Georgia, serif", 12]);
       });
       // indicazioni scritte, in corsivo, sopra nomi e dita
+      // volte (prima e seconda volta): parentesi sopra i nomi delle note
+      const yVolta = ySopra - ((tastiera || o.nomi) ? 30 : 16);
+      volteRiga.forEach(({ st, volta }) => {
+        const x1 = st.getX() + 2, x2 = st.getX() + st.getWidth() - 2;
+        ctx.save(); ctx.setStrokeStyle("#111"); ctx.setLineWidth(1.3); ctx.beginPath();
+        ctx.moveTo(volta.inizio ? x1 : st.getX(), volta.inizio ? yVolta + 14 : yVolta);
+        if (volta.inizio) ctx.lineTo(x1, yVolta);
+        ctx.lineTo(x2, yVolta); if (volta.fine) ctx.lineTo(x2, yVolta + 14);
+        ctx.stroke(); ctx.restore();
+        if (volta.inizio) { ctx.save(); ctx.setFont("Arial", 12, "bold"); ctx.setFillStyle("#111"); ctx.fillText(volta.numero + ".", x1 + 5, yVolta + 13); ctx.restore(); }
+      });
       if (conTesti) {
-        const yTesti = ySopra - ((tastiera || o.nomi) ? 18 : 4);
+        const yTesti = (volteRiga.length ? yVolta - 6 : ySopra - ((tastiera || o.nomi) ? 18 : 4));
         const scrivi = (t, xx, allinea) => { ctx.save(); ctx.setFont("Georgia, serif", 12, "normal", "italic"); ctx.setFillStyle("#334155");
           const w = ctx.measureText(t).width; ctx.fillText(t, allinea === "destra" ? xx - w : xx, yTesti); ctx.restore(); };
         daScrivere.forEach(sn => {
@@ -416,6 +441,7 @@
           if (e.testi) scrivi(e.testi.join("  "), e.intera ? sn.getStave().getNoteStartX() : sn.getAbsoluteX() - 4);
           if (e.testiDopo) scrivi(e.testiDopo.join("  "), sn.getStave().getX() + sn.getStave().getWidth() - 4, "destra");
         });
+        testiPause.forEach(tp => scrivi(tp.t, tp.x));
         if (r === 0 && (brano.andamento || brano.metronomo)) {
           const nota = brano.metronomo ? ({ quarter: "♩", half: "𝅗𝅥", eighth: "♪" }[brano.metronomo.unita] || "♩") + " = " + brano.metronomo.valore : "";
           const t = [brano.andamento, nota].filter(Boolean).join("   ");
@@ -472,5 +498,188 @@
     return contenitore;
   }
 
-  global.MotoreSchemi = { disegnaGruppo, disegnaBrano, leggiMusicXML, noteUsate, POSIZIONI, COLORI, NOMI, daNomi };
+  /* ===================== spartito adattato a un riquadro =====================
+     Per ogni numero di battute per riga (da 2 a 8) allarga le battute quanto serve per riempire
+     il riquadro (mai sotto una larghezza minima leggibile) e tiene la soluzione con le note più grandi.
+     Restituisce { svg, scala }: lo spartito disegnato in "contenitore" e il suo ingrandimento. */
+  function adattaBrano(contenitore, brano, opzioni, larghArea, altoArea) {
+    const minBattuta = 150, testa = 120;
+    let migliore = null;
+    for (let perRiga = 2; perRiga <= 8; perRiga++) {
+      if (perRiga > brano.battute.length) break;
+      const minimo = minBattuta * perRiga + testa;
+      disegnaBrano(contenitore, brano, Object.assign({}, opzioni, { larghezza: minimo, perRiga }));
+      const altoLogico = contenitore.querySelector("svg").viewBox.baseVal.height;
+      const larghIdeale = altoLogico * larghArea / altoArea;        // larghezza che riempie anche in altezza
+      const larghezza = Math.max(minimo, larghIdeale);
+      const scala = Math.min(larghArea / larghezza, altoArea / altoLogico);
+      if (!migliore || scala > migliore.scala + 1e-6) migliore = { perRiga, larghezza, scala };
+    }
+    disegnaBrano(contenitore, brano, Object.assign({}, opzioni, { larghezza: Math.round(migliore.larghezza), perRiga: migliore.perRiga }));
+    const svg = contenitore.querySelector("svg"), vb = svg.viewBox.baseVal;
+    return { svg, scala: Math.min(larghArea / vb.width, altoArea / vb.height), perRiga: migliore.perRiga };
+  }
+
+  /* ===================== pagina A4 orizzontale, a tutto foglio =====================
+     paginaA4(brano, opzioni, extra) -> Promise<SVGElement> di 1123 x 794 (A4 a 96 dpi).
+     extra: { numero, titolo, riquadri: [testi], disegno: url di un SVG, pausePiuBattute }
+     In alto: numero, titolo colorato, novità, schema dello strumento, disegno.
+     Sotto: lo spartito, grande quanto il foglio permette. */
+  const NS = "http://www.w3.org/2000/svg";
+  const PW = 1123, PH = 794, M = 22;
+  const esc = t => String(t).replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
+  let fontIncorporato = null;
+  function caricaFontTitolo() {   // il carattere del titolo, incorporato nel PDF (se la rete lo permette)
+    if (fontIncorporato) return fontIncorporato;
+    fontIncorporato = fetch("https://fonts.googleapis.com/css2?family=Fredoka:wght@700&display=swap")
+      .then(r => r.text()).then(css => {
+        const url = (css.match(/url\((https:[^)]+\.woff2)\)/) || [])[1];
+        if (!url) return "";
+        return fetch(url).then(r => r.arrayBuffer()).then(buf => {
+          let bin = ""; const v = new Uint8Array(buf);
+          for (let i = 0; i < v.length; i += 0x8000) bin += String.fromCharCode.apply(null, v.subarray(i, i + 0x8000));
+          return `@font-face{font-family:'Fredoka';font-weight:700;src:url(data:font/woff2;base64,${btoa(bin)}) format('woff2');}`;
+        });
+      }).catch(() => "");
+    return fontIncorporato;
+  }
+  function inDataUrl(url) {
+    return fetch(url).then(r => r.text()).then(t => "data:image/svg+xml;base64," + btoa(unescape(encodeURIComponent(t)))).catch(() => null);
+  }
+  function annida(svgSorgente, x, y, w, h, allinea) {   // copia un SVG dentro la pagina, in un riquadro
+    const n = document.createElementNS(NS, "svg");
+    n.setAttribute("x", x); n.setAttribute("y", y); n.setAttribute("width", w); n.setAttribute("height", h);
+    n.setAttribute("viewBox", svgSorgente.getAttribute("viewBox"));
+    n.setAttribute("preserveAspectRatio", (allinea || "xMidYMid") + " meet");
+    n.innerHTML = svgSorgente.innerHTML;
+    return n;
+  }
+  async function paginaA4(brano, opzioni, extra) {
+    extra = extra || {};
+    const fuori = document.createElement("div");
+    fuori.style.cssText = "position:fixed;left:-20000px;top:0;width:1400px;background:#fff";
+    document.body.appendChild(fuori);
+    try {
+      const pagina = document.createElementNS(NS, "svg");
+      pagina.setAttribute("xmlns", NS); pagina.setAttribute("viewBox", `0 0 ${PW} ${PH}`);
+      pagina.setAttribute("width", PW); pagina.setAttribute("height", PH);
+      let corpo = `<rect width="${PW}" height="${PH}" fill="#fff"/>`;
+      // --- intestazione ---
+      const riquadri = (extra.riquadri || []).map(t => t.split(/\n/).map(r => r.trim()).filter(Boolean));
+      const larghSinistra = PW * 0.44;
+      let xT = M;
+      if (extra.numero != null) {
+        corpo += `<circle cx="${M + 22}" cy="${M + 24}" r="22" fill="#5E50A1"/><text x="${M + 22}" y="${M + 32}" text-anchor="middle" font-family="Fredoka, 'Arial Rounded MT Bold', Arial, sans-serif" font-weight="700" font-size="22" fill="#fff">${extra.numero}</text>`;
+        xT = M + 56;
+      }
+      const titolo = extra.titolo || brano.titoloBreve || brano.titolo || "";
+      const fs = Math.max(22, Math.min(40, (larghSinistra - (xT - M)) / Math.max(6, titolo.length * 0.58)));
+      let k = 0;
+      const tspans = [...titolo].map(c => c === " " ? " " : `<tspan fill="${["#E21C48","#F99D1C","#FFF428","#BED958","#009C95","#5E50A1","#CF3E96"][k++ % 7]}">${esc(c)}</tspan>`).join("");
+      corpo += `<text x="${xT}" y="${M + 36}" font-family="Fredoka, 'Arial Rounded MT Bold', 'Arial Black', Arial, sans-serif" font-weight="700" font-size="${fs}" stroke="#1F2430" stroke-width="${fs / 13}" paint-order="stroke" stroke-linejoin="round">${tspans}</text>`;
+      let yR = M + 56;
+      riquadri.forEach(righe => {
+        const novita = /^NOVIT/i.test(righe[0]);
+        const testa = novita ? "Novità: " + righe[0].replace(/^NOVIT[ÀA]\s*:?\s*/i, "") : "Attenzione";
+        const resto = novita ? righe.slice(1) : righe;
+        const h = 24 + resto.length * 15 + 8;
+        corpo += `<rect x="${M}" y="${yR}" width="${larghSinistra}" height="${h}" rx="10" fill="${novita ? "#FFF7B8" : "#DDF3FF"}" stroke="${novita ? "#F5D90A" : "#7CC6F2"}" stroke-width="2"/>`;
+        corpo += `<text x="${M + 12}" y="${yR + 20}" font-family="Fredoka, 'Arial Rounded MT Bold', Arial, sans-serif" font-weight="700" font-size="15" fill="#1F2430">${novita ? "★ " : "💡 "}${esc(testa)}</text>`;
+        resto.forEach((r, i) => corpo += `<text x="${M + 12}" y="${yR + 38 + i * 15}" font-family="Arial, sans-serif" font-size="12.5" fill="#1F2430">${esc(r)}</text>`);
+        yR += h + 6;
+      });
+      const altoTesta = Math.max(yR - M, 118);
+      // --- disegno (in alto a destra) e schema dello strumento (al centro) ---
+      const latoDis = extra.disegno ? Math.min(altoTesta + 6, 150) : 0;
+      if (extra.disegno) {
+        const dataUrl = await inDataUrl(extra.disegno);
+        if (dataUrl) corpo += `<image x="${PW - M - latoDis}" y="${M - 6}" width="${latoDis}" height="${latoDis}" href="${dataUrl}"/>`;
+      }
+      pagina.innerHTML = corpo;
+      const divSchema = document.createElement("div"); fuori.appendChild(divSchema);
+      const gs = disegnaGruppo(divSchema, opzioni.strumento || "flauto", noteUsate(brano));
+      gs.setAttribute("viewBox", `0 0 ${gs.getAttribute("width")} ${gs.getAttribute("height")}`);
+      const xS = M + larghSinistra + 14, wS = PW - M - latoDis - 10 - xS;
+      pagina.appendChild(annida(gs, xS, M - 4, wS, altoTesta + 4, "xMidYMid"));
+      // --- spartito: provo diverse battute per riga e tengo il più grande che sta nel foglio ---
+      const yS = M + altoTesta + 10, wSp = PW - 2 * M, hSp = PH - yS - M;
+      const divSp = document.createElement("div"); fuori.appendChild(divSp);
+      const ad = adattaBrano(divSp, brano, Object.assign({}, opzioni, { titolo: false, schema: false, pausePiuBattute: extra.pausePiuBattute }), wSp, hSp);
+      pagina.appendChild(annida(ad.svg, M, yS, wSp, hSp, "xMidYMid"));
+      return pagina;
+    } finally { fuori.remove(); }
+  }
+
+  /* stampa: la pagina occupa tutto il foglio A4 orizzontale */
+  function stampaPagina(pagina) {
+    let area = document.getElementById("motoreAreaStampa");
+    if (!area) {
+      area = document.createElement("div"); area.id = "motoreAreaStampa"; document.body.appendChild(area);
+      const st = document.createElement("style");
+      st.textContent = "#motoreAreaStampa{display:none}@media print{@page{size:A4 landscape;margin:0}" +
+        "body.motore-stampa>*:not(#motoreAreaStampa){display:none!important}body.motore-stampa{background:#fff!important;margin:0}" +
+        "body.motore-stampa::before,body.motore-stampa::after{display:none!important}" +
+        "body.motore-stampa #motoreAreaStampa{display:block}#motoreAreaStampa svg{width:297mm;height:209mm;display:block}}";
+      document.head.appendChild(st);
+      window.addEventListener("afterprint", () => { document.body.classList.remove("motore-stampa"); area.innerHTML = ""; });
+    }
+    area.innerHTML = ""; area.appendChild(pagina);
+    document.body.classList.add("motore-stampa");
+    window.print();
+  }
+
+  /* PDF: la pagina diventa un'immagine ad alta risoluzione dentro un PDF A4 orizzontale, senza margini */
+  async function salvaPaginaPDF(pagina, nomeFile) {
+    const font = await caricaFontTitolo();
+    const copia = pagina.cloneNode(true);
+    if (font) { const st = document.createElementNS(NS, "style"); st.textContent = font; copia.insertBefore(st, copia.firstChild); }
+    const scala = 2.6;
+    const url = URL.createObjectURL(new Blob([new XMLSerializer().serializeToString(copia)], { type: "image/svg+xml" }));
+    const img = new Image();
+    await new Promise((ok, ko) => { img.onload = ok; img.onerror = ko; img.src = url; });
+    const canvas = document.createElement("canvas"); canvas.width = Math.round(PW * scala); canvas.height = Math.round(PH * scala);
+    const c = canvas.getContext("2d"); c.fillStyle = "#fff"; c.fillRect(0, 0, canvas.width, canvas.height);
+    c.drawImage(img, 0, 0, canvas.width, canvas.height); URL.revokeObjectURL(url);
+    const dati = atob(canvas.toDataURL("image/jpeg", 0.9).split(",")[1]);
+    const jpeg = new Uint8Array(dati.length); for (let i = 0; i < dati.length; i++) jpeg[i] = dati.charCodeAt(i);
+    const W = 842, H = 595, enc = new TextEncoder(), parti = [], offset = []; let lung = 0;
+    const scrivi = d => { const b = typeof d === "string" ? enc.encode(d) : d; parti.push(b); lung += b.length; };
+    const contenuto = `q ${W} 0 0 ${H} 0 0 cm /Im0 Do Q`;
+    scrivi("%PDF-1.4\n");
+    const ogg = (n, t) => { offset[n] = lung; scrivi(`${n} 0 obj\n${t}\nendobj\n`); };
+    ogg(1, "<< /Type /Catalog /Pages 2 0 R >>"); ogg(2, "<< /Type /Pages /Kids [3 0 R] /Count 1 >>");
+    ogg(3, `<< /Type /Page /Parent 2 0 R /MediaBox [0 0 ${W} ${H}] /Resources << /XObject << /Im0 4 0 R >> >> /Contents 5 0 R >>`);
+    offset[4] = lung;
+    scrivi(`4 0 obj\n<< /Type /XObject /Subtype /Image /Width ${canvas.width} /Height ${canvas.height} /ColorSpace /DeviceRGB /BitsPerComponent 8 /Filter /DCTDecode /Length ${jpeg.length} >>\nstream\n`);
+    scrivi(jpeg); scrivi("\nendstream\nendobj\n");
+    ogg(5, `<< /Length ${contenuto.length} >>\nstream\n${contenuto}\nendstream`);
+    const xref = lung;
+    scrivi("xref\n0 6\n0000000000 65535 f \n" + [1, 2, 3, 4, 5].map(n => String(offset[n]).padStart(10, "0") + " 00000 n \n").join(""));
+    scrivi(`trailer\n<< /Size 6 /Root 1 0 R >>\nstartxref\n${xref}\n%%EOF`);
+    const href = URL.createObjectURL(new Blob(parti, { type: "application/pdf" }));
+    const a = document.createElement("a"); a.href = href; a.download = nomeFile; document.body.appendChild(a); a.click(); a.remove();
+    setTimeout(() => URL.revokeObjectURL(href), 3000);
+  }
+
+  /* schema di una sola nota (solo la diteggiatura, senza pentagramma), come SVG a sé */
+  function schemaNota(strumento, n) {
+    let w, h, corpo;
+    if (strumento === "flauto") { w = 66; h = 188; corpo = svgFlauto(n, 40, 6); }
+    else if (strumento === "tastiera") { w = 150; h = 64; corpo = svgTastiera(n, 75, 5); }
+    else { w = larghezzaCorde(strumento, n) + 12; h = (CORDE[strumento] - 1) * 15 + 34; corpo = svgCorde(strumento, n, w / 2 + 4, 8); }
+    return `<svg xmlns="${NS}" viewBox="0 0 ${w} ${h}" style="display:block;width:100%;height:auto"><g stroke="none">${corpo}</g></svg>`;
+  }
+  /* carte delle note: nome colorato + diteggiatura, una carta per nota */
+  function disegnaCarte(contenitore, strumento, note) {
+    contenitore.innerHTML = "";
+    note.forEach(n => {
+      const carta = document.createElement("div"); carta.className = "carta-nota";
+      const nome = NOMI[n.lettera].replace(/^./, c => c.toUpperCase()) + (n.alt === "b" ? "♭" : n.alt === "#" ? "♯" : "");
+      carta.innerHTML = `<div class="carta-nome" style="color:${COLORI[n.lettera]}">${nome}</div><div class="carta-schema">${schemaNota(strumento, n)}</div>`;
+      contenitore.appendChild(carta);
+    });
+  }
+
+  global.MotoreSchemi = { disegnaGruppo, disegnaBrano, leggiMusicXML, noteUsate, POSIZIONI, COLORI, NOMI, daNomi,
+    paginaA4, stampaPagina, salvaPaginaPDF, disegnaCarte, adattaBrano };
 })(window);

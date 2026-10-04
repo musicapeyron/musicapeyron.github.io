@@ -338,14 +338,6 @@
   button.score-dl { border: 0; cursor: pointer; font-family: inherit; }
   .azioni-spartito { display: flex; gap: 8px; flex-wrap: wrap; }
   .azioni-spartito .score-dl { margin-top: 12px; }
-  #areaStampa { display: none; }
-  @media print {
-    body.stampando > *:not(#areaStampa) { display: none !important; }
-    body.stampando #areaStampa { display: block; }
-    body.stampando { background: #fff !important; }
-    body.stampando::before, body.stampando::after { display: none !important; }
-    @page { size: A4 landscape; margin: 12mm; }
-  }
 
   .score-dl {
     display: inline-block;
@@ -405,7 +397,6 @@
 
 <main id="brani-container"></main>
 
-<div id="areaStampa"></div>
 <div class="lightbox" id="lightbox">
   <button class="lightbox-close" id="lightboxClose" aria-label="Chiudi">✕</button>
   <div class="lightbox-inner" id="lightboxInner"></div>
@@ -573,22 +564,15 @@
       const div = wrap.querySelector('.spartito');
       return disegna(div, Math.min(760, Math.max(300, div.clientWidth - 8)));
     };
-    pulsanti[0].addEventListener('click', () => {
-      const area = document.getElementById('areaStampa');
-      area.innerHTML = '<div class="spartito"></div>';
-      area.style.width = '1000px';
-      disegna(area.firstChild, 1000).then(() => {
-        document.body.classList.add('stampando');
-        window.print();
-      });
-    });
+    // stampa e PDF: pagina A4 orizzontale a tutto foglio, con titolo colorato e schema dello strumento
+    const pagina = () => caricaBrano(b.numero).then(brano => MotoreSchemi.paginaA4(brano,
+      { strumento: strumento.id, colori: versione.colori, nomi: versione.nomi }, { titolo: "Brano " + b.numero }));
+    pulsanti[0].addEventListener('click', () => pagina().then(MotoreSchemi.stampaPagina));
     pulsanti[1].addEventListener('click', async () => {
       const btn = pulsanti[1], testo = btn.textContent;
       btn.textContent = 'Preparo il PDF…'; btn.disabled = true;
-      try {
-        const nome = `Brano ${b.numero} - ${strumento.label} - ${versione.label}.pdf`;
-        await salvaPDF(disegna, nome);
-      } finally { btn.textContent = testo; btn.disabled = false; }
+      try { await MotoreSchemi.salvaPaginaPDF(await pagina(), `Brano ${b.numero} - ${strumento.label} - ${versione.label}.pdf`); }
+      finally { btn.textContent = testo; btn.disabled = false; }
     });
     aggiornamenti.push(mostra);
     card.querySelectorAll('.versions button').forEach(btn => {
@@ -603,68 +587,6 @@
     mostra();   // dopo l'inserimento nella pagina, così la larghezza disponibile è quella vera
   });
 
-  /* ---------- Salva PDF: lo spartito diventa un'immagine ad alta risoluzione
-     dentro un PDF A4 orizzontale, costruito direttamente nel browser ---------- */
-  async function spartitoInImmagine(disegna) {
-    const fuori = document.createElement('div');
-    fuori.style.cssText = 'position:fixed;left:-10000px;top:0;width:1000px;background:#fff';
-    fuori.innerHTML = '<div class="spartito"></div>';
-    document.body.appendChild(fuori);
-    try {
-      await disegna(fuori.firstChild, 1000);
-      const box = fuori.getBoundingClientRect(), scala = 3;
-      const canvas = document.createElement('canvas');
-      canvas.width = Math.round(box.width * scala); canvas.height = Math.round(box.height * scala);
-      const c = canvas.getContext('2d');
-      c.fillStyle = '#fff'; c.fillRect(0, 0, canvas.width, canvas.height);
-      for (const svg of fuori.querySelectorAll('svg')) {
-        const r = svg.getBoundingClientRect();
-        const copia = svg.cloneNode(true);
-        copia.setAttribute('xmlns', 'http://www.w3.org/2000/svg');
-        copia.setAttribute('width', r.width); copia.setAttribute('height', r.height);
-        const url = URL.createObjectURL(new Blob([new XMLSerializer().serializeToString(copia)], { type: 'image/svg+xml' }));
-        const img = new Image();
-        await new Promise((ok, ko) => { img.onload = ok; img.onerror = ko; img.src = url; });
-        c.drawImage(img, (r.left - box.left) * scala, (r.top - box.top) * scala, r.width * scala, r.height * scala);
-        URL.revokeObjectURL(url);
-      }
-      return canvas;
-    } finally { fuori.remove(); }
-  }
-  function pdfDaJpeg(jpeg, wImg, hImg) {
-    // pagina A4 orizzontale (842 x 595 punti), immagine centrata con margini di 30 punti
-    const W = 842, H = 595, m = 30, k = Math.min((W - 2 * m) / wImg, (H - 2 * m) / hImg);
-    const w = wImg * k, h = hImg * k, x = (W - w) / 2, y = H - m - h;
-    const enc = new TextEncoder(), parti = [], offset = [];
-    let lung = 0;
-    const scrivi = d => { const b = typeof d === 'string' ? enc.encode(d) : d; parti.push(b); lung += b.length; };
-    const contenuto = `q ${w.toFixed(2)} 0 0 ${h.toFixed(2)} ${x.toFixed(2)} ${y.toFixed(2)} cm /Im0 Do Q`;
-    scrivi('%PDF-1.4\n');
-    const oggetto = (n, corpo) => { offset[n] = lung; scrivi(`${n} 0 obj\n${corpo}\nendobj\n`); };
-    oggetto(1, '<< /Type /Catalog /Pages 2 0 R >>');
-    oggetto(2, '<< /Type /Pages /Kids [3 0 R] /Count 1 >>');
-    oggetto(3, `<< /Type /Page /Parent 2 0 R /MediaBox [0 0 ${W} ${H}] /Resources << /XObject << /Im0 4 0 R >> >> /Contents 5 0 R >>`);
-    offset[4] = lung;
-    scrivi(`4 0 obj\n<< /Type /XObject /Subtype /Image /Width ${wImg} /Height ${hImg} /ColorSpace /DeviceRGB /BitsPerComponent 8 /Filter /DCTDecode /Length ${jpeg.length} >>\nstream\n`);
-    scrivi(jpeg); scrivi('\nendstream\nendobj\n');
-    oggetto(5, `<< /Length ${contenuto.length} >>\nstream\n${contenuto}\nendstream`);
-    const xref = lung;
-    scrivi('xref\n0 6\n0000000000 65535 f \n' + [1, 2, 3, 4, 5].map(n => String(offset[n]).padStart(10, '0') + ' 00000 n \n').join(''));
-    scrivi(`trailer\n<< /Size 6 /Root 1 0 R >>\nstartxref\n${xref}\n%%EOF`);
-    return new Blob(parti, { type: 'application/pdf' });
-  }
-  async function salvaPDF(disegna, nomeFile) {
-    const canvas = await spartitoInImmagine(disegna);
-    const dati = atob(canvas.toDataURL('image/jpeg', 0.92).split(',')[1]);
-    const jpeg = new Uint8Array(dati.length);
-    for (let i = 0; i < dati.length; i++) jpeg[i] = dati.charCodeAt(i);
-    const url = URL.createObjectURL(pdfDaJpeg(jpeg, canvas.width, canvas.height));
-    const a = document.createElement('a'); a.href = url; a.download = nomeFile;
-    document.body.appendChild(a); a.click(); a.remove();
-    setTimeout(() => URL.revokeObjectURL(url), 2000);
-  }
-
-  window.addEventListener('afterprint', () => { document.body.classList.remove('stampando'); document.getElementById('areaStampa').innerHTML = ''; });
   let ultimaLarghezza = window.innerWidth, attesa;
   window.addEventListener('resize', () => {
     clearTimeout(attesa);

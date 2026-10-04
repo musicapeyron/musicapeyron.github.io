@@ -330,14 +330,6 @@
   button.score-dl { border: 0; cursor: pointer; font-family: inherit; }
   .azioni-spartito { display: flex; gap: 8px; flex-wrap: wrap; }
   .azioni-spartito .score-dl { margin-top: 12px; }
-  #areaStampa { display: none; }
-  @media print {
-    body.stampando > *:not(#areaStampa) { display: none !important; }
-    body.stampando #areaStampa { display: block; }
-    body.stampando { background: #fff !important; }
-    body.stampando::before, body.stampando::after { display: none !important; }
-    @page { size: A4 landscape; margin: 12mm; }
-  }
 
   .score-dl {
     display: inline-block;
@@ -446,6 +438,11 @@
   .lim-lato .bp-riquadro { font-size: clamp(13px, 1.1vw, 16px); }
   .lim-lato .bp-schema { max-width: 100%; margin-top: auto; align-self: center; }
   .lim-lato .bp-schema svg { margin: 0 auto !important; }
+  .lim-carte { display: grid; grid-template-columns: repeat(2, 1fr); gap: 8px; margin-top: auto; justify-items: center; }
+  .carta-nota { background: #fff; border: 1.5px solid #E2E8F0; border-radius: 12px; padding: 4px 6px 6px; max-width: 120px; justify-self: center; width: 100%; box-shadow: 0 2px 6px rgba(30,27,75,0.08); }
+  .carta-nome { font-family: 'Fredoka', 'Manrope', sans-serif; font-weight: 700; font-size: 20px; text-align: center; line-height: 1;
+    -webkit-text-stroke: 1.5px #1F2430; paint-order: stroke fill; margin: 2px 0 2px; }
+  .lim-lato .bp-disegno { transition: none; }
   .lim-spartito { display: flex; align-items: center; justify-content: center; padding: 18px 26px 18px 18px; overflow: hidden; }
   .lightbox .lim-spartito .spartito { width: 100%; max-width: none; max-height: none; overflow: visible; padding: 0; background: transparent; }
   .lim-spartito svg { display: block; margin: 0 auto; }
@@ -468,7 +465,6 @@
 
 <main id="brani-container"></main>
 
-<div id="areaStampa"></div>
 <div class="lightbox bp-lim" id="lightbox">
   <button class="lightbox-close" id="lightboxClose" aria-label="Chiudi">✕</button>
   <div class="lightbox-inner" id="lightboxInner"></div>
@@ -479,7 +475,7 @@
 <script>
   const CARTELLA = "media/brani-propedeutici/";
   const NUMERI = Array.from({ length: 28 }, (_, i) => i + 1);
-  const DISEGNI = [4, 7, 20];          // brani che hanno già il loro disegno
+  const DISEGNI = NUMERI;              // brani che hanno il loro disegno (gli altri mostrano una nota generica)
   const due = n => String(n).padStart(2, "0");
   const disegno = n => CARTELLA + "disegni/" + (DISEGNI.includes(n) ? "brano" + due(n) : "nota") + ".svg";
 
@@ -508,15 +504,16 @@
     { label: "Nomi delle note", colori: false, nomi: true  },
     { label: "Colori e nomi",   colori: true,  nomi: true  }
   ];
-  const VERSIONE_INIZIALE = 3;          // per la primaria si parte con colori e nomi
+  const VERSIONE_INIZIALE = 0;          // si parte dalla versione standard
   let strumento = STRUMENTI[0];
   try { strumento = STRUMENTI.find(x => x.id === localStorage.getItem('primiBrani.strumento')) || STRUMENTI[0]; } catch (e) {}
 
   const cache = {};
   const caricaBrano = n => cache[n] || (cache[n] = fetch(CARTELLA + "brano" + due(n) + ".musicxml")
     .then(r => r.text()).then(t => { const b = MotoreSchemi.leggiMusicXML(t); b.titolo = n + ". " + b.titoloBreve; return b; }));
-  const opzioni = (versione, extra) => Object.assign({ strumento: strumento.id, colori: versione.colori, nomi: versione.nomi,
-    notaBaseDita: "g4", titolo: false, schema: false }, extra);
+  const PAUSE_RAGGRUPPATE = [28];        // brani in cui le battute di pausa consecutive diventano una sola, con il numero
+  const opzioni = (versione, extra, n) => Object.assign({ strumento: strumento.id, colori: versione.colori, nomi: versione.nomi,
+    notaBaseDita: "g4", titolo: false, schema: false, pausePiuBattute: PAUSE_RAGGRUPPATE.includes(n) }, extra);
 
   /* schema dello strumento: cresce in proporzione alle note del brano (non diventa enorme con una nota sola) */
   function disegnaSchema(div, brano, ingrandimento) {
@@ -554,26 +551,31 @@
         <h2 class="bp-titolo">${titoloColorato(brano.titoloBreve)}</h2>
         <div class="bp-disegno"><img src="${disegno(n)}" alt=""></div>
         ${brano.riquadri.map(riquadroHTML).join("")}
-        <div class="bp-schema"></div>
+        <div class="lim-carte"></div>
       </div>
       <div class="lim-spartito"><div class="spartito"></div></div>
     </div>`;
     lightbox.classList.add('open'); document.body.style.overflow = 'hidden';
-    disegnaSchema(lightboxInner.querySelector('.bp-schema'), brano, 190);
+    // colonna di sinistra: carte delle note; se non ci sta tutto, rimpicciolisco disegno e carte
+    const lato = lightboxInner.querySelector('.lim-lato'), carte = lightboxInner.querySelector('.lim-carte');
+    MotoreSchemi.disegnaCarte(carte, strumento.id, MotoreSchemi.noteUsate(brano));
+    const dis = lightboxInner.querySelector('.lim-lato .bp-disegno');
+    const nNote = MotoreSchemi.noteUsate(brano).length;
+    const prove = [];
+    for (const latoDis of [170, 140, 115, 95, 80])
+      for (const colonne of [Math.min(nNote, strumento.id === 'flauto' ? 3 : 2), Math.min(nNote, 3), nNote]) prove.push([latoDis, colonne]);
+    prove.push([0, nNote]);
+    for (const [latoDis, colonne] of prove) {
+      dis.style.display = latoDis ? '' : 'none'; dis.style.width = latoDis + 'px';
+      carte.style.gridTemplateColumns = `repeat(${Math.max(1, colonne)}, 1fr)`;
+      if (lato.scrollHeight <= lato.clientHeight + 1) break;
+    }
     // provo diversi numeri di battute per riga e tengo quello che rende lo spartito più grande senza scorrere
     const area = lightboxInner.querySelector('.lim-spartito'), div = area.querySelector('.spartito');
     const aw = area.clientWidth - 44, ah = area.clientHeight - 36;
-    let migliore = null;
-    for (const perRiga of [3, 4, 5, 6, 7, 8]) {
-      if (perRiga > brano.battute.length) break;
-      MotoreSchemi.disegnaBrano(div, brano, opzioni(versione, { larghezza: 180 * perRiga + 120, perRiga }));
-      const vbp = div.querySelector('svg').viewBox.baseVal;
-      const sc = Math.min(aw / vbp.width, ah / vbp.height);
-      if (!migliore || sc > migliore.scala) migliore = { perRiga, scala: sc };
-    }
-    MotoreSchemi.disegnaBrano(div, brano, opzioni(versione, { larghezza: 180 * migliore.perRiga + 120, perRiga: migliore.perRiga }));
-    const svg = div.querySelector('svg'), vb = svg.viewBox.baseVal;
-    const scala = Math.min(aw / vb.width, ah / vb.height, 2.6);   // i brani brevi non diventano enormi
+    const ad = MotoreSchemi.adattaBrano(div, brano, opzioni(versione, {}, n), aw, ah);
+    const svg = ad.svg, vb = svg.viewBox.baseVal;
+    const scala = Math.min(ad.scala, 2.6);   // i brani brevi non diventano enormi
     svg.style.width = (vb.width * scala) + "px"; svg.style.height = (vb.height * scala) + "px";
   }
 
@@ -607,7 +609,7 @@
     container.appendChild(card);
     const wrap = card.querySelector('.score-wrap'), div = wrap.querySelector('.spartito');
     const disegna = (d, larghezza, perRiga, extra) => caricaBrano(n).then(brano =>
-      MotoreSchemi.disegnaBrano(d, brano, opzioni(versione, Object.assign({ larghezza, perRiga }, extra))));
+      MotoreSchemi.disegnaBrano(d, brano, opzioni(versione, Object.assign({ larghezza, perRiga }, extra), n)));
     const mostra = () => caricaBrano(n).then(brano => {
       card.querySelector('.bp-titolo').innerHTML = titoloColorato(brano.titoloBreve);
       card.querySelector('.bp-riquadri').innerHTML = brano.riquadri.map(riquadroHTML).join("");
@@ -625,82 +627,19 @@
     }));
     wrap.addEventListener('click', () => apriLim(n, versione));
     const [btnStampa, btnPdf] = card.querySelectorAll('.azioni-spartito .score-dl');
-    btnStampa.addEventListener('click', () => {
-      const area = document.getElementById('areaStampa');
-      area.innerHTML = '<div class="spartito"></div>'; area.style.width = '1000px';
-      disegna(area.firstChild, 1000, undefined, { titolo: true, schema: true }).then(() => { document.body.classList.add('stampando'); window.print(); });
-    });
+    const pagina = () => caricaBrano(n).then(brano => MotoreSchemi.paginaA4(brano, opzioni(versione, {}, n),
+      { numero: n, titolo: brano.titoloBreve, riquadri: brano.riquadri, disegno: disegno(n), pausePiuBattute: PAUSE_RAGGRUPPATE.includes(n) }));
+    btnStampa.addEventListener('click', () => pagina().then(MotoreSchemi.stampaPagina));
     btnPdf.addEventListener('click', async () => {
       const testo = btnPdf.textContent; btnPdf.textContent = 'Preparo il PDF…'; btnPdf.disabled = true;
       try {
         const brano = await caricaBrano(n);
-        await salvaPDF((d, l) => disegna(d, l, undefined, { titolo: true, schema: true }), `${n}. ${brano.titoloBreve} - ${strumento.label} - ${versione.label}.pdf`);
+        await MotoreSchemi.salvaPaginaPDF(await pagina(), `${n}. ${brano.titoloBreve} - ${strumento.label} - ${versione.label}.pdf`);
       } finally { btnPdf.textContent = testo; btnPdf.disabled = false; }
     });
     mostra();
   });
 
-  async function spartitoInImmagine(disegna) {
-    const fuori = document.createElement('div');
-    fuori.style.cssText = 'position:fixed;left:-10000px;top:0;width:1000px;background:#fff';
-    fuori.innerHTML = '<div class="spartito"></div>';
-    document.body.appendChild(fuori);
-    try {
-      await disegna(fuori.firstChild, 1000);
-      const box = fuori.getBoundingClientRect(), scala = 3;
-      const canvas = document.createElement('canvas');
-      canvas.width = Math.round(box.width * scala); canvas.height = Math.round(box.height * scala);
-      const c = canvas.getContext('2d');
-      c.fillStyle = '#fff'; c.fillRect(0, 0, canvas.width, canvas.height);
-      for (const svg of fuori.querySelectorAll('svg')) {
-        const r = svg.getBoundingClientRect();
-        const copia = svg.cloneNode(true);
-        copia.setAttribute('xmlns', 'http://www.w3.org/2000/svg');
-        copia.setAttribute('width', r.width); copia.setAttribute('height', r.height);
-        const url = URL.createObjectURL(new Blob([new XMLSerializer().serializeToString(copia)], { type: 'image/svg+xml' }));
-        const img = new Image();
-        await new Promise((ok, ko) => { img.onload = ok; img.onerror = ko; img.src = url; });
-        c.drawImage(img, (r.left - box.left) * scala, (r.top - box.top) * scala, r.width * scala, r.height * scala);
-        URL.revokeObjectURL(url);
-      }
-      return canvas;
-    } finally { fuori.remove(); }
-  }
-  function pdfDaJpeg(jpeg, wImg, hImg) {
-    // pagina A4 orizzontale (842 x 595 punti), immagine centrata con margini di 30 punti
-    const W = 842, H = 595, m = 30, k = Math.min((W - 2 * m) / wImg, (H - 2 * m) / hImg);
-    const w = wImg * k, h = hImg * k, x = (W - w) / 2, y = H - m - h;
-    const enc = new TextEncoder(), parti = [], offset = [];
-    let lung = 0;
-    const scrivi = d => { const b = typeof d === 'string' ? enc.encode(d) : d; parti.push(b); lung += b.length; };
-    const contenuto = `q ${w.toFixed(2)} 0 0 ${h.toFixed(2)} ${x.toFixed(2)} ${y.toFixed(2)} cm /Im0 Do Q`;
-    scrivi('%PDF-1.4\n');
-    const oggetto = (n, corpo) => { offset[n] = lung; scrivi(`${n} 0 obj\n${corpo}\nendobj\n`); };
-    oggetto(1, '<< /Type /Catalog /Pages 2 0 R >>');
-    oggetto(2, '<< /Type /Pages /Kids [3 0 R] /Count 1 >>');
-    oggetto(3, `<< /Type /Page /Parent 2 0 R /MediaBox [0 0 ${W} ${H}] /Resources << /XObject << /Im0 4 0 R >> >> /Contents 5 0 R >>`);
-    offset[4] = lung;
-    scrivi(`4 0 obj\n<< /Type /XObject /Subtype /Image /Width ${wImg} /Height ${hImg} /ColorSpace /DeviceRGB /BitsPerComponent 8 /Filter /DCTDecode /Length ${jpeg.length} >>\nstream\n`);
-    scrivi(jpeg); scrivi('\nendstream\nendobj\n');
-    oggetto(5, `<< /Length ${contenuto.length} >>\nstream\n${contenuto}\nendstream`);
-    const xref = lung;
-    scrivi('xref\n0 6\n0000000000 65535 f \n' + [1, 2, 3, 4, 5].map(n => String(offset[n]).padStart(10, '0') + ' 00000 n \n').join(''));
-    scrivi(`trailer\n<< /Size 6 /Root 1 0 R >>\nstartxref\n${xref}\n%%EOF`);
-    return new Blob(parti, { type: 'application/pdf' });
-  }
-  async function salvaPDF(disegna, nomeFile) {
-    const canvas = await spartitoInImmagine(disegna);
-    const dati = atob(canvas.toDataURL('image/jpeg', 0.92).split(',')[1]);
-    const jpeg = new Uint8Array(dati.length);
-    for (let i = 0; i < dati.length; i++) jpeg[i] = dati.charCodeAt(i);
-    const url = URL.createObjectURL(pdfDaJpeg(jpeg, canvas.width, canvas.height));
-    const a = document.createElement('a'); a.href = url; a.download = nomeFile;
-    document.body.appendChild(a); a.click(); a.remove();
-    setTimeout(() => URL.revokeObjectURL(url), 2000);
-  }
-
-
-  window.addEventListener('afterprint', () => { document.body.classList.remove('stampando'); document.getElementById('areaStampa').innerHTML = ''; });
   let ultimaLarghezza = window.innerWidth, attesa;
   window.addEventListener('resize', () => {
     clearTimeout(attesa);
