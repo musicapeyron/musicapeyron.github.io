@@ -315,12 +315,14 @@
     svg.querySelectorAll("path, rect").forEach(el => { if (el.getAttribute("stroke") === "#999999") el.setAttribute("stroke", "#111"); });
     svg.setAttribute("viewBox", `0 0 ${W} ${yPrima + righe * altezzaRiga}`);
     svg.setAttribute("width", "100%"); svg.removeAttribute("height");
+    svg.style.width = "100%"; svg.style.height = "auto";   // VexFlow fissa la larghezza in pixel: lo spartito deve adattarsi al contenitore
 
     // schema dello strumento con le note usate nel brano
     const divSchema = document.createElement("div"); divSchema.className = "schema-brano"; contenitore.appendChild(divSchema);
     const g = disegnaGruppo(divSchema, o.strumento, usate);
     const gw = +g.getAttribute("width"), gh = +g.getAttribute("height");
     g.setAttribute("viewBox", `0 0 ${gw} ${gh}`); g.setAttribute("width", "100%"); g.removeAttribute("height");
+    g.style.width = "100%"; g.style.height = "auto";
     g.style.maxWidth = Math.min(gw * 0.9, o.larghezza * 0.75) + "px"; g.style.display = "block"; g.style.margin = "0 auto";
     return contenitore;
   }
