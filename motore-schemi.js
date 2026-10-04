@@ -217,6 +217,11 @@
         if (r && r.getAttribute("direction") === "forward") b.inizioRitornello = true;
         if (r && r.getAttribute("direction") === "backward") b.fineRitornello = true;
         if (!r && (bl.querySelector("bar-style") || {}).textContent === "light-heavy") b.fine = true;
+        const fineB = bl.querySelector("ending");
+        if (fineB) {
+          b.volta = b.volta || { numero: fineB.getAttribute("number"), inizio: false, fine: false };
+          if (fineB.getAttribute("type") === "start") b.volta.inizio = true; else b.volta.fine = true;
+        }
       });
       m.querySelectorAll(":scope > note").forEach(n => {
         if (n.querySelector("chord")) return;          // melodie a una voce
@@ -231,6 +236,13 @@
         b.eventi.push(ev);
       });
       brano.battute.push(b);
+    });
+    // le battute in mezzo a una volta non hanno segni propri: le collego
+    let aperta = null;
+    brano.battute.forEach(b => {
+      if (b.volta && b.volta.inizio) aperta = b.volta.numero;
+      else if (!b.volta && aperta) b.volta = { numero: aperta, inizio: false, fine: false };
+      if (b.volta && b.volta.fine) aperta = null;
     });
     return brano;
   }
@@ -264,29 +276,44 @@
     renderer.resize(W, yPrima + righe * altezzaRiga);
     const ctx = renderer.getContext();
     if (brano.titolo) { ctx.save(); ctx.setFont("Georgia, serif", 18); ctx.fillText(brano.titolo, W / 2 - ctx.measureText(brano.titolo).width / 2, 20); ctx.restore(); }
+    const alterazioniInChiave = {};
+    "fcgdaeb".slice(0, Math.max(0, brano.armatura)).split("").forEach(l => alterazioniInChiave[l] = "#");
+    "beadgcf".slice(0, Math.max(0, -brano.armatura)).split("").forEach(l => alterazioniInChiave[l] = "b");
     const keySpec = brano.armatura ? (["F","Bb","Eb","Ab","Db","Gb","Cb"][-brano.armatura - 1] || ["G","D","A","E","B","F#","C#"][brano.armatura - 1]) : null;
 
     for (let r = 0; r < righe; r++) {
       const battute = brano.battute.slice(r * perRiga, r * perRiga + perRiga);
       const y = yPrima + r * altezzaRiga + 10;
-      const testa = r === 0 ? 92 : 50;
-      const largB = (W - 20 - testa) / perRiga;
+      const testa = (r === 0 ? 92 : 50) + (brano.armatura ? Math.abs(brano.armatura) * 10 : 0);
+      // le battute con più note ricevono più spazio (minimo come 4 note)
+      const pesi = battute.map(b => Math.max(4, b.eventi.length));
+      const pesoTot = brano.battute.length >= perRiga ? Math.max(pesi.reduce((a, c) => a + c, 0), 4 * perRiga) : pesi.reduce((a, c) => a + c, 0);
+      const spazio = W - 20 - testa;
       let x = 10;
+      const daScrivere = [];   // note della riga: nomi e dita si scrivono alla fine, alla stessa altezza
+      let stRiga = null;
       battute.forEach((b, i) => {
-        const w = largB + (i === 0 ? testa : 0);
+        const w = spazio * pesi[i] / pesoTot + (i === 0 ? testa : 0);
         const st = new VF.Stave(x, y, w);
         if (i === 0) { st.addClef("treble"); if (keySpec) st.addKeySignature(keySpec); if (r === 0) st.addTimeSignature(brano.tempo.join("/")); }
         if (b.inizioRitornello) st.setBegBarType(VF.Barline.type.REPEAT_BEGIN);
+        if (b.volta) {
+          const T = VF.VoltaType || (VF.Volta && VF.Volta.type);
+          const tipo = b.volta.inizio && b.volta.fine ? T.BEGIN_END : b.volta.inizio ? T.BEGIN : b.volta.fine ? T.END : T.MID;
+          st.setVoltaType(tipo, b.volta.numero + ".", 21);   // appena sopra i nomi delle note
+        }
         if (b.fineRitornello) st.setEndBarType(VF.Barline.type.REPEAT_END);
         else if (b.fine || (r === righe - 1 && i === battute.length - 1)) st.setEndBarType(VF.Barline.type.END);
         st.setStyle({ strokeStyle: "#111", fillStyle: "#111" });
         st.setContext(ctx).draw();
         const note = b.eventi.map(e => {
           const durata = e.durata + (e.pausa ? "r" : "");
-          const sn = new VF.StaveNote({ keys: [e.pausa ? "b/4" : e.nota.lettera + e.nota.alt + "/" + e.nota.ottava], duration: durata, clef: "treble", auto_stem: true });
+          const sn = new VF.StaveNote({ keys: [e.pausa ? "b/4" : e.nota.lettera + e.nota.alt + "/" + e.nota.ottava], duration: durata, dots: e.punti, clef: "treble", auto_stem: true });
           for (let k = 0; k < e.punti; k++) VF.Dot.buildAndAttach([sn], { all: true });
           if (e.pausa) return sn;
-          if (e.nota.alt) sn.addModifier(new VF.Accidental(e.nota.alt), 0);
+          // alterazione scritta solo se diversa da quella in chiave
+          const inChiave = alterazioniInChiave[e.nota.lettera] || "";
+          if (e.nota.alt !== inChiave) sn.addModifier(new VF.Accidental(e.nota.alt || "n"), 0);
           const col = COLORI[e.nota.lettera];
           if (o.colori) sn.setKeyStyle(0, { fillStyle: col, strokeStyle: col });
           sn._nome = NOMI[e.nota.lettera].replace(/^./, c => c.toUpperCase()) + (e.nota.alt === "b" ? "♭" : e.nota.alt === "#" ? "♯" : "");
@@ -296,19 +323,28 @@
         const beams = VF.Beam.generateBeams(note);
         VF.Formatter.FormatAndDraw(ctx, st, note, { auto_beam: false });
         beams.forEach(bm => bm.setContext(ctx).draw());
-        // nomi delle note e dita: su righe fisse, in nero, come negli spartiti stampati
-        const ySopra = st.getYForLine(0) - 14, ySotto = st.getYForLine(4) + 44;
-        const testo = (t, xc, yy, font) => { ctx.save(); ctx.setFont(font[0], font[1]); ctx.setFillStyle("#111");
-          ctx.fillText(t, xc - ctx.measureText(t).width / 2, yy); ctx.restore(); };
-        note.forEach(sn => {
-          if (!sn._nome) return;
-          const xc = sn.getAbsoluteX() + sn.getGlyphWidth() / 2;
-          if (tastiera) {
-            if (sn._dito) testo(sn._dito, xc, ySopra, ["Arial", 10]);
-            if (o.nomi) testo(sn._nome, xc, ySotto, ["Georgia, serif", 12]);
-          } else if (o.nomi) testo(sn._nome, xc, ySopra, ["Georgia, serif", 12]);
-        });
+        note.forEach(sn => daScrivere.push(sn));
+        stRiga = st;
         x += w;
+      });
+      // nomi delle note e dita: in nero, tutti alla stessa altezza, sopra (o sotto) gambi e travi più sporgenti
+      let piuAlto = stRiga.getYForLine(0), piuBasso = stRiga.getYForLine(4);
+      daScrivere.forEach(sn => {
+        if (sn.isRest && sn.isRest()) return;
+        const ext = sn.getStemExtents ? sn.getStemExtents() : null;
+        if (ext) { piuAlto = Math.min(piuAlto, ext.topY, ext.baseY); piuBasso = Math.max(piuBasso, ext.topY, ext.baseY); }
+      });
+      const ySopra = Math.min(stRiga.getYForLine(0) - 14, piuAlto - 8);
+      const ySotto = Math.max(stRiga.getYForLine(4) + 30, piuBasso + 18);
+      const testo = (t, xc, yy, font) => { ctx.save(); ctx.setFont(font[0], font[1]); ctx.setFillStyle("#111");
+        ctx.fillText(t, xc - ctx.measureText(t).width / 2, yy); ctx.restore(); };
+      daScrivere.forEach(sn => {
+        if (!sn._nome) return;
+        const xc = sn.getAbsoluteX() + sn.getGlyphWidth() / 2;
+        if (tastiera) {
+          if (sn._dito) testo(sn._dito, xc, ySopra, ["Arial", 10]);
+          if (o.nomi) testo(sn._nome, xc, ySotto, ["Georgia, serif", 12]);
+        } else if (o.nomi) testo(sn._nome, xc, ySopra, ["Georgia, serif", 12]);
       });
     }
     const svg = divRigo.querySelector("svg");
