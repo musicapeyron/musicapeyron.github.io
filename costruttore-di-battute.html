@@ -516,7 +516,33 @@ function tono(t0, durata, freq, vol, tipo) {
   g.gain.setValueAtTime(vol * 0.75, t0 + Math.max(0.03, durata - 0.06)); g.gain.exponentialRampToValueAtTime(0.0001, t0 + durata);
   o.connect(g).connect(ac.destination); o.start(t0); o.stop(t0 + durata + 0.02);
 }
-const click = (t0, forte) => tono(t0, 0.05, forte ? 1600 : 1100, forte ? 0.25 : 0.14, "square");
+/* clic del metronomo: lo stesso dei giochi del sito (primo tempo un po' più acuto) */
+const click = (t0, forte) => toneGiochiA(t0, forte ? 780 : 520, 0.08, "triangle", forte ? 0.3 : 0.22);
+function toneGiochiA(t0, freq, durata, tipo, vol) {
+  const ctx = audio(); if (!volumeGiochi) { volumeGiochi = ctx.createGain(); volumeGiochi.gain.value = 0.75; volumeGiochi.connect(ctx.destination); }
+  const osc = ctx.createOscillator(), gain = ctx.createGain(); osc.type = tipo; osc.frequency.value = freq;
+  gain.gain.setValueAtTime(0.0001, t0); gain.gain.exponentialRampToValueAtTime(vol, t0 + 0.01); gain.gain.exponentialRampToValueAtTime(0.0001, t0 + durata);
+  osc.connect(gain); gain.connect(volumeGiochi); osc.start(t0); osc.stop(t0 + durata + 0.05);
+}
+/* pianoforte: lo stesso di "Leggi la nota" (fondamentale + armoniche, filtro che si scurisce);
+   in più, alla fine della figura il suono si smorza come quando si alza il dito dal tasto */
+function pianoforte(t0, freq, durataFigura) {
+  const ctx = audio(); if (!volumeGiochi) { volumeGiochi = ctx.createGain(); volumeGiochi.gain.value = 0.75; volumeGiochi.connect(ctx.destination); }
+  const duration = 1.9, fine = t0 + Math.min(durataFigura, duration);
+  const filter = ctx.createBiquadFilter();
+  filter.type = "lowpass"; filter.frequency.setValueAtTime(6500, t0); filter.frequency.exponentialRampToValueAtTime(800, t0 + duration); filter.Q.value = 0.6;
+  filter.connect(volumeGiochi);
+  [{ mult: 1, gain: 0.5, decay: duration }, { mult: 2, gain: 0.24, decay: duration * 0.8 }, { mult: 3, gain: 0.14, decay: duration * 0.6 },
+   { mult: 4, gain: 0.08, decay: duration * 0.45 }, { mult: 6, gain: 0.04, decay: duration * 0.3 }].forEach(h => {
+    const osc = ctx.createOscillator(), gain = ctx.createGain();
+    osc.type = "sine"; osc.frequency.value = freq * h.mult;
+    const stop = Math.min(t0 + h.decay, fine);
+    gain.gain.setValueAtTime(0.0001, t0); gain.gain.exponentialRampToValueAtTime(h.gain, t0 + 0.01);
+    gain.gain.exponentialRampToValueAtTime(Math.max(0.0001, h.gain * Math.pow(0.0001 / h.gain, (stop - t0) / h.decay)), stop);
+    gain.gain.exponentialRampToValueAtTime(0.0001, stop + 0.07);            // smorzatore
+    osc.connect(gain); gain.connect(filter); osc.start(t0); osc.stop(stop + 0.1);
+  });
+}
 /* fa sentire la battuta: una battuta di metronomo, poi il ritmo (le pause sono silenzio) */
 function ascolta(b, mattoni) {
   if (!b.length) return;
@@ -531,7 +557,7 @@ function ascolta(b, mattoni) {
   let x = t;
   b.forEach((tipo, i) => {
     const d = DATI.valori[tipo] * q;
-    if (!tipo.startsWith("paus")) tono(x, d * 0.92, 523.25, 0.32);
+    if (!tipo.startsWith("paus")) pianoforte(x, 493.88, d);      // il si, come sul pentagramma
     if (mattoni && mattoni[i]) {
       const m = mattoni[i], ritardo = (x - ac.currentTime) * 1000;
       riproduzione.push(setTimeout(() => m.classList.add("suona"), ritardo), setTimeout(() => m.classList.remove("suona"), ritardo + d * 1000 - 40));
