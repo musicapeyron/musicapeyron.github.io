@@ -285,6 +285,24 @@
   .versions + .score-wrap { margin-top: 10px; }
 
   /* barra degli strumenti: resta visibile mentre si scorre */
+  /* barra fissa in alto: strumenti + indice dei brani */
+  .barra-fissa { position: sticky; top: 0; z-index: 40; background: rgba(15, 23, 42, 0.88); backdrop-filter: blur(8px);
+    border-bottom: 1px solid rgba(255,255,255,0.08); }
+  .barra-fissa .strumenti-bar { position: static; background: transparent; border-bottom: 0; backdrop-filter: none; padding-bottom: 6px; }
+  .indice-bar { display: flex; flex-wrap: nowrap; gap: 6px; justify-content: safe center; overflow-x: auto; scrollbar-width: none;
+    padding: 2px 64px 9px; scroll-behavior: smooth; }
+  .indice-bar::-webkit-scrollbar { display: none; }
+  .indice-bar .ind { flex: none; display: inline-flex; align-items: center; gap: 6px; text-decoration: none; border-radius: 999px;
+    padding: 0; color: #EAF2FF; font-family: 'Manrope', sans-serif; font-weight: 700; font-size: 12.5px; }
+  .indice-bar .ind-num { width: 28px; height: 28px; border-radius: 50%; display: grid; place-items: center;
+    background: #5E50A1; color: #fff; font-family: 'Fredoka', 'Manrope', sans-serif; font-weight: 700; font-size: 13.5px;
+    box-shadow: inset 0 -3px 0 rgba(0,0,0,0.2); transition: transform .15s, box-shadow .15s; }
+  .indice-bar .ind.con-testo { padding-right: 12px; background: rgba(255,255,255,0.07); border: 1px solid rgba(255,255,255,0.12); }
+  .indice-bar .ind:hover .ind-num { transform: scale(1.08); }
+  .indice-bar .ind.attivo .ind-num { background: #F99D1C; color: #1F2430; box-shadow: 0 0 0 2px #fff; }
+  .indice-bar .ind.attivo.con-testo { border-color: #F99D1C; }
+  @media (max-width: 600px) { .indice-bar { padding: 2px 10px 8px 60px; justify-content: flex-start; gap: 5px; }
+    .indice-bar .ind-num { width: 26px; height: 26px; font-size: 12.5px; } }
   .strumenti-bar {
     position: sticky; top: 0; z-index: 40;
     display: flex; flex-wrap: wrap; justify-content: center; align-items: center; gap: 6px;
@@ -509,7 +527,10 @@
   <p>Scegli il tuo strumento, ascolta la base e suona: per ogni brano trovi la melodia con la base e la base da sola.</p>
 </header>
 
-<nav class="strumenti-bar" id="strumentiBar" aria-label="Scegli lo strumento"></nav>
+<div class="barra-fissa">
+  <nav class="strumenti-bar" id="strumentiBar" aria-label="Scegli lo strumento"></nav>
+  <nav class="indice-bar" id="indiceBar" aria-label="Indice dei brani"></nav>
+</div>
 
 <main id="brani-container"></main>
 
@@ -523,6 +544,7 @@
 <script>
   const CARTELLA = "media/primi-brani-2/";
   const NUMERI = [7, 8, 9, 10, 11];
+  let ETICHETTE_INDICE = {};            // testo accanto al numero nell'indice (es. la tonalità delle scale)
   const DISEGNI = [];                  // questa raccolta non ha disegni
   const due = n => String(n).padStart(2, "0");
   const disegno = n => null;
@@ -742,6 +764,7 @@
   NUMERI.forEach(n => {
     const card = document.createElement('article');
     card.className = 'bp-card';
+    card.id = 'brano-' + n;
     let versione = VERSIONI[VERSIONE_INIZIALE], dit = 'no';
     const scelta = () => Object.assign({}, versione, { dit });
     card.innerHTML = `
@@ -807,6 +830,29 @@
     });
     mostra();
   });
+
+  /* ---------- indice dei brani: sempre visibile, evidenzia il brano che si sta guardando ---------- */
+  const indice = document.getElementById('indiceBar');
+  indice.innerHTML = NUMERI.map(n => `<a href="#brano-${n}" class="ind${ETICHETTE_INDICE[n] ? ' con-testo' : ''}" data-n="${n}" title="${ETICHETTE_INDICE[n] || 'Brano ' + n}">` +
+    `<span class="ind-num">${n}</span>${ETICHETTE_INDICE[n] ? `<span class="ind-testo">${ETICHETTE_INDICE[n]}</span>` : ''}</a>`).join('');
+  const altezzaBarra = () => document.querySelector('.barra-fissa').getBoundingClientRect().height;
+  indice.querySelectorAll('.ind').forEach(a => a.addEventListener('click', ev => {
+    ev.preventDefault();
+    const c = document.getElementById('brano-' + a.dataset.n);
+    window.scrollTo({ top: c.getBoundingClientRect().top + window.scrollY - altezzaBarra() - 12, behavior: 'smooth' });
+  }));
+  let attivoPrima = null;
+  const aggiornaIndice = () => {
+    const soglia = altezzaBarra() + 80;
+    let attivo = NUMERI[0];
+    NUMERI.forEach(n => { const c = document.getElementById('brano-' + n); if (c && c.getBoundingClientRect().top <= soglia) attivo = n; });
+    if (attivo === attivoPrima) return; attivoPrima = attivo;
+    indice.querySelectorAll('.ind').forEach(a => a.classList.toggle('attivo', +a.dataset.n === attivo));
+    const a = indice.querySelector('.ind.attivo');   // l'indice scorre per tenere visibile il numero attivo
+    if (a && indice.scrollWidth > indice.clientWidth) indice.scrollLeft = a.offsetLeft - indice.clientWidth / 2 + a.offsetWidth / 2;
+  };
+  window.addEventListener('scroll', aggiornaIndice, { passive: true });
+  aggiornaIndice();
 
   let ultimaLarghezza = window.innerWidth, attesa;
   window.addEventListener('resize', () => {

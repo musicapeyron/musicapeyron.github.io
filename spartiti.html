@@ -368,6 +368,27 @@
   }
   .site-home-button:hover { background: rgba(255,255,255,0.2); transform: translateY(-2px); }
   @media (max-width: 600px) { header.hero { padding-top: 58px; } }
+  /* ---------- raccolte di spartiti ---------- */
+  #grid { grid-template-columns: repeat(auto-fill, minmax(340px, 1fr)); gap: 14px; }
+  .card.raccolta { flex-direction: row; align-items: center; gap: 14px; padding: 16px 16px 16px 18px; min-height: 0;
+    border-top: 3px solid var(--col); background: linear-gradient(135deg, color-mix(in srgb, var(--col) 14%, transparent), rgba(255,255,255,0.03) 60%); }
+  .card.raccolta:hover { transform: translateY(-2px); border-color: rgba(255,255,255,0.18); border-top-color: var(--col); }
+  .icona-raccolta { flex: none; width: 54px; height: 54px; border-radius: 50%; display: grid; place-items: center; font-size: 26px;
+    background: color-mix(in srgb, var(--col) 28%, rgba(255,255,255,0.05)); box-shadow: inset 0 0 0 2px color-mix(in srgb, var(--col) 60%, transparent); }
+  .testo-raccolta { flex: 1; min-width: 0; }
+  .card.raccolta h2 { margin: 0 0 3px; font-size: 16.5px; }
+  .card.raccolta p { margin: 0 0 9px; font-size: 13px; color: #9FB3CE; line-height: 1.4; }
+  .etichette { display: flex; flex-wrap: wrap; gap: 5px; align-items: center; }
+  .etichette .chip { font-size: 11px; font-weight: 700; color: #EAF2FF; background: rgba(255,255,255,0.08);
+    border: 1px solid rgba(255,255,255,0.12); border-radius: 999px; padding: 2px 9px; }
+  .etichette .lv { display: inline-flex; align-items: center; justify-content: center; width: 18px; height: 18px; border-radius: 5px;
+    font-size: 10.5px; font-weight: 800; color: #0f172a; }
+  .etichette .lv-P { background: #f9a8d4; } .etichette .lv-M { background: #fcd34d; } .etichette .lv-L { background: #93c5fd; }
+  .card.raccolta .freccia { flex: none; color: var(--col); font-size: 20px; font-weight: 700; opacity: .8; transition: transform .2s; }
+  .card.raccolta:hover .freccia { transform: translateX(3px); opacity: 1; }
+  .sottotitolo-spartiti { color: #9FB3CE; font-size: 15px; margin: 6px 0 0; text-align: center; }
+  @media (max-width: 600px) { #grid { grid-template-columns: 1fr; } .card.raccolta { padding: 13px 12px 13px 14px; }
+    .icona-raccolta { width: 46px; height: 46px; font-size: 22px; } }
 </style>
 </head>
 <body>
@@ -376,6 +397,7 @@
 
 <header class="hero">
   <h1>Spartiti</h1>
+  <p class="sottotitolo-spartiti">Spartiti progressivi per primaria e secondaria: scegli una raccolta.</p>
 
   <div class="staff" aria-hidden="true">
     <svg viewBox="0 0 300 32" preserveAspectRatio="none">
@@ -417,64 +439,42 @@
   /* ============================================================
      ELENCO — per aggiungerne uno, copia un blocco { ... }
      ============================================================ */
+  /* raccolte di spartiti, nell'ordine in cui compaiono */
   const raccolte = [
-    {
-      title: "Brani propedeutici",
-      icon: "🌱",
-      desc: "28 brani per iniziare, dal si al re, con basi e disegni.",
-      url: "brani-propedeutici.html"
-    },
-    {
-      title: "Primi Brani - prima parte",
-      icon: "🎼",
-      desc: "",
-      url: "primi-brani.html"
-    },
-    {
-      title: "Primi Brani - seconda parte",
-      icon: "🎼",
-      desc: "",
-      url: "primi-brani-2.html"
-    },
-    {
-      title: "Berens",
-      icon: "🎼",
-      desc: "Dagli Esercizi Melodici op. 62",
-      url: "berens.html"
-    },
-    {
-      title: "Diabelli",
-      icon: "🎼",
-      desc: "Dai 28 Studi Melodici op. 149",
-      url: "diabelli.html"
-    },
-    {
-      title: "Sonatina in Do Maggiore",
-      icon: "🎼",
-      desc: "",
-      url: "sonatina-do-maggiore.html"
-    },
-    {
-      title: "Scale",
-      icon: "🎼",
-      desc: "",
-      url: "scale.html"
-    }
+    { title: "Brani propedeutici", icon: "🌱", colore: "#E21C48", url: "brani-propedeutici.html",
+      desc: "Il primo percorso: dal si al re, una novità alla volta, con disegni e basi.", quanti: "28 brani", livelli: ["P"] },
+    { title: "Scale", icon: "🪜", colore: "#F99D1C", url: "scale.html",
+      desc: "Scale maggiori e minori, con le note alterate dall'armatura evidenziate.", quanti: "7 scale", livelli: ["M", "L"] },
+    { title: "Primi Brani · prima parte", icon: "🎈", colore: "#009C95", url: "primi-brani.html",
+      desc: "Brani da sol a re, con la melodia e la base da sola.", quanti: "6 brani", livelli: ["P", "M"] },
+    { title: "Primi Brani · seconda parte", icon: "🚀", colore: "#5EC8D8", url: "primi-brani-2.html",
+      desc: "Arrivano armatura, crome, ritornelli e volte.", quanti: "5 brani", livelli: ["P", "M"] },
+    { title: "Diabelli", icon: "🎓", colore: "#5E50A1", url: "diabelli.html",
+      desc: "Dagli Studi melodici op. 149, con basi anche rallentate.", quanti: "9 brani", livelli: ["M"] },
+    { title: "Berens", icon: "📖", colore: "#CF3E96", url: "berens.html",
+      desc: "Dagli Esercizi melodici op. 62, in posizione fissa di cinque dita.", quanti: "8 brani", livelli: ["M"] },
+    { title: "Sonatina in Do maggiore", icon: "🎹", colore: "#BED958", url: "sonatina-do-maggiore.html",
+      desc: "Per flauto dolce e pianoforte, con la base.", quanti: "1 brano", livelli: ["M"] }
   ];
+  const NOMI_LIVELLO = { P: "Primaria", M: "Medie", L: "Liceo musicale" };
 
   const grid = document.getElementById('grid');
   raccolte.forEach(t => {
     const card = document.createElement('a');
-    card.className = 'card';
+    card.className = 'card raccolta';
     card.href = t.url;
+    card.style.setProperty('--col', t.colore);
     card.innerHTML = `
-      <div class="top-row">
-        <div class="icon">${t.icon}</div>
-        ${t.label ? `<span class="label">${t.label}</span>` : ''}
+      <div class="icona-raccolta">${t.icon}</div>
+      <div class="testo-raccolta">
+        <h2>${t.title}</h2>
+        <p>${t.desc}</p>
+        <div class="etichette">
+          <span class="chip">${t.quanti}</span><span class="chip">con basi</span>
+          ${t.livelli.map(l => `<span class="lv lv-${l}" title="${NOMI_LIVELLO[l]}">${l}</span>`).join('')}
+        </div>
       </div>
-      <h2>${t.title}</h2>
-      ${t.desc ? `<p>${t.desc}</p>` : ''}
-    `;
+      <span class="freccia" aria-hidden="true">→</span>`;
     grid.appendChild(card);
   });
 </script>

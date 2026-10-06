@@ -417,6 +417,23 @@
   .strumento .card .icon { background: var(--chip); }
   .strumento .card .label { color: var(--accent); background: var(--chip); }
   .strumento .group-title span { font-size: 15px; }
+  /* ---------- tessere degli strumenti ---------- */
+  #strumenti { max-width: 1120px !important; }
+  .tessere { display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 14px; }
+  .tessera { border-radius: 16px; padding: 22px 14px 16px; text-align: center; display: flex; flex-direction: column; align-items: center;
+    background: linear-gradient(180deg, color-mix(in srgb, var(--col) 16%, transparent), rgba(255,255,255,0.03) 70%);
+    border: 1px solid rgba(255,255,255,0.09); border-top: 3px solid var(--col); }
+  .tessera-icona { width: 64px; height: 64px; border-radius: 50%; display: grid; place-items: center; font-size: 32px;
+    background: color-mix(in srgb, var(--col) 26%, rgba(255,255,255,0.05)); box-shadow: inset 0 0 0 2px color-mix(in srgb, var(--col) 60%, transparent); }
+  .tessera h3 { margin: 12px 0 14px; font-size: 16px; color: #EAF2FF; }
+  .tessera-pulsanti { display: flex; flex-direction: column; gap: 8px; width: 100%; margin-top: auto; }
+  .pulsante-schema { display: flex; align-items: center; justify-content: center; gap: 8px; text-decoration: none; font-weight: 700; font-size: 14px;
+    color: #0f172a; background: var(--col); border-radius: 10px; padding: 10px 12px; transition: transform .15s, filter .15s; }
+  .pulsante-schema:hover { transform: translateY(-2px); filter: brightness(1.08); }
+  .pulsante-schema .ps-icona { font-size: 15px; }
+  @media (max-width: 900px) { .tessere { grid-template-columns: repeat(3, minmax(0, 1fr)); } }
+  @media (max-width: 600px) { .tessere { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; }
+    .tessera { padding: 16px 10px 12px; } .tessera-icona { width: 52px; height: 52px; font-size: 26px; } }
 </style>
 </head>
 <body>
@@ -475,7 +492,7 @@
   const strumenti = [
     {
       nome: "Flauto dolce",
-      icona: "🎵",
+      icona: '<svg viewBox="0 0 40 40" width="36" height="36" aria-hidden="true"><g transform="rotate(45 20 20)"><rect x="16" y="1" width="8" height="38" rx="4" fill="#F3E2C3" stroke="#B9874E" stroke-width="1.6"/><rect x="16" y="1" width="8" height="7" rx="3" fill="#D9B98A" stroke="#B9874E" stroke-width="1.6"/><circle cx="20" cy="13" r="1.6" fill="#7A5230"/><circle cx="20" cy="18" r="1.6" fill="#7A5230"/><circle cx="20" cy="23" r="1.6" fill="#7A5230"/><circle cx="20" cy="28" r="1.6" fill="#7A5230"/><circle cx="20" cy="33" r="1.6" fill="#7A5230"/></g></svg>',
       schemi: [
         { title: "Schema note", icon: "📄", label: "Note", desc: "Ogni nota sul pentagramma, con il suo nome e la posizione sullo strumento.", url: "media/schemi/schema-note-flauto-dolce.png" }
       ]
@@ -513,30 +530,20 @@
     }
   ];
 
+  /* una tessera per strumento, tutte affiancate: si vede tutto senza scorrere */
+  const COLORI_STRUMENTO = { "Flauto dolce": "#5EC8D8", "Chitarra": "#F99D1C", "Ukulele": "#BED958", "Tastiera": "#a78bfa", "Basso elettrico": "#E21C48" };
   const main = document.getElementById('strumenti');
+  const griglia = document.createElement('div'); griglia.className = 'tessere';
   strumenti.forEach(st => {
-    const sec = document.createElement('section');
-    const chiave = st.schemi[0].url.match(/schema-[a-z]+-(.+)\.png$/)[1];
-    sec.className = 'group strumento st-' + chiave;
-    sec.innerHTML = `<h3 class="group-title"><span>${st.icona}</span> ${st.nome}</h3><div class="grid"></div>`;
-    const grid = sec.querySelector('.grid');
-    st.schemi.forEach(t => {
-      const card = document.createElement('a');
-      card.className = 'card';
-      card.href = t.url;
-      card.dataset.immagine = t.url;
-      card.innerHTML = `
-        <div class="top-row">
-          <div class="icon">${t.icon}</div>
-          <span class="label">${t.label}</span>
-        </div>
-        <h2>${t.title}</h2>
-        <p>${t.desc}</p>
-      `;
-      grid.appendChild(card);
-    });
-    main.appendChild(sec);
+    const t = document.createElement('section');
+    t.className = 'tessera';
+    t.style.setProperty('--col', COLORI_STRUMENTO[st.nome] || '#5EC8D8');
+    t.innerHTML = `<div class="tessera-icona">${st.icona}</div><h3>${st.nome}</h3>
+      <div class="tessera-pulsanti">${st.schemi.map(sc => `<a class="pulsante-schema" href="${sc.url}" data-immagine="${sc.url}" data-titolo="${st.nome} — ${sc.title}">
+        <span class="ps-icona">${sc.label === 'Accordi' ? '🎼' : '🎵'}</span><span>${sc.label}</span></a>`).join('')}</div>`;
+    griglia.appendChild(t);
   });
+  main.appendChild(griglia);
 
   /* Visore: la card apre lo schema a tutto schermo (tocca per ingrandire, ✕ o Esc per chiudere) */
   const viewer = document.getElementById('viewer');
@@ -549,8 +556,8 @@
     document.body.style.overflow = 'hidden';
   }
   function closeViewer() { viewer.classList.remove('open'); document.body.style.overflow = ''; if (document.activeElement) document.activeElement.blur(); }
-  document.querySelectorAll('a.card[data-immagine]').forEach(c => c.addEventListener('click', e => {
-    e.preventDefault(); openViewer(c.dataset.immagine, c.closest('section').querySelector('.group-title').textContent.trim() + ' — ' + c.querySelector('h2').textContent);
+  document.querySelectorAll('a[data-immagine]').forEach(c => c.addEventListener('click', e => {
+    e.preventDefault(); openViewer(c.dataset.immagine, c.dataset.titolo);
   }));
   vImg.addEventListener('click', () => viewer.classList.toggle('zoom'));
   document.getElementById('viewerClose').addEventListener('click', closeViewer);
