@@ -371,6 +371,10 @@
   .breadcrumb { display: inline-block; font-size: 12px; font-weight: 600; color: #7FD8E4; text-decoration: none; margin-bottom: 8px; }
   .breadcrumb:hover { text-decoration: underline; }
   .group-schemi { --accent: #BED958; }
+  .ico { width: 84%; height: 84%; display: block; overflow: visible; }
+  /* riquadro delle icone nelle card dei giochi: più grande, per le icone disegnate */
+  .card .icon { width: 34px !important; height: 34px !important; border-radius: 9px !important; }
+  .featured-card .icon .ico { width: 78%; height: 78%; }
 </style>
 </head>
 <body>
@@ -424,7 +428,7 @@
   const elenco = [
     {
       title: "Strumenti",
-      icon: "🎸",
+      icon: '<svg class="ico" viewBox="0 0 48 48" aria-hidden="true"><use href="icone.svg#ic-strumenti"/></svg>',
       desc: "Flauto dolce, chitarra, ukulele, tastiera e basso elettrico: note e accordi.",
       url: "schemi-strumenti.html"
     }

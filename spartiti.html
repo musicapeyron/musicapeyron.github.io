@@ -389,6 +389,7 @@
   .sottotitolo-spartiti { color: #9FB3CE; font-size: 15px; margin: 6px 0 0; text-align: center; }
   @media (max-width: 600px) { #grid { grid-template-columns: 1fr; } .card.raccolta { padding: 13px 12px 13px 14px; }
     .icona-raccolta { width: 46px; height: 46px; font-size: 22px; } }
+  .ico { width: 70%; height: 70%; display: block; overflow: visible; }
 </style>
 </head>
 <body>
@@ -441,19 +442,19 @@
      ============================================================ */
   /* raccolte di spartiti, nell'ordine in cui compaiono */
   const raccolte = [
-    { title: "Brani propedeutici", icon: "🌱", colore: "#E21C48", url: "brani-propedeutici.html",
+    { title: "Brani propedeutici", icon: '<svg class="ico" viewBox="0 0 48 48" aria-hidden="true"><use href="icone.svg#ic-propedeutici"/></svg>', colore: "#E21C48", url: "brani-propedeutici.html",
       desc: "Il primo percorso: dal si al re, una novità alla volta, con disegni e basi.", quanti: "28 brani", livelli: ["P"] },
-    { title: "Scale", icon: "🪜", colore: "#F99D1C", url: "scale.html",
+    { title: "Scale", icon: '<svg class="ico" viewBox="0 0 48 48" aria-hidden="true"><use href="icone.svg#ic-scale"/></svg>', colore: "#F99D1C", url: "scale.html",
       desc: "Scale maggiori e minori, con le note alterate dall'armatura evidenziate.", quanti: "7 scale", livelli: ["M", "L"] },
-    { title: "Primi Brani · prima parte", icon: "🎈", colore: "#009C95", url: "primi-brani.html",
+    { title: "Primi Brani · prima parte", icon: '<svg class="ico" viewBox="0 0 48 48" aria-hidden="true"><use href="icone.svg#ic-primi-brani-1"/></svg>', colore: "#009C95", url: "primi-brani.html",
       desc: "Brani da sol a re, con la melodia e la base da sola.", quanti: "6 brani", livelli: ["P", "M"] },
-    { title: "Primi Brani · seconda parte", icon: "🚀", colore: "#5EC8D8", url: "primi-brani-2.html",
+    { title: "Primi Brani · seconda parte", icon: '<svg class="ico" viewBox="0 0 48 48" aria-hidden="true"><use href="icone.svg#ic-primi-brani-2"/></svg>', colore: "#5EC8D8", url: "primi-brani-2.html",
       desc: "Arrivano armatura, crome, ritornelli e volte.", quanti: "5 brani", livelli: ["P", "M"] },
-    { title: "Diabelli", icon: "🎓", colore: "#5E50A1", url: "diabelli.html",
+    { title: "Diabelli", icon: '<svg class="ico" viewBox="0 0 48 48" aria-hidden="true"><use href="icone.svg#ic-diabelli"/></svg>', colore: "#5E50A1", url: "diabelli.html",
       desc: "Dagli Studi melodici op. 149, con basi anche rallentate.", quanti: "9 brani", livelli: ["M"] },
-    { title: "Berens", icon: "📖", colore: "#CF3E96", url: "berens.html",
+    { title: "Berens", icon: '<svg class="ico" viewBox="0 0 48 48" aria-hidden="true"><use href="icone.svg#ic-berens"/></svg>', colore: "#CF3E96", url: "berens.html",
       desc: "Dagli Esercizi melodici op. 62, in posizione fissa di cinque dita.", quanti: "8 brani", livelli: ["M"] },
-    { title: "Sonatina in Do maggiore", icon: "🎹", colore: "#BED958", url: "sonatina-do-maggiore.html",
+    { title: "Sonatina in Do maggiore", icon: '<svg class="ico" viewBox="0 0 48 48" aria-hidden="true"><use href="icone.svg#ic-sonatina"/></svg>', colore: "#BED958", url: "sonatina-do-maggiore.html",
       desc: "Per flauto dolce e pianoforte, con la base.", quanti: "1 brano", livelli: ["M"] }
   ];
   const NOMI_LIVELLO = { P: "Primaria", M: "Medie", L: "Liceo musicale" };

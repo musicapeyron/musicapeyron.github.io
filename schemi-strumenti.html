@@ -430,7 +430,10 @@
   .pulsante-schema { display: flex; align-items: center; justify-content: center; gap: 8px; text-decoration: none; font-weight: 700; font-size: 14px;
     color: #0f172a; background: var(--col); border-radius: 10px; padding: 10px 12px; transition: transform .15s, filter .15s; }
   .pulsante-schema:hover { transform: translateY(-2px); filter: brightness(1.08); }
-  .pulsante-schema .ps-icona { font-size: 15px; }
+  .pulsante-schema .ps-icona { width: 20px; height: 20px; display: inline-grid; }
+  .pulsante-schema .ps-icona .ico { width: 100%; height: 100%; }
+  .pulsante-schema .ps-icona .ico * { stroke: #0f172a !important; }
+  .tessera-icona .ico { width: 72%; height: 72%; }
   @media (max-width: 900px) { .tessere { grid-template-columns: repeat(3, minmax(0, 1fr)); } }
   @media (max-width: 600px) { .tessere { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; }
     .tessera { padding: 16px 10px 12px; } .tessera-icona { width: 52px; height: 52px; font-size: 26px; } }
@@ -492,14 +495,14 @@
   const strumenti = [
     {
       nome: "Flauto dolce",
-      icona: '<svg viewBox="0 0 40 40" width="36" height="36" aria-hidden="true"><g transform="rotate(45 20 20)"><rect x="16" y="1" width="8" height="38" rx="4" fill="#F3E2C3" stroke="#B9874E" stroke-width="1.6"/><rect x="16" y="1" width="8" height="7" rx="3" fill="#D9B98A" stroke="#B9874E" stroke-width="1.6"/><circle cx="20" cy="13" r="1.6" fill="#7A5230"/><circle cx="20" cy="18" r="1.6" fill="#7A5230"/><circle cx="20" cy="23" r="1.6" fill="#7A5230"/><circle cx="20" cy="28" r="1.6" fill="#7A5230"/><circle cx="20" cy="33" r="1.6" fill="#7A5230"/></g></svg>',
+      icona: '<svg class="ico" viewBox="0 0 48 48" aria-hidden="true"><use href="icone.svg#ic-flauto"/></svg>',
       schemi: [
         { title: "Schema note", icon: "📄", label: "Note", desc: "Ogni nota sul pentagramma, con il suo nome e la posizione sullo strumento.", url: "media/schemi/schema-note-flauto-dolce.png" }
       ]
     },
     {
       nome: "Chitarra",
-      icona: "🎸",
+      icona: '<svg class="ico" viewBox="0 0 48 48" aria-hidden="true"><use href="icone.svg#ic-chitarra"/></svg>',
       schemi: [
         { title: "Schema note", icon: "📄", label: "Note", desc: "Ogni nota sul pentagramma, con il suo nome e la posizione sullo strumento.", url: "media/schemi/schema-note-chitarra.png" },
         { title: "Schema accordi", icon: "🎼", label: "Accordi", desc: "Gli accordi principali: maggiori, minori e di settima, con le dita da usare.", url: "media/schemi/schema-accordi-chitarra.png" }
@@ -507,7 +510,7 @@
     },
     {
       nome: "Ukulele",
-      icona: "🪕",
+      icona: '<svg class="ico" viewBox="0 0 48 48" aria-hidden="true"><use href="icone.svg#ic-ukulele"/></svg>',
       schemi: [
         { title: "Schema note", icon: "📄", label: "Note", desc: "Ogni nota sul pentagramma, con il suo nome e la posizione sullo strumento.", url: "media/schemi/schema-note-ukulele.png" },
         { title: "Schema accordi", icon: "🎼", label: "Accordi", desc: "Gli accordi principali: maggiori, minori e di settima, con le dita da usare.", url: "media/schemi/schema-accordi-ukulele.png" }
@@ -515,7 +518,7 @@
     },
     {
       nome: "Tastiera",
-      icona: "🎹",
+      icona: '<svg class="ico" viewBox="0 0 48 48" aria-hidden="true"><use href="icone.svg#ic-tastiera"/></svg>',
       schemi: [
         { title: "Schema note", icon: "📄", label: "Note", desc: "Ogni nota sul pentagramma, con il suo nome e la posizione sullo strumento.", url: "media/schemi/schema-note-tastiera.png" },
         { title: "Schema accordi", icon: "🎼", label: "Accordi", desc: "Gli accordi principali: maggiori, minori e di settima, con le dita da usare.", url: "media/schemi/schema-accordi-tastiera.png" }
@@ -523,7 +526,7 @@
     },
     {
       nome: "Basso elettrico",
-      icona: "🎸",
+      icona: '<svg class="ico" viewBox="0 0 48 48" aria-hidden="true"><use href="icone.svg#ic-basso"/></svg>',
       schemi: [
         { title: "Schema note", icon: "📄", label: "Note", desc: "Ogni nota sul pentagramma, con il suo nome e la posizione sullo strumento.", url: "media/schemi/schema-note-basso.png" }
       ]
@@ -540,7 +543,7 @@
     t.style.setProperty('--col', COLORI_STRUMENTO[st.nome] || '#5EC8D8');
     t.innerHTML = `<div class="tessera-icona">${st.icona}</div><h3>${st.nome}</h3>
       <div class="tessera-pulsanti">${st.schemi.map(sc => `<a class="pulsante-schema" href="${sc.url}" data-immagine="${sc.url}" data-titolo="${st.nome} — ${sc.title}">
-        <span class="ps-icona">${sc.label === 'Accordi' ? '🎼' : '🎵'}</span><span>${sc.label}</span></a>`).join('')}</div>`;
+        <span class="ps-icona">${sc.label === 'Accordi' ? '<svg class="ico" viewBox="0 0 48 48" aria-hidden="true"><use href="icone.svg#ic-accordi"/></svg>' : '<svg class="ico" viewBox="0 0 48 48" aria-hidden="true"><use href="icone.svg#ic-note"/></svg>'}</span><span>${sc.label}</span></a>`).join('')}</div>`;
     griglia.appendChild(t);
   });
   main.appendChild(griglia);
