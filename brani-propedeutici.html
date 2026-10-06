@@ -522,7 +522,7 @@
 <header class="hero">
   <a class="breadcrumb" href="spartiti.html">← Spartiti</a>
   <h1>Brani propedeutici</h1>
-  <p>28 brani per iniziare, dal si al re. Scegli il tuo strumento, ascolta la base e suona!</p>
+  <p>22 brani per iniziare, dal si al re. Scegli il tuo strumento, ascolta la base e suona!</p>
   <a class="docenti" href="media/brani-propedeutici/brani-propedeutici-docenti.pdf" download>📄 PDF per i docenti (con gli accordi)</a>
 </header>
 
@@ -542,7 +542,7 @@
 
 <script>
   const CARTELLA = "media/brani-propedeutici/";
-  const NUMERI = Array.from({ length: 28 }, (_, i) => i + 1);
+  const NUMERI = Array.from({ length: 22 }, (_, i) => i + 1);
   let ETICHETTE_INDICE = {};            // testo accanto al numero nell'indice (es. la tonalità delle scale)
   const DISEGNI = NUMERI;              // brani che hanno il loro disegno (gli altri mostrano una nota generica)
   const due = n => String(n).padStart(2, "0");
@@ -580,31 +580,31 @@
   /* Novità che nei file MusicXML non hanno il loro riquadro: si aggiungono qui.
      "prima": il riquadro va prima di quelli già presenti nel brano (es. la nota prima della figura). */
   const NOVITA_AGGIUNTE = {
-    1:  { prima: true, testo: "NOVITÀ: la nota SI\nsi scrive sulla terza riga del pentagramma" },
-    3:  { testo: "NOVITÀ: il RITORNELLO\nquando trovi i due puntini prima della stanghetta,\ntorna indietro e suona di nuovo" },
-    4:  { testo: "NOVITÀ: la nota LA\nsi scrive nel secondo spazio del pentagramma" },
-    6:  { testo: "NOVITÀ: l'INTRODUZIONE\nla base suona da sola per 2 battute:\nascolta, conta e poi entra" },
-    7:  { prima: true, testo: "NOVITÀ: la nota SOL\nsi scrive sulla seconda riga del pentagramma" },
-    10: { testo: "NOVITÀ: la nota DO alto\nsi scrive nel terzo spazio del pentagramma" },
-    13: { testo: "NOVITÀ: la nota RE alto\nsi scrive sulla quarta riga del pentagramma" },
-    16: { testo: "NOVITÀ: più BATTUTE DI PAUSA di seguito\nconta ogni battuta di silenzio\nper rientrare al momento giusto" },
-    17: { testo: "NOVITÀ: il DIALOGO con la base\ntu fai la domanda, la base risponde:\nascolta bene, poi tocca di nuovo a te" },
-    18: { testo: "NOVITÀ: PRIMA e SECONDA VOLTA\nla prima volta suoni la casella 1.,\ndopo il ritornello salti alla casella 2." },
-    19: { testo: "NOVITÀ: DUE RITORNELLI\nogni parte chiusa tra i segni di ritornello\nsi suona due volte" },
-    20: { testo: "NOVITÀ: D.C. al FINE\nD.C. vuol dire «da capo»: torna all'inizio\ne fermati dove c'è scritto Fine" },
-    24: { testo: "NOVITÀ: il TEMPO 3/4\n3 tempi in ogni battuta:\nuno-due-tre, come un valzer" },
-    26: { testo: "NOVITÀ: la MINIMA PUNTATA in 4/4\nvale 3 tempi: nella battuta\nresta spazio per 1 tempo" }
+    1:  [{ prima: true, testo: "NOVITÀ: la nota SI\nsi scrive sulla terza riga del pentagramma" },
+         { testo: "NOVITÀ: la PAUSA DI SEMIMINIMA\n1 tempo di silenzio: le dita restano pronte" }],
+    2:  { testo: "NOVITÀ: il RITORNELLO\nquando trovi i due puntini prima della stanghetta,\ntorna indietro e suona di nuovo" },
+    5:  { testo: "NOVITÀ: la MINIMA\nvale 2 tempi: tieni la nota più a lungo" },
+    8:  { testo: "NOVITÀ: la SEMIBREVE\nvale 4 tempi: una nota lunga tutta la battuta" },
+    12: { testo: "NOVITÀ: più BATTUTE DI PAUSA di seguito\nconta ogni battuta di silenzio\nper rientrare al momento giusto" },
+    13: { testo: "NOVITÀ: il DIALOGO con la base\ntu fai la domanda, la base risponde:\nascolta bene, poi tocca di nuovo a te" },
+    14: { testo: "NOVITÀ: PRIMA e SECONDA VOLTA\nla prima volta suoni la casella 1.,\ndopo il ritornello salti alla casella 2." },
+    15: { testo: "NOVITÀ: DUE RITORNELLI\nogni parte chiusa tra i segni di ritornello\nsi suona due volte" },
+    16: { testo: "NOVITÀ: D.C. al FINE\nD.C. vuol dire «da capo»: torna all'inizio\ne fermati dove c'è scritto Fine" },
+    19: { testo: "NOVITÀ: il TEMPO 3/4\n3 tempi in ogni battuta:\nuno-due-tre, come un valzer" },
+    21: { testo: "NOVITÀ: la MINIMA PUNTATA in 4/4\nvale 3 tempi: nella battuta\nresta spazio per 1 tempo" },
+    22: { testo: "NOVITÀ: la LEGATURA DI PORTAMENTO\nunisce note diverse:\nsi suonano senza staccarle" }
   };
 
   const cache = {};
   const caricaBrano = n => cache[n] || (cache[n] = fetch(CARTELLA + "brano" + due(n) + ".musicxml")
     .then(r => r.text()).then(t => {
       const b = MotoreSchemi.leggiMusicXML(t); b.titolo = n + ". " + b.titoloBreve;
-      const agg = NOVITA_AGGIUNTE[n];
-      if (agg) b.riquadri = agg.prima ? [agg.testo, ...b.riquadri] : [...b.riquadri, agg.testo];
+      // novità aggiunte dalla pagina (una o più per brano): prima o dopo quelle scritte nel file
+      [].concat(NOVITA_AGGIUNTE[n] || []).reverse().forEach(agg => { if (agg.prima) b.riquadri.unshift(agg.testo); });
+      [].concat(NOVITA_AGGIUNTE[n] || []).forEach(agg => { if (!agg.prima) b.riquadri.push(agg.testo); });
       return b;
     }));
-  const PAUSE_RAGGRUPPATE = [28];        // brani in cui le battute di pausa consecutive diventano una sola, con il numero
+  const PAUSE_RAGGRUPPATE = [22];        // brani in cui le battute di pausa consecutive diventano una sola, con il numero
   // la diteggiatura (no / prima volta / sempre) viaggia insieme alla versione; il flauto non ne ha
   const opzioni = (versione, extra, n) => Object.assign({ strumento: strumento.id, colori: versione.colori, nomi: versione.nomi,
     diteggiatura: strumento.id === 'flauto' ? 'no' : (versione.dit || 'no'),

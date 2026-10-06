@@ -10,20 +10,25 @@
       <feComposite in2="spost" operator="in" result="ombra"/>
       <feMerge><feMergeNode in="ombra"/><feMergeNode in="bianco"/><feMergeNode in="SourceGraphic"/></feMerge>
     </filter>
-    
+    <mask id="falce"><rect width="220" height="220" fill="#fff"/><circle cx="138" cy="86" r="66" fill="#000"/></mask>
+    <radialGradient id="lunaLuce" cx="35%" cy="40%" r="75%"><stop offset="0" stop-color="#FFF6C7"/><stop offset="1" stop-color="#FFD866"/></radialGradient>
   </defs>
   <g filter="url(#adesivo)">
-
-    <ellipse cx="92" cy="150" rx="58" ry="18" fill="#C8173E" stroke="#8F1230" stroke-width="4"/>
-    <path d="M34 112 v38 q0 18 58 18 q58 0 58 -18 v-38" fill="#E21C48" stroke="#8F1230" stroke-width="4" stroke-linejoin="round"/>
-    <path d="M40 120 l18 34 l18 -34 l18 34 l18 -34 l18 34 l18 -32" fill="none" stroke="#FFD54A" stroke-width="4" stroke-linejoin="round"/>
-    <ellipse cx="92" cy="112" rx="58" ry="18" fill="#FFF6E0" stroke="#8F1230" stroke-width="4"/>
-    <path d="M60 60 L84 104" stroke="#8B5E34" stroke-width="7" stroke-linecap="round"/><circle cx="58" cy="57" r="9" fill="#F5E6C8" stroke="#8B5E34" stroke-width="3"/>
-    <path d="M128 64 L104 104" stroke="#8B5E34" stroke-width="7" stroke-linecap="round"/><circle cx="130" cy="61" r="9" fill="#F5E6C8" stroke="#8B5E34" stroke-width="3"/>
-    <path d="M22 70 l-10 -8 M18 88 l-12 0 M24 54 l-6 -12" stroke="#F99D1C" stroke-width="5" stroke-linecap="round"/>
-    <path d="M136 56 q0 -20 20 -20 q8 -12 22 -6 q16 -2 18 14 q10 6 4 18 q-2 10 -16 8 h-34 q-16 0 -14 -14 Z" fill="#EAF2FF" stroke="#7CA4D6" stroke-width="3.5"/>
-    <path d="M152 46 q4 4 8 0 M170 46 q4 4 8 0" fill="none" stroke="#1F2430" stroke-width="2.5" stroke-linecap="round"/>
-    <text x="182" y="30" font-family="Fredoka, Arial Rounded MT Bold, sans-serif" font-weight="700" font-size="16" fill="#5E50A1">z</text>
-    <text x="192" y="18" font-family="Fredoka, Arial Rounded MT Bold, sans-serif" font-weight="700" font-size="12" fill="#5E50A1">z</text>
+    <g mask="url(#falce)">
+      <circle cx="104" cy="112" r="80" fill="url(#lunaLuce)" stroke="#E7B43C" stroke-width="4"/>
+      <circle cx="58" cy="150" r="9" fill="#F3C24F" opacity="0.55"/>
+      <circle cx="80" cy="172" r="6" fill="#F3C24F" opacity="0.5"/>
+      <circle cx="44" cy="118" r="5" fill="#F3C24F" opacity="0.5"/>
+    </g>
+    <path d="M58 118 q10 8 20 0" fill="none" stroke="#5B4636" stroke-width="4" stroke-linecap="round"/>
+    <path d="M56 113 l-3 -5 M62 111 l-1 -6 M68 111 l1 -6" stroke="#5B4636" stroke-width="2.5" stroke-linecap="round"/>
+    <ellipse cx="52" cy="134" rx="9" ry="6" fill="#F7A1B5" opacity="0.8"/>
+    <path d="M74 148 q12 9 24 -1" fill="none" stroke="#5B4636" stroke-width="4" stroke-linecap="round"/>
+    <polygon points="192.0,19.0 196.0,28.5 206.3,29.4 198.4,36.1 200.8,46.1 192.0,40.8 183.2,46.1 185.6,36.1 177.7,29.4 188.0,28.5" fill="#FFD54A" stroke="#E3A814" stroke-width="2.5" stroke-linejoin="round"/><polygon points="188.8,139.4 189.8,146.9 197.0,149.4 190.2,152.7 189.9,160.3 184.7,154.8 177.5,156.9 181.1,150.3 176.8,144.0 184.2,145.4" fill="#FFD54A" stroke="#E3A814" stroke-width="2.5" stroke-linejoin="round"/><polygon points="144.0,183.1 143.3,188.5 147.8,191.7 142.4,192.7 140.8,198.0 138.2,193.1 132.7,193.3 136.5,189.3 134.6,184.1 139.6,186.4" fill="#FFD54A" stroke="#E3A814" stroke-width="2.5" stroke-linejoin="round"/>
+    <g transform="translate(146 104) rotate(-12)">
+      <rect x="15" y="-46" width="5" height="52" rx="2" fill="#5E50A1"/>
+      <ellipse cx="8" cy="6" rx="14" ry="10" transform="rotate(-22 8 6)" fill="#5E50A1" stroke="#3E3478" stroke-width="2"/>
+      <text x="8" y="11" font-family="Fredoka, Arial Rounded MT Bold, sans-serif" font-size="13" font-weight="700" fill="#fff" text-anchor="middle">La</text>
+    </g>
   </g>
 </svg>

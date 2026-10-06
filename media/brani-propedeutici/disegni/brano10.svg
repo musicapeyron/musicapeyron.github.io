@@ -14,14 +14,15 @@
   </defs>
   <g filter="url(#adesivo)">
 
-    <path d="M60 120 L76 200 H144 L160 120 Z" fill="#F99D1C" stroke="#A66912" stroke-width="4" stroke-linejoin="round"/>
-    <path d="M80 124 L90 198 M110 124 V198 M140 124 L130 198" stroke="#FFD08A" stroke-width="4"/>
-    <path d="M48 124 Q40 96 68 92 Q66 64 96 66 Q104 40 130 54 Q156 56 154 84 Q182 90 172 118 Q170 128 158 126 H62 Q50 128 48 124 Z" fill="#FFC4DA" stroke="#C2648A" stroke-width="4" stroke-linejoin="round"/>
-    <path d="M70 102 q20 10 40 0 q20 -10 40 2" fill="none" stroke="#fff" stroke-width="5" stroke-linecap="round" opacity="0.8"/>
-    <rect x="80" y="80" width="8" height="4" rx="2" fill="#5E50A1" transform="rotate(30 84 82)"/><rect x="128" y="74" width="8" height="4" rx="2" fill="#009C95" transform="rotate(-20 132 76)"/>
-    <rect x="104" y="92" width="8" height="4" rx="2" fill="#FFF428" transform="rotate(60 108 94)"/><rect x="142" y="100" width="8" height="4" rx="2" fill="#BED958"/>
-    <path d="M112 44 q4 -20 22 -24" fill="none" stroke="#4FA83D" stroke-width="4" stroke-linecap="round"/>
-    <circle cx="108" cy="46" r="15" fill="#E21C48" stroke="#8F1230" stroke-width="3.5"/><ellipse cx="103" cy="41" rx="4" ry="3" fill="#fff" opacity="0.7"/>
-    <text x="108" y="52" text-anchor="middle" font-family="Fredoka, Arial Rounded MT Bold, sans-serif" font-weight="700" font-size="14" fill="#fff">Do</text>
+    <path d="M110 20 C 50 20, 40 90, 84 132 L96 146 H124 L136 132 C 180 90, 170 20, 110 20 Z" fill="#E21C48" stroke="#8F1230" stroke-width="4"/>
+    <path d="M110 20 C 84 30, 82 100, 100 146 M110 20 C 136 30, 138 100, 120 146" fill="none" stroke="#8F1230" stroke-width="3"/>
+    <path d="M110 20 C 98 34, 98 110, 106 146 L114 146 C 122 110, 122 34, 110 20 Z" fill="#FFF428"/>
+    <path d="M64 76 C 80 80, 140 80, 156 76" fill="none" stroke="#FFF428" stroke-width="6"/>
+    <path d="M98 146 L92 168 M122 146 L128 168" stroke="#5B4636" stroke-width="3"/>
+    <rect x="86" y="166" width="48" height="30" rx="6" fill="#C98A3E" stroke="#7A4B2A" stroke-width="4"/>
+    <path d="M86 176 h48 M86 186 h48" stroke="#7A4B2A" stroke-width="2"/>
+    <path d="M10 120 q10 -14 26 -8 q8 -10 20 -2 q10 6 2 14 h-44 Z" fill="#EAF2FF" stroke="#9DBBE0" stroke-width="3"/>
+    <path d="M168 168 q8 -12 22 -6 q8 -8 18 0 q8 8 0 14 h-40 Z" fill="#EAF2FF" stroke="#9DBBE0" stroke-width="3"/>
+    <path d="M186 74 v-24 M178 58 l8 -8 l8 8" fill="none" stroke="#009C95" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"/>
   </g>
 </svg>

@@ -14,12 +14,11 @@
   </defs>
   <g filter="url(#adesivo)">
 
-    <path d="M40 112 L52 52 L84 88 L110 40 L136 88 L168 52 L180 112 Z" fill="#FFD54A" stroke="#B9831A" stroke-width="4" stroke-linejoin="round"/>
-    <rect x="38" y="108" width="144" height="22" rx="6" fill="#F7B733" stroke="#B9831A" stroke-width="4"/>
-    <circle cx="52" cy="50" r="7" fill="#E21C48"/><circle cx="110" cy="38" r="8" fill="#009C95"/><circle cx="168" cy="50" r="7" fill="#5E50A1"/>
-    <circle cx="80" cy="119" r="5" fill="#E21C48"/><circle cx="110" cy="119" r="5" fill="#F99D1C"/><circle cx="140" cy="119" r="5" fill="#CF3E96"/>
-    <g transform="rotate(-25 60 168)"><rect x="56" y="168" width="10" height="40" rx="4" fill="#8B5E34"/><ellipse cx="61" cy="160" rx="22" ry="26" fill="#F99D1C" stroke="#A66912" stroke-width="4"/><path d="M44 152 q17 10 34 0 M42 166 q19 10 38 0" fill="none" stroke="#E21C48" stroke-width="4"/></g>
-    <g transform="rotate(25 160 168)"><rect x="155" y="168" width="10" height="40" rx="4" fill="#8B5E34"/><ellipse cx="160" cy="160" rx="22" ry="26" fill="#BED958" stroke="#6E7D33" stroke-width="4"/><path d="M143 152 q17 10 34 0 M141 166 q19 10 38 0" fill="none" stroke="#009C95" stroke-width="4"/></g>
-    <path d="M24 140 l-8 -6 M22 156 h-10 M196 140 l8 -6 M198 156 h10" stroke="#F99D1C" stroke-width="4" stroke-linecap="round"/>
+    <path d="M14 30 h104 q12 0 12 12 v46 q0 12 -12 12 h-62 l-22 20 l4 -20 h-24 q-12 0 -12 -12 v-46 q0 -12 12 -12 Z" fill="#FFF7B8" stroke="#E3B90A" stroke-width="4" stroke-linejoin="round"/>
+    <g transform="translate(46 84) scale(0.7)"><rect x="9" y="-44" width="5" height="46" rx="2" fill="#009C95"/><ellipse cx="2" cy="2" rx="13" ry="9.5" transform="rotate(-20 2 2)" fill="#009C95" stroke="#1F2430" stroke-opacity="0.35" stroke-width="2"/></g><g transform="translate(76 78) scale(0.7)"><rect x="9" y="-44" width="5" height="46" rx="2" fill="#5E50A1"/><ellipse cx="2" cy="2" rx="13" ry="9.5" transform="rotate(-20 2 2)" fill="#5E50A1" stroke="#1F2430" stroke-opacity="0.35" stroke-width="2"/></g>
+    <text x="112" y="62" font-family="Fredoka, Arial Rounded MT Bold, sans-serif" font-weight="700" font-size="24" fill="#E3A814">?</text>
+    <path d="M206 110 h-104 q-12 0 -12 12 v46 q0 12 12 12 h62 l22 20 l-4 -20 h24 q12 0 12 -12 v-46 q0 -12 -12 -12 Z" fill="#DDF3FF" stroke="#7CA4D6" stroke-width="4" stroke-linejoin="round"/>
+    <g transform="translate(130 164) scale(0.7)"><rect x="9" y="-44" width="5" height="46" rx="2" fill="#CF3E96"/><ellipse cx="2" cy="2" rx="13" ry="9.5" transform="rotate(-20 2 2)" fill="#CF3E96" stroke="#1F2430" stroke-opacity="0.35" stroke-width="2"/></g><g transform="translate(160 158) scale(0.7)"><rect x="9" y="-44" width="5" height="46" rx="2" fill="#E21C48"/><ellipse cx="2" cy="2" rx="13" ry="9.5" transform="rotate(-20 2 2)" fill="#E21C48" stroke="#1F2430" stroke-opacity="0.35" stroke-width="2"/></g>
+    <text x="104" y="144" font-family="Fredoka, Arial Rounded MT Bold, sans-serif" font-weight="700" font-size="24" fill="#4A8CC2">!</text>
   </g>
 </svg>

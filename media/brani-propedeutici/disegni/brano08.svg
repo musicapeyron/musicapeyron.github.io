@@ -14,21 +14,17 @@
   </defs>
   <g filter="url(#adesivo)">
 
-    <rect x="86" y="18" width="48" height="52" rx="10" fill="#1F2430"/>
-    <rect x="84" y="62" width="52" height="8" rx="3" fill="#FFD54A" stroke="#B9831A" stroke-width="2"/>
-    <circle cx="110" cy="22" r="6" fill="#E21C48"/>
-    <circle cx="110" cy="86" r="22" fill="#FFD9B8" stroke="#C99A72" stroke-width="3"/>
-    <circle cx="102" cy="84" r="4.6" fill="#fff" stroke="#1F2430" stroke-width="2.2"/><circle cx="103.5" cy="85" r="2.6" fill="#1F2430"/><circle cx="105" cy="82.5" r="1.4" fill="#fff"/>
-<circle cx="118" cy="84" r="4.6" fill="#fff" stroke="#1F2430" stroke-width="2.2"/><circle cx="119.5" cy="85" r="2.6" fill="#1F2430"/><circle cx="121" cy="82.5" r="1.4" fill="#fff"/>
-    <circle cx="96" cy="94" r="5" fill="#F7A1B5"/><circle cx="124" cy="94" r="5" fill="#F7A1B5"/>
-    <path d="M102 98 q8 6 16 0" fill="none" stroke="#1F2430" stroke-width="2.5" stroke-linecap="round"/>
-    <rect x="80" y="106" width="60" height="56" rx="10" fill="#E21C48" stroke="#8F1230" stroke-width="4"/>
-    <path d="M110 108 v52" stroke="#FFD54A" stroke-width="3"/>
-    <circle cx="110" cy="122" r="3.5" fill="#FFD54A"/><circle cx="110" cy="138" r="3.5" fill="#FFD54A"/><circle cx="110" cy="152" r="3.5" fill="#FFD54A"/>
-    <path d="M80 112 l-14 34" stroke="#E21C48" stroke-width="12" stroke-linecap="round"/><circle cx="64" cy="150" r="7" fill="#FFD9B8" stroke="#C99A72" stroke-width="2.5"/>
-    <path d="M140 112 l14 30" stroke="#E21C48" stroke-width="12" stroke-linecap="round"/>
-    <rect x="150" y="70" width="6" height="86" rx="3" fill="#8B5E34"/><circle cx="153" cy="146" r="7" fill="#FFD9B8" stroke="#C99A72" stroke-width="2.5"/>
-    <rect x="86" y="160" width="20" height="40" rx="4" fill="#5E50A1" stroke="#3E3478" stroke-width="3"/><rect x="114" y="160" width="20" height="40" rx="4" fill="#5E50A1" stroke="#3E3478" stroke-width="3"/>
-    <rect x="82" y="196" width="26" height="10" rx="4" fill="#1F2430"/><rect x="112" y="196" width="26" height="10" rx="4" fill="#1F2430"/>
+    <path d="M20 200 V164 H60 V128 H100 V92 H140 V56 H180 V200 Z" fill="#FFE9C7" stroke="#B9831A" stroke-width="4" stroke-linejoin="round"/>
+    <path d="M20 164 H60 M60 128 H100 M100 92 H140 M140 56 H180" stroke="#B9831A" stroke-width="4"/>
+    <rect x="20" y="164" width="40" height="8" fill="#009C95"/><rect x="60" y="128" width="40" height="8" fill="#5E50A1"/><rect x="100" y="92" width="40" height="8" fill="#CF3E96"/><rect x="140" y="56" width="40" height="8" fill="#E21C48"/>
+    <path d="M44 150 q10 -26 30 -28 M84 114 q10 -26 30 -28" fill="none" stroke="#F99D1C" stroke-width="4" stroke-linecap="round" stroke-dasharray="1 9"/>
+    <g transform="translate(124 70)">
+      <path d="M-6 6 l-4 16 M6 6 l4 16" stroke="#1F2430" stroke-width="4" stroke-linecap="round"/>
+      <rect x="10" y="-56" width="7" height="56" rx="3" fill="#CF3E96"/>
+      <ellipse cx="0" cy="0" rx="18" ry="14" transform="rotate(-18)" fill="#CF3E96" stroke="#8F2464" stroke-width="3"/>
+      <circle cx="-6" cy="-2" r="4.4" fill="#fff" stroke="#1F2430" stroke-width="2.2"/><circle cx="-4.5" cy="-1" r="2.4" fill="#1F2430"/><circle cx="-3" cy="-3.5" r="1.4" fill="#fff"/>
+<circle cx="6" cy="-2" r="4.4" fill="#fff" stroke="#1F2430" stroke-width="2.2"/><circle cx="7.5" cy="-1" r="2.4" fill="#1F2430"/><circle cx="9" cy="-3.5" r="1.4" fill="#fff"/>
+    </g>
+    <polygon points="196.0,17.0 199.4,25.3 208.4,26.0 201.6,31.8 203.6,40.5 196.0,35.9 188.4,40.5 190.4,31.8 183.6,26.0 192.6,25.3" fill="#FFD54A" stroke="#E3A814" stroke-width="2.5" stroke-linejoin="round"/>
   </g>
 </svg>

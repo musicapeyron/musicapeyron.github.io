@@ -13,18 +13,32 @@
     
   </defs>
   <g filter="url(#adesivo)">
-
-    <path d="M20 200 V164 H60 V128 H100 V92 H140 V56 H180 V200 Z" fill="#FFE9C7" stroke="#B9831A" stroke-width="4" stroke-linejoin="round"/>
-    <path d="M20 164 H60 M60 128 H100 M100 92 H140 M140 56 H180" stroke="#B9831A" stroke-width="4"/>
-    <rect x="20" y="164" width="40" height="8" fill="#009C95"/><rect x="60" y="128" width="40" height="8" fill="#5E50A1"/><rect x="100" y="92" width="40" height="8" fill="#CF3E96"/><rect x="140" y="56" width="40" height="8" fill="#E21C48"/>
-    <path d="M44 150 q10 -26 30 -28 M84 114 q10 -26 30 -28" fill="none" stroke="#F99D1C" stroke-width="4" stroke-linecap="round" stroke-dasharray="1 9"/>
-    <g transform="translate(124 70)">
-      <path d="M-6 6 l-4 16 M6 6 l4 16" stroke="#1F2430" stroke-width="4" stroke-linecap="round"/>
-      <rect x="10" y="-56" width="7" height="56" rx="3" fill="#CF3E96"/>
-      <ellipse cx="0" cy="0" rx="18" ry="14" transform="rotate(-18)" fill="#CF3E96" stroke="#8F2464" stroke-width="3"/>
-      <circle cx="-6" cy="-2" r="4.4" fill="#fff" stroke="#1F2430" stroke-width="2.2"/><circle cx="-4.5" cy="-1" r="2.4" fill="#1F2430"/><circle cx="-3" cy="-3.5" r="1.4" fill="#fff"/>
-<circle cx="6" cy="-2" r="4.4" fill="#fff" stroke="#1F2430" stroke-width="2.2"/><circle cx="7.5" cy="-1" r="2.4" fill="#1F2430"/><circle cx="9" cy="-3.5" r="1.4" fill="#fff"/>
-    </g>
-    <polygon points="196.0,17.0 199.4,25.3 208.4,26.0 201.6,31.8 203.6,40.5 196.0,35.9 188.4,40.5 190.4,31.8 183.6,26.0 192.6,25.3" fill="#FFD54A" stroke="#E3A814" stroke-width="2.5" stroke-linejoin="round"/>
+    <path d="M30 150 Q110 176 190 150" fill="none" stroke="#1F2430" stroke-width="4" stroke-linecap="round"/>
+    <rect x="42" y="52" width="6" height="58" rx="3" fill="#009C95"/>
+    <ellipse cx="30" cy="110" rx="19" ry="15" transform="rotate(-18 30 110)" fill="#009C95" stroke="#00675F" stroke-width="3"/>
+    <circle cx="24" cy="108" r="4.2" fill="#fff" stroke="#1F2430" stroke-width="2.2"/><circle cx="25.5" cy="109" r="2.3" fill="#1F2430"/><circle cx="27" cy="106.5" r="1.4" fill="#fff"/>
+<circle cx="36" cy="108" r="4.2" fill="#fff" stroke="#1F2430" stroke-width="2.2"/><circle cx="37.5" cy="109" r="2.3" fill="#1F2430"/><circle cx="39" cy="106.5" r="1.4" fill="#fff"/>
+    <path d="M25.5 115 q4.5 4.95 9 0" fill="none" stroke="#1F2430" stroke-width="2.2" stroke-linecap="round"/>
+    <rect x="82" y="56" width="6" height="58" rx="3" fill="#5E50A1"/>
+    <ellipse cx="70" cy="114" rx="19" ry="15" transform="rotate(-18 70 114)" fill="#5E50A1" stroke="#3E3478" stroke-width="3"/>
+    <circle cx="64" cy="112" r="4.2" fill="#fff" stroke="#1F2430" stroke-width="2.2"/><circle cx="65.5" cy="113" r="2.3" fill="#1F2430"/><circle cx="67" cy="110.5" r="1.4" fill="#fff"/>
+<circle cx="76" cy="112" r="4.2" fill="#fff" stroke="#1F2430" stroke-width="2.2"/><circle cx="77.5" cy="113" r="2.3" fill="#1F2430"/><circle cx="79" cy="110.5" r="1.4" fill="#fff"/>
+    <path d="M65.5 119 q4.5 4.95 9 0" fill="none" stroke="#1F2430" stroke-width="2.2" stroke-linecap="round"/>
+    <rect x="122" y="62" width="6" height="58" rx="3" fill="#CF3E96"/>
+    <ellipse cx="110" cy="120" rx="19" ry="15" transform="rotate(-18 110 120)" fill="#CF3E96" stroke="#8F2464" stroke-width="3"/>
+    <circle cx="104" cy="118" r="4.2" fill="#fff" stroke="#1F2430" stroke-width="2.2"/><circle cx="105.5" cy="119" r="2.3" fill="#1F2430"/><circle cx="107" cy="116.5" r="1.4" fill="#fff"/>
+<circle cx="116" cy="118" r="4.2" fill="#fff" stroke="#1F2430" stroke-width="2.2"/><circle cx="117.5" cy="119" r="2.3" fill="#1F2430"/><circle cx="119" cy="116.5" r="1.4" fill="#fff"/>
+    <path d="M105.5 125 q4.5 4.95 9 0" fill="none" stroke="#1F2430" stroke-width="2.2" stroke-linecap="round"/>
+    <rect x="162" y="56" width="6" height="58" rx="3" fill="#E21C48"/>
+    <ellipse cx="150" cy="114" rx="19" ry="15" transform="rotate(-18 150 114)" fill="#E21C48" stroke="#8F1230" stroke-width="3"/>
+    <circle cx="144" cy="112" r="4.2" fill="#fff" stroke="#1F2430" stroke-width="2.2"/><circle cx="145.5" cy="113" r="2.3" fill="#1F2430"/><circle cx="147" cy="110.5" r="1.4" fill="#fff"/>
+<circle cx="156" cy="112" r="4.2" fill="#fff" stroke="#1F2430" stroke-width="2.2"/><circle cx="157.5" cy="113" r="2.3" fill="#1F2430"/><circle cx="159" cy="110.5" r="1.4" fill="#fff"/>
+    <path d="M145.5 119 q4.5 4.95 9 0" fill="none" stroke="#1F2430" stroke-width="2.2" stroke-linecap="round"/>
+    <rect x="202" y="52" width="6" height="58" rx="3" fill="#F99D1C"/>
+    <ellipse cx="190" cy="110" rx="19" ry="15" transform="rotate(-18 190 110)" fill="#F99D1C" stroke="#A66912" stroke-width="3"/>
+    <circle cx="184" cy="108" r="4.2" fill="#fff" stroke="#1F2430" stroke-width="2.2"/><circle cx="185.5" cy="109" r="2.3" fill="#1F2430"/><circle cx="187" cy="106.5" r="1.4" fill="#fff"/>
+<circle cx="196" cy="108" r="4.2" fill="#fff" stroke="#1F2430" stroke-width="2.2"/><circle cx="197.5" cy="109" r="2.3" fill="#1F2430"/><circle cx="199" cy="106.5" r="1.4" fill="#fff"/>
+    <path d="M185.5 115 q4.5 4.95 9 0" fill="none" stroke="#1F2430" stroke-width="2.2" stroke-linecap="round"/>
+<polygon points="110.0,14.0 113.2,21.6 121.4,22.3 115.1,27.7 117.1,35.7 110.0,31.4 102.9,35.7 104.9,27.7 98.6,22.3 106.8,21.6" fill="#FFD54A" stroke="#E3A814" stroke-width="2.5" stroke-linejoin="round"/>
   </g>
 </svg>

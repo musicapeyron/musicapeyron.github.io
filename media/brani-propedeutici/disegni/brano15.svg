@@ -13,32 +13,18 @@
     
   </defs>
   <g filter="url(#adesivo)">
-    <path d="M30 150 Q110 176 190 150" fill="none" stroke="#1F2430" stroke-width="4" stroke-linecap="round"/>
-    <rect x="42" y="52" width="6" height="58" rx="3" fill="#009C95"/>
-    <ellipse cx="30" cy="110" rx="19" ry="15" transform="rotate(-18 30 110)" fill="#009C95" stroke="#00675F" stroke-width="3"/>
-    <circle cx="24" cy="108" r="4.2" fill="#fff" stroke="#1F2430" stroke-width="2.2"/><circle cx="25.5" cy="109" r="2.3" fill="#1F2430"/><circle cx="27" cy="106.5" r="1.4" fill="#fff"/>
-<circle cx="36" cy="108" r="4.2" fill="#fff" stroke="#1F2430" stroke-width="2.2"/><circle cx="37.5" cy="109" r="2.3" fill="#1F2430"/><circle cx="39" cy="106.5" r="1.4" fill="#fff"/>
-    <path d="M25.5 115 q4.5 4.95 9 0" fill="none" stroke="#1F2430" stroke-width="2.2" stroke-linecap="round"/>
-    <rect x="82" y="56" width="6" height="58" rx="3" fill="#5E50A1"/>
-    <ellipse cx="70" cy="114" rx="19" ry="15" transform="rotate(-18 70 114)" fill="#5E50A1" stroke="#3E3478" stroke-width="3"/>
-    <circle cx="64" cy="112" r="4.2" fill="#fff" stroke="#1F2430" stroke-width="2.2"/><circle cx="65.5" cy="113" r="2.3" fill="#1F2430"/><circle cx="67" cy="110.5" r="1.4" fill="#fff"/>
-<circle cx="76" cy="112" r="4.2" fill="#fff" stroke="#1F2430" stroke-width="2.2"/><circle cx="77.5" cy="113" r="2.3" fill="#1F2430"/><circle cx="79" cy="110.5" r="1.4" fill="#fff"/>
-    <path d="M65.5 119 q4.5 4.95 9 0" fill="none" stroke="#1F2430" stroke-width="2.2" stroke-linecap="round"/>
-    <rect x="122" y="62" width="6" height="58" rx="3" fill="#CF3E96"/>
-    <ellipse cx="110" cy="120" rx="19" ry="15" transform="rotate(-18 110 120)" fill="#CF3E96" stroke="#8F2464" stroke-width="3"/>
-    <circle cx="104" cy="118" r="4.2" fill="#fff" stroke="#1F2430" stroke-width="2.2"/><circle cx="105.5" cy="119" r="2.3" fill="#1F2430"/><circle cx="107" cy="116.5" r="1.4" fill="#fff"/>
-<circle cx="116" cy="118" r="4.2" fill="#fff" stroke="#1F2430" stroke-width="2.2"/><circle cx="117.5" cy="119" r="2.3" fill="#1F2430"/><circle cx="119" cy="116.5" r="1.4" fill="#fff"/>
-    <path d="M105.5 125 q4.5 4.95 9 0" fill="none" stroke="#1F2430" stroke-width="2.2" stroke-linecap="round"/>
-    <rect x="162" y="56" width="6" height="58" rx="3" fill="#E21C48"/>
-    <ellipse cx="150" cy="114" rx="19" ry="15" transform="rotate(-18 150 114)" fill="#E21C48" stroke="#8F1230" stroke-width="3"/>
-    <circle cx="144" cy="112" r="4.2" fill="#fff" stroke="#1F2430" stroke-width="2.2"/><circle cx="145.5" cy="113" r="2.3" fill="#1F2430"/><circle cx="147" cy="110.5" r="1.4" fill="#fff"/>
-<circle cx="156" cy="112" r="4.2" fill="#fff" stroke="#1F2430" stroke-width="2.2"/><circle cx="157.5" cy="113" r="2.3" fill="#1F2430"/><circle cx="159" cy="110.5" r="1.4" fill="#fff"/>
-    <path d="M145.5 119 q4.5 4.95 9 0" fill="none" stroke="#1F2430" stroke-width="2.2" stroke-linecap="round"/>
-    <rect x="202" y="52" width="6" height="58" rx="3" fill="#F99D1C"/>
-    <ellipse cx="190" cy="110" rx="19" ry="15" transform="rotate(-18 190 110)" fill="#F99D1C" stroke="#A66912" stroke-width="3"/>
-    <circle cx="184" cy="108" r="4.2" fill="#fff" stroke="#1F2430" stroke-width="2.2"/><circle cx="185.5" cy="109" r="2.3" fill="#1F2430"/><circle cx="187" cy="106.5" r="1.4" fill="#fff"/>
-<circle cx="196" cy="108" r="4.2" fill="#fff" stroke="#1F2430" stroke-width="2.2"/><circle cx="197.5" cy="109" r="2.3" fill="#1F2430"/><circle cx="199" cy="106.5" r="1.4" fill="#fff"/>
-    <path d="M185.5 115 q4.5 4.95 9 0" fill="none" stroke="#1F2430" stroke-width="2.2" stroke-linecap="round"/>
-<polygon points="110.0,14.0 113.2,21.6 121.4,22.3 115.1,27.7 117.1,35.7 110.0,31.4 102.9,35.7 104.9,27.7 98.6,22.3 106.8,21.6" fill="#FFD54A" stroke="#E3A814" stroke-width="2.5" stroke-linejoin="round"/>
+
+    <rect x="20" y="58" width="44" height="110" rx="8" fill="#E21C48" stroke="#8F1230" stroke-width="4"/>
+    <rect x="156" y="58" width="44" height="110" rx="8" fill="#E21C48" stroke="#8F1230" stroke-width="4"/>
+    <path d="M64 64 L80 172 L96 64 L112 172 L128 64 L144 172 L156 64" fill="#FFF6E0" stroke="#8B5E34" stroke-width="3.5" stroke-linejoin="round"/>
+    <path d="M64 64 H156 M64 168 H156" stroke="#8B5E34" stroke-width="4"/>
+    <rect x="28" y="72" width="28" height="82" rx="4" fill="#FFF6E0"/>
+    <rect x="30" y="76" width="24" height="9" rx="2" fill="#1F2430"/><rect x="30" y="90" width="24" height="9" rx="2" fill="#fff" stroke="#1F2430" stroke-width="1.5"/>
+    <rect x="30" y="104" width="24" height="9" rx="2" fill="#1F2430"/><rect x="30" y="118" width="24" height="9" rx="2" fill="#fff" stroke="#1F2430" stroke-width="1.5"/><rect x="30" y="132" width="24" height="9" rx="2" fill="#1F2430"/>
+    <circle cx="170" cy="80" r="5" fill="#FFF6E0"/><circle cx="186" cy="80" r="5" fill="#FFF6E0"/><circle cx="170" cy="96" r="5" fill="#FFF6E0"/><circle cx="186" cy="96" r="5" fill="#FFF6E0"/>
+    <circle cx="170" cy="112" r="5" fill="#FFF6E0"/><circle cx="186" cy="112" r="5" fill="#FFF6E0"/><circle cx="178" cy="132" r="9" fill="#FFD54A" stroke="#B9831A" stroke-width="2.5"/>
+    
+    <g font-family="Arial, sans-serif" font-weight="700" fill="#5E50A1"><rect x="70" y="10" width="5" height="34"/><rect x="79" y="10" width="2.5" height="34"/><circle cx="88" cy="21" r="3"/><circle cx="88" cy="33" r="3"/>
+    <circle cx="132" cy="21" r="3"/><circle cx="132" cy="33" r="3"/><rect x="138.5" y="10" width="2.5" height="34"/><rect x="145" y="10" width="5" height="34"/></g>
   </g>
 </svg>
