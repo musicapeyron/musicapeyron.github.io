@@ -30,7 +30,13 @@
     flauto: {
       c4: ["P", 1, 2, 3, 4, 5, 6, 7], d4: ["P", 1, 2, 3, 4, 5, 6], e4: ["P", 1, 2, 3, 4, 5], "c#5": [1, 2],
       f4: ["P", 1, 2, 3, 4], g4: ["P", 1, 2, 3], a4: ["P", 1, 2], bb4: ["P", 1, 3, 4], b4: ["P", 1],
-      c5: ["P", 2], d5: [2], e5: ["P½", 1, 2, 3, 4, 5], f5: ["P½", 1, 2, 3, 4]
+      c5: ["P", 2], d5: [2], e5: ["P½", 1, 2, 3, 4, 5], f5: ["P½", 1, 2, 3, 4],
+      // note alterate (diteggiatura tedesca, dallo schema cromatico)
+      "c#4": ["P", 1, 2, 3, 4, 5, 6, "7½"], db4: ["P", 1, 2, 3, 4, 5, 6, "7½"],
+      "d#4": ["P", 1, 2, 3, 4, 5, "6½"], eb4: ["P", 1, 2, 3, 4, 5, "6½"],
+      "f#4": ["P", 1, 2, 3, 5, 6, 7], gb4: ["P", 1, 2, 3, 5, 6, 7],
+      "g#4": ["P", 1, 2, 4, 5, 6], ab4: ["P", 1, 2, 4, 5, 6], "a#4": ["P", 1, 3, 4],
+      db5: [1, 2], "d#5": [2, 3, 4, 5, 6], eb5: [2, 3, 4, 5, 6]
     },
     chitarra: {
       e3: [6, 0], f3: [6, 1], g3: [6, 3], a3: [5, 0], b3: [5, 2], c4: [5, 3], d4: [4, 0], e4: [4, 2],
@@ -48,6 +54,18 @@
   /* posizioni alternative (solo per gli schemi completi): sull'ukulele sol e la si possono suonare anche sulla corda 4 */
   const ALTERNATIVE = { ukulele: { g4: [4, 0], a4: [4, 2] } };
   const CORDE = { chitarra: 6, ukulele: 4, basso: 4 };
+  /* accordatura (in note scritte), dalla corda 1 (la più acuta) */
+  const ACCORDATURA = { chitarra: [76, 71, 67, 62, 57, 52], ukulele: [69, 64, 60, 67], basso: [55, 50, 45, 40] };
+  /* posizione di una nota: dalla tabella, altrimenti la corda più acuta in prima posizione (tasti 0-4) */
+  function posCorde(strumento, nota) {
+    const t = POSIZIONI[strumento] && POSIZIONI[strumento][nota.chiave];
+    if (t) return t;
+    const acc = ACCORDATURA[strumento]; if (!acc) return null;
+    const m = midi(nota);
+    for (let c = 0; c < acc.length; c++) { const f = m - acc[c]; if (f >= 0 && f <= 4) return [c + 1, f]; }
+    const possibili = acc.map((a, c) => [c + 1, m - a]).filter(x => x[1] >= 0).sort((x, y) => x[1] - y[1]);
+    return possibili[0] || null;
+  }
   /* convenzione: corde in numeri (1 = la più acuta), tasti in numeri romani */
   const ROMANI = ["0", "I", "II", "III", "IV", "V", "VI", "VII", "VIII", "IX", "X", "XI", "XII"];
   const romano = n => ROMANI[n] || String(n);
@@ -80,7 +98,7 @@
   /* ===================== disegno degli schemi (SVG) ===================== */
   function svgCorde(strumento, nota, cx, top, posizione) {
     const nCorde = CORDE[strumento];
-    const pos = posizione || POSIZIONI[strumento][nota.chiave];
+    const pos = posizione || posCorde(strumento, nota);
     if (!pos) return `<text x="${cx}" y="${top + 30}" font-size="10" text-anchor="middle" fill="${GRIGIO}">?</text>`;
     const [corda, tasto] = pos;
     const tasti = Math.max(3, tasto);
@@ -109,7 +127,7 @@
     return s;
   }
   function larghezzaCorde(strumento, nota, posizione) {
-    const pos = posizione || POSIZIONI[strumento][nota.chiave] || [1, 3];
+    const pos = posizione || posCorde(strumento, nota) || [1, 3];
     return Math.max(3, pos[1]) * 18 + 44;
   }
 
@@ -128,7 +146,7 @@
     };
     const pollice = chiusi.includes("P") ? "chiuso" : chiusi.includes("P½") ? "mezzo" : "aperto";
     s += foro(cx - 24, ys[0], pollice);
-    for (let i = 1; i <= 7; i++) s += foro(cx, ys[i - 1], chiusi.includes(i) ? "chiuso" : "aperto");
+    for (let i = 1; i <= 7; i++) s += foro(cx, ys[i - 1], chiusi.includes(i) ? "chiuso" : chiusi.includes(i + "½") ? "mezzo" : "aperto");
     return s;
   }
 
@@ -317,6 +335,8 @@
         if (dinamicaInAttesa) { ev.dinamica = dinamicaInAttesa; dinamicaInAttesa = null; }
         if (acciaccInAttesa.length) { ev.acciaccature = acciaccInAttesa; acciaccInAttesa = []; }
         const arts = n.querySelector("notations articulations"); if (arts) ev.art = [...arts.children].map(a => a.tagName);
+        const colNota = n.getAttribute("color") || (n.querySelector("notehead") || { getAttribute: () => null }).getAttribute("color");
+        if (colNota && /^#?([a-f0-9]{6})$/i.test(colNota) && colNota.replace("#", "").toLowerCase() !== "000000") ev.evidenzia = colNota.startsWith("#") ? colNota : "#" + colNota;
         const tr = n.querySelector(':scope > beam[number="1"]'); if (tr) { ev.trave = tr.textContent.trim(); brano.traviScritte = true; }
         const gambo = n.querySelector(":scope > stem"); if (gambo && /^(up|down)$/.test(gambo.textContent.trim())) ev.gambo = gambo.textContent.trim();
         if (n.querySelector("notations fermata")) ev.corona = true;
@@ -466,12 +486,13 @@
           }
           const col = COLORI[e.nota.lettera];
           if (o.colori) sn.setKeyStyle(0, { fillStyle: col, strokeStyle: col });
+          else if (e.evidenzia) sn.setStyle({ fillStyle: e.evidenzia, strokeStyle: e.evidenzia });   // nota evidenziata: rossa come nel file
           sn._nome = NOMI[e.nota.lettera].replace(/^./, c => c.toUpperCase()) + (e.nota.alt === "b" ? "♭" : e.nota.alt === "#" ? "♯" : "");
           if (e.legaFine) { sn._nome = ""; return sn; }   // nota legata: non si suona di nuovo
           const mostraDit = modoDit === undefined ? tastiera : (modoDit === "sempre" || (modoDit === "prima" && !visteDit.has(e.nota.chiave)));
           if (mostraDit) {
             if (tastiera) sn._dito = e.dito || ditoTastiera(e.nota, piuGrave);
-            else if (corde) { const pos = POSIZIONI[o.strumento][e.nota.chiave]; if (pos) { sn._corda = String(pos[0]); sn._tasto = pos[1] === 0 ? "0" : romano(pos[1]); } }
+            else if (corde) { const pos = posCorde(o.strumento, e.nota); if (pos) { sn._corda = String(pos[0]); sn._tasto = pos[1] === 0 ? "0" : romano(pos[1]); } }
             visteDit.add(e.nota.chiave);
           }
           return sn;
@@ -528,6 +549,13 @@
       const ySotto = Math.max(stRiga.getYForLine(4) + 30, piuBasso + 18);
       const testo = (t, xc, yy, font) => { ctx.save(); ctx.setFont(font[0], font[1]); ctx.setFillStyle("#111");
         ctx.fillText(t, xc - ctx.measureText(t).width / 2, yy); ctx.restore(); };
+      // con i colori le note evidenziate hanno un cerchietto rosso attorno alla testa
+      if (o.colori) daScrivere.forEach(sn => {
+        const e = sn._ev; if (!e || !e.evidenzia || e.pausa) return;
+        const xc = sn.getAbsoluteX() + sn.getGlyphWidth() / 2, yc = sn.getYs()[0];
+        ctx.save(); ctx.setStrokeStyle("#D0021B"); ctx.setLineWidth(2.2); ctx.beginPath();
+        ctx.arc(xc, yc, 10.5, 0, Math.PI * 2); ctx.stroke(); ctx.restore();
+      });
       const cerchio = (t, xc, yy) => { ctx.save(); ctx.setStrokeStyle("#111"); ctx.setLineWidth(1.1); ctx.setFillStyle("#fff");
         ctx.beginPath(); ctx.arc(xc, yy - 3.6, 6.6, 0, Math.PI * 2); ctx.fill(); ctx.stroke(); ctx.restore();
         ctx.save(); ctx.setFont("Arial", 9.5, "bold"); ctx.setFillStyle("#111"); ctx.fillText(t, xc - ctx.measureText(t).width / 2, yy); ctx.restore(); };
@@ -563,7 +591,10 @@
       if (conTesti) {
         const yTesti = (volteRiga.length ? yVolta - 6 : ySopra - (haSopra ? 18 : 4));
         const scrivi = (t, xx, allinea) => { ctx.save(); ctx.setFont("Georgia, serif", 12, "normal", "italic"); ctx.setFillStyle("#334155");
-          const w = ctx.measureText(t).width; ctx.fillText(t, allinea === "destra" ? xx - w : xx, yTesti); ctx.restore(); };
+          const w = ctx.measureText(t).width;
+          // le scritte che arriverebbero oltre il bordo destro si spostano a sinistra
+          const xt = Math.max(4, Math.min(allinea === "destra" ? xx - w : xx, W - 6 - w));
+          ctx.fillText(t, xt, yTesti); ctx.restore(); };
         daScrivere.forEach(sn => {
           const e = sn._ev; if (!e) return;
           // per le pause di battuta intera (centrate) il testo parte dall'inizio della battuta
@@ -834,6 +865,6 @@
     });
   }
 
-  global.MotoreSchemi = { disegnaGruppo, disegnaBrano, leggiMusicXML, noteUsate, POSIZIONI, ALTERNATIVE, COLORI, NOMI, daNomi, analizza,
+  global.MotoreSchemi = { posCorde, disegnaGruppo, disegnaBrano, leggiMusicXML, noteUsate, POSIZIONI, ALTERNATIVE, COLORI, NOMI, daNomi, analizza,
     paginaA4, stampaPagina, salvaPaginaPDF, disegnaCarte, adattaBrano, schemaNota, rigoNota, svgAccordo, ACCORDI, SIGLE, LETTERA_ACCORDO, romano };
 })(window);
