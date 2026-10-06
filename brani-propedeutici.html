@@ -393,6 +393,12 @@
   .bp-disegno img { width: 100%; height: 100%; display: block; }
 
   .bp-riquadri { margin-top: 14px; }
+  .dit-scelta { display: flex; flex-wrap: wrap; align-items: center; gap: 6px; margin: -4px 0 12px; }
+  .dit-scelta .dit-etichetta { font-size: 12px; font-weight: 700; letter-spacing: 0.04em; text-transform: uppercase; color: #64748b; margin-right: 4px; }
+  .dit-scelta button { font-family: 'Manrope', sans-serif; font-weight: 700; font-size: 12.5px; color: #1F2430; background: #F1F5F9;
+    border: 1px solid #CBD5E1; border-radius: 999px; padding: 6px 12px; cursor: pointer; }
+  .dit-scelta button.active { background: #009C95; border-color: #009C95; color: #fff; }
+  .dit-scelta[hidden] { display: none; }
   .bp-carte { display: flex; flex-wrap: wrap; gap: 8px; justify-content: center; margin-top: 14px; }
   .bp-riquadro { border-radius: 16px; padding: 12px 16px 12px 52px; position: relative; line-height: 1.4; font-size: 15.5px; }
   .bp-riquadro + .bp-riquadro { margin-top: 8px; }
@@ -556,7 +562,9 @@
       return b;
     }));
   const PAUSE_RAGGRUPPATE = [28];        // brani in cui le battute di pausa consecutive diventano una sola, con il numero
+  // la diteggiatura (no / prima volta / sempre) viaggia insieme alla versione; il flauto non ne ha
   const opzioni = (versione, extra, n) => Object.assign({ strumento: strumento.id, colori: versione.colori, nomi: versione.nomi,
+    diteggiatura: strumento.id === 'flauto' ? 'no' : (versione.dit || 'no'),
     notaBaseDita: "g4", titolo: false, schema: false, pausePiuBattute: PAUSE_RAGGRUPPATE.includes(n) }, extra);
 
 
@@ -687,7 +695,8 @@
   NUMERI.forEach(n => {
     const card = document.createElement('article');
     card.className = 'bp-card';
-    let versione = VERSIONI[VERSIONE_INIZIALE];
+    let versione = VERSIONI[VERSIONE_INIZIALE], dit = 'no';
+    const scelta = () => Object.assign({}, versione, { dit });
     card.innerHTML = `
       <div class="bp-testa">
         <div class="bp-numero">${n}</div>
@@ -705,6 +714,7 @@
         <audio controls preload="none" src="${CARTELLA}brano${due(n)}-accompagnamento.mp3"></audio>
       </div>
       <div class="versions">${VERSIONI.map((v, i) => `<button type="button" data-v="${i}" class="${i === VERSIONE_INIZIALE ? 'active' : ''}">${v.label}</button>`).join('')}</div>
+      <div class="dit-scelta"><span class="dit-etichetta">Diteggiatura</span>${[['no', 'No'], ['prima', 'Prima volta'], ['sempre', 'Sempre']].map(([d, t]) => `<button type="button" data-d="${d}" class="${d === 'no' ? 'active' : ''}">${t}</button>`).join('')}</div>
       <div class="score-wrap"><div class="spartito"></div></div>
       <div class="azioni-spartito">
         <button type="button" class="score-dl" data-azione="stampa">🖨️ Stampa</button>
@@ -713,8 +723,9 @@
     container.appendChild(card);
     const wrap = card.querySelector('.score-wrap'), div = wrap.querySelector('.spartito');
     const disegna = (d, larghezza, perRiga, extra) => caricaBrano(n).then(brano =>
-      MotoreSchemi.disegnaBrano(d, brano, opzioni(versione, Object.assign({ larghezza, perRiga }, extra), n)));
+      MotoreSchemi.disegnaBrano(d, brano, opzioni(scelta(), Object.assign({ larghezza, perRiga }, extra), n)));
     const mostra = () => caricaBrano(n).then(brano => {
+      card.querySelector('.dit-scelta').hidden = strumento.id === 'flauto';   // il flauto non ha diteggiatura sullo spartito
       card.querySelector('.bp-titolo').innerHTML = titoloColorato(brano.titoloBreve);
       card.querySelector('.bp-riquadri').innerHTML = brano.riquadri.map(riquadroHTML).join("");
       // carte delle note (pentagramma, nome, diteggiatura): affiancate, vanno a capo se non c'è spazio
@@ -734,9 +745,14 @@
       card.querySelectorAll('.versions button').forEach(x => x.classList.toggle('active', x === btn));
       mostra();
     }));
-    wrap.addEventListener('click', () => apriLim(n, versione));
+    wrap.addEventListener('click', () => apriLim(n, scelta()));
+    card.querySelectorAll('.dit-scelta button').forEach(btn => btn.addEventListener('click', () => {
+      dit = btn.dataset.d;
+      card.querySelectorAll('.dit-scelta button').forEach(x => x.classList.toggle('active', x === btn));
+      mostra();
+    }));
     const [btnStampa, btnPdf] = card.querySelectorAll('.azioni-spartito .score-dl');
-    const pagina = () => caricaBrano(n).then(brano => MotoreSchemi.paginaA4(brano, opzioni(versione, {}, n),
+    const pagina = () => caricaBrano(n).then(brano => MotoreSchemi.paginaA4(brano, opzioni(scelta(), {}, n),
       { numero: n, titolo: brano.titoloBreve, riquadri: brano.riquadri, disegno: disegno(n), pausePiuBattute: PAUSE_RAGGRUPPATE.includes(n) }));
     btnStampa.addEventListener('click', () => pagina().then(MotoreSchemi.stampaPagina));
     btnPdf.addEventListener('click', async () => {

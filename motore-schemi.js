@@ -28,20 +28,29 @@
      Regola ukulele: se una nota ha due posizioni, si usa quella sulla corda più acuta. */
   const POSIZIONI = {
     flauto: {
+      c4: ["P", 1, 2, 3, 4, 5, 6, 7], d4: ["P", 1, 2, 3, 4, 5, 6], e4: ["P", 1, 2, 3, 4, 5], "c#5": [1, 2],
       f4: ["P", 1, 2, 3, 4], g4: ["P", 1, 2, 3], a4: ["P", 1, 2], bb4: ["P", 1, 3, 4], b4: ["P", 1],
       c5: ["P", 2], d5: [2], e5: ["P½", 1, 2, 3, 4, 5], f5: ["P½", 1, 2, 3, 4]
     },
     chitarra: {
-      f4: [4, 3], g4: [3, 0], a4: [3, 2], bb4: [3, 3], b4: [2, 0], c5: [2, 1], d5: [2, 3], e5: [1, 0], f5: [1, 1]
+      e3: [6, 0], f3: [6, 1], g3: [6, 3], a3: [5, 0], b3: [5, 2], c4: [5, 3], d4: [4, 0], e4: [4, 2],
+      f4: [4, 3], g4: [3, 0], a4: [3, 2], bb4: [3, 3], b4: [2, 0], c5: [2, 1], "c#5": [2, 2], d5: [2, 3], e5: [1, 0], f5: [1, 1], g5: [1, 3]
     },
     ukulele: {
-      f4: [2, 1], g4: [2, 3], a4: [1, 0], bb4: [1, 1], b4: [1, 2], c5: [1, 3], d5: [1, 5], e5: [1, 7], f5: [1, 8]
+      c4: [3, 0], d4: [3, 2], e4: [2, 0],
+      f4: [2, 1], g4: [2, 3], a4: [1, 0], bb4: [1, 1], b4: [1, 2], c5: [1, 3], "c#5": [1, 4], d5: [1, 5], e5: [1, 7], f5: [1, 8]
     },
     basso: {
-      f2: [4, 1], g2: [4, 3], a2: [3, 0], bb2: [3, 1], b2: [3, 2], c3: [3, 3], d3: [2, 0], e3: [2, 2], f3: [2, 3]
+      e2: [4, 0], f2: [4, 1], g2: [4, 3], a2: [3, 0], bb2: [3, 1], b2: [3, 2], c3: [3, 3], d3: [2, 0], e3: [2, 2], f3: [2, 3],
+      g3: [1, 0], a3: [1, 2], b3: [1, 4]
     }
   };
+  /* posizioni alternative (solo per gli schemi completi): sull'ukulele sol e la si possono suonare anche sulla corda 4 */
+  const ALTERNATIVE = { ukulele: { g4: [4, 0], a4: [4, 2] } };
   const CORDE = { chitarra: 6, ukulele: 4, basso: 4 };
+  /* convenzione: corde in numeri (1 = la più acuta), tasti in numeri romani */
+  const ROMANI = ["0", "I", "II", "III", "IV", "V", "VI", "VII", "VIII", "IX", "X", "XI", "XII"];
+  const romano = n => ROMANI[n] || String(n);
   const SEGNI_TASTO = { chitarra: [], ukulele: [3, 5, 7], basso: [3, 5, 7] };
 
   /* ---------- note: "bb4" -> { lettera, alterazione, ottava } ---------- */
@@ -69,9 +78,9 @@
   }
 
   /* ===================== disegno degli schemi (SVG) ===================== */
-  function svgCorde(strumento, nota, cx, top) {
+  function svgCorde(strumento, nota, cx, top, posizione) {
     const nCorde = CORDE[strumento];
-    const pos = POSIZIONI[strumento][nota.chiave];
+    const pos = posizione || POSIZIONI[strumento][nota.chiave];
     if (!pos) return `<text x="${cx}" y="${top + 30}" font-size="10" text-anchor="middle" fill="${GRIGIO}">?</text>`;
     const [corda, tasto] = pos;
     const tasti = Math.max(3, tasto);
@@ -84,7 +93,7 @@
     for (let c = 1; c <= nCorde; c++) {
       const y = y0 + (c - 1) * passo, attiva = c === corda;
       s += `<line x1="${x0}" y1="${y}" x2="${x0 + larg}" y2="${y}" stroke="${attiva ? col : LINEA}" stroke-width="${attiva ? 2.2 : 1}"/>`;
-      s += `<text x="${x0 - 22}" y="${y + 3.5}" font-size="10.5" text-anchor="middle" fill="${GRIGIO}" font-family="DejaVu Sans, Verdana, sans-serif" font-weight="400">${["I","II","III","IV","V","VI"][c - 1]}</text>`;
+      s += `<text x="${x0 - 22}" y="${y + 3.5}" font-size="10.5" text-anchor="middle" fill="${GRIGIO}" font-family="DejaVu Sans, Verdana, sans-serif" font-weight="400">${c}</text>`;
     }
     // segni di riferimento sulla tastiera (tra le corde centrali)
     for (const f of SEGNI_TASTO[strumento]) if (f <= tasti)
@@ -92,15 +101,15 @@
     // capotasto
     s += `<line x1="${x0}" y1="${y0 - 1}" x2="${x0}" y2="${y0 + alto + 1}" stroke="#111" stroke-width="3.2"/>`;
     // numeri dei tasti
-    for (let t = 1; t <= tasti; t++) s += `<text x="${x0 + (t - 0.5) * largTasto}" y="${y0 + alto + 14}" font-size="9.5" text-anchor="middle" fill="${GRIGIO}" font-family="DejaVu Sans, Verdana, sans-serif" font-weight="400">${t}</text>`;
+    for (let t = 1; t <= tasti; t++) s += `<text x="${x0 + (t - 0.5) * largTasto}" y="${y0 + alto + 14}" font-size="9.5" text-anchor="middle" fill="${GRIGIO}" font-family="DejaVu Sans, Verdana, sans-serif" font-weight="400">${romano(t)}</text>`;
     // dito o corda a vuoto
     const y = y0 + (corda - 1) * passo;
     if (tasto === 0) s += `<circle cx="${x0 - 8}" cy="${y}" r="5.2" fill="#fff" stroke="${bordo}" stroke-width="2"/>`;
     else s += `<circle cx="${x0 + (tasto - 0.5) * largTasto}" cy="${y}" r="6.2" fill="${col}" stroke="${bordo}" stroke-width="1"/>`;
     return s;
   }
-  function larghezzaCorde(strumento, nota) {
-    const pos = POSIZIONI[strumento][nota.chiave] || [1, 3];
+  function larghezzaCorde(strumento, nota, posizione) {
+    const pos = posizione || POSIZIONI[strumento][nota.chiave] || [1, 3];
     return Math.max(3, pos[1]) * 18 + 44;
   }
 
@@ -121,6 +130,57 @@
     s += foro(cx - 24, ys[0], pollice);
     for (let i = 1; i <= 7; i++) s += foro(cx, ys[i - 1], chiusi.includes(i) ? "chiuso" : "aperto");
     return s;
+  }
+
+  /* accordi: per ogni corda (dalla 1 alla più grave) "x" = non suonare, 0 = a vuoto, [tasto, dito] = premuta */
+  const ACCORDI = {
+    chitarra: {
+      Do:   [0, [1, 1], 0, [2, 2], [3, 3], "x"],      Re:   [[2, 2], [3, 3], [2, 1], 0, "x", "x"],
+      Mi:   [0, 0, [1, 1], [2, 3], [2, 2], 0],        Fa:   [[1, 1], [1, 1], [2, 2], [3, 3], "x", "x"],
+      Sol:  [[3, 3], 0, 0, 0, [2, 1], [3, 2]],        La:   [0, [2, 3], [2, 2], [2, 1], 0, "x"],
+      Rem:  [[1, 1], [3, 3], [2, 2], 0, "x", "x"],    Mim:  [0, 0, 0, [2, 3], [2, 2], 0],
+      Lam:  [0, [1, 1], [2, 3], [2, 2], 0, "x"],      Re7:  [[2, 3], [1, 1], [2, 2], 0, "x", "x"],
+      Sol7: [[1, 1], 0, 0, 0, [2, 2], [3, 3]],        La7:  [0, [2, 2], 0, [2, 1], 0, "x"]
+    },
+    ukulele: {
+      Do:   [[3, 3], 0, 0, 0],             Re:   [0, [2, 3], [2, 2], [2, 1]],
+      Mi:   [[2, 2], 0, [4, 4], [1, 1]],   Fa:   [0, [1, 1], 0, [2, 2]],
+      Sol:  [[2, 2], [3, 3], [2, 1], 0],   La:   [0, 0, [1, 1], [2, 2]],
+      Rem:  [0, [1, 1], [2, 2], [2, 3]],   Mim:  [[2, 1], [3, 2], [4, 3], 0],
+      Lam:  [0, 0, 0, [2, 2]],             Re7:  [0, [2, 1], 0, [2, 2]],
+      Sol7: [[2, 3], [1, 1], [2, 2], 0],   La7:  [0, 0, [1, 1], 0]
+    }
+  };
+  const SIGLE = { Do: "C", Re: "D", Mi: "E", Fa: "F", Sol: "G", La: "A", Rem: "Dm", Mim: "Em", Lam: "Am", Re7: "D7", Sol7: "G7", La7: "A7" };
+  const LETTERA_ACCORDO = { Do: "c", Re: "d", Mi: "e", Fa: "f", Sol: "g", La: "a" };
+  function svgAccordo(strumento, nome) {
+    const forma = ACCORDI[strumento][nome], nCorde = forma.length;
+    const tasti = strumento === "ukulele" ? 5 : 4, passo = 15, largTasto = 19;
+    const larg = tasti * largTasto, alto = (nCorde - 1) * passo, x0 = 30, y0 = 8;
+    const col = COLORI[LETTERA_ACCORDO[nome.replace(/m$|7$/, "")]], bordo = scurisci(col, 0.62);
+    const F = 'font-family="DejaVu Sans, Verdana, sans-serif"';
+    let s = "";
+    for (let t = 1; t <= tasti; t++) s += `<line x1="${x0 + t * largTasto}" y1="${y0}" x2="${x0 + t * largTasto}" y2="${y0 + alto}" stroke="${LINEA}" stroke-width="1"/>`;
+    for (const f of SEGNI_TASTO[strumento]) if (f <= tasti) s += `<circle cx="${x0 + (f - 0.5) * largTasto}" cy="${y0 + alto / 2}" r="2.6" fill="${GRIGIO_CHIARO}"/>`;
+    forma.forEach((v, i) => {
+      const y = y0 + i * passo, muta = v === "x";
+      s += `<line x1="${x0}" y1="${y}" x2="${x0 + larg}" y2="${y}" stroke="${muta ? LINEA : col}" stroke-width="${muta ? 1 : 2.2}"/>`;
+      s += `<text x="${x0 - 22}" y="${y + 3.5}" font-size="10.5" text-anchor="middle" fill="${GRIGIO}" ${F}>${i + 1}</text>`;
+    });
+    s += `<line x1="${x0}" y1="${y0 - 1}" x2="${x0}" y2="${y0 + alto + 1}" stroke="#111" stroke-width="3.2"/>`;
+    for (let t = 1; t <= tasti; t++) s += `<text x="${x0 + (t - 0.5) * largTasto}" y="${y0 + alto + 14}" font-size="9.5" text-anchor="middle" fill="${GRIGIO}" ${F}>${romano(t)}</text>`;
+    forma.forEach((v, i) => {
+      const y = y0 + i * passo;
+      if (v === "x") s += `<path d="M${x0 - 12} ${y - 4} l8 8 M${x0 - 4} ${y - 4} l-8 8" stroke="#7b8796" stroke-width="2" stroke-linecap="round"/>`;
+      else if (v === 0) s += `<circle cx="${x0 - 8}" cy="${y}" r="5.2" fill="#fff" stroke="${bordo}" stroke-width="2"/>`;
+      else {
+        const cx = x0 + (v[0] - 0.5) * largTasto;
+        s += `<circle cx="${cx}" cy="${y}" r="7" fill="${col}" stroke="${bordo}" stroke-width="1"/>`;
+        s += `<text x="${cx}" y="${y + 3.6}" font-size="10" font-weight="700" text-anchor="middle" fill="#fff" stroke="${bordo}" stroke-width="2" paint-order="stroke" ${F}>${v[1]}</text>`;
+      }
+    });
+    const w = x0 + larg + 8, h = y0 + alto + 20;
+    return `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ${w} ${h}" style="display:block;width:100%;height:auto"><g stroke="none">${s}</g></svg>`;
   }
 
   /* tastiera: da do4 a fa5 (11 tasti bianchi) */
@@ -213,7 +273,8 @@
     parte.querySelectorAll(":scope > measure").forEach(m => {
       const b = { eventi: [] };
       const key = m.querySelector("attributes key fifths"); if (key) brano.armatura = +key.textContent;
-      const t = m.querySelector("attributes time"); if (t) brano.tempo = [+t.querySelector("beats").textContent, +t.querySelector("beat-type").textContent];
+      const ott = m.querySelector("attributes clef clef-octave-change"); if (ott && +ott.textContent === 1) brano.chiaveOttava = true;
+      const t = m.querySelector("attributes time"); if (t) { brano.tempo = [+t.querySelector("beats").textContent, +t.querySelector("beat-type").textContent]; brano.simboloTempo = t.getAttribute("symbol"); }
       m.querySelectorAll(":scope > barline").forEach(bl => {
         const r = bl.querySelector("repeat");
         if (r && r.getAttribute("direction") === "forward") b.inizioRitornello = true;
@@ -225,7 +286,7 @@
           if (fineB.getAttribute("type") === "start") b.volta.inizio = true; else b.volta.fine = true;
         }
       });
-      let testiInAttesa = [];
+      let testiInAttesa = [], dinamicaInAttesa = null, acciaccInAttesa = [];
       [...m.children].forEach(n => {
         if (n.tagName === "direction") {
           // indicazioni scritte: andamento, "Introduzione", "Fine"... I riquadri (NOVITÀ e note) vanno a parte
@@ -237,15 +298,29 @@
             else testiInAttesa.push(t);
           });
           if (met && brano.battute.length === 0) brano.metronomo = { unita: (met.querySelector("beat-unit") || {}).textContent, valore: (met.querySelector("per-minute") || {}).textContent };
+          const din = n.querySelector("dynamics > *"); if (din) dinamicaInAttesa = din.tagName;
           return;
         }
         if (n.tagName !== "note") return;
         if (n.querySelector("chord")) return;          // melodie a una voce
+        if (n.querySelector("grace") && n.querySelector("pitch")) {   // acciaccatura: si attacca alla nota seguente
+          const st = n.querySelector("pitch step").textContent.toLowerCase(), al = +((n.querySelector("pitch alter") || {}).textContent || 0);
+          acciaccInAttesa.push({ nota: analizza(st + (al === -1 ? "b" : al === 1 ? "#" : "") + n.querySelector("pitch octave").textContent),
+            durata: TIPI[(n.querySelector("type") || {}).textContent] || "8", slash: (n.querySelector("grace").getAttribute("slash") === "yes") });
+          return;
+        }
         const r = n.querySelector("rest");
         const intera = r && (r.getAttribute("measure") === "yes" || !n.querySelector("type"));
         const ev = { durata: intera ? "w" : (TIPI[(n.querySelector("type") || {}).textContent] || "q"), punti: n.querySelectorAll("dot").length };
         if (intera) ev.intera = true;
         if (testiInAttesa.length) { ev.testi = testiInAttesa; testiInAttesa = []; }
+        if (dinamicaInAttesa) { ev.dinamica = dinamicaInAttesa; dinamicaInAttesa = null; }
+        if (acciaccInAttesa.length) { ev.acciaccature = acciaccInAttesa; acciaccInAttesa = []; }
+        const arts = n.querySelector("notations articulations"); if (arts) ev.art = [...arts.children].map(a => a.tagName);
+        const tr = n.querySelector(':scope > beam[number="1"]'); if (tr) { ev.trave = tr.textContent.trim(); brano.traviScritte = true; }
+        if (n.querySelector("notations fermata")) ev.corona = true;
+        const accScritto = n.querySelector(":scope > accidental");
+        if (accScritto) { ev.accidentale = { sharp: "#", flat: "b", natural: "n" }[accScritto.textContent.trim()] || null; brano.alterazioniScritte = true; }
         n.querySelectorAll(":scope > tie").forEach(t => { if (t.getAttribute("type") === "start") ev.legaInizio = true; else ev.legaFine = true; });
         n.querySelectorAll("notations slur").forEach(sl => { if (sl.getAttribute("type") === "start") ev.portamentoInizio = true; else if (sl.getAttribute("type") === "stop") ev.portamentoFine = true; });
         if (r) ev.pausa = true;
@@ -290,6 +365,13 @@
     const VF = (global.Vex && global.Vex.Flow) ? global.Vex.Flow : global.VexFlow;
     const o = Object.assign({ strumento: "flauto", colori: false, nomi: false, larghezza: 760 }, opzioni);
     const tastiera = o.strumento === "tastiera";
+    /* diteggiatura: undefined = come sempre (tastiera con le dita, nessuna indicazione per le corde);
+       "no" | "prima" (solo alla prima comparsa di ogni nota) | "sempre" */
+    const corde = !!CORDE[o.strumento];
+    const modoDit = o.diteggiatura, ditAttiva = modoDit === "prima" || modoDit === "sempre";
+    const nomiSotto = tastiera || (corde && ditAttiva);
+    const haSopra = (tastiera && (modoDit === undefined || ditAttiva)) || (corde && ditAttiva) || (o.nomi && !nomiSotto);
+    const visteDit = new Set();
     const usate = noteUsate(brano);
     const piuGrave = o.notaBaseDita ? analizza(o.notaBaseDita) : usate[0];   // diteggiatura fissa (es. "g4" = sol pollice) o dal brano
     const conTesti = o.testi !== false;
@@ -306,7 +388,7 @@
       else unita.push({ b, n: 1, unibile, battute: [b] });
     });
     const perRiga = o.perRiga || (W < 520 ? 2 : 4), righe = Math.ceil(unita.length / perRiga);
-    const altezzaRiga = (tastiera ? 140 : 120) + (conTesti && o.titolo === false ? 14 : 0);
+    const altezzaRiga = (nomiSotto ? 140 : 120) + (corde && ditAttiva && o.nomi ? 16 : 0) + (conTesti && o.titolo === false ? 14 : 0);
     const yPrima = o.titolo === false ? (conTesti && (brano.andamento || brano.metronomo) ? 26 : 8) : 30;
     contenitore.innerHTML = "";
     const divRigo = document.createElement("div"); contenitore.appendChild(divRigo);
@@ -343,7 +425,7 @@
         const b = u.b, ultima = u.battute[u.battute.length - 1];
         const w = spazio * pesi[i] / pesoTot + (i === 0 ? testa : 0);
         const st = new VF.Stave(x, y, w);
-        if (i === 0) { st.addClef("treble"); if (keySpec) st.addKeySignature(keySpec); if (r === 0) st.addTimeSignature(brano.tempo.join("/")); }
+        if (i === 0) { st.addClef("treble", "default", brano.chiaveOttava ? "8va" : undefined); if (keySpec) st.addKeySignature(keySpec); if (r === 0) st.addTimeSignature(brano.simboloTempo === "cut" ? "C|" : brano.simboloTempo === "common" ? "C" : brano.tempo.join("/")); }
         if (b.inizioRitornello) st.setBegBarType(VF.Barline.type.REPEAT_BEGIN);
         if (b.volta) volteRiga.push({ st, volta: b.volta });   // le volte si disegnano dopo, sopra i nomi
         if (ultima.fineRitornello) st.setEndBarType(VF.Barline.type.REPEAT_END);
@@ -361,17 +443,45 @@
           sn._ev = e; sn._riga = r;
           for (let k = 0; k < e.punti; k++) VF.Dot.buildAndAttach([sn], { all: true });
           if (e.pausa) return sn;
-          // alterazione scritta solo se diversa da quella in chiave
-          const inChiave = alterazioniInChiave[e.nota.lettera] || "";
-          if (e.nota.alt !== inChiave) sn.addModifier(new VF.Accidental(e.nota.alt || "n"), 0);
+          // alterazioni: come scritte nel file, se il file le indica; altrimenti solo se diverse dalla chiave
+          if (brano.alterazioniScritte) { if (e.accidentale) sn.addModifier(new VF.Accidental(e.accidentale), 0); }
+          else {
+            const inChiave = alterazioniInChiave[e.nota.lettera] || "";
+            if (e.nota.alt !== inChiave) sn.addModifier(new VF.Accidental(e.nota.alt || "n"), 0);
+          }
+          // staccato, tenuto, accento (dalla parte della testa) e corona (sempre sopra)
+          const POS = (VF.ModifierPosition || (VF.Modifier && VF.Modifier.Position) || {});
+          const lato = sn.getStemDirection && sn.getStemDirection() === 1 ? POS.BELOW : POS.ABOVE;
+          (e.art || []).forEach(a => { const c = { staccato: "a.", tenuto: "a-", accent: "a>" }[a]; if (c) sn.addModifier(new VF.Articulation(c).setPosition(lato), 0); });
+          if (e.corona) sn.addModifier(new VF.Articulation("a@a").setPosition(POS.ABOVE), 0);
+          // acciaccature
+          if (e.acciaccature) {
+            const gn = e.acciaccature.map(a => new VF.GraceNote({ keys: [a.nota.lettera + a.nota.alt + "/" + a.nota.ottava], duration: a.durata, slash: a.slash && e.acciaccature.length === 1 }));
+            const gruppo = new VF.GraceNoteGroup(gn, true); if (gn.length > 1) gruppo.beamNotes();
+            sn.addModifier(gruppo, 0);
+          }
           const col = COLORI[e.nota.lettera];
           if (o.colori) sn.setKeyStyle(0, { fillStyle: col, strokeStyle: col });
           sn._nome = NOMI[e.nota.lettera].replace(/^./, c => c.toUpperCase()) + (e.nota.alt === "b" ? "♭" : e.nota.alt === "#" ? "♯" : "");
-          if (tastiera) sn._dito = e.dito || ditoTastiera(e.nota, piuGrave);
-          if (e.legaFine) { sn._nome = ""; sn._dito = ""; }   // nota legata: non si suona di nuovo
+          if (e.legaFine) { sn._nome = ""; return sn; }   // nota legata: non si suona di nuovo
+          const mostraDit = modoDit === undefined ? tastiera : (modoDit === "sempre" || (modoDit === "prima" && !visteDit.has(e.nota.chiave)));
+          if (mostraDit) {
+            if (tastiera) sn._dito = e.dito || ditoTastiera(e.nota, piuGrave);
+            else if (corde) { const pos = POSIZIONI[o.strumento][e.nota.chiave]; if (pos) { sn._corda = String(pos[0]); sn._tasto = pos[1] === 0 ? "0" : romano(pos[1]); } }
+            visteDit.add(e.nota.chiave);
+          }
           return sn;
         });
-        const beams = VF.Beam.generateBeams(note);
+        let beams = [];
+        if (brano.traviScritte) {      // travi come nel file (inizio / continua / fine)
+          let gruppo = [];
+          note.forEach(sn => { const t = sn._ev && sn._ev.trave;
+            if (t === "begin") gruppo = [sn]; else if (t === "continue" && gruppo.length) gruppo.push(sn);
+            else if (t === "end" && gruppo.length) { gruppo.push(sn); beams.push(new VF.Beam(gruppo)); gruppo = []; } });
+        } else {
+          let gruppiTrave; try { gruppiTrave = VF.Beam.getDefaultBeamGroups(brano.tempo.join("/")); } catch (er) {}
+          beams = VF.Beam.generateBeams(note, gruppiTrave ? { groups: gruppiTrave } : {});
+        }
         VF.Formatter.FormatAndDraw(ctx, st, note, { auto_beam: false });
         beams.forEach(bm => bm.setContext(ctx).draw());
         note.forEach(sn => { daScrivere.push(sn); tutteLeNote.push(sn); });
@@ -411,17 +521,29 @@
       const ySotto = Math.max(stRiga.getYForLine(4) + 30, piuBasso + 18);
       const testo = (t, xc, yy, font) => { ctx.save(); ctx.setFont(font[0], font[1]); ctx.setFillStyle("#111");
         ctx.fillText(t, xc - ctx.measureText(t).width / 2, yy); ctx.restore(); };
+      const cerchio = (t, xc, yy) => { ctx.save(); ctx.setStrokeStyle("#111"); ctx.setLineWidth(1.1); ctx.setFillStyle("#fff");
+        ctx.beginPath(); ctx.arc(xc, yy - 3.6, 6.6, 0, Math.PI * 2); ctx.fill(); ctx.stroke(); ctx.restore();
+        ctx.save(); ctx.setFont("Arial", 9.5, "bold"); ctx.setFillStyle("#111"); ctx.fillText(t, xc - ctx.measureText(t).width / 2, yy); ctx.restore(); };
+      const yNomeSotto = corde && ditAttiva ? ySotto + 18 : ySotto;
       daScrivere.forEach(sn => {
         if (!sn._nome) return;
         const xc = sn.getAbsoluteX() + sn.getGlyphWidth() / 2;
-        if (tastiera) {
-          if (sn._dito) testo(sn._dito, xc, ySopra, ["Arial", 10]);
-          if (o.nomi) testo(sn._nome, xc, ySotto, ["Georgia, serif", 12]);
-        } else if (o.nomi) testo(sn._nome, xc, ySopra, ["Georgia, serif", 12]);
+        if (sn._dito) testo(sn._dito, xc, ySopra, ["Arial", 10]);
+        if (sn._corda) cerchio(sn._corda, xc, ySopra);                       // corda: numero nel cerchietto, sopra
+        if (sn._tasto) { ctx.save(); ctx.setFont("Arial", 10, "bold"); ctx.setFillStyle("#111");
+          ctx.fillText(sn._tasto, xc - ctx.measureText(sn._tasto).width / 2, ySotto); ctx.restore(); }  // tasto in romano, sotto
+        if (o.nomi) testo(sn._nome, xc, nomiSotto ? yNomeSotto : ySopra, ["Georgia, serif", 12]);
+      });
+      // dinamiche (p, mf, f...): in grassetto corsivo, sotto le altre indicazioni
+      const yDin = (nomiSotto && o.nomi ? yNomeSotto : (corde && ditAttiva ? ySotto : ySotto - 12)) + 17;
+      daScrivere.forEach(sn => {
+        const e = sn._ev; if (!e || !e.dinamica) return;
+        ctx.save(); ctx.setFont("Georgia, serif", 14, "bold", "italic"); ctx.setFillStyle("#111");
+        ctx.fillText(e.dinamica, sn.getAbsoluteX() - 2, yDin); ctx.restore();
       });
       // indicazioni scritte, in corsivo, sopra nomi e dita
       // volte (prima e seconda volta): parentesi sopra i nomi delle note
-      const yVolta = ySopra - ((tastiera || o.nomi) ? 30 : 16);
+      const yVolta = ySopra - (haSopra ? 30 : 16);
       volteRiga.forEach(({ st, volta }) => {
         const x1 = st.getX() + 2, x2 = st.getX() + st.getWidth() - 2;
         ctx.save(); ctx.setStrokeStyle("#111"); ctx.setLineWidth(1.3); ctx.beginPath();
@@ -432,7 +554,7 @@
         if (volta.inizio) { ctx.save(); ctx.setFont("Arial", 12, "bold"); ctx.setFillStyle("#111"); ctx.fillText(volta.numero + ".", x1 + 5, yVolta + 13); ctx.restore(); }
       });
       if (conTesti) {
-        const yTesti = (volteRiga.length ? yVolta - 6 : ySopra - ((tastiera || o.nomi) ? 18 : 4));
+        const yTesti = (volteRiga.length ? yVolta - 6 : ySopra - (haSopra ? 18 : 4));
         const scrivi = (t, xx, allinea) => { ctx.save(); ctx.setFont("Georgia, serif", 12, "normal", "italic"); ctx.setFillStyle("#334155");
           const w = ctx.measureText(t).width; ctx.fillText(t, allinea === "destra" ? xx - w : xx, yTesti); ctx.restore(); };
         daScrivere.forEach(sn => {
@@ -664,27 +786,31 @@
   }
 
   /* schema di una sola nota (solo la diteggiatura, senza pentagramma), come SVG a sé */
-  function schemaNota(strumento, n) {
+  function schemaNota(strumento, n, posizione) {
     let w, h, corpo;
     if (strumento === "flauto") { w = 66; h = 188; corpo = svgFlauto(n, 40, 6); }
     else if (strumento === "tastiera") { w = 150; h = 64; corpo = svgTastiera(n, 75, 5); }
-    else { w = larghezzaCorde(strumento, n) + 12; h = (CORDE[strumento] - 1) * 15 + 34; corpo = svgCorde(strumento, n, w / 2 + 4, 8); }
+    else { w = larghezzaCorde(strumento, n, posizione) + 12; h = (CORDE[strumento] - 1) * 15 + 34; corpo = svgCorde(strumento, n, w / 2 + 4, 8, posizione); }
     return `<svg xmlns="${NS}" viewBox="0 0 ${w} ${h}" style="display:block;width:100%;height:auto"><g stroke="none">${corpo}</g></svg>`;
   }
   /* pentagramma con una sola nota (per le carte), come SVG */
-  function rigoNota(contenitore, n) {
+  function rigoNota(contenitore, n, chiave) {
+    chiave = chiave || "treble";
     const VF = (global.Vex && global.Vex.Flow) ? global.Vex.Flow : global.VexFlow;
     contenitore.innerHTML = "";
-    const R = new VF.Renderer(contenitore, VF.Renderer.Backends.SVG); R.resize(150, 96);
+    const R = new VF.Renderer(contenitore, VF.Renderer.Backends.SVG); R.resize(150, 110);
     const ctx = R.getContext();
-    const st = new VF.Stave(4, 2, 142); st.setBegBarType(VF.Barline.type.NONE); st.setEndBarType(VF.Barline.type.NONE);
-    st.setStyle({ strokeStyle: "#111", fillStyle: "#111" }); st.addClef("treble").setContext(ctx).draw();
-    const sn = new VF.StaveNote({ keys: [n.lettera + n.alt + "/" + n.ottava], duration: "w", clef: "treble" });
+    const st = new VF.Stave(4, 10, 142); st.setBegBarType(VF.Barline.type.NONE); st.setEndBarType(VF.Barline.type.NONE);
+    st.setStyle({ strokeStyle: "#111", fillStyle: "#111" }); st.addClef(chiave).setContext(ctx).draw();
+    const sn = new VF.StaveNote({ keys: [n.lettera + n.alt + "/" + n.ottava], duration: "w", clef: chiave });
     if (n.alt) sn.addModifier(new VF.Accidental(n.alt), 0);
     sn.setStave(st); const tc = new VF.TickContext(); tc.addTickable(sn).preFormat(); tc.setX(95 - st.getNoteStartX()); sn.setContext(ctx).draw();
     const svg = contenitore.querySelector("svg");
     svg.querySelectorAll("path, rect").forEach(el => { if (el.getAttribute("stroke") === "#999999") el.setAttribute("stroke", "#111"); });
-    svg.setAttribute("viewBox", "0 0 150 96"); svg.removeAttribute("width"); svg.removeAttribute("height");
+    // riquadro adattato anche alle note con molti tagli addizionali (sopra o sotto il pentagramma)
+    let alto = 0, basso = 110;
+    try { const bb = svg.getBBox(); alto = Math.min(0, bb.y - 4); basso = Math.max(110, bb.y + bb.height + 4); } catch (e) {}
+    svg.setAttribute("viewBox", `0 ${alto} 150 ${basso - alto}`); svg.removeAttribute("width"); svg.removeAttribute("height");
     svg.style.width = "100%"; svg.style.height = "auto"; svg.style.display = "block";
   }
   /* carte delle note, come negli schemi: pentagramma con la nota, nome colorato, diteggiatura */
@@ -701,6 +827,6 @@
     });
   }
 
-  global.MotoreSchemi = { disegnaGruppo, disegnaBrano, leggiMusicXML, noteUsate, POSIZIONI, COLORI, NOMI, daNomi,
-    paginaA4, stampaPagina, salvaPaginaPDF, disegnaCarte, adattaBrano };
+  global.MotoreSchemi = { disegnaGruppo, disegnaBrano, leggiMusicXML, noteUsate, POSIZIONI, ALTERNATIVE, COLORI, NOMI, daNomi, analizza,
+    paginaA4, stampaPagina, salvaPaginaPDF, disegnaCarte, adattaBrano, schemaNota, rigoNota, svgAccordo, ACCORDI, SIGLE, LETTERA_ACCORDO, romano };
 })(window);
