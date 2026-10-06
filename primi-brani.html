@@ -508,6 +508,13 @@
   .lim-spartito { display: flex; align-items: center; justify-content: center; padding: 18px 26px 18px 18px; overflow: hidden; }
   .lightbox .lim-spartito .spartito { width: 100%; max-width: none; max-height: none; overflow: visible; padding: 0; background: transparent; }
   .lim-spartito svg { display: block; margin: 0 auto; }
+  /* basi nello schermo intero */
+  .lim-basi { display: flex; gap: 6px; flex-wrap: wrap; margin-top: 8px; }
+  .lim-basi button { flex: 1; font-family: 'Manrope', sans-serif; font-weight: 800; font-size: 13px; border-radius: 999px; padding: 8px 10px; cursor: pointer;
+    border: 0; color: #fff; background: #009C95; box-shadow: 0 3px 0 #00706B; }
+  .lim-basi button[data-base="1"] { background: #5E50A1; box-shadow: 0 3px 0 #43397A; }
+  .lim-basi button[data-base="stop"] { flex: none; background: #E2E8F0; color: #1F2430; box-shadow: 0 3px 0 #B8C2D0; }
+  .tel .lim-basi button { font-size: 11px; padding: 6px 8px; }
   /* raccolta senza disegni: titolo sobrio */
   .bp-disegno, .tel-disegno { display: none !important; }
   .bp-titolo { font-family: 'Manrope', sans-serif !important; font-size: clamp(20px, 2.6vw, 28px) !important; color: #1F2430; }
@@ -515,7 +522,7 @@
   .tel-titolo { font-family: 'Manrope', sans-serif !important; font-size: 14px !important; }
 </style>
 <script src="vexflow.js"></script>
-<script src="motore-schemi.js?v=2026-10-06c"></script>
+<script src="motore-schemi.js?v=2026-10-07"></script>
 </head>
 <body>
 
@@ -544,7 +551,9 @@
 <script>
   const CARTELLA = "media/primi-brani/";
   const NUMERI = [1, 2, 3, 4, 5, 6];
-  let ETICHETTE_INDICE = {};            // testo accanto al numero nell'indice (es. la tonalità delle scale)
+  let ETICHETTE_INDICE = {};
+  /* spartito che segue la base: secondi di attacco della base prima della prima battuta (misurati) */
+  const SINCRO = {};   // lo spartito che segue la base: per ora solo nei Brani propedeutici 1-10            // testo accanto al numero nell'indice (es. la tonalità delle scale)
   const DISEGNI = [];                  // questa raccolta non ha disegni
   const due = n => String(n).padStart(2, "0");
   const disegno = n => null;
@@ -588,8 +597,9 @@
   const caricaBrano = n => cache[n] || (cache[n] = fetch(CARTELLA + "brano" + n + ".musicxml")
     .then(r => r.text()).then(t => {
       const b = MotoreSchemi.leggiMusicXML(t); b.titoloBreve = "Brano " + n; b.titolo = b.titoloBreve;
-      const agg = NOVITA_AGGIUNTE[n];
-      if (agg) b.riquadri = agg.prima ? [agg.testo, ...b.riquadri] : [...b.riquadri, agg.testo];
+      // novità aggiunte dalla pagina (una o più per brano): prima o dopo quelle scritte nel file
+      [].concat(NOVITA_AGGIUNTE[n] || []).reverse().forEach(agg => { if (agg.prima) b.riquadri.unshift(agg.testo); });
+      [].concat(NOVITA_AGGIUNTE[n] || []).forEach(agg => { if (!agg.prima) b.riquadri.push(agg.testo); });
       return b;
     }));
   const PAUSE_RAGGRUPPATE = [];        // brani in cui le battute di pausa consecutive diventano una sola, con il numero
@@ -624,7 +634,7 @@
     const brano = await caricaBrano(n), note = MotoreSchemi.noteUsate(brano);
     const verticale = window.innerHeight > window.innerWidth;
     const testa = `<div class="tel-testa"><span class="tel-numero">${n}</span><h2 class="tel-titolo">${titoloColorato(brano.titoloBreve)}</h2>${disegno(n) ? `<img class="tel-disegno" src="${disegno(n)}" alt="">` : ''}</div>`;
-    const riquadri = brano.riquadri.map(riquadroHTML).join("");
+    const riquadri = brano.riquadri.map(riquadroHTML).join("") + comandiBasi(n);
     lightboxInner.innerHTML = verticale
       ? `<div class="tel tel-vert">${testa}<div class="tel-riquadri">${riquadri}</div><div class="tel-spartito"><div class="spartito"></div></div><div class="tel-carte lim-carte"></div></div>`
       : `<div class="tel tel-oriz${colonnaChiusa ? ' chiusa' : ''}"><div class="tel-striscia"><span class="tel-numero">${n}</span></div><div class="tel-lato">${testa}<div class="tel-riquadri">${riquadri}</div><div class="tel-carte lim-carte"></div></div><div class="tel-spartito">${maniglia()}<div class="spartito"></div></div></div>`;
@@ -698,7 +708,7 @@
           <div><div class="bp-numero">${n}</div><h2 class="bp-titolo">${titoloColorato(brano.titoloBreve)}</h2></div>
           <div class="bp-disegno">${disegno(n) ? `<img src="${disegno(n)}" alt="">` : ''}</div>
         </div>
-        ${brano.riquadri.map(riquadroHTML).join("")}
+        ${brano.riquadri.map(riquadroHTML).join("")}${comandiBasi(n)}
         <div class="lim-carte"></div>
       </div>
       <div class="lim-spartito">${maniglia()}<div class="spartito"></div></div>
@@ -830,6 +840,98 @@
     });
     mostra();
   });
+
+  /* ---------- lo spartito segue la base: battuta illuminata, linea che scorre, conto alla rovescia ---------- */
+  function ordineEsecuzione(battute) {
+    const ord = []; let i = 0, inizio = 0, passata = 1, dc = false, giri = 0; const ripetute = new Set();
+    const haDC = b => b.eventi.some(e => (e.testiDopo || []).some(t => /^D\.?\s?C/.test(t)));
+    while (i < battute.length && giri++ < 5000) {
+      const b = battute[i];
+      if (b.inizioRitornello && !ripetute.has("i" + i)) inizio = i;
+      if (b.volta && !String(b.volta.numero).split(/[,\s]+/).includes(String(passata))) { i++; continue; }
+      if (!b.volta && passata === 2 && ord.length && battute[ord[ord.length - 1]].volta) passata = 1;
+      ord.push(i);
+      if (dc && b.eventi.some(e => (e.testiDopo || []).includes("Fine"))) break;
+      if (b.fineRitornello && !ripetute.has(i)) { ripetute.add(i); passata = 2; i = inizio; continue; }
+      if (haDC(b) && !dc) { dc = true; passata = 1; ripetute.clear(); i = 0; inizio = 0; continue; }
+      i++;
+    }
+    return ord;
+  }
+  let sincro = null, ultimoScorrimento = 0;
+  async function avviaSincro(audio) {
+    const card = audio.closest('.bp-card'); if (!card) return;
+    const n = +card.id.replace('brano-', ''); if (SINCRO[n] === undefined) return;
+    const brano = await caricaBrano(n), bpm = +((brano.metronomo || {}).valore) || 0; if (!bpm) return;
+    const q = 60 / bpm, lung = brano.tempo[0] * 4 / brano.tempo[1], durB = lung * q, ord = ordineEsecuzione(brano.battute);
+    // quando entra il flauto: la prima battuta (nell'ordine di esecuzione) con una nota
+    let entrata = 0; for (let k = 0; k < ord.length; k++) { const b = brano.battute[ord[k]]; const iNota = b.eventi.findIndex(e => !e.pausa); if (iNota >= 0) { let qq = 0; for (let j = 0; j < iNota; j++) qq += 1; entrata = k * durB; break; } }
+    sincro = { n, audio, card, q, lung, durB, ord, entrata };
+    requestAnimationFrame(passoSincro);
+  }
+  function fermaSincro() { document.querySelectorAll('svg .sincro').forEach(g => g.remove()); sincro = null; }
+  function svgSeguiti() {
+    const l = [sincro.card.querySelector('.spartito svg')];
+    if (lightbox.classList.contains('open') && limAperta && limAperta.n === sincro.n) l.push(lightboxInner.querySelector('.lim-spartito svg, .tel-spartito svg'));
+    return l.filter(x => x && x._mappa);
+  }
+  function passoSincro() {
+    if (!sincro || sincro.audio.paused) return;
+    const { audio, q, lung, durB, ord, entrata, n } = sincro, t = audio.currentTime - SINCRO[n];
+    let m = ord[0], qIn = 0, conta = 0, visibile = true;
+    if (t < 0) conta = Math.ceil(-t / q);
+    else {
+      const k = Math.floor(t / durB);
+      if (k >= ord.length) visibile = false;
+      else { m = ord[k]; qIn = (t - k * durB) / q; if (t < entrata && entrata - t <= durB) conta = Math.ceil((entrata - t) / q); }
+    }
+    svgSeguiti().forEach(svg => disegnaSincro(svg, m, t < 0 ? 0 : qIn, conta, visibile && t >= 0));
+    if (!lightbox.classList.contains('open') && performance.now() - ultimoScorrimento > 400) { ultimoScorrimento = performance.now(); tieniInVista(sincro.card.querySelector('.spartito svg'), m); }
+    requestAnimationFrame(passoSincro);
+  }
+  function disegnaSincro(svg, m, qIn, conta, attivo) {
+    const NS = 'http://www.w3.org/2000/svg', mp = svg._mappa[m]; if (!mp) return;
+    let g = svg.querySelector('.sincro');
+    if (!g) {
+      g = document.createElementNS(NS, 'g'); g.setAttribute('class', 'sincro');
+      g.innerHTML = '<rect class="sb" rx="8" fill="rgba(249,157,28,0.16)"/><line class="sl" stroke="#F99D1C" stroke-width="3.5" stroke-linecap="round"/>' +
+        '<text class="sc" text-anchor="middle" font-family="Fredoka, Manrope, Arial" font-weight="700" font-size="30" fill="#F99D1C" stroke="#fff" stroke-width="5" paint-order="stroke"></text>';
+      svg.insertBefore(g, svg.firstChild);
+    }
+    const x0 = mp.xNote != null ? mp.xNote - 10 : mp.x0, x1 = mp.x1;
+    const r = g.querySelector('.sb'); r.setAttribute('x', x0); r.setAttribute('y', mp.y0 - 22); r.setAttribute('width', Math.max(0, x1 - x0)); r.setAttribute('height', mp.y1 - mp.y0 + 44);
+    r.style.display = attivo ? '' : 'none';
+    // la linea: interpolata tra le posizioni delle figure della battuta
+    const pts = mp.punti.concat([{ q: svg._lungBattuta, x: x1 - 6 }]);
+    let x = pts[0].x;
+    for (let i = 0; i < pts.length - 1; i++) if (qIn >= pts[i].q && qIn <= pts[i + 1].q) { const a = pts[i], b = pts[i + 1]; x = a.x + (b.x - a.x) * ((qIn - a.q) / Math.max(1e-6, b.q - a.q)); break; }
+    const l = g.querySelector('.sl'); l.setAttribute('x1', x); l.setAttribute('x2', x); l.setAttribute('y1', mp.y0 - 18); l.setAttribute('y2', mp.y1 + 18); l.style.display = attivo ? '' : 'none';
+    const c = g.querySelector('.sc'); c.textContent = conta ? conta : ''; c.setAttribute('x', (mp.xNote != null ? mp.xNote : mp.x0) + 14); c.setAttribute('y', mp.y0 - 26);
+  }
+  function tieniInVista(svg, m) {
+    if (!svg || !svg._mappa[m]) return;
+    const r = svg.getBoundingClientRect(), vb = svg.viewBox.baseVal, k = r.width / vb.width, mp = svg._mappa[m];
+    const yTop = r.top + (mp.y0 - 30 - vb.y) * k, yBot = r.top + (mp.y1 + 30 - vb.y) * k;
+    const alto = document.querySelector('.barra-fissa').getBoundingClientRect().bottom + 10;
+    if (yTop < alto || yBot > innerHeight - 20) window.scrollTo({ top: window.scrollY + yTop - innerHeight * 0.35, behavior: 'smooth' });
+  }
+  document.addEventListener('play', e => { if (e.target.tagName === 'AUDIO') { fermaSincro(); avviaSincro(e.target); } }, true);
+  document.addEventListener('pause', e => { if (sincro && e.target === sincro.audio) fermaSincro(); }, true);
+  document.addEventListener('ended', e => { if (sincro && e.target === sincro.audio) fermaSincro(); }, true);
+  /* pulsanti per far partire le basi dallo schermo intero */
+  const comandiBasi = n => SINCRO[n] === undefined ? '' : `<div class="lim-basi"><button type="button" data-base="0">▶ Con melodia</button><button type="button" data-base="1">▶ Solo base</button><button type="button" data-base="stop" aria-label="Ferma">■</button></div>`;
+  lightbox.addEventListener('click', e => {
+    const b = e.target.closest('[data-base]'); if (!b || !limAperta) return;
+    e.stopPropagation();
+    const aud = document.querySelectorAll(`#brano-${limAperta.n} audio`);
+    aud.forEach(a => a.pause());
+    if (b.dataset.base !== 'stop') { const a = aud[+b.dataset.base]; if (a) { a.currentTime = 0; a.play(); } }
+  });
+
+  /* ---------- un solo lettore alla volta: quando ne parte uno, gli altri si fermano ---------- */
+  document.addEventListener('play', e => {
+    document.querySelectorAll('audio').forEach(a => { if (a !== e.target && !a.paused) a.pause(); });
+  }, true);
 
   /* ---------- indice dei brani: sempre visibile, evidenzia il brano che si sta guardando ---------- */
   const indice = document.getElementById('indiceBar');

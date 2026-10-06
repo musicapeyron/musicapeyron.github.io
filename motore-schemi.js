@@ -423,6 +423,10 @@
     const keySpec = brano.armatura ? (["F","Bb","Eb","Ab","Db","Gb","Cb"][-brano.armatura - 1] || ["G","D","A","E","B","F#","C#"][brano.armatura - 1]) : null;
 
     const tutteLeNote = [];
+    /* mappa per seguire la base: per ogni battuta, dove sta nel disegno e dove cade ogni figura (in semiminime) */
+    const mappaBattute = [], lungBattuta = brano.tempo[0] * 4 / brano.tempo[1];
+    const DURQ = { w: 4, h: 2, q: 1, "8": 0.5, "16": 0.25 };
+    const durQ = e => e.intera ? lungBattuta : (DURQ[e.durata] || 1) * (e.punti ? 1.5 : 1);
     { let aperte = [], prossima = 0;   // ogni nota sotto una legatura di portamento riceve il suo numero
       brano.battute.forEach(b => b.eventi.forEach(e => {
         if (e.pausa) return;
@@ -455,6 +459,8 @@
         st.setContext(ctx).draw();
         if (u.n > 1) {   // pausa di più battute: barra con il numero sopra
           new VF.MultiMeasureRest(u.n, { number_of_measures: u.n }).setStave(st).setContext(ctx).draw();
+          u.battute.forEach((bb, k) => { const x0 = st.getNoteStartX(), x1 = st.getX() + st.getWidth(), pw = (x1 - x0) / u.n;
+            mappaBattute[brano.battute.indexOf(bb)] = { x0: k ? x0 + k * pw : st.getX(), x1: x0 + (k + 1) * pw, y0: st.getYForLine(0), y1: st.getYForLine(4), punti: [{ q: 0, x: x0 + k * pw }, { q: lungBattuta, x: x0 + (k + 1) * pw }] }; });
           const t = b.eventi[0].testi; if (t) testiPause.push({ t: t.join("  "), x: st.getNoteStartX() });
           stRiga = st; x += w; return;
         }
@@ -511,6 +517,8 @@
           beams = VF.Beam.generateBeams(note, gruppiTrave ? { groups: gruppiTrave } : {});
         }
         VF.Formatter.FormatAndDraw(ctx, st, note, { auto_beam: false });
+        { let q = 0; const punti = note.map(sn => { const p = { q, x: sn.getAbsoluteX() + sn.getGlyphWidth() / 2 }; q += durQ(sn._ev || {}); return p; });
+          mappaBattute[brano.battute.indexOf(b)] = { x0: st.getX(), x1: st.getX() + st.getWidth(), xNote: st.getNoteStartX(), y0: st.getYForLine(0), y1: st.getYForLine(4), punti }; }
         beams.forEach(bm => bm.setContext(ctx).draw());
         note.forEach(sn => { daScrivere.push(sn); tutteLeNote.push(sn); });
         stRiga = st; sn_ultimaBattuta = { st, note };
@@ -646,6 +654,7 @@
     svg.setAttribute("viewBox", vb.join(" "));
     svg.setAttribute("width", "100%"); svg.removeAttribute("height");
     svg.style.width = "100%"; svg.style.height = "auto";   // VexFlow fissa la larghezza in pixel: lo spartito deve adattarsi al contenitore
+    svg._mappa = mappaBattute; svg._lungBattuta = lungBattuta;
 
     if (o.schema === false) return contenitore;
     // schema dello strumento con le note usate nel brano
