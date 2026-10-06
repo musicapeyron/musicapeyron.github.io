@@ -6,12 +6,10 @@
 <!--
   ============================================================
   BERENS — Hermann Berens, op. 62
-  Ogni brano è un file MusicXML in media/berens/ (berensN.musicxml),
-  ricavato dagli spartiti originali: il sito lo disegna per lo strumento
-  e la versione scelti. Le basi sono berensN-accompagnamento.mp3
-  (e, se ci sono, -media e -lenta per le velocità ridotte).
-  Per aggiungere un brano: carica il MusicXML e le basi, poi aggiungi
-  il numero a NUMERI qui sotto.
+  Ogni brano è un file MusicXML in media/berens/ (berensN.musicxml), ricavato dagli
+  spartiti originali: il sito lo disegna per lo strumento e la versione scelti.
+  Basi: berensN-accompagnamento.mp3 (e, se ci sono, -media e -lenta).
+  Per aggiungere un brano: carica MusicXML e basi, poi aggiungi il numero a NUMERI.
   ============================================================
 -->
 <title>Berens — Musica Peyron</title>
@@ -504,11 +502,11 @@
 <script>
   const CARTELLA = "media/berens/";
   const NUMERI = [1, 2, 3, 4, 5, 6, 8, 9];
-  const DISEGNI = [];                  // queste raccolte non hanno disegni
+  const DISEGNI = [];                  // questa raccolta non ha disegni
   const due = n => String(n).padStart(2, "0");
   const disegno = n => null;
 
-  // basi di ogni brano (le velocità ridotte compaiono solo se esistono)
+  // basi di ogni brano
   const AUDIO = {"1": [{"label": "Base", "file": "berens1-accompagnamento.mp3"}], "2": [{"label": "Base", "file": "berens2-accompagnamento.mp3"}], "3": [{"label": "Base", "file": "berens3-accompagnamento.mp3"}], "4": [{"label": "Base", "file": "berens4-accompagnamento.mp3"}], "5": [{"label": "Base", "file": "berens5-accompagnamento.mp3"}], "6": [{"label": "Base", "file": "berens6-accompagnamento.mp3"}], "8": [{"label": "Base", "file": "berens8-accompagnamento.mp3"}], "9": [{"label": "Base", "file": "berens9-accompagnamento.mp3"}]};
 
   const COLORI_NOTE = ["#E21C48", "#F99D1C", "#FFF428", "#BED958", "#009C95", "#5E50A1", "#CF3E96"];
@@ -745,7 +743,7 @@
       const testo = btnPdf.textContent; btnPdf.textContent = 'Preparo il PDF…'; btnPdf.disabled = true;
       try {
         const brano = await caricaBrano(n);
-        await MotoreSchemi.salvaPaginaPDF(await pagina(), `${n}. ${brano.titoloBreve} - ${strumento.label} - ${versione.label}.pdf`);
+        await MotoreSchemi.salvaPaginaPDF(await pagina(), `${brano.titoloBreve} - ${strumento.label} - ${versione.label}.pdf`);
       } finally { btnPdf.textContent = testo; btnPdf.disabled = false; }
     });
     mostra();
