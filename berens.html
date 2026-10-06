@@ -3,38 +3,25 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<!-- Nome del sito: Musica Peyron -->
+<!--
+  ============================================================
+  BERENS — Hermann Berens, op. 62
+  Ogni brano è un file MusicXML in media/berens/ (berensN.musicxml),
+  ricavato dagli spartiti originali: il sito lo disegna per lo strumento
+  e la versione scelti. Le basi sono berensN-accompagnamento.mp3
+  (e, se ci sono, -media e -lenta per le velocità ridotte).
+  Per aggiungere un brano: carica il MusicXML e le basi, poi aggiungi
+  il numero a NUMERI qui sotto.
+  ============================================================
+-->
 <title>Berens — Musica Peyron</title>
 <link rel="icon" href="favicon.svg" type="image/svg+xml">
 <link rel="icon" href="favicon-32.png" type="image/png" sizes="32x32">
 <link rel="apple-touch-icon" href="apple-touch-icon.png">
-<meta name="description" content="Berens, dagli Esercizi Melodici op. 62: ascolto e spartiti.">
-
-<!--
-  ============================================================
-  COME AGGIUNGERE UN NUOVO BRANO DI QUESTA RACCOLTA
-  ============================================================
-  1) Carica nella stessa cartella di questa pagina:
-     - l'audio con melodia + accompagnamento (preferibilmente
-       .mp3: molto più leggero di un .wav, stessa qualità
-       all'ascolto. Un .wav può superare i limiti di
-       caricamento di GitHub)
-     - l'audio con il solo accompagnamento
-     - il file dello spartito: un'immagine (.png/.jpg) oppure
-       un PDF (.pdf)
-  2) Aggiungi un blocco { ... } dentro l'array "brani" qui
-     sotto, nel tag <script>: numero del brano, i nomi dei tre
-     file (audioFull, audioAccomp, scoreSrc) e "scoreType"
-     ("image" oppure "pdf").
-  3) Copia, incolla o cancella un blocco { ... } se hai meno o
-     più brani.
-  ============================================================
--->
-
+<meta name="description" content="Berens, Esercizi melodici op. 62: spartiti per flauto, tastiera, chitarra e ukulele, con le basi.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@500;700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
-
+<link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@600;700&family=Manrope:wght@500;700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
 <style>
   * { box-sizing: border-box; }
 
@@ -250,16 +237,17 @@
     width: 40px;
     height: 40px;
     border-radius: 50%;
-    background: rgba(255,255,255,0.1);
-    border: 1px solid rgba(255,255,255,0.2);
+    background: rgba(15,23,42,0.88);
+    border: 1px solid rgba(255,255,255,0.35);
     color: #EAF2FF;
     font-size: 18px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.35);
     display: flex;
     align-items: center;
     justify-content: center;
     cursor: pointer;
   }
-  .lightbox .lightbox-close:hover { background: rgba(255,255,255,0.2); }
+  .lightbox .lightbox-close:hover { background: rgba(30,41,59,0.95); }
 
   .player-row.coming-soon {
     font-size: 12px;
@@ -281,6 +269,66 @@
     border: none;
     pointer-events: none; /* lascia passare il click al contenitore, anche sopra il visualizzatore PDF nativo */
   }
+
+  .versions {
+    display: flex; flex-wrap: wrap; gap: 6px;
+    margin-top: 16px;
+  }
+  .versions button {
+    font-family: 'Manrope', sans-serif; font-weight: 700; font-size: 12px;
+    color: #EAF2FF; cursor: pointer;
+    padding: 6px 13px; border-radius: 999px;
+    border: 1px solid rgba(255,255,255,0.16);
+    background: rgba(255,255,255,0.05);
+    transition: background 0.15s ease, color 0.15s ease;
+  }
+  .versions button:hover { background: rgba(255,255,255,0.12); }
+  .versions button.active { background: #5EC8D8; color: #061323; border-color: #5EC8D8; }
+  .versions + .score-wrap { margin-top: 10px; }
+
+  /* barra degli strumenti: resta visibile mentre si scorre */
+  .strumenti-bar {
+    position: sticky; top: 0; z-index: 40;
+    display: flex; flex-wrap: wrap; justify-content: center; align-items: center; gap: 6px;
+    padding: 10px 64px;
+    background: rgba(15, 23, 42, 0.85);
+    backdrop-filter: blur(8px);
+    border-bottom: 1px solid rgba(255,255,255,0.08);
+  }
+  .strumenti-bar .bar-label {
+    font-size: 11px; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase;
+    color: #9FB3CE; margin-right: 4px;
+  }
+  .strumenti-bar button {
+    font-family: 'Manrope', sans-serif; font-weight: 700; font-size: 13px;
+    color: #EAF2FF; cursor: pointer; padding: 7px 14px; border-radius: 999px;
+    border: 1px solid rgba(255,255,255,0.16); background: rgba(255,255,255,0.06);
+  }
+  .strumenti-bar button:hover { background: rgba(255,255,255,0.12); }
+  .strumenti-bar button.active { background: #F99D1C; color: #1F2430; border-color: #F99D1C; }
+  .strumenti-bar .corto { display: none; }
+  @media (max-width: 600px) {
+    .strumenti-bar { padding: 8px 8px 8px 60px; gap: 4px; flex-wrap: nowrap; justify-content: flex-start; }
+    .strumenti-bar .bar-label, .strumenti-bar .lungo { display: none; }
+    .strumenti-bar .corto { display: inline; }
+    .strumenti-bar button { font-size: 12px; padding: 6px 10px; flex-shrink: 0; }
+    .strumenti-bar { overflow-x: auto; }
+  }
+  @media (max-width: 360px) {
+    .strumenti-bar { padding-left: 56px; gap: 3px; }
+    .strumenti-bar button { font-size: 11px; padding: 5px 8px; }
+  }
+
+  .spartito { background: #fff; border-radius: 8px; padding: 6px 4px 10px; }
+  .spartito svg { display: block; }
+  .lightbox .lightbox-inner { flex-direction: column; }
+  .lightbox .spartito { width: 100%; max-width: 1100px; min-width: 0; max-height: 100%; overflow: auto; box-sizing: border-box; }
+  .lightbox .lightbox-inner { width: 100%; min-width: 0; }
+  .lightbox .ruota { display: none; margin: 12px 0 0; font-size: 13px; color: #cbd5e1; text-align: center; }
+  @media (max-width: 600px) and (orientation: portrait) { .lightbox .ruota { display: block; } }
+  button.score-dl { border: 0; cursor: pointer; font-family: inherit; }
+  .azioni-spartito { display: flex; gap: 8px; flex-wrap: wrap; }
+  .azioni-spartito .score-dl { margin-top: 12px; }
 
   .score-dl {
     display: inline-block;
@@ -322,7 +370,115 @@
     font-size: 11px;
     color: #5C7091;
   }
+
+  /* ======================= BRANI PROPEDEUTICI ======================= */
+  #brani-container { max-width: 940px !important; width: calc(100% - 32px); margin-left: auto; margin-right: auto; padding-left: 0; padding-right: 0; }
+  .docenti { display: inline-flex; align-items: center; gap: 8px; margin-top: 12px;
+    font-family: 'Manrope', sans-serif; font-weight: 700; font-size: 13px; text-decoration: none;
+    color: #1F2430; background: #FFF428; border-radius: 999px; padding: 8px 16px; }
+  .docenti:hover { background: #fff; }
+
+  /* ogni brano è una pagina del libro */
+  .bp-card { background: #fff; color: #1F2430; border-radius: 22px; padding: 22px 24px 20px;
+    margin: 0 auto 28px; max-width: 900px; width: 100%; box-sizing: border-box; box-shadow: 0 10px 30px rgba(0,0,0,0.28); position: relative; }
+  .bp-testa { display: grid; grid-template-columns: auto 1fr auto; gap: 14px 18px; align-items: center; }
+  .bp-numero { width: 52px; height: 52px; border-radius: 50%; display: grid; place-items: center;
+    font-family: 'Fredoka', 'Manrope', sans-serif; font-weight: 700; font-size: 24px; color: #fff;
+    background: #5E50A1; box-shadow: inset 0 -4px 0 rgba(0,0,0,0.2); }
+  .bp-titolo { font-family: 'Fredoka', 'Manrope', sans-serif; font-weight: 700; line-height: 1.05;
+    font-size: clamp(30px, 5vw, 46px); margin: 0; letter-spacing: 0.01em; }
+  .bp-titolo span { -webkit-text-stroke: 2.5px #1F2430; paint-order: stroke fill; text-shadow: 0 3px 0 rgba(31,36,48,0.18); }
+  .bp-disegno { width: 150px; height: 150px; transform: rotate(4deg); margin: -10px -6px -16px 0; }
+  .bp-disegno img { width: 100%; height: 100%; display: block; }
+
+  .bp-riquadri { margin-top: 14px; }
+  .dit-scelta { display: flex; flex-wrap: wrap; align-items: center; gap: 6px; margin: -4px 0 12px; }
+  .dit-scelta .dit-etichetta { font-size: 12px; font-weight: 700; letter-spacing: 0.04em; text-transform: uppercase; color: #64748b; margin-right: 4px; }
+  .dit-scelta button { font-family: 'Manrope', sans-serif; font-weight: 700; font-size: 12.5px; color: #1F2430; background: #F1F5F9;
+    border: 1px solid #CBD5E1; border-radius: 999px; padding: 6px 12px; cursor: pointer; }
+  .dit-scelta button.active { background: #009C95; border-color: #009C95; color: #fff; }
+  .dit-scelta[hidden] { display: none; }
+  .bp-carte { display: flex; flex-wrap: wrap; gap: 8px; justify-content: center; margin-top: 14px; }
+  .bp-riquadro { border-radius: 16px; padding: 12px 16px 12px 52px; position: relative; line-height: 1.4; font-size: 15.5px; }
+  .bp-riquadro + .bp-riquadro { margin-top: 8px; }
+  .bp-riquadro::before { position: absolute; left: 14px; top: 10px; font-size: 24px; }
+  .bp-riquadro.novita { background: #FFF7B8; border: 2px solid #F5D90A; }
+  .bp-riquadro.novita::before { content: "⭐"; }
+  .bp-riquadro.nota { background: #DDF3FF; border: 2px solid #7CC6F2; }
+  .bp-riquadro.nota::before { content: "💡"; }
+  .bp-riquadro .etichetta { font-family: 'Fredoka', 'Manrope', sans-serif; font-weight: 700; font-size: 20px; display: block; color: #1F2430; }
+  .bp-riquadro .etichetta b { color: #E21C48; }
+
+  .bp-card .player-row .label { color: #475569; }
+  .bp-card .player-row .dl { color: #5E50A1; }
+  .bp-card .versions button { color: #1F2430; background: #F1F5F9; border-color: #CBD5E1; }
+  .bp-card .versions button.active { background: #5E50A1; color: #fff; border-color: #5E50A1; }
+  .bp-card .score-wrap { background: #fff; border: 1px solid #E2E8F0; }
+  .bp-card .score-wrap::after { background: rgba(31,36,48,0.75); }
+  .bp-card button.score-dl { background: #F1F5F9; color: #1F2430; }
+  .bp-card button.score-dl:hover { background: #E2E8F0; }
+
+  @media (max-width: 640px) {
+    .bp-card { padding: 16px 14px; border-radius: 18px; }
+    .bp-testa { grid-template-columns: auto 1fr; }
+    .bp-disegno { grid-column: 1 / -1; grid-row: 1; justify-self: center; width: 120px; height: 120px; margin: 0; }
+    .bp-numero { width: 42px; height: 42px; font-size: 20px; }
+    .bp-info { grid-template-columns: 1fr; }
+  }
+
+  /* ---------- schermo intero per la LIM: due colonne, niente da scorrere ---------- */
+  .lightbox.bp-lim { padding: 0; }
+  .lightbox.bp-lim .lightbox-inner { width: 100vw; height: 100vh; height: 100dvh; max-width: none; flex-direction: row; }
+  .lim { width: 100%; height: 100%; background: #fff; color: #1F2430; display: grid; grid-template-columns: minmax(250px, 30%) 1fr; }
+  .lim-lato { padding: 22px 18px; display: flex; flex-direction: column; gap: 14px; overflow: hidden;
+    background: linear-gradient(180deg, #F5F3FF, #fff); border-right: 1px solid #E2E8F0; }
+  .lim-lato .bp-titolo { font-size: clamp(30px, 3vw, 50px); }
+  .lim-lato .bp-numero { width: 44px; height: 44px; font-size: 20px; }
+  .lim-testa { display: grid; grid-template-columns: 1fr auto; gap: 8px; align-items: start; }
+  .lim-testa .bp-numero { margin-bottom: 8px; }
+  .lim-lato .bp-disegno { height: auto; aspect-ratio: 1; margin: -6px -4px 0 0; transform: rotate(5deg); }
+  .lim-lato .bp-riquadro { font-size: clamp(13px, 1.1vw, 16px); }
+  .lim-carte { display: grid; gap: 8px; margin-top: auto; justify-content: center; }
+  .carta-nota { background: #fff; border: 1.5px solid #E2E8F0; border-radius: 14px; padding: 6px 6px 10px; box-sizing: border-box;
+    box-shadow: 0 2px 8px rgba(30,27,75,0.10); }
+  .carta-nome { font-family: 'Fredoka', 'Manrope', sans-serif; font-weight: 700; text-align: center; line-height: 1;
+    -webkit-text-stroke: 1.5px #1F2430; paint-order: stroke fill; margin: 0 0 6px; }
+  .lim-lato .bp-disegno { transition: none; }
+  /* telefono: spartito prima di tutto, poi schema; titolo, novità e disegno piccoli */
+  .tel { width: 100%; height: 100%; background: #fff; color: #1F2430; display: grid; gap: 6px; padding: 8px; box-sizing: border-box; overflow: hidden; }
+  .tel-vert { grid-template-rows: auto auto minmax(0, 1fr) auto; }
+  .tel-oriz { grid-template-columns: minmax(180px, 30%) minmax(0, 1fr); grid-template-rows: minmax(0, 1fr); }
+  .tel-lato { display: flex; flex-direction: column; gap: 6px; overflow: hidden; min-height: 0; }
+  .tel-testa { display: flex; align-items: center; gap: 6px; padding-right: 46px; min-height: 34px; }
+  .tel-oriz .tel-testa { padding-right: 0; }
+  .tel-numero { flex: none; width: 24px; height: 24px; border-radius: 50%; background: #5E50A1; color: #fff; display: grid; place-items: center;
+    font-family: 'Fredoka', 'Manrope', sans-serif; font-weight: 700; font-size: 13px; }
+  .tel-titolo { margin: 0; font-family: 'Fredoka', 'Manrope', sans-serif; font-weight: 700; font-size: 17px; line-height: 1.05; flex: 1; }
+  .tel-titolo span { -webkit-text-stroke: 1.2px #1F2430; paint-order: stroke fill; }
+  .tel-disegno { flex: none; width: 34px; height: 34px; }
+  .tel .bp-riquadro { font-size: 10.5px; line-height: 1.3; padding: 4px 8px 5px 26px; border-radius: 10px; border-width: 1.5px; }
+  .tel .bp-riquadro + .bp-riquadro { margin-top: 4px; }
+  .tel .bp-riquadro::before { font-size: 13px; left: 7px; top: 4px; }
+  .tel .bp-riquadro .etichetta { font-size: 12.5px; }
+  .tel-spartito { display: flex; align-items: center; justify-content: center; overflow: hidden; min-height: 0; min-width: 0; }
+  .lightbox .tel-spartito .spartito { width: 100%; max-width: none; max-height: none; overflow: visible; padding: 0; background: transparent; display: flex; justify-content: center; }
+  .tel-carte { display: grid; gap: 6px; justify-content: center; }
+  .tel-oriz .tel-carte { margin-top: auto; }
+  .tel .carta-nota { padding: 3px 3px 5px; border-radius: 10px; }
+  .tel .carta-nome { margin-bottom: 3px; -webkit-text-stroke: 1px #1F2430; }
+  .lightbox.bp-lim .lightbox-close { width: 36px; height: 36px; top: 8px; right: 8px; font-size: 16px; }
+  @media (min-width: 761px) and (min-height: 501px) { .lightbox.bp-lim .lightbox-close { width: 40px; height: 40px; top: 18px; right: 18px; font-size: 18px; } }
+  .lim-spartito { display: flex; align-items: center; justify-content: center; padding: 18px 26px 18px 18px; overflow: hidden; }
+  .lightbox .lim-spartito .spartito { width: 100%; max-width: none; max-height: none; overflow: visible; padding: 0; background: transparent; }
+  .lim-spartito svg { display: block; margin: 0 auto; }
+  /* raccolta senza disegni: titolo sobrio */
+  .bp-disegno, .tel-disegno { display: none !important; }
+  .bp-titolo { font-family: 'Manrope', sans-serif !important; font-size: clamp(20px, 2.6vw, 28px) !important; color: #1F2430; }
+  .lim-lato .bp-titolo { font-size: clamp(20px, 2vw, 28px) !important; }
+  .tel-titolo { font-family: 'Manrope', sans-serif !important; font-size: 14px !important; }
 </style>
+<script src="vexflow.js"></script>
+<script src="motore-schemi.js"></script>
 </head>
 <body>
 
@@ -331,12 +487,14 @@
 <header class="hero">
   <a class="breadcrumb" href="spartiti.html">← Spartiti</a>
   <h1>Berens</h1>
-  <p>Dagli Esercizi Melodici op. 62. Per ogni brano: melodia con accompagnamento, solo accompagnamento, e spartito.</p>
+  <p>Dagli Esercizi melodici op. 62. Scegli il tuo strumento, ascolta la base e suona.</p>
 </header>
+
+<nav class="strumenti-bar" id="strumentiBar" aria-label="Scegli lo strumento"></nav>
 
 <main id="brani-container"></main>
 
-<div class="lightbox" id="lightbox">
+<div class="lightbox bp-lim" id="lightbox">
   <button class="lightbox-close" id="lightboxClose" aria-label="Chiudi">✕</button>
   <div class="lightbox-inner" id="lightboxInner"></div>
 </div>
@@ -344,90 +502,260 @@
 <footer></footer>
 
 <script>
-  /* ============================================================
-     I BRANI DI QUESTA RACCOLTA — modifica qui
-     ============================================================
-     scoreType: "image" oppure "pdf"
-  ============================================================ */
-  const brani = [
-    { numero: 1, audioFull: null, audioAccomp: "media/berens/berens1-accompagnamento.mp3", scoreType: "pdf", scoreSrc: "media/berens/berens1.pdf" },
-    { numero: 2, audioFull: null, audioAccomp: "media/berens/berens2-accompagnamento.mp3", scoreType: "pdf", scoreSrc: "media/berens/berens2.pdf" },
-    { numero: 3, audioFull: null, audioAccomp: "media/berens/berens3-accompagnamento.mp3", scoreType: "pdf", scoreSrc: "media/berens/berens3.pdf" },
-    { numero: 4, audioFull: null, audioAccomp: "media/berens/berens4-accompagnamento.mp3", scoreType: "pdf", scoreSrc: "media/berens/berens4.pdf" },
-    { numero: 5, audioFull: null, audioAccomp: "media/berens/berens5-accompagnamento.mp3", scoreType: "pdf", scoreSrc: "media/berens/berens5.pdf" },
-    { numero: 6, audioFull: null, audioAccomp: "media/berens/berens6-accompagnamento.mp3", scoreType: "pdf", scoreSrc: "media/berens/berens6.pdf" },
-    { numero: 8, audioFull: null, audioAccomp: "media/berens/berens8-accompagnamento.mp3", scoreType: "pdf", scoreSrc: "media/berens/berens8.pdf" },
-    { numero: 9, audioFull: null, audioAccomp: "media/berens/berens9-accompagnamento.mp3", scoreType: "pdf", scoreSrc: "media/berens/berens9.pdf" }
+  const CARTELLA = "media/berens/";
+  const NUMERI = [1, 2, 3, 4, 5, 6, 8, 9];
+  const DISEGNI = [];                  // queste raccolte non hanno disegni
+  const due = n => String(n).padStart(2, "0");
+  const disegno = n => null;
+
+  // basi di ogni brano (le velocità ridotte compaiono solo se esistono)
+  const AUDIO = {"1": [{"label": "Base", "file": "berens1-accompagnamento.mp3"}], "2": [{"label": "Base", "file": "berens2-accompagnamento.mp3"}], "3": [{"label": "Base", "file": "berens3-accompagnamento.mp3"}], "4": [{"label": "Base", "file": "berens4-accompagnamento.mp3"}], "5": [{"label": "Base", "file": "berens5-accompagnamento.mp3"}], "6": [{"label": "Base", "file": "berens6-accompagnamento.mp3"}], "8": [{"label": "Base", "file": "berens8-accompagnamento.mp3"}], "9": [{"label": "Base", "file": "berens9-accompagnamento.mp3"}]};
+
+  const COLORI_NOTE = ["#E21C48", "#F99D1C", "#FFF428", "#BED958", "#009C95", "#5E50A1", "#CF3E96"];
+  const titoloColorato = t => t;          // titolo semplice, senza colori
+  const riquadroHTML = testo => {
+    const righe = testo.split(/\n/).map(r => r.trim()).filter(Boolean);
+    const novita = /^NOVIT/i.test(righe[0]);
+    let etichetta;
+    if (novita) { const resto = righe[0].replace(/^NOVIT[ÀA]\s*:?\s*/i, ""); etichetta = `<b>Novità:</b> ${resto}`; righe.shift(); }
+    else { etichetta = "Attenzione"; }
+    return `<div class="bp-riquadro ${novita ? "novita" : "nota"}"><span class="etichetta">${etichetta}</span>${righe.join("<br>")}</div>`;
+  };
+
+  /* strumenti e versioni, come nei Primi Brani */
+  const STRUMENTI = [
+    { id: "flauto",   label: "Flauto dolce", corto: "Flauto" },
+    { id: "tastiera", label: "Tastiera" },
+    { id: "chitarra", label: "Chitarra" },
+    { id: "ukulele",  label: "Ukulele" }
   ];
+  const VERSIONI = [
+    { label: "Standard",        colori: false, nomi: false },
+    { label: "Colori",          colori: true,  nomi: false },
+    { label: "Nomi delle note", colori: false, nomi: true  },
+    { label: "Colori e nomi",   colori: true,  nomi: true  }
+  ];
+  const VERSIONE_INIZIALE = 0;          // si parte dalla versione standard
+  let strumento = STRUMENTI[0];
+  try { strumento = STRUMENTI.find(x => x.id === localStorage.getItem('primiBrani.strumento')) || STRUMENTI[0]; } catch (e) {}
 
-  const container = document.getElementById('brani-container');
-  const lightbox = document.getElementById('lightbox');
-  const lightboxInner = document.getElementById('lightboxInner');
-  const lightboxClose = document.getElementById('lightboxClose');
+  /* Novità che nei file MusicXML non hanno il loro riquadro: si aggiungono qui.
+     "prima": il riquadro va prima di quelli già presenti nel brano (es. la nota prima della figura). */
+  const NOVITA_AGGIUNTE = {};
 
-  function openLightbox(b) {
-    lightboxInner.innerHTML = b.scoreType === 'pdf'
-      ? `<embed src="${b.scoreSrc}" type="application/pdf">`
-      : `<img src="${b.scoreSrc}" alt="">`;
-    lightbox.classList.add('open');
+  const cache = {};
+  const caricaBrano = n => cache[n] || (cache[n] = fetch(CARTELLA + "berens" + n + ".musicxml")
+    .then(r => r.text()).then(t => {
+      const b = MotoreSchemi.leggiMusicXML(t); b.titoloBreve = "Hermann Berens, op. 62 n. " + n; b.titolo = b.titoloBreve;
+      const agg = NOVITA_AGGIUNTE[n];
+      if (agg) b.riquadri = agg.prima ? [agg.testo, ...b.riquadri] : [...b.riquadri, agg.testo];
+      return b;
+    }));
+  const PAUSE_RAGGRUPPATE = [];        // brani in cui le battute di pausa consecutive diventano una sola, con il numero
+  // la diteggiatura (no / prima volta / sempre) viaggia insieme alla versione; il flauto non ne ha
+  const opzioni = (versione, extra, n) => Object.assign({ strumento: strumento.id, colori: versione.colori, nomi: versione.nomi,
+    diteggiatura: strumento.id === 'flauto' ? 'no' : (versione.dit || 'no'),
+    notaBaseDita: undefined, titolo: false, schema: false, pausePiuBattute: PAUSE_RAGGRUPPATE.includes(n) }, extra);
+
+
+  /* ---------- barra degli strumenti ---------- */
+  const aggiornamenti = [];
+  const bar = document.getElementById('strumentiBar');
+  bar.innerHTML = STRUMENTI.map(x => `<button type="button" data-id="${x.id}" class="${x === strumento ? 'active' : ''}"><span class="lungo">${x.label}</span><span class="corto">${x.corto || x.label}</span></button>`).join('');
+  bar.querySelectorAll('button').forEach(btn => btn.addEventListener('click', () => {
+    strumento = STRUMENTI.find(x => x.id === btn.dataset.id);
+    try { localStorage.setItem('primiBrani.strumento', strumento.id); } catch (e) {}
+    bar.querySelectorAll('button').forEach(x => x.classList.toggle('active', x === btn));
+    aggiornamenti.forEach(f => f());
+  }));
+
+  /* ---------- schermo intero per la LIM ---------- */
+  const lightbox = document.getElementById('lightbox'), lightboxInner = document.getElementById('lightboxInner');
+  function chiudi() { lightbox.classList.remove('open'); lightboxInner.innerHTML = ''; document.body.style.overflow = ''; limAperta = null; }
+  document.getElementById('lightboxClose').addEventListener('click', chiudi);
+  document.addEventListener('keydown', e => { if (e.key === 'Escape') chiudi(); });
+
+  /* ---------- schermo intero sul telefono: lo spartito prima di tutto ----------
+     Vale solo per schermi piccoli (larghi meno di 760 px o alti meno di 500 px): LIM e computer non cambiano. */
+  const eTelefono = () => matchMedia('(max-width: 760px), (max-height: 500px)').matches;
+  let limAperta = null;
+  async function apriTelefono(n, versione) {
+    const brano = await caricaBrano(n), note = MotoreSchemi.noteUsate(brano);
+    const verticale = window.innerHeight > window.innerWidth;
+    const testa = `<div class="tel-testa"><span class="tel-numero">${n}</span><h2 class="tel-titolo">${titoloColorato(brano.titoloBreve)}</h2>${disegno(n) ? `<img class="tel-disegno" src="${disegno(n)}" alt="">` : ''}</div>`;
+    const riquadri = brano.riquadri.map(riquadroHTML).join("");
+    lightboxInner.innerHTML = verticale
+      ? `<div class="tel tel-vert">${testa}<div class="tel-riquadri">${riquadri}</div><div class="tel-spartito"><div class="spartito"></div></div><div class="tel-carte lim-carte"></div></div>`
+      : `<div class="tel tel-oriz"><div class="tel-lato">${testa}<div class="tel-riquadri">${riquadri}</div><div class="tel-carte lim-carte"></div></div><div class="tel-spartito"><div class="spartito"></div></div></div>`;
+    lightbox.classList.add('open'); document.body.style.overflow = 'hidden';
+    const carte = lightboxInner.querySelector('.tel-carte');
+    MotoreSchemi.disegnaCarte(carte, strumento.id, note);
+    const gap = 6, nNote = note.length;
+    const applica = (colonne, w) => {
+      carte.style.gridTemplateColumns = `repeat(${colonne}, ${w}px)`;
+      carte.querySelectorAll('.carta-nota').forEach(c => { c.style.width = w + 'px'; c.querySelector('.carta-nome').style.fontSize = Math.max(11, w * 0.17) + 'px'; });
+    };
+    if (verticale) {
+      // una sola fila di carte, alta al massimo un quarto dello schermo
+      const largUtile = lightboxInner.querySelector('.tel').clientWidth - 16;
+      let w = Math.min(130, (largUtile - gap * (nNote - 1)) / nNote);
+      applica(nNote, w);
+      while (w > 40 && carte.getBoundingClientRect().height > window.innerHeight * 0.25) { w *= 0.93; applica(nNote, w); }
+    } else {
+      // colonna stretta: carte il più grandi possibile senza uscire dallo schermo
+      const lato = lightboxInner.querySelector('.tel-lato'), largUtile = lato.clientWidth;
+      let migliore = null;
+      for (let colonne = 1; colonne <= nNote; colonne++) {
+        let w = Math.min(160, (largUtile - gap * (colonne - 1)) / colonne);
+        while (w >= 36) { applica(colonne, w); if (lato.scrollHeight <= lato.clientHeight + 1) break; w *= 0.94; }
+        if (w >= 36 && (!migliore || w > migliore.w)) migliore = { colonne, w };
+      }
+      migliore = migliore || { colonne: nNote, w: 36 };
+      applica(migliore.colonne, migliore.w);
+    }
+    // lo spartito occupa tutto lo spazio rimasto, intero e senza scorrere
+    const area = lightboxInner.querySelector('.tel-spartito'), div = area.querySelector('.spartito');
+    const ad = MotoreSchemi.adattaBrano(div, brano, opzioni(versione, {}, n), area.clientWidth - 4, area.clientHeight - 4);
+    const vb = ad.svg.viewBox.baseVal, scala = Math.min(ad.scala, 2.6);
+    ad.svg.style.width = (vb.width * scala) + "px"; ad.svg.style.height = (vb.height * scala) + "px";
   }
-  function closeLightbox() {
-    lightbox.classList.remove('open');
-    lightboxInner.innerHTML = '';
-  }
-  lightboxClose.addEventListener('click', closeLightbox);
-  lightbox.addEventListener('click', (e) => {
-    if (e.target === lightbox) closeLightbox();
-  });
-  document.addEventListener('keydown', (e) => {
-    if (e.key === 'Escape') closeLightbox();
+  // se si ruota il telefono (o si ridimensiona la finestra) con lo spartito aperto, si ridisegna
+  let attesaLim;
+  window.addEventListener('resize', () => {
+    if (!limAperta || !lightbox.classList.contains('open')) return;
+    clearTimeout(attesaLim); attesaLim = setTimeout(() => apriLim(limAperta.n, limAperta.versione), 250);
   });
 
-  brani.forEach(b => {
-    const title = `Berens ${b.numero}`;
-    const card = document.createElement('div');
-    card.className = 'brano-card';
-
-    const scoreHTML = b.scoreType === 'pdf'
-      ? `<embed src="${b.scoreSrc}" type="application/pdf">`
-      : `<img src="${b.scoreSrc}" alt="Spartito di ${title}">`;
-
-    const melodiaRow = b.audioFull
-      ? `<div class="player-row">
-          <div class="label-row">
-            <span class="label">Melodia + accompagnamento</span>
-            <a class="dl" href="${b.audioFull}" download>Scarica</a>
-          </div>
-          <audio controls preload="none" src="${b.audioFull}"></audio>
-        </div>`
-      : `<div class="player-row coming-soon">Melodia + accompagnamento: in arrivo</div>`;
-
-    card.innerHTML = `
-      <h2>${title}</h2>
-
-      ${melodiaRow}
-
-      <div class="player-row">
-        <div class="label-row">
-          <span class="label">Solo accompagnamento</span>
-          <a class="dl" href="${b.audioAccomp}" download>Scarica</a>
+  async function apriLim(n, versione) {
+    limAperta = { n, versione };
+    if (eTelefono()) return apriTelefono(n, versione);
+    const brano = await caricaBrano(n);
+    lightboxInner.innerHTML = `<div class="lim">
+      <div class="lim-lato">
+        <div class="lim-testa">
+          <div><div class="bp-numero">${n}</div><h2 class="bp-titolo">${titoloColorato(brano.titoloBreve)}</h2></div>
+          <div class="bp-disegno">${disegno(n) ? `<img src="${disegno(n)}" alt="">` : ''}</div>
         </div>
-        <audio controls preload="none" src="${b.audioAccomp}"></audio>
+        ${brano.riquadri.map(riquadroHTML).join("")}
+        <div class="lim-carte"></div>
       </div>
+      <div class="lim-spartito"><div class="spartito"></div></div>
+    </div>`;
+    lightbox.classList.add('open'); document.body.style.overflow = 'hidden';
+    // colonna di sinistra: carte delle note; se non ci sta tutto, rimpicciolisco disegno e carte
+    const lato = lightboxInner.querySelector('.lim-lato'), carte = lightboxInner.querySelector('.lim-carte');
+    MotoreSchemi.disegnaCarte(carte, strumento.id, MotoreSchemi.noteUsate(brano));
+    const dis = lightboxInner.querySelector('.lim-lato .bp-disegno');
+    // carte il più grandi possibile: provo quante per riga e quanto larghe, il disegno si rimpicciolisce per primo
+    const nNote = MotoreSchemi.noteUsate(brano).length, gap = 8;
+    const cs = getComputedStyle(lato), largUtile = lato.clientWidth - parseFloat(cs.paddingLeft) - parseFloat(cs.paddingRight);
+    const applica = (latoDis, colonne, w) => {
+      dis.style.display = latoDis ? '' : 'none'; dis.style.width = latoDis + 'px';
+      carte.style.gridTemplateColumns = `repeat(${colonne}, ${w}px)`;
+      carte.querySelectorAll('.carta-nota').forEach(c => { c.style.width = w + 'px'; c.querySelector('.carta-nome').style.fontSize = Math.max(14, w * 0.17) + 'px'; });
+    };
+    const ciSta = () => lato.scrollHeight <= lato.clientHeight + 1;
+    // il disegno sta accanto al titolo; si rimpicciolisce (o si toglie) solo se le carte resterebbero troppo piccole
+    const migliorePer = latoDis => {      // carte più grandi possibili con un disegno di questa misura
+      let m = null;
+      for (let colonne = 1; colonne <= nNote; colonne++) {
+        let w = Math.min(300, (largUtile - gap * (colonne - 1)) / colonne);
+        while (w >= 56) { applica(latoDis, colonne, w); if (ciSta()) break; w *= 0.95; }
+        if (w >= 56 && (!m || w > m.w)) m = { latoDis, colonne, w };
+      }
+      return m;
+    };
+    // si tiene il disegno grande se le carte restano ben leggibili, altrimenti si prova a rimpicciolirlo
+    const prove = [112, 88, 0].map(migliorePer).filter(Boolean);
+    let migliore = prove.find(m => m.w >= 95) || prove.sort((x, y) => y.w - x.w)[0] || { latoDis: 0, colonne: nNote, w: 56 };
+    const conDisegno = prove.filter(m => m.latoDis > 0).sort((x, y) => y.w - x.w)[0];
+    if (migliore.latoDis === 0 && conDisegno && conDisegno.w >= migliore.w * 0.9) migliore = conDisegno;
+    applica(migliore.latoDis, migliore.colonne, migliore.w);
+    // provo diversi numeri di battute per riga e tengo quello che rende lo spartito più grande senza scorrere
+    const area = lightboxInner.querySelector('.lim-spartito'), div = area.querySelector('.spartito');
+    const aw = area.clientWidth - 44, ah = area.clientHeight - 36;
+    const ad = MotoreSchemi.adattaBrano(div, brano, opzioni(versione, {}, n), aw, ah);
+    const svg = ad.svg, vb = svg.viewBox.baseVal;
+    const scala = Math.min(ad.scala, 2.6);   // i brani brevi non diventano enormi
+    svg.style.width = (vb.width * scala) + "px"; svg.style.height = (vb.height * scala) + "px";
+  }
 
-      <div class="score-wrap" data-index="${b.numero}">${scoreHTML}</div>
-      <a class="score-dl" href="${b.scoreSrc}" download>Scarica spartito</a>
-    `;
-
-    card.querySelector('.score-wrap').addEventListener('click', () => openLightbox(b));
+  /* ---------- le pagine dei brani ---------- */
+  const container = document.getElementById('brani-container');
+  NUMERI.forEach(n => {
+    const card = document.createElement('article');
+    card.className = 'bp-card';
+    let versione = VERSIONI[VERSIONE_INIZIALE], dit = 'no';
+    const scelta = () => Object.assign({}, versione, { dit });
+    card.innerHTML = `
+      <div class="bp-testa">
+        <div class="bp-numero">${n}</div>
+        <h2 class="bp-titolo"></h2>
+        <div class="bp-disegno">${disegno(n) ? `<img src="${disegno(n)}" alt="">` : ''}</div>
+      </div>
+      <div class="bp-riquadri"></div>
+      <div class="bp-carte"></div>
+      ${(AUDIO[n] || []).map((a, i) => `<div class="player-row"${i === 0 ? ' style="margin-top:16px"' : ''}>
+        <div class="label-row"><span class="label">${a.label}</span><a class="dl" href="${CARTELLA}${a.file}" download>Scarica</a></div>
+        <audio controls preload="none" src="${CARTELLA}${a.file}"></audio>
+      </div>`).join('')}
+      <div class="versions">${VERSIONI.map((v, i) => `<button type="button" data-v="${i}" class="${i === VERSIONE_INIZIALE ? 'active' : ''}">${v.label}</button>`).join('')}</div>
+      <div class="dit-scelta"><span class="dit-etichetta">Diteggiatura</span>${[['no', 'No'], ['prima', 'Prima volta'], ['sempre', 'Sempre']].map(([d, t]) => `<button type="button" data-d="${d}" class="${d === 'no' ? 'active' : ''}">${t}</button>`).join('')}</div>
+      <div class="score-wrap"><div class="spartito"></div></div>
+      <div class="azioni-spartito">
+        <button type="button" class="score-dl" data-azione="stampa">🖨️ Stampa</button>
+        <button type="button" class="score-dl" data-azione="pdf">⬇️ Salva PDF</button>
+      </div>`;
     container.appendChild(card);
+    const wrap = card.querySelector('.score-wrap'), div = wrap.querySelector('.spartito');
+    const disegna = (d, larghezza, perRiga, extra) => caricaBrano(n).then(brano =>
+      MotoreSchemi.disegnaBrano(d, brano, opzioni(scelta(), Object.assign({ larghezza, perRiga }, extra), n)));
+    const mostra = () => caricaBrano(n).then(brano => {
+      card.querySelector('.dit-scelta').hidden = strumento.id === 'flauto';   // il flauto non ha diteggiatura sullo spartito
+      card.querySelector('.bp-titolo').innerHTML = titoloColorato(brano.titoloBreve);
+      card.querySelector('.bp-riquadri').innerHTML = brano.riquadri.map(riquadroHTML).join("");
+      // carte delle note (pentagramma, nome, diteggiatura): affiancate, vanno a capo se non c'è spazio
+      const carte = card.querySelector('.bp-carte'), note = MotoreSchemi.noteUsate(brano);
+      MotoreSchemi.disegnaCarte(carte, strumento.id, note);
+      const largh = carte.clientWidth, gap = 8;
+      let w = Math.min(strumento.id === 'flauto' ? 110 : 130, (largh - gap * (note.length - 1)) / note.length);
+      if (w < 72) w = Math.min(110, Math.max(72, (largh - gap * 2) / 3));   // schermi stretti: tre per riga
+      carte.querySelectorAll('.carta-nota').forEach(c => { c.style.width = w + 'px'; c.querySelector('.carta-nome').style.fontSize = Math.max(13, w * 0.17) + 'px'; });
+      // spartito più grande del solito: disegnato più stretto e poi ingrandito alla larghezza della pagina
+      const larg = Math.max(300, div.clientWidth - 8);
+      return disegna(div, Math.round(larg / (larg < 520 ? 1.1 : 1.28)));
+    });
+    aggiornamenti.push(mostra);
+    card.querySelectorAll('.versions button').forEach(btn => btn.addEventListener('click', () => {
+      versione = VERSIONI[+btn.dataset.v];
+      card.querySelectorAll('.versions button').forEach(x => x.classList.toggle('active', x === btn));
+      mostra();
+    }));
+    wrap.addEventListener('click', () => apriLim(n, scelta()));
+    card.querySelectorAll('.dit-scelta button').forEach(btn => btn.addEventListener('click', () => {
+      dit = btn.dataset.d;
+      card.querySelectorAll('.dit-scelta button').forEach(x => x.classList.toggle('active', x === btn));
+      mostra();
+    }));
+    const [btnStampa, btnPdf] = card.querySelectorAll('.azioni-spartito .score-dl');
+    const pagina = () => caricaBrano(n).then(brano => MotoreSchemi.paginaA4(brano, opzioni(scelta(), {}, n),
+      { numero: n, titolo: brano.titoloBreve, riquadri: brano.riquadri, disegno: disegno(n), pausePiuBattute: PAUSE_RAGGRUPPATE.includes(n) }));
+    btnStampa.addEventListener('click', () => pagina().then(MotoreSchemi.stampaPagina));
+    btnPdf.addEventListener('click', async () => {
+      const testo = btnPdf.textContent; btnPdf.textContent = 'Preparo il PDF…'; btnPdf.disabled = true;
+      try {
+        const brano = await caricaBrano(n);
+        await MotoreSchemi.salvaPaginaPDF(await pagina(), `${n}. ${brano.titoloBreve} - ${strumento.label} - ${versione.label}.pdf`);
+      } finally { btnPdf.textContent = testo; btnPdf.disabled = false; }
+    });
+    mostra();
   });
 
-  const empty = document.createElement('div');
-  empty.className = 'brano-card empty';
-  empty.innerHTML = `<div class="plus">+</div><div>Prossimo brano in arrivo</div>`;
-  container.appendChild(empty);
+  let ultimaLarghezza = window.innerWidth, attesa;
+  window.addEventListener('resize', () => {
+    clearTimeout(attesa);
+    attesa = setTimeout(() => { if (Math.abs(window.innerWidth - ultimaLarghezza) > 40) { ultimaLarghezza = window.innerWidth; aggiornamenti.forEach(f => f()); } }, 250);
+  });
 </script>
-
 </body>
 </html>
