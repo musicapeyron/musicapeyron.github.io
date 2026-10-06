@@ -318,6 +318,7 @@
         if (acciaccInAttesa.length) { ev.acciaccature = acciaccInAttesa; acciaccInAttesa = []; }
         const arts = n.querySelector("notations articulations"); if (arts) ev.art = [...arts.children].map(a => a.tagName);
         const tr = n.querySelector(':scope > beam[number="1"]'); if (tr) { ev.trave = tr.textContent.trim(); brano.traviScritte = true; }
+        const gambo = n.querySelector(":scope > stem"); if (gambo && /^(up|down)$/.test(gambo.textContent.trim())) ev.gambo = gambo.textContent.trim();
         if (n.querySelector("notations fermata")) ev.corona = true;
         const accScritto = n.querySelector(":scope > accidental");
         if (accScritto) { ev.accidentale = { sharp: "#", flat: "b", natural: "n" }[accScritto.textContent.trim()] || null; brano.alterazioniScritte = true; }
@@ -439,7 +440,10 @@
         }
         const note = b.eventi.map(e => {
           const durata = e.durata + (e.pausa ? "r" : "");
-          const sn = new VF.StaveNote({ keys: [e.pausa ? (e.intera ? "d/5" : "b/4") : e.nota.lettera + e.nota.alt + "/" + e.nota.ottava], duration: durata, dots: e.punti, clef: "treble", auto_stem: true, align_center: !!e.intera });
+          // gambo come nel file, se indicato; altrimenti automatico
+          const dirGambo = e.gambo === "up" ? 1 : e.gambo === "down" ? -1 : null;
+          const sn = new VF.StaveNote(Object.assign({ keys: [e.pausa ? (e.intera ? "d/5" : "b/4") : e.nota.lettera + e.nota.alt + "/" + e.nota.ottava], duration: durata, dots: e.punti, clef: "treble", align_center: !!e.intera },
+            dirGambo ? { stem_direction: dirGambo } : { auto_stem: true }));
           sn._ev = e; sn._riga = r;
           for (let k = 0; k < e.punti; k++) VF.Dot.buildAndAttach([sn], { all: true });
           if (e.pausa) return sn;
@@ -477,7 +481,10 @@
           let gruppo = [];
           note.forEach(sn => { const t = sn._ev && sn._ev.trave;
             if (t === "begin") gruppo = [sn]; else if (t === "continue" && gruppo.length) gruppo.push(sn);
-            else if (t === "end" && gruppo.length) { gruppo.push(sn); beams.push(new VF.Beam(gruppo)); gruppo = []; } });
+            else if (t === "end" && gruppo.length) { gruppo.push(sn);
+              // se il file non indica i gambi, tutte le note della trave prendono la stessa direzione
+              const gambiScritti = gruppo.every(x => x._ev && x._ev.gambo);
+              beams.push(new VF.Beam(gruppo, !gambiScritti)); gruppo = []; } });
         } else {
           let gruppiTrave; try { gruppiTrave = VF.Beam.getDefaultBeamGroups(brano.tempo.join("/")); } catch (er) {}
           beams = VF.Beam.generateBeams(note, gruppiTrave ? { groups: gruppiTrave } : {});
