@@ -13,14 +13,22 @@
     
   </defs>
   <g filter="url(#adesivo)">
-<g transform="rotate(-20 46 170)"><ellipse cx="46" cy="170" rx="17" ry="25" fill="#E21C48" stroke="#8F1230" stroke-width="3"/>
-    <circle cx="33" cy="140" r="5" fill="#E21C48" stroke="#8F1230" stroke-width="2.5"/><circle cx="43" cy="135" r="5.5" fill="#E21C48" stroke="#8F1230" stroke-width="2.5"/>
-    <circle cx="54" cy="137" r="5" fill="#E21C48" stroke="#8F1230" stroke-width="2.5"/><circle cx="62" cy="144" r="4.5" fill="#E21C48" stroke="#8F1230" stroke-width="2.5"/></g><g transform="rotate(-20 108 120)"><ellipse cx="108" cy="120" rx="17" ry="25" fill="#F99D1C" stroke="#A66912" stroke-width="3"/>
-    <circle cx="95" cy="90" r="5" fill="#F99D1C" stroke="#A66912" stroke-width="2.5"/><circle cx="105" cy="85" r="5.5" fill="#F99D1C" stroke="#A66912" stroke-width="2.5"/>
-    <circle cx="116" cy="87" r="5" fill="#F99D1C" stroke="#A66912" stroke-width="2.5"/><circle cx="124" cy="94" r="4.5" fill="#F99D1C" stroke="#A66912" stroke-width="2.5"/></g><g transform="rotate(-20 170 70)"><ellipse cx="170" cy="70" rx="17" ry="25" fill="#009C95" stroke="#00675F" stroke-width="3"/>
-    <circle cx="157" cy="40" r="5" fill="#009C95" stroke="#00675F" stroke-width="2.5"/><circle cx="167" cy="35" r="5.5" fill="#009C95" stroke="#00675F" stroke-width="2.5"/>
-    <circle cx="178" cy="37" r="5" fill="#009C95" stroke="#00675F" stroke-width="2.5"/><circle cx="186" cy="44" r="4.5" fill="#009C95" stroke="#00675F" stroke-width="2.5"/></g>
-    <path d="M60 196 q30 10 50 -26 M124 146 q30 10 46 -28" fill="none" stroke="#5B4636" stroke-width="3" stroke-dasharray="2 8" stroke-linecap="round"/>
-    <text x="22" y="40" font-family="Fredoka, Arial Rounded MT Bold, sans-serif" font-weight="700" font-size="28" fill="#5E50A1" stroke="#fff" stroke-width="4" paint-order="stroke">1·2·3</text>
+
+    <path d="M40 112 L110 84 L180 112 L110 140 Z" fill="#FFC4DA" stroke="#C2648A" stroke-width="4" stroke-linejoin="round"/>
+    <path d="M40 112 V176 L110 204 V140 Z" fill="#F48FB7" stroke="#C2648A" stroke-width="4" stroke-linejoin="round"/>
+    <path d="M180 112 V176 L110 204 V140 Z" fill="#E86FA2" stroke="#C2648A" stroke-width="4" stroke-linejoin="round"/>
+    <path d="M52 136 L98 154 M52 152 L98 170" stroke="#FFD54A" stroke-width="4" stroke-linecap="round"/>
+    <path d="M168 136 L122 154 M168 152 L122 170" stroke="#FFD54A" stroke-width="4" stroke-linecap="round"/>
+    <circle cx="146" cy="170" r="6" fill="#FFD54A" stroke="#B9831A" stroke-width="2.5"/>
+    <path d="M146 170 L188 160 L192 176" fill="none" stroke="#B9831A" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"/>
+    <circle cx="193" cy="180" r="7" fill="#FFD54A" stroke="#B9831A" stroke-width="2.5"/>
+    <path d="M110 84 V64" stroke="#B9831A" stroke-width="4"/>
+    <ellipse cx="110" cy="62" rx="16" ry="5" fill="#FFD54A" stroke="#B9831A" stroke-width="3"/>
+    <circle cx="110" cy="40" r="11" fill="#FFD9B8" stroke="#C99A72" stroke-width="2.5"/>
+    <path d="M100 34 q10 -12 20 0" fill="#8B5E34"/>
+    <path d="M110 51 L96 62 H124 Z" fill="#CF3E96" stroke="#8F2464" stroke-width="2.5" stroke-linejoin="round"/>
+    <path d="M100 52 l-12 -10 M120 52 l12 -10" stroke="#FFD9B8" stroke-width="4" stroke-linecap="round"/>
+    <g transform="translate(40 70) scale(0.65)"><rect x="9" y="-44" width="5" height="46" rx="2" fill="#5E50A1"/><ellipse cx="2" cy="2" rx="13" ry="9.5" transform="rotate(-20 2 2)" fill="#5E50A1" stroke="#1F2430" stroke-opacity="0.35" stroke-width="2"/></g><g transform="translate(170 58) scale(0.6)"><rect x="9" y="-44" width="5" height="46" rx="2" fill="#009C95"/><ellipse cx="2" cy="2" rx="13" ry="9.5" transform="rotate(-20 2 2)" fill="#009C95" stroke="#1F2430" stroke-opacity="0.35" stroke-width="2"/></g><g transform="translate(24 108) scale(0.55)"><path d="M10 -44 v46" stroke="#E21C48" stroke-width="5" stroke-linecap="round"/><path d="M12 -44 q16 8 14 24 q-4 -10 -14 -12" fill="#E21C48"/><ellipse cx="2" cy="2" rx="13" ry="9.5" transform="rotate(-20 2 2)" fill="#E21C48"/></g>
+    <text x="150" y="104" font-family="Fredoka, Arial Rounded MT Bold, sans-serif" font-weight="700" font-size="22" fill="#5E50A1" stroke="#fff" stroke-width="4" paint-order="stroke">3/4</text>
   </g>
 </svg>

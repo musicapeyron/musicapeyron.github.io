@@ -515,6 +515,7 @@
   .lim-basi button[data-base="1"] { background: #5E50A1; box-shadow: 0 3px 0 #43397A; }
   .lim-basi button[data-base="stop"] { flex: none; background: #E2E8F0; color: #1F2430; box-shadow: 0 3px 0 #B8C2D0; }
   .tel .lim-basi button { font-size: 11px; padding: 6px 8px; }
+  .tel .segui { display: none; }   /* sul telefono l'interruttore è già nella barra in alto */
   /* interruttore "Segui la base" */
   .segui { display: inline-flex; align-items: center; gap: 8px; cursor: pointer; font-family: 'Manrope', sans-serif; font-weight: 800; font-size: 12.5px;
     color: #1F2430; background: #FFF4E0; border: 1px solid #F9C77A; border-radius: 999px; padding: 6px 12px 6px 8px; margin: 0 0 10px; user-select: none; }
@@ -536,6 +537,28 @@
     .segui-barra .lungo { display: none; } .segui-barra .corto { display: inline; } .segui-barra { white-space: nowrap; flex: none; }
     .separa-segui { display: none; } .segui-barra { padding: 6px 10px 6px 6px; font-size: 11.5px; } .segui-barra input { width: 30px; height: 18px; } .segui-barra input::after { width: 14px; height: 14px; } .segui-barra input:checked::after { left: 14px; } }
   svg .sincro rect { stroke: none !important; }
+  /* solfeggio */
+  .solf-via { display: none; font-family: 'Manrope', sans-serif; font-weight: 800; font-size: 13px; border: 0; border-radius: 999px; padding: 8px 14px; margin: 0 0 10px;
+    color: #1F2430; background: #F99D1C; box-shadow: 0 3px 0 #C26D0A; cursor: pointer; }
+  .solf-via.in-corso { background: #E2E8F0; box-shadow: 0 3px 0 #B8C2D0; }
+  body.solf-on .solf-via { display: inline-flex; }
+  .lim-solf .solf-via { margin: 8px 0 0; }
+  .solf-ctl { display: none; align-items: center; gap: 4px; margin-left: 4px; }
+  body.solf-on .solf-ctl { display: inline-flex; }
+  .solf-ctl button { width: 28px; height: 28px; border-radius: 50%; border: 1px solid rgba(255,255,255,0.25); background: rgba(255,255,255,0.1); color: #EAF2FF; font-weight: 800; font-size: 15px; cursor: pointer; }
+  .solf-bpm { font-family: 'Manrope', sans-serif; font-weight: 800; font-size: 13px; color: #EAF2FF; min-width: 58px; text-align: center; }
+  .solf-clic { display: inline-flex; align-items: center; gap: 4px; font-family: 'Manrope', sans-serif; font-weight: 700; font-size: 12px; color: #EAF2FF; margin-left: 4px; cursor: pointer; }
+  .opz-pc { display: inline-flex; align-items: center; gap: 8px; }
+  .opz-tel { display: none; }
+  @media (max-width: 600px) {
+    .opz-pc, .barra-fissa .strumenti-bar .separa-segui { display: none !important; }
+    .opz-tel { display: flex; align-items: center; gap: 6px; padding: 0 8px 6px 60px; overflow-x: auto; scrollbar-width: none; }
+    .opz-tel::-webkit-scrollbar { display: none; }
+    .opz-tel .segui-barra { font-size: 11px !important; padding: 5px 9px !important; flex: none; }
+    .opz-tel .solf-ctl button { width: 24px; height: 24px; font-size: 13px; }
+    .opz-tel .solf-bpm { font-size: 11.5px; min-width: 48px; }
+    .opz-tel .solf-clic { font-size: 11px; }
+  }
   /* raccolta senza disegni: titolo sobrio */
   .bp-disegno, .tel-disegno { display: none !important; }
   .bp-titolo { font-family: 'Manrope', sans-serif !important; font-size: clamp(20px, 2.6vw, 28px) !important; color: #1F2430; }
@@ -543,7 +566,7 @@
   .tel-titolo { font-family: 'Manrope', sans-serif !important; font-size: 14px !important; }
 </style>
 <script src="vexflow.js"></script>
-<script src="motore-schemi.js?v=2026-10-07"></script>
+<script src="motore-schemi.js?v=2026-10-07b"></script>
 </head>
 <body>
 
@@ -575,6 +598,17 @@
   let ETICHETTE_INDICE = {};
   /* spartito che segue la base: secondi di attacco della base prima della prima battuta (misurati) */
   const SINCRO = {};   // lo spartito che segue la base: per ora solo nei Brani propedeutici 1-10
+  /* solfeggio: spento di base; velocità e clic ricordati */
+  const leggi = (k, d) => { try { const v = localStorage.getItem(k); return v === null ? d : v; } catch (e) { return d; } };
+  const scrivi = (k, v) => { try { localStorage.setItem(k, v); } catch (e) {} };
+  let solf = null;   // solfeggio in corso
+  const SOLF = { attivo: leggi('raccolte.solfeggio', '0') === '1', bpm: +leggi('raccolte.solfBpm', '60') || 60, clic: leggi('raccolte.solfClic', '1') === '1' };
+  const comandiSolfeggio = () => `<label class="segui segui-barra" title="Solfeggio: un triangolino indica a tempo la figura da leggere"><input type="checkbox" class="chk-solf" ${SOLF.attivo ? 'checked' : ''}><span>Solfeggio</span></label>` +
+    `<span class="solf-ctl"><button type="button" class="solf-meno" aria-label="Più lento">−</button><span class="solf-bpm" title="Battiti al minuto (in 6/8 il battito è la semiminima puntata, in 2/2 la minima)">♩ = ${SOLF.bpm}</span><button type="button" class="solf-piu" aria-label="Più veloce">+</button>` +
+    `<label class="solf-clic" title="Metronomo udibile"><input type="checkbox" class="chk-clic" ${SOLF.clic ? 'checked' : ''}><span>Clic</span></label></span>`;
+  const pulsanteSolfeggia = n => { const on = !!solf && solf.n === n;
+    return `<button type="button" class="solf-via${on ? ' in-corso' : ''}" data-solf="${n}">${on ? '■ Ferma' : '▶ Solfeggia'}</button>`; };
+
   /* interruttore "Segui la base": spento di base, la scelta viene ricordata */
   let segui = false; try { segui = localStorage.getItem('propedeutici.segui') === '1'; } catch (e) {}
   const interruttoreSegui = n => SINCRO[n] === undefined ? '' :
@@ -639,8 +673,11 @@
   const aggiornamenti = [];
   const bar = document.getElementById('strumentiBar');
   bar.innerHTML = STRUMENTI.map(x => `<button type="button" data-id="${x.id}" class="${x === strumento ? 'active' : ''}"><span class="lungo">${x.label}</span><span class="corto">${x.corto || x.label}</span></button>`).join('')
-    + (Object.keys(SINCRO).length ? `<span class="separa-segui"></span><label class="segui segui-barra" title="Mentre la base suona, la figura da suonare si illumina (brani 1-10)"><input type="checkbox" class="chk-segui" ${segui ? 'checked' : ''}><span class="lungo">Segui la base</span><span class="corto">Segui</span></label>` : '');
-  bar.querySelectorAll('button').forEach(btn => btn.addEventListener('click', () => {
+    + `<span class="separa-segui"></span><span class="opz-pc">` + (Object.keys(SINCRO).length ? `<label class="segui segui-barra" title="Mentre la base suona, la figura da suonare si illumina"><input type="checkbox" class="chk-segui" ${segui ? 'checked' : ''}><span>Segui la base</span></label>` : '') + comandiSolfeggio() + `</span>`;
+  // sul telefono gli interruttori vanno su una riga sottile sotto gli strumenti
+  bar.insertAdjacentHTML('afterend', `<div class="opz-tel">` + (Object.keys(SINCRO).length ? `<label class="segui segui-barra"><input type="checkbox" class="chk-segui" ${segui ? 'checked' : ''}><span>Segui la base</span></label>` : '') + comandiSolfeggio() + `</div>`);
+  document.body.classList.toggle('solf-on', SOLF.attivo);
+  bar.querySelectorAll('button[data-id]').forEach(btn => btn.addEventListener('click', () => {
     strumento = STRUMENTI.find(x => x.id === btn.dataset.id);
     try { localStorage.setItem('primiBrani.strumento', strumento.id); } catch (e) {}
     bar.querySelectorAll('button').forEach(x => x.classList.toggle('active', x === btn));
@@ -817,6 +854,7 @@
         <audio controls preload="none" src="${CARTELLA}${a.file}"></audio>
       </div>`).join('')}
       <div class="versions">${VERSIONI.map((v, i) => `<button type="button" data-v="${i}" class="${i === VERSIONE_INIZIALE ? 'active' : ''}">${v.label}</button>`).join('')}</div>
+      ${pulsanteSolfeggia(n)}
       <div class="dit-scelta"><span class="dit-etichetta">Diteggiatura</span>${[['no', 'No'], ['prima', 'Prima volta'], ['sempre', 'Sempre']].map(([d, t]) => `<button type="button" data-d="${d}" class="${d === 'no' ? 'active' : ''}">${t}</button>`).join('')}</div>
       <div class="score-wrap"><div class="spartito"></div></div>
       <div class="azioni-spartito">
@@ -870,17 +908,26 @@
 
   /* ---------- lo spartito segue la base: battuta illuminata, linea che scorre, conto alla rovescia ---------- */
   function ordineEsecuzione(battute) {
-    const ord = []; let i = 0, inizio = 0, passata = 1, dc = false, giri = 0; const ripetute = new Set();
-    const haDC = b => b.eventi.some(e => (e.testiDopo || []).some(t => /^D\.?\s?C/.test(t)));
+    const ord = []; let i = 0, inizio = 0, passata = 1, salto = false, giri = 0; const ripetute = new Set();
+    const testi = b => b.eventi.flatMap(e => (e.testi || []).concat(e.testiDopo || []));
+    const haDC = b => b.daCapo || testi(b).some(t => /^D\.?\s?C/.test(t));
+    const haDS = b => b.dalSegno || testi(b).some(t => /^D\.?\s?S/.test(t));
+    const haFine = b => b.fineEsecuzione || testi(b).includes("Fine");
+    const segno = Math.max(0, battute.findIndex(b => b.segno));
+    const ultimaVolta = k => { let mx = 1; for (let j = k; j < battute.length && battute[j].volta; j++) String(battute[j].volta.numero).split(/[,\s]+/).forEach(v => mx = Math.max(mx, +v || 1)); return mx; };
     while (i < battute.length && giri++ < 5000) {
       const b = battute[i];
       if (b.inizioRitornello && !ripetute.has("i" + i)) inizio = i;
-      if (b.volta && !String(b.volta.numero).split(/[,\s]+/).includes(String(passata))) { i++; continue; }
-      if (!b.volta && passata === 2 && ord.length && battute[ord[ord.length - 1]].volta) passata = 1;
+      const volteQui = b.volta ? String(b.volta.numero).split(/[,\s]+/) : null;
+      const passataQui = salto && b.volta ? ultimaVolta(i) : passata;
+      if (volteQui && !volteQui.includes(String(passataQui))) { i++; continue; }
+      // finita la seconda volta (si va avanti, non si torna indietro) il giro riparte da 1
+      if (!b.volta && passata === 2 && ord.length && battute[ord[ord.length - 1]].volta && i > ord[ord.length - 1]) passata = 1;
       ord.push(i);
-      if (dc && b.eventi.some(e => (e.testiDopo || []).includes("Fine"))) break;
-      if (b.fineRitornello && !ripetute.has(i)) { ripetute.add(i); passata = 2; i = inizio; continue; }
-      if (haDC(b) && !dc) { dc = true; passata = 1; ripetute.clear(); i = 0; inizio = 0; continue; }
+      if (salto && haFine(b)) break;
+      if (b.fineRitornello && !salto && !ripetute.has(i)) { ripetute.add(i); passata = 2; i = inizio; continue; }
+      if (b.fineRitornello && ripetute.has(i) && !b.volta) passata = 1;   // ritornello finito: si riparte dal primo giro
+      if (!salto && (haDS(b) || haDC(b))) { salto = true; passata = 1; i = haDS(b) ? segno : 0; continue; }
       i++;
     }
     return ord;
@@ -961,7 +1008,7 @@
   document.addEventListener('pause', e => { if (sincro && e.target === sincro.audio) fermaSincro(); }, true);
   document.addEventListener('ended', e => { if (sincro && e.target === sincro.audio) fermaSincro(); }, true);
   /* pulsanti per far partire le basi dallo schermo intero */
-  const comandiBasi = n => SINCRO[n] === undefined ? '' : interruttoreSegui(n) + `<div class="lim-basi"><button type="button" data-base="0">▶ Con melodia</button><button type="button" data-base="1">▶ Solo base</button><button type="button" data-base="stop" aria-label="Ferma">■</button></div>`;
+  const comandiBasi = n => `<div class="lim-solf">${pulsanteSolfeggia(n)}</div>` + (SINCRO[n] === undefined ? '' : interruttoreSegui(n) + `<div class="lim-basi"><button type="button" data-base="0">▶ Con melodia</button><button type="button" data-base="1">▶ Solo base</button><button type="button" data-base="stop" aria-label="Ferma">■</button></div>`);
   lightbox.addEventListener('click', e => {
     const b = e.target.closest('[data-base]'); if (!b || !limAperta) return;
     e.stopPropagation();
@@ -969,6 +1016,101 @@
     aud.forEach(a => a.pause());
     if (b.dataset.base !== 'stop') { const a = aud[+b.dataset.base]; if (a) { a.currentTime = 0; a.play(); } }
   });
+
+  /* ---------- solfeggio: un triangolino indica a tempo la figura da leggere (senza base) ---------- */
+  let ctxSolf = null;
+  const DURQ_S = { w: 4, h: 2, q: 1, "8": 0.5, "16": 0.25 };
+  function clicSolf(forte) {
+    try {
+      ctxSolf = ctxSolf || new (window.AudioContext || window.webkitAudioContext)(); if (ctxSolf.state === 'suspended') ctxSolf.resume();
+      const t = ctxSolf.currentTime + 0.005, o = ctxSolf.createOscillator(), g = ctxSolf.createGain();
+      o.type = 'triangle'; o.frequency.value = forte ? 780 : 520;
+      g.gain.setValueAtTime(0.0001, t); g.gain.exponentialRampToValueAtTime(forte ? 0.3 : 0.2, t + 0.01); g.gain.exponentialRampToValueAtTime(0.0001, t + 0.08);
+      o.connect(g).connect(ctxSolf.destination); o.start(t); o.stop(t + 0.1);
+    } catch (e) {}
+  }
+  async function avviaSolf(n) {
+    fermaSolf(); document.querySelectorAll('audio').forEach(a => a.pause());
+    const brano = await caricaBrano(n), [num, den] = brano.tempo, lung = num * 4 / den;
+    const pulsQ = (den === 8 && num % 3 === 0) ? 1.5 : (brano.simboloTempo === 'cut' || den === 2) ? 2 : 4 / den;
+    const durB = b => { if (b.eventi.length && b.eventi.every(e => e.intera)) return lung;
+      const q = b.eventi.reduce((t, e) => t + (e.intera ? lung : (DURQ_S[e.durata] || 1) * (e.punti ? 1.5 : 1)), 0); return q > 0 ? q : lung; };
+    const ord = ordineEsecuzione(brano.battute), inizi = []; let tot = 0;
+    ord.forEach(m => { inizi.push(tot); tot += durB(brano.battute[m]); });
+    const primo = durB(brano.battute[ord[0]]);
+    const conteggio = primo < lung - 1e-6 ? lung - primo : lung;      // con l'anacrusi si conta solo fino al suo attacco
+    solf = { n, card: document.getElementById('brano-' + n), ord, inizi, tot, lung, pulsQ, pos: -conteggio, conteggio, prima: performance.now(), ultimoBattito: null };
+    aggiornaPulsantiSolf(); requestAnimationFrame(passoSolf);
+  }
+  function fermaSolf() {
+    document.querySelectorAll('svg .solf').forEach(g => g.remove());
+    solf = null; aggiornaPulsantiSolf();
+  }
+  function aggiornaPulsantiSolf() {
+    document.querySelectorAll('.solf-via').forEach(b => { const on = solf && +b.dataset.solf === solf.n; b.textContent = on ? '■ Ferma' : '▶ Solfeggia'; b.classList.toggle('in-corso', !!on); });
+  }
+  function passoSolf(ora) {
+    if (!solf) return;
+    const dt = Math.min(0.1, Math.max(0, (ora - solf.prima) / 1000)); solf.prima = ora;
+    solf.pos += dt * (SOLF.bpm / 60) * solf.pulsQ;
+    const { pos, pulsQ, ord, inizi, tot, conteggio, n } = solf;
+    // battito: clic (sempre nel conteggio, poi solo se richiesto)
+    const battito = Math.floor((pos + conteggio) / pulsQ + 1e-6);
+    if (battito !== solf.ultimoBattito && pos < tot) {
+      solf.ultimoBattito = battito;
+      let forte = false;
+      if (pos < 0) forte = battito === 0;
+      else { const k = inizi.findIndex((x, j) => pos >= x - 1e-6 && (j === inizi.length - 1 || pos < inizi[j + 1] - 1e-6)); forte = k >= 0 && pos - inizi[k] < pulsQ * 0.5; }
+      if (pos < 0 || SOLF.clic) clicSolf(forte);
+    }
+    if (pos >= tot) { fermaSolf(); return; }
+    let m = ord[0], qIn = 0, conta = 0, attivo = pos >= 0;
+    if (!attivo) conta = Math.ceil(-pos / pulsQ - 1e-6);
+    else { let k = 0; while (k + 1 < inizi.length && inizi[k + 1] <= pos + 1e-6) k++; m = ord[k]; qIn = pos - inizi[k]; }
+    const svgs = [solf.card.querySelector('.spartito svg')];
+    if (lightbox.classList.contains('open') && limAperta && limAperta.n === n) svgs.push(lightboxInner.querySelector('.lim-spartito svg, .tel-spartito svg'));
+    svgs.forEach(svg => { if (svg && svg._mappa) disegnaSolf(svg, m, qIn, conta, attivo); });
+    if (!lightbox.classList.contains('open') && performance.now() - ultimoScorrimento > 400) { ultimoScorrimento = performance.now(); tieniInVista(solf.card.querySelector('.spartito svg'), m); }
+    requestAnimationFrame(passoSolf);
+  }
+  function disegnaSolf(svg, m, qIn, conta, attivo) {
+    const NS = 'http://www.w3.org/2000/svg', mp = svg._mappa[m]; if (!mp) return;
+    let g = svg.querySelector('.solf');
+    if (!g) {
+      g = document.createElementNS(NS, 'g'); g.setAttribute('class', 'solf');
+      g.innerHTML = '<path class="tri" stroke="#fff" stroke-width="2.5" stroke-linejoin="round"/>' +
+        '<text class="sc" text-anchor="middle" font-family="Fredoka, Manrope, Arial" font-weight="700" font-size="72" fill="#F99D1C" stroke="#fff" stroke-width="9" paint-order="stroke" opacity="0.95"></text>';
+      svg.appendChild(g);
+    }
+    let i = 0; for (let k = 0; k < mp.punti.length; k++) if (qIn >= mp.punti[k].q - 1e-6) i = k;
+    const p = mp.punti[i] || { x: mp.x0 }, x = p.x, y = mp.y0 - 30;
+    const tri = g.querySelector('.tri');
+    tri.setAttribute('d', `M${x - 10} ${y - 16} L${x + 10} ${y - 16} L${x} ${y} Z`);
+    tri.setAttribute('fill', p.lega ? 'none' : '#F99D1C'); tri.setAttribute('stroke', p.lega ? '#F99D1C' : '#fff');
+    tri.style.display = attivo ? '' : 'none';
+    const c = g.querySelector('.sc'); c.textContent = conta ? conta : '';
+    c.setAttribute('x', ((mp.xNote != null ? mp.xNote : mp.x0) + mp.x1) / 2); c.setAttribute('y', (mp.y0 + mp.y1) / 2 + 25);
+  }
+  // comandi: interruttore, velocità, clic, pulsanti nei brani
+  document.addEventListener('change', e => {
+    const t = e.target; if (!t.classList) return;
+    if (t.classList.contains('chk-solf')) {
+      SOLF.attivo = t.checked; scrivi('raccolte.solfeggio', SOLF.attivo ? '1' : '0');
+      document.querySelectorAll('.chk-solf').forEach(c => c.checked = SOLF.attivo);
+      document.body.classList.toggle('solf-on', SOLF.attivo); if (!SOLF.attivo) fermaSolf();
+    }
+    if (t.classList.contains('chk-clic')) { SOLF.clic = t.checked; scrivi('raccolte.solfClic', SOLF.clic ? '1' : '0'); document.querySelectorAll('.chk-clic').forEach(c => c.checked = SOLF.clic); }
+  });
+  document.addEventListener('click', e => {
+    const v = e.target.closest('.solf-meno, .solf-piu');
+    if (v) {
+      SOLF.bpm = Math.max(30, Math.min(200, SOLF.bpm + (v.classList.contains('solf-piu') ? 4 : -4))); scrivi('raccolte.solfBpm', SOLF.bpm);
+      document.querySelectorAll('.solf-bpm').forEach(x => x.textContent = '♩ = ' + SOLF.bpm); return;
+    }
+    const b = e.target.closest('.solf-via');
+    if (b) { e.stopPropagation(); const n = +b.dataset.solf; if (solf && solf.n === n) fermaSolf(); else avviaSolf(n); }
+  }, true);
+  document.addEventListener('play', e => { if (e.target.tagName === 'AUDIO' && solf) fermaSolf(); }, true);
 
   /* ---------- un solo lettore alla volta: quando ne parte uno, gli altri si fermano ---------- */
   document.addEventListener('play', e => {

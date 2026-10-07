@@ -13,22 +13,17 @@
     
   </defs>
   <g filter="url(#adesivo)">
-
-    <path d="M40 112 L110 84 L180 112 L110 140 Z" fill="#FFC4DA" stroke="#C2648A" stroke-width="4" stroke-linejoin="round"/>
-    <path d="M40 112 V176 L110 204 V140 Z" fill="#F48FB7" stroke="#C2648A" stroke-width="4" stroke-linejoin="round"/>
-    <path d="M180 112 V176 L110 204 V140 Z" fill="#E86FA2" stroke="#C2648A" stroke-width="4" stroke-linejoin="round"/>
-    <path d="M52 136 L98 154 M52 152 L98 170" stroke="#FFD54A" stroke-width="4" stroke-linecap="round"/>
-    <path d="M168 136 L122 154 M168 152 L122 170" stroke="#FFD54A" stroke-width="4" stroke-linecap="round"/>
-    <circle cx="146" cy="170" r="6" fill="#FFD54A" stroke="#B9831A" stroke-width="2.5"/>
-    <path d="M146 170 L188 160 L192 176" fill="none" stroke="#B9831A" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"/>
-    <circle cx="193" cy="180" r="7" fill="#FFD54A" stroke="#B9831A" stroke-width="2.5"/>
-    <path d="M110 84 V64" stroke="#B9831A" stroke-width="4"/>
-    <ellipse cx="110" cy="62" rx="16" ry="5" fill="#FFD54A" stroke="#B9831A" stroke-width="3"/>
-    <circle cx="110" cy="40" r="11" fill="#FFD9B8" stroke="#C99A72" stroke-width="2.5"/>
-    <path d="M100 34 q10 -12 20 0" fill="#8B5E34"/>
-    <path d="M110 51 L96 62 H124 Z" fill="#CF3E96" stroke="#8F2464" stroke-width="2.5" stroke-linejoin="round"/>
-    <path d="M100 52 l-12 -10 M120 52 l12 -10" stroke="#FFD9B8" stroke-width="4" stroke-linecap="round"/>
-    <g transform="translate(40 70) scale(0.65)"><rect x="9" y="-44" width="5" height="46" rx="2" fill="#5E50A1"/><ellipse cx="2" cy="2" rx="13" ry="9.5" transform="rotate(-20 2 2)" fill="#5E50A1" stroke="#1F2430" stroke-opacity="0.35" stroke-width="2"/></g><g transform="translate(170 58) scale(0.6)"><rect x="9" y="-44" width="5" height="46" rx="2" fill="#009C95"/><ellipse cx="2" cy="2" rx="13" ry="9.5" transform="rotate(-20 2 2)" fill="#009C95" stroke="#1F2430" stroke-opacity="0.35" stroke-width="2"/></g><g transform="translate(24 108) scale(0.55)"><path d="M10 -44 v46" stroke="#E21C48" stroke-width="5" stroke-linecap="round"/><path d="M12 -44 q16 8 14 24 q-4 -10 -14 -12" fill="#E21C48"/><ellipse cx="2" cy="2" rx="13" ry="9.5" transform="rotate(-20 2 2)" fill="#E21C48"/></g>
-    <text x="150" y="104" font-family="Fredoka, Arial Rounded MT Bold, sans-serif" font-weight="700" font-size="22" fill="#5E50A1" stroke="#fff" stroke-width="4" paint-order="stroke">3/4</text>
+<circle cx="80" cy="110" r="52" fill="#5EC8D8" fill-opacity="0.28" stroke="#5EC8D8" stroke-width="3.5"/>
+    <path d="M51.4 97.0 a31.2 31.2 0 0 1 23.400000000000002 -20.8" fill="none" stroke="#fff" stroke-width="7.280000000000001" stroke-linecap="round"/>
+    <circle cx="98.2" cy="130.8" r="4.16" fill="#fff"/><circle cx="160" cy="64" r="32" fill="#CF3E96" fill-opacity="0.28" stroke="#CF3E96" stroke-width="3.5"/>
+    <path d="M142.4 56.0 a19.2 19.2 0 0 1 14.4 -12.8" fill="none" stroke="#fff" stroke-width="4.48" stroke-linecap="round"/>
+    <circle cx="171.2" cy="76.8" r="2.56" fill="#fff"/><circle cx="170" cy="160" r="26" fill="#BED958" fill-opacity="0.28" stroke="#BED958" stroke-width="3.5"/>
+    <path d="M155.7 153.5 a15.6 15.6 0 0 1 11.700000000000001 -10.4" fill="none" stroke="#fff" stroke-width="3.6400000000000006" stroke-linecap="round"/>
+    <circle cx="179.1" cy="170.4" r="2.08" fill="#fff"/><circle cx="36" cy="40" r="18" fill="#F99D1C" fill-opacity="0.28" stroke="#F99D1C" stroke-width="3.5"/>
+    <path d="M26.1 35.5 a10.799999999999999 10.799999999999999 0 0 1 8.1 -7.2" fill="none" stroke="#fff" stroke-width="3" stroke-linecap="round"/>
+    <circle cx="42.3" cy="47.2" r="1.44" fill="#fff"/><circle cx="130" cy="190" r="14" fill="#5E50A1" fill-opacity="0.28" stroke="#5E50A1" stroke-width="3.5"/>
+    <path d="M122.3 186.5 a8.4 8.4 0 0 1 6.3 -5.6000000000000005" fill="none" stroke="#fff" stroke-width="3" stroke-linecap="round"/>
+    <circle cx="134.9" cy="195.6" r="1.12" fill="#fff"/>
+    <path d="M30 196 l30 -40" stroke="#8B5E34" stroke-width="6" stroke-linecap="round"/><circle cx="66" cy="148" r="12" fill="none" stroke="#8B5E34" stroke-width="5"/>
   </g>
 </svg>

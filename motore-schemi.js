@@ -293,6 +293,11 @@
       const key = m.querySelector("attributes key fifths"); if (key) brano.armatura = +key.textContent;
       const ott = m.querySelector("attributes clef clef-octave-change"); if (ott && +ott.textContent === 1) brano.chiaveOttava = true;
       const t = m.querySelector("attributes time"); if (t) { brano.tempo = [+t.querySelector("beats").textContent, +t.querySelector("beat-type").textContent]; brano.simboloTempo = t.getAttribute("symbol"); }
+      // segno, D.S. / D.C. e Fine: dai simboli e dalle istruzioni di esecuzione del file
+      if (m.querySelector("direction-type > segno, barline > segno")) b.segno = true;
+      if (m.querySelector("sound[fine]")) b.fineEsecuzione = true;
+      if (m.querySelector("sound[dalsegno]")) b.dalSegno = true;
+      if (m.querySelector("sound[dacapo]")) b.daCapo = true;
       m.querySelectorAll(":scope > barline").forEach(bl => {
         const r = bl.querySelector("repeat");
         if (r && r.getAttribute("direction") === "forward") b.inizioRitornello = true;
@@ -452,6 +457,7 @@
         const st = new VF.Stave(x, y, w);
         if (i === 0) { st.addClef("treble", "default", brano.chiaveOttava ? "8va" : undefined); if (keySpec) st.addKeySignature(keySpec); if (r === 0) st.addTimeSignature(brano.simboloTempo === "cut" ? "C|" : brano.simboloTempo === "common" ? "C" : brano.tempo.join("/")); }
         if (b.inizioRitornello) st.setBegBarType(VF.Barline.type.REPEAT_BEGIN);
+        if (b.segno) st.setRepetitionType(VF.Repetition.type.SEGNO_LEFT, -6);   // il segno 𝄋 sopra l'inizio della battuta
         if (b.volta) volteRiga.push({ st, volta: b.volta });   // le volte si disegnano dopo, sopra i nomi
         if (ultima.fineRitornello) st.setEndBarType(VF.Barline.type.REPEAT_END);
         else if (ultima.fine || (r === righe - 1 && i === battute.length - 1)) st.setEndBarType(VF.Barline.type.END);
@@ -517,7 +523,7 @@
           beams = VF.Beam.generateBeams(note, gruppiTrave ? { groups: gruppiTrave } : {});
         }
         VF.Formatter.FormatAndDraw(ctx, st, note, { auto_beam: false });
-        { let q = 0; const punti = note.map(sn => { const p = { q, x: sn.getAbsoluteX() + sn.getGlyphWidth() / 2 }; q += durQ(sn._ev || {}); return p; });
+        { let q = 0; const punti = note.map(sn => { const ev = sn._ev || {}; const p = { q, x: sn.getAbsoluteX() + sn.getGlyphWidth() / 2, lega: !!ev.legaFine, pausa: !!ev.pausa }; q += durQ(ev); return p; });
           mappaBattute[brano.battute.indexOf(b)] = { x0: st.getX(), x1: st.getX() + st.getWidth(), xNote: st.getNoteStartX(), y0: st.getYForLine(0), y1: st.getYForLine(4), punti }; }
         beams.forEach(bm => bm.setContext(ctx).draw());
         note.forEach(sn => { daScrivere.push(sn); tutteLeNote.push(sn); });
