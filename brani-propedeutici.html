@@ -571,14 +571,43 @@
   .festa > * { position: relative; z-index: 1; }
   .lim-spartito.festa > .lim-maniglia { position: absolute; }
   @keyframes luciDisco { from { background-position: 0% 0%; } to { background-position: 100% 100%; } }
-  img.festa-palla { animation: dondola 1s ease-in-out infinite alternate; transform-origin: 50% 0%; }
-  @keyframes dondola { from { transform: rotate(-5deg); } to { transform: rotate(5deg); } }
+  /* palla da discoteca viva */
+  .palla-viva { width: 100%; height: 100%; display: block; overflow: visible; filter: drop-shadow(3px 0 0 #fff) drop-shadow(-3px 0 0 #fff) drop-shadow(0 3px 0 #fff) drop-shadow(0 -3px 0 #fff) drop-shadow(0 6px 4px rgba(30,27,75,0.3)); }
+  .palla-dondola { transform-origin: 110px 10px; transform-box: view-box; animation: dondola 1s ease-in-out infinite alternate; }
+  @keyframes dondola { from { transform: rotate(-6deg); } to { transform: rotate(6deg); } }
+  .tessera { animation: tessera 4s linear infinite; }
+  .tessera.t0 { --a: #E21C48; --b: #F99D1C; } .tessera.t1 { --a: #009C95; --b: #5E50A1; } .tessera.t2 { --a: #CF3E96; --b: #FFF428; } .tessera.t3 { --a: #BED958; --b: #009C95; }
+  .tessera.t4 { --a: #5E50A1; --b: #E21C48; } .tessera.t5 { --a: #F99D1C; --b: #CF3E96; } .tessera.t6 { --a: #FFF428; --b: #BED958; }
+  @keyframes tessera { 0%, 100% { fill: var(--a); } 50% { fill: var(--b); } }
+  .raggio { animation: raggio 3s ease-in-out infinite alternate; }
+  @keyframes raggio { from { opacity: 0.55; } to { opacity: 1; } }
+  .scintilla { transform-box: fill-box; transform-origin: center; animation: scintilla 2.4s ease-in-out infinite; }
+  @keyframes scintilla { 0%, 100% { opacity: 0.2; transform: scale(0.6); } 50% { opacity: 1; transform: scale(1.1); } }
+  .palla-tel { display: inline-block; width: 46px; height: 46px; flex: none; margin-left: -34px; }
+  /* schermo intero: la palla grande prende il posto di titolo e novità */
+  .palla-grande { display: none; }
+  .festa-lato .palla-grande { display: block; width: min(100%, 42vh); margin: 0 auto 6px; }
+  .festa-lato .lim-testa .bp-titolo, .festa-lato .lim-testa .bp-disegno, .festa-lato .bp-riquadro { display: none !important; }
+  /* il palcoscenico delle cinque note */
+  .palco { position: absolute; left: -2px; right: -2px; z-index: 3; border-radius: 18px; overflow: hidden; pointer-events: none;
+    background: linear-gradient(180deg, #1e1b4b 0%, #312e81 70%, #3b3192 100%); box-shadow: 0 8px 24px rgba(30,27,75,0.3); animation: apriPalco 0.6s ease-out both; }
+  @keyframes apriPalco { from { opacity: 0; transform: scaleY(0.6); } to { opacity: 1; transform: none; } }
+  .palco-luci { position: absolute; inset: 0; background: radial-gradient(circle at 20% 0%, rgba(249,157,28,0.35), transparent 45%), radial-gradient(circle at 80% 0%, rgba(0,156,149,0.35), transparent 45%),
+    radial-gradient(circle at 50% 0%, rgba(207,62,150,0.3), transparent 50%); background-size: 160% 160%; animation: luciDisco 8s ease-in-out infinite alternate; }
+  .lim-spartito > .palco { left: 34px; }   /* lascia libera la linguetta della colonna */
+  .palco-scritta { position: absolute; top: 5%; left: 0; right: 0; text-align: center; font-family: 'Fredoka', 'Manrope', Arial, sans-serif; font-weight: 700;
+    font-size: clamp(16px, calc(var(--h) * 0.28), 34px); color: #FFE58A; text-shadow: 0 3px 0 rgba(0,0,0,0.3); }
+  .palco-amiche { position: absolute; left: 4%; right: 4%; bottom: 20%; display: flex; justify-content: center; align-items: flex-end; gap: 3%; }
+  .nota-amica { height: var(--h); width: auto; overflow: visible; transform-origin: 40% 90%; transition: transform 0.16s ease-out; filter: drop-shadow(0 4px 0 rgba(0,0,0,0.25)); }
+  .nota-amica.su { transform: translateY(-16%) rotate(-8deg) scaleY(1.04); }
+  .nota-amica.giu { transform: rotate(7deg) scaleY(0.94); }
+  .pista { position: absolute; left: 0; right: 0; bottom: 0; height: 14%; background: repeating-linear-gradient(90deg, rgba(249,157,28,0.35) 0 12%, rgba(94,80,161,0.35) 12% 24%, rgba(0,156,149,0.35) 24% 36%); border-top: 2px solid rgba(255,255,255,0.25); }
   svg .bravi { font-family: 'Fredoka', 'Manrope', Arial, sans-serif; font-weight: 700; font-size: 44px; fill: #F99D1C; stroke: #fff; stroke-width: 7; paint-order: stroke; animation: compare 0.9s ease-out both; }
   @keyframes compare { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: none; } }
   #strato-coriandoli { position: fixed; inset: 0; pointer-events: none; overflow: hidden; z-index: 300; }
   .confetti-piece { position: absolute; width: 8px; height: 8px; border-radius: 2px; animation: confettiBurst 0.9s ease-out forwards; }
   @keyframes confettiBurst { 0% { transform: translate(-50%, -50%) rotate(0deg); opacity: 1; } 100% { transform: translate(calc(-50% + var(--dx)), calc(-50% + var(--dy))) rotate(var(--rot)); opacity: 0; } }
-  @media (prefers-reduced-motion: reduce) { .festa::before, img.festa-palla, svg .bravi { animation: none; } .confetti-piece { display: none; } }
+  @media (prefers-reduced-motion: reduce) { .festa::before, .palla-dondola, .tessera, .raggio, .scintilla, .palco-luci, .palco, svg .bravi { animation: none; } .nota-amica { transition: none; } .confetti-piece { display: none; } }
 </style>
 <script src="vexflow.js"></script>
 <script src="motore-schemi.js?v=2026-10-07b"></script>
@@ -952,11 +981,6 @@
     if (lightbox.classList.contains('open')) l.push(lightboxInner.querySelector('.lim-spartito, .tel-spartito'));
     return l.filter(Boolean);
   }
-  function palleFesta(card) {
-    const l = [card.querySelector('.bp-disegno img, img.bp-disegno')];
-    if (lightbox.classList.contains('open')) l.push(lightboxInner.querySelector('.bp-disegno img, img.bp-disegno'));
-    return l.filter(Boolean);
-  }
   /* il ballerino: corpo = la barra arancione (dietro le note), testa con occhiali da sole e mezzo sorriso, braccia in due pose */
   function disegnaBallerino(svg, mp, i, posa, salto) {
     const NS = 'http://www.w3.org/2000/svg';
@@ -978,34 +1002,104 @@
       `<path d="M${x - 6} ${yt + 8} Q${x + 2} ${yt + 10} ${x + 8} ${yt + 5}" fill="none" stroke="#1F2430" stroke-width="2.2" stroke-linecap="round"/>` +
       `<path d="M${x + 8} ${yt + 5} l2 -1.5" stroke="#1F2430" stroke-width="1.8" stroke-linecap="round"/>`;
   }
-  function aggiornaFesta(n, card, m, qIn, attivo, svgs) {
+  /* palla da discoteca viva: le tessere cambiano colore lentamente, i raggi respirano */
+  let idPalla = 0;
+  function pallaViva() {
+    const id = 'pv' + (++idPalla), cx = 110, cy = 92, r = 46, col = ['#E21C48', '#F99D1C', '#FFF428', '#BED958', '#009C95', '#5E50A1', '#CF3E96'];
+    let tess = '', k = 0;
+    for (let row = -6; row <= 6; row++) {
+      const y = cy + row * 7.8, w = Math.sqrt(Math.max(0, r * r - (y - cy) ** 2)), n = Math.max(2, Math.floor(w * 2 / 8.5));
+      for (let i = 0; i < n; i++, k++) {
+        const x = cx - w + i * (2 * w / n), base = ['#C9D3E6', '#E8EEF8', '#A9B6CF', '#DCE4F2'][((row + i) % 4 + 4) % 4];
+        const viva = (row * 3 + i * 5 + 70) % 3 === 0;
+        tess += `<rect x="${(x + 0.6).toFixed(1)}" y="${(y - 3.4).toFixed(1)}" width="${(2 * w / n - 1.2).toFixed(1)}" height="6.6" rx="1.2" fill="${base}"` +
+          (viva ? ` class="tessera t${k % 7}" style="animation-delay:-${(k * 0.37) % 4}s"` : '') + '/>';
+      }
+    }
+    const raggi = [[-145, '#F7A8B8'], [-118, '#FFD39A'], [-62, '#9FE0D9'], [-35, '#C3B8F0']].map(([ang, c], j) => {
+      const a = (ang + 180) * Math.PI / 180, a1 = a - 0.11, a2 = a + 0.11, L = 112, P = (aa, rr) => `${(cx + rr * Math.cos(aa)).toFixed(1)},${(cy + rr * Math.sin(aa)).toFixed(1)}`;
+      return `<polygon class="raggio" style="animation-delay:-${j * 0.7}s" points="${P(a, r - 6)} ${P(a1, L)} ${P(a2, L)}" fill="${c}"/>`; }).join('');
+    return `<svg class="palla-viva" viewBox="0 0 220 220" aria-hidden="true"><defs><clipPath id="${id}"><circle cx="${cx}" cy="${cy}" r="${r}"/></clipPath></defs>
+      <g class="palla-dondola">${raggi}<rect x="${cx - 2}" y="10" width="4" height="${cy - r - 8}" fill="#8892A6"/><rect x="${cx - 9}" y="${cy - r - 8}" width="18" height="9" rx="3" fill="#8892A6"/>
+      <circle cx="${cx}" cy="${cy}" r="${r}" fill="#B9C4DA"/><g clip-path="url(#${id})">${tess}</g>
+      <circle cx="${cx}" cy="${cy}" r="${r}" fill="none" stroke="#5E6A86" stroke-width="3"/>
+      <ellipse cx="${cx - 16}" cy="${cy - 20}" rx="12" ry="7" fill="#fff" opacity="0.85" transform="rotate(-30 ${cx - 16} ${cy - 20})"/>
+      <path class="scintilla" d="M${cx + 22} ${cy - 30} l2.5 7 l7 2.5 l-7 2.5 l-2.5 7 l-2.5 -7 l-7 -2.5 l7 -2.5 Z" fill="#fff"/></g></svg>`;
+  }
+  /* una nota con la faccina (come in "Cinque amiche"), con due braccine */
+  function notaFaccina(col, bordo) {
+    return `<svg viewBox="0 0 70 120" class="nota-amica">
+      <rect x="38" y="6" width="7" height="72" rx="3.5" fill="${col}"/>
+      <ellipse cx="24" cy="80" rx="22" ry="17" transform="rotate(-18 24 80)" fill="${col}" stroke="${bordo}" stroke-width="3"/>
+      <circle cx="17" cy="77" r="4.6" fill="#fff" stroke="#1F2430" stroke-width="2.2"/><circle cx="18.6" cy="78" r="2.5" fill="#1F2430"/>
+      <circle cx="30" cy="75" r="4.6" fill="#fff" stroke="#1F2430" stroke-width="2.2"/><circle cx="31.6" cy="76" r="2.5" fill="#1F2430"/>
+      <path d="M18 86 q6 6 12 -1" fill="none" stroke="#1F2430" stroke-width="2.4" stroke-linecap="round"/></svg>`;
+  }
+  const AMICHE = [['#009C95', '#00675F'], ['#5E50A1', '#3E3478'], ['#CF3E96', '#8F2464'], ['#E21C48', '#9E1030'], ['#F99D1C', '#B86A00']];
+  /* palcoscenico sopra lo spartito che non serve più (prima della battuta della festa) */
+  function aggiornaPalco(cont, svg, F, battito) {
+    if (!cont || !svg || !svg._mappa) return;
+    const mp = svg._mappa[F.da - 1]; if (!mp) return;
+    const rs = svg.getBoundingClientRect(), rc = cont.getBoundingClientRect(), vb = svg.viewBox.baseVal, sc = rs.width / vb.width;
+    const alto = Math.max(0, rs.top - rc.top) + 6, basso = rs.top - rc.top + (mp.y0 - 46 - vb.y) * sc, h = basso - alto;
+    let palco = cont.querySelector(':scope > .palco');
+    if (h < 90) { if (palco) palco.remove(); return; }
+    if (!palco) {
+      palco = document.createElement('div'); palco.className = 'palco';
+      palco.innerHTML = '<div class="palco-luci"></div><div class="palco-scritta">Tutti in pista!</div><div class="palco-amiche">' + AMICHE.map(([c, b]) => notaFaccina(c, b)).join('') + '</div><div class="pista"></div>';
+      cont.appendChild(palco);
+    }
+    palco.style.top = alto + 'px'; palco.style.height = h + 'px';
+    palco.style.setProperty('--h', Math.min(200, h * 0.5, palco.clientWidth * 0.25) + 'px');   // cinque note devono starci in larghezza
+    // passi di danza: a onda, una nota dopo l'altra, sul battito
+    palco.querySelectorAll('.nota-amica').forEach((el, j) => { const su = (battito + j) % 2 === 0; el.classList.toggle('su', su); el.classList.toggle('giu', !su); });
+  }
+  function aggiornaFesta(n, card, m, qIn, attivo, svgs, conBallerino) {
     const F = FESTA[n];
-    if (F && !attivo && festa && festa.finale) return;   // brano finito: "Bravi!" e luci restano finché la base suona
+    if (F && !attivo && festa && festa.eventi.has('fine')) return;   // brano finito: la festa resta finché la base suona
     if (!F || !attivo || m + 1 < F.da) { if (festa) spegniFesta(); festaOn = false; return; }
-    if (!festa || festa.n !== n) festa = { n, chiave: null, posa: false, finale: false };
+    if (!festa || festa.n !== n) festa = { n, chiave: null, posa: false, eventi: new Set(), battito: -1 };
     const mp0 = (svgs[0] && svgs[0]._mappa[m]) || null; let i = 0;
     if (mp0) for (let k = 0; k < mp0.punti.length; k++) if (qIn >= mp0.punti[k].q - 1e-6) i = k;
     const chiave = m + '-' + i; if (chiave !== festa.chiave) { festa.chiave = chiave; festa.posa = !festa.posa; }
-    contenitoriFesta(card).forEach(c => c.classList.add('festa'));
-    palleFesta(card).forEach(im => im.classList.add('festa-palla'));
-    svgs.forEach(svg => { const mp = svg && svg._mappa[m]; if (mp) disegnaBallerino(svg, mp, i, festa.posa, m + 1 >= F.salto); });
-    if (m + 1 >= F.fine && !festa.finale) {
-      festa.finale = true;
-      const dove = contenitoriFesta(card).slice(-1)[0];
+    const battito = m * 4 + Math.floor(qIn + 1e-6);
+    const conts = contenitoriFesta(card), dove = conts.slice(-1)[0];
+    conts.forEach(c => c.classList.add('festa'));
+    // palla animata al posto del disegno (nella scheda; a schermo intero grande, al posto di titolo e novità)
+    document.querySelectorAll(`#brano-${n} .bp-disegno, #lightboxInner .bp-disegno, #lightboxInner .tel-disegno`).forEach(d => {
+      if (d.dataset.festa) return; d.dataset.festa = '1';
+      if (d.tagName === 'IMG') { d.style.visibility = 'hidden'; d.insertAdjacentHTML('afterend', `<span class="palla-tel">${pallaViva()}</span>`); }
+      else { d.querySelector('img').style.display = 'none'; d.insertAdjacentHTML('beforeend', pallaViva()); }
+    });
+    const lato = lightboxInner.querySelector('.lim-lato');
+    if (lato && lightbox.classList.contains('open') && limAperta && limAperta.n === n && !lato.classList.contains('festa-lato')) {
+      lato.classList.add('festa-lato'); lato.insertAdjacentHTML('afterbegin', `<div class="palla-grande">${pallaViva()}</div>`);
+    }
+    // palcoscenico con le cinque note che ballano sullo spartito che non serve più
+    conts.forEach(c => aggiornaPalco(c, c.querySelector('svg'), F, battito));
+    // il ballerino (solo se c'è il lettore: Segui la base o Solfeggio)
+    if (conBallerino) svgs.forEach(svg => { const mp = svg && svg._mappa[m]; if (mp) disegnaBallerino(svg, mp, i, festa.posa, m + 1 >= F.salto); });
+    else document.querySelectorAll('svg .ballerino').forEach(g => g.remove());
+    // coriandoli: all'inizio della festa e su ognuna delle tre note finali; alla fine "Bravi!"
+    const evento = (nome, fn) => { if (!festa.eventi.has(nome)) { festa.eventi.add(nome); fn(); } };
+    evento('inizio', () => coriandoli(dove, 60, 130));
+    if (m + 1 === F.salto) evento('f' + i, () => coriandoli(dove, 50, 120));
+    if (m + 1 >= F.fine) evento('fine', () => {
       coriandoli(dove, 70, 140); setTimeout(() => coriandoli(dove, 50, 120), 400);
       svgs.forEach(svg => { const mp = svg._mappa[m]; if (!mp) return; const NS = 'http://www.w3.org/2000/svg';
         const t = document.createElementNS(NS, 'text'); t.setAttribute('class', 'bravi'); t.setAttribute('text-anchor', 'middle');
-        // "Bravi!" a destra dell'ultima battuta, dove c'è spazio; se non c'è, più in alto
         const larg = svg.viewBox.baseVal.width, spazio = larg - mp.x1 > 190;
         t.setAttribute('x', spazio ? mp.x1 + 100 : (mp.x0 + mp.x1) / 2); t.setAttribute('y', spazio ? (mp.y0 + mp.y1) / 2 + 15 : mp.y0 - 92);
         t.textContent = 'Bravi!'; svg.appendChild(t); });
-    }
-    festaOn = true;
+    });
+    festaOn = !!conBallerino;
   }
   function spegniFesta() {
     document.querySelectorAll('.festa').forEach(c => c.classList.remove('festa'));
-    document.querySelectorAll('.festa-palla').forEach(c => c.classList.remove('festa-palla'));
-    document.querySelectorAll('svg .ballerino, svg .bravi').forEach(g => g.remove());
+    document.querySelectorAll('svg .ballerino, svg .bravi, .palco, .palla-grande, .palla-tel').forEach(g => g.remove());
+    document.querySelectorAll('[data-festa]').forEach(d => { delete d.dataset.festa; d.style.visibility = '';
+      const im = d.querySelector && d.querySelector('img'); if (im) im.style.display = ''; d.querySelectorAll && d.querySelectorAll('.palla-viva').forEach(x => x.remove()); });
+    document.querySelectorAll('.festa-lato').forEach(l => l.classList.remove('festa-lato'));
     festa = null; festaOn = false;
   }
 
@@ -1045,7 +1139,7 @@
   });
   async function avviaSincro(audio) {
     const card = audio.closest('.bp-card'); if (!card) return;
-    if (!segui) { const n0 = +card.id.replace('brano-', ''); if (SINCRO[n0] !== undefined) sincro = { n: n0, audio, card, inAttesa: true }; return; }
+    { const n0 = +card.id.replace('brano-', ''); if (!segui && !FESTA[n0]) { if (SINCRO[n0] !== undefined) sincro = { n: n0, audio, card, inAttesa: true }; return; } }
     const n = +card.id.replace('brano-', ''); if (SINCRO[n] === undefined) return;
     const brano = await caricaBrano(n), bpm = +((brano.metronomo || {}).valore) || 0; if (!bpm) return;
     const q = 60 / bpm, lung = brano.tempo[0] * 4 / brano.tempo[1], durB = lung * q, ord = ordineEsecuzione(brano.battute);
@@ -1063,7 +1157,7 @@
   function passoSincro() {
     if (!sincro || sincro.audio.paused) return;
     if (sincro.inAttesa) { if (segui) { const a = sincro.audio; sincro = null; avviaSincro(a); } return; }
-    if (!segui) return;
+    if (!segui && !FESTA[sincro.n]) return;
     const { audio, q, lung, durB, ord, entrata, n } = sincro, t = audio.currentTime - SINCRO[n];
     let m = ord[0], qIn = 0, conta = 0, visibile = true;
     if (t < 0) conta = Math.ceil(-t / q);
@@ -1072,9 +1166,11 @@
       if (k >= ord.length) visibile = false;
       else { m = ord[k]; qIn = (t - k * durB) / q; if (t < entrata && entrata - t <= durB) conta = Math.ceil((entrata - t) / q); }
     }
-    aggiornaFesta(n, sincro.card, m, t < 0 ? 0 : qIn, visibile && t >= 0, svgSeguiti());
-    svgSeguiti().forEach(svg => disegnaSincro(svg, m, t < 0 ? 0 : qIn, conta, visibile && t >= 0));
-    if (!lightbox.classList.contains('open') && performance.now() - ultimoScorrimento > 400) { ultimoScorrimento = performance.now(); tieniInVista(sincro.card.querySelector('.spartito svg'), m); }
+    aggiornaFesta(n, sincro.card, m, t < 0 ? 0 : qIn, visibile && t >= 0, svgSeguiti(), segui);
+    if (segui) {
+      svgSeguiti().forEach(svg => disegnaSincro(svg, m, t < 0 ? 0 : qIn, conta, visibile && t >= 0));
+      if (!lightbox.classList.contains('open') && performance.now() - ultimoScorrimento > 400) { ultimoScorrimento = performance.now(); tieniInVista(sincro.card.querySelector('.spartito svg'), m); }
+    }
     requestAnimationFrame(passoSincro);
   }
   function disegnaSincro(svg, m, qIn, conta, attivo) {
@@ -1174,7 +1270,7 @@
     else { let k = 0; while (k + 1 < inizi.length && inizi[k + 1] <= pos + 1e-6) k++; m = ord[k]; qIn = pos - inizi[k]; }
     const svgs = [solf.card.querySelector('.spartito svg')];
     if (lightbox.classList.contains('open') && limAperta && limAperta.n === n) svgs.push(lightboxInner.querySelector('.lim-spartito svg, .tel-spartito svg'));
-    aggiornaFesta(n, solf.card, m, qIn, attivo, svgs.filter(x => x && x._mappa));
+    aggiornaFesta(n, solf.card, m, qIn, attivo, svgs.filter(x => x && x._mappa), true);
     svgs.forEach(svg => { if (svg && svg._mappa) disegnaSolf(svg, m, qIn, conta, attivo); });
     if (!lightbox.classList.contains('open') && performance.now() - ultimoScorrimento > 400) { ultimoScorrimento = performance.now(); tieniInVista(solf.card.querySelector('.spartito svg'), m); }
     requestAnimationFrame(passoSolf);
