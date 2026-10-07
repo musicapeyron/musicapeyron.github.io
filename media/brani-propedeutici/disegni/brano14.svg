@@ -24,7 +24,6 @@
     <circle cx="170" cy="80" r="5" fill="#FFF6E0"/><circle cx="186" cy="80" r="5" fill="#FFF6E0"/><circle cx="170" cy="96" r="5" fill="#FFF6E0"/><circle cx="186" cy="96" r="5" fill="#FFF6E0"/>
     <circle cx="170" cy="112" r="5" fill="#FFF6E0"/><circle cx="186" cy="112" r="5" fill="#FFF6E0"/><circle cx="178" cy="132" r="9" fill="#FFD54A" stroke="#B9831A" stroke-width="2.5"/>
     
-    <g font-family="Arial, sans-serif" font-weight="700" fill="#5E50A1"><rect x="70" y="10" width="5" height="34"/><rect x="79" y="10" width="2.5" height="34"/><circle cx="88" cy="21" r="3"/><circle cx="88" cy="33" r="3"/>
-    <circle cx="132" cy="21" r="3"/><circle cx="132" cy="33" r="3"/><rect x="138.5" y="10" width="2.5" height="34"/><rect x="145" y="10" width="5" height="34"/></g>
+    <text x="110" y="50" text-anchor="middle" font-family="Fredoka, Arial Rounded MT Bold, Arial, sans-serif" font-weight="700" font-size="32" fill="#5E50A1">D.C.</text>
   </g>
 </svg>
