@@ -1,0 +1,6 @@
+/* Caratteri del sito, ospitati qui (nessuna richiesta a Google).
+   Inter, Manrope, Fredoka e Sora: SIL Open Font License 1.1 (vedi fonts/OFL-*.txt). */
+@font-face { font-family: 'Inter'; font-style: normal; font-weight: 100 900; font-display: swap; src: url('inter.woff') format('woff'); }
+@font-face { font-family: 'Manrope'; font-style: normal; font-weight: 200 800; font-display: swap; src: url('manrope.woff') format('woff'); }
+@font-face { font-family: 'Fredoka'; font-style: normal; font-weight: 300 700; font-display: swap; src: url('fredoka.woff') format('woff'); }
+@font-face { font-family: 'Sora'; font-style: normal; font-weight: 100 800; font-display: swap; src: url('sora.woff') format('woff'); }

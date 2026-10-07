@@ -18,9 +18,7 @@
 <link rel="icon" href="favicon-32.png" type="image/png" sizes="32x32">
 <link rel="apple-touch-icon" href="apple-touch-icon.png">
 <meta name="description" content="Scale maggiori e minori per flauto, tastiera, chitarra e ukulele, con basi e diteggiature.">
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@600;700&family=Manrope:wght@500;700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="fonts/caratteri.css">
 <style>
   * { box-sizing: border-box; }
 
@@ -560,6 +558,49 @@
     .opz-tel .solf-bpm { font-size: 11.5px; min-width: 48px; }
     .opz-tel .solf-clic { font-size: 11px; }
   }
+  /* festa del finale: luci morbide e lente (nessun lampeggio), palla che dondola, "Bravi!" che compare piano */
+  .festa { position: relative; }
+  .festa::before { content: ""; position: absolute; inset: 0; z-index: 0; pointer-events: none; border-radius: inherit;
+    background: radial-gradient(circle at 20% 30%, rgba(226,28,72,0.15), transparent 40%), radial-gradient(circle at 80% 35%, rgba(0,156,149,0.15), transparent 42%),
+      radial-gradient(circle at 50% 85%, rgba(94,80,161,0.15), transparent 45%), radial-gradient(circle at 30% 70%, rgba(249,157,28,0.13), transparent 40%);
+    background-size: 220% 220%; animation: luciDisco 8s ease-in-out infinite alternate; }
+  .festa > * { position: relative; z-index: 1; }
+  .lim-spartito.festa > .lim-maniglia { position: absolute; }
+  @keyframes luciDisco { from { background-position: 0% 0%; } to { background-position: 100% 100%; } }
+  /* palla da discoteca viva */
+  .palla-viva { width: 100%; height: 100%; display: block; overflow: visible; filter: drop-shadow(3px 0 0 #fff) drop-shadow(-3px 0 0 #fff) drop-shadow(0 3px 0 #fff) drop-shadow(0 -3px 0 #fff) drop-shadow(0 6px 4px rgba(30,27,75,0.3)); }
+  .palla-dondola { transform-origin: 110px 10px; transform-box: view-box; animation: dondola 1s ease-in-out infinite alternate; }
+  @keyframes dondola { from { transform: rotate(-6deg); } to { transform: rotate(6deg); } }
+  .tessera { animation: tessera 4s linear infinite; }
+  .tessera.t0 { --a: #E21C48; --b: #F99D1C; } .tessera.t1 { --a: #009C95; --b: #5E50A1; } .tessera.t2 { --a: #CF3E96; --b: #FFF428; } .tessera.t3 { --a: #BED958; --b: #009C95; }
+  .tessera.t4 { --a: #5E50A1; --b: #E21C48; } .tessera.t5 { --a: #F99D1C; --b: #CF3E96; } .tessera.t6 { --a: #FFF428; --b: #BED958; }
+  @keyframes tessera { 0%, 100% { fill: var(--a); } 50% { fill: var(--b); } }
+  .raggio { animation: raggio 3s ease-in-out infinite alternate; }
+  @keyframes raggio { from { opacity: 0.55; } to { opacity: 1; } }
+  .scintilla { transform-box: fill-box; transform-origin: center; animation: scintilla 2.4s ease-in-out infinite; }
+  @keyframes scintilla { 0%, 100% { opacity: 0.2; transform: scale(0.6); } 50% { opacity: 1; transform: scale(1.1); } }
+  .palla-tel { display: inline-block; width: 46px; height: 46px; flex: none; margin-left: -34px; }
+  /* schermo intero: la palla grande prende il posto di titolo e novità */
+  .palla-grande { display: none; }
+  .festa-lato .palla-grande { display: block; width: min(100%, 42vh); margin: 0 auto 6px; }
+  .festa-lato .lim-testa .bp-titolo, .festa-lato .lim-testa .bp-disegno, .festa-lato .bp-riquadro { display: none !important; }
+  /* le cinque note che ballano sullo spartito già suonato (che sfuma quasi a bianco) */
+  .palco { position: absolute; left: -2px; right: -2px; z-index: 3; pointer-events: none;
+    animation: apriPalco 0.8s ease-out both; }
+  @keyframes apriPalco { from { opacity: 0; } to { opacity: 1; } }
+  .palco-amiche { position: absolute; left: 4%; right: 4%; top: 50%; transform: translateY(-50%); display: flex; justify-content: center; align-items: flex-end; gap: 3%; }
+  .nota-amica { height: var(--h); width: auto; overflow: visible; transform-origin: 40% 90%; transition: transform 0.16s ease-out; filter: drop-shadow(2px 0 0 #fff) drop-shadow(-2px 0 0 #fff) drop-shadow(0 2px 0 #fff) drop-shadow(0 -2px 0 #fff) drop-shadow(0 4px 3px rgba(30,27,75,0.3)); }
+  .nota-amica.su { transform: translateY(-16%) rotate(-8deg) scaleY(1.04); }
+  .nota-amica.giu { transform: rotate(7deg) scaleY(0.94); }
+  .palco.piccolo .nota-amica.su { transform: translateY(-7%) rotate(-4deg); }
+  .palco.piccolo .nota-amica.giu { transform: rotate(3deg); }
+  .nota-amica.finale { transform: translateY(-10%) scale(1.08); transition: transform 0.35s ease-out; }
+  svg .bravi { font-family: 'Fredoka', 'Manrope', Arial, sans-serif; font-weight: 700; font-size: 44px; fill: #F99D1C; stroke: #fff; stroke-width: 7; paint-order: stroke; animation: compare 0.9s ease-out both; }
+  @keyframes compare { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: none; } }
+  #strato-coriandoli { position: fixed; inset: 0; pointer-events: none; overflow: hidden; z-index: 300; }
+  .confetti-piece { position: absolute; width: 8px; height: 8px; border-radius: 2px; animation: confettiBurst 0.9s ease-out forwards; }
+  @keyframes confettiBurst { 0% { transform: translate(-50%, -50%) rotate(0deg); opacity: 1; } 100% { transform: translate(calc(-50% + var(--dx)), calc(-50% + var(--dy))) rotate(var(--rot)); opacity: 0; } }
+  @media (prefers-reduced-motion: reduce) { .festa::before, .palla-dondola, .tessera, .raggio, .scintilla, .palco, svg .bravi { animation: none; } .nota-amica { transition: none; } .confetti-piece { display: none; } }
   /* raccolta senza disegni: titolo sobrio */
   .bp-disegno, .tel-disegno { display: none !important; }
   .bp-titolo { font-family: 'Manrope', sans-serif !important; font-size: clamp(20px, 2.6vw, 28px) !important; color: #1F2430; }
@@ -567,7 +608,7 @@
   .tel-titolo { font-family: 'Manrope', sans-serif !important; font-size: 14px !important; }
 </style>
 <script src="vexflow.js"></script>
-<script src="motore-schemi.js?v=2026-10-07b"></script>
+<script src="motore-schemi.js?v=2026-10-08"></script>
 </head>
 <body>
 
@@ -609,6 +650,10 @@
     `<label class="solf-clic" title="Metronomo udibile"><input type="checkbox" class="chk-clic" ${SOLF.clic ? 'checked' : ''}><span>Clic</span></label></span>`;
   const pulsanteSolfeggia = n => { const on = !!solf && solf.n === n;
     return `<button type="button" class="solf-via${on ? ' in-corso' : ''}" data-solf="${n}">${on ? '■ Ferma' : '▶ Solfeggia'}</button>`; };
+
+  /* sorpresa nel finale: da questa battuta l'evidenziatore diventa un ballerino (con Segui la base o Solfeggio) */
+  const FESTA = {};
+  let festa = null, festaOn = false;
 
   /* interruttore "Segui la base": spento di base, la scelta viene ricordata */
   let segui = false; try { segui = localStorage.getItem('propedeutici.segui') === '1'; } catch (e) {}
@@ -910,6 +955,167 @@
     mostra();
   });
 
+  /* ---------- la festa del finale: ballerino "cool", luci morbide, palla che dondola, coriandoli ---------- */
+  const COLORI_CORIANDOLI = ["#f59e0b", "#22c55e", "#3b82f6", "#ec4899", "#a855f7", "#facc15", "#06b6d4"];
+  function coriandoli(el, quanti, distanza) {
+    const r = el.getBoundingClientRect(); let strato = document.getElementById('strato-coriandoli');
+    if (!strato) { strato = document.createElement('div'); strato.id = 'strato-coriandoli'; document.body.appendChild(strato); }
+    for (let i = 0; i < quanti; i++) {
+      const p = document.createElement('span'); p.className = 'confetti-piece';
+      p.style.left = (r.left + r.width / 2) + 'px'; p.style.top = (r.top + r.height / 2) + 'px';
+      const a = Math.random() * Math.PI * 2, d = distanza + Math.random() * distanza * 1.6;
+      p.style.setProperty('--dx', Math.cos(a) * d + 'px'); p.style.setProperty('--dy', (Math.sin(a) * d - 20) + 'px'); p.style.setProperty('--rot', (Math.random() * 480 - 240) + 'deg');
+      p.style.background = COLORI_CORIANDOLI[i % COLORI_CORIANDOLI.length]; p.style.width = p.style.height = (5 + Math.random() * 5) + 'px';
+      strato.appendChild(p); setTimeout(() => p.remove(), 1100);
+    }
+  }
+  function contenitoriFesta(card) {
+    const l = [card.querySelector('.spartito')];
+    if (lightbox.classList.contains('open')) l.push(lightboxInner.querySelector('.lim-spartito, .tel-spartito'));
+    return l.filter(Boolean);
+  }
+  /* il ballerino: corpo = la barra arancione (dietro le note), testa con occhiali da sole e mezzo sorriso, braccia in due pose */
+  function disegnaBallerino(svg, mp, i, posa, salto) {
+    const NS = 'http://www.w3.org/2000/svg';
+    let g = svg.querySelector('.ballerino');
+    if (!g) { g = document.createElementNS(NS, 'g'); g.setAttribute('class', 'ballerino'); svg.insertBefore(g, svg.firstChild); }
+    const x = (mp.punti[i] || { x: mp.x0 }).x, y0 = mp.y0, y1 = mp.y1;
+    const su = salto ? -14 : (posa ? -4 : 0), yt = y0 - 40 + su;
+    const braccia = salto ? [[-34, yt - 6], [34, yt - 6]] : posa ? [[-32, yt - 8], [30, y0 + 6 + su]] : [[-30, y0 + 6 + su], [32, yt - 8]];
+    g.innerHTML =
+      `<rect x="${x - 15}" y="${y0 - 16 + su}" width="30" height="${y1 - y0 + 42}" rx="12" fill="rgba(249,157,28,0.42)"/>` +
+      braccia.map(([dx, hy], k) => { const sx = x + (k ? 13 : -13), sy = y0 - 18 + su;
+        return `<path d="M${sx} ${sy} L${x + dx} ${hy}" stroke="#F99D1C" stroke-width="6" stroke-linecap="round"/><circle cx="${x + dx}" cy="${hy}" r="4.5" fill="#F99D1C"/>`; }).join('') +
+      `<circle cx="${x}" cy="${yt}" r="17" fill="#F99D1C" stroke="#C26D0A" stroke-width="2"/>` +
+      // occhiali da sole che coprono gli occhi, con un riflesso
+      `<path d="M${x - 15} ${yt - 6} H${x + 15}" stroke="#1F2430" stroke-width="2"/>` +
+      `<rect x="${x - 14}" y="${yt - 7}" width="12" height="9" rx="3.5" fill="#1F2430"/><rect x="${x + 2}" y="${yt - 7}" width="12" height="9" rx="3.5" fill="#1F2430"/>` +
+      `<path d="M${x + 5} ${yt - 5} l4 0" stroke="#fff" stroke-width="1.6" stroke-linecap="round" opacity="0.85"/>` +
+      // mezzo sorriso da furbetto: piatto a sinistra, che sale a destra
+      `<path d="M${x - 6} ${yt + 8} Q${x + 2} ${yt + 10} ${x + 8} ${yt + 5}" fill="none" stroke="#1F2430" stroke-width="2.2" stroke-linecap="round"/>` +
+      `<path d="M${x + 8} ${yt + 5} l2 -1.5" stroke="#1F2430" stroke-width="1.8" stroke-linecap="round"/>`;
+  }
+  /* palla da discoteca viva: le tessere cambiano colore lentamente, i raggi respirano */
+  let idPalla = 0;
+  function pallaViva() {
+    const id = 'pv' + (++idPalla), cx = 110, cy = 92, r = 46, col = ['#E21C48', '#F99D1C', '#FFF428', '#BED958', '#009C95', '#5E50A1', '#CF3E96'];
+    let tess = '', k = 0;
+    for (let row = -6; row <= 6; row++) {
+      const y = cy + row * 7.8, w = Math.sqrt(Math.max(0, r * r - (y - cy) ** 2)), n = Math.max(2, Math.floor(w * 2 / 8.5));
+      for (let i = 0; i < n; i++, k++) {
+        const x = cx - w + i * (2 * w / n), base = ['#C9D3E6', '#E8EEF8', '#A9B6CF', '#DCE4F2'][((row + i) % 4 + 4) % 4];
+        const viva = (row * 3 + i * 5 + 70) % 3 === 0;
+        tess += `<rect x="${(x + 0.6).toFixed(1)}" y="${(y - 3.4).toFixed(1)}" width="${(2 * w / n - 1.2).toFixed(1)}" height="6.6" rx="1.2" fill="${base}"` +
+          (viva ? ` class="tessera t${k % 7}" style="animation-delay:-${(k * 0.37) % 4}s"` : '') + '/>';
+      }
+    }
+    const raggi = [[-145, '#F7A8B8'], [-118, '#FFD39A'], [-62, '#9FE0D9'], [-35, '#C3B8F0']].map(([ang, c], j) => {
+      const a = (ang + 180) * Math.PI / 180, a1 = a - 0.11, a2 = a + 0.11, L = 112, P = (aa, rr) => `${(cx + rr * Math.cos(aa)).toFixed(1)},${(cy + rr * Math.sin(aa)).toFixed(1)}`;
+      return `<polygon class="raggio" style="animation-delay:-${j * 0.7}s" points="${P(a, r - 6)} ${P(a1, L)} ${P(a2, L)}" fill="${c}"/>`; }).join('');
+    return `<svg class="palla-viva" viewBox="0 0 220 220" aria-hidden="true"><defs><clipPath id="${id}"><circle cx="${cx}" cy="${cy}" r="${r}"/></clipPath></defs>
+      <g class="palla-dondola">${raggi}<rect x="${cx - 2}" y="10" width="4" height="${cy - r - 8}" fill="#8892A6"/><rect x="${cx - 9}" y="${cy - r - 8}" width="18" height="9" rx="3" fill="#8892A6"/>
+      <circle cx="${cx}" cy="${cy}" r="${r}" fill="#B9C4DA"/><g clip-path="url(#${id})">${tess}</g>
+      <circle cx="${cx}" cy="${cy}" r="${r}" fill="none" stroke="#5E6A86" stroke-width="3"/>
+      <ellipse cx="${cx - 16}" cy="${cy - 20}" rx="12" ry="7" fill="#fff" opacity="0.85" transform="rotate(-30 ${cx - 16} ${cy - 20})"/>
+      <path class="scintilla" d="M${cx + 22} ${cy - 30} l2.5 7 l7 2.5 l-7 2.5 l-2.5 7 l-2.5 -7 l-7 -2.5 l7 -2.5 Z" fill="#fff"/></g></svg>`;
+  }
+  /* una nota con la faccina (come in "Cinque amiche"): ognuna con la sua espressione, tutte contente */
+  const OCCHIO = (x, y) => `<circle cx="${x}" cy="${y}" r="4.6" fill="#fff" stroke="#1F2430" stroke-width="2.2"/><circle cx="${x + 1.6}" cy="${y + 1}" r="2.5" fill="#1F2430"/><circle cx="${x + 2.6}" cy="${y - 1}" r="1.1" fill="#fff"/>`;
+  /* occhiali da sole (come il ballerino), con un riflesso sulla lente */
+  const OCCHIALI = `<path d="M9 74 L38 70" stroke="#1F2430" stroke-width="2"/><rect x="10" y="71" width="12" height="9" rx="3.5" fill="#1F2430" transform="rotate(-8 16 75)"/>` +
+    `<rect x="25" y="68.5" width="12" height="9" rx="3.5" fill="#1F2430" transform="rotate(-8 31 73)"/><path d="M28 71.5 l4 -.6" stroke="#fff" stroke-width="1.5" stroke-linecap="round" opacity=".85"/>`;
+  const VISI = {
+    // sorriso largo a bocca aperta, guance rosa
+    aperto: `${OCCHIALI}<path d="M16 84 Q24 96 33 82 Z" fill="#7a1f2b" stroke="#1F2430" stroke-width="2" stroke-linejoin="round"/><circle cx="10" cy="86" r="3.2" fill="#F7A8B8" opacity=".85"/><circle cx="37" cy="81" r="3.2" fill="#F7A8B8" opacity=".85"/>`,
+    // sopracciglio alzato e mezzo sorriso da furbetta
+    furba: `${OCCHIALI}<path d="M25 64 q6 -4 11 -1" fill="none" stroke="#1F2430" stroke-width="2.2" stroke-linecap="round"/><path d="M17 87 Q25 89 32 82" fill="none" stroke="#1F2430" stroke-width="2.4" stroke-linecap="round"/><path d="M32 82 l2 -1.6" stroke="#1F2430" stroke-width="1.8" stroke-linecap="round"/>`,
+    // risata a bocca aperta
+    risata: `${OCCHIALI}<path d="M15 83 Q24 96 34 80 Q24 87 15 83 Z" fill="#7a1f2b" stroke="#1F2430" stroke-width="2" stroke-linejoin="round"/><path d="M19 86 q5 2 11 -1" fill="none" stroke="#fff" stroke-width="1.6"/>`,
+    // linguaccia birichina
+    linguaccia: `${OCCHIALI}<path d="M16 85 q8 5 16 -2" fill="none" stroke="#1F2430" stroke-width="2.4" stroke-linecap="round"/><path d="M24 87 q2 6 6 2 q-1 -3 -2 -4" fill="#F28AA0" stroke="#1F2430" stroke-width="1.6"/>`,
+    // grande sorriso e una stellina che brilla sulla lente
+    stelline: `${OCCHIALI}<path d="M15 83 q9 10 20 -3" fill="none" stroke="#1F2430" stroke-width="2.6" stroke-linecap="round"/><path d="M40 62 l1.4 3 3 .4 -2.2 2.1 .5 3 -2.7 -1.4 -2.7 1.4 .5 -3 -2.2 -2.1 3 -.4 Z" fill="#FFF428" stroke="#B88A00" stroke-width="1"/>`
+  };
+  function notaFaccina(col, bordo, viso) {
+    return `<svg viewBox="0 0 70 120" class="nota-amica">
+      <rect x="38" y="6" width="7" height="72" rx="3.5" fill="${col}"/>
+      <ellipse cx="24" cy="80" rx="22" ry="17" transform="rotate(-18 24 80)" fill="${col}" stroke="${bordo}" stroke-width="3"/>
+      ${VISI[viso]}</svg>`;
+  }
+  const AMICHE = [['#009C95', '#00675F', 'aperto'], ['#5E50A1', '#3E3478', 'furba'], ['#CF3E96', '#8F2464', 'risata'], ['#E21C48', '#9E1030', 'linguaccia'], ['#F99D1C', '#B86A00', 'stelline']];
+  /* palcoscenico sopra lo spartito che non serve più (prima della battuta della festa) */
+  function aggiornaPalco(cont, svg, F, passo, finale, piccolo) {
+    if (!cont || !svg || !svg._mappa) return;
+    const mp = svg._mappa[F.da - 1]; if (!mp) return;
+    const rs = svg.getBoundingClientRect(), rc = cont.getBoundingClientRect(), vb = svg.viewBox.baseVal, sc = rs.width / vb.width;
+    const alto = Math.max(0, rs.top - rc.top) + 6, basso = rs.top - rc.top + (mp.y0 - 46 - vb.y) * sc, h = basso - alto;
+    let palco = cont.querySelector(':scope > .palco');
+    if (h < 90) { if (palco) palco.remove(); return; }
+    if (!palco) {
+      palco = document.createElement('div'); palco.className = 'palco';
+      palco.innerHTML = '<div class="palco-amiche">' + AMICHE.map(([c, b, v]) => notaFaccina(c, b, v)).join('') + '</div>';
+      cont.appendChild(palco);
+    }
+    palco.style.top = alto + 'px'; palco.style.height = h + 'px';
+    palco.style.setProperty('--h', Math.min(200, h * 0.5, palco.clientWidth * 0.25) + 'px');   // cinque note devono starci in larghezza
+    // passi di danza a onda; verso la fine passi più piccoli, poi la posa finale tutte insieme
+    palco.classList.toggle('piccolo', !!piccolo);
+    palco.querySelectorAll('.nota-amica').forEach((el, j) => {
+      const su = !finale && (passo + j) % 2 === 0;
+      el.classList.toggle('su', su); el.classList.toggle('giu', !finale && !su); el.classList.toggle('finale', !!finale);
+    });
+  }
+  function aggiornaFesta(n, card, m, qIn, attivo, svgs, conBallerino) {
+    const F = FESTA[n];
+    if (F && !attivo && festa && festa.eventi.has('fine')) return;   // brano finito: la festa resta finché la base suona
+    if (!F || !attivo || m + 1 < F.da) { if (festa) spegniFesta(); festaOn = false; return; }
+    if (!festa || festa.n !== n) festa = { n, chiave: null, posa: false, eventi: new Set(), battito: -1 };
+    const mp0 = (svgs[0] && svgs[0]._mappa[m]) || null; let i = 0;
+    if (mp0) for (let k = 0; k < mp0.punti.length; k++) if (qIn >= mp0.punti[k].q - 1e-6) i = k;
+    const chiave = m + '-' + i; if (chiave !== festa.chiave) { festa.chiave = chiave; festa.posa = !festa.posa; }
+    const mm = m + 1, bt = Math.floor(qIn + 1e-6);
+    const tempoPasso = mm < F.fine - 2 ? m * 4 + bt : mm === F.fine - 2 ? m * 4 : mm === F.fine - 1 ? m * 4 + (bt >= 2 ? 2 : 0) : m * 4;
+    if (tempoPasso !== festa.ultimoPasso) { festa.ultimoPasso = tempoPasso; festa.passi = (festa.passi || 0) + 1; }
+    const conts = contenitoriFesta(card), dove = conts.slice(-1)[0];
+    conts.forEach(c => c.classList.add('festa'));
+    // palla animata al posto del disegno (nella scheda; a schermo intero grande, al posto di titolo e novità)
+    document.querySelectorAll(`#brano-${n} .bp-disegno, #lightboxInner .bp-disegno, #lightboxInner .tel-disegno`).forEach(d => {
+      if (d.dataset.festa) return; d.dataset.festa = '1';
+      if (d.tagName === 'IMG') { d.style.visibility = 'hidden'; d.insertAdjacentHTML('afterend', `<span class="palla-tel">${pallaViva()}</span>`); }
+      else { d.querySelector('img').style.display = 'none'; d.insertAdjacentHTML('beforeend', pallaViva()); }
+    });
+    const lato = lightboxInner.querySelector('.lim-lato');
+    if (lato && lightbox.classList.contains('open') && limAperta && limAperta.n === n && !lato.classList.contains('festa-lato')) {
+      lato.classList.add('festa-lato'); lato.insertAdjacentHTML('afterbegin', `<div class="palla-grande">${pallaViva()}</div>`);
+    }
+    // palcoscenico con le cinque note che ballano sullo spartito che non serve più
+    conts.forEach(c => aggiornaPalco(c, c.querySelector('svg'), F, festa.passi, mm >= F.fine, mm >= F.fine - 2));
+    // il ballerino (solo se c'è il lettore: Segui la base o Solfeggio)
+    if (conBallerino) svgs.forEach(svg => { const mp = svg && svg._mappa[m]; if (mp) disegnaBallerino(svg, mp, i, festa.posa, m + 1 >= F.salto); });
+    else document.querySelectorAll('svg .ballerino').forEach(g => g.remove());
+    // coriandoli: all'inizio della festa e su ognuna delle tre note finali; alla fine "Bravi!"
+    const evento = (nome, fn) => { if (!festa.eventi.has(nome)) { festa.eventi.add(nome); fn(); } };
+    evento('inizio', () => coriandoli(dove, 60, 130));
+    if (m + 1 === F.salto) evento('f' + i, () => coriandoli(dove, 50, 120));
+    if (m + 1 >= F.fine) evento('fine', () => {
+      coriandoli(dove, 70, 140); setTimeout(() => coriandoli(dove, 50, 120), 400);
+      svgs.forEach(svg => { const mp = svg._mappa[m]; if (!mp) return; const NS = 'http://www.w3.org/2000/svg';
+        const t = document.createElementNS(NS, 'text'); t.setAttribute('class', 'bravi'); t.setAttribute('text-anchor', 'middle');
+        const larg = svg.viewBox.baseVal.width, spazio = larg - mp.x1 > 190;
+        t.setAttribute('x', spazio ? mp.x1 + 100 : (mp.x0 + mp.x1) / 2); t.setAttribute('y', spazio ? (mp.y0 + mp.y1) / 2 + 15 : mp.y0 - 92);
+        t.textContent = 'Bravi!'; svg.appendChild(t); });
+    });
+    festaOn = !!conBallerino;
+  }
+  function spegniFesta() {
+    document.querySelectorAll('.festa').forEach(c => c.classList.remove('festa'));
+    document.querySelectorAll('svg .ballerino, svg .bravi, .palco, .palla-grande, .palla-tel').forEach(g => g.remove());
+    document.querySelectorAll('[data-festa]').forEach(d => { delete d.dataset.festa; d.style.visibility = '';
+      const im = d.querySelector && d.querySelector('img'); if (im) im.style.display = ''; d.querySelectorAll && d.querySelectorAll('.palla-viva').forEach(x => x.remove()); });
+    document.querySelectorAll('.festa-lato').forEach(l => l.classList.remove('festa-lato'));
+    festa = null; festaOn = false;
+  }
+
   /* ---------- lo spartito segue la base: battuta illuminata, linea che scorre, conto alla rovescia ---------- */
   function ordineEsecuzione(battute) {
     const ord = []; let i = 0, inizio = 0, passata = 1, salto = false, giri = 0; const ripetute = new Set();
@@ -946,7 +1152,7 @@
   });
   async function avviaSincro(audio) {
     const card = audio.closest('.bp-card'); if (!card) return;
-    if (!segui) { const n0 = +card.id.replace('brano-', ''); if (SINCRO[n0] !== undefined) sincro = { n: n0, audio, card, inAttesa: true }; return; }
+    { const n0 = +card.id.replace('brano-', ''); if (!segui && !FESTA[n0]) { if (SINCRO[n0] !== undefined) sincro = { n: n0, audio, card, inAttesa: true }; return; } }
     const n = +card.id.replace('brano-', ''); if (SINCRO[n] === undefined) return;
     const brano = await caricaBrano(n), bpm = +((brano.metronomo || {}).valore) || 0; if (!bpm) return;
     const q = 60 / bpm, lung = brano.tempo[0] * 4 / brano.tempo[1], durB = lung * q, ord = ordineEsecuzione(brano.battute);
@@ -955,7 +1161,7 @@
     sincro = { n, audio, card, q, lung, durB, ord, entrata };
     requestAnimationFrame(passoSincro);
   }
-  function fermaSincro() { document.querySelectorAll('svg .sincro, svg .sincro-sopra').forEach(g => g.remove()); sincro = null; }
+  function fermaSincro() { document.querySelectorAll('svg .sincro, svg .sincro-sopra').forEach(g => g.remove()); sincro = null; spegniFesta(); }
   function svgSeguiti() {
     const l = [sincro.card.querySelector('.spartito svg')];
     if (lightbox.classList.contains('open') && limAperta && limAperta.n === sincro.n) l.push(lightboxInner.querySelector('.lim-spartito svg, .tel-spartito svg'));
@@ -964,7 +1170,7 @@
   function passoSincro() {
     if (!sincro || sincro.audio.paused) return;
     if (sincro.inAttesa) { if (segui) { const a = sincro.audio; sincro = null; avviaSincro(a); } return; }
-    if (!segui) return;
+    if (!segui && !FESTA[sincro.n]) return;
     const { audio, q, lung, durB, ord, entrata, n } = sincro, t = audio.currentTime - SINCRO[n];
     let m = ord[0], qIn = 0, conta = 0, visibile = true;
     if (t < 0) conta = Math.ceil(-t / q);
@@ -973,8 +1179,11 @@
       if (k >= ord.length) visibile = false;
       else { m = ord[k]; qIn = (t - k * durB) / q; if (t < entrata && entrata - t <= durB) conta = Math.ceil((entrata - t) / q); }
     }
-    svgSeguiti().forEach(svg => disegnaSincro(svg, m, t < 0 ? 0 : qIn, conta, visibile && t >= 0));
-    if (!lightbox.classList.contains('open') && performance.now() - ultimoScorrimento > 400) { ultimoScorrimento = performance.now(); tieniInVista(sincro.card.querySelector('.spartito svg'), m); }
+    aggiornaFesta(n, sincro.card, m, t < 0 ? 0 : qIn, visibile && t >= 0, svgSeguiti(), segui);
+    if (segui) {
+      svgSeguiti().forEach(svg => disegnaSincro(svg, m, t < 0 ? 0 : qIn, conta, visibile && t >= 0));
+      if (!lightbox.classList.contains('open') && performance.now() - ultimoScorrimento > 400) { ultimoScorrimento = performance.now(); tieniInVista(sincro.card.querySelector('.spartito svg'), m); }
+    }
     requestAnimationFrame(passoSincro);
   }
   function disegnaSincro(svg, m, qIn, conta, attivo) {
@@ -997,10 +1206,11 @@
     let i = 0; for (let k = 0; k < mp.punti.length; k++) if (qIn >= mp.punti[k].q - 1e-6) i = k;
     const xf = mp.punti[i] ? mp.punti[i].x : x0, larg = 30;
     const ev = g.querySelector('.ev'); ev.setAttribute('x', xf - larg / 2); ev.setAttribute('width', larg); ev.setAttribute('y', mp.y0 - 30); ev.setAttribute('height', mp.y1 - mp.y0 + 60);
-    ev.style.display = attivo ? '' : 'none';
+    ev.style.display = attivo && !festaOn ? '' : 'none';
     const c = sopra.querySelector('.sc'); c.textContent = conta ? conta : '';
     c.setAttribute('x', (x0 + x1) / 2); c.setAttribute('y', (mp.y0 + mp.y1) / 2 + 25);
   }
+  /* la pagina scorre da sola per tenere in vista il punto in cui si è (base o solfeggio) */
   function tieniInVista(svg, m) {
     if (!svg || !svg._mappa[m]) return;
     const r = svg.getBoundingClientRect(), vb = svg.viewBox.baseVal, k = r.width / vb.width, mp = svg._mappa[m];
@@ -1048,7 +1258,7 @@
   }
   function fermaSolf() {
     document.querySelectorAll('svg .solf').forEach(g => g.remove());
-    solf = null; aggiornaPulsantiSolf();
+    solf = null; aggiornaPulsantiSolf(); spegniFesta();
   }
   function aggiornaPulsantiSolf() {
     document.querySelectorAll('.solf-via').forEach(b => { const on = solf && +b.dataset.solf === solf.n; b.textContent = on ? '■ Ferma' : '▶ Solfeggia'; b.classList.toggle('in-corso', !!on); });
@@ -1073,6 +1283,7 @@
     else { let k = 0; while (k + 1 < inizi.length && inizi[k + 1] <= pos + 1e-6) k++; m = ord[k]; qIn = pos - inizi[k]; }
     const svgs = [solf.card.querySelector('.spartito svg')];
     if (lightbox.classList.contains('open') && limAperta && limAperta.n === n) svgs.push(lightboxInner.querySelector('.lim-spartito svg, .tel-spartito svg'));
+    aggiornaFesta(n, solf.card, m, qIn, attivo, svgs.filter(x => x && x._mappa), true);
     svgs.forEach(svg => { if (svg && svg._mappa) disegnaSolf(svg, m, qIn, conta, attivo); });
     if (!lightbox.classList.contains('open') && performance.now() - ultimoScorrimento > 400) { ultimoScorrimento = performance.now(); tieniInVista(solf.card.querySelector('.spartito svg'), m); }
     requestAnimationFrame(passoSolf);
@@ -1091,7 +1302,7 @@
     const tri = g.querySelector('.tri');
     tri.setAttribute('d', `M${x - 10} ${y - 16} L${x + 10} ${y - 16} L${x} ${y} Z`);
     tri.setAttribute('fill', p.lega ? 'none' : '#F99D1C'); tri.setAttribute('stroke', p.lega ? '#F99D1C' : '#fff');
-    tri.style.display = attivo ? '' : 'none';
+    tri.style.display = attivo && !festaOn ? '' : 'none';
     const c = g.querySelector('.sc'); c.textContent = conta ? conta : '';
     c.setAttribute('x', ((mp.xNote != null ? mp.xNote : mp.x0) + mp.x1) / 2); c.setAttribute('y', (mp.y0 + mp.y1) / 2 + 25);
   }

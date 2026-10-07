@@ -704,18 +704,13 @@
   const PW = 1123, PH = 794, M = 22;
   const esc = t => String(t).replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
   let fontIncorporato = null;
-  function caricaFontTitolo() {   // il carattere del titolo, incorporato nel PDF (se la rete lo permette)
+  function caricaFontTitolo() {   // il carattere del titolo, incorporato nel PDF: preso dal sito (fonts/fredoka.woff), non da Google
     if (fontIncorporato) return fontIncorporato;
-    fontIncorporato = fetch("https://fonts.googleapis.com/css2?family=Fredoka:wght@700&display=swap")
-      .then(r => r.text()).then(css => {
-        const url = (css.match(/url\((https:[^)]+\.woff2)\)/) || [])[1];
-        if (!url) return "";
-        return fetch(url).then(r => r.arrayBuffer()).then(buf => {
-          let bin = ""; const v = new Uint8Array(buf);
-          for (let i = 0; i < v.length; i += 0x8000) bin += String.fromCharCode.apply(null, v.subarray(i, i + 0x8000));
-          return `@font-face{font-family:'Fredoka';font-weight:700;src:url(data:font/woff2;base64,${btoa(bin)}) format('woff2');}`;
-        });
-      }).catch(() => "");
+    fontIncorporato = fetch("fonts/fredoka.woff").then(r => r.ok ? r.arrayBuffer() : Promise.reject()).then(buf => {
+      let bin = ""; const v = new Uint8Array(buf);
+      for (let i = 0; i < v.length; i += 0x8000) bin += String.fromCharCode.apply(null, v.subarray(i, i + 0x8000));
+      return `@font-face{font-family:'Fredoka';font-weight:300 700;src:url(data:font/woff;base64,${btoa(bin)}) format('woff');}`;
+    }).catch(() => "");
     return fontIncorporato;
   }
   function inDataUrl(url) {
