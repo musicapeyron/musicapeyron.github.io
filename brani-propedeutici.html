@@ -980,6 +980,7 @@
       else { m = ord[k]; qIn = (t - k * durB) / q; if (t < entrata && entrata - t <= durB) conta = Math.ceil((entrata - t) / q); }
     }
     svgSeguiti().forEach(svg => disegnaSincro(svg, m, t < 0 ? 0 : qIn, conta, visibile && t >= 0));
+    if (!lightbox.classList.contains('open') && performance.now() - ultimoScorrimento > 400) { ultimoScorrimento = performance.now(); tieniInVista(sincro.card.querySelector('.spartito svg'), m); }
     requestAnimationFrame(passoSincro);
   }
   function disegnaSincro(svg, m, qIn, conta, attivo) {
@@ -1006,7 +1007,7 @@
     const c = sopra.querySelector('.sc'); c.textContent = conta ? conta : '';
     c.setAttribute('x', (x0 + x1) / 2); c.setAttribute('y', (mp.y0 + mp.y1) / 2 + 25);
   }
-  /* (non più usata: la pagina non scorre da sola mentre la base o il solfeggio vanno) */
+  /* la pagina scorre da sola per tenere in vista il punto in cui si è (base o solfeggio) */
   function tieniInVista(svg, m) {
     if (!svg || !svg._mappa[m]) return;
     const r = svg.getBoundingClientRect(), vb = svg.viewBox.baseVal, k = r.width / vb.width, mp = svg._mappa[m];
@@ -1080,6 +1081,7 @@
     const svgs = [solf.card.querySelector('.spartito svg')];
     if (lightbox.classList.contains('open') && limAperta && limAperta.n === n) svgs.push(lightboxInner.querySelector('.lim-spartito svg, .tel-spartito svg'));
     svgs.forEach(svg => { if (svg && svg._mappa) disegnaSolf(svg, m, qIn, conta, attivo); });
+    if (!lightbox.classList.contains('open') && performance.now() - ultimoScorrimento > 400) { ultimoScorrimento = performance.now(); tieniInVista(solf.card.querySelector('.spartito svg'), m); }
     requestAnimationFrame(passoSolf);
   }
   function disegnaSolf(svg, m, qIn, conta, attivo) {
