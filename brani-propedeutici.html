@@ -596,7 +596,8 @@
   const NUMERI = Array.from({ length: 21 }, (_, i) => i + 1);
   let ETICHETTE_INDICE = {};
   /* spartito che segue la base: secondi di attacco della base prima della prima battuta (misurati) */
-  const SINCRO = { 1: 2.57, 2: 2.69, 3: 2.37, 4: -0.03, 5: 2.96, 6: 2.57, 7: -0.03, 8: 2.57, 9: -0.03, 10: 2.38, 11: -0.02, 12: 2.46, 13: 2.28, 14: 1.81 };   // misurati sulla pulsazione della base
+  const SINCRO = { 1: 2.57, 2: 2.69, 3: 2.37, 4: -0.03, 5: 2.96, 6: 2.57, 7: -0.03, 8: 2.57, 9: -0.03, 10: 2.38, 11: -0.02, 12: 2.46, 13: 2.28, 14: 1.81,
+    15: -0.02, 16: 2.69, 17: 2.58, 18: 1.77, 19: 1.69, 20: 2.46, 21: -0.02 };   // misurati sulla pulsazione della base
   /* solfeggio: spento di base; velocità e clic ricordati */
   const leggi = (k, d) => { try { const v = localStorage.getItem(k); return v === null ? d : v; } catch (e) { return d; } };
   const scrivi = (k, v) => { try { localStorage.setItem(k, v); } catch (e) {} };
@@ -654,11 +655,8 @@
     2:  { testo: "NOVITÀ: il RITORNELLO\nquando trovi i due puntini prima della stanghetta,\ntorna indietro e suona di nuovo" },
     5:  { testo: "NOVITÀ: la MINIMA\nvale 2 tempi: tieni la nota più a lungo" },
     8:  { testo: "NOVITÀ: la SEMIBREVE\nvale 4 tempi: una nota lunga tutta la battuta" },
-    18: { testo: "NOVITÀ: il TEMPO 3/4\n3 tempi in ogni battuta:\nuno-due-tre, come un valzer" },
-    20: { testo: "NOVITÀ: la MINIMA PUNTATA in 4/4\nvale 3 tempi: nella battuta\nresta spazio per 1 tempo" },
     21: [{ testo: "NOVITÀ: PRIMA e SECONDA VOLTA\nla prima volta suoni la casella 1.,\ndopo il ritornello salti alla casella 2." },
-         { testo: "NOVITÀ: DUE RITORNELLI\nogni parte chiusa tra i segni di ritornello\nsi suona due volte" },
-         { testo: "NOVITÀ: la LEGATURA DI PORTAMENTO\nunisce note diverse:\nsi suonano senza staccarle" }]
+         { testo: "NOVITÀ: DUE RITORNELLI\nogni parte chiusa tra i segni di ritornello\nsi suona due volte" }]
   };
 
   const cache = {};
@@ -982,7 +980,6 @@
       else { m = ord[k]; qIn = (t - k * durB) / q; if (t < entrata && entrata - t <= durB) conta = Math.ceil((entrata - t) / q); }
     }
     svgSeguiti().forEach(svg => disegnaSincro(svg, m, t < 0 ? 0 : qIn, conta, visibile && t >= 0));
-    if (!lightbox.classList.contains('open') && performance.now() - ultimoScorrimento > 400) { ultimoScorrimento = performance.now(); tieniInVista(sincro.card.querySelector('.spartito svg'), m); }
     requestAnimationFrame(passoSincro);
   }
   function disegnaSincro(svg, m, qIn, conta, attivo) {
@@ -1009,6 +1006,7 @@
     const c = sopra.querySelector('.sc'); c.textContent = conta ? conta : '';
     c.setAttribute('x', (x0 + x1) / 2); c.setAttribute('y', (mp.y0 + mp.y1) / 2 + 25);
   }
+  /* (non più usata: la pagina non scorre da sola mentre la base o il solfeggio vanno) */
   function tieniInVista(svg, m) {
     if (!svg || !svg._mappa[m]) return;
     const r = svg.getBoundingClientRect(), vb = svg.viewBox.baseVal, k = r.width / vb.width, mp = svg._mappa[m];
@@ -1082,7 +1080,6 @@
     const svgs = [solf.card.querySelector('.spartito svg')];
     if (lightbox.classList.contains('open') && limAperta && limAperta.n === n) svgs.push(lightboxInner.querySelector('.lim-spartito svg, .tel-spartito svg'));
     svgs.forEach(svg => { if (svg && svg._mappa) disegnaSolf(svg, m, qIn, conta, attivo); });
-    if (!lightbox.classList.contains('open') && performance.now() - ultimoScorrimento > 400) { ultimoScorrimento = performance.now(); tieniInVista(solf.card.querySelector('.spartito svg'), m); }
     requestAnimationFrame(passoSolf);
   }
   function disegnaSolf(svg, m, qIn, conta, attivo) {
