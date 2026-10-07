@@ -398,7 +398,7 @@
 
 <header class="hero">
   <h1>Spartiti</h1>
-  <p class="sottotitolo-spartiti">Spartiti progressivi per primaria e secondaria: scegli una raccolta.</p>
+  <p class="sottotitolo-spartiti">Spartiti progressivi, dai primi brani ai metodi classici: scegli una raccolta.</p>
 
   <div class="staff" aria-hidden="true">
     <svg viewBox="0 0 300 32" preserveAspectRatio="none">
@@ -443,7 +443,7 @@
   /* raccolte di spartiti, nell'ordine in cui compaiono */
   const raccolte = [
     { title: "Brani propedeutici", icon: '<svg class="ico" viewBox="0 0 48 48" aria-hidden="true"><use href="icone.svg#ic-propedeutici"/></svg>', colore: "#E21C48", url: "brani-propedeutici.html",
-      desc: "Il primo percorso: dal si al re, una novità alla volta, con disegni e basi.", quanti: "28 brani", livelli: ["P"] },
+      desc: "Il primo percorso: dal si al re, una novità alla volta, con disegni e basi.", quanti: "21 brani", livelli: ["P"] },
     { title: "Scale", icon: '<svg class="ico" viewBox="0 0 48 48" aria-hidden="true"><use href="icone.svg#ic-scale"/></svg>', colore: "#F99D1C", url: "scale.html",
       desc: "Scale maggiori e minori, con le note alterate dall'armatura evidenziate.", quanti: "7 scale", livelli: ["M", "L"] },
     { title: "Primi Brani · prima parte", icon: '<svg class="ico" viewBox="0 0 48 48" aria-hidden="true"><use href="icone.svg#ic-primi-brani-1"/></svg>', colore: "#009C95", url: "primi-brani.html",
@@ -458,6 +458,8 @@
       desc: "Per flauto dolce e pianoforte, con la base.", quanti: "1 brano", livelli: ["M"] }
   ];
   const NOMI_LIVELLO = { P: "Primaria", M: "Medie", L: "Liceo musicale" };
+  /* i livelli (campo "livelli") restano nei dati ma per ora non si mostrano: per riattivarli MOSTRA_LIVELLI = true */
+  const MOSTRA_LIVELLI = false;
 
   const grid = document.getElementById('grid');
   raccolte.forEach(t => {
@@ -472,7 +474,7 @@
         <p>${t.desc}</p>
         <div class="etichette">
           <span class="chip">${t.quanti}</span><span class="chip">con basi</span>
-          ${t.livelli.map(l => `<span class="lv lv-${l}" title="${NOMI_LIVELLO[l]}">${l}</span>`).join('')}
+          ${MOSTRA_LIVELLI ? t.livelli.map(l => `<span class="lv lv-${l}" title="${NOMI_LIVELLO[l]}">${l}</span>`).join('') : ''}
         </div>
       </div>
       <span class="freccia" aria-hidden="true">→</span>`;

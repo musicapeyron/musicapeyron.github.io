@@ -452,7 +452,7 @@
       <div class="icon"><svg class="ico" viewBox="0 0 48 48" aria-hidden="true"><use href="icone.svg#ic-spartiti"/></svg></div>
       <div class="featured-text">
         <h2>Spartiti</h2>
-        <p>Spartiti progressivi per primaria e secondaria.</p>
+        <p>Spartiti progressivi, dai primi brani ai metodi classici.</p>
       </div>
       <span class="arrow">→</span>
     </a>
@@ -716,13 +716,17 @@
   if (document.fonts && document.fonts.ready) document.fonts.ready.then(fitTitle);
   window.addEventListener('resize', fitTitle);
 
-  /* ---------- livelli: P primaria, M medie, L liceo musicale ---------- */
+  /* ---------- livelli: P primaria, M medie, L liceo musicale ----------
+     Per ora i livelli NON si mostrano: i dati (campo "livelli" di ogni gioco) restano qui,
+     ma non compaiono né le lettere P/M/L né il filtro "Per chi è", e l'indirizzo
+     ?livello=... non ha effetto. Per riattivarli basta mettere MOSTRA_LIVELLI = true. */
+  const MOSTRA_LIVELLI = false;
   const LIVELLI = [
     { id: "P", nome: "Primaria",       chiave: "primaria" },
     { id: "M", nome: "Medie",          chiave: "medie" },
     { id: "L", nome: "Liceo musicale", corto: "Liceo", chiave: "liceo" }
   ];
-  const segniLivello = lv => '<span class="livelli" aria-label="Adatto a: ' +
+  const segniLivello = lv => !MOSTRA_LIVELLI ? '' : '<span class="livelli" aria-label="Adatto a: ' +
     LIVELLI.filter(l => lv.includes(l.id)).map(l => l.nome).join(', ') + '">' +
     LIVELLI.filter(l => lv.includes(l.id)).map(l => `<span class="lv lv-${l.id} on">${l.id}</span>`).join('') + '</span>';
 
@@ -759,6 +763,8 @@
   /* ---------- filtro "Per chi è": si ricorda la scelta e si può condividere
      con un indirizzo, es. index.html?livello=primaria ---------- */
   const barra = document.getElementById('livelliBar');
+  if (!MOSTRA_LIVELLI) barra.remove();
+  else {
   barra.innerHTML =
     '<button type="button" data-l="">Tutti</button>' +
     LIVELLI.map(l => `<button type="button" data-l="${l.id}"><span class="lv lv-${l.id} on">${l.id}</span><span class="lungo">${l.nome}</span><span class="corto">${l.corto || l.nome}</span></button>`).join('');
@@ -781,6 +787,7 @@
     // all'apertura è sempre selezionato "Tutti", salvo un link del tipo index.html?livello=primaria
     applicaLivello(l ? l.id : '', false);
   })();
+  }
 </script>
 
 </body>
