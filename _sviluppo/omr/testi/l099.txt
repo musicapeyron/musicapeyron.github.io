@@ -1,0 +1,22 @@
+# Lezione 99 | Allegro moderato · re bemolle maggiore, 3/4 | armatura=-5 tempo=3/4
+# nota: battuta 29 mordente (due piccole note fa–mi♭) prima del re♭
+# nota: battuta 34 appoggiatura mi♭ prima del re♭
+# nota: battuta 35 gruppetto (piccole note, esecuzione "a" a piè di pagina) fra il fa puntato e il la♭
+# nota: battuta 37 appoggiatura do prima del la♭ croma
+# nota: battuta 38 segno di gruppetto con ♮ sotto (esecuzione "b": do-si♭-la♮-si♭) fra il si♭ puntato e il do
+# nota: battuta 39 gruppetto scritto in piccole note (si♭-la♭-sol♮-la♭) dopo il la♭ puntato
+# nota: battuta 40 segno di gruppetto con ♯ sotto dopo il sol♮ (esecuzione "c": la♭-sol-fa♯-sol); appoggiatura doppia (si♭-la♭) prima del sol nella terzina
+# nota: battuta 43 acciaccatura (sol♮?) prima del primo fa
+# nota: battute 47 e 49 quintina di semicrome sul primo tempo, approssimata come 2 biscrome + 3 semicrome
+# nota: battuta 21 stampati si𝄫 (semiminima), poi terzina pausa-la♭-la♮, terzina si𝄫-do♭-do♮: il formato non ammette doppi bemolli, scritti come equivalenti enarmonici (si𝄫=a4, do♭=b4)
+db5q db5q db5q | c58 db58 eb5q rq | eb5q gb5q f5q | eb58 c58 db5q rq | ab5q ab5q. bb58 | ab5h gb5q | f5q eb5q. db58 |
+f5h eb5q | db5q db5q db58t f58t eb58t | db58 c58 eb5q rq | ab48t c58t eb58t gb5q gb5q | gb58t f58t eb58t db5q rq | db58t f58t gb58t ab5q a5q |
+c6q~ c68t bb58t ab58t gb58t f58t eb58t | db58t g48t ab48t f58t g48t ab48t f58. eb516 | db5h rq | c58t db58t c58t f48t a48t c58t f5q~ | f58t c58t eb58t db58t a48t c58t bb4q |
+bb48t c58t bb48t eb48t g48t bb48t eb5q~ | eb58t d58t eb58t gb58t b48t c58t eb58t g48t ab48t | a4q r8t ab48t a48t a48t b48t c58t | db5q db5q db5q | c58t f58t eb58t gb4h~ |
+gb48t f48t gb48t eb5q. gb48 | f48t e48t f48t db5h | bb416 a416 bb416 c516 db516 c516 db516 eb516 f516 eb516 f516 gb516 | bb58. ab516 gb516 f516 eb516 db516 c516 db516 c516 bb416 |
+ab416 bb416 c516 db516 eb516 f516 gb516 ab516 bb58 r16 c516 | eb5q db58 r8 rq | c58. db516 c5q eb4q | f48. ab416 eb48 r8 rq | eb48 ab4q c5q f58 |
+eb5q~ eb58. db516 bb48. b416 | c58. db516 c5q eb4q | f48. ab416 eb48 r8 eb416 ab416 c516 f516 | eb58. c532 ab432 g48. bb432 c532 db58. f432 g432 | bb4q ab48 r8 a4q |
+bb48. c516 db5q c58. bb416 | ab48. bb416 c5q bb48. ab416 | g4q bb48. ab416 ab48t g48t f48t | e416 g416 bb416 c516 db5q. eb48 | c58. db516 c5q eb48. e416 |
+f416 e416 f416 ab416 eb48 f416 g416 ab416 r32 bb432 c516 r32 db532 | f516 r32 eb532 c516 r32 ab432 ab58 c516 db516 eb532 bb432 a432 bb432 db516. c532 | ab4q. a48 bb48 c58 | db5q db5q db5q |
+c532 db532 bb416 db516 c516 ab416 g416 ab416 bb416 c516 bb416 c516 db516 | eb58 f58 gb58t ab48t gb58t f58t ab48t f58t | eb532 d532 eb516 gb516 f516 db516 ab416 bb416 c516 db532 c532 db532 eb532 f532 eb532 f532 gb532 |
+ab5q ab5q. a58 | c68 bb516 r16 ab58 gb516 r16 f516 eb516 bb416 eb516 | ab48 db516 eb516 f58 f5q eb58 | db5h.

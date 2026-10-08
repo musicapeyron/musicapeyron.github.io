@@ -1,0 +1,23 @@
+# Lezione 93 | Allegretto · re maggiore, 2/4 | armatura=2 tempo=2/4
+# nota: battuta 41 cadenza "de bravura" a piacere (fuori tempo), con corona sul sol5 e sul mi4 finale: valori trascritti come stampati
+# nota: battuta 47 acciaccatura la4 prima del sol5 e acciaccatura sol4 prima del secondo fa#5
+d416 f#416 e416 g416 f#416 a416 g416 b416 | a416 b416 c#516 d516 a48 d58 | b416 c#516 d516 c#516 e516 d516 c#516 b416 |
+a4q~ a416 f#516 g516 f#516 | g4q~ g416 e516 f#516 e516 |
+f#416 d516 e516 d516 f#4q | e416 b416 c#516 b416~ b416 e416 f#416 e416~ | e416 e516 d516 c#516 b416 a416 g416 e416 |
+d416. f#432 e416. g432 f#416. a432 g416. b432 | a416. b432 c#516. d532 a48 d58 |
+c#516. d532 c#516. d532 c#58 f#58~ | f#516. e532 d516. c#532 b48 e58~ | e58 d516 c#516 b48 c#516 d516 |
+a416 g#416 a48 f#58 a416 r16 | g416 g58 e516 c#516 a416 g416 e416 | d4q. r8 |
+r8 b416 c516 d58 r8 | r8 c516 d516 e58 r8 | r8 a416 b416 c516 b416 a48 | b48 c516 d516 b48 g516 r16 |
+r8 b416 c516 d58 r8 | c516 d516 e58 c516 b416 a416 r16 |
+r16 d516 f#516 e516 r16 c516 e516 d516 | b48 d516 a416 b48 g416 r16 | r16 a416 c58 b416 e516 d58 |
+r16 c516 e58 f#516 g516 d58 | r16 a416 c516 r16 r16 b416 d516 r16 |
+r16 c#516 b516 a416 r16 a416 g516 c#516 | d516 f#516 d516 a516 d516 d616 c616 a516 |
+r8 b416. c532 d58 r8 | r8 c516. d532 e58 r8 | r8 c#516. d532 e58 a416 r16 | r8 d516. e532 f#58 d516 r16 |
+r8 d#516. e532 f#58 d516 r16 | r8 e516. f#532 g58 e516 r16 | r8 f#516. g532 a58 g516. a532 |
+b5q~ b516t a516t g516t f#516t e516t d516t | f#5q~ f#516t e516t d516t c516t b416t a416t |
+d516 g58 b48 d58 g416~ | g416 b48 d48 b48 a416 |
+g416 g58 a516 b532 a532 g532 f#532 e532 g532 f#532 d532 c#532 d532 e532 f#532 g532 f#532 e532 d532 c#532 e532 d532 b432 a432 g#432 g432 e48 |
+d416. f#432 e416. g432 f#416. a432 g416. b432 | a416. b432 c#516. d532 a48 d58 |
+c#516. d532 e516. f#532 e516. d532 c#516. e532 | d516. c#532 b416. d532 c516. b432 a416. c532 |
+b416. a#432 b416. c#532 e516. d532 c#516. b432 |
+g58 f#58 f#58 e58 | f#416t a416t d516t f#516. a532 g516t e516t c#516t a416t g416t e416t | d4h

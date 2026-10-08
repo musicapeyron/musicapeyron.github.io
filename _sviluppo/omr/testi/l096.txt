@@ -1,0 +1,11 @@
+# Lezione 96 | Allegretto moderato assai · mi bemolle maggiore, 6/8 | armatura=-3 tempo=6/8
+bb416 c516 bb48 eb58 bb4q b48 | c516 db516 c58 f58 c5q c#58 | d516 eb516 f58 f516 g516 ab516 bb48 bb58 ab516 |
+ab516 g58 f58 eb58 d58 c58 bb416 | bb416 c516 bb48 bb416 eb516 bb48. a416 bb416 b416 | c516 db516 c58 c516 f516 c58~ c516 b416 c516 c#516 |
+d516 bb316 d58 bb58 ab58 c58. d516 | f58. bb416 f516 g516 eb5q r8 | r16 g416 eb58. d516 c516 eb516 bb58. ab516 |
+r16 d516 g5q r16 d416 g4q | r16 g416 eb516 f516 eb516 d516 r16 c516 eb516 g516 bb516 ab516 | g58~ g516. f#532 g516. f#532 g58. ab532 g532 f#516 g516 |
+ab58. bb532 ab532 g516 f516 e58. g532 f532 eb516 d516 | c58. f532 eb532 d516 c516 bb48. eb532 d532 c516 bb416 | ab416 f432 g432 ab416 bb416 c58~ c516 c532 d532 eb516 f516 g516 ab516 |
+c616 bb58 g58 eb516 c516 bb48 g48 eb416 | ab48. bb432 ab432 g416 f416 e48. g432 f432 eb416 d416 | f416 g432 f432 eb48. d416 eb416 f432 eb432 d48. bb316 |
+bb316 d48 f48 bb48 d58 f58 bb516 | eb5q r8 r8 eb5q | r8 f5q r8 bb5q | r8 bb58 g58 r8 g516 eb516 eb516 bb416 |
+r8 cb58 f58 r16 d58 bb58 bb416 | g5q eb516 r16 r8 eb58 e58~ | e58 e58 f58~ f58 f58 bb58~ | bb5q g58~ g516 eb58 bb48 g416 |
+bb4q c5q d5q | eb5q r8 eb58~ eb516t f516t eb516t bb416t c516t bb416t | g4q bb416 eb516 g58~ g516t ab516t g516t eb516t f516t eb516t | bb4q eb516 g516 bb58~ bb516t c616t bb516t g516t ab516t g516t |
+eb516t f516t eb516t g516t ab516t g516t bb416t c516t bb416t eb516t f516t eb516t g416t ab416t g416t bb416t c516t bb416t | eb4q.~ eb48 g48 bb48 | eb5q.~ eb58 g58 bb58 | eb6h.

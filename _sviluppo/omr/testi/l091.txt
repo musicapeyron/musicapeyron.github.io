@@ -1,0 +1,12 @@
+# Lezione 91 | Allegro · fa maggiore, 4/4 | armatura=-1 tempo=4/4
+f48t a48t bb48t c58t d58t e58t f5q. e58 | d5h g58 r8 rq | c58t bb48t g48t e48t f48t g48t c48t d58t c48t d58. c516 |
+bb4h a48 r8 rq | f48t a48t bb48t c58t d58t e58t g58t f58t e58t f58t c58t a48t | e5h d58 r8 rq |
+g48t a58t g58t a48t g58t f58t g48t f58t e58t f48t e58t d58t | rq d5q c58 r8 rq | g58t a58t g58t f58. e516 f58t g58t f58t e58. d516 |
+c5q~ c58t a48t d58t c5q~ c58t g58t f58t | e58 bb58~ bb58t g58t e58t c58 e58~ e58t d58t c58t | c58. d516 e516 f516 a516 f516 c58 r8 rq |
+g516 a516 g516 f516 e58t f58t e58t d516 e516 d516 c516 bb48t c58t bb48t | a48. bb416 c58. d516 c58. d516 e516 f516 e516 f516 |
+ab58 g5q f5q db5q b48~ | b48 c5q db5q bb4q c58~ | c58 db5q. c516 bb48 a48 ab48 g416 |
+f48t a48t bb48t c58t d58t e58t f5q. e58 | d5h g58 r8 rq | g48t bb48t c58t d58t e58t f58t g5q. f58 | e5h~ e58t f58t e58t~ e58t d58t e58t~ |
+e58t g58t f58t~ f58t e58t f58t g58t a58t g58t~ g58t f58t g58t | a58. g516 f58. e516 d58. c516 bb48. a416 | g516 f516 g516 f516 e58. d516 c58. bb416 a48. g416 |
+f516 e516 f516 e516 d516 c516 d516 c516 bb416 a416 bb416 a416 g416 f416 g416 f416 | e416 g416 f416 a416 g416 bb416 a416 c516 bb416 d516 c516 e516 d516 f516 e516 g516 |
+f5h r8 d58 r8 f58 | r8 a58 r8 a48 r8 c58 r8 bb48 | a4h r8 bb48 r8 d58 | r8 f58 a4q r8 c58 g48. a416 | f4h rh
+# nota: battuta 16 stampata con re bemolle puntato (4 quarti e mezzo); il punto è stato tolto (ritmo uguale alla battuta 15)

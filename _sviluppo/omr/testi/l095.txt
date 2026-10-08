@@ -1,0 +1,11 @@
+# Lezione 95 | Moderato assai · si bemolle maggiore, 3/4 | armatura=-2 tempo=3/4
+# nota: battute 12, 14, 15 sestine di semicrome (nota da 2 + 4 semicrome) scritte come due terzine di semicrome
+bb48. c516 d5q c5q | f5q~ f516 g516 f516 e516 f516 d516 bb416 c516 | d58. eb516 f5q bb4q |
+c5q~ c516 g532 f532 eb532 d532 c532 bb432 a416 g416 a416 f416 | bb416 a416 bb416 c516 d5q c5q | f5q~ f516. bb532 a516. bb532 d516. f532 e516. f532 |
+bb48t c58t d58t eb58 r16 f416 d516 r32 f432 c516. f532 | bb48 r8 bb5q rq | a58t g58t f58t c58. c#516 d516 f58 bb432 d532 |
+c5h d58t c58t a48t | bb416 d58 a432 c532 bb4q c58t bb48t g48t~ | g48t a48t d58t~ d58t c58t g58t~ g58t f516t e516t f516t g516t |
+a58t g58t f58t c58. c#516 d516 f58 bb432 d532 | c5q~ c58t a516t g516t f516t e516t d58t g516t f516t e516t d516t | c58t f416t a416t c516t f516t a58t a416t c516t f516t a516t c68. e516 |
+f5q~ f58t g58t f58t~ f58t eb58t c58t | bb48~ bb432 a432 bb432 c532 d58. eb532 d532 c58. f516 | f5q~ f516 g516 f516 e516 f516 d516 bb416 c516 |
+d58 d532 c532 d532 eb532 f516 g58 f516 d516 eb58 d516 | c532 f432 g432 a432 bb432 c532 d532 e532 f532 a432 bb432 c532 d532 e532 f532 g532 a532 bb532 a532 g532 f532 eb532 d532 c532 |
+bb48. c516 d5q c5q | f58. gb516 ab5q gb5q~ | gb58 f5q eb5q db58~ | db516 c58 bb48 a48 c58 bb48 g416 |
+bb48 r16 c516 d5q. r8 | d58 r16 eb516 f5q. r8 | f5q~ f516t bb516t g516t d516t f516t eb516t bb416t c516t bb416t a416t d516.t c532t | bb4h.

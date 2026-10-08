@@ -1,0 +1,6 @@
+# Lezione 89 | Sostenuto · mi bemolle maggiore, 12/8 | armatura=-3 tempo=12/8
+eb4h. f4q. g4q. | ab4h. bb4q. c5q. | bb4h. c5q. d5q. | eb5w. | c5q. d5q. eb5q. g5q. |
+bb4w.~ | bb4q. a4q bb48 d5q.~ d5q c58 | bb4h. rh. | c5h. db5q c58 b4q c58 | f5h.~ f5q. cb5q. | bb4h. c5q bb48 a4q bb48 |
+eb5h.~ eb5q. g4q. | ab48 g48 ab48 bb48 ab48 bb48 c58 bb48 c58 d58 c58 d58 | eb58 d58 eb58 e58 d58 e58 f5q eb58 d58 eb58 c58 |
+bb4q. g4q ab48 bb48 g58 eb58 d516 c516 bb416 ab416 g416 f416 | eb4q r8 rq r8 g4q. bb4q. | d5q.~ d58 c58 bb48 f58 eb58 d58 ab5q d58 | eb5h. g4q. ab4q. |
+bb4q.~ bb48 cb58 bb48~ bb48 cb58 bb48~ bb48 c58 bb48 | eb4h. g4q. bb4q. | eb5q. g5q. bb58 g58 eb58 bb48 g48 bb48 | eb4w.

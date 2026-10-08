@@ -177,7 +177,7 @@ quella modifica si perde.
 ## 6. Da fare / in sospeso
 
 - Brani da suonare del Medioevo (In taberna, Sumer is icumen in, Ut queant laxis) e dell'antichità (Epitaffio di Seikilos): servono gli spartiti.
-- Solfeggio: Lettura ritmica e Solfeggio cantato ancora da fare. Bona: fatte 1–80 (prossima: 81, pagina 35 del PDF in fondo).
+- Solfeggio: Lettura ritmica e Solfeggio cantato ancora da fare. Bona: fatte 1–100. Dalla 86 la fonte è l'edizione Mangione (IMSLP 756392, pagine pulite a 300 dpi): trascrizione in parallelo con più assistenti, istruzioni in _sviluppo/omr/ISTRUZIONI.md.
 - Altre epoche di storia.
 - Dominio musicascuole.it (DNS su Aruba + dominio personalizzato in GitHub Pages, www → reindirizzo).
 - Anteprima dei link (Open Graph), pagina 404, sitemap.

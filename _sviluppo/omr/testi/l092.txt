@@ -1,0 +1,11 @@
+# Lezione 92 | Andante · sol maggiore, 2/2 | armatura=1 tempo=C|
+rq g48 a48 b4q c58 d58 | e5h~ e58 g58 e58 c58 | a48 c58 a48 f#48 d48 e58 d58 d48 |
+d58 b58 g58 e58 d58 c58 a48 d58 | rq g48. a416 b4q c58. d516 | e5h~ e58 g58 e58 d58 | c#58 a4q b5q a4q c#58 |
+rq e5q d5q rq | rq d58 d58 e58 e58 f#58 f#58 | g58 r8 b48 b48 e58 e58 d58 d58 | c58 d48 d5q c58 d48 e5q |
+d58. g516 e58. g516 d5q rq | rq d58t c#58t d58t e58t d58t e58t f#58t e58t f#58t | g58t f#58t g58t a58t g58t a58t b58 r8 g48t a48t b48t | c58 r8 e5h d58 c58 |
+b48 g48 e58t g58t e58t d5q rq | rq g48 a48 b4q c58 d58 | e5h. d#58 e58 | b58 g#58 d58 f58 e58 b48 e58 d58 |
+c58 a4q c5q e5q a58~ | a58 c6q b58 a58 g5q e58 | g516 r16 d5q g58~ g516 r16 eb5q g58~ | g58 b4q d5q a4q d58~ |
+d58 b4q g58 d58 c5q a48 | g4h rq b4q | rq c5q r8 d58 f#58 e58 | rq d5q rq g5q | rq a4q r8 d58 e58 d58 |
+r8 b48 c58 b48 r8 g48 f#416 g416 a416 b416 | rq c5q r8 d58 f#58 e58 | r8 d58 c68 b58 r8 d58 a58 g58 | r8 a48 f#58 e58 r8 d48 c58 b48 |
+g4h. b48t c58t b48t | d5h. f58t e58t d58t | g5h. e58t c58t a48t | f#4h. d58t c58t a48t | g4h~ g4q b48t c58t b48t |
+d5h~ d5q f58t e58t d58t | g5h~ g5q e58t c58t a48t | f#48. g416 a48. b416 c516 b416 c516 d516 e516 d516 e516 f#516 | g5h rh

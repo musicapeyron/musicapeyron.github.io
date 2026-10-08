@@ -1,0 +1,7 @@
+# Lezione 86 | Allegretto · mi maggiore, 6/8 | armatura=4 tempo=6/8
+e4h. | g#4q. b4q. | e58 g#58 a58 b5q r8 | e48 g#48 a48 b4q r8 | a5h. | g#5q. e5q. | d#58 c#58 b48 f#5q r8 |
+d#48 c#48 b38 f#4q r8 | e4h. | g48 f#48 g48 b48 a#48 b48 | e58 g58 a58 b5q r8 | e48 g48 a48 b4q r8 | d6h. |
+c6q. b5q r8 | a58 d58 b58 g5q r8 | a48 d48 b48 g4q r8 | f#416 g416 a416 b416 c516 r16 f#516 g516 a516 b516 c616 r16 |
+e416 f#416 g416 a416 b416 r16 e516 f#516 g516 a516 b516 r16 | b516 d616 b58 b48 g516 a516 g58 b48 | f#516 g516 f#58 b48 f#516 g516 f#58 b48 | c58 d516 c516 a58 b48 c516 b416 g58 |
+a48 b416 a416 f#58 g48 a416 g416 e58 | e5h.~ | e5q. d516 c516 b416 a416 g416 f#416 | e416 g416 b416 e516 g516 a516 b516 d616 b516 g516 e516 c516 |
+b4q f#48 b4q d#48 | e4h. | g#4q. b4q. | e58 g#58 a58 b5q. | b48 e58 f#58 g#5q. | g48 b48 d#58 e5q. | e48 g#48 a48 b48 c58 b48 | e4h.

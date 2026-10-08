@@ -1,0 +1,17 @@
+# Lezione 100 | Allegretto · mi maggiore, 3/8 | armatura=4 tempo=3/8
+# nota: battuta 17 abbellimenti (due piccole note) prima di ciascuna delle tre crome mi, si, sol♯
+# nota: battuta 19 acciaccature (piccola nota) prima di ciascuna delle tre crome do♯, la, fa♯
+# nota: battuta 33 abbellimento di due piccole note (fa♮–mi) prima del re♮
+# nota: battuta 34 abbellimento di due piccole note (mi–re) prima del do♮
+# nota: battuta 35 abbellimento di piccole note prima del si
+e58 b48 g#48 | f#416 a416 c#5q | a48 f#48 d#48 | e416 g#416 b4q | e516 f#516 g#516 e516 b416 g#416 | f#416 a416 e58. c#516 | d#416 f#416 c58. b416 |
+e4q r8 | f#48 a#416 c#516 e516 g#516 | f#58. d#516 b416 g#416 | e#416 f#416 g48. f#416 | d#5q b48 | f#48 a#416 c#516 e516 g#516 | f#516 b516 d#516 f#516 b416 d#516 |
+e#416 f#416 e58. a#416 | c#516 b416 a416 b416 c#516 d#516 | e58 b48 g#48 | f#416 a416 c#516 f#58 e516 | c#58 a48 f#48 | e416 g#416 b416 g#58 e516 |
+e532 f#532 g#532 f#532 e532 d#532 c#532 b432 c#532 b432 a432 g#432 | f#48 a516 g#516 f#532 e532 d#532 c#532 | b432 c532 a432 f#432 d#432 f#432 a432 b432 c516. b432 | e4q r8 | r16 b316 d#416 f#416 a416 c#516 |
+r16 b416 f#516 e516 a516 g#516 | r16 c#516 f#516 c#516 d#516 b416 | e516 g#516 e516 b416 a432 g#432 f#432 e432 | r16 b316 r16 d#416 r16 f#416 | r16 c#516 r16 b416 r16 e516 |
+d#516 a58 f#58 d#516 | e58 r8 e58 | e58 d516 c516 b416 g416 | d58 c58. g416 | c58 b416 a416 g#416 e416 | c5q.~ | c5q.~ | c5q.~ |
+c58 b416 c516 d516 e516 | g516t f516t e516t d58. g416 | f516t e516t d516t c58. g416 | b416t a416t g416t d516t c516t b416t f516t e516t d#516t | c516 r16 e5q~ |
+e516 r16 c5q~ | c516 r16 a4q~ | a416t g#416t a416t c58. a416 | b416 r16 e416t g#416t b416t e516t g#516t f#516t | e516t d#516t a516t~ a516t a416t c516t~ c516t d#416t b416t |
+g#416t e416t g#416t b416t f#516t e516t g#516t f#516t e516t | d#516t a516t c516t f#516t a416t c516t d#416t c516t d#416t | e416t g#416t b416t d58 c#516. b432 | a416t c#516t f#516t a516. g#532 f#516t e516t c#516t |
+b416. c#532 b416. g#532 f#516. e532 | d#516. a432 c#58. b416 | e416t g#416t b416t d516t f#516t e516t d516t c#516t b416t | a416t c#516t e516t a516t g#516t f#516t e516t d#516t c#516t |
+b416t g#416t a416t b416t c#516t d#516t e516t f#516t g#516t | a516 r16 c58. b416 | e58 b48 g#48 | f#416 a416 c516 d#416 c#516. b432 | e4q r8

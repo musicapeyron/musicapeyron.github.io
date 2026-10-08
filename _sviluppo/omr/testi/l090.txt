@@ -1,0 +1,8 @@
+# Lezione 90 | Moderato assai · la bemolle maggiore, 12/8 | armatura=-4 tempo=12/8
+c416 eb416 ab416 bb416 c516 db516 eb5q ab48 f5q ab58 eb5q r8 | db5q eb48 c5q eb48 bb48 eb5q bb48 eb4q |
+c416 eb416 ab416 bb416 c516 db516 eb58 c58 eb58 f58 ab58 f58 eb5q r8 | ab58~ ab516 eb516 c516 ab416 c58~ c516 bb416 g416 eb416 db416 eb416 fb48 eb48 ab4q r8 |
+g48. bb416 eb516 f516 g5q f58 bb48. eb516 g516 ab516 bb5q d58 | f58 eb58 g58 f58 eb58 g58 f58 eb58 d58 db58 c58 bb416 eb416 |
+c416 eb416 ab416 bb416 c516 db516 eb5q ab48 f516 e516 f516 ab516 db516 f516 eb5q r8 | db58 eb4q c58 eb4q bb4q eb58 bb4q eb48 |
+c416 eb416 ab416 bb416 c516 db516 eb516 ab416 bb416 c516 db516 eb516 f516 e516 f516 ab516 db516 f516 eb58~ eb516 ab416 c516 eb516 |
+ab58~ ab516 eb516 c516 ab416 eb58~ eb516 c516 ab416 eb416 c58~ c516 ab416 eb416 c416 f48~ f416 eb416 db416 bb316 | ab3q r8 eb516 f516 eb58 db58 c516 db516 eb58 ab48 bb416 c516 db58 g48 |
+ab4q eb48 eb58 f516 eb516 d516 eb516 ab58 c58 db516 d516 eb58 bb48 c58 | ab4h. rh.

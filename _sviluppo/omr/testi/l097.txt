@@ -1,0 +1,14 @@
+# Lezione 97 | Adagio · la minore, 9/8 | armatura=0 tempo=9/8
+# nota: battute 15 (ultimo tempo) gruppi di semicrome senza il "3" stampato, trascritti come terzine (9 semicrome nel tempo di 3 crome)
+a4q.~ a48 b48 c58 d58 c58 b48 | a4q c516 f516 e5q r8 rq r8 | e5q.~ e58 f58 g58 a58 f58 a58 | e5q c516 f516 e5q r8 rq r8 |
+r8 e58 d58 r8 c516 b416 d58 rq e48 | r8 d58 c58 r8 b416 a416 c58 rq a48 | r8 c58 b48 r8 d58 c#58 r8 e516 d516 f516 e516 | g5q. f5q.~ f5q f58 |
+g516 f516 f516 g516 g58~ g58 f516 g516 f58 g516 f516 c516 g516 f516 c516 | g516 f516 d516 bb416 d516 f516 bb5q. a4q. |
+c5q b432 c532 d532 e532 f5q b432 a432 b432 c532 d532 e432 f432 e432 a432 g#432 c532 b432 f516. e532 |
+a4q a58~ a58 ab58 g58~ g516 f#516 f516 e516 d58 | c58~ c516t b416t c516t e516t d516t c516t g5q c516 d516 e5q d58 |
+c58~ c516 b416 d516t c516t a416t g4q r8 g416 c516 e516 g516 b516 a516 |
+g516. f532 e516. g532 f58 g516. f532 e516. g532 f58 e516t c516t d516t e516t f516t g516t a516t g516t f516t | d5q e58~ e58 f5q~ f58 f#58 g58 |
+c58 c516t b416t c516t e516t d516t c516t g58~ g516t c516t d516t e516t d516t c516t bb5q e58 | r8 g58 f58 r8 e58 d58 r16 c516 r16 d516 e516 f516 |
+r16 g516 c68 e58 g58 c58. e516 d516t a516t g516t b416 e516 d58 | c5q r8 c5q. b416t c516t d516t f58 r16 e516 |
+a4q.~ a48 b48 c58 d58 c58 b48 | a48~ a416 e432 a432 c532 a432 c532 f532 e5q r8 a4q~ a432 b432 c532 d532 |
+e5q.~ e58 f58 g58 a58 f58 a58 | e5q c516 f516 e5q a416 d516 c5q e416 a416 | r8 e58 d58 r8 c516 b416 d58 rq e48 |
+r8 d58 c58 r8 b416 a416 c58 r8 a48 c58 | r8 g516 f532 r32 e516 d532 r32 r8 f516 e532 r32 d516 c532 r32 r8 e516 d532 r32 c516 b432 r32 | a4h. rq r8

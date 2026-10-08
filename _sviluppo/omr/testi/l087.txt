@@ -1,0 +1,6 @@
+# Lezione 87 | Moderato assai · do maggiore, 9/8 | armatura=0 tempo=9/8
+g4q. c5q. e5q. | d5h.~ d5q. | c5q. b4q. a4q. | g4h.~ g4q. | g4q a48 b4q c58 d5q e58 |
+a4q a58 e5q f58 c5q d58 | e5q c58 g4q e48 g48 f48 d48 | c4h. rq r8 | b48 c58 d58 e5q d58 b4q g48 | f#48 a48 e58 d5q. rq r8 |
+a48 b48 c58 d5q c58 b4q a48 | g48 g58 e58 d5q.~ d5q r8 | b48 c58 c#58 e516 d516 c58 b48 a416 b416 c516 b416 a416 g416 | f#48 e48 g58~ g58 e58 c58~ c58 b48 a48 |
+d5q.~ d516 e516 d516 e516 d516 g416 b416 a416 d5q | g4h.~ g48 a48 ab48 | g4q. c5q. e5q. | d5h. f58 e58 d58 | c5q. b4q. a4q. | g48 a5q g58 a4q g48 ab4q |
+g48 a4q b48 c5q d58 e5q | a4q a58~ a58 e58 f58~ f58 c58 d58 | e58 g48 c58 e516 g416 a416 b416 c516 d516 e58 d58 g58 | d5h. c5q r8

@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Solfeggio parlato — Musica Peyron</title>
-<meta name="description" content="Solfeggio parlato con le prime 80 lezioni del metodo di Pasquale Bona: metronomo, conteggio, nomi delle note e schede da stampare.">
+<meta name="description" content="Solfeggio parlato con le prime 100 lezioni del metodo di Pasquale Bona: metronomo, conteggio, nomi delle note e schede da stampare.">
 <link rel="icon" href="favicon.svg" type="image/svg+xml">
 <link rel="icon" href="favicon-32.png" type="image/png" sizes="32x32">
 <link rel="apple-touch-icon" href="apple-touch-icon.png">
@@ -130,7 +130,7 @@
 <main>
   <div class="testa">
     <h1>Solfeggio parlato</h1>
-    <p>Pasquale Bona, le prime 80 lezioni</p>
+    <p>Pasquale Bona, le prime 100 lezioni</p>
   </div>
   <nav class="argomenti" id="argomenti" aria-label="Argomenti"></nav>
   <nav class="numeri" id="numeri" aria-label="Lezioni"></nav>
@@ -204,7 +204,8 @@
     { nome: "Sincope", lezioni: [61, 62, 63, 64, 65, 66], titolo: "La sincope" },
     { nome: "Salti veloci", lezioni: [67, 68, 69, 70, 71, 72, 73], titolo: "Tutti i salti, per sciogliere la lingua", dettagli: { 73: "Salti misti" } },
     { nome: "Biscrome", lezioni: [74], titolo: "Scala di biscrome" },
-    { nome: "Parte seconda", lezioni: [75, 76, 77, 78, 79, 80], titolo: "Parte seconda", dettagli: { 75: "Largo", 76: "Maestoso · le terzine", 77: "Andante · sol maggiore", 78: "Allegro moderato · re maggiore, tempo tagliato", 79: "Andantino · fa maggiore, 2/4", 80: "Larghetto · si bemolle maggiore, 2/4" } }
+    { nome: "Parte seconda", lezioni: [75, 76, 77, 78, 79, 80, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98], titolo: "Parte seconda", dettagli: { 86: "Allegretto · mi maggiore, 6/8", 87: "Moderato assai · do maggiore, 9/8", 88: "Allegretto moderato · fa maggiore, 9/8", 89: "Sostenuto · mi bemolle maggiore, 12/8", 90: "Moderato assai · la bemolle maggiore, 12/8", 91: "Allegro · fa maggiore, 4/4", 92: "Andante · sol maggiore, 2/2", 93: "Allegretto · re maggiore, 2/4", 94: "Andante · la maggiore, 3/8", 95: "Moderato assai · si bemolle maggiore, 3/4", 96: "Allegretto moderato assai · mi bemolle maggiore, 6/8", 97: "Adagio · la minore, 9/8", 98: "Allegretto moderato · do maggiore, 12/8", 81: "Allegro moderato assai · 3/8", 82: "Andante mosso · re maggiore, 3/8", 83: "Larghetto · sol maggiore, 3/4", 84: "Larghetto mosso · fa maggiore, 3/4", 85: "Adagio · la maggiore, 6/8", 75: "Largo", 76: "Maestoso · le terzine", 77: "Andante · sol maggiore", 78: "Allegro moderato · re maggiore, tempo tagliato", 79: "Andantino · fa maggiore, 2/4", 80: "Larghetto · si bemolle maggiore, 2/4" } },
+    { nome: "Parte terza", lezioni: [99, 100], titolo: "Parte terza", dettagli: { 99: "Allegro moderato · re bemolle maggiore, 3/4", 100: "Allegretto · mi maggiore, 3/8" } }
   ];
   const TUTTE = ARGOMENTI.flatMap(a => a.lezioni).sort((x, y) => x - y);
   const argDi = n => ARGOMENTI.find(a => a.lezioni.includes(n));
