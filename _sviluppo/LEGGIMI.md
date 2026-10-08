@@ -120,6 +120,7 @@ quella modifica si perde.
 - `storia.html` — elenco delle epoche (array `EPOCHE`: per attivarne una basta darle `url` e `img`).
 - `storia-antichita.html` — Preistoria e antichità (banner: preistoria a sinistra, antichità a destra; il filtro vale anche per gli strumenti). Idee e link dal programma di prima, lezione 31.
 - `storia-rinascimento.html` — Rinascimento (banner: Roma a sinistra, Venezia a destra; ogni ascolto è assegnato a una delle due scuole).
+  Ha in più il pulsante speciale **🎭 L'Orfeo** (Monteverdi, 1607, ponte verso il Barocco): video dell'opera intera + mini-schede Il mito / La storia / Curiosità, testi nell'oggetto `ORFEO` dello script. Lo stesso schema si può riusare per altre opere "speciali" (es. Barocco).
 - `storia-medioevo.html` — modello di epoca. Doppio banner (profano a sinistra, sacro a destra; toccando una metà
   si filtrano gli ascolti), schede **Ascolti / Strumenti / Da suonare**, finestra con video, gancio, 2–4 punti
   “cosa ascoltare”, “Lo sapevi?”, frecce ← → ed Esc.

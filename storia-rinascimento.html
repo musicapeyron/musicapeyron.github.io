@@ -112,6 +112,40 @@
   .freccia { font: 700 13px 'Manrope', sans-serif; color: #EAF2FF; background: rgba(255,255,255,0.08); border: 1px solid rgba(255,255,255,0.18); border-radius: 999px; padding: 7px 14px; cursor: pointer; }
   .freccia:hover { background: rgba(255,255,255,0.15); }
 
+  /* ---------- L'Orfeo ---------- */
+  .scheda.speciale { background: linear-gradient(135deg, rgba(180,83,9,0.55), rgba(124,45,18,0.55)); border-color: #FBBF24; color: #FFE58A; }
+  .scheda.speciale:hover { background: linear-gradient(135deg, rgba(180,83,9,0.8), rgba(124,45,18,0.8)); }
+  .scheda.speciale.attiva { background: #FFE58A; color: #0f172a; border-color: #FFE58A; }
+  .orfeo { --accent: #FBBF24; display: grid; grid-template-columns: 1.55fr 1fr; background: #131c33; border: 1px solid rgba(255,255,255,0.14);
+    border-top: 3px solid var(--accent); border-radius: 18px; overflow: hidden; }
+  .orfeo[hidden], .grid[hidden] { display: none; }
+  @media (max-width: 860px) { .orfeo { grid-template-columns: 1fr; } }
+  .o-video { display: flex; flex-direction: column; background: #000; }
+  .o-sotto { font-size: 11.5px; color: #9FB3CE; padding: 8px 12px; background: #0b1224; }
+  .o-sotto a { color: #7DD3FC; }
+  .o-info { padding: 14px 16px 14px; display: flex; flex-direction: column; gap: 6px; min-height: 0; }
+  .o-info .label { align-self: flex-start; font-size: 10px; font-weight: 800; letter-spacing: .06em; text-transform: uppercase; color: var(--accent); background: color-mix(in srgb, var(--accent) 16%, transparent); padding: 3px 9px; border-radius: 999px; }
+  .o-info h3 { font-family: 'Fredoka', 'Manrope', sans-serif; font-weight: 600; font-size: 28px; margin: 0; line-height: 1.1; }
+  .o-info .chi { font-size: 13px; color: #9FB3CE; font-weight: 600; }
+  .o-info .gancio { font-family: 'Manrope', sans-serif; font-weight: 700; font-size: 15px; color: #FFE58A; }
+  .o-tab { display: flex; gap: 6px; margin-top: 4px; flex-wrap: wrap; }
+  .o-t { font: 700 12.5px 'Manrope', sans-serif; color: #EAF2FF; cursor: pointer; padding: 6px 12px; border-radius: 999px; background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.16); }
+  .o-t:hover { background: rgba(255,255,255,0.12); }
+  .o-t.attiva { background: var(--accent); color: #0f172a; border-color: var(--accent); }
+  .o-corpo { flex: 1; min-height: 0; overflow: auto; padding-right: 4px; }
+  @media (min-width: 861px) { .o-info { contain: size; } }   /* la colonna dei testi si adatta all'altezza del video e scorre */
+  .o-corpo ul { margin: 4px 0 0; padding: 0; list-style: none; display: flex; flex-direction: column; gap: 7px; }
+  .o-corpo li { font-size: 14px; color: #DCE6F5; line-height: 1.45; padding-left: 24px; position: relative; }
+  .o-corpo li::before { content: attr(data-i); position: absolute; left: 0; top: 0; font-size: 13px; }
+  .o-corpo .atto { display: grid; grid-template-columns: 62px 1fr; gap: 8px; align-items: baseline; padding: 6px 8px; border-radius: 8px; background: rgba(255,255,255,0.04); font-size: 13.5px; color: #DCE6F5; line-height: 1.4; }
+  .o-corpo .atto b { font: 800 11px 'Manrope', sans-serif; color: var(--accent); text-transform: uppercase; letter-spacing: .05em; }
+  .o-corpo .atto + .atto { margin-top: 5px; }
+  .o-corpo .cur { font-size: 13.5px; color: #DCE6F5; background: rgba(255,255,255,0.05); border-left: 3px solid var(--accent); border-radius: 8px; padding: 7px 10px; line-height: 1.45; }
+  .o-corpo .cur + .cur { margin-top: 6px; }
+  .o-corpo .cur b { color: var(--accent); }
+  .o-corpo .cur img { float: right; height: 150px; margin: 0 0 4px 10px; border-radius: 6px; background: #fff; cursor: zoom-in; }
+  .o-corpo .cur::after { content: ""; display: block; clear: both; }
+
   .crediti-img { margin-top: 18px; font-size: 11.5px; color: #7F93B2; }
   .crediti-img summary { cursor: pointer; color: #9FB3CE; }
   .crediti-img li { margin: 3px 0; } .crediti-img a { color: #7DD3FC; }
@@ -141,10 +175,31 @@
   <nav class="schede" aria-label="Sezioni">
     <button class="scheda attiva" data-scheda="ascolti">🎧 Ascolti <span class="n" id="nAscolti"></span></button>
     <button class="scheda" data-scheda="strumenti">🪕 Strumenti <span class="n" id="nStrumenti"></span></button>
+    <button class="scheda speciale" data-scheda="orfeo">🎭 L'Orfeo</button>
     <button class="scheda" data-scheda="suonare">🎼 Da suonare <span class="n" id="nSuonare"></span></button>
   </nav>
 
   <div class="grid" id="griglia"></div>
+
+  <!-- ===== L'ORFEO: sezione speciale (testi qui sotto, nell'oggetto ORFEO dello script) ===== -->
+  <section class="orfeo" id="orfeo" hidden aria-label="L'Orfeo di Monteverdi">
+    <div class="o-video">
+      <div class="schermo" id="oSchermo"></div>
+      <div class="o-sotto">Opera completa, versione del 1609, con i sottotitoli in italiano · <a id="oLink" target="_blank" rel="noopener">Apri su YouTube ↗</a></div>
+    </div>
+    <div class="o-info">
+      <span class="label">Mantova, 1607 · nasce l'opera</span>
+      <h3>L'Orfeo</h3>
+      <div class="chi">Claudio Monteverdi · libretto di Alessandro Striggio</div>
+      <div class="gancio">Una favola cantata dall'inizio alla fine: la prima grande opera della storia.</div>
+      <div class="o-tab" role="tablist">
+        <button class="o-t attiva" data-o="mito">🏛️ Il mito</button>
+        <button class="o-t" data-o="storia">📜 La storia</button>
+        <button class="o-t" data-o="curiosita">💡 Curiosità</button>
+      </div>
+      <div class="o-corpo" id="oCorpo"></div>
+    </div>
+  </section>
 
   <details class="crediti-img">
     <summary>Crediti delle immagini e dei video</summary>
@@ -196,7 +251,7 @@
               "Ascolta l'<b>imitazione</b>: una voce comincia la melodia, le altre la ripetono una dopo l'altra.",
               "Le frasi sono lunghe e morbide, senza salti bruschi: è la calma tipica della scuola romana."],
       sapevi: "Palestrina fu maestro di cappella a San Pietro e a Santa Maria Maggiore e scrisse più di cento Messe." },
-    { id: "josquin", mondo: "sx", label: "Roma · mottetto", titolo: "Ave Maria… virgo serena", chi: "Josquin Desprez · fine Quattrocento", img: "josquin.jpg", yt: "4VOIaUsk1f8", canale: "Schola Antiqua",
+    { id: "josquin", mondo: "sx", label: "Roma · mottetto", titolo: "Ave Maria… virgo serena", chi: "Josquin Desprez · fine Quattrocento", img: "josquin.jpg", yt: "zco6iS9KfQs", canale: "The Hilliard Ensemble (caricato da Air Musica)",
       gancio: "Il compositore più famoso d'Europa intorno al 1500.",
       punti: ["Josquin veniva dalle Fiandre e cantò per alcuni anni nel <b>coro del Papa</b>, a Roma.",
               "Le voci entrano a coppie, imitandosi: ascolta come «Ave Maria» passa da una voce all'altra.",
@@ -208,11 +263,11 @@
               "L'inizio è lento e raccolto, come chi entra in punta di piedi nella stalla.",
               "Alla fine l'<b>Alleluia</b> cambia ritmo e diventa quasi una danza in tre."],
       sapevi: "Victoria era spagnolo: visse a Roma una ventina d'anni, forse allievo di Palestrina, prima di tornare a Madrid. Questo mottetto fu stampato a Venezia nel 1572." },
-    { id: "gabrieli", mondo: "dx", label: "Venezia · cori battenti", titolo: "Sonata pian' e forte", chi: "Giovanni Gabrieli · Venezia, 1597", img: "gabrieli.jpg", yt: "HJbbuTV5Q_I", canale: "Teatro La Fenice",
+    { id: "gabrieli", mondo: "dx", label: "Venezia · cori battenti", titolo: "Sonata pian' e forte", chi: "Giovanni Gabrieli · Venezia, 1597", img: "gabrieli.jpg", yt: "QXRITlQBitc", canale: "Bartje Bartmans",
       gancio: "Una delle prime musiche in cui è scritto «piano» e «forte».",
       punti: ["Due gruppi di strumenti suonano a turno e poi insieme: sono i <b>cori battenti</b>.",
               "Nella basilica di San Marco i due gruppi stavano su due balconate opposte: il suono arrivava da destra e da sinistra.",
-              "Ascolta i cornetti, i tromboni e le viole che si rispondono."],
+              "Nel video scorre la partitura: cerca le parole <b>pian</b> e <b>forte</b> scritte sotto le note."],
       sapevi: "Gabrieli è tra i primi compositori a scrivere sulla partitura come suonare: «pian» e «forte». Nasce così la dinamica." },
     { id: "grillo", mondo: "dx", label: "Venezia · stampa musicale", titolo: "El grillo", chi: "Josquin Desprez · stampato a Venezia, 1505", img: "grillo.jpg", yt: "62-aBOZrqh8", canale: "Profeti della Quinta",
       gancio: "«Il grillo è un buon cantore»… e Venezia inventa gli spartiti stampati.",
@@ -252,11 +307,11 @@
       punti: ["Nel Rinascimento si costruiva in tutte le misure, dal piccolissimo soprano al grande basso.",
               "Insieme formavano un <b>consort</b>, un gruppo di strumenti della stessa famiglia."],
       sapevi: "Era uno degli strumenti più amati: il re Enrico VIII d'Inghilterra ne possedeva più di settanta." },
-    { id: "liuto", label: "Corde pizzicate", titolo: "Liuto", chi: "Il re degli strumenti", img: "liuto.jpg", yt: "r6PhdHo0J48", canale: "Peter Croton",
+    { id: "liuto", label: "Corde pizzicate", titolo: "Liuto", chi: "Il re degli strumenti", img: "liuto.jpg", yt: "csaKmdYJuW4", canale: "Paul Kieffer",
       gancio: "Lo strumento più amato del Rinascimento.",
       punti: ["Ha la cassa a mezza pera, molte corde doppie e il manico con i tasti.",
               "Si suonava da solo, per accompagnare il canto o insieme ad altri strumenti."],
-      sapevi: "Il liutista Francesco da Milano, che ascolti qui, era così bravo che lo chiamavano «il divino»." },
+      sapevi: "Francesco da Milano, autore del ricercare che ascolti qui, era così bravo che lo chiamavano «il divino»." },
     { id: "gamba", label: "Corde strofinate", titolo: "Viola da gamba", chi: "Si suona tra le gambe", img: "gamba.jpg", yt: "sZh-NN-T1uY", canale: "Voices of Music",
       gancio: "Una viola che si tiene tra le gambe.",
       punti: ["Si appoggia sulle gambe o tra le ginocchia; l'arco si tiene dal basso, col palmo in su.",
@@ -267,11 +322,11 @@
       punti: ["È di legno ricoperto di cuoio, curvo, con i fori per le dita.",
               "Si suona con un piccolo bocchino: il suono assomiglia moltissimo alla voce umana."],
       sapevi: "A San Marco i cornetti suonavano accanto ai cantori nelle grandi feste: qui accompagna un mottetto di Palestrina." },
-    { id: "trombone", label: "Ottoni", titolo: "Trombone rinascimentale", chi: "Il nonno del trombone", img: "trombone.jpg", yt: "EB9tYCLUzXA", canale: "Capella de la Torre",
+    { id: "trombone", label: "Ottoni", titolo: "Trombone rinascimentale", chi: "Il nonno del trombone", img: "trombone.jpg", yt: "RPw_4I6ayc4", canale: "Sabine Gassner",
       gancio: "Una tromba che si allunga e si accorcia.",
       punti: ["Ha già la <b>coulisse</b>, il tubo che scorre per cambiare nota.",
               "La campana è più stretta di quella moderna: il suono è morbido e si fonde con le voci."],
-      sapevi: "Nella Venezia di Gabrieli tromboni e cornetti erano la coppia perfetta per la musica di San Marco." },
+      sapevi: "Qui suona le «diminuzioni» di Giovanni Bassano, cornettista di San Marco: un madrigale arricchito di note velocissime (Venezia, 1591)." },
     { id: "cromorno", label: "Fiati", titolo: "Cromorno", chi: "Il «corno storto»", img: "cromorno.jpg", yt: "VeQGk38rp8c", canale: "ReRenaissance",
       gancio: "Un fiato a forma di J, dal suono ronzante.",
       punti: ["L'ancia doppia è chiusa in una capsula: il musicista non la tocca con le labbra.",
@@ -287,6 +342,33 @@
   const SUONARE = [
     { titolo: "Schiarazula Marazula", chi: "Giorgio Mainerio", img: "mainerio.jpg" }
   ];
+
+  /* ---------- L'Orfeo (pulsante speciale) ---------- */
+  const ORFEO = {
+    yt: "wI9QKoopNik", canale: "Agapò te Musikè 2", img: "orfeo-mantova.jpg",
+    mito: [
+      ["🎶", "Orfeo è il più grande cantore della mitologia greca: con la sua lira incanta gli animali, gli alberi e perfino le pietre."],
+      ["💍", "Sposa la ninfa <b>Euridice</b>, ma poco dopo le nozze lei viene morsa da un serpente e muore."],
+      ["🔥", "Orfeo scende negli <b>Inferi</b>, il regno dei morti, e con il suo canto commuove chi lo governa: potrà riportarla a casa."],
+      ["⚠️", "A un patto: non dovrà voltarsi a guardarla finché non saranno usciti. Ma Orfeo si volta… e la perde per sempre."]
+    ],
+    storia: [
+      ["Prologo", "La Musica in persona entra in scena e si presenta: «Io la Musica son…»."],
+      ["Atto I", "Festa di nozze tra ninfe e pastori: Orfeo ed Euridice sono felici."],
+      ["Atto II", "Orfeo canta allegro, ma arriva la Messaggera: Euridice è morta. Orfeo: «Tu se' morta, mia vita…»."],
+      ["Atto III", "Accompagnato dalla Speranza, Orfeo arriva al fiume dei morti. Con l'aria «Possente spirto» fa addormentare il traghettatore Caronte e passa."],
+      ["Atto IV", "Proserpina convince Plutone: Euridice può tornare, se Orfeo non si volta. Lui si volta… e lei svanisce."],
+      ["Atto V", "Orfeo piange da solo e gli risponde soltanto l'eco. Scende dal cielo il dio Apollo, suo padre, e lo porta con sé tra le stelle."]
+    ],
+    curiosita: [
+      "<b>Prima volta.</b> Fu rappresentato il 24 febbraio 1607 nel Palazzo Ducale di Mantova, a Carnevale, per pochi invitati della corte dei Gonzaga. Ognuno ricevette il libretto stampato per seguire le parole.",
+      "<b>La sigla iniziale.</b> L'opera si apre con una <b>Toccata</b>: una fanfara di trombe suonata tre volte, per salutare il duca e i suoi ospiti.",
+      `<a href="${IMG}orfeo-strumenti.jpg" target="_blank" rel="noopener"><img src="${IMG}orfeo-strumenti.jpg" alt="Elenco dei personaggi e degli strumenti nella partitura del 1609"></a><b>Gli strumenti raccontano.</b> Nella partitura Monteverdi scrive quali strumenti devono suonare: flauti, violini e arpa per i pastori, tromboni e un organo dal suono ruvido, il <b>regale</b>, per il regno dei morti e per Caronte.`,
+      "<b>Un verso di Dante.</b> All'ingresso degli Inferi la Speranza abbandona Orfeo leggendo una scritta: «Lasciate ogni speranza, voi ch'entrate». Viene dalla Divina Commedia!",
+      "<b>Due finali.</b> Nel libretto del 1607 l'opera finiva in modo cupo, con le Baccanti furiose. Nella partitura stampata nel 1609 arriva invece Apollo con il lieto fine: è la versione di questo video.",
+      "<b>Da Mantova a Venezia.</b> Pochi anni dopo, nel 1613, Monteverdi divenne maestro di cappella proprio a <b>San Marco</b>, a Venezia. Il Barocco è alle porte!"
+    ]
+  };
 
   /* crediti delle immagini (tutte ospitate nel sito) */
 const CREDITI_IMG = [
@@ -308,6 +390,9 @@ const CREDITI_IMG = [
     'Cornetto, 1575 circa (Metropolitan Museum) — <a href="https://www.metmuseum.org/art/collection/search/503951" target="_blank" rel="noopener">fonte</a>, pubblico dominio (Open Access).',
     'Tromboni rinascimentali, foto di Multimann — <a href="https://commons.wikimedia.org/wiki/File:Sackbutt.jpg" target="_blank" rel="noopener">fonte</a>, <a href="https://creativecommons.org/licenses/by-sa/3.0/deed.it" target="_blank" rel="noopener">CC BY-SA 3.0</a>, ritagliata.',
     'Cromorno tenore, Musikinstrumenten-Museum di Berlino, foto di Irmgard Otto — <a href="https://commons.wikimedia.org/wiki/File:Musikinstrumenten-Museum_Berlin_-_Tenor-Krummhorn_in_D_-_1106536.jpg" target="_blank" rel="noopener">fonte</a>, <a href="https://creativecommons.org/licenses/by-sa/4.0/deed.it" target="_blank" rel="noopener">CC BY-SA 4.0</a>, ritagliata.',
+    'L\'Orfeo: Palazzo Ducale di Mantova, foto di BMK — <a href="https://commons.wikimedia.org/wiki/File:Mantua2_BMK.jpg" target="_blank" rel="noopener">fonte</a>, <a href="https://creativecommons.org/licenses/by-sa/2.0/de/deed.it" target="_blank" rel="noopener">CC BY-SA 2.0 DE</a>, ritagliata.',
+    'L\'Orfeo: frontespizio della partitura (Venezia, 1609) — <a href="https://commons.wikimedia.org/wiki/File:Frontispiece_of_L%27Orfeo.jpg" target="_blank" rel="noopener">fonte</a>, pubblico dominio.',
+    'L\'Orfeo: personaggi e strumenti nella partitura del 1609 — <a href="https://commons.wikimedia.org/wiki/File:Orfeo_libretto_instruments_characters.jpg" target="_blank" rel="noopener">fonte</a>, pubblico dominio.',
     'Virginale doppio di Hans Ruckers, 1581 (Metropolitan Museum) — <a href="https://www.metmuseum.org/art/collection/search/503676" target="_blank" rel="noopener">fonte</a>, pubblico dominio (Open Access).'
   ];
 
@@ -320,6 +405,11 @@ const CREDITI_IMG = [
   let scheda = "ascolti", mondo = null, elenco = [];
   function disegna() {
     griglia.innerHTML = "";
+    const conOrfeo = scheda === "orfeo";
+    document.getElementById("orfeo").hidden = !conOrfeo;
+    griglia.hidden = conOrfeo;
+    if (conOrfeo) { preparaOrfeo(); return; }
+    oSchermo.innerHTML = "";   // si esce dall'Orfeo: il video si ferma
     if (scheda === "suonare") {
       SUONARE.forEach(s => {
         const c = document.createElement("div"); c.className = "card suona empty";
@@ -355,7 +445,7 @@ const CREDITI_IMG = [
     banner.classList.toggle("f-dx", m === "dx");
     document.querySelectorAll(".etich-meta").forEach(e => e.classList.toggle("attiva", e.dataset.mondo === m));
     if (!senzaDisegno) {
-      if (scheda === "suonare") { scheda = "ascolti"; document.querySelectorAll(".scheda").forEach(x => x.classList.toggle("attiva", x.dataset.scheda === "ascolti")); }
+      if (scheda === "suonare" || scheda === "orfeo") { scheda = "ascolti"; document.querySelectorAll(".scheda").forEach(x => x.classList.toggle("attiva", x.dataset.scheda === "ascolti")); }
       disegna();
     }
   }
@@ -401,9 +491,34 @@ const CREDITI_IMG = [
     if (e.key === "ArrowLeft") apri(attuale - 1);
   });
 
+  /* ---------- L'Orfeo ---------- */
+  const oSchermo = document.getElementById("oSchermo"), oCorpo = document.getElementById("oCorpo");
+  document.getElementById("oLink").href = "https://www.youtube.com/watch?v=" + ORFEO.yt;
+  function preparaOrfeo() {
+    oSchermo.innerHTML = "";
+    oSchermo.style.backgroundImage = `url('${IMG + ORFEO.img}')`;
+    const b = document.createElement("button"); b.className = "avvio"; b.type = "button";
+    b.innerHTML = `<span class="tondo">▶</span><span class="nota">Il video si carica da YouTube quando premi play</span>`;
+    b.addEventListener("click", () => {
+      oSchermo.innerHTML = `<iframe src="https://www.youtube-nocookie.com/embed/${ORFEO.yt}?autoplay=1&rel=0&playsinline=1" title="L'Orfeo di Monteverdi"
+        allow="autoplay; encrypted-media; picture-in-picture; fullscreen" allowfullscreen referrerpolicy="strict-origin-when-cross-origin"></iframe>`;
+    });
+    oSchermo.appendChild(b);
+  }
+  function mostraOrfeo(parte) {
+    document.querySelectorAll(".o-t").forEach(t => t.classList.toggle("attiva", t.dataset.o === parte));
+    if (parte === "mito") oCorpo.innerHTML = "<ul>" + ORFEO.mito.map(([i, t]) => `<li data-i="${i}">${t}</li>`).join("") + "</ul>";
+    if (parte === "storia") oCorpo.innerHTML = ORFEO.storia.map(([a, t]) => `<div class="atto"><b>${a}</b><span>${t}</span></div>`).join("");
+    if (parte === "curiosita") oCorpo.innerHTML = ORFEO.curiosita.map(t => `<div class="cur">${t}</div>`).join("");
+    oCorpo.scrollTop = 0;
+  }
+  document.querySelectorAll(".o-t").forEach(t => t.addEventListener("click", () => mostraOrfeo(t.dataset.o)));
+  mostraOrfeo("mito");
+
   /* ---------- crediti ---------- */
   document.getElementById("listaCrediti").innerHTML = CREDITI_IMG.map(c => `<li>${c}</li>`).join("") +
-    [...ASCOLTI, ...STRUMENTI].map(d => `<li>${d.titolo} (${d.chi}): video di <a href="https://www.youtube.com/watch?v=${d.yt}" target="_blank" rel="noopener">${d.canale}</a> su YouTube</li>`).join("");
+    [...ASCOLTI, ...STRUMENTI].map(d => `<li>${d.titolo} (${d.chi}): video di <a href="https://www.youtube.com/watch?v=${d.yt}" target="_blank" rel="noopener">${d.canale}</a> su YouTube</li>`).join("") +
+    `<li>L'Orfeo (Claudio Monteverdi): video di <a href="https://www.youtube.com/watch?v=${ORFEO.yt}" target="_blank" rel="noopener">${ORFEO.canale}</a> su YouTube</li>`;
 
   disegna();
 })();
