@@ -1,0 +1,19 @@
+# pagina 25 del PDF (libro p. 17) — controllata (riscritta a mano)
+
+# Lezione 53 | Il punto
+c4h. d4q | e4h. f4q | g4h. a4q | b4h. c5q | b4h. a4q | g4h. f4q | e4h. d4q | c4h rh
+
+# Lezione 54 | Il punto
+c5h. b4q | a4h rh | b4h. g4q | e5h rh | c5h d58 c58 a416 b416 c516 d516 | f5h. a5q | b4h c58 b48 a48 b48 | rq d5q c5q rq
+
+# Lezione 55 | Il punto
+c4q. d48 e4q. f48 | d4h g4q rq | d4q. e48 f4q. g48 | e4h c5q rq | e5q. d58 c5q. b48 | a4q. f58 e5q. d58 | g5q. c58 d5q. b48 | d5h c5q rq
+
+# Lezione 56 | Il punto
+c4h. e4q | g4q. a48 g4q rq | g4h. b4q | d5q. c58 g4q rq | e5h. g5q | g5q. f58 e5q. d58 | c5h. b4q | d58. c516 d58. e516 c5q rq
+
+# Lezione 57 | Il doppio punto
+c4q.. d416 e4q.. f416 | g4h rh | a4q.. b416 c5q.. d516 | e5h rh | g5q.. f516 e5q.. d516 | f5q.. e516 d5q.. c516 | e5q.. d516 c5q.. b416 | c5h rh
+
+# Lezione 58 | Il doppio punto
+c4h. d4q | e4q. f48 g4q rq | g4q.. a416 b48. c516 d58. e516 | g5q.. f516 d5q rq | e5q.. f516 e58. d516 c58. b416 | a4q.. b416 c5q.. d516 | e5h. c5q | d58. c516 d58. e516 c5q rq

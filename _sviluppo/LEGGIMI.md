@@ -166,7 +166,7 @@ quella modifica si perde.
 - Due passaggi: `bona_omr.py leggi bona.pdf PAGINA_PDF PRIMA_LEZIONE cartella/` → un file di testo per pagina
   (una riga per lezione, note tipo `c4h e5q rq`, avvisi `!` sulle battute che non tornano); lo si corregge
   guardando la pagina pulita, poi `bona_omr.py scrivi pagina.txt media/solfeggio/bona/` crea i MusicXML.
-  I testi già controllati delle lezioni 1–40 sono in `_sviluppo/omr/testi/` (la fonte "vera": rigenerano i MusicXML).
+  I testi già controllati delle lezioni 1–75 sono in `_sviluppo/omr/testi/` (la fonte "vera": rigenerano i MusicXML).
 - Pagina: `solfeggio-parlato.html` (lettore con conteggio, clic, triangolino a tempo, nomi e colori; "Prepara una
   scheda": fogli A4 verticali con 4 battute per riga, stampa o PDF di più pagine). Gli argomenti sono nell'array
   `ARGOMENTI` della pagina; per nuove lezioni: aggiungere i file e i numeri lì.
@@ -177,10 +177,19 @@ quella modifica si perde.
 ## 6. Da fare / in sospeso
 
 - Brani da suonare del Medioevo (In taberna, Sumer is icumen in, Ut queant laxis) e dell'antichità (Epitaffio di Seikilos): servono gli spartiti.
-- Solfeggio: Lettura ritmica e Solfeggio cantato ancora da fare; il Bona oltre la lezione 40 (dalla 41 compaiono pause e figure nuove).
+- Solfeggio: Lettura ritmica e Solfeggio cantato ancora da fare. Bona: fatte 1–75 (fine Parte prima + n. 75). Dalla 76 cambiano
+  armatura e tempo (3/4, 6/8...): `bona_omr.py scrivi` per ora scrive sempre do maggiore e 4/4, va esteso prima di continuare.
 - Altre epoche di storia.
 - Dominio musicascuole.it (DNS su Aruba + dominio personalizzato in GitHub Pages, www → reindirizzo).
 - Anteprima dei link (Open Graph), pagina 404, sitemap.
 - Pagina “Come usare il sito”, Viaggio del ritmo (parcheggiato), schede rosse di armonia.
 - Strumenti persi: lo script di allineamento delle basi non è più disponibile. Per il PDF → MusicXML ora c'è
   `_sviluppo/omr/` (pensato per il Bona, ma funziona per qualsiasi spartito stampato a una voce).
+
+### Note 08/10/2026 (2)
+- Metronomo di `solfeggio-parlato.html`: clic programmati sull'orologio dell'audio (precisi), menu suddivisione
+  (movimenti / in 2 / in 3 / in 4): primo movimento acuto, movimenti medi, suddivisioni più piane.
+- Motore: aggiunte biscrome ("32nd") e doppio punto nella mappa dei tempi. Verificato: i 63 spartiti delle raccolte
+  si disegnano identici a prima.
+- Dal PDF del Bona, dalla pagina 22 in poi il riconoscimento automatico sbaglia molto: le lezioni 41–75 sono state
+  scritte a mano nei file di testo guardando la scansione ad alta risoluzione (pdftoppm -r 400 -gray).

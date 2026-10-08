@@ -1,0 +1,13 @@
+# pagina 24 del PDF (libro p. 16) — controllata
+
+# Lezione 49 | Semicrome
+c416 d416 e416 f416 g416 a416 b416 c516 d416 e416 f416 g416 a416 b416 c516 d516 | e416 f416 g416 a416 b416 c516 d516 e516 f416 g416 a416 b416 c516 d516 e516 f516 | g516 f516 e516 d516 c516 b416 a416 g416 f516 e516 d516 c516 b416 a416 g416 f416 | e516 d516 c516 b416 a416 g416 f416 e416 d516 c516 b416 a416 g416 f416 e416 d416 | c4w
+
+# Lezione 50 | Figure diverse
+c4w | d4h e4h | f4q g4q a4q b4q | c58 d58 e58 f58 g516 f516 e516 d516 c516 b416 a416 g416 | f58 e58 d58 c58 b4q a4q | g4h f4h | e4h d4h | c4w
+
+# Lezione 51 | Figure diverse
+c5w | b4h c5h | d5h b4h | g4h rh | rq c5q rq e5q | rq d5q rq c5q | b4q d58 c58 a4q c58 b48 | g416 a416 b416 c516 d516 e516 f516 e516 d516 c516 b416 a416 g416 f416 e416 d416 | c4w | e4q g4q c5q e5q | d4q f48 a48 d58 e58 f58 g58 | a58 e58 g58 f58 a48 b48 c58 d58 | e5q c5q g4q e4q | d4w | g4w | c4h rh
+
+# Lezione 52 | Figure diverse
+c416 e416 d416 f416 e416 g416 f416 a416 g416 b416 a416 c516 b416 d516 c516 e516 | d5q rq rh | e516 g516 d516 f516 c516 e516 b416 d516 a416 c516 g416 b416 f416 a416 e416 g416 | d4q rq rh | c416 f416 d416 g416 e416 a416 f416 b416 g416 c516 a416 d516 b416 e516 c516 f516 | d58 a48 a516 g516 f516 e516 d516 e516 c516 d516 b416 c516 a416 b416 | g48 e58 d58 c58 b416 c516 d516 e516 f516 g516 a516 b416 | d5h c5q rq

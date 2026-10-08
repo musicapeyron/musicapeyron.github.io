@@ -20,7 +20,7 @@ Il file di testo:
     c4h e5h | d4h f5h | ... | c5w
   una battuta tra due "|"; ogni nota è nome+ottava+durata: c4 = do centrale; durata w h q 8 16
   (semibreve, minima, semiminima, croma, semicroma), "." per il punto; pausa = r + durata (rh, rq ...);
-  diesis/bemolle: c#5q, bb4q. Le righe che iniziano con "!" sono avvisi dello script (battute che non tornano).
+  diesis/bemolle: c#5q, bb4q; doppio punto: "q.."; legatura di valore verso la nota seguente: "~" in fondo (c4h~). Le righe che iniziano con "!" sono avvisi dello script (battute che non tornano).
   La corona sull'ultima nota/pausa e la doppia barra finale vengono aggiunte da sole.
 
 Audiveris (OMR open source): https://github.com/Audiveris/audiveris — installato da
@@ -70,6 +70,8 @@ def misure_da_mxl(f):
             if t not in DUR:
                 continue
             d = DUR[t] + "." * len(n.findall("dot"))
+            if any(x.get("type") == "start" for x in n.findall("tie")):
+                d += "~"   # legatura di valore verso la nota seguente
             if n.find("rest") is not None:
                 note.append("r" + d)
             else:
@@ -80,7 +82,7 @@ def misure_da_mxl(f):
 
 
 def durata(tok):
-    m = re.fullmatch(r"(?:r|[a-g][#b]?\d)(w|h|q|8|16|32)(\.*)", tok)
+    m = re.fullmatch(r"(?:r|[a-g][#b]?\d)(w|h|q|8|16|32)(\.*)~?", tok)
     if not m:
         raise ValueError(f"nota non valida: {tok}")
     base = QL[m.group(1)]
@@ -138,16 +140,17 @@ def musicxml(numero, argomento, battute):
          + '</identification>',
          '  <part-list><score-part id="P1"><part-name>Voce</part-name></score-part></part-list>',
          '  <part id="P1">']
+    legata_prima = False
     for i, b in enumerate(battute, 1):
         x.append(f'    <measure number="{i}">')
         if i == 1:
             x.append(f'      <attributes><divisions>{DIV}</divisions><key><fifths>0</fifths></key>'
                      '<time symbol="common"><beats>4</beats><beat-type>4</beat-type></time><clef><sign>G</sign><line>2</line></clef></attributes>')
         for j, tok in enumerate(b):
-            m = re.fullmatch(r"(r|[a-g][#b]?\d)(w|h|q|8|16|32)(\.*)", tok)
+            m = re.fullmatch(r"(r|[a-g][#b]?\d)(w|h|q|8|16|32)(\.*)(~?)", tok)
             if not m:
                 raise ValueError(f"Lezione {numero}, battuta {i}: nota non valida «{tok}»")
-            alt, d, punti = m.groups()
+            alt, d, punti, lega = m.groups()
             dur = int(durata(tok) * DIV)
             ultima = i == len(battute) and j == len(b) - 1
             if alt == "r":
@@ -156,9 +159,13 @@ def musicxml(numero, argomento, battute):
                 acc = {"#": 1, "b": -1}.get(alt[1] if len(alt) == 3 else "", 0)
                 testa = (f'<pitch><step>{alt[0].upper()}</step>' + (f'<alter>{acc}</alter>' if acc else '')
                          + f'<octave>{alt[-1]}</octave></pitch>')
-            x.append(f'      <note>{testa}<duration>{dur}</duration><type>{TIPO[d]}</type>'
-                     + '<dot/>' * len(punti)
-                     + ('<notations><fermata type="upright"/></notations>' if ultima else '') + '</note>')
+            legature = (['stop'] if legata_prima else []) + (['start'] if lega else [])
+            notazioni = ''.join(f'<tied type="{t}"/>' for t in legature) + ('<fermata type="upright"/>' if ultima else '')
+            x.append(f'      <note>{testa}<duration>{dur}</duration>'
+                     + ''.join(f'<tie type="{t}"/>' for t in legature)
+                     + f'<type>{TIPO[d]}</type>' + '<dot/>' * len(punti)
+                     + (f'<notations>{notazioni}</notations>' if notazioni else '') + '</note>')
+            legata_prima = bool(lega)
         if i == len(battute):
             x.append('      <barline location="right"><bar-style>light-heavy</bar-style></barline>')
         x.append('    </measure>')

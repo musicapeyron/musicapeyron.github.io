@@ -1,0 +1,7 @@
+# pagina 26 del PDF (libro p. 18) — controllata (riscritta a mano)
+
+# Lezione 59 | La legatura di valore
+c5h~ c5q b4q | d5q~ d58 c58 g4q rq | d5h~ d5q e5q | g58 f58 d58 b48 g4q rq | c5h~ c5q b4q | a4h~ a4q c5q | b4h~ b4q d5q | c5q~ c58 e58 d5q~ d58 f58 | e5h~ e5q g5q | a4h~ a4q f5q | g4h~ g48 e48 g48 c58 | e5q~ e58 c58 d5q~ d58 b48 | d58 g48 d58 e58 c5q rq
+
+# Lezione 60 | Punto, doppio punto e legatura
+c5h. b4q | c5h g4q rq | d5h. e5q | f5h g4q rq | c5q. d58 e5q. f58 | g5q. e58 c5q rq | c5q.. d516 e5q.. c516 | d5h g4q rq | c5h. d58 e58 | g5h~ g58 f58 e58 d58 | f5h~ f58 e58 d58 c58 | e5h~ e58 d58 c58 b48 | d5h~ d58 c58 b48 a48 | g4h. e58 c58 | g4h. f58 d58 | c5q g58 e58 d5q a58 f58 | e5q. c58 f5q. c58 | g58. c516 a5q rq c58 d58 | e5h. g4q | e5q. g48 e58. g416 d58.. g432 | c5h rh | g4q f5q g4q a5q | g5q e5q c5q. a48 | g4h~ g48 a48 b48 d58 | c58 d58 e58 c58 g4q rq | g4q f58.. e532 d5q a5q | g5q e58. d516 c5q b48. c516 | g4q. f48 e4q.. d416 | c4h rh

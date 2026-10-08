@@ -1,0 +1,13 @@
+# pagina 22 del PDF (libro p. 14) — controllata
+
+# Lezione 42 | Piccoli solfeggi con le pause
+r8 c48 r8 d48 r8 e48 r8 f48 | r8 g48 r8 a48 r8 b48 r8 c58 | r8 d58 r8 e58 r8 f58 r8 g58 | r8 f58 r8 e58 r8 d58 r8 c58 | r8 b48 r8 a48 r8 g48 r8 f48 | r8 e48 r8 d48 c4h
+
+# Lezione 43 | Piccoli solfeggi con le pause
+r8 c48 d48 e48 r8 d48 e48 f48 | r8 e48 f48 g48 r8 f48 g48 a48 | r8 g48 a48 b48 r8 a48 b48 c58 | r8 b48 c58 d58 r8 e58 f58 g58 | r8 g58 e58 c58 r8 g58 d58 b48 | r8 e58 c58 a48 r8 e58 b48 g48 | rq g4q f4q d4q | c4w
+
+# Lezione 44 | Piccoli solfeggi con le pause
+c4h e4q g4q | c5h rh | rq e5q d5q c5q | d5h g4q rq | c4h e4q g4q | c5q d5q e5q rq | rq d5q c5q a4q | r8 g48 b48 a48 r8 g48 d58 c58 | b48 c58 d58 e58 f5q rq | rq f4q e4q d4q | c4q e4q f4q g4q | rq a4q rq b4q | r8 c58 r8 d58 r8 e58 r8 f58 | g5h rh | rh e5q c5q | rq g4q rq f4q | rq e4q rq d4q | c4w
+
+# Lezione 45 | Piccoli solfeggi con le pause
+c5h d5q b4q | c5h g4q rq | c5h e5q g5q | d5h g4q rq | c5h b4q c5q | a4q f5q e5q d5q | c5h e5q d5q | c5h rh | rq b4q c5q a4q | rq d5q g5q g4q | rq b4q a4q d4q | g4q f5q a48 f58 b48 g58 | c5h d5q b4q | c5q rq g4q rq | c5h d5q e5q | rq g5q rq f5q | r8 e58 r8 d58 r8 c58 r8 a48 | g4h c5h | b4q c5q d5q e5q | c5h rh

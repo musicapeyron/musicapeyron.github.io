@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Solfeggio parlato — Musica Peyron</title>
-<meta name="description" content="Solfeggio parlato con le prime 40 lezioni del metodo di Pasquale Bona: metronomo, conteggio, nomi delle note e schede da stampare.">
+<meta name="description" content="Solfeggio parlato con le prime 75 lezioni del metodo di Pasquale Bona: metronomo, conteggio, nomi delle note e schede da stampare.">
 <link rel="icon" href="favicon.svg" type="image/svg+xml">
 <link rel="icon" href="favicon-32.png" type="image/png" sizes="32x32">
 <link rel="apple-touch-icon" href="apple-touch-icon.png">
@@ -67,6 +67,8 @@
   .interr { display: inline-flex; align-items: center; gap: 6px; font: 700 13px 'Manrope', sans-serif; color: #1F2430; background: #fff; border: 1px solid #E2E8F0;
     border-radius: 999px; padding: 7px 12px; cursor: pointer; user-select: none; }
   .interr input { width: 16px; height: 16px; accent-color: #E21C48; margin: 0; }
+  .interr.senza { border: 0; padding: 4px 6px; }
+  .clic-g select { font: 700 13px 'Manrope', sans-serif; color: #1F2430; background: #F1F5F9; border: 1px solid #CBD5E1; border-radius: 999px; padding: 6px 8px; cursor: pointer; }
   .azione { font: 700 13px 'Manrope', sans-serif; color: #1F2430; background: #fff; border: 1px solid #CBD5E1; border-radius: 999px; padding: 8px 14px; cursor: pointer; }
   .azione:hover { background: #F1F5F9; }
 
@@ -128,7 +130,7 @@
 <main>
   <div class="testa">
     <h1>Solfeggio parlato</h1>
-    <p>Pasquale Bona, le prime 40 lezioni · si dice il nome delle note, a tempo</p>
+    <p>Pasquale Bona, le prime 75 lezioni</p>
   </div>
   <nav class="argomenti" id="argomenti" aria-label="Argomenti"></nav>
   <nav class="numeri" id="numeri" aria-label="Lezioni"></nav>
@@ -143,7 +145,9 @@
     <div class="comandi">
       <button type="button" class="via" id="via">▶ Solfeggia</button>
       <span class="gruppo" title="Velocità (battiti al minuto)"><button type="button" class="tondo" id="meno" aria-label="Più lento">−</button><span class="bpm" id="bpm"></span><button type="button" class="tondo" id="piu" aria-label="Più veloce">+</button></span>
-      <label class="interr" title="Metronomo udibile durante l'esercizio (il conteggio iniziale si sente sempre)"><input type="checkbox" id="clic"> Clic</label>
+      <span class="gruppo clic-g"><label class="interr senza" title="Metronomo udibile durante l'esercizio (il conteggio iniziale si sente sempre)"><input type="checkbox" id="clic"> Clic</label>
+        <select id="sudd" aria-label="Suddivisione del clic" title="Suddivisione: oltre ai movimenti, il clic batte anche le parti di ogni movimento (più piano)">
+          <option value="1">♩ movimenti</option><option value="2">♪♪ in 2</option><option value="3">♪♪♪ in 3</option><option value="4">♬♬ in 4</option></select></span>
       <label class="interr" title="Scrive il nome sopra ogni nota"><input type="checkbox" id="nomi"> Nomi</label>
       <label class="interr" title="Colora le note"><input type="checkbox" id="colori"> Colori</label>
       <button type="button" class="azione" id="intero" title="Schermo intero, per la LIM">⛶ Schermo intero</button>
@@ -191,17 +195,25 @@
     { nome: "None", lezioni: [27, 28, 29], titolo: "Salti di nona" },
     { nome: "Decime", lezioni: [30, 31, 32], titolo: "Salti di decima" },
     { nome: "Salti misti", lezioni: [33, 34, 35, 36], titolo: "Salti misti" },
-    { nome: "Figure diverse", lezioni: [37], titolo: "Scala con figure diverse" },
-    { nome: "Pause", lezioni: [38, 39, 40], titolo: "Piccoli solfeggi con le pause" }
+    { nome: "Figure diverse", lezioni: [37, 50, 51, 52], titolo: "Figure diverse", dettagli: { 37: "Scala con figure diverse" } },
+    { nome: "Pause", lezioni: [38, 39, 40, 41, 42, 43, 44, 45], titolo: "Piccoli solfeggi con le pause" },
+    { nome: "Semicrome", lezioni: [46, 47, 48, 49], titolo: "Le semicrome" },
+    { nome: "Punto", lezioni: [53, 54, 55, 56], titolo: "Il punto" },
+    { nome: "Doppio punto", lezioni: [57, 58], titolo: "Il doppio punto" },
+    { nome: "Legatura", lezioni: [59, 60], dettagli: { 59: "La legatura di valore", 60: "Punto, doppio punto e legatura" } },
+    { nome: "Sincope", lezioni: [61, 62, 63, 64, 65, 66], titolo: "La sincope" },
+    { nome: "Salti veloci", lezioni: [67, 68, 69, 70, 71, 72, 73], titolo: "Tutti i salti, per sciogliere la lingua", dettagli: { 73: "Salti misti" } },
+    { nome: "Biscrome", lezioni: [74], titolo: "Scala di biscrome" },
+    { nome: "Parte seconda", lezioni: [75], titolo: "Parte seconda · Largo" }
   ];
-  const TUTTE = ARGOMENTI.flatMap(a => a.lezioni);
+  const TUTTE = ARGOMENTI.flatMap(a => a.lezioni).sort((x, y) => x - y);
   const argDi = n => ARGOMENTI.find(a => a.lezioni.includes(n));
   const titoloDi = n => { const a = argDi(n); return (a.dettagli && a.dettagli[n]) || a.titolo; };
 
   /* ---------- impostazioni ricordate (solo in questo browser) ---------- */
   const leggi = (k, d) => { try { const v = localStorage.getItem("bona." + k); return v === null ? d : v; } catch (e) { return d; } };
   const scrivi = (k, v) => { try { localStorage.setItem("bona." + k, v); } catch (e) {} };
-  const S = { bpm: +leggi("bpm", "60") || 60, clic: leggi("clic", "1") === "1", nomi: leggi("nomi", "0") === "1", colori: leggi("colori", "0") === "1" };
+  const S = { bpm: +leggi("bpm", "60") || 60, sudd: [1, 2, 3, 4].includes(+leggi("sudd", "1")) ? +leggi("sudd", "1") : 1, clic: leggi("clic", "1") === "1", nomi: leggi("nomi", "0") === "1", colori: leggi("colori", "0") === "1" };
   let attuale = +leggi("lezione", "1"); if (!TUTTE.includes(attuale)) attuale = 1;
   let argomento = null;   // null = tutte
 
@@ -244,9 +256,28 @@
   function disegna() {
     if (!branoAttuale) return;
     const w = area.clientWidth - 36, h = area.clientHeight - 16;
-    const ad = MotoreSchemi.adattaBrano(div, branoAttuale, opzioni(), Math.max(200, w), Math.max(120, h));
+    const ad = adatta(div, branoAttuale, opzioni(), Math.max(200, w), Math.max(120, h));
     const vb = ad.svg.viewBox.baseVal, k = Math.min(ad.scala, 2.6);
     ad.svg.style.width = vb.width * k + "px"; ad.svg.style.height = vb.height * k + "px";
+  }
+  /* come MotoreSchemi.adattaBrano, ma le battute molto fitte (biscrome) ricevono lo spazio che serve */
+  const notePiuFitte = brano => Math.max(...brano.battute.map(b => b.eventi.length));
+  function adatta(contenitore, brano, opz, larghArea, altoArea) {
+    const minBattuta = Math.max(150, notePiuFitte(brano) * 26), testa = 120;
+    let migliore = null;
+    for (let perRiga = 1; perRiga <= 8; perRiga++) {
+      if (perRiga > brano.battute.length) break;
+      if (perRiga === 1 && brano.battute.length > 1 && minBattuta <= 150) continue;
+      const minimo = minBattuta * perRiga + testa;
+      MotoreSchemi.disegnaBrano(contenitore, brano, Object.assign({}, opz, { larghezza: minimo, perRiga }));
+      const altoLogico = contenitore.querySelector("svg").viewBox.baseVal.height;
+      const larghezza = Math.max(minimo, altoLogico * larghArea / altoArea);
+      const scala = Math.min(larghArea / larghezza, altoArea / altoLogico);
+      if (!migliore || scala > migliore.scala + 1e-6) migliore = { perRiga, larghezza, scala };
+    }
+    MotoreSchemi.disegnaBrano(contenitore, brano, Object.assign({}, opz, { larghezza: Math.round(migliore.larghezza), perRiga: migliore.perRiga }));
+    const svg = contenitore.querySelector("svg"), vb = svg.viewBox.baseVal;
+    return { svg, scala: Math.min(larghArea / vb.width, altoArea / vb.height) };
   }
   const passo = d => {
     const elenco = argomento === null ? TUTTE : ARGOMENTI[argomento].lezioni;
@@ -260,8 +291,14 @@
   const elBpm = document.getElementById("bpm");
   const aggiornaBpm = () => elBpm.textContent = "♩ = " + S.bpm;
   aggiornaBpm();
-  document.getElementById("meno").addEventListener("click", () => { S.bpm = Math.max(30, S.bpm - 4); scrivi("bpm", S.bpm); aggiornaBpm(); });
-  document.getElementById("piu").addEventListener("click", () => { S.bpm = Math.min(160, S.bpm + 4); scrivi("bpm", S.bpm); aggiornaBpm(); });
+  document.getElementById("meno").addEventListener("click", () => { cambiaBpm(Math.max(30, S.bpm - 4)); scrivi("bpm", S.bpm); aggiornaBpm(); });
+  document.getElementById("piu").addEventListener("click", () => { cambiaBpm(Math.min(200, S.bpm + 4)); scrivi("bpm", S.bpm); aggiornaBpm(); });
+  const elSudd = document.getElementById("sudd"); elSudd.value = String(S.sudd);
+  elSudd.addEventListener("change", () => {
+    const nuovo = +elSudd.value;
+    if (solf) { const p = posA(adesso()); solf.griglia = Math.ceil((p + solf.lung) * nuovo - 1e-6); }
+    S.sudd = nuovo; scrivi("sudd", nuovo);
+  });
   [["clic", false], ["nomi", true], ["colori", true]].forEach(([k, ridisegna]) => {
     const c = document.getElementById(k); c.checked = S[k];
     c.addEventListener("change", () => { S[k] = c.checked; scrivi(k, c.checked ? "1" : "0"); if (ridisegna) { ferma(); disegna(); } });
@@ -281,47 +318,69 @@
     else if (e.key === " " && e.target.tagName !== "BUTTON") { e.preventDefault(); solf ? ferma() : avvia(); }
   });
 
-  /* ---------- solfeggio: conteggio iniziale, clic e triangolino sulla figura da leggere ---------- */
-  let ctx = null, solf = null;
-  const DURQ = { w: 4, h: 2, q: 1, "8": 0.5, "16": 0.25 };
-  function clic(forte) {
+  /* ---------- solfeggio: conteggio iniziale, clic e triangolino sulla figura da leggere ----------
+     Il tempo lo dà l'orologio dell'audio: i clic sono programmati in anticipo, così restano precisi anche
+     con le suddivisioni veloci. Clic: accento sul primo movimento, movimenti, suddivisioni più leggere. */
+  let ctx = null, solf = null, timer = null, suoni = [];
+  const DURQ = { w: 4, h: 2, q: 1, "8": 0.5, "16": 0.25, "32": 0.125 };
+  const audio = () => { try { ctx = ctx || new (window.AudioContext || window.webkitAudioContext)(); if (ctx.state === "suspended") ctx.resume(); } catch (e) { ctx = null; } return ctx; };
+  const adesso = () => ctx ? ctx.currentTime : performance.now() / 1000;
+  function clic(t, tipo) {   // tipo: 2 = primo movimento, 1 = movimento, 0 = suddivisione
+    if (!ctx) return;
     try {
-      ctx = ctx || new (window.AudioContext || window.webkitAudioContext)(); if (ctx.state === "suspended") ctx.resume();
-      const t = ctx.currentTime + 0.005, o = ctx.createOscillator(), g = ctx.createGain();
-      o.type = "triangle"; o.frequency.value = forte ? 780 : 520;
-      g.gain.setValueAtTime(0.0001, t); g.gain.exponentialRampToValueAtTime(forte ? 0.3 : 0.2, t + 0.01); g.gain.exponentialRampToValueAtTime(0.0001, t + 0.08);
+      const o = ctx.createOscillator(), g = ctx.createGain();
+      o.type = "triangle"; o.frequency.value = [1250, 780, 520][2 - tipo];
+      const v = [0.11, 0.22, 0.32][tipo];
+      g.gain.setValueAtTime(0.0001, t); g.gain.exponentialRampToValueAtTime(v, t + 0.006); g.gain.exponentialRampToValueAtTime(0.0001, t + (tipo ? 0.08 : 0.05));
       o.connect(g).connect(ctx.destination); o.start(t); o.stop(t + 0.1);
+      suoni.push(o); if (suoni.length > 64) suoni.splice(0, 32);
     } catch (e) {}
   }
   const via = document.getElementById("via");
   via.addEventListener("click", () => solf ? ferma() : avvia());
+  const posA = t => solf.ancora.pos + (t - solf.ancora.t) * S.bpm / 60;   // posizione in semiminime (negativa nel conteggio)
+  const tempoDi = p => solf.ancora.t + (p - solf.ancora.pos) * 60 / S.bpm;
   function avvia() {
     const svg = div.querySelector("svg"); if (!branoAttuale || !svg || !svg._mappa) return;
+    audio();
     const [num, den] = branoAttuale.tempo, lung = num * 4 / den;
-    const durB = b => { const q = b.eventi.reduce((t, e) => t + (e.intera ? lung : (DURQ[e.durata] || 1) * (e.punti ? 1.5 : 1)), 0); return q > 0 ? q : lung; };
+    const durB = b => { const q = b.eventi.reduce((t, e) => t + (e.intera ? lung : (DURQ[e.durata] || 1) * (2 - Math.pow(0.5, e.punti || 0))), 0); return q > 0 ? q : lung; };
     const inizi = []; let tot = 0;
     branoAttuale.battute.forEach(b => { inizi.push(tot); tot += durB(b); });
-    solf = { svg, inizi, tot, lung, pos: -lung, prima: performance.now(), ultimo: null };
+    solf = { svg, inizi, tot, lung, ancora: { t: adesso() + 0.12, pos: -lung }, griglia: 0 };
     via.textContent = "■ Ferma"; via.classList.add("in-corso");
+    programma(); timer = setInterval(programma, 25);
     requestAnimationFrame(avanti);
   }
+  function programma() {   // programma i clic dei prossimi 150 ms
+    if (!solf) return;
+    const sud = S.sudd, fine = adesso() + 0.15;
+    for (;;) {
+      const p = -solf.lung + solf.griglia / sud;
+      if (p >= solf.tot - 1e-6) break;
+      const t = tempoDi(p); if (t > fine) break;
+      const movimento = solf.griglia % sud === 0;
+      if (t >= adesso() - 0.01 && (p < 0 || S.clic)) {
+        let tipo = movimento ? 1 : 0;
+        if (movimento) { const inBattuta = p < 0 ? p + solf.lung : p - solf.inizi.reduce((a, x) => x <= p + 1e-6 ? x : a, 0); if (Math.abs(inBattuta) < 1e-6) tipo = 2; }
+        if (movimento || sud > 1) clic(t, tipo);
+      }
+      solf.griglia++;
+    }
+  }
   function ferma() {
+    clearInterval(timer); timer = null;
+    suoni.forEach(o => { try { o.stop(); } catch (e) {} }); suoni = [];
     div.querySelectorAll("svg .solf-g, svg .solf-sb").forEach(g => g.remove());
     solf = null; via.textContent = "▶ Solfeggia"; via.classList.remove("in-corso");
   }
-  function avanti(ora) {
+  function cambiaBpm(nuovo) {   // durante l'esercizio la velocità cambia senza salti
+    if (solf) { const t = adesso(), p = posA(t); solf.ancora = { t, pos: p }; solf.griglia = Math.ceil((p + solf.lung) * S.sudd - 1e-6); suoni.forEach(o => { try { o.stop(); } catch (e) {} }); suoni = []; }
+    S.bpm = nuovo;
+  }
+  function avanti() {
     if (!solf) return;
-    const dt = Math.min(0.1, Math.max(0, (ora - solf.prima) / 1000)); solf.prima = ora;
-    solf.pos += dt * S.bpm / 60;
-    const { pos, inizi, tot, lung } = solf;
-    const battito = Math.floor(pos + lung + 1e-6);
-    if (battito !== solf.ultimo && pos < tot) {
-      solf.ultimo = battito;
-      let forte;
-      if (pos < 0) forte = battito === 0;
-      else { const k = inizi.findIndex((x, j) => pos >= x - 1e-6 && (j === inizi.length - 1 || pos < inizi[j + 1] - 1e-6)); forte = k >= 0 && pos - inizi[k] < 0.5; }
-      if (pos < 0 || S.clic) clic(forte);
-    }
+    const pos = posA(adesso()), { inizi, tot } = solf;
     if (pos >= tot) { ferma(); return; }
     let m = 0, qIn = 0, conta = 0;
     if (pos < 0) conta = Math.ceil(-pos - 1e-6);
@@ -413,7 +472,8 @@
       for (const n of lezioni) {
         const brano = await carica(n);
         const d = document.createElement("div"); fuori.appendChild(d);
-        MotoreSchemi.disegnaBrano(d, brano, Object.assign({}, opz, { larghezza: larg, perRiga: Math.min(BATTUTE_RIGA, brano.battute.length) }));
+        const perRiga = Math.max(1, Math.min(BATTUTE_RIGA, brano.battute.length, Math.floor((larg - 60) / (notePiuFitte(brano) * 22))));
+        MotoreSchemi.disegnaBrano(d, brano, Object.assign({}, opz, { larghezza: larg, perRiga }));
         const s = d.querySelector("svg"), vb = s.viewBox.baseVal;
         let h = vb.height * larg / vb.width, k = 1;
         const spazio = PH - MG - 22 - y - 30 - 18;

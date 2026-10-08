@@ -281,7 +281,7 @@
   /* ===================== lettura del MusicXML =====================
      Restituisce { titolo, armatura, tempo:[n,d], battute:[{ eventi, inizioRitornello, fineRitornello, fine }] }
      Ogni evento: { nota:{lettera,alt,ottava,chiave} | pausa:true, durata:"w"|"h"|"q"|"8"|"16", punti, dito? } */
-  const TIPI = { whole: "w", half: "h", quarter: "q", eighth: "8", "16th": "16" };
+  const TIPI = { whole: "w", half: "h", quarter: "q", eighth: "8", "16th": "16", "32nd": "32" };
   function leggiMusicXML(testo) {
     const doc = new DOMParser().parseFromString(testo, "application/xml");
     const parte = doc.querySelector("part");
@@ -430,8 +430,8 @@
     const tutteLeNote = [];
     /* mappa per seguire la base: per ogni battuta, dove sta nel disegno e dove cade ogni figura (in semiminime) */
     const mappaBattute = [], lungBattuta = brano.tempo[0] * 4 / brano.tempo[1];
-    const DURQ = { w: 4, h: 2, q: 1, "8": 0.5, "16": 0.25 };
-    const durQ = e => e.intera ? lungBattuta : (DURQ[e.durata] || 1) * (e.punti ? 1.5 : 1);
+    const DURQ = { w: 4, h: 2, q: 1, "8": 0.5, "16": 0.25, "32": 0.125 };
+    const durQ = e => e.intera ? lungBattuta : (DURQ[e.durata] || 1) * (2 - Math.pow(0.5, e.punti || 0));   // punto: ×1,5; doppio punto: ×1,75
     { let aperte = [], prossima = 0;   // ogni nota sotto una legatura di portamento riceve il suo numero
       brano.battute.forEach(b => b.eventi.forEach(e => {
         if (e.pausa) return;
