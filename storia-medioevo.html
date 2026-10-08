@@ -1,0 +1,417 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Il Medioevo — Storia della musica — Musica Peyron</title>
+<meta name="description" content="La musica del Medioevo raccontata attraverso gli ascolti: canto gregoriano, Leonino e Perotino, trovatori, Carmina Burana, danze e strumenti dell'epoca.">
+<link rel="icon" href="favicon.svg" type="image/svg+xml">
+<link rel="icon" href="favicon-32.png" type="image/png" sizes="32x32">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
+<link rel="stylesheet" href="fonts/caratteri.css">
+<style>
+  * { box-sizing: border-box; }
+  html, body { margin: 0; min-height: 100%; }
+  body { min-height: 100vh; font-family: 'Inter', 'Segoe UI', Arial, sans-serif; color: #EAF2FF; -webkit-font-smoothing: antialiased;
+    background: #0f172a; overflow-x: hidden; position: relative; }
+  body::after { content: ""; position: fixed; inset: 0; z-index: -1; pointer-events: none;
+    background: radial-gradient(circle at 50% 0%, #3730a3 0%, transparent 45%), linear-gradient(135deg, #0f172a, #1e1b4b); }
+  body::before { content: ""; position: fixed; inset: 0; z-index: 0; pointer-events: none; opacity: 0.5;
+    background-image: radial-gradient(rgba(255,255,255,0.035) 1px, transparent 1px); background-size: 3px 3px; }
+
+  .casetta { position: fixed; top: 12px; left: 12px; z-index: 40; width: 44px; height: 44px; border-radius: 50%; display: grid; place-items: center;
+    background: rgba(15,23,42,0.75); border: 1px solid rgba(255,255,255,0.18); text-decoration: none; font-size: 20px; }
+
+  main { position: relative; z-index: 1; max-width: 1400px; margin: 0 auto; padding: 12px 20px 24px; }
+
+  /* ---------- doppio banner ---------- */
+  .banner { position: relative; height: clamp(170px, 30vh, 320px); border-radius: 18px; overflow: hidden; background: #111827;
+    border: 1px solid rgba(255,255,255,0.1); user-select: none; -webkit-user-select: none; }
+  .meta { position: absolute; inset: 0; cursor: pointer; transition: filter .35s ease, opacity .35s ease; -webkit-tap-highlight-color: transparent; }
+  .meta img { width: 100%; height: 100%; object-fit: cover; display: block; }
+  .meta.sx { clip-path: polygon(0 0, 56% 0, 44% 100%, 0 100%); }
+  .meta.dx { clip-path: polygon(56% 0, 100% 0, 100% 100%, 44% 100%); }
+  .meta.sx img { width: 58%; object-position: 50% 55%; }
+  .meta.dx img { width: 58%; margin-left: 42%; object-position: 50% 40%; }
+  .banner.f-profano .meta.dx, .banner.f-sacro .meta.sx { filter: grayscale(.85) brightness(.45); }
+  .banner::after { content: ""; position: absolute; inset: 0; pointer-events: none;
+    background: radial-gradient(ellipse at 50% 55%, rgba(15,23,42,0.55) 0%, rgba(15,23,42,0) 60%), linear-gradient(0deg, rgba(15,23,42,0.75), rgba(15,23,42,0) 45%); }
+  .titolo-epoca { position: absolute; left: 50%; top: 50%; transform: translate(-50%, -58%); text-align: center; z-index: 2; pointer-events: none; }
+  .titolo-epoca .sopra { font-family: 'Manrope', sans-serif; font-weight: 800; font-size: 11.5px; letter-spacing: .16em; text-transform: uppercase; color: #FDE7C7; text-shadow: 0 1px 6px rgba(0,0,0,.8); }
+  .titolo-epoca h1 { font-family: 'Fredoka', 'Manrope', sans-serif; font-weight: 600; margin: 0; font-size: clamp(32px, 6vw, 62px); line-height: 1.05; text-shadow: 0 2px 18px rgba(0,0,0,.85); }
+  .titolo-epoca .date { font-family: 'Manrope', sans-serif; font-weight: 800; color: #FFE58A; font-size: clamp(13px, 1.6vw, 17px); text-shadow: 0 1px 8px rgba(0,0,0,.9); }
+  .etich-meta { position: absolute; bottom: 12px; z-index: 3; font-family: 'Manrope', sans-serif; font-weight: 800; font-size: 12.5px;
+    padding: 6px 12px; border-radius: 999px; background: rgba(15,23,42,0.72); border: 1px solid rgba(255,255,255,0.22); cursor: pointer; white-space: nowrap; }
+  .etich-meta.sx { left: 12px; color: #FBC877; } .etich-meta.dx { right: 12px; color: #C4B5FD; }
+  .etich-meta.attiva { background: #EAF2FF; color: #0f172a; }
+  @media (max-width: 560px) { .etich-meta { font-size: 11px; padding: 5px 9px; bottom: 8px; } .etich-meta .lungo { display: none; } }
+
+  .atmosfera { text-align: center; color: #9FB3CE; font-size: 13px; font-style: italic; margin: 10px auto 12px; max-width: 760px; line-height: 1.45; }
+
+  /* ---------- schede ---------- */
+  .schede { display: flex; justify-content: center; gap: 8px; flex-wrap: wrap; margin-bottom: 12px; }
+  .scheda { font: 700 13.5px 'Manrope', sans-serif; color: #EAF2FF; cursor: pointer; padding: 8px 16px; border-radius: 999px;
+    background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.14); display: inline-flex; align-items: center; gap: 7px; }
+  .scheda:hover { background: rgba(255,255,255,0.12); }
+  .scheda.attiva { background: #EAF2FF; color: #0f172a; border-color: #EAF2FF; }
+  .scheda .n { font-size: 11px; opacity: .65; }
+  @media (max-width: 560px) { main { padding-top: 64px !important; } .schede { flex-wrap: nowrap; gap: 6px; } .scheda { font-size: 12.5px; padding: 7px 11px; gap: 5px; } .scheda .n { display: none; } }
+
+  /* ---------- griglia di card (come in home) ---------- */
+  .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 12px; }
+  @media (min-width: 1200px) { .grid { grid-template-columns: repeat(5, 1fr); } }
+  @media (max-width: 520px) { .grid { grid-template-columns: repeat(2, 1fr); gap: 9px; } main { padding: 10px 12px 20px; } }
+  .card { --accent: #5EC8D8; position: relative; background: rgba(255,255,255,0.035); border: 1px solid rgba(255,255,255,0.09); border-top: 2px solid var(--accent);
+    border-radius: 12px; overflow: hidden; display: flex; flex-direction: column; text-align: left; font: inherit; color: inherit; padding: 0; cursor: pointer;
+    transition: border-color .2s ease, transform .2s ease, background .2s ease; }
+  .card:hover { transform: translateY(-2px); background: rgba(255,255,255,0.06); border-color: color-mix(in srgb, var(--accent) 55%, transparent); border-top-color: var(--accent); }
+  .card:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+  .card .foto { aspect-ratio: 16 / 10; background: #1e293b center / cover no-repeat; position: relative; }
+  .card .foto::after { content: "▶"; position: absolute; right: 8px; bottom: 8px; width: 30px; height: 30px; border-radius: 50%; display: grid; place-items: center;
+    font-size: 12px; background: rgba(15,23,42,0.8); color: #fff; border: 1px solid rgba(255,255,255,0.3); }
+  .card .testo { padding: 9px 11px 11px; display: flex; flex-direction: column; gap: 3px; flex: 1; }
+  .card .label { align-self: flex-start; font-size: 9px; font-weight: 700; letter-spacing: .05em; text-transform: uppercase; color: var(--accent);
+    background: color-mix(in srgb, var(--accent) 14%, transparent); padding: 2px 7px; border-radius: 999px; }
+  .card h2 { font-family: 'Manrope', sans-serif; font-weight: 700; font-size: 14px; margin: 2px 0 0; letter-spacing: -0.01em; line-height: 1.25; }
+  .card .chi { font-size: 11px; color: #9FB3CE; font-weight: 600; }
+  .card p { font-size: 11.5px; line-height: 1.4; color: #B8C7DD; margin: 2px 0 0; }
+  .card.sacro { --accent: #a78bfa; } .card.profano { --accent: #F99D1C; } .card.strum { --accent: #5EC8D8; } .card.suona { --accent: #BED958; }
+  .card.empty { cursor: default; border-style: dashed; background: transparent; }
+  .card.empty:hover { transform: none; }
+  .card.empty .foto::after { content: "presto"; width: auto; height: auto; padding: 3px 9px; border-radius: 999px; font: 700 10.5px 'Manrope', sans-serif; letter-spacing: .04em; }
+  .card.nascosta { display: none; }
+
+  /* ---------- finestra dell'ascolto ---------- */
+  .velo { position: fixed; inset: 0; z-index: 60; background: rgba(2,6,23,0.82); display: none; align-items: center; justify-content: center; padding: 16px; }
+  .velo.aperto { display: flex; }
+  .finestra { position: relative; width: min(1180px, 100%); max-height: calc(100vh - 32px); overflow: auto; background: #131c33; border: 1px solid rgba(255,255,255,0.14);
+    border-top: 3px solid var(--accent, #5EC8D8); border-radius: 18px; display: grid; grid-template-columns: 1.55fr 1fr; gap: 0; box-shadow: 0 20px 60px rgba(0,0,0,.5); }
+  @media (max-width: 860px) { .finestra { grid-template-columns: 1fr; } }
+  .schermo { position: relative; aspect-ratio: 16 / 9; background: #000 center / cover no-repeat; }
+  .schermo iframe { position: absolute; inset: 0; width: 100%; height: 100%; border: 0; }
+  .avvio { position: absolute; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 10px; cursor: pointer;
+    background: rgba(2,6,23,0.55); border: 0; color: #fff; font: inherit; width: 100%; }
+  .avvio .tondo { width: 76px; height: 76px; border-radius: 50%; background: #FFE58A; color: #0f172a; display: grid; place-items: center; font-size: 30px; padding-left: 6px; box-shadow: 0 6px 24px rgba(0,0,0,.45); }
+  .avvio:hover .tondo { transform: scale(1.06); }
+  .avvio .nota { font-size: 12px; color: #DCE6F5; background: rgba(15,23,42,0.7); padding: 4px 10px; border-radius: 999px; }
+  .info { padding: 16px 18px 14px; display: flex; flex-direction: column; gap: 8px; }
+  .info .label { align-self: flex-start; font-size: 10px; font-weight: 800; letter-spacing: .06em; text-transform: uppercase; color: var(--accent); background: color-mix(in srgb, var(--accent) 16%, transparent); padding: 3px 9px; border-radius: 999px; }
+  .info h3 { font-family: 'Manrope', sans-serif; font-weight: 800; font-size: 22px; margin: 0; line-height: 1.2; }
+  .info .chi { font-size: 13px; color: #9FB3CE; font-weight: 600; margin-top: -4px; }
+  .info .gancio { font-family: 'Manrope', sans-serif; font-weight: 700; font-size: 16px; color: #FFE58A; margin: 2px 0 0; }
+  .info ul { margin: 0; padding-left: 0; list-style: none; display: flex; flex-direction: column; gap: 6px; }
+  .info li { font-size: 14.5px; color: #DCE6F5; line-height: 1.45; padding-left: 24px; position: relative; }
+  .info li::before { content: "🎧"; position: absolute; left: 0; top: 0; font-size: 13px; }
+  .info .sapevi { font-size: 13.5px; color: #DCE6F5; background: rgba(255,255,255,0.05); border-left: 3px solid var(--accent); border-radius: 8px; padding: 8px 10px; line-height: 1.45; }
+  .info .sapevi b { color: var(--accent); }
+  .info .piede { margin-top: auto; display: flex; justify-content: space-between; align-items: flex-end; gap: 10px; flex-wrap: wrap; font-size: 11px; color: #7F93B2; }
+  .info .piede a { color: #7DD3FC; }
+  .chiudi { position: absolute; top: 8px; right: 8px; z-index: 3; width: 40px; height: 40px; border-radius: 50%; border: 1px solid rgba(255,255,255,0.25);
+    background: rgba(15,23,42,0.85); color: #fff; font-size: 18px; cursor: pointer; }
+  .frecce { display: flex; gap: 8px; }
+  .freccia { font: 700 13px 'Manrope', sans-serif; color: #EAF2FF; background: rgba(255,255,255,0.08); border: 1px solid rgba(255,255,255,0.18); border-radius: 999px; padding: 7px 14px; cursor: pointer; }
+  .freccia:hover { background: rgba(255,255,255,0.15); }
+
+  .crediti-img { margin-top: 18px; font-size: 11.5px; color: #7F93B2; }
+  .crediti-img summary { cursor: pointer; color: #9FB3CE; }
+  .crediti-img li { margin: 3px 0; } .crediti-img a { color: #7DD3FC; }
+  footer.piede { position: relative; z-index: 1; text-align: center; font-size: 13px; color: #9FB3CE; padding: 12px 12px 24px; }
+  footer.piede a { color: #7DD3FC; }
+  @media (prefers-reduced-motion: reduce) { .card, .meta { transition: none; } }
+</style>
+</head>
+<body>
+<a class="casetta" href="index.html" aria-label="Torna al sito" title="Torna al sito">🏠</a>
+<main>
+
+  <div class="banner" id="banner">
+    <div class="meta sx" data-mondo="profano" title="Musica profana"><img src="media/storia/medioevo/banner-castello.jpg" alt="La città fortificata di Carcassonne, di notte"></div>
+    <div class="meta dx" data-mondo="sacro" title="Musica sacra"><img src="media/storia/medioevo/banner-notredame.jpg" alt="La cattedrale di Notre-Dame di Parigi, di notte"></div>
+    <div class="titolo-epoca">
+      <div class="sopra">Storia della musica</div>
+      <h1>Il Medioevo</h1>
+      <div class="date">476 – 1492</div>
+    </div>
+    <button class="etich-meta sx" data-mondo="profano">🏰 Profana<span class="lungo"> · castelli e piazze</span></button>
+    <button class="etich-meta dx" data-mondo="sacro">⛪ Sacra<span class="lungo"> · chiese e cattedrali</span></button>
+  </div>
+
+  <p class="atmosfera">Mille anni senza registrazioni: la musica vive nella memoria di chi la canta. Nelle cattedrali si prega con la voce, nei castelli e nelle piazze si balla e si canta l'amore.</p>
+
+  <nav class="schede" aria-label="Sezioni">
+    <button class="scheda attiva" data-scheda="ascolti">🎧 Ascolti <span class="n" id="nAscolti"></span></button>
+    <button class="scheda" data-scheda="strumenti">🪕 Strumenti <span class="n" id="nStrumenti"></span></button>
+    <button class="scheda" data-scheda="suonare">🎼 Da suonare <span class="n" id="nSuonare"></span></button>
+  </nav>
+
+  <div class="grid" id="griglia"></div>
+
+  <details class="crediti-img">
+    <summary>Crediti delle immagini e dei video</summary>
+    <ul id="listaCrediti"></ul>
+    <p>I video sono incorporati da YouTube e restano dei rispettivi titolari: non fanno parte della licenza del sito.</p>
+  </details>
+</main>
+<footer class="piede">Cristiano Arata · Musica Peyron — <a href="crediti.html">Crediti e licenza</a> · <a href="privacy.html">Privacy</a></footer>
+
+<div class="velo" id="velo" role="dialog" aria-modal="true" aria-labelledby="fTitolo">
+  <div class="finestra" id="finestra">
+    <button class="chiudi" id="chiudi" aria-label="Chiudi">✕</button>
+    <div class="schermo" id="schermo"></div>
+    <div class="info">
+      <span class="label" id="fLabel"></span>
+      <h3 id="fTitolo"></h3>
+      <div class="chi" id="fChi"></div>
+      <div class="gancio" id="fGancio"></div>
+      <ul id="fPunti"></ul>
+      <div class="sapevi" id="fSapevi"></div>
+      <div class="piede">
+        <div class="frecce"><button class="freccia" id="prec">◀</button><button class="freccia" id="succ">▶</button></div>
+        <div id="fFonte"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+(function () {
+  "use strict";
+  const IMG = "media/storia/medioevo/";
+
+  /* =========================================================
+     CONTENUTI — per cambiare un video basta cambiare "yt"
+     ========================================================= */
+  const ASCOLTI = [
+    { id: "kyrie", mondo: "sacro", label: "Sacra · canto gregoriano", titolo: "Kyrie eleison", chi: "Canto gregoriano", img: "kyrie.jpg", yt: "qCAo6AkBcbg", canale: "Schola cantorum Rosenbergensis",
+      gancio: "Una sola melodia, nessuno strumento: per secoli la Chiesa ha pregato così.",
+      punti: ["Tutte le voci cantano la stessa melodia: è la <b>monodia</b>.",
+              "Solo voci, senza strumenti: si dice <b>a cappella</b>.",
+              "Il ritmo è libero, segue le parole: niente battito da tenere con il piede.",
+              "A volte una sillaba si allunga su tante note, come un'onda: è un <b>melisma</b>."],
+      sapevi: "Si chiama «gregoriano» per papa Gregorio Magno (VI secolo), ma è una leggenda: questi canti si sono formati lentamente, in secoli di preghiera." },
+    { id: "ut", mondo: "sacro", label: "Sacra · inno", titolo: "Ut queant laxis", chi: "Inno a San Giovanni Battista", img: "ut.jpg", yt: "BTPzyMgfXR4", canale: "Kantátika Férfikar",
+      gancio: "Perché le note si chiamano DO, RE, MI?",
+      punti: ["Ogni verso comincia <b>una nota più in alto</b> del precedente.",
+              "Le sillabe iniziali dei versi sono <b>Ut – Re – Mi – Fa – Sol – La</b>.",
+              "Intorno al 1025 il monaco <b>Guido d'Arezzo</b> le usò per insegnare a leggere le note."],
+      sapevi: "Il SI arriva solo nel Cinquecento, dalle iniziali di <i>Sancte Iohannes</i>. Nel Seicento l'UT, scomodo da cantare, diventa DO." },
+    { id: "leonino", mondo: "sacro", label: "Sacra · polifonia", titolo: "Viderunt omnes", chi: "Leonino · Parigi, XII secolo", img: "leonino.jpg", yt: "0DPNf72qg60", canale: "James Bowman (canale ufficiale)",
+      gancio: "Una voce tiene, l'altra vola.",
+      punti: ["In basso il canto gregoriano rallenta in note lunghissime: è il <b>tenor</b>, da <i>tenere</i>.",
+              "Sopra, una seconda voce si muove libera, piena di note.",
+              "Due melodie diverse nello stesso momento: è la <b>polifonia</b>."],
+      sapevi: "Leonino lavorava a Notre-Dame di Parigi mentre la cattedrale era in costruzione: i lavori erano cominciati nel 1163." },
+    { id: "perotino", mondo: "sacro", label: "Sacra · polifonia", titolo: "Viderunt omnes", chi: "Perotino · Parigi, 1198 circa", img: "perotino.jpg", yt: "Q2JvIyStzNA", canale: "The Hilliard Ensemble (canale ufficiale)",
+      gancio: "Quattro voci in una cattedrale: per l'epoca era fantascienza.",
+      punti: ["Le voci diventano <b>quattro</b>: sotto il tenor, tre voci si intrecciano.",
+              "Le voci ripetono piccoli motivi ritmici: l'effetto è quasi ipnotico.",
+              "È musica pensata per l'eco enorme di una cattedrale gotica."],
+      sapevi: "Nel 1198 il vescovo di Parigi ordinò che a Capodanno si cantasse «a tre o quattro voci»: forse proprio questo brano di Perotino, che a Notre-Dame proseguì il lavoro di Leonino." },
+    { id: "kalenda", mondo: "profano", label: "Profana · trovatori", titolo: "Kalenda maya", chi: "Raimbaut de Vaqueiras · 1200 circa", img: "kalenda.jpg", yt: "CxcfSG-O_mE", canale: "Martin Best Mediaeval Ensemble (canale ufficiale)",
+      gancio: "Un trovatore scrive le parole su una danza appena ascoltata.",
+      punti: ["È in <b>lingua d'oc</b>, la lingua dei trovatori del sud della Francia.",
+              "Canta l'amore per una dama: è l'<b>amor cortese</b>.",
+              "Il ritmo è quello di una danza: l'<b>estampida</b>."],
+      sapevi: "Si racconta che Raimbaut la scrisse alla corte del marchese di Monferrato, in Piemonte, dopo aver sentito due giullari francesi suonare questa danza." },
+    { id: "taberna", mondo: "profano", label: "Profana · goliardi", titolo: "In taberna quando sumus", chi: "Carmina Burana · 1230 circa", img: "taberna.jpg", yt: "Zs-uItDlEhE", canale: "Clemencic Consort (canale ufficiale)",
+      gancio: "Una canzone da osteria… in latino.",
+      punti: ["La scrissero i <b>goliardi</b>, studenti e chierici che giravano tra le università.",
+              "Il testo elenca chi beve all'osteria: tutti, dal servo al vescovo!",
+              "Il ritmo è marcato e ripetitivo: si canta in coro, battendo il tempo."],
+      sapevi: "Il codice dei Carmina Burana fu ritrovato nel 1803 nell'abbazia di Benediktbeuern, in Baviera. Nel 1937 Carl Orff ha rimusicato alcuni di questi testi: il suo <i>O Fortuna</i> è famosissimo." },
+    { id: "sumer", mondo: "profano", label: "Profana · canone", titolo: "Sumer is icumen in", chi: "Anonimo inglese · XIII secolo", img: "sumer.jpg", yt: "Fxx7ZIfJqr4", canale: "Early Music Muse",
+      gancio: "Uno dei più antichi canoni che conosciamo, a sei voci.",
+      punti: ["Le voci entrano una dopo l'altra con la stessa melodia: è un <b>canone</b>.",
+              "Sotto, due voci ripetono sempre lo stesso motivo, come un tappeto.",
+              "Canta l'arrivo dell'estate e il verso del cuculo: <i>cuccu!</i>"],
+      sapevi: "Lo copiò un monaco dell'abbazia di Reading, in Inghilterra. Sotto le parole inglesi ne scrisse altre in latino, religiose, sulla stessa musica." },
+    { id: "saltarello", mondo: "profano", label: "Profana · danza", titolo: "Saltarello", chi: "Anonimo italiano · XIV secolo", img: "saltarello.jpg", yt: "RU8QFeDZyvg", canale: "Grupo Artefactum",
+      gancio: "Il nome dice tutto: si balla saltando.",
+      punti: ["Solo strumenti: è musica per danzare.",
+              "Il ritmo è veloce e saltellante.",
+              "Ascolta le sezioni che si ripetono, ogni volta con un finale diverso."],
+      sapevi: "Viene da un manoscritto toscano del Trecento che oggi si trova a Londra, alla British Library. È una delle poche danze medievali arrivate fino a noi." },
+    { id: "machaut", mondo: "profano", label: "Profana · virelai", titolo: "Douce dame jolie", chi: "Guillaume de Machaut · XIV secolo", img: "machaut.jpg", yt: "vO1C_nQNls4", canale: "Emilio Villalba",
+      gancio: "Il poeta-musicista più famoso del Trecento.",
+      punti: ["Una sola voce racconta un amore non ricambiato.",
+              "Il ritornello torna dopo ogni strofa: è la forma del <b>virelai</b>.",
+              "La melodia è semplice: dopo un ascolto la canticchi già."],
+      sapevi: "Machaut era anche canonico della cattedrale di Reims e scrisse la prima Messa polifonica completa composta da un solo autore." },
+    { id: "landini", mondo: "profano", label: "Profana · ballata", titolo: "Ecco la primavera", chi: "Francesco Landini · Firenze, XIV secolo", img: "landini.jpg", yt: "cgnCBPOLyBs", canale: "Ensemble Ars Serena",
+      gancio: "Firenze, Trecento: un organista cieco canta la primavera.",
+      punti: ["È in <b>italiano</b>, la lingua del popolo.",
+              "Due voci cantano insieme: polifonia, ma leggera e danzante.",
+              "La prima parte, la <b>ripresa</b>, torna come un ritornello."],
+      sapevi: "Landini era cieco fin da bambino, ma era famosissimo per come suonava l'organetto: nel Codice Squarcialupi è ritratto proprio con il suo strumento." }
+  ];
+
+  const STRUMENTI = [
+    { id: "viella", label: "Corde strofinate", titolo: "Viella", chi: "Antenata del violino", img: "viella.jpg", yt: "7-Yd1lryGKs", canale: "Kathryn Wheeler",
+      gancio: "Lo strumento preferito dei giullari.",
+      punti: ["Si suona con l'<b>archetto</b>, appoggiata alla spalla o sulle gambe.",
+              "Accompagna canti e danze: qui suona il <i>Trotto</i>, una danza italiana del Trecento."],
+      sapevi: "Dalla viella, secoli dopo, nasceranno le viole e il violino." },
+    { id: "ghironda", label: "Corde strofinate", titolo: "Ghironda", chi: "La ruota al posto dell'archetto", img: "ghironda.jpg", yt: "8QXUIjbFjzw", canale: "Vielles Kerboeuf",
+      gancio: "Una manovella che fa cantare le corde.",
+      punti: ["Girando la manovella, una <b>ruota</b> strofina le corde.",
+              "Con i tasti si cambiano le note della melodia.",
+              "Alcune corde suonano sempre la stessa nota: è il <b>bordone</b>."],
+      sapevi: "Le prime ghironde erano così grandi che servivano due persone: una girava la ruota, l'altra suonava i tasti." },
+    { id: "liuto", label: "Corde pizzicate", titolo: "Liuto", chi: "Arrivato dal mondo arabo", img: "liuto.jpg", yt: "O_wM-Sk_Lvw", canale: "Peppe Frana",
+      gancio: "Il suo nome viene dall'arabo.",
+      punti: ["Ha la cassa a forma di <b>mezza pera</b> e la testa del manico piegata all'indietro.",
+              "Nel Medioevo si pizzicava con una penna d'oca, come un plettro."],
+      sapevi: "Il nome viene dall'arabo <i>al-ʿūd</i>, «il legno». Arriva in Europa attraverso la Spagna e la Sicilia." },
+    { id: "arpa", label: "Corde pizzicate", titolo: "Arpa", chi: "Piccola, da tenere in braccio", img: "arpa.jpg", yt: "H4FRkDhj_DU", canale: "Marie Nishiyama",
+      gancio: "Accompagnava poeti e cantastorie.",
+      punti: ["È molto più piccola dell'arpa moderna: si suona seduti, tenendola in grembo.",
+              "Qui suona <i>Santa Maria, strela do dia</i>, dalle Cantigas di Alfonso X di Castiglia."],
+      sapevi: "Le Cantigas de Santa Maria contengono centinaia di miniature di musicisti: sono una delle fonti migliori per sapere com'erano gli strumenti del Medioevo." },
+    { id: "salterio", label: "Corde pizzicate", titolo: "Salterio", chi: "Una scatola piena di corde", img: "salterio.jpg", yt: "k2uw2V3mHH0", canale: "harpoetica",
+      gancio: "Tante corde tese su una cassa di legno.",
+      punti: ["Le corde si pizzicano con le dita o con piccoli plettri.",
+              "Qui suona il <i>Lamento di Tristano</i>, una danza italiana del Trecento."],
+      sapevi: "Dal salterio con le corde percosse nascerà il salterio a martelletti; molto più tardi, con una tastiera, il clavicembalo." },
+    { id: "organetto", label: "Tastiera", titolo: "Organo portativo", chi: "L'organo a tracolla", img: "organetto.jpg", yt: "CyzQw6GWBvI", canale: "Catalina Vicens",
+      gancio: "Un organo da portare in giro.",
+      punti: ["Una mano suona i tasti, l'altra muove il <b>mantice</b> che soffia l'aria nelle canne.",
+              "Qui suona <i>Lucente stella</i>, un brano italiano del Trecento."],
+      sapevi: "Era lo strumento di Francesco Landini, il musicista più famoso della Firenze del Trecento." },
+    { id: "ciaramella", label: "Fiati", titolo: "Ciaramella", chi: "Antenata dell'oboe", img: "ciaramella.jpg", yt: "ULPkG78d6gc", canale: "David Griffith",
+      gancio: "Il fiato più forte della piazza.",
+      punti: ["Ha un'<b>ancia doppia</b>, come l'oboe di oggi.",
+              "Il suono è potente: perfetto per feste, cortei e danze all'aperto."],
+      sapevi: "In molte zone d'Italia la ciaramella si suona ancora oggi, insieme alla zampogna, nelle novene di Natale." },
+    { id: "cornamusa", label: "Fiati", titolo: "Cornamusa", chi: "Il suono che non si ferma", img: "cornamusa.jpg", yt: "7ib19YCqFHU", canale: "Alexander Khudolev",
+      gancio: "Una sacca piena d'aria.",
+      punti: ["Il suonatore soffia nella <b>sacca</b>, che poi spinge l'aria nelle canne.",
+              "Una canna suona la melodia, le altre tengono una nota fissa: il <b>bordone</b>."],
+      sapevi: "Era lo strumento dei pastori e delle feste di paese: compare in tantissime miniature e sculture medievali." }
+  ];
+
+  const SUONARE = [
+    { titolo: "In taberna quando sumus", chi: "Carmina Burana", img: "taberna.jpg" },
+    { titolo: "Sumer is icumen in", chi: "Canone a più voci", img: "sumer.jpg" },
+    { titolo: "Ut queant laxis", chi: "L'inno delle note", img: "ut.jpg" }
+  ];
+
+  /* crediti delle immagini (tutte ospitate nel sito) */
+  const CREDITI_IMG = [
+  'Banner: Carcassonne di notte, foto di Diego Delso — <a href="https://commons.wikimedia.org/wiki/File:Ciudadela,_Carcasona,_Francia,_2023-01-07,_DD_216-218_HDR.jpg" target="_blank" rel="noopener">fonte</a>, <a href="https://creativecommons.org/licenses/by-sa/4.0/deed.it" target="_blank" rel="noopener">CC BY-SA 4.0</a>, ritagliata.',
+  'Banner: Notre-Dame di Parigi di notte, foto di Sanchezn — <a href="https://commons.wikimedia.org/wiki/File:NotreDameDeParis.jpg" target="_blank" rel="noopener">fonte</a>, <a href="https://creativecommons.org/licenses/by-sa/3.0/deed.it" target="_blank" rel="noopener">CC BY-SA 3.0</a>, ritagliata.',
+  'Kyrie: Antifonario di Hartker, San Gallo (X secolo) — <a href="https://commons.wikimedia.org/wiki/File:Csg-0391_009.jpg" target="_blank" rel="noopener">fonte</a>, pubblico dominio.',
+  'Ut queant laxis: mano guidoniana — <a href="https://commons.wikimedia.org/wiki/File:Guidonian_hand.jpg" target="_blank" rel="noopener">fonte</a>, pubblico dominio.',
+  'Leonino: portali di Notre-Dame, foto di Benh LIEU SONG — <a href="https://commons.wikimedia.org/wiki/File:Notre_Dame_Paris_front_facade_lower.jpg" target="_blank" rel="noopener">fonte</a>, <a href="https://creativecommons.org/licenses/by-sa/3.0/deed.it" target="_blank" rel="noopener">CC BY-SA 3.0</a>, ritagliata.',
+  'Perotino: Viderunt omnes, manoscritto — <a href="https://commons.wikimedia.org/wiki/File:P%C3%A9rotin_-_Viderunt_omnes.jpg" target="_blank" rel="noopener">fonte</a>, pubblico dominio.',
+  'Kalenda maya: musicisti dalle Cantigas de Santa Maria (XIII secolo) — <a href="https://commons.wikimedia.org/wiki/File:Cantigas_de_Santa_Mar%C3%ADa,_Codex_of_the_musicians,_B-I-2_162R_lute_rebab.jpg" target="_blank" rel="noopener">fonte</a>, pubblico dominio.',
+  'In taberna: Ruota della Fortuna dal Codex Buranus — <a href="https://commons.wikimedia.org/wiki/File:Wheel-of-fortune-carmina-burana.jpg" target="_blank" rel="noopener">fonte</a>, pubblico dominio.',
+  'Sumer is icumen in: British Library, Harley MS 978 — <a href="https://commons.wikimedia.org/wiki/File:Sumer_is_icumen_in_-_Summer_Canon_(Reading_Rota)_(mid_13th_C),_f.11v_-_BL_Harley_MS_978_(detail).jpg" target="_blank" rel="noopener">fonte</a>, CC0.',
+  'Saltarello: Ambrogio Lorenzetti, Effetti del Buon Governo (Siena, 1338) — <a href="https://commons.wikimedia.org/wiki/File:Ambrogio_Lorenzetti_-_Effects_of_Good_Government_on_the_City_Life_(detail)_-_WGA13488.jpg" target="_blank" rel="noopener">fonte</a>, pubblico dominio.',
+  'Machaut: miniatura dalle opere di Guillaume de Machaut — <a href="https://commons.wikimedia.org/wiki/File:Machaut_1.jpg" target="_blank" rel="noopener">fonte</a>, pubblico dominio.',
+  'Landini e organo portativo: Codice Squarcialupi (Firenze, XV secolo) — <a href="https://commons.wikimedia.org/wiki/File:Francesco_Landini,_Squarcialupi_Codex,_page_246v.jpg" target="_blank" rel="noopener">fonte</a>, pubblico dominio.',
+  'Viella e arpa: Jan van Eyck, Polittico di Gand (1432), Angeli musicanti — <a href="https://www.wga.hu/html/e/eyck_van/jan/09ghent/1open2/u6play.html" target="_blank" rel="noopener">fonte</a>, pubblico dominio.',
+  'Liuto, salterio e ciaramella: Hans Memling, Angeli musicanti (1480 circa) — <a href="https://commons.wikimedia.org/wiki/File:Hans_Memling_-_Angel_Musicians_(left_panel)_-_WGA14937.jpg" target="_blank" rel="noopener">fonte</a>, pubblico dominio.',
+  'Ghironda: Cantigas de Santa Maria, cantiga 160 — <a href="https://commons.wikimedia.org/wiki/File:Symphonia_Cantigas_Sta_Mar%C3%ADa_160.jpg" target="_blank" rel="noopener">fonte</a>, pubblico dominio.',
+  'Cornamusa: ricostruzione da una cantiga, foto di Viascos — <a href="https://commons.wikimedia.org/wiki/File:Gaita_Cantiga_350.jpg" target="_blank" rel="noopener">fonte</a>, <a href="https://creativecommons.org/licenses/by-sa/4.0/deed.it" target="_blank" rel="noopener">CC BY-SA 4.0</a>, ritagliata.'
+  ];
+
+  /* ---------- costruzione della griglia ---------- */
+  const griglia = document.getElementById("griglia");
+  document.getElementById("nAscolti").textContent = ASCOLTI.length;
+  document.getElementById("nStrumenti").textContent = STRUMENTI.length;
+  document.getElementById("nSuonare").textContent = SUONARE.length;
+
+  let scheda = "ascolti", mondo = null, elenco = [];
+  function disegna() {
+    griglia.innerHTML = "";
+    if (scheda === "suonare") {
+      SUONARE.forEach(s => {
+        const c = document.createElement("div"); c.className = "card suona empty";
+        c.innerHTML = `<div class="foto" style="background-image:url('${IMG + s.img}')"></div>
+          <div class="testo"><span class="label">Da suonare</span><h2>${s.titolo}</h2><span class="chi">${s.chi}</span></div>`;
+        griglia.appendChild(c);
+      });
+      return;
+    }
+    const dati = scheda === "ascolti" ? ASCOLTI : STRUMENTI;
+    elenco = dati.filter(d => scheda !== "ascolti" || !mondo || d.mondo === mondo);
+    elenco.forEach((d, i) => {
+      const c = document.createElement("button"); c.type = "button";
+      c.className = "card " + (scheda === "ascolti" ? d.mondo : "strum");
+      c.innerHTML = `<div class="foto" style="background-image:url('${IMG + d.img}')"></div>
+        <div class="testo"><span class="label">${d.label}</span><h2>${d.titolo}</h2><span class="chi">${d.chi}</span><p>${d.gancio}</p></div>`;
+      c.addEventListener("click", () => apri(i));
+      griglia.appendChild(c);
+    });
+  }
+
+  document.querySelectorAll(".scheda").forEach(b => b.addEventListener("click", () => {
+    scheda = b.dataset.scheda;
+    document.querySelectorAll(".scheda").forEach(x => x.classList.toggle("attiva", x === b));
+    if (scheda !== "ascolti") impostaMondo(null, true);
+    disegna();
+  }));
+
+  /* ---------- banner: sacro / profano ---------- */
+  const banner = document.getElementById("banner");
+  function impostaMondo(m, senzaDisegno) {
+    mondo = m;
+    banner.classList.toggle("f-profano", m === "profano");
+    banner.classList.toggle("f-sacro", m === "sacro");
+    document.querySelectorAll(".etich-meta").forEach(e => e.classList.toggle("attiva", e.dataset.mondo === m));
+    if (!senzaDisegno) {
+      if (scheda !== "ascolti") { scheda = "ascolti"; document.querySelectorAll(".scheda").forEach(x => x.classList.toggle("attiva", x.dataset.scheda === "ascolti")); }
+      disegna();
+    }
+  }
+  banner.querySelectorAll("[data-mondo]").forEach(el => el.addEventListener("click", () => impostaMondo(mondo === el.dataset.mondo ? null : el.dataset.mondo)));
+
+  /* ---------- finestra con il video ---------- */
+  const velo = document.getElementById("velo"), schermo = document.getElementById("schermo"), finestra = document.getElementById("finestra");
+  let attuale = 0;
+  function apri(i) {
+    attuale = (i + elenco.length) % elenco.length;
+    const d = elenco[attuale];
+    finestra.style.setProperty("--accent", scheda === "ascolti" ? (d.mondo === "sacro" ? "#a78bfa" : "#F99D1C") : "#5EC8D8");
+    document.getElementById("fLabel").textContent = d.label;
+    document.getElementById("fTitolo").textContent = d.titolo;
+    document.getElementById("fChi").textContent = d.chi;
+    document.getElementById("fGancio").textContent = d.gancio;
+    document.getElementById("fPunti").innerHTML = d.punti.map(p => `<li>${p}</li>`).join("");
+    document.getElementById("fSapevi").innerHTML = `<b>Lo sapevi?</b> ${d.sapevi}`;
+    document.getElementById("fFonte").innerHTML = `<a href="https://www.youtube.com/watch?v=${d.yt}" target="_blank" rel="noopener">Apri su YouTube ↗</a>`;
+    // anteprima: nessuna richiesta a YouTube finché non si preme play
+    schermo.innerHTML = "";
+    schermo.style.backgroundImage = `url('${IMG + d.img}')`;
+    const b = document.createElement("button"); b.className = "avvio"; b.type = "button";
+    b.innerHTML = `<span class="tondo">▶</span><span class="nota">Il video si carica da YouTube quando premi play</span>`;
+    b.addEventListener("click", () => {
+      schermo.innerHTML = `<iframe src="https://www.youtube-nocookie.com/embed/${d.yt}?autoplay=1&rel=0&playsinline=1" title="${d.titolo}"
+        allow="autoplay; encrypted-media; picture-in-picture; fullscreen" allowfullscreen referrerpolicy="strict-origin-when-cross-origin"></iframe>`;
+    });
+    schermo.appendChild(b);
+    velo.classList.add("aperto");
+    document.body.style.overflow = "hidden";
+    b.focus({ preventScroll: true });
+  }
+  function chiudi() { velo.classList.remove("aperto"); schermo.innerHTML = ""; document.body.style.overflow = ""; }
+  document.getElementById("chiudi").addEventListener("click", chiudi);
+  velo.addEventListener("click", e => { if (e.target === velo) chiudi(); });
+  document.getElementById("prec").addEventListener("click", () => apri(attuale - 1));
+  document.getElementById("succ").addEventListener("click", () => apri(attuale + 1));
+  document.addEventListener("keydown", e => {
+    if (!velo.classList.contains("aperto")) return;
+    if (e.key === "Escape") chiudi();
+    if (e.key === "ArrowRight") apri(attuale + 1);
+    if (e.key === "ArrowLeft") apri(attuale - 1);
+  });
+
+  /* ---------- crediti ---------- */
+  document.getElementById("listaCrediti").innerHTML = CREDITI_IMG.map(c => `<li>${c}</li>`).join("") +
+    [...ASCOLTI, ...STRUMENTI].map(d => `<li>${d.titolo} (${d.chi}): video di <a href="https://www.youtube.com/watch?v=${d.yt}" target="_blank" rel="noopener">${d.canale}</a> su YouTube</li>`).join("");
+
+  disegna();
+})();
+</script>
+</body>
+</html>
