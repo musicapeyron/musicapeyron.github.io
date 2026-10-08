@@ -1,5 +1,5 @@
---- /home/claude/repo/musicapeyron.github.io-main/brani-propedeutici.html	2026-10-08 19:12:08.196007854 +0000
-+++ /home/claude/repo/musicapeyron.github.io-main/scale.html	2026-10-08 19:12:08.199993688 +0000
+--- /home/claude/repo/musicapeyron.github.io-main/brani-propedeutici.html	2026-10-08 21:42:03.943402989 +0000
++++ /home/claude/repo/musicapeyron.github.io-main/scale.html	2026-10-08 21:42:03.945603256 +0000
 @@ -5,21 +5,19 @@
  <meta name="viewport" content="width=device-width, initial-scale=1.0">
  <!--
@@ -20,8 +20,8 @@
 +  Per aggiungere una scala: carica MusicXML e basi, poi aggiungila a SCALE e a NUMERI.
    ============================================================
  -->
--<title>Brani propedeutici — Musica Peyron</title>
-+<title>Scale — Musica Peyron</title>
+-<title>Brani propedeutici — musicascuole.it</title>
++<title>Scale — musicascuole.it</title>
  <link rel="icon" href="favicon.svg" type="image/svg+xml">
  <link rel="icon" href="favicon-32.png" type="image/png" sizes="32x32">
  <link rel="apple-touch-icon" href="apple-touch-icon.png">

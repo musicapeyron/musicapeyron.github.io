@@ -1,6 +1,6 @@
-# Licenza dei contenuti — Musica Peyron
+# Licenza dei contenuti — musicascuole.it
 
-Autore: **Cristiano Arata** (Musica Peyron)
+Autore: **Cristiano Arata** (musicascuole.it)
 
 Brani, spartiti (MusicXML e PDF), testi, disegni e icone di questo sito sono
 distribuiti con la licenza **Creative Commons Attribuzione – Non commerciale – Condividi allo
@@ -11,7 +11,7 @@ Le **basi musicali** (file audio) usano anche suoni con licenza CC BY-SA, quindi
 con licenza **CC BY-SA 3.0**: https://creativecommons.org/licenses/by-sa/3.0/deed.it
 
 Come citare:
-> «titolo del materiale» di Cristiano Arata – Musica Peyron (musicascuole.it), licenza CC BY-NC-SA 4.0.
+> «titolo del materiale» di Cristiano Arata – musicascuole.it, licenza CC BY-NC-SA 4.0.
 
 Il **codice** del sito è distribuito con licenza **MIT** (file `LICENSE`).
 I materiali di **altri autori** (VexFlow, caratteri, suoni, immagini di Wikimedia Commons)

@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta name="robots" content="noindex, nofollow">
-<title>Programma — Musica Peyron</title>
+<title>Programma — musicascuole.it</title>
 <link rel="icon" href="../favicon.svg" type="image/svg+xml">
 <link rel="icon" href="../favicon-32.png" type="image/png" sizes="32x32">
 <link rel="apple-touch-icon" href="../apple-touch-icon.png">
@@ -763,10 +763,10 @@ stili</strong></p>
     const host = u.hostname.replace(/^www\./, '');
     const last = decodeURIComponent(u.pathname.split('/').filter(Boolean).pop() || '');
     const noExt = last.replace(/\.(png|jpe?g|webp|gif|html?|pdf)$/i, '');
-    if (/\.(png|jpe?g|webp|gif)$/i.test(last) && (u.origin === location.origin || (host === 'musicapeyron.github.io' || host === 'musicascuole.it'))) {
+    if (/\.(png|jpe?g|webp|gif)$/i.test(last) && (u.origin === location.origin || host === 'musicascuole.it')) {
       return { cls: '', text: '🖼 ' + noExt.replace(/-/g, ' ') };
     }
-    if (host === 'musicapeyron.github.io' || host === 'musicascuole.it') {
+    if (host === 'musicascuole.it') {
       return { cls: 'site', text: '🎮 ' + (GAMES[last] || noExt || 'Sito') };
     }
     if (host.includes('githubusercontent.com') || host === 'github.com') {
