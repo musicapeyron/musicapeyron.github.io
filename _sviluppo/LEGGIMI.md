@@ -131,10 +131,10 @@ quella modifica si perde.
   - per i brani: **tracce d'album con la copertina** (canali “– Topic” o canali ufficiali), **no concerti dal vivo**
     con audio scadente;
   - per gli strumenti vanno bene video di musicisti che li suonano;
-  - **attenzione ai canali “– Topic”**: le etichette spesso ne bloccano la riproduzione fuori da YouTube
-    (“Video non disponibile”). Prima di usare un video controllare che si possa incorporare: nella pagina
-    `https://www.youtube-nocookie.com/embed/ID` deve comparire `playableInEmbed":true` (se c'è `UNPLAYABLE`, non va).
-    Lo fa lo script `_sviluppo/controlla_video.sh ID1 ID2 …`.
+  - un video può risultare “non disponibile” se il proprietario lo rende privato o non in elenco
+    (è successo con Ut queant laxis): in quel caso si sostituisce. Le tracce dei canali “– Topic” di solito funzionano.
+  - lo script `_sviluppo/controlla_video.sh ID1 ID2 …` dà un'indicazione, ma **non è affidabile per i video “Topic”**
+    (dai server esterni risultano bloccati anche quando nel browser funzionano): la prova vera è aprirli nel sito.
   - i video possono sparire nel tempo: ogni tanto ricontrollare tutti gli ID con lo script.
 - Tono: storia che **incuriosisce**, non accademica; poco testo, tutto cliccabile, deve stare in una schermata LIM.
   Le leggende si raccontano come leggende. Niente riquadri fissi sulle compositrici (scelta dell'autore).
