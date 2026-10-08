@@ -117,12 +117,15 @@ quella modifica si perde.
 ## 4. Storia della musica
 
 - `storia.html` — elenco delle epoche (array `EPOCHE`: per attivarne una basta darle `url` e `img`).
+- `storia-antichita.html` — Preistoria e antichità (banner: preistoria a sinistra, antichità a destra; il filtro vale anche per gli strumenti). Idee e link dal programma di prima, lezione 31.
 - `storia-medioevo.html` — modello di epoca. Doppio banner (profano a sinistra, sacro a destra; toccando una metà
   si filtrano gli ascolti), schede **Ascolti / Strumenti / Da suonare**, finestra con video, gancio, 2–4 punti
   “cosa ascoltare”, “Lo sapevi?”, frecce ← → ed Esc.
 - I contenuti sono negli array `ASCOLTI`, `STRUMENTI`, `SUONARE`; i crediti delle immagini in `CREDITI_IMG`.
-- Immagini in `media/storia/<epoca>/`, ritagliate 640×400 (card) e 1400×600 (banner), da Wikimedia Commons o
-  Web Gallery of Art (opere di pubblico dominio); citare autore e licenza delle foto CC BY-SA.
+- Immagini in `media/storia/<epoca>/`, ritagliate 640×400 (card) e 1400×600 (banner), da Wikimedia Commons,
+  Web Gallery of Art (dipinti di pubblico dominio) o Metropolitan Museum Open Access (CC0, API
+  `collectionapi.metmuseum.org/public/collection/v1.1/search`); citare autore e licenza delle foto CC BY.
+  Wikimedia limita i download (errore 429): scaricare le miniature (thumb) piano, una alla volta.
 - **Video (scelte dell'autore):**
   - ascolti completi, niente “momenti cliccabili”;
   - per i brani: **tracce d'album con la copertina** (canali “– Topic” o canali ufficiali), **no concerti dal vivo**
@@ -141,9 +144,16 @@ quella modifica si perde.
 
 ---
 
-## 5. Da fare / in sospeso
+## 5. Solfeggio
 
-- Brani da suonare del Medioevo (In taberna, Sumer is icumen in, Ut queant laxis): servono gli spartiti.
+- `solfeggio.html` — pagina della quinta card in home (rossa, icona metronomo). Per ora: Lettura ritmica,
+  Solfeggio parlato, Solfeggio cantato segnati “presto”, più i collegamenti ai giochi già esistenti
+  (Imita il ritmo, Dettato ritmico, Dettato melodico). Per attivare una voce: darle `url` nell'array `VOCI`.
+
+## 6. Da fare / in sospeso
+
+- Brani da suonare del Medioevo (In taberna, Sumer is icumen in, Ut queant laxis) e dell'antichità (Epitaffio di Seikilos): servono gli spartiti.
+- Contenuti della pagina Solfeggio.
 - Altre epoche di storia.
 - Dominio musicascuole.it (DNS su Aruba + dominio personalizzato in GitHub Pages, www → reindirizzo).
 - Anteprima dei link (Open Graph), pagina 404, sitemap.

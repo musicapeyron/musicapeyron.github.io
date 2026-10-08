@@ -1,0 +1,413 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Preistoria e antichità — Storia della musica — Musica Peyron</title>
+<meta name="description" content="La musica della preistoria e dell'antichità raccontata attraverso gli ascolti: flauti d'osso, pietre sonore, la melodia più antica del mondo, la musica greca e romana, gli strumenti antichi.">
+<link rel="icon" href="favicon.svg" type="image/svg+xml">
+<link rel="icon" href="favicon-32.png" type="image/png" sizes="32x32">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
+<link rel="stylesheet" href="fonts/caratteri.css">
+<style>
+  * { box-sizing: border-box; }
+  html, body { margin: 0; min-height: 100%; }
+  body { min-height: 100vh; font-family: 'Inter', 'Segoe UI', Arial, sans-serif; color: #EAF2FF; -webkit-font-smoothing: antialiased;
+    background: #0f172a; overflow-x: hidden; position: relative; }
+  body::after { content: ""; position: fixed; inset: 0; z-index: -1; pointer-events: none;
+    background: radial-gradient(circle at 50% 0%, #3730a3 0%, transparent 45%), linear-gradient(135deg, #0f172a, #1e1b4b); }
+  body::before { content: ""; position: fixed; inset: 0; z-index: 0; pointer-events: none; opacity: 0.5;
+    background-image: radial-gradient(rgba(255,255,255,0.035) 1px, transparent 1px); background-size: 3px 3px; }
+
+  .casetta { position: fixed; top: 12px; left: 12px; z-index: 40; width: 44px; height: 44px; border-radius: 50%; display: grid; place-items: center;
+    background: rgba(15,23,42,0.75); border: 1px solid rgba(255,255,255,0.18); text-decoration: none; font-size: 20px; color: #EAF2FF; font-weight: 700; }
+
+  main { position: relative; z-index: 1; max-width: 1400px; margin: 0 auto; padding: 12px 20px 24px; }
+
+  /* ---------- doppio banner ---------- */
+  .banner { position: relative; height: clamp(170px, 30vh, 320px); border-radius: 18px; overflow: hidden; background: #111827;
+    border: 1px solid rgba(255,255,255,0.1); user-select: none; -webkit-user-select: none; }
+  .meta { position: absolute; inset: 0; cursor: pointer; transition: filter .35s ease, opacity .35s ease; -webkit-tap-highlight-color: transparent; }
+  .meta img { width: 100%; height: 100%; object-fit: cover; display: block; }
+  .meta.sx { clip-path: polygon(0 0, 56% 0, 44% 100%, 0 100%); }
+  .meta.dx { clip-path: polygon(56% 0, 100% 0, 100% 100%, 44% 100%); }
+  .meta.sx img { width: 58%; object-position: 50% 55%; }
+  .meta.dx img { width: 58%; margin-left: 42%; object-position: 50% 40%; }
+  .banner.f-sx .meta.dx, .banner.f-dx .meta.sx { filter: grayscale(.85) brightness(.45); }
+  .banner::after { content: ""; position: absolute; inset: 0; pointer-events: none;
+    background: radial-gradient(ellipse at 50% 55%, rgba(15,23,42,0.55) 0%, rgba(15,23,42,0) 60%), linear-gradient(0deg, rgba(15,23,42,0.75), rgba(15,23,42,0) 45%); }
+  .titolo-epoca { position: absolute; left: 50%; top: 50%; transform: translate(-50%, -58%); text-align: center; z-index: 2; pointer-events: none; }
+  .titolo-epoca .sopra { font-family: 'Manrope', sans-serif; font-weight: 800; font-size: 11.5px; letter-spacing: .16em; text-transform: uppercase; color: #FDE7C7; text-shadow: 0 1px 6px rgba(0,0,0,.8); }
+  .titolo-epoca h1 { font-family: 'Fredoka', 'Manrope', sans-serif; font-weight: 600; margin: 0; font-size: clamp(32px, 6vw, 62px); line-height: 1.05; text-shadow: 0 2px 18px rgba(0,0,0,.85); }
+  .titolo-epoca .date { font-family: 'Manrope', sans-serif; font-weight: 800; color: #FFE58A; font-size: clamp(13px, 1.6vw, 17px); text-shadow: 0 1px 8px rgba(0,0,0,.9); }
+  .etich-meta { position: absolute; bottom: 12px; z-index: 3; font-family: 'Manrope', sans-serif; font-weight: 800; font-size: 12.5px;
+    padding: 6px 12px; border-radius: 999px; background: rgba(15,23,42,0.72); border: 1px solid rgba(255,255,255,0.22); cursor: pointer; white-space: nowrap; }
+  .etich-meta.sx { left: 12px; color: #FBC877; } .etich-meta.dx { right: 12px; color: #C4B5FD; }
+  .etich-meta.attiva { background: #EAF2FF; color: #0f172a; }
+  @media (max-width: 560px) { .etich-meta { font-size: 11px; padding: 5px 9px; bottom: 8px; } .etich-meta .lungo { display: none; } }
+
+  .atmosfera { text-align: center; color: #9FB3CE; font-size: 13px; font-style: italic; margin: 10px auto 12px; max-width: 760px; line-height: 1.45; }
+
+  /* ---------- schede ---------- */
+  .schede { display: flex; justify-content: center; gap: 8px; flex-wrap: wrap; margin-bottom: 12px; }
+  .scheda { font: 700 13.5px 'Manrope', sans-serif; color: #EAF2FF; cursor: pointer; padding: 8px 16px; border-radius: 999px;
+    background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.14); display: inline-flex; align-items: center; gap: 7px; }
+  .scheda:hover { background: rgba(255,255,255,0.12); }
+  .scheda.attiva { background: #EAF2FF; color: #0f172a; border-color: #EAF2FF; }
+  .scheda .n { font-size: 11px; opacity: .65; }
+  @media (max-width: 560px) { main { padding-top: 64px !important; } .schede { flex-wrap: nowrap; gap: 6px; } .scheda { font-size: 12.5px; padding: 7px 11px; gap: 5px; } .scheda .n { display: none; } }
+
+  /* ---------- griglia di card (come in home) ---------- */
+  .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 12px; }
+  @media (min-width: 1200px) { .grid { grid-template-columns: repeat(5, 1fr); } }
+  @media (max-width: 520px) { .grid { grid-template-columns: repeat(2, 1fr); gap: 9px; } main { padding: 10px 12px 20px; } }
+  .card { --accent: #5EC8D8; position: relative; background: rgba(255,255,255,0.035); border: 1px solid rgba(255,255,255,0.09); border-top: 2px solid var(--accent);
+    border-radius: 12px; overflow: hidden; display: flex; flex-direction: column; text-align: left; font: inherit; color: inherit; padding: 0; cursor: pointer;
+    transition: border-color .2s ease, transform .2s ease, background .2s ease; }
+  .card:hover { transform: translateY(-2px); background: rgba(255,255,255,0.06); border-color: color-mix(in srgb, var(--accent) 55%, transparent); border-top-color: var(--accent); }
+  .card:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+  .card .foto { aspect-ratio: 16 / 10; background: #1e293b center / cover no-repeat; position: relative; }
+  .card .foto::after { content: "▶"; position: absolute; right: 8px; bottom: 8px; width: 30px; height: 30px; border-radius: 50%; display: grid; place-items: center;
+    font-size: 12px; background: rgba(15,23,42,0.8); color: #fff; border: 1px solid rgba(255,255,255,0.3); }
+  .card .testo { padding: 9px 11px 11px; display: flex; flex-direction: column; gap: 3px; flex: 1; }
+  .card .label { align-self: flex-start; font-size: 9px; font-weight: 700; letter-spacing: .05em; text-transform: uppercase; color: var(--accent);
+    background: color-mix(in srgb, var(--accent) 14%, transparent); padding: 2px 7px; border-radius: 999px; }
+  .card h2 { font-family: 'Manrope', sans-serif; font-weight: 700; font-size: 14px; margin: 2px 0 0; letter-spacing: -0.01em; line-height: 1.25; }
+  .card .chi { font-size: 11px; color: #9FB3CE; font-weight: 600; }
+  .card p { font-size: 11.5px; line-height: 1.4; color: #B8C7DD; margin: 2px 0 0; }
+  .card.dx { --accent: #a78bfa; } .card.sx { --accent: #F99D1C; } .card.strum { --accent: #5EC8D8; } .card.suona { --accent: #BED958; }
+  .card.empty { cursor: default; border-style: dashed; background: transparent; }
+  .card.empty:hover { transform: none; }
+  .card.empty .foto::after { content: "presto"; width: auto; height: auto; padding: 3px 9px; border-radius: 999px; font: 700 10.5px 'Manrope', sans-serif; letter-spacing: .04em; }
+  .card.nascosta { display: none; }
+
+  /* ---------- finestra dell'ascolto ---------- */
+  .velo { position: fixed; inset: 0; z-index: 60; background: rgba(2,6,23,0.82); display: none; align-items: center; justify-content: center; padding: 16px; }
+  .velo.aperto { display: flex; }
+  .finestra { position: relative; width: min(1180px, 100%); max-height: calc(100vh - 32px); overflow: auto; background: #131c33; border: 1px solid rgba(255,255,255,0.14);
+    border-top: 3px solid var(--accent, #5EC8D8); border-radius: 18px; display: grid; grid-template-columns: 1.55fr 1fr; gap: 0; box-shadow: 0 20px 60px rgba(0,0,0,.5); }
+  @media (max-width: 860px) { .finestra { grid-template-columns: 1fr; } }
+  .schermo { position: relative; aspect-ratio: 16 / 9; background: #000 center / cover no-repeat; }
+  .schermo iframe { position: absolute; inset: 0; width: 100%; height: 100%; border: 0; }
+  .avvio { position: absolute; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 10px; cursor: pointer;
+    background: rgba(2,6,23,0.55); border: 0; color: #fff; font: inherit; width: 100%; }
+  .avvio .tondo { width: 76px; height: 76px; border-radius: 50%; background: #FFE58A; color: #0f172a; display: grid; place-items: center; font-size: 30px; padding-left: 6px; box-shadow: 0 6px 24px rgba(0,0,0,.45); }
+  .avvio:hover .tondo { transform: scale(1.06); }
+  .avvio .nota { font-size: 12px; color: #DCE6F5; background: rgba(15,23,42,0.7); padding: 4px 10px; border-radius: 999px; }
+  .info { padding: 16px 18px 14px; display: flex; flex-direction: column; gap: 8px; }
+  .info .label { align-self: flex-start; font-size: 10px; font-weight: 800; letter-spacing: .06em; text-transform: uppercase; color: var(--accent); background: color-mix(in srgb, var(--accent) 16%, transparent); padding: 3px 9px; border-radius: 999px; }
+  .info h3 { font-family: 'Manrope', sans-serif; font-weight: 800; font-size: 22px; margin: 0; line-height: 1.2; }
+  .info .chi { font-size: 13px; color: #9FB3CE; font-weight: 600; margin-top: -4px; }
+  .info .gancio { font-family: 'Manrope', sans-serif; font-weight: 700; font-size: 16px; color: #FFE58A; margin: 2px 0 0; }
+  .info ul { margin: 0; padding-left: 0; list-style: none; display: flex; flex-direction: column; gap: 6px; }
+  .info li { font-size: 14.5px; color: #DCE6F5; line-height: 1.45; padding-left: 24px; position: relative; }
+  .info li::before { content: "🎧"; position: absolute; left: 0; top: 0; font-size: 13px; }
+  .info .sapevi { font-size: 13.5px; color: #DCE6F5; background: rgba(255,255,255,0.05); border-left: 3px solid var(--accent); border-radius: 8px; padding: 8px 10px; line-height: 1.45; }
+  .info .sapevi b { color: var(--accent); }
+  .info .piede { margin-top: auto; display: flex; justify-content: space-between; align-items: flex-end; gap: 10px; flex-wrap: wrap; font-size: 11px; color: #7F93B2; }
+  .info .piede a { color: #7DD3FC; }
+  .chiudi { position: absolute; top: 8px; right: 8px; z-index: 3; width: 40px; height: 40px; border-radius: 50%; border: 1px solid rgba(255,255,255,0.25);
+    background: rgba(15,23,42,0.85); color: #fff; font-size: 18px; cursor: pointer; }
+  .frecce { display: flex; gap: 8px; }
+  .freccia { font: 700 13px 'Manrope', sans-serif; color: #EAF2FF; background: rgba(255,255,255,0.08); border: 1px solid rgba(255,255,255,0.18); border-radius: 999px; padding: 7px 14px; cursor: pointer; }
+  .freccia:hover { background: rgba(255,255,255,0.15); }
+
+  .crediti-img { margin-top: 18px; font-size: 11.5px; color: #7F93B2; }
+  .crediti-img summary { cursor: pointer; color: #9FB3CE; }
+  .crediti-img li { margin: 3px 0; } .crediti-img a { color: #7DD3FC; }
+  footer.piede { position: relative; z-index: 1; text-align: center; font-size: 13px; color: #9FB3CE; padding: 12px 12px 24px; }
+  footer.piede a { color: #7DD3FC; }
+  @media (prefers-reduced-motion: reduce) { .card, .meta { transition: none; } }
+</style>
+</head>
+<body>
+<a class="casetta" href="storia.html" aria-label="Torna alla storia della musica" title="Torna alla storia della musica">←</a>
+<main>
+
+  <div class="banner" id="banner">
+    <div class="meta sx" data-mondo="sx" title="Preistoria"><img src="media/storia/antichita/banner-grotta.jpg" alt="Pitture rupestri nella grotta di Lascaux"></div>
+    <div class="meta dx" data-mondo="dx" title="Antichità"><img src="media/storia/antichita/banner-teatro.jpg" alt="Il teatro greco di Epidauro"></div>
+    <div class="titolo-epoca">
+      <div class="sopra">Storia della musica</div>
+      <h1>Preistoria e antichità</h1>
+      <div class="date">da 60.000 anni fa al 476 d.C.</div>
+    </div>
+    <button class="etich-meta sx" data-mondo="sx">🦴 Preistoria<span class="lungo"> · grotte e ossa</span></button>
+    <button class="etich-meta dx" data-mondo="dx">🏛️ Antichità<span class="lungo"> · Egitto, Grecia, Roma</span></button>
+  </div>
+
+  <p class="atmosfera">Prima della scrittura, prima delle città: qualcuno soffia in un osso forato e nasce una melodia. Poi arrivano le tavolette d'argilla, le lire degli dèi e i teatri di pietra.</p>
+
+  <nav class="schede" aria-label="Sezioni">
+    <button class="scheda attiva" data-scheda="ascolti">🎧 Ascolti <span class="n" id="nAscolti"></span></button>
+    <button class="scheda" data-scheda="strumenti">🪕 Strumenti <span class="n" id="nStrumenti"></span></button>
+    <button class="scheda" data-scheda="suonare">🎼 Da suonare <span class="n" id="nSuonare"></span></button>
+  </nav>
+
+  <div class="grid" id="griglia"></div>
+
+  <details class="crediti-img">
+    <summary>Crediti delle immagini e dei video</summary>
+    <ul id="listaCrediti"></ul>
+    <p>I video sono incorporati da YouTube e restano dei rispettivi titolari: non fanno parte della licenza del sito.</p>
+  </details>
+</main>
+<footer class="piede">Cristiano Arata · Musica Peyron — <a href="crediti.html">Crediti e licenza</a> · <a href="privacy.html">Privacy</a></footer>
+
+<div class="velo" id="velo" role="dialog" aria-modal="true" aria-labelledby="fTitolo">
+  <div class="finestra" id="finestra">
+    <button class="chiudi" id="chiudi" aria-label="Chiudi">✕</button>
+    <div class="schermo" id="schermo"></div>
+    <div class="info">
+      <span class="label" id="fLabel"></span>
+      <h3 id="fTitolo"></h3>
+      <div class="chi" id="fChi"></div>
+      <div class="gancio" id="fGancio"></div>
+      <ul id="fPunti"></ul>
+      <div class="sapevi" id="fSapevi"></div>
+      <div class="piede">
+        <div class="frecce"><button class="freccia" id="prec">◀</button><button class="freccia" id="succ">▶</button></div>
+        <div id="fFonte"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+(function () {
+  "use strict";
+  const IMG = "media/storia/antichita/";
+
+  /* =========================================================
+     CONTENUTI — per cambiare un video basta cambiare "yt"
+     ========================================================= */
+  /* =========================================================
+     CONTENUTI — per cambiare un video basta cambiare "yt"
+     mondo: "sx" = preistoria (metà sinistra del banner), "dx" = antichità (metà destra)
+     ========================================================= */
+  const ASCOLTI = [
+    { id: "divjebabe", mondo: "sx", label: "Preistoria · 60.000 anni fa", titolo: "Il flauto di Divje Babe", chi: "Slovenia · Neanderthal?", img: "divjebabe.jpg", yt: "eRUufCAFS50", canale: "Ljuben Dimkaroski (video di Gašper Uršič)",
+      gancio: "Il flauto dei Neanderthal… o il morso di un animale?",
+      punti: ["È un pezzo di <b>femore di orso delle caverne</b> con alcuni fori, trovato in una grotta della Slovenia.",
+              "Il musicista Ljuben Dimkaroski ne ha costruito una copia e la suona: ascolta quante note riesce a ottenere.",
+              "Se fosse davvero un flauto, l'avrebbero costruito i <b>Neanderthal</b>."],
+      sapevi: "Gli studiosi discutono ancora: per alcuni i fori sono morsi di iena o di lupo, non opera umana. Oggi è esposto al Museo nazionale di Lubiana." },
+    { id: "hohlefels", mondo: "sx", label: "Preistoria · 40.000 anni fa", titolo: "Il flauto di Hohle Fels", chi: "Germania · Homo sapiens", img: "hohlefels.jpg", yt: "YKv-57HrUHo", canale: "ArchäoMusik Vienna",
+      gancio: "Il più antico strumento musicale sicuro: un osso d'avvoltoio.",
+      punti: ["È ricavato dall'osso dell'ala di un <b>grifone</b>, un grande avvoltoio, con cinque fori.",
+              "L'hanno costruito uomini come noi, i primi <b>Homo sapiens</b> arrivati in Europa.",
+              "Qui una copia viene suonata con un'<b>ancia</b>, come un clarinetto: è una delle ipotesi degli studiosi."],
+      sapevi: "Nella stessa grotta è stata trovata anche una delle più antiche statuette umane del mondo, la «Venere di Hohle Fels»." },
+    { id: "litofoni", mondo: "sx", label: "Preistoria · pietre sonore", titolo: "I litofoni", chi: "Grotte d'Europa · 30.000–10.000 anni fa", img: "litofoni.jpg", yt: "1kFP7dJ6VZc", canale: "Jean-Loup Ringot",
+      gancio: "E se le prime percussioni fossero state… le grotte?",
+      punti: ["In alcune grotte ci sono stalattiti e colonne di pietra con <b>segni di percussione</b>.",
+              "Alcuni ricercatori pensano che fossero <b>litofoni</b>: strumenti di pietra che suonano se colpiti.",
+              "Nel video si suonano lame di pietra preistoriche trovate in Francia: ogni pietra ha la sua nota."],
+      sapevi: "Spesso i segni di percussione si trovano vicino alle pitture rupestri: forse immagini e suoni facevano parte degli stessi riti." },
+    { id: "jiahu", mondo: "sx", label: "Neolitico · 9.000 anni fa", titolo: "I flauti di Jiahu", chi: "Cina · 7000–5700 a.C.", img: "jiahu.jpg", yt: "LOpXaee2RbI", canale: "CGTN",
+      gancio: "Flauti di 9.000 anni che suonano ancora.",
+      punti: ["A Jiahu, in Cina, sono stati trovati circa <b>30 flauti</b> ricavati dalle ossa delle ali della gru.",
+              "Hanno da cinque a otto fori: permettono di suonare una vera scala.",
+              "Nel video una copia suona <i>Jasmine Flower</i>, una canzone tradizionale cinese."],
+      sapevi: "Alcuni di questi flauti sono ancora suonabili: sono tra gli strumenti più antichi del mondo che si possono ancora far suonare." },
+    { id: "hurrita", mondo: "dx", label: "Mesopotamia · 1400 a.C.", titolo: "Inno hurrita n. 6", chi: "Ugarit, Siria · 1400 a.C. circa", img: "hurrita.jpg", yt: "DBhB9gRnIHE", canale: "Michael Levy",
+      gancio: "La melodia scritta più antica del mondo.",
+      punti: ["È incisa in <b>scrittura cuneiforme</b> su una tavoletta d'argilla.",
+              "È un inno alla dea <b>Nikkal</b>, protettrice dei frutteti.",
+              "Decifrare la notazione è difficilissimo: ogni studioso la ricostruisce in modo diverso. Ascolti una delle ipotesi."],
+      sapevi: "La tavoletta è stata trovata negli anni Cinquanta negli scavi dell'antica città di Ugarit, oggi Ras Shamra, in Siria." },
+    { id: "delfico", mondo: "dx", label: "Grecia · 138 a.C.", titolo: "Inno delfico ad Apollo", chi: "Delfi · 138 a.C.", img: "delfico.jpg", yt: "ws7xUHt_W4o", canale: "Michael Levy",
+      gancio: "Una canzone scolpita nel marmo, per il dio della musica.",
+      punti: ["È inciso sulle pietre del Tesoro degli Ateniesi, nel santuario di <b>Delfi</b>.",
+              "Sopra le sillabe del testo ci sono delle <b>lettere</b>: erano le note dei Greci.",
+              "È dedicato ad <b>Apollo</b>, il dio della musica e delle arti."],
+      sapevi: "È uno dei pochissimi brani dell'antica Grecia arrivati fino a noi quasi interi." },
+    { id: "seikilos", mondo: "dx", label: "Grecia · I secolo d.C.", titolo: "Epitaffio di Seikilos", chi: "Asia Minore · I secolo d.C.", img: "seikilos.jpg", yt: "zPTF28XyH4g", canale: "Farya Faraji",
+      gancio: "La canzone completa più antica: scritta su una tomba.",
+      punti: ["È incisa su una piccola colonna funeraria, con <b>parole, note e ritmo</b>.",
+              "Dice: «Finché vivi, splendi: non affliggerti per nulla. La vita dura poco, il tempo esige il suo tributo».",
+              "La melodia è breve e completa: dall'inizio alla fine, come una canzone."],
+      sapevi: "La colonna fu ritrovata nel 1883 in Turchia. Si racconta che per un periodo fu usata come base per un vaso di fiori, e per farla stare dritta ne tagliarono il fondo. Oggi è al Museo nazionale di Copenaghen." },
+    { id: "mesomede", mondo: "dx", label: "Roma · II secolo d.C.", titolo: "Inno al Sole", chi: "Mesomede di Creta · 130 d.C. circa", img: "mesomede.jpg", yt: "H4q9tmxetLg", canale: "Michael Levy",
+      gancio: "Il musicista dell'imperatore.",
+      punti: ["Mesomede era un musicista greco alla corte dell'imperatore romano <b>Adriano</b>.",
+              "È un inno al <b>Sole</b>, che i Greci chiamavano Helios.",
+              "I suoi inni sono arrivati a noi copiati nei manoscritti, con i segni musicali."],
+      sapevi: "Nel 1581 Vincenzo Galilei, il padre di Galileo, pubblicò questi inni: la musica greca affascinava i musicisti fiorentini che, pochi anni dopo, inventarono l'opera." }
+  ];
+
+  const STRUMENTI = [
+    { id: "flautoosso", mondo: "sx", label: "Fiati · preistoria", titolo: "Flauto d'osso", chi: "Il primo strumento a fiato", img: "flautoosso.jpg", yt: "S1hC2XarF6Y", canale: "Scandinavian Sounds",
+      gancio: "Un osso cavo, qualche foro, un soffio.",
+      punti: ["Si usavano ossa lunghe e cave di uccelli o di altri animali.",
+              "Chiudendo e aprendo i fori con le dita cambiano le note, come nel flauto dolce."],
+      sapevi: "Il legno, le pelli e le fibre si decompongono: per questo dalla preistoria ci sono arrivati quasi solo strumenti d'osso e di pietra." },
+    { id: "liraur", mondo: "dx", label: "Corde · Mesopotamia", titolo: "Lira di Ur", chi: "Iraq · 2500 a.C. circa", img: "liraur.jpg", yt: "aZOFYT7w4GI", canale: "Luc Vanlaere",
+      gancio: "Una lira d'oro con la testa di toro.",
+      punti: ["Fu trovata nelle <b>tombe reali di Ur</b>, in Mesopotamia (l'attuale Iraq).",
+              "La cassa è decorata con una testa di toro in oro e lapislazzuli; le corde si pizzicano."],
+      sapevi: "Le lire di Ur sono tra gli strumenti a corda più antichi del mondo: oggi sono divise tra musei di Londra, Filadelfia e Baghdad." },
+    { id: "arpa", mondo: "dx", label: "Corde · Egitto", titolo: "Arpa egizia", chi: "L'arpa dei faraoni", img: "arpa.jpg", yt: "wvqRZzT2kJI", canale: "Michael Levy",
+      gancio: "La musica dipinta nelle tombe.",
+      punti: ["Le pitture delle tombe egizie mostrano spesso musicisti con l'<b>arpa ad arco</b>.",
+              "Accompagnava i canti nei banchetti e nelle cerimonie."],
+      sapevi: "Nelle pitture e nei rilievi egizi compaiono spesso arpisti ciechi." },
+    { id: "sistro", mondo: "dx", label: "Percussioni · Egitto", titolo: "Sistro", chi: "Il sonaglio sacro", img: "sistro.jpg", yt: "G7pYdPOS4yw", canale: "Tahya",
+      gancio: "Tintinna come un tamburello, ma è sacro.",
+      punti: ["Ha un manico e una cornice con barrette di metallo che tintinnano quando lo si scuote.",
+              "Era sacro alla dea <b>Hathor</b> e poi a <b>Iside</b>; si suonava nei riti."],
+      sapevi: "Il culto di Iside arrivò fino a Roma: diversi sistri sono stati trovati anche a Pompei." },
+    { id: "lira", mondo: "dx", label: "Corde · Grecia", titolo: "Lira e cetra", chi: "Gli strumenti di Apollo", img: "lira.jpg", yt: "2_EgoTpFsrw", canale: "Michael Levy",
+      gancio: "La prima lira? Un guscio di tartaruga.",
+      punti: ["La <b>lira</b> era lo strumento di tutti, anche dei ragazzi a scuola; la <b>cetra</b> (kithara), più grande, dei musicisti professionisti.",
+              "Le corde si pizzicano con le dita o con un plettro."],
+      sapevi: "Secondo il mito, il dio Ermes costruì la prima lira con un guscio di tartaruga e la regalò ad Apollo." },
+    { id: "aulos", mondo: "dx", label: "Fiati · Grecia", titolo: "Aulos", chi: "Il doppio flauto", img: "aulos.jpg", yt: "eWwtNO168kI", canale: "Aulos Collective (Callum Armstrong)",
+      gancio: "Due canne suonate insieme.",
+      punti: ["Non è un flauto: ha un'<b>ancia</b>, come l'oboe. Il musicista suona due canne nello stesso momento.",
+              "Si suonava a teatro, nelle feste e durante le gare sportive."],
+      sapevi: "Il mito racconta che la dea Atena lo buttò via perché le gonfiava le guance; lo raccolse il satiro Marsia, che osò sfidare Apollo." },
+    { id: "siringa", mondo: "dx", label: "Fiati · Grecia", titolo: "Siringa", chi: "Il flauto di Pan", img: "siringa.jpg", yt: "OLlYgG6AE3I", canale: "SEIKILO Ancient World Music",
+      gancio: "Tante canne, tante note.",
+      punti: ["È fatta di canne di lunghezze diverse legate insieme: ogni canna dà una nota.",
+              "Era lo strumento dei pastori."],
+      sapevi: "Il nome viene dalla ninfa Siringa che, inseguita dal dio Pan, fu trasformata in canne palustri: Pan ne fece il suo flauto." },
+    { id: "hydraulis", mondo: "dx", label: "Tastiera · Grecia e Roma", titolo: "Hydraulis", chi: "L'organo ad acqua", img: "hydraulis.jpg", yt: "zZey_H8qmQA", canale: "European Music Archaeology Project",
+      gancio: "Il nonno dell'organo funzionava ad acqua.",
+      punti: ["Lo inventò <b>Ctesibio</b> di Alessandria, nel III secolo a.C.",
+              "L'acqua serve a tenere costante la pressione dell'aria che fa suonare le canne.",
+              "Nell'impero romano suonava negli anfiteatri, anche durante i combattimenti dei gladiatori."],
+      sapevi: "L'imperatore Nerone era un appassionato di organi ad acqua. Dall'hydraulis nascerà l'organo delle chiese." },
+    { id: "cornu", mondo: "dx", label: "Ottoni · Roma", titolo: "Cornu e tuba", chi: "Le trombe dell'esercito romano", img: "cornu.jpg", yt: "62kU3mRaZr8", canale: "Brass from the Past",
+      gancio: "Squilli per dare ordini ai soldati.",
+      punti: ["Il <b>cornu</b> è un grande corno di bronzo a forma di G; la <b>tuba</b> una tromba dritta.",
+              "Nell'esercito servivano a dare i comandi: avanzare, fermarsi, ritirarsi."],
+      sapevi: "Alcuni cornu quasi interi sono stati trovati a Pompei." }
+  ];
+
+  const SUONARE = [
+    { titolo: "Epitaffio di Seikilos", chi: "La canzone più antica", img: "seikilos.jpg" }
+  ];
+
+  /* crediti delle immagini (tutte ospitate nel sito) */
+const CREDITI_IMG = [
+    'Banner: pitture rupestri della grotta di Lascaux — <a href="https://commons.wikimedia.org/wiki/File:Lascaux_painting.jpg" target="_blank" rel="noopener">fonte</a>, pubblico dominio.',
+    'Banner: teatro di Epidauro, foto di Sirabder87 — <a href="https://commons.wikimedia.org/wiki/File:Theatre_of_Epidaurus,_Greece_-_20050303.jpg" target="_blank" rel="noopener">fonte</a>, <a href="https://creativecommons.org/licenses/by-sa/3.0/deed.it" target="_blank" rel="noopener">CC BY-SA 3.0</a>, ritagliata.',
+    'Divje Babe: interno della grotta, foto di Thilo Parg — <a href="https://commons.wikimedia.org/wiki/File:Inside_cave_Divje_Babe_1.JPG" target="_blank" rel="noopener">fonte</a>, <a href="https://creativecommons.org/licenses/by-sa/3.0/deed.it" target="_blank" rel="noopener">CC BY-SA 3.0</a>, ritagliata.',
+    'Hohle Fels: flauto in osso di grifone (Urgeschichtliches Museum Blaubeuren), foto di Tomatenpflanze — <a href="https://commons.wikimedia.org/wiki/File:Fl%C3%B6te_aus_G%C3%A4nsegeierknochen_vom_Hohle_Fels_im_urmu.jpg" target="_blank" rel="noopener">fonte</a>, <a href="https://creativecommons.org/licenses/by-sa/4.0/deed.it" target="_blank" rel="noopener">CC BY-SA 4.0</a>, ritagliata.',
+    'Litofoni: pitture rupestri di Lascaux — <a href="https://commons.wikimedia.org/wiki/File:Lascaux2.jpg" target="_blank" rel="noopener">fonte</a>, pubblico dominio.',
+    'Jiahu: flauto d\'osso neolitico, foto di Cangminzho — <a href="https://commons.wikimedia.org/wiki/File:Bone_Flute.jpg" target="_blank" rel="noopener">fonte</a>, <a href="https://creativecommons.org/licenses/by-sa/4.0/deed.it" target="_blank" rel="noopener">CC BY-SA 4.0</a>, ritagliata.',
+    'Inno hurrita: disegno della tavoletta h.6 — <a href="https://commons.wikimedia.org/wiki/File:Hurritische_hymne.gif" target="_blank" rel="noopener">fonte</a>, pubblico dominio.',
+    'Inno delfico: iscrizione nel Museo archeologico di Delfi, foto di Zde — <a href="https://commons.wikimedia.org/wiki/File:Delphic_hymns_to_Apollo,_128_BC,_inscription_in_AM_of_Delphi,_201388.jpg" target="_blank" rel="noopener">fonte</a>, <a href="https://creativecommons.org/licenses/by-sa/4.0/deed.it" target="_blank" rel="noopener">CC BY-SA 4.0</a>, ritagliata.',
+    'Seikilos: la stele con l\'epitaffio, foto di inharecherche — <a href="https://commons.wikimedia.org/wiki/File:2._St%C3%A8le_portant_l%E2%80%99inscription_de_Seikilos.jpg" target="_blank" rel="noopener">fonte</a>, <a href="https://creativecommons.org/licenses/by/2.0/deed.it" target="_blank" rel="noopener">CC BY 2.0</a>, ritagliata.',
+    'Mesomede: busto dell\'imperatore Adriano, Musei Capitolini, foto di Marie-Lan Nguyen — <a href="https://commons.wikimedia.org/wiki/File:Bust_Hadrian_Musei_Capitolini_MC817.jpg" target="_blank" rel="noopener">fonte</a>, pubblico dominio.',
+    'Flauto d\'osso: flauto neolitico, foto di asgitner — <a href="https://commons.wikimedia.org/wiki/File:Neolithic_bone_flute.jpg" target="_blank" rel="noopener">fonte</a>, <a href="https://creativecommons.org/licenses/by-sa/2.0/deed.it" target="_blank" rel="noopener">CC BY-SA 2.0</a>, ritagliata.',
+    'Lira di Ur, foto di Binxedits — <a href="https://commons.wikimedia.org/wiki/File:Bull_Headed_Lyre_of_Ur.jpg" target="_blank" rel="noopener">fonte</a>, <a href="https://creativecommons.org/licenses/by-sa/4.0/deed.it" target="_blank" rel="noopener">CC BY-SA 4.0</a>, ritagliata.',
+    'Arpa egizia: musiciste, copia di una pittura tebana (Metropolitan Museum) — <a href="https://www.metmuseum.org/art/collection/search/557727" target="_blank" rel="noopener">fonte</a>, pubblico dominio (Open Access).',
+    'Sistro egizio (Metropolitan Museum) — <a href="https://www.metmuseum.org/art/collection/search/545681" target="_blank" rel="noopener">fonte</a>, pubblico dominio (Open Access).',
+    'Lira e cetra: suonatrice di cetra, statuetta cipriota (Metropolitan Museum) — <a href="https://www.metmuseum.org/art/collection/search/241226" target="_blank" rel="noopener">fonte</a>, pubblico dominio (Open Access).',
+    'Aulos: suonatore di aulos, statuetta cipriota (Metropolitan Museum) — <a href="https://www.metmuseum.org/art/collection/search/242070" target="_blank" rel="noopener">fonte</a>, pubblico dominio (Open Access).',
+    'Siringa: statuetta di Pan (Metropolitan Museum) — <a href="https://www.metmuseum.org/art/collection/search/242286" target="_blank" rel="noopener">fonte</a>, pubblico dominio (Open Access).',
+    'Hydraulis: mosaico della villa romana di Nennig — <a href="https://commons.wikimedia.org/wiki/File:Hydraulos-cornu-nenning-trier.jpg" target="_blank" rel="noopener">fonte</a>, pubblico dominio.',
+    'Cornu e tuba: musicisti del mosaico di Zliten — <a href="https://commons.wikimedia.org/wiki/File:Musicians_from_Zliten_mosaic.JPG" target="_blank" rel="noopener">fonte</a>, pubblico dominio.'
+  ];
+
+  /* ---------- costruzione della griglia ---------- */
+  const griglia = document.getElementById("griglia");
+  document.getElementById("nAscolti").textContent = ASCOLTI.length;
+  document.getElementById("nStrumenti").textContent = STRUMENTI.length;
+  document.getElementById("nSuonare").textContent = SUONARE.length;
+
+  let scheda = "ascolti", mondo = null, elenco = [];
+  function disegna() {
+    griglia.innerHTML = "";
+    if (scheda === "suonare") {
+      SUONARE.forEach(s => {
+        const c = document.createElement("div"); c.className = "card suona empty";
+        c.innerHTML = `<div class="foto" style="background-image:url('${IMG + s.img}')"></div>
+          <div class="testo"><span class="label">Da suonare</span><h2>${s.titolo}</h2><span class="chi">${s.chi}</span></div>`;
+        griglia.appendChild(c);
+      });
+      return;
+    }
+    const dati = scheda === "ascolti" ? ASCOLTI : STRUMENTI;
+    elenco = dati.filter(d => !mondo || !d.mondo || d.mondo === mondo);
+    elenco.forEach((d, i) => {
+      const c = document.createElement("button"); c.type = "button";
+      c.className = "card " + (scheda === "ascolti" ? d.mondo : "strum");
+      c.innerHTML = `<div class="foto" style="background-image:url('${IMG + d.img}')"></div>
+        <div class="testo"><span class="label">${d.label}</span><h2>${d.titolo}</h2><span class="chi">${d.chi}</span><p>${d.gancio}</p></div>`;
+      c.addEventListener("click", () => apri(i));
+      griglia.appendChild(c);
+    });
+  }
+
+  document.querySelectorAll(".scheda").forEach(b => b.addEventListener("click", () => {
+    scheda = b.dataset.scheda;
+    document.querySelectorAll(".scheda").forEach(x => x.classList.toggle("attiva", x === b));
+    disegna();
+  }));
+
+  /* ---------- banner: preistoria / antichità ---------- */
+  const banner = document.getElementById("banner");
+  function impostaMondo(m, senzaDisegno) {
+    mondo = m;
+    banner.classList.toggle("f-sx", m === "sx");
+    banner.classList.toggle("f-dx", m === "dx");
+    document.querySelectorAll(".etich-meta").forEach(e => e.classList.toggle("attiva", e.dataset.mondo === m));
+    if (!senzaDisegno) {
+      if (scheda === "suonare") { scheda = "ascolti"; document.querySelectorAll(".scheda").forEach(x => x.classList.toggle("attiva", x.dataset.scheda === "ascolti")); }
+      disegna();
+    }
+  }
+  banner.querySelectorAll("[data-mondo]").forEach(el => el.addEventListener("click", () => impostaMondo(mondo === el.dataset.mondo ? null : el.dataset.mondo)));
+
+  /* ---------- finestra con il video ---------- */
+  const velo = document.getElementById("velo"), schermo = document.getElementById("schermo"), finestra = document.getElementById("finestra");
+  let attuale = 0;
+  function apri(i) {
+    attuale = (i + elenco.length) % elenco.length;
+    const d = elenco[attuale];
+    finestra.style.setProperty("--accent", scheda === "ascolti" ? (d.mondo === "dx" ? "#a78bfa" : "#F99D1C") : "#5EC8D8");
+    document.getElementById("fLabel").textContent = d.label;
+    document.getElementById("fTitolo").textContent = d.titolo;
+    document.getElementById("fChi").textContent = d.chi;
+    document.getElementById("fGancio").textContent = d.gancio;
+    document.getElementById("fPunti").innerHTML = d.punti.map(p => `<li>${p}</li>`).join("");
+    document.getElementById("fSapevi").innerHTML = `<b>Lo sapevi?</b> ${d.sapevi}`;
+    document.getElementById("fFonte").innerHTML = `<a href="https://www.youtube.com/watch?v=${d.yt}" target="_blank" rel="noopener">Apri su YouTube ↗</a>`;
+    // anteprima: nessuna richiesta a YouTube finché non si preme play
+    schermo.innerHTML = "";
+    schermo.style.backgroundImage = `url('${IMG + d.img}')`;
+    const b = document.createElement("button"); b.className = "avvio"; b.type = "button";
+    b.innerHTML = `<span class="tondo">▶</span><span class="nota">Il video si carica da YouTube quando premi play</span>`;
+    b.addEventListener("click", () => {
+      schermo.innerHTML = `<iframe src="https://www.youtube-nocookie.com/embed/${d.yt}?autoplay=1&rel=0&playsinline=1" title="${d.titolo}"
+        allow="autoplay; encrypted-media; picture-in-picture; fullscreen" allowfullscreen referrerpolicy="strict-origin-when-cross-origin"></iframe>`;
+    });
+    schermo.appendChild(b);
+    velo.classList.add("aperto");
+    document.body.style.overflow = "hidden";
+    b.focus({ preventScroll: true });
+  }
+  function chiudi() { velo.classList.remove("aperto"); schermo.innerHTML = ""; document.body.style.overflow = ""; }
+  document.getElementById("chiudi").addEventListener("click", chiudi);
+  velo.addEventListener("click", e => { if (e.target === velo) chiudi(); });
+  document.getElementById("prec").addEventListener("click", () => apri(attuale - 1));
+  document.getElementById("succ").addEventListener("click", () => apri(attuale + 1));
+  document.addEventListener("keydown", e => {
+    if (!velo.classList.contains("aperto")) return;
+    if (e.key === "Escape") chiudi();
+    if (e.key === "ArrowRight") apri(attuale + 1);
+    if (e.key === "ArrowLeft") apri(attuale - 1);
+  });
+
+  /* ---------- crediti ---------- */
+  document.getElementById("listaCrediti").innerHTML = CREDITI_IMG.map(c => `<li>${c}</li>`).join("") +
+    [...ASCOLTI, ...STRUMENTI].map(d => `<li>${d.titolo} (${d.chi}): video di <a href="https://www.youtube.com/watch?v=${d.yt}" target="_blank" rel="noopener">${d.canale}</a> su YouTube</li>`).join("");
+
+  disegna();
+})();
+</script>
+</body>
+</html>

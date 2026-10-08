@@ -223,7 +223,7 @@
   }
 
   .featured-row {
-    display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px;
+    display: grid; grid-template-columns: repeat(5, 1fr); gap: 8px;
     margin-bottom: 16px;
   }
   .featured-row .featured-card { margin-bottom: 0; padding: 11px 12px; gap: 10px; }
@@ -231,7 +231,10 @@
   .featured-row .featured-card p { font-size: 11px; line-height: 1.35; }
   .featured-row .featured-card .icon { width: 30px; height: 30px; }
   .featured-row .featured-card .arrow { font-size: 14px; }
-  @media (max-width: 760px) { .featured-row { grid-template-columns: 1fr 1fr; } }
+  .featured-row .featured-card p, .featured-row .featured-card .arrow { display: none; }
+  .featured-row .featured-card { padding: 13px 12px; }
+  @media (max-width: 760px) { .featured-row { grid-template-columns: repeat(6, 1fr); } .featured-row .featured-card { grid-column: span 2; }
+    .featured-row .featured-card:nth-child(4), .featured-row .featured-card:nth-child(5) { grid-column: span 3; } }
   @media (max-width: 420px) { .featured-row .featured-card p { display: none; } .featured-row .featured-card .arrow { display: none; } }
   .featured-storia {
     background: linear-gradient(135deg, rgba(207,62,150,0.14), rgba(255,255,255,0.035));
@@ -240,6 +243,13 @@
   .featured-storia:hover { border-color: rgba(207,62,150,0.7); background: linear-gradient(135deg, rgba(207,62,150,0.2), rgba(255,255,255,0.05)); }
   .featured-storia .icon { background: rgba(207,62,150,0.18); }
   .featured-storia .arrow { color: #E879B9; }
+  .featured-solfeggio {
+    background: linear-gradient(135deg, rgba(226,28,72,0.14), rgba(255,255,255,0.035));
+    border-color: rgba(226,28,72,0.42);
+  }
+  .featured-solfeggio:hover { border-color: rgba(226,28,72,0.7); background: linear-gradient(135deg, rgba(226,28,72,0.2), rgba(255,255,255,0.05)); }
+  .featured-solfeggio .icon { background: rgba(226,28,72,0.18); }
+  .featured-solfeggio .arrow { color: #F87171; }
   .featured-giochi {
     background: linear-gradient(135deg, rgba(249,157,28,0.14), rgba(255,255,255,0.035));
     border-color: rgba(249,157,28,0.4);
@@ -489,6 +499,14 @@
       <div class="featured-text">
         <h2>Storia della musica</h2>
         <p>Le epoche raccontate con gli ascolti.</p>
+      </div>
+      <span class="arrow">→</span>
+    </a>
+    <a class="featured-card featured-solfeggio" href="solfeggio.html">
+      <div class="icon"><svg class="ico" viewBox="0 0 48 48" aria-hidden="true"><use href="icone.svg#ic-solfeggio"/></svg></div>
+      <div class="featured-text">
+        <h2>Solfeggio</h2>
+        <p>Leggere ritmi e note a tempo.</p>
       </div>
       <span class="arrow">→</span>
     </a>

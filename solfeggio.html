@@ -3,14 +3,13 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Storia della musica — Musica Peyron</title>
-<meta name="description" content="La storia della musica raccontata attraverso gli ascolti, un'epoca alla volta.">
+<title>Solfeggio — Musica Peyron</title>
+<meta name="description" content="Solfeggio: leggere ritmi e note a tempo, parlando e cantando.">
 <link rel="icon" href="favicon.svg" type="image/svg+xml">
 <link rel="icon" href="favicon-32.png" type="image/png" sizes="32x32">
 <link rel="apple-touch-icon" href="apple-touch-icon.png">
 <!--
-  PAGINA STORIA DELLA MUSICA — per aggiungere un'epoca: crea la sua pagina
-  (copiando storia-medioevo.html) e scrivi il suo indirizzo in "url" nell'elenco EPOCHE qui sotto.
+  PAGINA SOLFEGGIO — per attivare una sezione: scrivi il suo indirizzo in "url" nell'elenco VOCI qui sotto.
 -->
 <link rel="stylesheet" href="fonts/caratteri.css">
 <style>
@@ -30,10 +29,12 @@
   main { position: relative; z-index: 1; max-width: 1100px; margin: 0 auto; padding: 8px 20px 30px; }
   .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(230px, 1fr)); gap: 12px; }
   @media (max-width: 520px) { .grid { grid-template-columns: repeat(2, 1fr); gap: 9px; } main { padding: 6px 12px 24px; } header { padding-top: 64px; } }
-  .card { --accent: #CF3E96; position: relative; background: rgba(255,255,255,0.035); border: 1px solid rgba(255,255,255,0.09); border-top: 2px solid var(--accent);
+  .card { --accent: #E21C48; position: relative; background: rgba(255,255,255,0.035); border: 1px solid rgba(255,255,255,0.09); border-top: 2px solid var(--accent);
     border-radius: 12px; overflow: hidden; display: flex; flex-direction: column; text-decoration: none; color: inherit; transition: transform .2s ease, background .2s ease, border-color .2s ease; }
   a.card:hover { transform: translateY(-2px); background: rgba(255,255,255,0.06); border-color: color-mix(in srgb, var(--accent) 55%, transparent); border-top-color: var(--accent); }
-  .card .foto { aspect-ratio: 16 / 9; background: #1e293b center / cover no-repeat; display: grid; place-items: center; font-size: 34px; }
+  .card .foto { aspect-ratio: 16 / 7; background: rgba(226,28,72,0.08); display: grid; place-items: center; font-size: 34px; }
+  .card .foto svg { width: 54px; height: 54px; }
+  h3.gruppo { font-family: 'Manrope', sans-serif; font-weight: 800; font-size: 12px; letter-spacing: .08em; text-transform: uppercase; color: #cbd5e1; margin: 22px 0 10px; padding-left: 10px; border-left: 3px solid #E21C48; }
   .card .testo { padding: 10px 12px 12px; }
   .card .date { font-size: 10px; font-weight: 800; letter-spacing: .06em; color: var(--accent); background: color-mix(in srgb, var(--accent) 14%, transparent); padding: 2px 8px; border-radius: 999px; display: inline-block; }
   .card h2 { font-family: 'Manrope', sans-serif; font-weight: 700; font-size: 15px; margin: 5px 0 2px; }
@@ -49,31 +50,35 @@
 <body>
 <a class="casetta" href="index.html" aria-label="Torna al sito" title="Torna al sito">🏠</a>
 <header>
-  <h1>Storia della musica</h1>
-  <p>Un'epoca alla volta, attraverso gli ascolti: brani, strumenti e curiosità.</p>
+  <h1>Solfeggio</h1>
+  <p>Leggere a tempo: prima il ritmo, poi le note, parlando e cantando.</p>
 </header>
-<main><div class="grid" id="grid"></div></main>
+<main><div class="grid" id="grid"></div><h3 class="gruppo">Già sul sito</h3><div class="grid" id="grid2"></div></main>
 <footer class="piede">Cristiano Arata · Musica Peyron — <a href="crediti.html">Crediti e licenza</a> · <a href="privacy.html">Privacy</a></footer>
 <script>
-  const EPOCHE = [
-    { titolo: "Preistoria e antichità", date: "fino al 476 d.C.", desc: "Flauti d'osso, pietre sonore, la melodia più antica, Grecia e Roma.", url: "storia-antichita.html", img: "media/storia/antichita/banner-grotta.jpg" },
-    { titolo: "Medioevo", date: "476 – 1492", desc: "Canto gregoriano, polifonia, trovatori e danze di corte.", url: "storia-medioevo.html", img: "media/storia/medioevo/banner-castello.jpg" },
-    { titolo: "Rinascimento", date: "1400 – 1600", desc: "Madrigali, danze e la stampa musicale.", icona: "🎨" },
-    { titolo: "Barocco", date: "1600 – 1750", desc: "Nasce l'opera: Monteverdi, Vivaldi, Bach.", icona: "🎻" },
-    { titolo: "Classicismo", date: "1750 – 1820", desc: "Haydn, Mozart, Beethoven e l'orchestra classica.", icona: "🎼" },
-    { titolo: "Romanticismo", date: "1820 – 1900", desc: "Virtuosi, sentimenti e il melodramma italiano.", icona: "🎹" },
-    { titolo: "Novecento", date: "1900 – 2000", desc: "Nuovi suoni, nuove regole, nuove tecnologie.", icona: "📻" },
-    { titolo: "Jazz e popular", date: "dal 1900 a oggi", desc: "Dal blues al rock, fino alle canzoni di oggi.", icona: "🎷" }
+  const ico = id => `<svg viewBox="0 0 48 48" aria-hidden="true"><use href="icone.svg#${id}"/></svg>`;
+  const VOCI = [
+    { titolo: "Lettura ritmica", desc: "Ritmi da leggere a tempo, con il metronomo e la base.", icona: "ic-figure-ritmiche" },
+    { titolo: "Solfeggio parlato", desc: "Leggere il nome delle note mantenendo il ritmo.", icona: "ic-leggi-nota" },
+    { titolo: "Solfeggio cantato", desc: "Brevi melodie da intonare.", icona: "ic-recita" }
   ];
-  const g = document.getElementById("grid");
-  EPOCHE.forEach(e => {
-    const el = document.createElement(e.url ? "a" : "div");
-    el.className = "card" + (e.url ? "" : " presto");
-    if (e.url) el.href = e.url;
-    el.innerHTML = `<div class="foto" ${e.img ? `style="background-image:url('${e.img}')"` : ""}>${e.img ? "" : e.icona}</div>
-      <div class="testo"><span class="date">${e.url ? e.date : "presto"}</span><h2>${e.titolo}</h2><p>${e.url ? e.desc : e.date}</p></div>`;
-    g.appendChild(el);
-  });
+  const GIA = [
+    { titolo: "Imita il ritmo", desc: "Ascolta uno schema ritmico e riproducilo.", icona: "ic-imita-ritmo", url: "imita-il-ritmo.html" },
+    { titolo: "Dettato ritmico", desc: "Ascolta il ritmo e trascrivilo sul rigo.", icona: "ic-dettato-ritmico", url: "dettato-ritmico.html" },
+    { titolo: "Dettato melodico", desc: "Ascolta la melodia e scrivila sul pentagramma.", icona: "ic-dettato-melodico", url: "dettato-melodico.html" }
+  ];
+  function riempi(id, voci) {
+    const g = document.getElementById(id);
+    voci.forEach(e => {
+      const el = document.createElement(e.url ? "a" : "div");
+      el.className = "card" + (e.url ? "" : " presto");
+      if (e.url) el.href = e.url;
+      el.innerHTML = `<div class="foto">${ico(e.icona)}</div>
+        <div class="testo">${e.url ? "" : '<span class="date">presto</span>'}<h2>${e.titolo}</h2><p>${e.desc}</p></div>`;
+      g.appendChild(el);
+    });
+  }
+  riempi("grid", VOCI); riempi("grid2", GIA);
 </script>
 </body>
 </html>
