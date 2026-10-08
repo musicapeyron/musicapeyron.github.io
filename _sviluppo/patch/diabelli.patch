@@ -1,0 +1,183 @@
+--- brani-propedeutici.html	2026-10-07 22:20:07.000000000 +0000
++++ diabelli.html	2026-10-07 22:20:07.000000000 +0000
+@@ -5,21 +5,18 @@
+ <meta name="viewport" content="width=device-width, initial-scale=1.0">
+ <!--
+   ============================================================
+-  BRANI PROPEDEUTICI (primaria)
+-  Ogni brano è un file MusicXML in media/brani-propedeutici/:
+-  titolo, novità e indicazioni vengono letti dal file; le sigle
+-  degli accordi vengono ignorate. Gli audio sono
+-  branoNN-completo.mp3 (con melodia) e branoNN-accompagnamento.mp3
+-  (solo base). Il disegno di ogni brano è in
+-  media/brani-propedeutici/disegni/branoNN.svg: se manca, compare
+-  una nota generica.
++  DIABELLI — Anton Diabelli, op. 149
++  Ogni brano è un file MusicXML in media/diabelli/ (diabelliN.musicxml), ricavato dagli
++  spartiti originali: il sito lo disegna per lo strumento e la versione scelti.
++  Basi: diabelliN-accompagnamento.mp3 (e, se ci sono, -media e -lenta).
++  Per aggiungere un brano: carica MusicXML e basi, poi aggiungi il numero a NUMERI.
+   ============================================================
+ -->
+-<title>Brani propedeutici — Musica Peyron</title>
++<title>Diabelli — Musica Peyron</title>
+ <link rel="icon" href="favicon.svg" type="image/svg+xml">
+ <link rel="icon" href="favicon-32.png" type="image/png" sizes="32x32">
+ <link rel="apple-touch-icon" href="apple-touch-icon.png">
+-<meta name="description" content="Brani propedeutici: 21 brani progressivi da sol a re, con basi, spartiti colorati e schemi per flauto, tastiera, chitarra e ukulele.">
++<meta name="description" content="Diabelli, Studi melodici op. 149: spartiti per flauto, tastiera, chitarra e ukulele, con basi a diverse velocità.">
+ <link rel="stylesheet" href="fonts/caratteri.css">
+ <style>
+   * { box-sizing: border-box; }
+@@ -603,6 +600,11 @@
+   .confetti-piece { position: absolute; width: 8px; height: 8px; border-radius: 2px; animation: confettiBurst 0.9s ease-out forwards; }
+   @keyframes confettiBurst { 0% { transform: translate(-50%, -50%) rotate(0deg); opacity: 1; } 100% { transform: translate(calc(-50% + var(--dx)), calc(-50% + var(--dy))) rotate(var(--rot)); opacity: 0; } }
+   @media (prefers-reduced-motion: reduce) { .festa::before, .palla-dondola, .tessera, .raggio, .scintilla, .palco, svg .bravi { animation: none; } .nota-amica { transition: none; } .confetti-piece { display: none; } }
++  /* raccolta senza disegni: titolo sobrio */
++  .bp-disegno, .tel-disegno { display: none !important; }
++  .bp-titolo { font-family: 'Manrope', sans-serif !important; font-size: clamp(20px, 2.6vw, 28px) !important; color: #1F2430; }
++  .lim-lato .bp-titolo { font-size: clamp(20px, 2vw, 28px) !important; }
++  .tel-titolo { font-family: 'Manrope', sans-serif !important; font-size: 14px !important; }
+ </style>
+ <script src="vexflow.js"></script>
+ <script src="motore-schemi.js?v=2026-10-08"></script>
+@@ -613,9 +615,8 @@
+ 
+ <header class="hero">
+   <a class="breadcrumb" href="spartiti.html">← Spartiti</a>
+-  <h1>Brani propedeutici</h1>
+-  <p>21 brani per iniziare, dal si al re. Scegli il tuo strumento, ascolta la base e suona!</p>
+-  <a class="docenti" href="media/brani-propedeutici/brani-propedeutici-docenti.pdf" download>📄 PDF per i docenti (con gli accordi)</a>
++  <h1>Diabelli</h1>
++  <p>Dagli Studi melodici op. 149. Scegli il tuo strumento, ascolta la base e suona: per alcuni brani ci sono anche le basi più lente.</p>
+ </header>
+ 
+ <div class="barra-fissa">
+@@ -633,12 +634,11 @@
+ <footer></footer>
+ 
+ <script>
+-  const CARTELLA = "media/brani-propedeutici/";
+-  const NUMERI = Array.from({ length: 21 }, (_, i) => i + 1);
++  const CARTELLA = "media/diabelli/";
++  const NUMERI = [1, 2, 3, 4, 5, 6, 8, 9, 10];
+   let ETICHETTE_INDICE = {};
+   /* spartito che segue la base: secondi di attacco della base prima della prima battuta (misurati) */
+-  const SINCRO = { 1: 2.57, 2: 2.69, 3: 2.37, 4: -0.03, 5: 2.96, 6: 2.57, 7: -0.03, 8: 2.57, 9: -0.03, 10: 2.38, 11: -0.02, 12: 2.46, 13: 2.28, 14: 1.81,
+-    15: -0.02, 16: 2.69, 17: 2.58, 18: 1.77, 19: 1.69, 20: 2.46, 21: -0.02 };   // misurati sulla pulsazione della base
++  const SINCRO = {};   // lo spartito che segue la base: per ora solo nei Brani propedeutici 1-10
+   /* solfeggio: spento di base; velocità e clic ricordati */
+   const leggi = (k, d) => { try { const v = localStorage.getItem(k); return v === null ? d : v; } catch (e) { return d; } };
+   const scrivi = (k, v) => { try { localStorage.setItem(k, v); } catch (e) {} };
+@@ -651,7 +651,7 @@
+     return `<button type="button" class="solf-via${on ? ' in-corso' : ''}" data-solf="${n}">${on ? '■ Ferma' : '▶ Solfeggia'}</button>`; };
+ 
+   /* sorpresa nel finale: da questa battuta l'evidenziatore diventa un ballerino (con Segui la base o Solfeggio) */
+-  const FESTA = { 21: { da: 30, salto: 41, fine: 42 } };
++  const FESTA = {};
+   let festa = null, festaOn = false;
+ 
+   /* interruttore "Segui la base": spento di base, la scelta viene ricordata */
+@@ -659,13 +659,15 @@
+   const interruttoreSegui = n => SINCRO[n] === undefined ? '' :
+     `<label class="segui" title="Mentre la base suona, la figura da suonare si illumina"><input type="checkbox" class="chk-segui" ${segui ? 'checked' : ''}><span>Segui la base</span></label>`;
+             // testo accanto al numero nell'indice (es. la tonalità delle scale)
+-  const DISEGNI = NUMERI;              // brani che hanno il loro disegno (gli altri mostrano una nota generica)
++  const DISEGNI = [];                  // questa raccolta non ha disegni
+   const due = n => String(n).padStart(2, "0");
+-  const disegno = n => CARTELLA + "disegni/" + (DISEGNI.includes(n) ? "brano" + due(n) : "nota") + ".svg";
++  const disegno = n => null;
++
++  // basi di ogni brano
++  const AUDIO = {"1": [{"label": "Base", "file": "diabelli1-accompagnamento.mp3"}], "2": [{"label": "Base", "file": "diabelli2-accompagnamento.mp3"}], "3": [{"label": "Base", "file": "diabelli3-accompagnamento.mp3"}], "4": [{"label": "Base", "file": "diabelli4-accompagnamento.mp3"}, {"label": "Base (velocità media)", "file": "diabelli4-accompagnamento-media.mp3"}, {"label": "Base (velocità lenta)", "file": "diabelli4-accompagnamento-lenta.mp3"}], "5": [{"label": "Base", "file": "diabelli5-accompagnamento.mp3"}, {"label": "Base (velocità media)", "file": "diabelli5-accompagnamento-media.mp3"}], "6": [{"label": "Base", "file": "diabelli6-accompagnamento.mp3"}, {"label": "Base (velocità media)", "file": "diabelli6-accompagnamento-media.mp3"}, {"label": "Base (velocità lenta)", "file": "diabelli6-accompagnamento-lenta.mp3"}], "8": [{"label": "Base", "file": "diabelli8-accompagnamento.mp3"}, {"label": "Base (velocità media)", "file": "diabelli8-accompagnamento-media.mp3"}, {"label": "Base (velocità lenta)", "file": "diabelli8-accompagnamento-lenta.mp3"}], "9": [{"label": "Base", "file": "diabelli9-accompagnamento.mp3"}, {"label": "Base (velocità media)", "file": "diabelli9-accompagnamento-media.mp3"}, {"label": "Base (velocità lenta)", "file": "diabelli9-accompagnamento-lenta.mp3"}], "10": [{"label": "Base", "file": "diabelli10-accompagnamento.mp3"}, {"label": "Base (velocità media)", "file": "diabelli10-accompagnamento-media.mp3"}, {"label": "Base (velocità lenta)", "file": "diabelli10-accompagnamento-lenta.mp3"}]};
+ 
+   const COLORI_NOTE = ["#E21C48", "#F99D1C", "#FFF428", "#BED958", "#009C95", "#5E50A1", "#CF3E96"];
+-  const titoloColorato = t => { let k = 0; return [...t].map(c => c === " " ? " " :
+-    `<span style="color:${COLORI_NOTE[k++ % 7]}">${c}</span>`).join(""); };
++  const titoloColorato = t => t;          // titolo semplice, senza colori
+   const riquadroHTML = testo => {
+     const righe = testo.split(/\n/).map(r => r.trim()).filter(Boolean);
+     const novita = /^NOVIT/i.test(righe[0]);
+@@ -694,26 +696,22 @@
+ 
+   /* Novità che nei file MusicXML non hanno il loro riquadro: si aggiungono qui.
+      "prima": il riquadro va prima di quelli già presenti nel brano (es. la nota prima della figura). */
+-  const NOVITA_AGGIUNTE = {
+-    1:  { prima: true, testo: "NOVITÀ: la nota SI\nsi scrive sulla terza riga del pentagramma" },
+-    21: [{ testo: "NOVITÀ: PRIMA e SECONDA VOLTA\nla prima volta suoni la casella 1.,\ndopo il ritornello salti alla casella 2." },
+-         { testo: "NOVITÀ: DUE RITORNELLI\nogni parte chiusa tra i segni di ritornello\nsi suona due volte" }]
+-  };
++  const NOVITA_AGGIUNTE = {};
+ 
+   const cache = {};
+-  const caricaBrano = n => cache[n] || (cache[n] = fetch(CARTELLA + "brano" + due(n) + ".musicxml")
++  const caricaBrano = n => cache[n] || (cache[n] = fetch(CARTELLA + "diabelli" + n + ".musicxml")
+     .then(r => r.text()).then(t => {
+-      const b = MotoreSchemi.leggiMusicXML(t); b.titolo = n + ". " + b.titoloBreve;
++      const b = MotoreSchemi.leggiMusicXML(t); b.titoloBreve = "Anton Diabelli, op. 149 n. " + n; b.titolo = b.titoloBreve;
+       // novità aggiunte dalla pagina (una o più per brano): prima o dopo quelle scritte nel file
+       [].concat(NOVITA_AGGIUNTE[n] || []).reverse().forEach(agg => { if (agg.prima) b.riquadri.unshift(agg.testo); });
+       [].concat(NOVITA_AGGIUNTE[n] || []).forEach(agg => { if (!agg.prima) b.riquadri.push(agg.testo); });
+       return b;
+     }));
+-  const PAUSE_RAGGRUPPATE = [21];        // brani in cui le battute di pausa consecutive diventano una sola, con il numero
++  const PAUSE_RAGGRUPPATE = [];        // brani in cui le battute di pausa consecutive diventano una sola, con il numero
+   // la diteggiatura (no / prima volta / sempre) viaggia insieme alla versione; il flauto non ne ha
+   const opzioni = (versione, extra, n) => Object.assign({ strumento: strumento.id, colori: versione.colori, nomi: versione.nomi,
+     diteggiatura: strumento.id === 'flauto' ? 'no' : (versione.dit || 'no'),
+-    notaBaseDita: "g4", titolo: false, schema: false, pausePiuBattute: PAUSE_RAGGRUPPATE.includes(n) }, extra);
++    notaBaseDita: undefined, titolo: false, schema: false, pausePiuBattute: PAUSE_RAGGRUPPATE.includes(n) }, extra);
+ 
+ 
+   /* ---------- barra degli strumenti ---------- */
+@@ -744,7 +742,7 @@
+   async function apriTelefono(n, versione) {
+     const brano = await caricaBrano(n), note = MotoreSchemi.noteUsate(brano);
+     const verticale = window.innerHeight > window.innerWidth;
+-    const testa = `<div class="tel-testa"><span class="tel-numero">${n}</span><h2 class="tel-titolo">${titoloColorato(brano.titoloBreve)}</h2><img class="tel-disegno" src="${disegno(n)}" alt=""></div>`;
++    const testa = `<div class="tel-testa"><span class="tel-numero">${n}</span><h2 class="tel-titolo">${titoloColorato(brano.titoloBreve)}</h2>${disegno(n) ? `<img class="tel-disegno" src="${disegno(n)}" alt="">` : ''}</div>`;
+     const riquadri = brano.riquadri.map(riquadroHTML).join("") + comandiBasi(n);
+     lightboxInner.innerHTML = verticale
+       ? `<div class="tel tel-vert">${testa}<div class="tel-riquadri">${riquadri}</div><div class="tel-spartito"><div class="spartito"></div></div><div class="tel-carte lim-carte"></div></div>`
+@@ -817,7 +815,7 @@
+       <div class="lim-lato">
+         <div class="lim-testa">
+           <div><div class="bp-numero">${n}</div><h2 class="bp-titolo">${titoloColorato(brano.titoloBreve)}</h2></div>
+-          <div class="bp-disegno"><img src="${disegno(n)}" alt=""></div>
++          <div class="bp-disegno">${disegno(n) ? `<img src="${disegno(n)}" alt="">` : ''}</div>
+         </div>
+         ${brano.riquadri.map(riquadroHTML).join("")}${comandiBasi(n)}
+         <div class="lim-carte"></div>
+@@ -892,18 +890,14 @@
+       <div class="bp-testa">
+         <div class="bp-numero">${n}</div>
+         <h2 class="bp-titolo"></h2>
+-        <div class="bp-disegno"><img src="${disegno(n)}" alt=""></div>
++        <div class="bp-disegno">${disegno(n) ? `<img src="${disegno(n)}" alt="">` : ''}</div>
+       </div>
+       <div class="bp-riquadri"></div>
+       <div class="bp-carte"></div>
+-      <div class="player-row" style="margin-top:16px">
+-        <div class="label-row"><span class="label">Con melodia</span><a class="dl" href="${CARTELLA}brano${due(n)}-completo.mp3" download>Scarica</a></div>
+-        <audio controls preload="none" src="${CARTELLA}brano${due(n)}-completo.mp3"></audio>
+-      </div>
+-      <div class="player-row">
+-        <div class="label-row"><span class="label">Solo base</span><a class="dl" href="${CARTELLA}brano${due(n)}-accompagnamento.mp3" download>Scarica</a></div>
+-        <audio controls preload="none" src="${CARTELLA}brano${due(n)}-accompagnamento.mp3"></audio>
+-      </div>
++      ${(AUDIO[n] || []).map((a, i) => `<div class="player-row"${i === 0 ? ' style="margin-top:16px"' : ''}>
++        <div class="label-row"><span class="label">${a.label}</span><a class="dl" href="${CARTELLA}${a.file}" download>Scarica</a></div>
++        <audio controls preload="none" src="${CARTELLA}${a.file}"></audio>
++      </div>`).join('')}
+       <div class="versions">${VERSIONI.map((v, i) => `<button type="button" data-v="${i}" class="${i === VERSIONE_INIZIALE ? 'active' : ''}">${v.label}</button>`).join('')}</div>
+       ${pulsanteSolfeggia(n)}
+       <div class="dit-scelta"><span class="dit-etichetta">Diteggiatura</span>${[['no', 'No'], ['prima', 'Prima volta'], ['sempre', 'Sempre']].map(([d, t]) => `<button type="button" data-d="${d}" class="${d === 'no' ? 'active' : ''}">${t}</button>`).join('')}</div>
+@@ -951,7 +945,7 @@
+       const testo = btnPdf.textContent; btnPdf.textContent = 'Preparo il PDF…'; btnPdf.disabled = true;
+       try {
+         const brano = await caricaBrano(n);
+-        await MotoreSchemi.salvaPaginaPDF(await pagina(), `${n}. ${brano.titoloBreve} - ${strumento.label} - ${versione.label}.pdf`);
++        await MotoreSchemi.salvaPaginaPDF(await pagina(), `${brano.titoloBreve} - ${strumento.label} - ${versione.label}.pdf`);
+       } finally { btnPdf.textContent = testo; btnPdf.disabled = false; }
+     });
+     mostra();
