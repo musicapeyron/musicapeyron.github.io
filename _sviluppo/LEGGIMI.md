@@ -20,7 +20,7 @@ gli zip vanno estratti prima; non cancellare il file `CNAME`).
   (youtube-nocookie). Le preferenze vanno solo in `localStorage`, sempre dentro try/catch.
 - **Licenze:** contenuti CC BY-NC-SA 4.0; basi audio CC BY-SA 3.0; codice MIT (© 2026 Cristiano Arata);
   i materiali di terzi tengono la loro licenza → vanno citati in `crediti.html` (e in fondo alle pagine di storia).
-- **Immagini:** niente nudo, nemmeno in statue o pitture antiche (scelta dell'autore): per gli strumenti meglio la foto dell'oggetto.
+- **Immagini:** niente nudo, nemmeno in statue o pitture antiche (scelta dell'autore); gli abiti d'epoca vanno benissimo. Per gli strumenti meglio la foto dell'oggetto, per i brani l'iconografia dell'epoca.
 - **Animazioni:** lente, niente lampeggi (sito usato da bambini), rispettare `prefers-reduced-motion`.
 - **Stile:** quello della home (`index.html`): sfondo blu notte, card scure con bordo colorato in alto, caratteri
   Manrope (titoli), Inter (testo), Fredoka (titoli grandi). Caratteri locali in `fonts/` (`fonts/caratteri.css`).
@@ -119,6 +119,7 @@ quella modifica si perde.
 
 - `storia.html` — elenco delle epoche (array `EPOCHE`: per attivarne una basta darle `url` e `img`).
 - `storia-antichita.html` — Preistoria e antichità (banner: preistoria a sinistra, antichità a destra; il filtro vale anche per gli strumenti). Idee e link dal programma di prima, lezione 31.
+- `storia-rinascimento.html` — Rinascimento (banner: Roma a sinistra, Venezia a destra; ogni ascolto è assegnato a una delle due scuole).
 - `storia-medioevo.html` — modello di epoca. Doppio banner (profano a sinistra, sacro a destra; toccando una metà
   si filtrano gli ascolti), schede **Ascolti / Strumenti / Da suonare**, finestra con video, gancio, 2–4 punti
   “cosa ascoltare”, “Lo sapevi?”, frecce ← → ed Esc.

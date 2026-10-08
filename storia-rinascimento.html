@@ -1,0 +1,412 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Il Rinascimento — Storia della musica — Musica Peyron</title>
+<meta name="description" content="La musica del Rinascimento raccontata attraverso gli ascolti: Roma e Palestrina, Venezia e i cori battenti di Gabrieli, il madrigale, la stampa musicale, le danze e gli strumenti.">
+<link rel="icon" href="favicon.svg" type="image/svg+xml">
+<link rel="icon" href="favicon-32.png" type="image/png" sizes="32x32">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
+<link rel="stylesheet" href="fonts/caratteri.css">
+<style>
+  * { box-sizing: border-box; }
+  html, body { margin: 0; min-height: 100%; }
+  body { min-height: 100vh; font-family: 'Inter', 'Segoe UI', Arial, sans-serif; color: #EAF2FF; -webkit-font-smoothing: antialiased;
+    background: #0f172a; overflow-x: hidden; position: relative; }
+  body::after { content: ""; position: fixed; inset: 0; z-index: -1; pointer-events: none;
+    background: radial-gradient(circle at 50% 0%, #3730a3 0%, transparent 45%), linear-gradient(135deg, #0f172a, #1e1b4b); }
+  body::before { content: ""; position: fixed; inset: 0; z-index: 0; pointer-events: none; opacity: 0.5;
+    background-image: radial-gradient(rgba(255,255,255,0.035) 1px, transparent 1px); background-size: 3px 3px; }
+
+  .casetta { position: fixed; top: 12px; left: 12px; z-index: 40; width: 44px; height: 44px; border-radius: 50%; display: grid; place-items: center;
+    background: rgba(15,23,42,0.75); border: 1px solid rgba(255,255,255,0.18); text-decoration: none; font-size: 20px; color: #EAF2FF; font-weight: 700; }
+
+  main { position: relative; z-index: 1; max-width: 1400px; margin: 0 auto; padding: 12px 20px 24px; }
+
+  /* ---------- doppio banner ---------- */
+  .banner { position: relative; height: clamp(170px, 30vh, 320px); border-radius: 18px; overflow: hidden; background: #111827;
+    border: 1px solid rgba(255,255,255,0.1); user-select: none; -webkit-user-select: none; }
+  .meta { position: absolute; inset: 0; cursor: pointer; transition: filter .35s ease, opacity .35s ease; -webkit-tap-highlight-color: transparent; }
+  .meta img { width: 100%; height: 100%; object-fit: cover; display: block; }
+  .meta.sx { clip-path: polygon(0 0, 56% 0, 44% 100%, 0 100%); }
+  .meta.dx { clip-path: polygon(56% 0, 100% 0, 100% 100%, 44% 100%); }
+  .meta.sx img { width: 58%; object-position: 50% 55%; }
+  .meta.dx img { width: 58%; margin-left: 42%; object-position: 50% 40%; }
+  .banner.f-sx .meta.dx, .banner.f-dx .meta.sx { filter: grayscale(.85) brightness(.45); }
+  .banner::after { content: ""; position: absolute; inset: 0; pointer-events: none;
+    background: radial-gradient(ellipse at 50% 55%, rgba(15,23,42,0.55) 0%, rgba(15,23,42,0) 60%), linear-gradient(0deg, rgba(15,23,42,0.75), rgba(15,23,42,0) 45%); }
+  .titolo-epoca { position: absolute; left: 50%; top: 50%; transform: translate(-50%, -58%); text-align: center; z-index: 2; pointer-events: none; }
+  .titolo-epoca .sopra { font-family: 'Manrope', sans-serif; font-weight: 800; font-size: 11.5px; letter-spacing: .16em; text-transform: uppercase; color: #FDE7C7; text-shadow: 0 1px 6px rgba(0,0,0,.8); }
+  .titolo-epoca h1 { font-family: 'Fredoka', 'Manrope', sans-serif; font-weight: 600; margin: 0; font-size: clamp(32px, 6vw, 62px); line-height: 1.05; text-shadow: 0 2px 18px rgba(0,0,0,.85); }
+  .titolo-epoca .date { font-family: 'Manrope', sans-serif; font-weight: 800; color: #FFE58A; font-size: clamp(13px, 1.6vw, 17px); text-shadow: 0 1px 8px rgba(0,0,0,.9); }
+  .etich-meta { position: absolute; bottom: 12px; z-index: 3; font-family: 'Manrope', sans-serif; font-weight: 800; font-size: 12.5px;
+    padding: 6px 12px; border-radius: 999px; background: rgba(15,23,42,0.72); border: 1px solid rgba(255,255,255,0.22); cursor: pointer; white-space: nowrap; }
+  .etich-meta.sx { left: 12px; color: #FBC877; } .etich-meta.dx { right: 12px; color: #C4B5FD; }
+  .etich-meta.attiva { background: #EAF2FF; color: #0f172a; }
+  @media (max-width: 560px) { .etich-meta { font-size: 11px; padding: 5px 9px; bottom: 8px; } .etich-meta .lungo { display: none; } }
+
+  .atmosfera { text-align: center; color: #9FB3CE; font-size: 13px; font-style: italic; margin: 10px auto 12px; max-width: 760px; line-height: 1.45; }
+
+  /* ---------- schede ---------- */
+  .schede { display: flex; justify-content: center; gap: 8px; flex-wrap: wrap; margin-bottom: 12px; }
+  .scheda { font: 700 13.5px 'Manrope', sans-serif; color: #EAF2FF; cursor: pointer; padding: 8px 16px; border-radius: 999px;
+    background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.14); display: inline-flex; align-items: center; gap: 7px; }
+  .scheda:hover { background: rgba(255,255,255,0.12); }
+  .scheda.attiva { background: #EAF2FF; color: #0f172a; border-color: #EAF2FF; }
+  .scheda .n { font-size: 11px; opacity: .65; }
+  @media (max-width: 560px) { main { padding-top: 64px !important; } .schede { flex-wrap: nowrap; gap: 6px; } .scheda { font-size: 12.5px; padding: 7px 11px; gap: 5px; } .scheda .n { display: none; } }
+
+  /* ---------- griglia di card (come in home) ---------- */
+  .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 12px; }
+  @media (min-width: 1200px) { .grid { grid-template-columns: repeat(5, 1fr); } }
+  @media (max-width: 520px) { .grid { grid-template-columns: repeat(2, 1fr); gap: 9px; } main { padding: 10px 12px 20px; } }
+  .card { --accent: #5EC8D8; position: relative; background: rgba(255,255,255,0.035); border: 1px solid rgba(255,255,255,0.09); border-top: 2px solid var(--accent);
+    border-radius: 12px; overflow: hidden; display: flex; flex-direction: column; text-align: left; font: inherit; color: inherit; padding: 0; cursor: pointer;
+    transition: border-color .2s ease, transform .2s ease, background .2s ease; }
+  .card:hover { transform: translateY(-2px); background: rgba(255,255,255,0.06); border-color: color-mix(in srgb, var(--accent) 55%, transparent); border-top-color: var(--accent); }
+  .card:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+  .card .foto { aspect-ratio: 16 / 10; background: #1e293b center / cover no-repeat; position: relative; }
+  .card .foto::after { content: "▶"; position: absolute; right: 8px; bottom: 8px; width: 30px; height: 30px; border-radius: 50%; display: grid; place-items: center;
+    font-size: 12px; background: rgba(15,23,42,0.8); color: #fff; border: 1px solid rgba(255,255,255,0.3); }
+  .card .testo { padding: 9px 11px 11px; display: flex; flex-direction: column; gap: 3px; flex: 1; }
+  .card .label { align-self: flex-start; font-size: 9px; font-weight: 700; letter-spacing: .05em; text-transform: uppercase; color: var(--accent);
+    background: color-mix(in srgb, var(--accent) 14%, transparent); padding: 2px 7px; border-radius: 999px; }
+  .card h2 { font-family: 'Manrope', sans-serif; font-weight: 700; font-size: 14px; margin: 2px 0 0; letter-spacing: -0.01em; line-height: 1.25; }
+  .card .chi { font-size: 11px; color: #9FB3CE; font-weight: 600; }
+  .card p { font-size: 11.5px; line-height: 1.4; color: #B8C7DD; margin: 2px 0 0; }
+  .card.dx { --accent: #a78bfa; } .card.sx { --accent: #F99D1C; } .card.strum { --accent: #5EC8D8; } .card.suona { --accent: #BED958; }
+  .card.empty { cursor: default; border-style: dashed; background: transparent; }
+  .card.empty:hover { transform: none; }
+  .card.empty .foto::after { content: "presto"; width: auto; height: auto; padding: 3px 9px; border-radius: 999px; font: 700 10.5px 'Manrope', sans-serif; letter-spacing: .04em; }
+  .card.nascosta { display: none; }
+
+  /* ---------- finestra dell'ascolto ---------- */
+  .velo { position: fixed; inset: 0; z-index: 60; background: rgba(2,6,23,0.82); display: none; align-items: center; justify-content: center; padding: 16px; }
+  .velo.aperto { display: flex; }
+  .finestra { position: relative; width: min(1180px, 100%); max-height: calc(100vh - 32px); overflow: auto; background: #131c33; border: 1px solid rgba(255,255,255,0.14);
+    border-top: 3px solid var(--accent, #5EC8D8); border-radius: 18px; display: grid; grid-template-columns: 1.55fr 1fr; gap: 0; box-shadow: 0 20px 60px rgba(0,0,0,.5); }
+  @media (max-width: 860px) { .finestra { grid-template-columns: 1fr; } }
+  .schermo { position: relative; aspect-ratio: 16 / 9; background: #000 center / cover no-repeat; }
+  .schermo iframe { position: absolute; inset: 0; width: 100%; height: 100%; border: 0; }
+  .avvio { position: absolute; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 10px; cursor: pointer;
+    background: rgba(2,6,23,0.55); border: 0; color: #fff; font: inherit; width: 100%; }
+  .avvio .tondo { width: 76px; height: 76px; border-radius: 50%; background: #FFE58A; color: #0f172a; display: grid; place-items: center; font-size: 30px; padding-left: 6px; box-shadow: 0 6px 24px rgba(0,0,0,.45); }
+  .avvio:hover .tondo { transform: scale(1.06); }
+  .avvio .nota { font-size: 12px; color: #DCE6F5; background: rgba(15,23,42,0.7); padding: 4px 10px; border-radius: 999px; }
+  .info { padding: 16px 18px 14px; display: flex; flex-direction: column; gap: 8px; }
+  .info .label { align-self: flex-start; font-size: 10px; font-weight: 800; letter-spacing: .06em; text-transform: uppercase; color: var(--accent); background: color-mix(in srgb, var(--accent) 16%, transparent); padding: 3px 9px; border-radius: 999px; }
+  .info h3 { font-family: 'Manrope', sans-serif; font-weight: 800; font-size: 22px; margin: 0; line-height: 1.2; }
+  .info .chi { font-size: 13px; color: #9FB3CE; font-weight: 600; margin-top: -4px; }
+  .info .gancio { font-family: 'Manrope', sans-serif; font-weight: 700; font-size: 16px; color: #FFE58A; margin: 2px 0 0; }
+  .info ul { margin: 0; padding-left: 0; list-style: none; display: flex; flex-direction: column; gap: 6px; }
+  .info li { font-size: 14.5px; color: #DCE6F5; line-height: 1.45; padding-left: 24px; position: relative; }
+  .info li::before { content: "🎧"; position: absolute; left: 0; top: 0; font-size: 13px; }
+  .info .sapevi { font-size: 13.5px; color: #DCE6F5; background: rgba(255,255,255,0.05); border-left: 3px solid var(--accent); border-radius: 8px; padding: 8px 10px; line-height: 1.45; }
+  .info .sapevi b { color: var(--accent); }
+  .info .piede { margin-top: auto; display: flex; justify-content: space-between; align-items: flex-end; gap: 10px; flex-wrap: wrap; font-size: 11px; color: #7F93B2; }
+  .info .piede a { color: #7DD3FC; }
+  .chiudi { position: absolute; top: 8px; right: 8px; z-index: 3; width: 40px; height: 40px; border-radius: 50%; border: 1px solid rgba(255,255,255,0.25);
+    background: rgba(15,23,42,0.85); color: #fff; font-size: 18px; cursor: pointer; }
+  .frecce { display: flex; gap: 8px; }
+  .freccia { font: 700 13px 'Manrope', sans-serif; color: #EAF2FF; background: rgba(255,255,255,0.08); border: 1px solid rgba(255,255,255,0.18); border-radius: 999px; padding: 7px 14px; cursor: pointer; }
+  .freccia:hover { background: rgba(255,255,255,0.15); }
+
+  .crediti-img { margin-top: 18px; font-size: 11.5px; color: #7F93B2; }
+  .crediti-img summary { cursor: pointer; color: #9FB3CE; }
+  .crediti-img li { margin: 3px 0; } .crediti-img a { color: #7DD3FC; }
+  footer.piede { position: relative; z-index: 1; text-align: center; font-size: 13px; color: #9FB3CE; padding: 12px 12px 24px; }
+  footer.piede a { color: #7DD3FC; }
+  @media (prefers-reduced-motion: reduce) { .card, .meta { transition: none; } }
+</style>
+</head>
+<body>
+<a class="casetta" href="storia.html" aria-label="Torna alla storia della musica" title="Torna alla storia della musica">←</a>
+<main>
+
+  <div class="banner" id="banner">
+    <div class="meta sx" data-mondo="sx" title="Roma"><img src="media/storia/rinascimento/banner-roma.jpg" alt="La basilica di San Pietro a Roma"></div>
+    <div class="meta dx" data-mondo="dx" title="Venezia"><img src="media/storia/rinascimento/banner-venezia.jpg" alt="La basilica di San Marco a Venezia"></div>
+    <div class="titolo-epoca">
+      <div class="sopra">Storia della musica</div>
+      <h1>Il Rinascimento</h1>
+      <div class="date">1450 – 1600</div>
+    </div>
+    <button class="etich-meta sx" data-mondo="sx">⛪ Roma<span class="lungo"> · voci a cappella</span></button>
+    <button class="etich-meta dx" data-mondo="dx">🎺 Venezia<span class="lungo"> · cori, strumenti, stampa</span></button>
+  </div>
+
+  <p class="atmosfera">Due città, due modi di fare musica. A Roma le voci, pure e ordinate, al servizio della preghiera. A Venezia cori che si rispondono da un lato all'altro della basilica, strumenti squillanti… e i primi spartiti stampati.</p>
+
+  <nav class="schede" aria-label="Sezioni">
+    <button class="scheda attiva" data-scheda="ascolti">🎧 Ascolti <span class="n" id="nAscolti"></span></button>
+    <button class="scheda" data-scheda="strumenti">🪕 Strumenti <span class="n" id="nStrumenti"></span></button>
+    <button class="scheda" data-scheda="suonare">🎼 Da suonare <span class="n" id="nSuonare"></span></button>
+  </nav>
+
+  <div class="grid" id="griglia"></div>
+
+  <details class="crediti-img">
+    <summary>Crediti delle immagini e dei video</summary>
+    <ul id="listaCrediti"></ul>
+    <p>I video sono incorporati da YouTube e restano dei rispettivi titolari: non fanno parte della licenza del sito.</p>
+  </details>
+</main>
+<footer class="piede">Cristiano Arata · Musica Peyron — <a href="crediti.html">Crediti e licenza</a> · <a href="privacy.html">Privacy</a></footer>
+
+<div class="velo" id="velo" role="dialog" aria-modal="true" aria-labelledby="fTitolo">
+  <div class="finestra" id="finestra">
+    <button class="chiudi" id="chiudi" aria-label="Chiudi">✕</button>
+    <div class="schermo" id="schermo"></div>
+    <div class="info">
+      <span class="label" id="fLabel"></span>
+      <h3 id="fTitolo"></h3>
+      <div class="chi" id="fChi"></div>
+      <div class="gancio" id="fGancio"></div>
+      <ul id="fPunti"></ul>
+      <div class="sapevi" id="fSapevi"></div>
+      <div class="piede">
+        <div class="frecce"><button class="freccia" id="prec">◀</button><button class="freccia" id="succ">▶</button></div>
+        <div id="fFonte"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+(function () {
+  "use strict";
+  const IMG = "media/storia/rinascimento/";
+
+  /* =========================================================
+     CONTENUTI — per cambiare un video basta cambiare "yt"
+     mondo: "sx" = Roma (metà sinistra del banner), "dx" = Venezia (metà destra)
+     ========================================================= */
+  const ASCOLTI = [
+    { id: "missa", mondo: "sx", label: "Roma · Messa", titolo: "Missa Papae Marcelli", chi: "Palestrina · Roma, 1562 circa", img: "missa.jpg", yt: "965WSmercZQ", canale: "Cappella Musicale Pontificia Sistina (canale ufficiale)",
+      gancio: "La Messa che, secondo la leggenda, salvò la polifonia.",
+      punti: ["Siamo nell'epoca del <b>Concilio di Trento</b>: la Chiesa vuole che le parole sacre si capiscano bene.",
+              "Le voci sono sei, ma l'intreccio è chiaro e ordinato: nessuna voce copre le altre.",
+              "Solo voci, senza strumenti: è lo stile <b>a cappella</b> romano.",
+              "La canta il coro del Papa, la Cappella Sistina, che esiste ancora oggi."],
+      sapevi: "Si racconta che i cardinali volessero vietare la polifonia in chiesa e che Palestrina li abbia convinti con questa Messa. È una leggenda, ma per secoli Palestrina è stato il modello della musica sacra." },
+    { id: "sicut", mondo: "sx", label: "Roma · mottetto", titolo: "Sicut cervus", chi: "Palestrina · Roma, 1584", img: "sicut.jpg", yt: "dU7k-hiiVjw", canale: "VOCES8",
+      gancio: "«Come la cerva cerca l'acqua…»",
+      punti: ["È un <b>mottetto</b>: un brano sacro in latino, a più voci.",
+              "Ascolta l'<b>imitazione</b>: una voce comincia la melodia, le altre la ripetono una dopo l'altra.",
+              "Le frasi sono lunghe e morbide, senza salti bruschi: è la calma tipica della scuola romana."],
+      sapevi: "Palestrina fu maestro di cappella a San Pietro e a Santa Maria Maggiore e scrisse più di cento Messe." },
+    { id: "josquin", mondo: "sx", label: "Roma · mottetto", titolo: "Ave Maria… virgo serena", chi: "Josquin Desprez · fine Quattrocento", img: "josquin.jpg", yt: "4VOIaUsk1f8", canale: "Schola Antiqua",
+      gancio: "Il compositore più famoso d'Europa intorno al 1500.",
+      punti: ["Josquin veniva dalle Fiandre e cantò per alcuni anni nel <b>coro del Papa</b>, a Roma.",
+              "Le voci entrano a coppie, imitandosi: ascolta come «Ave Maria» passa da una voce all'altra.",
+              "Alla fine tutte le voci si fermano su accordi lenti per l'ultima preghiera."],
+      sapevi: "Martin Lutero disse di lui: «Josquin è padrone delle note: loro fanno ciò che vuole lui; gli altri compositori fanno ciò che vogliono le note»." },
+    { id: "victoria", mondo: "sx", label: "Roma · mottetto", titolo: "O magnum mysterium", chi: "Tomás Luis de Victoria · Roma, 1572", img: "victoria.jpg", yt: "c1qj4gl3mIs", canale: "Ensemble Plus Ultra",
+      gancio: "Uno spagnolo a Roma racconta il Natale.",
+      punti: ["È un <b>mottetto</b> di Natale: «Oh grande mistero: gli animali videro il Signore appena nato, deposto in una mangiatoia».",
+              "L'inizio è lento e raccolto, come chi entra in punta di piedi nella stalla.",
+              "Alla fine l'<b>Alleluia</b> cambia ritmo e diventa quasi una danza in tre."],
+      sapevi: "Victoria era spagnolo: visse a Roma una ventina d'anni, forse allievo di Palestrina, prima di tornare a Madrid. Questo mottetto fu stampato a Venezia nel 1572." },
+    { id: "gabrieli", mondo: "dx", label: "Venezia · cori battenti", titolo: "Sonata pian' e forte", chi: "Giovanni Gabrieli · Venezia, 1597", img: "gabrieli.jpg", yt: "HJbbuTV5Q_I", canale: "Teatro La Fenice",
+      gancio: "Una delle prime musiche in cui è scritto «piano» e «forte».",
+      punti: ["Due gruppi di strumenti suonano a turno e poi insieme: sono i <b>cori battenti</b>.",
+              "Nella basilica di San Marco i due gruppi stavano su due balconate opposte: il suono arrivava da destra e da sinistra.",
+              "Ascolta i cornetti, i tromboni e le viole che si rispondono."],
+      sapevi: "Gabrieli è tra i primi compositori a scrivere sulla partitura come suonare: «pian» e «forte». Nasce così la dinamica." },
+    { id: "grillo", mondo: "dx", label: "Venezia · stampa musicale", titolo: "El grillo", chi: "Josquin Desprez · stampato a Venezia, 1505", img: "grillo.jpg", yt: "62-aBOZrqh8", canale: "Profeti della Quinta",
+      gancio: "«Il grillo è un buon cantore»… e Venezia inventa gli spartiti stampati.",
+      punti: ["È una <b>frottola</b>: una canzone allegra in italiano, a quattro voci.",
+              "Le voci imitano il verso del grillo con note veloci e ripetute.",
+              "Ascolta la nota lunga, tenuta come il canto di un grillo nella notte d'estate."],
+      sapevi: "Nel 1501 a Venezia Ottaviano Petrucci stampò il primo libro di musica polifonica con i caratteri mobili. El grillo uscì in una sua raccolta del 1505." },
+    { id: "arcadelt", mondo: "dx", label: "Venezia · madrigale", titolo: "Il bianco e dolce cigno", chi: "Jacques Arcadelt · stampato a Venezia, 1539", img: "arcadelt.jpg", yt: "gFbT7mZzioY", canale: "Ars Nova Copenhagen",
+      gancio: "Il madrigale: la poesia diventa musica.",
+      punti: ["Il <b>madrigale</b> mette in musica una poesia in italiano, a quattro o cinque voci.",
+              "La musica «dipinge» le parole: ascolta come cambia su «piangendo» e su «morire».",
+              "Si cantava tra amici, nelle case e nelle corti, leggendo ognuno la propria parte."],
+      sapevi: "Il primo libro di madrigali di Arcadelt, stampato a Venezia nel 1539, fu ristampato per più di cent'anni: un vero successo editoriale." },
+    { id: "casulana", mondo: "dx", label: "Venezia · madrigale", titolo: "Morir non può il mio cuore", chi: "Maddalena Casulana · stampato a Venezia, 1566", img: "casulana.jpg", yt: "5yklIyYenzU", canale: "The Sixteen",
+      gancio: "La prima donna a pubblicare la propria musica.",
+      punti: ["È un <b>madrigale</b> a quattro voci, uscito a Venezia nel 1566.",
+              "Ascolta come le voci si inseguono e poi si ritrovano insieme sulle parole più importanti.",
+              "Due anni dopo Casulana pubblicò un intero libro di madrigali tutto suo."],
+      sapevi: "Nella dedica del suo libro (1568) scrisse di voler mostrare «il vano error degli uomini», convinti che l'intelligenza e il talento fossero solo loro." },
+    { id: "dame", label: "Ferrara · concerto delle dame", titolo: "O dolcezze amarissime d'amore", chi: "Luzzasco Luzzaschi · Ferrara, fine Cinquecento", img: "dame.jpg", yt: "T2GoNO0upAw", canale: "Outhere Music (canale ufficiale)",
+      gancio: "Le cantanti più famose d'Italia… in un castello.",
+      punti: ["Alla corte degli Este, a <b>Ferrara</b>, il duca Alfonso II riunì tre cantanti bravissime: Laura Peverara, Anna Guarini e Livia d'Arco.",
+              "Era il <b>concerto delle dame</b>: cantavano per pochi ospiti, in privato, con voci acute e piene di virtuosismi.",
+              "Ascolta i ghirigori veloci delle voci, accompagnate dal clavicembalo."],
+      sapevi: "Altre corti, come Mantova e Firenze, cercarono subito di imitarle. Luzzaschi pubblicò i madrigali scritti per loro solo nel 1601." },
+    { id: "mainerio", mondo: "dx", label: "Venezia · danza", titolo: "Schiarazula Marazula", chi: "Giorgio Mainerio · stampato a Venezia, 1578", img: "mainerio.jpg", yt: "xhLFMEZKkK0", canale: "Ulsamer Collegium (canale ufficiale)",
+      gancio: "Una danza del Cinquecento che si suona ancora a scuola.",
+      punti: ["Viene dal <b>Primo libro de balli</b> di Mainerio, stampato a Venezia nel 1578.",
+              "La melodia è semplice e si ripete, con un ritmo ben marcato.",
+              "La suonano strumenti dell'epoca: cromorni, flauti, percussioni."],
+      sapevi: "Giorgio Mainerio, nato a Parma, era maestro di cappella ad Aquileia, in Friuli. Il titolo è misterioso: nessuno sa con certezza che cosa significhi." }
+  ];
+
+  const STRUMENTI = [
+    { id: "flauto", label: "Fiati", titolo: "Flauto dolce", chi: "Una famiglia intera", img: "flauto.jpg", yt: "WXkRgUvY6PM", canale: "The Royal Wind Music",
+      gancio: "Lo stesso flauto che suoni a scuola.",
+      punti: ["Nel Rinascimento si costruiva in tutte le misure, dal piccolissimo soprano al grande basso.",
+              "Insieme formavano un <b>consort</b>, un gruppo di strumenti della stessa famiglia."],
+      sapevi: "Era uno degli strumenti più amati: il re Enrico VIII d'Inghilterra ne possedeva più di settanta." },
+    { id: "liuto", label: "Corde pizzicate", titolo: "Liuto", chi: "Il re degli strumenti", img: "liuto.jpg", yt: "r6PhdHo0J48", canale: "Peter Croton",
+      gancio: "Lo strumento più amato del Rinascimento.",
+      punti: ["Ha la cassa a mezza pera, molte corde doppie e il manico con i tasti.",
+              "Si suonava da solo, per accompagnare il canto o insieme ad altri strumenti."],
+      sapevi: "Il liutista Francesco da Milano, che ascolti qui, era così bravo che lo chiamavano «il divino»." },
+    { id: "gamba", label: "Corde strofinate", titolo: "Viola da gamba", chi: "Si suona tra le gambe", img: "gamba.jpg", yt: "sZh-NN-T1uY", canale: "Voices of Music",
+      gancio: "Una viola che si tiene tra le gambe.",
+      punti: ["Si appoggia sulle gambe o tra le ginocchia; l'arco si tiene dal basso, col palmo in su.",
+              "Sul manico ha i tasti, come una chitarra; anche le viole formavano consort di più misure."],
+      sapevi: "Non è la nonna del violoncello: viole da gamba e violini sono due famiglie diverse, nate quasi nello stesso periodo." },
+    { id: "cornetto", label: "Fiati", titolo: "Cornetto", chi: "Lo strumento che canta", img: "cornetto.jpg", yt: "qFVNdp4XiQY", canale: "Voices of Music",
+      gancio: "Fori come un flauto, bocchino come una tromba.",
+      punti: ["È di legno ricoperto di cuoio, curvo, con i fori per le dita.",
+              "Si suona con un piccolo bocchino: il suono assomiglia moltissimo alla voce umana."],
+      sapevi: "A San Marco i cornetti suonavano accanto ai cantori nelle grandi feste: qui accompagna un mottetto di Palestrina." },
+    { id: "trombone", label: "Ottoni", titolo: "Trombone rinascimentale", chi: "Il nonno del trombone", img: "trombone.jpg", yt: "EB9tYCLUzXA", canale: "Capella de la Torre",
+      gancio: "Una tromba che si allunga e si accorcia.",
+      punti: ["Ha già la <b>coulisse</b>, il tubo che scorre per cambiare nota.",
+              "La campana è più stretta di quella moderna: il suono è morbido e si fonde con le voci."],
+      sapevi: "Nella Venezia di Gabrieli tromboni e cornetti erano la coppia perfetta per la musica di San Marco." },
+    { id: "cromorno", label: "Fiati", titolo: "Cromorno", chi: "Il «corno storto»", img: "cromorno.jpg", yt: "VeQGk38rp8c", canale: "ReRenaissance",
+      gancio: "Un fiato a forma di J, dal suono ronzante.",
+      punti: ["L'ancia doppia è chiusa in una capsula: il musicista non la tocca con le labbra.",
+              "Il suono è nasale e un po' buffo, perfetto per le danze."],
+      sapevi: "Il nome viene dal tedesco Krummhorn, che significa proprio «corno storto»." },
+    { id: "virginale", label: "Tastiera", titolo: "Virginale", chi: "Piccolo clavicembalo", img: "virginale.jpg", yt: "YOG_PPvTvW0", canale: "My Life With Early Music",
+      gancio: "Una tastiera che pizzica le corde.",
+      punti: ["Premendo un tasto, una piccola punta pizzica la corda, come nel clavicembalo.",
+              "Era spesso decorato con pitture e scritte, come un mobile prezioso."],
+      sapevi: "Era tra gli strumenti preferiti delle case nobili: anche la regina Elisabetta I d'Inghilterra lo suonava." }
+  ];
+
+  const SUONARE = [
+    { titolo: "Schiarazula Marazula", chi: "Giorgio Mainerio", img: "mainerio.jpg" }
+  ];
+
+  /* crediti delle immagini (tutte ospitate nel sito) */
+const CREDITI_IMG = [
+    'Banner: facciata della basilica di San Pietro, foto di Palickap — <a href="https://commons.wikimedia.org/wiki/File:Roma,_Basilica_di_San_Pietro,_facciata.jpg" target="_blank" rel="noopener">fonte</a>, <a href="https://creativecommons.org/licenses/by-sa/4.0/deed.it" target="_blank" rel="noopener">CC BY-SA 4.0</a>, ritagliata.',
+    'Banner: basilica di San Marco, foto di InSapphoWeTrust — <a href="https://commons.wikimedia.org/wiki/File:Basilica_Cattedrale_Patriarcale_di_San_Marco,_Venezia_(5354215510).jpg" target="_blank" rel="noopener">fonte</a>, <a href="https://creativecommons.org/licenses/by-sa/2.0/deed.it" target="_blank" rel="noopener">CC BY-SA 2.0</a>, ritagliata.',
+    'Missa Papae Marcelli: Palestrina presenta le sue Messe a papa Giulio III (1554) — <a href="https://commons.wikimedia.org/wiki/File:Giovanni_Palestrina_and_Pope_Julius_III.jpg" target="_blank" rel="noopener">fonte</a>, pubblico dominio.',
+    'Sicut cervus: ritratto di Palestrina — <a href="https://commons.wikimedia.org/wiki/File:Giovanni_Pierluigi_da_Palestrina.jpg" target="_blank" rel="noopener">fonte</a>, pubblico dominio.',
+    'Josquin Desprez, xilografia — <a href="https://commons.wikimedia.org/wiki/File:Josquin_des_Prez.jpg" target="_blank" rel="noopener">fonte</a>, pubblico dominio.',
+    'O magnum mysterium: ritratto di Tomás Luis de Victoria — <a href="https://commons.wikimedia.org/wiki/File:Tom%C3%A1s_Luis_de_Victoria.jpg" target="_blank" rel="noopener">fonte</a>, pubblico dominio.',
+    'Gabrieli: Gentile Bellini, Processione in piazza San Marco (1496) — <a href="https://commons.wikimedia.org/wiki/File:Accademia_-_Procession_in_piazza_San_Marco_by_Gentile_Bellini.jpg" target="_blank" rel="noopener">fonte</a>, pubblico dominio.',
+    'El grillo: pagina dell\'Odhecaton di Petrucci (Venezia, 1501) — <a href="https://commons.wikimedia.org/wiki/File:Adieu_mes_amours_tenor.jpg" target="_blank" rel="noopener">fonte</a>, pubblico dominio.',
+    'Il bianco e dolce cigno: Maestro delle Mezze Figure Femminili, Tre musiciste (prima metà del Cinquecento) — <a href="https://commons.wikimedia.org/wiki/File:Master_of_the_Female_Half-Lengths_-_Three_Musicians_AC1992.152.142.jpg" target="_blank" rel="noopener">fonte</a>, pubblico dominio.',
+    'Morir non può il mio cuore: pagina di musica stampata a Venezia da Petrucci (1506) — <a href="https://commons.wikimedia.org/wiki/File:Petrucci_Tromboncino_1506.jpg" target="_blank" rel="noopener">fonte</a>, pubblico dominio.',
+    'Concerto delle dame: il Castello Estense di Ferrara, foto di Acquario51 — <a href="https://commons.wikimedia.org/wiki/File:Ferrara_castello_estense.jpg" target="_blank" rel="noopener">fonte</a>, <a href="https://creativecommons.org/licenses/by-sa/3.0/deed.it" target="_blank" rel="noopener">CC BY-SA 3.0</a>, ritagliata.',
+    'Schiarazula Marazula: Pieter Bruegel il Vecchio, Danza di contadini (particolare) — <a href="https://commons.wikimedia.org/wiki/File:Pieter_Bruegel_the_Elder_-_The_Peasant_Dance_(detail)_-_WGA3503.jpg" target="_blank" rel="noopener">fonte</a>, pubblico dominio.',
+    'Flauto dolce tenore, 1600 circa (Metropolitan Museum) — <a href="https://www.metmuseum.org/art/collection/search/506723" target="_blank" rel="noopener">fonte</a>, pubblico dominio (Open Access).',
+    'Liuto italiano, fine Cinquecento (Metropolitan Museum) — <a href="https://www.metmuseum.org/art/collection/search/503357" target="_blank" rel="noopener">fonte</a>, pubblico dominio (Open Access).',
+    'Viola da gamba basso, 1600 circa (Metropolitan Museum) — <a href="https://www.metmuseum.org/art/collection/search/503359" target="_blank" rel="noopener">fonte</a>, pubblico dominio (Open Access).',
+    'Cornetto, 1575 circa (Metropolitan Museum) — <a href="https://www.metmuseum.org/art/collection/search/503951" target="_blank" rel="noopener">fonte</a>, pubblico dominio (Open Access).',
+    'Tromboni rinascimentali, foto di Multimann — <a href="https://commons.wikimedia.org/wiki/File:Sackbutt.jpg" target="_blank" rel="noopener">fonte</a>, <a href="https://creativecommons.org/licenses/by-sa/3.0/deed.it" target="_blank" rel="noopener">CC BY-SA 3.0</a>, ritagliata.',
+    'Cromorno tenore, Musikinstrumenten-Museum di Berlino, foto di Irmgard Otto — <a href="https://commons.wikimedia.org/wiki/File:Musikinstrumenten-Museum_Berlin_-_Tenor-Krummhorn_in_D_-_1106536.jpg" target="_blank" rel="noopener">fonte</a>, <a href="https://creativecommons.org/licenses/by-sa/4.0/deed.it" target="_blank" rel="noopener">CC BY-SA 4.0</a>, ritagliata.',
+    'Virginale doppio di Hans Ruckers, 1581 (Metropolitan Museum) — <a href="https://www.metmuseum.org/art/collection/search/503676" target="_blank" rel="noopener">fonte</a>, pubblico dominio (Open Access).'
+  ];
+
+  /* ---------- costruzione della griglia ---------- */
+  const griglia = document.getElementById("griglia");
+  document.getElementById("nAscolti").textContent = ASCOLTI.length;
+  document.getElementById("nStrumenti").textContent = STRUMENTI.length;
+  document.getElementById("nSuonare").textContent = SUONARE.length;
+
+  let scheda = "ascolti", mondo = null, elenco = [];
+  function disegna() {
+    griglia.innerHTML = "";
+    if (scheda === "suonare") {
+      SUONARE.forEach(s => {
+        const c = document.createElement("div"); c.className = "card suona empty";
+        c.innerHTML = `<div class="foto" style="background-image:url('${IMG + s.img}')"></div>
+          <div class="testo"><span class="label">Da suonare</span><h2>${s.titolo}</h2><span class="chi">${s.chi}</span></div>`;
+        griglia.appendChild(c);
+      });
+      return;
+    }
+    const dati = scheda === "ascolti" ? ASCOLTI : STRUMENTI;
+    elenco = dati.filter(d => !mondo || !d.mondo || d.mondo === mondo);
+    elenco.forEach((d, i) => {
+      const c = document.createElement("button"); c.type = "button";
+      c.className = "card " + (scheda === "ascolti" ? d.mondo : "strum");
+      c.innerHTML = `<div class="foto" style="background-image:url('${IMG + d.img}')"></div>
+        <div class="testo"><span class="label">${d.label}</span><h2>${d.titolo}</h2><span class="chi">${d.chi}</span><p>${d.gancio}</p></div>`;
+      c.addEventListener("click", () => apri(i));
+      griglia.appendChild(c);
+    });
+  }
+
+  document.querySelectorAll(".scheda").forEach(b => b.addEventListener("click", () => {
+    scheda = b.dataset.scheda;
+    document.querySelectorAll(".scheda").forEach(x => x.classList.toggle("attiva", x === b));
+    disegna();
+  }));
+
+  /* ---------- banner: preistoria / antichità ---------- */
+  const banner = document.getElementById("banner");
+  function impostaMondo(m, senzaDisegno) {
+    mondo = m;
+    banner.classList.toggle("f-sx", m === "sx");
+    banner.classList.toggle("f-dx", m === "dx");
+    document.querySelectorAll(".etich-meta").forEach(e => e.classList.toggle("attiva", e.dataset.mondo === m));
+    if (!senzaDisegno) {
+      if (scheda === "suonare") { scheda = "ascolti"; document.querySelectorAll(".scheda").forEach(x => x.classList.toggle("attiva", x.dataset.scheda === "ascolti")); }
+      disegna();
+    }
+  }
+  banner.querySelectorAll("[data-mondo]").forEach(el => el.addEventListener("click", () => impostaMondo(mondo === el.dataset.mondo ? null : el.dataset.mondo)));
+
+  /* ---------- finestra con il video ---------- */
+  const velo = document.getElementById("velo"), schermo = document.getElementById("schermo"), finestra = document.getElementById("finestra");
+  let attuale = 0;
+  function apri(i) {
+    attuale = (i + elenco.length) % elenco.length;
+    const d = elenco[attuale];
+    finestra.style.setProperty("--accent", scheda === "ascolti" ? (d.mondo === "dx" ? "#a78bfa" : "#F99D1C") : "#5EC8D8");
+    document.getElementById("fLabel").textContent = d.label;
+    document.getElementById("fTitolo").textContent = d.titolo;
+    document.getElementById("fChi").textContent = d.chi;
+    document.getElementById("fGancio").textContent = d.gancio;
+    document.getElementById("fPunti").innerHTML = d.punti.map(p => `<li>${p}</li>`).join("");
+    document.getElementById("fSapevi").innerHTML = `<b>Lo sapevi?</b> ${d.sapevi}`;
+    document.getElementById("fFonte").innerHTML = `<a href="https://www.youtube.com/watch?v=${d.yt}" target="_blank" rel="noopener">Apri su YouTube ↗</a>`;
+    // anteprima: nessuna richiesta a YouTube finché non si preme play
+    schermo.innerHTML = "";
+    schermo.style.backgroundImage = `url('${IMG + d.img}')`;
+    const b = document.createElement("button"); b.className = "avvio"; b.type = "button";
+    b.innerHTML = `<span class="tondo">▶</span><span class="nota">Il video si carica da YouTube quando premi play</span>`;
+    b.addEventListener("click", () => {
+      schermo.innerHTML = `<iframe src="https://www.youtube-nocookie.com/embed/${d.yt}?autoplay=1&rel=0&playsinline=1" title="${d.titolo}"
+        allow="autoplay; encrypted-media; picture-in-picture; fullscreen" allowfullscreen referrerpolicy="strict-origin-when-cross-origin"></iframe>`;
+    });
+    schermo.appendChild(b);
+    velo.classList.add("aperto");
+    document.body.style.overflow = "hidden";
+    b.focus({ preventScroll: true });
+  }
+  function chiudi() { velo.classList.remove("aperto"); schermo.innerHTML = ""; document.body.style.overflow = ""; }
+  document.getElementById("chiudi").addEventListener("click", chiudi);
+  velo.addEventListener("click", e => { if (e.target === velo) chiudi(); });
+  document.getElementById("prec").addEventListener("click", () => apri(attuale - 1));
+  document.getElementById("succ").addEventListener("click", () => apri(attuale + 1));
+  document.addEventListener("keydown", e => {
+    if (!velo.classList.contains("aperto")) return;
+    if (e.key === "Escape") chiudi();
+    if (e.key === "ArrowRight") apri(attuale + 1);
+    if (e.key === "ArrowLeft") apri(attuale - 1);
+  });
+
+  /* ---------- crediti ---------- */
+  document.getElementById("listaCrediti").innerHTML = CREDITI_IMG.map(c => `<li>${c}</li>`).join("") +
+    [...ASCOLTI, ...STRUMENTI].map(d => `<li>${d.titolo} (${d.chi}): video di <a href="https://www.youtube.com/watch?v=${d.yt}" target="_blank" rel="noopener">${d.canale}</a> su YouTube</li>`).join("");
+
+  disegna();
+})();
+</script>
+</body>
+</html>
