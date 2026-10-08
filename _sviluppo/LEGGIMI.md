@@ -20,6 +20,7 @@ gli zip vanno estratti prima; non cancellare il file `CNAME`).
   (youtube-nocookie). Le preferenze vanno solo in `localStorage`, sempre dentro try/catch.
 - **Licenze:** contenuti CC BY-NC-SA 4.0; basi audio CC BY-SA 3.0; codice MIT (© 2026 Cristiano Arata);
   i materiali di terzi tengono la loro licenza → vanno citati in `crediti.html` (e in fondo alle pagine di storia).
+- **Immagini:** niente nudo, nemmeno in statue o pitture antiche (scelta dell'autore): per gli strumenti meglio la foto dell'oggetto.
 - **Animazioni:** lente, niente lampeggi (sito usato da bambini), rispettare `prefers-reduced-motion`.
 - **Stile:** quello della home (`index.html`): sfondo blu notte, card scure con bordo colorato in alto, caratteri
   Manrope (titoli), Inter (testo), Fredoka (titoli grandi). Caratteri locali in `fonts/` (`fonts/caratteri.css`).
