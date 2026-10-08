@@ -177,8 +177,7 @@ quella modifica si perde.
 ## 6. Da fare / in sospeso
 
 - Brani da suonare del Medioevo (In taberna, Sumer is icumen in, Ut queant laxis) e dell'antichità (Epitaffio di Seikilos): servono gli spartiti.
-- Solfeggio: Lettura ritmica e Solfeggio cantato ancora da fare. Bona: fatte 1–75 (fine Parte prima + n. 75). Dalla 76 cambiano
-  armatura e tempo (3/4, 6/8...): `bona_omr.py scrivi` per ora scrive sempre do maggiore e 4/4, va esteso prima di continuare.
+- Solfeggio: Lettura ritmica e Solfeggio cantato ancora da fare. Bona: fatte 1–80 (prossima: 81, pagina 35 del PDF in fondo).
 - Altre epoche di storia.
 - Dominio musicascuole.it (DNS su Aruba + dominio personalizzato in GitHub Pages, www → reindirizzo).
 - Anteprima dei link (Open Graph), pagina 404, sitemap.
@@ -193,3 +192,11 @@ quella modifica si perde.
   si disegnano identici a prima.
 - Dal PDF del Bona, dalla pagina 22 in poi il riconoscimento automatico sbaglia molto: le lezioni 41–75 sono state
   scritte a mano nei file di testo guardando la scansione ad alta risoluzione (pdftoppm -r 400 -gray).
+
+### Note 08/10/2026 (3)
+- `bona_omr.py scrivi`: intestazione con tonalità e tempo ("| armatura=-1 tempo=2/4", "tempo=C|" per il ¢) e terzine
+  ("t" dopo la durata: e58t d58t c58t; il gruppo si chiude da solo quando fa 3 volte la nota più breve).
+- Motore: gruppi irregolari (time-modification + tuplet start/stop del MusicXML) con il 3 sopra/sotto; le terzine di
+  crome/semicrome senza parentesi, quelle di semiminime con la parentesi. Verificato: 138 spartiti identici a prima.
+- Metronomo del solfeggio: il battito segue il tempo (semiminima; minima nel ¢; semiminima puntata in 6/8, 9/8, 12/8, 3/8).
+- Versione del motore nelle pagine: v=2026-10-08c.

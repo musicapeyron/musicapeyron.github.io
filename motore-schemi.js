@@ -345,6 +345,10 @@
         const tr = n.querySelector(':scope > beam[number="1"]'); if (tr) { ev.trave = tr.textContent.trim(); brano.traviScritte = true; }
         const gambo = n.querySelector(":scope > stem"); if (gambo && /^(up|down)$/.test(gambo.textContent.trim())) ev.gambo = gambo.textContent.trim();
         if (n.querySelector("notations fermata")) ev.corona = true;
+        // gruppi irregolari (terzine...): rapporto e inizio/fine del gruppo
+        const tm = n.querySelector(":scope > time-modification");
+        if (tm) { ev.tupla = { reali: +tm.querySelector("actual-notes").textContent, normali: +tm.querySelector("normal-notes").textContent };
+          const tp = n.querySelector("notations tuplet"); if (tp) ev.tupla[tp.getAttribute("type") === "start" ? "inizio" : "fine"] = true; }
         const accScritto = n.querySelector(":scope > accidental");
         if (accScritto) { ev.accidentale = { sharp: "#", flat: "b", natural: "n" }[accScritto.textContent.trim()] || null; brano.alterazioniScritte = true; }
         n.querySelectorAll(":scope > tie").forEach(t => { if (t.getAttribute("type") === "start") ev.legaInizio = true; else ev.legaFine = true; });
@@ -431,7 +435,7 @@
     /* mappa per seguire la base: per ogni battuta, dove sta nel disegno e dove cade ogni figura (in semiminime) */
     const mappaBattute = [], lungBattuta = brano.tempo[0] * 4 / brano.tempo[1];
     const DURQ = { w: 4, h: 2, q: 1, "8": 0.5, "16": 0.25, "32": 0.125 };
-    const durQ = e => e.intera ? lungBattuta : (DURQ[e.durata] || 1) * (2 - Math.pow(0.5, e.punti || 0));   // punto: ×1,5; doppio punto: ×1,75
+    const durQ = e => e.intera ? lungBattuta : (DURQ[e.durata] || 1) * (2 - Math.pow(0.5, e.punti || 0)) * (e.tupla ? e.tupla.normali / e.tupla.reali : 1);   // punto: ×1,5; doppio punto: ×1,75; terzina: ×2/3
     { let aperte = [], prossima = 0;   // ogni nota sotto una legatura di portamento riceve il suo numero
       brano.battute.forEach(b => b.eventi.forEach(e => {
         if (e.pausa) return;
@@ -509,6 +513,15 @@
           }
           return sn;
         });
+        // gruppi irregolari: vanno creati prima della formattazione (cambiano la durata delle note)
+        const tuple = [];
+        { let gruppo = null;
+          note.forEach(sn => { const t = sn._ev && sn._ev.tupla;
+            if (!t) { gruppo = null; return; }
+            if (!gruppo || t.inizio) { gruppo = { note: [], t }; tuple.push(gruppo); }
+            gruppo.note.push(sn);
+            if (t.fine) gruppo = null; });
+          tuple.forEach((g, i) => tuple[i] = new VF.Tuplet(g.note, { num_notes: g.t.reali, notes_occupied: g.t.normali, ratioed: false, bracketed: !g.note.every(x => x.getDuration && ["8", "16", "32"].includes(x.getDuration())) })); }
         let beams = [];
         if (brano.traviScritte) {      // travi come nel file (inizio / continua / fine)
           let gruppo = [];
@@ -526,6 +539,7 @@
         { let q = 0; const punti = note.map(sn => { const ev = sn._ev || {}; const p = { q, x: sn.getAbsoluteX() + sn.getGlyphWidth() / 2, lega: !!ev.legaFine, pausa: !!ev.pausa }; q += durQ(ev); return p; });
           mappaBattute[brano.battute.indexOf(b)] = { x0: st.getX(), x1: st.getX() + st.getWidth(), xNote: st.getNoteStartX(), y0: st.getYForLine(0), y1: st.getYForLine(4), punti }; }
         beams.forEach(bm => bm.setContext(ctx).draw());
+        tuple.forEach(tp => tp.setContext(ctx).draw());
         note.forEach(sn => { daScrivere.push(sn); tutteLeNote.push(sn); });
         stRiga = st; sn_ultimaBattuta = { st, note };
         x += w;

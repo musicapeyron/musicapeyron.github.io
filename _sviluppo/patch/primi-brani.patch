@@ -1,5 +1,5 @@
---- brani-propedeutici.html	2026-10-07 22:20:07.000000000 +0000
-+++ primi-brani.html	2026-10-07 22:20:07.000000000 +0000
+--- /home/claude/repo/musicapeyron.github.io-main/brani-propedeutici.html	2026-10-08 19:12:08.196007854 +0000
++++ /home/claude/repo/musicapeyron.github.io-main/primi-brani.html	2026-10-08 19:12:08.199176197 +0000
 @@ -5,21 +5,18 @@
  <meta name="viewport" content="width=device-width, initial-scale=1.0">
  <!--
@@ -40,7 +40,7 @@
 +  .tel-titolo { font-family: 'Manrope', sans-serif !important; font-size: 14px !important; }
  </style>
  <script src="vexflow.js"></script>
- <script src="motore-schemi.js?v=2026-10-08"></script>
+ <script src="motore-schemi.js?v=2026-10-08c"></script>
 @@ -613,9 +615,8 @@
  
  <header class="hero">

@@ -1,0 +1,4 @@
+# pagina 34 del PDF (libro p. 26), lezione 78 — controllata (riscritta a mano)
+
+# Lezione 78 | Allegro moderato · re maggiore | armatura=2 tempo=C|
+a4q d5h b4q | a4q f#5h a4q | g#4q e5h g4q | f#4q. b48 a4q rq | a4q d5h c#58 b48 | a4q b416 c#516 d516 e516 f#5q d58 b48 | g#48 e48 d5h c#58 b48 | a4q. c#516 b416 a4q rq | g4q. b416 a416 g4q. c#516 b416 | a4q. d516 b416 a4q. e516 d516 | c#5q. g516 f#516 e5q. b416 c#516 | e5q~ e516 d516 c#516 b416 a4q rq | g48 b416 a416 g4h c#58t d58t b48t | a48 d516 b416 a4h f#58t e58t d58t | b48t g58t f#58t e58t d58t c#58t b48t a48t g48t a48t g48t e48t | d48 r8 f#48 g48 b48 r8 a48 r8 | g48 r8 g5q~ g58t e58t c#58t a48t g48t e48t | d48 r8 f#48 g48 b48 a48 f#58 f#48 | g4q g516 f#516 e516 f#516 e516 d516 c#516 b416 a416 g416 f#416 e416 | d48 r8 c5q b48 r8 d5q | c#58 r8 e5q d58 r8 g5q | f#5q. e516 d516 c#5q. d516 b416 | a4q. f#416 g416 a4q. e416 f#416 | e4w | d4w

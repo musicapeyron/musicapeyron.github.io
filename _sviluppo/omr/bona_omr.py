@@ -20,7 +20,9 @@ Il file di testo:
     c4h e5h | d4h f5h | ... | c5w
   una battuta tra due "|"; ogni nota è nome+ottava+durata: c4 = do centrale; durata w h q 8 16
   (semibreve, minima, semiminima, croma, semicroma), "." per il punto; pausa = r + durata (rh, rq ...);
-  diesis/bemolle: c#5q, bb4q; doppio punto: "q.."; legatura di valore verso la nota seguente: "~" in fondo (c4h~). Le righe che iniziano con "!" sono avvisi dello script (battute che non tornano).
+  diesis/bemolle: c#5q, bb4q; doppio punto: "q.."; terzina: "t" dopo la durata (e58t d58t c58t); legatura di valore verso la nota seguente: "~" in fondo (c4h~). Le righe che iniziano con "!" sono avvisi dello script (battute che non tornano).
+  Tonalità e tempo nell'intestazione: "# Lezione 76 | argomento | armatura=-1 tempo=3/4" (bemolli negativi, diesis
+  positivi; tempo=C| per il ¢). Le note si scrivono sempre con l'altezza vera (in fa maggiore il si è "bb4"): il sito mette da solo le alterazioni.
   La corona sull'ultima nota/pausa e la doppia barra finale vengono aggiunte da sole.
 
 Audiveris (OMR open source): https://github.com/Audiveris/audiveris — installato da
@@ -82,11 +84,11 @@ def misure_da_mxl(f):
 
 
 def durata(tok):
-    m = re.fullmatch(r"(?:r|[a-g][#b]?\d)(w|h|q|8|16|32)(\.*)~?", tok)
+    m = re.fullmatch(r"(?:r|[a-g][#b]?\d)(w|h|q|8|16|32)(\.*)(t?)~?", tok)
     if not m:
         raise ValueError(f"nota non valida: {tok}")
     base = QL[m.group(1)]
-    return base * (2 - Fraction(1, 2 ** len(m.group(2))))
+    return base * (2 - Fraction(1, 2 ** len(m.group(2)))) * (Fraction(2, 3) if m.group(3) else 1)
 
 
 def leggi(pdf, pagina, prima, cartella):
@@ -116,21 +118,31 @@ def leggi(pdf, pagina, prima, cartella):
 
 # ---------------------------------------------------------------- 2) scrittura
 def lezioni_da_testo(testo):
-    """Restituisce [(numero, argomento, [battute di token])]."""
+    """Restituisce [(numero, argomento, [battute di token], opzioni)].
+    Intestazione: "# Lezione 76 | argomento | armatura=-1 tempo=3/4" (armatura: bemolli negativi, diesis positivi)."""
     out, corrente = [], None
     for riga in testo.splitlines():
         riga = riga.strip()
-        m = re.match(r"#\s*Lezione\s+(\d+)\s*\|?\s*(.*)", riga)
+        m = re.match(r"#\s*Lezione\s+(\d+)\s*\|?\s*([^|]*)\|?\s*(.*)", riga)
         if m:
-            corrente = [int(m.group(1)), m.group(2).strip(), []]
+            opz = dict(x.split("=", 1) for x in m.group(3).split() if "=" in x)
+            corrente = [int(m.group(1)), m.group(2).strip(), [], opz]
             out.append(corrente)
         elif riga and not riga.startswith(("#", "!")) and corrente is not None:
             corrente[2] += [b.split() for b in riga.split("|") if b.strip()]
     return out
 
 
-def musicxml(numero, argomento, battute):
+def musicxml(numero, argomento, battute, opz=None):
+    opz = opz or {}
     DIV = 8
+    armatura = int(opz.get("armatura", 0))
+    tempo = opz.get("tempo", "4/4")
+    if tempo == "C|":   # ¢ (tempo tagliato): si scrive come 4/4 con il simbolo ¢, il battito è la minima
+        beats, beat_type, simbolo = 4, 4, ' symbol="cut"'
+    else:
+        beats, beat_type = (int(v) for v in tempo.split("/"))
+        simbolo = ' symbol="common"' if (beats, beat_type) == (4, 4) else ""
     x = ['<?xml version="1.0" encoding="UTF-8"?>',
          '<!DOCTYPE score-partwise PUBLIC "-//Recordare//DTD MusicXML 4.0 Partwise//EN" "http://www.musicxml.org/dtds/partwise.dtd">',
          '<score-partwise version="4.0">',
@@ -144,13 +156,14 @@ def musicxml(numero, argomento, battute):
     for i, b in enumerate(battute, 1):
         x.append(f'    <measure number="{i}">')
         if i == 1:
-            x.append(f'      <attributes><divisions>{DIV}</divisions><key><fifths>0</fifths></key>'
-                     '<time symbol="common"><beats>4</beats><beat-type>4</beat-type></time><clef><sign>G</sign><line>2</line></clef></attributes>')
+            x.append(f'      <attributes><divisions>{DIV}</divisions><key><fifths>{armatura}</fifths></key>'
+                     f'<time{simbolo}><beats>{beats}</beats><beat-type>{beat_type}</beat-type></time><clef><sign>G</sign><line>2</line></clef></attributes>')
+        gruppo = []   # terzina in corso: durate nominali delle sue note
         for j, tok in enumerate(b):
-            m = re.fullmatch(r"(r|[a-g][#b]?\d)(w|h|q|8|16|32)(\.*)(~?)", tok)
+            m = re.fullmatch(r"(r|[a-g][#b]?\d)(w|h|q|8|16|32)(\.*)(t?)(~?)", tok)
             if not m:
                 raise ValueError(f"Lezione {numero}, battuta {i}: nota non valida «{tok}»")
-            alt, d, punti, lega = m.groups()
+            alt, d, punti, terz, lega = m.groups()
             dur = int(durata(tok) * DIV)
             ultima = i == len(battute) and j == len(b) - 1
             if alt == "r":
@@ -160,10 +173,18 @@ def musicxml(numero, argomento, battute):
                 testa = (f'<pitch><step>{alt[0].upper()}</step>' + (f'<alter>{acc}</alter>' if acc else '')
                          + f'<octave>{alt[-1]}</octave></pitch>')
             legature = (['stop'] if legata_prima else []) + (['start'] if lega else [])
-            notazioni = ''.join(f'<tied type="{t}"/>' for t in legature) + ('<fermata type="upright"/>' if ultima else '')
+            tupla = ""
+            if terz:   # terzina: si chiude quando le durate nominali fanno 3 volte la più breve
+                nominale = QL[d] * (2 - Fraction(1, 2 ** len(punti)))
+                inizio = not gruppo; gruppo.append(nominale)
+                fine = sum(gruppo) == 3 * min(gruppo)
+                if fine: gruppo = []
+                tupla = (('<tuplet type="start" bracket="no"/>' if inizio else '') + ('<tuplet type="stop"/>' if fine else ''))
+            notazioni = ''.join(f'<tied type="{t}"/>' for t in legature) + tupla + ('<fermata type="upright"/>' if ultima else '')
             x.append(f'      <note>{testa}<duration>{dur}</duration>'
                      + ''.join(f'<tie type="{t}"/>' for t in legature)
                      + f'<type>{TIPO[d]}</type>' + '<dot/>' * len(punti)
+                     + ('<time-modification><actual-notes>3</actual-notes><normal-notes>2</normal-notes></time-modification>' if terz else '')
                      + (f'<notations>{notazioni}</notations>' if notazioni else '') + '</note>')
             legata_prima = bool(lega)
         if i == len(battute):
@@ -175,9 +196,11 @@ def musicxml(numero, argomento, battute):
 
 def scrivi(file_txt, cartella):
     os.makedirs(cartella, exist_ok=True)
-    for numero, argomento, battute in lezioni_da_testo(open(file_txt, encoding="utf8").read()):
-        sospette = [i for i, b in enumerate(battute, 1) if sum((durata(t) for t in b), Fraction(0)) != 4]
-        open(os.path.join(cartella, f"bona-{numero:03d}.musicxml"), "w", encoding="utf8").write(musicxml(numero, argomento, battute))
+    for numero, argomento, battute, opz in lezioni_da_testo(open(file_txt, encoding="utf8").read()):
+        b_, t_ = (int(v) for v in opz.get("tempo", "4/4").replace("C|", "4/4").split("/"))
+        piena = Fraction(4 * b_, t_)
+        sospette = [i for i, b in enumerate(battute, 1) if sum((durata(t) for t in b), Fraction(0)) != piena]
+        open(os.path.join(cartella, f"bona-{numero:03d}.musicxml"), "w", encoding="utf8").write(musicxml(numero, argomento, battute, opz))
         print(f"Lezione {numero} ({argomento or 'senza argomento'}): {len(battute)} battute"
               + (f" — ATTENZIONE battute {sospette} non piene" if sospette else ""))
 

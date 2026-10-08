@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Solfeggio parlato — Musica Peyron</title>
-<meta name="description" content="Solfeggio parlato con le prime 75 lezioni del metodo di Pasquale Bona: metronomo, conteggio, nomi delle note e schede da stampare.">
+<meta name="description" content="Solfeggio parlato con le prime 80 lezioni del metodo di Pasquale Bona: metronomo, conteggio, nomi delle note e schede da stampare.">
 <link rel="icon" href="favicon.svg" type="image/svg+xml">
 <link rel="icon" href="favicon-32.png" type="image/png" sizes="32x32">
 <link rel="apple-touch-icon" href="apple-touch-icon.png">
@@ -130,7 +130,7 @@
 <main>
   <div class="testa">
     <h1>Solfeggio parlato</h1>
-    <p>Pasquale Bona, le prime 75 lezioni</p>
+    <p>Pasquale Bona, le prime 80 lezioni</p>
   </div>
   <nav class="argomenti" id="argomenti" aria-label="Argomenti"></nav>
   <nav class="numeri" id="numeri" aria-label="Lezioni"></nav>
@@ -178,7 +178,7 @@
 <div id="areaStampa"></div>
 
 <script src="vexflow.js"></script>
-<script src="motore-schemi.js?v=2026-10-08b"></script>
+<script src="motore-schemi.js?v=2026-10-08c"></script>
 <script>
 (function () {
   "use strict";
@@ -204,7 +204,7 @@
     { nome: "Sincope", lezioni: [61, 62, 63, 64, 65, 66], titolo: "La sincope" },
     { nome: "Salti veloci", lezioni: [67, 68, 69, 70, 71, 72, 73], titolo: "Tutti i salti, per sciogliere la lingua", dettagli: { 73: "Salti misti" } },
     { nome: "Biscrome", lezioni: [74], titolo: "Scala di biscrome" },
-    { nome: "Parte seconda", lezioni: [75], titolo: "Parte seconda · Largo" }
+    { nome: "Parte seconda", lezioni: [75, 76, 77, 78, 79, 80], titolo: "Parte seconda", dettagli: { 75: "Largo", 76: "Maestoso · le terzine", 77: "Andante · sol maggiore", 78: "Allegro moderato · re maggiore, tempo tagliato", 79: "Andantino · fa maggiore, 2/4", 80: "Larghetto · si bemolle maggiore, 2/4" } }
   ];
   const TUTTE = ARGOMENTI.flatMap(a => a.lezioni).sort((x, y) => x - y);
   const argDi = n => ARGOMENTI.find(a => a.lezioni.includes(n));
@@ -251,7 +251,7 @@
     const a = elNum.querySelector(".num.attivo"); if (a && elNum.scrollWidth > elNum.clientWidth) elNum.scrollLeft = a.offsetLeft - elNum.clientWidth / 2;
     try { branoAttuale = await carica(n); } catch (e) { div.textContent = "Lezione non trovata."; return; }
     if (n !== attuale) return;
-    disegna();
+    aggiornaBpm(); disegna();
   }
   function disegna() {
     if (!branoAttuale) return;
@@ -289,14 +289,15 @@
 
   /* ---------- comandi ---------- */
   const elBpm = document.getElementById("bpm");
-  const aggiornaBpm = () => elBpm.textContent = "♩ = " + S.bpm;
+  const simboloBattito = () => { const b = battitoDi(branoAttuale); return b === 1.5 ? "♩." : b === 2 ? "𝅗𝅥" : b === 0.5 ? "♪" : "♩"; };
+  const aggiornaBpm = () => elBpm.textContent = simboloBattito() + " = " + S.bpm;
   aggiornaBpm();
   document.getElementById("meno").addEventListener("click", () => { cambiaBpm(Math.max(30, S.bpm - 4)); scrivi("bpm", S.bpm); aggiornaBpm(); });
   document.getElementById("piu").addEventListener("click", () => { cambiaBpm(Math.min(200, S.bpm + 4)); scrivi("bpm", S.bpm); aggiornaBpm(); });
   const elSudd = document.getElementById("sudd"); elSudd.value = String(S.sudd);
   elSudd.addEventListener("change", () => {
     const nuovo = +elSudd.value;
-    if (solf) { const p = posA(adesso()); solf.griglia = Math.ceil((p + solf.lung) * nuovo - 1e-6); }
+    if (solf) { const p = posA(adesso()); solf.griglia = Math.ceil((p + solf.lung) / solf.B * nuovo - 1e-6); }
     S.sudd = nuovo; scrivi("sudd", nuovo);
   });
   [["clic", false], ["nomi", true], ["colori", true]].forEach(([k, ridisegna]) => {
@@ -338,16 +339,18 @@
   }
   const via = document.getElementById("via");
   via.addEventListener("click", () => solf ? ferma() : avvia());
-  const posA = t => solf.ancora.pos + (t - solf.ancora.t) * S.bpm / 60;   // posizione in semiminime (negativa nel conteggio)
-  const tempoDi = p => solf.ancora.t + (p - solf.ancora.pos) * 60 / S.bpm;
+  /* il battito: semiminima in 2/4, 3/4, 4/4; semiminima puntata in 6/8, 9/8, 12/8 (e 3/8); minima in 2/2 */
+  function battitoDi(b) { if (!b) return 1; const [num, den] = b.tempo; return den === 8 && num % 3 === 0 ? 1.5 : (b.simboloTempo === "cut" || den === 2) ? 2 : 4 / den; }
+  const posA = t => solf.ancora.pos + (t - solf.ancora.t) * S.bpm / 60 * solf.B;   // posizione in semiminime (negativa nel conteggio)
+  const tempoDi = p => solf.ancora.t + (p - solf.ancora.pos) * 60 / S.bpm / solf.B;
   function avvia() {
     const svg = div.querySelector("svg"); if (!branoAttuale || !svg || !svg._mappa) return;
     audio();
     const [num, den] = branoAttuale.tempo, lung = num * 4 / den;
-    const durB = b => { const q = b.eventi.reduce((t, e) => t + (e.intera ? lung : (DURQ[e.durata] || 1) * (2 - Math.pow(0.5, e.punti || 0))), 0); return q > 0 ? q : lung; };
+    const durB = b => { const q = b.eventi.reduce((t, e) => t + (e.intera ? lung : (DURQ[e.durata] || 1) * (2 - Math.pow(0.5, e.punti || 0)) * (e.tupla ? e.tupla.normali / e.tupla.reali : 1)), 0); return q > 0 ? q : lung; };
     const inizi = []; let tot = 0;
     branoAttuale.battute.forEach(b => { inizi.push(tot); tot += durB(b); });
-    solf = { svg, inizi, tot, lung, ancora: { t: adesso() + 0.12, pos: -lung }, griglia: 0 };
+    solf = { svg, inizi, tot, lung, B: battitoDi(branoAttuale), ancora: { t: adesso() + 0.12, pos: -lung }, griglia: 0 };
     via.textContent = "■ Ferma"; via.classList.add("in-corso");
     programma(); timer = setInterval(programma, 25);
     requestAnimationFrame(avanti);
@@ -356,7 +359,7 @@
     if (!solf) return;
     const sud = S.sudd, fine = adesso() + 0.15;
     for (;;) {
-      const p = -solf.lung + solf.griglia / sud;
+      const p = -solf.lung + solf.griglia * solf.B / sud;
       if (p >= solf.tot - 1e-6) break;
       const t = tempoDi(p); if (t > fine) break;
       const movimento = solf.griglia % sud === 0;
@@ -375,7 +378,7 @@
     solf = null; via.textContent = "▶ Solfeggia"; via.classList.remove("in-corso");
   }
   function cambiaBpm(nuovo) {   // durante l'esercizio la velocità cambia senza salti
-    if (solf) { const t = adesso(), p = posA(t); solf.ancora = { t, pos: p }; solf.griglia = Math.ceil((p + solf.lung) * S.sudd - 1e-6); suoni.forEach(o => { try { o.stop(); } catch (e) {} }); suoni = []; }
+    if (solf) { const t = adesso(), p = posA(t); solf.ancora = { t, pos: p }; solf.griglia = Math.ceil((p + solf.lung) / solf.B * S.sudd - 1e-6); suoni.forEach(o => { try { o.stop(); } catch (e) {} }); suoni = []; }
     S.bpm = nuovo;
   }
   function avanti() {
@@ -383,7 +386,7 @@
     const pos = posA(adesso()), { inizi, tot } = solf;
     if (pos >= tot) { ferma(); return; }
     let m = 0, qIn = 0, conta = 0;
-    if (pos < 0) conta = Math.ceil(-pos - 1e-6);
+    if (pos < 0) conta = Math.ceil(-pos / solf.B - 1e-6);
     else { while (m + 1 < inizi.length && inizi[m + 1] <= pos + 1e-6) m++; qIn = pos - inizi[m]; }
     segna(solf.svg, m, qIn, conta, pos >= 0);
     requestAnimationFrame(avanti);
