@@ -1,0 +1,12 @@
+# pagina 15 del PDF (libro p. 7) — controllata
+
+# Lezione 1 | Scala di semibrevi
+c4w | d4w | e4w | f4w | g4w | a4w | b4w | c5w | d5w | e5w | f5w | g5w | f5w | e5w | d5w | c5w | b4w | a4w | g4w | f4w | e4w | d4w | c4w
+# Lezione 2 | Scala di minime
+c4h d4h | e4h f4h | g4h a4h | b4h c5h | d5h e5h | f5h g5h | g5h f5h | e5h d5h | c5h b4h | a4h g4h | f4h e4h | d4h c4h
+# Lezione 3 | Scala di semiminime
+c4q d4q e4q f4q | g4q a4q b4q c5q | d5q e5q f5q g5q | f5q e5q d5q c5q | b4q a4q g4q f4q | e4q d4q c4q rq
+# Lezione 4 | Scala di crome
+c48 d48 e48 f48 g48 a48 b48 c58 | d58 e58 f58 g58 f58 e58 d58 c58 | b48 a48 g48 f48 e48 d48 c4q
+# Lezione 5 | Scala di semicrome
+c416 d416 e416 f416 g416 a416 b416 c516 d516 e516 f516 g516 a516 g516 f516 e516 | d516 c516 b416 a416 g416 f416 e416 d416 c4q rq

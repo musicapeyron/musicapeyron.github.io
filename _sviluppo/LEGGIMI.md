@@ -150,7 +150,7 @@ quella modifica si perde.
 ## 5. Solfeggio
 
 - `solfeggio.html` — pagina della quinta card in home (rossa, icona metronomo). Per ora: Lettura ritmica,
-  Solfeggio parlato, Solfeggio cantato segnati “presto”, più i collegamenti ai giochi già esistenti
+  Solfeggio cantato segnati “presto” (Solfeggio parlato è attivo: vedi sotto), più i collegamenti ai giochi già esistenti
   (Imita il ritmo, Dettato ritmico, Dettato melodico). Per attivare una voce: darle `url` nell'array `VOCI`.
 
 ### Il Bona (solfeggio parlato) — trascrizione automatica
@@ -163,14 +163,21 @@ quella modifica si perde.
   Usa Audiveris 5.11 (`/opt/audiveris/bin/Audiveris`, .deb dalle release GitHub). Prende lo strato nero
   delle note dal PDF (niente macchie), divide le lezioni dove ricompare il tempo, toglie staccati/dinamiche
   finti nati dalle macchioline, mette corona e doppia barra finali, segnala le battute che non tornano.
-- `_sviluppo/omr/correggi.py file.musicxml BATTUTA "c5:2 r:2"` riscrive a mano una battuta segnalata.
-- Prova del 08/10/2026, pagina 20 del PDF (lezioni 30–37): 2 battute sbagliate su 45, entrambe segnalate dallo script.
+- Due passaggi: `bona_omr.py leggi bona.pdf PAGINA_PDF PRIMA_LEZIONE cartella/` → un file di testo per pagina
+  (una riga per lezione, note tipo `c4h e5q rq`, avvisi `!` sulle battute che non tornano); lo si corregge
+  guardando la pagina pulita, poi `bona_omr.py scrivi pagina.txt media/solfeggio/bona/` crea i MusicXML.
+  I testi già controllati delle lezioni 1–40 sono in `_sviluppo/omr/testi/` (la fonte "vera": rigenerano i MusicXML).
+- Pagina: `solfeggio-parlato.html` (lettore con conteggio, clic, triangolino a tempo, nomi e colori; "Prepara una
+  scheda": fogli A4 verticali con 4 battute per riga, stampa o PDF di più pagine). Gli argomenti sono nell'array
+  `ARGOMENTI` della pagina; per nuove lezioni: aggiungere i file e i numeri lì.
+- 08/10/2026: lezioni 1–40 (pagine PDF 15–21). Pagine pulite: pochi errori, tutti segnalati; pagine 19 e 21 del PDF
+  (tagli addizionali, pause) riconosciute male e riscritte a mano dal confronto.
   Pagina PDF = pagina del libro + 8 (la pag. 12 del libro è la 20 del PDF).
 
 ## 6. Da fare / in sospeso
 
 - Brani da suonare del Medioevo (In taberna, Sumer is icumen in, Ut queant laxis) e dell'antichità (Epitaffio di Seikilos): servono gli spartiti.
-- Contenuti della pagina Solfeggio.
+- Solfeggio: Lettura ritmica e Solfeggio cantato ancora da fare; il Bona oltre la lezione 40 (dalla 41 compaiono pause e figure nuove).
 - Altre epoche di storia.
 - Dominio musicascuole.it (DNS su Aruba + dominio personalizzato in GitHub Pages, www → reindirizzo).
 - Anteprima dei link (Open Graph), pagina 404, sitemap.

@@ -1,0 +1,19 @@
+# pagina 18 del PDF (libro p. 10) — controllata
+
+# Lezione 15 | Salti di sesta
+c4h a4h | d4h b4h | e4h c5h | f4h d5h | g4h e5h | a4h f5h | b4h g5h | g5h b4h | f5h a4h | e5h g4h | d5h f4h | c5h e4h | b4h d4h | a4h c4h | g4h b3h | c4w
+
+# Lezione 16 | Salti di sesta
+c4q a4q d4q b4q | e4q c5q f4q d5q | g4q e5q a4q f5q | b4q g5q c5q a5q | g5q b4q f5q a4q | e5q g4q d5q f4q | c5q e4q b4q d4q | a4q c4q g4q b3q | c4w
+
+# Lezione 17 | Salti di sesta
+c48 a48 d48 b48 e48 c58 f48 d58 | g48 e58 a48 f58 b48 g58 c58 a58 | a58 c58 g58 b48 f58 a48 e58 g48 | d58 f48 c58 e48 b48 d48 a48 c48 | d4h g4h | c4w
+
+# Lezione 18 | Salti di settima
+c4h b4h | d4h c5h | e4h d5h | f4h e5h | g4h f5h | a4h g5h | g5h a4h | f5h g4h | e5h f4h | d5h e4h | c5h d4h | c4h rh
+
+# Lezione 19 | Salti di settima
+c4q b4q d4q c5q | e4q d5q f4q e5q | g4q f5q a4q g5q | g5q a4q f5q g4q | e5q f4q d5q e4q | c5q d4q b4q c4q
+
+# Lezione 20 | Salti di settima
+c48 b48 d48 c58 e48 d58 f48 e58 | g48 f58 a48 g58 g58 a48 f58 g48 | e58 f48 d58 e48 c58 d48 b48 c48 | c5w

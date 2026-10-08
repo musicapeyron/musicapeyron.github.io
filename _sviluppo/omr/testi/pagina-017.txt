@@ -1,0 +1,16 @@
+# pagina 17 del PDF (libro p. 9) — controllata
+
+# Lezione 10 | Salti di quarta
+c4q f4q d4q g4q | e4q a4q f4q b4q | g4q c5q a4q d5q | b4q e5q c5q f5q | d5q g5q e5h | g5q d5q f5q c5q | e5q b4q d5q a4q | c5q g4q b4q f4q | a4q e4q g4q d4q | f4q c4q e4q d4q | c4h rh
+
+# Lezione 11 | Salti di quarta
+c48 f48 d48 g48 e48 a48 f48 b48 | g48 c58 a48 d58 b48 e58 c58 f58 | d58 g58 e58 a58 g58 d58 f58 c58 | e58 b48 d58 a48 c58 g48 b48 f48 | a48 e48 g48 d48 f48 c48 e48 d48 | c4h rh
+
+# Lezione 12 | Salti di quinta
+c4h g4h | d4h a4h | e4h b4h | f4h c5h | g4h d5h | a4h e5h | b4h f5h | c5h g5h | g5h c5h | f5h b4h | e5h a4h | d5h g4h | c5h f4h | b4h e4h | a4h d4h | g4h c4h | f4h b3h | c4w
+
+# Lezione 13 | Salti di quinta
+c4q g4q d4q a4q | e4q b4q f4q c5q | g4q d5q a4q e5q | b4q f5q c5q g5q | g5q c5q f5q b4q | e5q a4q d5q g4q | c5q f4q b4q e4q | a4q d4q g4q c4q
+
+# Lezione 14 | Salti di quinta
+c48 g48 d48 a48 e48 b48 f48 c58 | g48 d58 a48 e58 b48 f58 c58 g58 | g58 c58 f58 b48 e58 a48 d58 g48 | c58 f48 b48 e48 a48 d48 g48 c48 | d4h g4h | c4h rh

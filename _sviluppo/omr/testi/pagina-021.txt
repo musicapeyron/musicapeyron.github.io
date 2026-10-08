@@ -1,0 +1,10 @@
+# pagina 21 del PDF (libro p. 13) — controllata (riscritta a mano)
+
+# Lezione 38 | Piccoli solfeggi con le pause
+c4w | d4h rh | e4w | f4h rh | g4w | a4h rh | b4w | c5h rh
+
+# Lezione 39 | Piccoli solfeggi con le pause
+c4h e4q c4q | d4h g4q rq | e4h g4q e4q | f4h a4q rq | g4h b4q g4q | a4h c5q rq | b4h d5q b4q | c5h rh | g5h e5q c5q | d5h g4q rq | e5h c5q a4q | b4h e4q rq | c5h a4q f4q | g4h e4q c4q | d4h g4h | c4w
+
+# Lezione 40 | Piccoli solfeggi con le pause
+rq c4q rq e4q | rq d4q rq f4q | rq e4q rq g4q | rq f4q rq a4q | rq g4q rq b4q | rq a4q rq c5q | rq b4q rq d5q | c5h rh | rq e5q rq g5q | rq d5q rq g5q | rq c5q rq e5q | rq b4q rq e5q | rq a4q rq c5q | rq g4q rq e4q | rq f4q rq d4q | c4w

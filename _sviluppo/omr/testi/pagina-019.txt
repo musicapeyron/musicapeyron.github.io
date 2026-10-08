@@ -1,0 +1,28 @@
+# pagina 19 del PDF (libro p. 11) — controllata (riscritta a mano: il riconoscimento qui era scarso)
+
+# Lezione 21 | Salti d'ottava
+c4h c5h | d4h d5h | e4h e5h | f4h f5h | g4h g5h | g5h g4h | f5h f4h | e5h e4h | d5h d4h | c5h c4h
+
+# Lezione 22 | Salti d'ottava
+c4q c5q d4q d5q | e4q e5q f4q f5q | g4q g5q a4q a5q | g5q g4q f5q f4q | e5q e4q d5q d4q | c5q c4q rh
+
+# Lezione 23 | Salti d'ottava
+c48 c58 d48 d58 e48 e58 f48 f58 | g48 g58 a48 a58 g58 g48 f58 f48 | e58 e48 d58 d48 c58 c48 rq
+
+# Lezione 24 | Tutti i salti insieme
+c4h d4h | c4h e4h | c4h f4h | c4h g4h | c4h a4h | c4h b4h | c4h c5h | b4h c4h | a4h c4h | g4h c4h | f4h c4h | e4h c4h | d4h c4h | c4w
+
+# Lezione 25 | Tutti i salti insieme
+c4q d4q c4q e4q | c4q f4q c4q g4q | c4q a4q c4q b4q | c4q c5q b4q c4q | a4q c4q g4q c4q | f4q c4q e4q c4q | d4h g4h | c4h rh
+
+# Lezione 26 | Tutti i salti insieme
+c48 d48 c48 e48 c48 f48 c48 g48 | c48 a48 c48 b48 c48 c58 b48 c48 | a48 c48 g48 c48 f48 c48 e48 c48 | c5w
+
+# Lezione 27 | Salti di nona
+c4h d5h | d4h e5h | e4h f5h | f4h g5h | g5h f4h | f5h e4h | e5h d4h | d5h c4h | c5w
+
+# Lezione 28 | Salti di nona
+c4q d5q d4q e5q | e4q f5q f4q g5q | g4q a5q g5q f4q | f5q e4q e5q d4q | d5q c4q c5h
+
+# Lezione 29 | Salti di nona
+c48 d58 d48 e58 e48 f58 f48 g58 | g48 a58 g58 f48 f58 e48 e58 d48 | d58 c48 c5q rh

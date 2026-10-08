@@ -1,0 +1,25 @@
+# pagina 20 del PDF (libro p. 12) — controllata
+
+# Lezione 30 | Salti di decima
+c4h e5h | d4h f5h | e4h g5h | f4h a5h | g5h e4h | f5h d4h | e5h c4h | c5w
+
+# Lezione 31 | Salti di decima
+c4q e5q d4q f5q | e4q g5q f4q a5q | g5q e4q f5q d4q | e5q c4q d5q b3q | c4h rh
+
+# Lezione 32 | Salti di decima
+c48 e58 d48 f58 e48 g58 f48 a58 | g58 e48 f58 d48 e58 c48 d58 b38 | c4h rh
+
+# Lezione 33 | Salti misti
+c4h c5h | c4h d5h | c4h e5h | c4h f5h | c4h g5h | f5h c4h | e5h c4h | d5h c4h | c5w
+
+# Lezione 34 | Salti misti
+c4q c5q c4q d5q | c4q e5q c4q f5q | c4q g5q f5q c4q | e5q c4q d5q c4q | c5w
+
+# Lezione 35 | Salti misti
+c48 c58 c48 d58 c48 e58 c48 f58 | c48 g58 f58 c48 e58 c48 d58 c48 | c5h rh
+
+# Lezione 36 | Salti misti
+c48 c58 c48 d58 c48 e58 c48 f58 | c48 g58 c48 a58 c48 b58 c48 c68 | b58 c48 a58 c48 g58 c48 f58 c48 | e58 c48 d58 c48 c5h
+
+# Lezione 37 | Scala con figure diverse
+c4w | d4h e4h | f4q g4q a4q b4q | c58 d58 e58 f58 g5h | g5w | f5h e5h | d5q c5q b4q a4q | g48 f48 e48 d48 c4h
