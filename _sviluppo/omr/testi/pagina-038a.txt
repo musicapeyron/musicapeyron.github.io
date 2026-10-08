@@ -1,0 +1,4 @@
+# pagina 38 del PDF (libro p. 30), lezione 84 — controllata (riscritta a mano)
+
+# Lezione 84 | Larghetto mosso · fa maggiore, 3/4 | armatura=-1 tempo=3/4
+a48t bb48t a48t d5q c5q | bb48. c516 bb4q rq | a48 e5q a48 e58 a48 | f5h d58 r8 | a48t bb48t a48t d5q c5q | bb48. c516 bb4h~ | bb48t a48t bb48t g48 r8 d58 r8 | c58. a416 f4q rq | e4q f48t g48t a48t bb48. a416 | a48t b48t c#58t d5h | e5q f58t g58t a58t bb58. a516 | a5q. g58 f#58t eb58t d58t | g5q. f58 e58t db58t c58t | f5h e58t d58t bb48t | a48t g#48t a48t f58 r16 a416 e58 r16 a416 | d5h rq | a48t bb48t a48t e48t f48t g48t a4q~ | a48t bb48t a48t bb4h | c#516 e516 g516 f516 e58t d58t c58t bb48. a416 | a4h d58 r8 | a48t bb48t a48t e48t f48t g48t a4q~ | a48t bb48t a48t f5h | e516 f516 g516 a516 bb58 r8 rq | e416 f416 g416 a416 bb48 r8 rq | a48t bb48t a48t d58. c#516 f58. e516 | d5h.

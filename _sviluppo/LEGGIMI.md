@@ -155,6 +155,8 @@ quella modifica si perde.
 
 ### Il Bona (solfeggio parlato) — trascrizione automatica
 
+**→ Procedura completa e aggiornata: `_sviluppo/omr/PROCEDURA.md` (leggere quella; le note qui sotto sono la storia).**
+
 - Fonte scelta da Cristiano: https://archive.org/details/completemethodfo00bona (4ª ed. italiana riveduta da Bona,
   White-Smith 1905, pubblico dominio). Si usa la numerazione originale delle lezioni; la **scelta** delle lezioni
   è nostra (non copiare la selezione di un'edizione moderna in commercio: la raccolta può essere protetta).

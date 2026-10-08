@@ -1,20 +1,20 @@
 # Trascrizione lezioni del Bona (Metodo completo per la divisione) — istruzioni per chi trascrive
 
-Cartella di lavoro: /tmp/claude-0/-home-claude/d579e4e1-f205-5a3d-9bff-63792b564f16/scratchpad/bona2
-(lancia i comandi da lì; usa percorsi assoluti se la shell cambia cartella).
+Cartella di lavoro: quella indicata da chi ti affida il lavoro (contiene pg/pNN.png e ok4/).
+Gli strumenti sono in `_sviluppo/omr/` del sito (bozza.py, zoom.py, bona_omr.py): usa percorsi assoluti.
 
 Fonte: immagini pulite a 300 dpi delle pagine, `pg/pNN.png` (NN = pagina del PDF, 22–40).
 Ogni lezione è una sola voce in chiave di violino. Le note sono di Pasquale Bona; ignora testi e annotazioni del curatore
 ("Ton. de ...", note a piè di pagina, "3 ou 9/8" ecc.): trascrivi solo le note scritte sul pentagramma.
 
 ## Strumenti
-- `python3 bozza.py NN` — fa leggere la pagina ad Audiveris (riconoscimento automatico) e stampa una BOZZA battuta per battuta
+- `python3 <sito>/_sviluppo/omr/bozza.py pg/pNN.png bozze/` — fa leggere la pagina ad Audiveris (riconoscimento automatico) e stampa una BOZZA battuta per battuta
   con la durata totale in quarti. È utile come punto di partenza ma sbaglia spesso (battute fuse, durate, alterazioni, terzine):
   NON fidarti, controlla tutto sull'immagine.
-- `python3 zoom.py NN Y0 Y1 [X0 X1] [nome.png]` — ritaglia la pagina (frazioni 0–1 di altezza e larghezza) in `zoom/nome.png`;
+- `python3 <sito>/_sviluppo/omr/zoom.py pg/pNN.png Y0 Y1 [X0 X1] zoom/nome.png` — ritaglia la pagina (frazioni 0–1 di altezza e larghezza);
   poi guardala con lo strumento Read. Usa nomi file tuoi (es. `zoom/p26_a.png`) perché altri lavorano in parallelo.
   Per leggere bene: un rigo per volta (Y0..Y1 ≈ 0.07 di altezza), metà rigo per volta (X 0–0.55 e 0.45–1).
-- Controllo: `python3 /home/claude/repo/musicapeyron.github.io-main/_sviluppo/omr/bona_omr.py scrivi ok4/lNNN.txt /tmp/claude-0/prova_NNN`
+- Controllo: `python3 <sito>/_sviluppo/omr/bona_omr.py scrivi ok4/lNNN.txt /tmp/claude-0/prova_NNN`
   stampa il numero di battute e "ATTENZIONE battute [...] non piene" se qualche battuta non torna col tempo. Correggi finché
   non ci sono avvisi (unica eccezione accettabile: anacrusi iniziale e battuta finale che la completa).
 
