@@ -478,7 +478,7 @@
             dirGambo ? { stem_direction: dirGambo } : { auto_stem: true }));
           sn._ev = e; sn._riga = r;
           for (let k = 0; k < e.punti; k++) VF.Dot.buildAndAttach([sn], { all: true });
-          if (e.pausa) return sn;
+          if (e.pausa) { if (e.corona) sn.addModifier(new VF.Articulation("a@a").setPosition((VF.ModifierPosition || (VF.Modifier && VF.Modifier.Position) || {}).ABOVE), 0); return sn; }
           // alterazioni: come scritte nel file, se il file le indica; altrimenti solo se diverse dalla chiave
           if (brano.alterazioniScritte) { if (e.accidentale) sn.addModifier(new VF.Accidental(e.accidentale), 0); }
           else {

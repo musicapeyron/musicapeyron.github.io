@@ -153,6 +153,20 @@ quella modifica si perde.
   Solfeggio parlato, Solfeggio cantato segnati “presto”, più i collegamenti ai giochi già esistenti
   (Imita il ritmo, Dettato ritmico, Dettato melodico). Per attivare una voce: darle `url` nell'array `VOCI`.
 
+### Il Bona (solfeggio parlato) — trascrizione automatica
+
+- Fonte scelta da Cristiano: https://archive.org/details/completemethodfo00bona (4ª ed. italiana riveduta da Bona,
+  White-Smith 1905, pubblico dominio). Si usa la numerazione originale delle lezioni; la **scelta** delle lezioni
+  è nostra (non copiare la selezione di un'edizione moderna in commercio: la raccolta può essere protetta).
+  Il testo inglese di Davenport non si usa.
+- `_sviluppo/omr/bona_omr.py bona.pdf PAGINA_PDF PRIMA_LEZIONE uscita/` → un MusicXML per lezione (`bona-030.musicxml`…).
+  Usa Audiveris 5.11 (`/opt/audiveris/bin/Audiveris`, .deb dalle release GitHub). Prende lo strato nero
+  delle note dal PDF (niente macchie), divide le lezioni dove ricompare il tempo, toglie staccati/dinamiche
+  finti nati dalle macchioline, mette corona e doppia barra finali, segnala le battute che non tornano.
+- `_sviluppo/omr/correggi.py file.musicxml BATTUTA "c5:2 r:2"` riscrive a mano una battuta segnalata.
+- Prova del 08/10/2026, pagina 20 del PDF (lezioni 30–37): 2 battute sbagliate su 45, entrambe segnalate dallo script.
+  Pagina PDF = pagina del libro + 8 (la pag. 12 del libro è la 20 del PDF).
+
 ## 6. Da fare / in sospeso
 
 - Brani da suonare del Medioevo (In taberna, Sumer is icumen in, Ut queant laxis) e dell'antichità (Epitaffio di Seikilos): servono gli spartiti.
@@ -161,5 +175,5 @@ quella modifica si perde.
 - Dominio musicascuole.it (DNS su Aruba + dominio personalizzato in GitHub Pages, www → reindirizzo).
 - Anteprima dei link (Open Graph), pagina 404, sitemap.
 - Pagina “Come usare il sito”, Viaggio del ritmo (parcheggiato), schede rosse di armonia.
-- Strumenti persi: il convertitore PDF → MusicXML e lo script di allineamento delle basi non sono più disponibili;
-  i nuovi brani vanno esportati direttamente da MuseScore.
+- Strumenti persi: lo script di allineamento delle basi non è più disponibile. Per il PDF → MusicXML ora c'è
+  `_sviluppo/omr/` (pensato per il Bona, ma funziona per qualsiasi spartito stampato a una voce).
