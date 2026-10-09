@@ -1,0 +1,550 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Il Romanticismo — Storia della musica — musicascuole.it</title>
+<meta name="description" content="La musica del Romanticismo raccontata attraverso gli ascolti: l'intimità del salotto e del lied, il virtuosismo di Paganini e Liszt, le grandi orchestre, i nuovi strumenti e La Cenerentola di Rossini.">
+<link rel="icon" href="favicon.svg" type="image/svg+xml">
+<link rel="icon" href="favicon-32.png" type="image/png" sizes="32x32">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
+<link rel="stylesheet" href="fonts/caratteri.css">
+<link rel="stylesheet" href="comune.css">
+<style>
+  * { box-sizing: border-box; }
+  html, body { margin: 0; min-height: 100%; }
+  body { min-height: 100vh; font-family: 'Inter', 'Segoe UI', Arial, sans-serif; color: #EAF2FF; -webkit-font-smoothing: antialiased;
+    background: #0f172a; overflow-x: hidden; position: relative; }
+
+  .casetta { position: fixed; top: 12px; left: 12px; z-index: 40; width: 44px; height: 44px; border-radius: 50%; display: grid; place-items: center;
+    background: rgba(15,23,42,0.75); border: 1px solid rgba(255,255,255,0.18); text-decoration: none; font-size: 20px; color: #EAF2FF; font-weight: 700; }
+
+  main { position: relative; z-index: 1; max-width: 1400px; margin: 0 auto; padding: 12px 20px 24px; }
+
+  /* ---------- doppio banner ---------- */
+  .banner { position: relative; height: clamp(170px, 30vh, 320px); border-radius: 18px; overflow: hidden; background: #111827;
+    border: 1px solid rgba(255,255,255,0.1); user-select: none; -webkit-user-select: none; }
+  .meta { position: absolute; inset: 0; cursor: pointer; transition: filter .35s ease, opacity .35s ease; -webkit-tap-highlight-color: transparent; }
+  .meta img { width: 100%; height: 100%; object-fit: cover; display: block; }
+  .meta.sx { clip-path: polygon(0 0, 56% 0, 44% 100%, 0 100%); }
+  .meta.dx { clip-path: polygon(56% 0, 100% 0, 100% 100%, 44% 100%); }
+  .meta.sx img { width: 58%; object-position: 50% 55%; }
+  .meta.dx img { width: 58%; margin-left: 42%; object-position: 50% 40%; }
+  .banner.f-sx .meta.dx, .banner.f-dx .meta.sx { filter: grayscale(.85) brightness(.45); }
+  .banner::after { content: ""; position: absolute; inset: 0; pointer-events: none;
+    background: radial-gradient(ellipse at 50% 55%, rgba(15,23,42,0.55) 0%, rgba(15,23,42,0) 60%), linear-gradient(0deg, rgba(15,23,42,0.75), rgba(15,23,42,0) 45%); }
+  .titolo-epoca { position: absolute; left: 50%; top: 50%; transform: translate(-50%, -58%); text-align: center; z-index: 2; pointer-events: none; }
+  .titolo-epoca .sopra { font-family: 'Manrope', sans-serif; font-weight: 800; font-size: 11.5px; letter-spacing: .16em; text-transform: uppercase; color: #FDE7C7; text-shadow: 0 1px 6px rgba(0,0,0,.8); }
+  .titolo-epoca h1 { font-family: 'Fredoka', 'Manrope', sans-serif; font-weight: 600; margin: 0; font-size: clamp(32px, 6vw, 62px); line-height: 1.05; text-shadow: 0 2px 18px rgba(0,0,0,.85); }
+  .titolo-epoca .date { font-family: 'Manrope', sans-serif; font-weight: 800; color: #FFE58A; font-size: clamp(13px, 1.6vw, 17px); text-shadow: 0 1px 8px rgba(0,0,0,.9); }
+  .etich-meta { position: absolute; bottom: 12px; z-index: 3; font-family: 'Manrope', sans-serif; font-weight: 800; font-size: 12.5px;
+    padding: 6px 12px; border-radius: 999px; background: rgba(15,23,42,0.72); border: 1px solid rgba(255,255,255,0.22); cursor: pointer; white-space: nowrap; }
+  .etich-meta.sx { left: 12px; color: #FBC877; } .etich-meta.dx { right: 12px; color: #C4B5FD; }
+  .etich-meta.attiva { background: #EAF2FF; color: #0f172a; }
+  @media (max-width: 560px) { .etich-meta { font-size: 11px; padding: 5px 9px; bottom: 8px; } .etich-meta .lungo { display: none; } }
+
+  .atmosfera { text-align: center; color: #9FB3CE; font-size: 13px; font-style: italic; margin: 10px auto 12px; max-width: 760px; line-height: 1.45; }
+
+  /* ---------- schede ---------- */
+  .schede { display: flex; justify-content: center; gap: 8px; flex-wrap: wrap; margin-bottom: 12px; }
+  .scheda { font: 700 13.5px 'Manrope', sans-serif; color: #EAF2FF; cursor: pointer; padding: 8px 16px; border-radius: 999px;
+    background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.14); display: inline-flex; align-items: center; gap: 7px; }
+  .scheda:hover { background: rgba(255,255,255,0.12); }
+  .scheda.attiva { background: #EAF2FF; color: #0f172a; border-color: #EAF2FF; }
+  .scheda .n { font-size: 11px; opacity: .65; }
+  @media (max-width: 560px) { main { padding-top: 64px !important; } .schede { flex-wrap: nowrap; gap: 6px; } .scheda { font-size: 12.5px; padding: 7px 11px; gap: 5px; } .scheda .n { display: none; } }
+
+  /* ---------- griglia di card (come in home) ---------- */
+  .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 12px; }
+  @media (min-width: 1200px) { .grid { grid-template-columns: repeat(5, 1fr); } }
+  @media (max-width: 520px) { .grid { grid-template-columns: repeat(2, 1fr); gap: 9px; } main { padding: 10px 12px 20px; } }
+  .card { --accent: #5EC8D8; position: relative; background: rgba(255,255,255,0.035); border: 1px solid rgba(255,255,255,0.09); border-top: 2px solid var(--accent);
+    border-radius: 12px; overflow: hidden; display: flex; flex-direction: column; text-align: left; font: inherit; color: inherit; padding: 0; cursor: pointer;
+    transition: border-color .2s ease, transform .2s ease, background .2s ease; }
+  .card:hover { transform: translateY(-2px); background: rgba(255,255,255,0.06); border-color: color-mix(in srgb, var(--accent) 55%, transparent); border-top-color: var(--accent); }
+  .card:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+  .card .foto { aspect-ratio: 16 / 10; background: #1e293b center / cover no-repeat; position: relative; }
+  .card .foto::after { content: "▶"; position: absolute; right: 8px; bottom: 8px; width: 30px; height: 30px; border-radius: 50%; display: grid; place-items: center;
+    font-size: 12px; background: rgba(15,23,42,0.8); color: #fff; border: 1px solid rgba(255,255,255,0.3); }
+  .card .testo { padding: 9px 11px 11px; display: flex; flex-direction: column; gap: 3px; flex: 1; }
+  .card .label { align-self: flex-start; font-size: 9px; font-weight: 700; letter-spacing: .05em; text-transform: uppercase; color: var(--accent);
+    background: color-mix(in srgb, var(--accent) 14%, transparent); padding: 2px 7px; border-radius: 999px; }
+  .card h2 { font-family: 'Manrope', sans-serif; font-weight: 700; font-size: 14px; margin: 2px 0 0; letter-spacing: -0.01em; line-height: 1.25; }
+  .card .chi { font-size: 11px; color: #9FB3CE; font-weight: 600; }
+  .card p { font-size: 11.5px; line-height: 1.4; color: #B8C7DD; margin: 2px 0 0; }
+  .card.dx { --accent: #a78bfa; } .card.sx { --accent: #F99D1C; } .card.strum { --accent: #5EC8D8; } .card.suona { --accent: #BED958; }
+  .card.empty { cursor: default; border-style: dashed; background: transparent; }
+  .card.empty:hover { transform: none; }
+  .card.empty .foto::after { content: "presto"; width: auto; height: auto; padding: 3px 9px; border-radius: 999px; font: 700 10.5px 'Manrope', sans-serif; letter-spacing: .04em; }
+  .card.nascosta { display: none; }
+
+  /* ---------- finestra dell'ascolto ---------- */
+  .velo { position: fixed; inset: 0; z-index: 60; background: rgba(2,6,23,0.82); display: none; align-items: center; justify-content: center; padding: 16px; }
+  .velo.aperto { display: flex; }
+  .finestra { position: relative; width: min(1180px, 100%); max-height: calc(100vh - 32px); overflow: auto; background: #131c33; border: 1px solid rgba(255,255,255,0.14);
+    border-top: 3px solid var(--accent, #5EC8D8); border-radius: 18px; display: grid; grid-template-columns: 1.55fr 1fr; gap: 0; box-shadow: 0 20px 60px rgba(0,0,0,.5); }
+  @media (max-width: 860px) { .finestra { grid-template-columns: 1fr; } }
+  .schermo { position: relative; aspect-ratio: 16 / 9; background: #000 center / cover no-repeat; }
+  .schermo iframe { position: absolute; inset: 0; width: 100%; height: 100%; border: 0; }
+  .avvio { position: absolute; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 10px; cursor: pointer;
+    background: rgba(2,6,23,0.55); border: 0; color: #fff; font: inherit; width: 100%; }
+  .avvio .tondo { width: 76px; height: 76px; border-radius: 50%; background: #FFE58A; color: #0f172a; display: grid; place-items: center; font-size: 30px; padding-left: 6px; box-shadow: 0 6px 24px rgba(0,0,0,.45); }
+  .avvio:hover .tondo { transform: scale(1.06); }
+  .avvio .nota { font-size: 12px; color: #DCE6F5; background: rgba(15,23,42,0.7); padding: 4px 10px; border-radius: 999px; }
+  .info { padding: 16px 18px 14px; display: flex; flex-direction: column; gap: 8px; }
+  .info .label { align-self: flex-start; font-size: 10px; font-weight: 800; letter-spacing: .06em; text-transform: uppercase; color: var(--accent); background: color-mix(in srgb, var(--accent) 16%, transparent); padding: 3px 9px; border-radius: 999px; }
+  .info h3 { font-family: 'Manrope', sans-serif; font-weight: 800; font-size: 22px; margin: 0; line-height: 1.2; }
+  .info .chi { font-size: 13px; color: #9FB3CE; font-weight: 600; margin-top: -4px; }
+  .info .gancio { font-family: 'Manrope', sans-serif; font-weight: 700; font-size: 16px; color: #FFE58A; margin: 2px 0 0; }
+  .info ul { margin: 0; padding-left: 0; list-style: none; display: flex; flex-direction: column; gap: 6px; }
+  .info li { font-size: 14.5px; color: #DCE6F5; line-height: 1.45; padding-left: 24px; position: relative; }
+  .info li::before { content: "🎧"; position: absolute; left: 0; top: 0; font-size: 13px; }
+  .info .sapevi { font-size: 13.5px; color: #DCE6F5; background: rgba(255,255,255,0.05); border-left: 3px solid var(--accent); border-radius: 8px; padding: 8px 10px; line-height: 1.45; }
+  .info .sapevi b { color: var(--accent); }
+  .info .piede { margin-top: auto; display: flex; justify-content: space-between; align-items: flex-end; gap: 10px; flex-wrap: wrap; font-size: 11px; color: #7F93B2; }
+  .info .piede a { color: #7DD3FC; }
+  .chiudi { position: absolute; top: 8px; right: 8px; z-index: 3; width: 40px; height: 40px; border-radius: 50%; border: 1px solid rgba(255,255,255,0.25);
+    background: rgba(15,23,42,0.85); color: #fff; font-size: 18px; cursor: pointer; }
+  .frecce { display: flex; gap: 8px; }
+  .freccia { font: 700 13px 'Manrope', sans-serif; color: #EAF2FF; background: rgba(255,255,255,0.08); border: 1px solid rgba(255,255,255,0.18); border-radius: 999px; padding: 7px 14px; cursor: pointer; }
+  .freccia:hover { background: rgba(255,255,255,0.15); }
+
+  /* ---------- Sezione speciale (pulsante dorato) ---------- */
+  .scheda.speciale { background: linear-gradient(135deg, rgba(180,83,9,0.55), rgba(124,45,18,0.55)); border-color: #FBBF24; color: #FFE58A; }
+  .scheda.speciale:hover { background: linear-gradient(135deg, rgba(180,83,9,0.8), rgba(124,45,18,0.8)); }
+  .scheda.speciale.attiva { background: #FFE58A; color: #0f172a; border-color: #FFE58A; }
+  .fuga { --accent: #FBBF24; display: grid; grid-template-columns: 1.55fr 1fr; background: #131c33; border: 1px solid rgba(255,255,255,0.14);
+    border-top: 3px solid var(--accent); border-radius: 18px; overflow: hidden; }
+  .fuga[hidden], .grid[hidden] { display: none; }
+  @media (max-width: 860px) { .fuga { grid-template-columns: 1fr; } }
+  .o-video { display: flex; flex-direction: column; background: #000; }
+  .o-sotto { font-size: 11.5px; color: #9FB3CE; padding: 8px 12px; background: #0b1224; }
+  .o-sotto a { color: #7DD3FC; }
+  .o-info { padding: 14px 16px 14px; display: flex; flex-direction: column; gap: 6px; min-height: 0; }
+  .o-info .label { align-self: flex-start; font-size: 10px; font-weight: 800; letter-spacing: .06em; text-transform: uppercase; color: var(--accent); background: color-mix(in srgb, var(--accent) 16%, transparent); padding: 3px 9px; border-radius: 999px; }
+  .o-info h3 { font-family: 'Fredoka', 'Manrope', sans-serif; font-weight: 600; font-size: 28px; margin: 0; line-height: 1.1; }
+  .o-info .chi { font-size: 13px; color: #9FB3CE; font-weight: 600; }
+  .o-info .gancio { font-family: 'Manrope', sans-serif; font-weight: 700; font-size: 15px; color: #FFE58A; }
+  .o-tab { display: flex; gap: 6px; margin-top: 4px; flex-wrap: wrap; }
+  .o-t { font: 700 12.5px 'Manrope', sans-serif; color: #EAF2FF; cursor: pointer; padding: 6px 12px; border-radius: 999px; background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.16); }
+  .o-t:hover { background: rgba(255,255,255,0.12); }
+  .o-t.attiva { background: var(--accent); color: #0f172a; border-color: var(--accent); }
+  .o-corpo { flex: 1; min-height: 0; overflow: auto; padding-right: 4px; }
+  @media (min-width: 861px) { .o-info { contain: size; } }   /* la colonna dei testi si adatta all'altezza del video e scorre */
+  .o-corpo ul { margin: 4px 0 0; padding: 0; list-style: none; display: flex; flex-direction: column; gap: 7px; }
+  .o-corpo li { font-size: 14px; color: #DCE6F5; line-height: 1.45; padding-left: 24px; position: relative; }
+  .o-corpo li::before { content: attr(data-i); position: absolute; left: 0; top: 0; font-size: 13px; }
+  .o-corpo .atto { display: grid; grid-template-columns: 62px 1fr; gap: 8px; align-items: baseline; padding: 6px 8px; border-radius: 8px; background: rgba(255,255,255,0.04); font-size: 13.5px; color: #DCE6F5; line-height: 1.4; }
+  .o-corpo .atto b { font: 800 11px 'Manrope', sans-serif; color: var(--accent); text-transform: uppercase; letter-spacing: .05em; }
+  .o-corpo .atto + .atto { margin-top: 5px; }
+  .o-corpo .cur { font-size: 13.5px; color: #DCE6F5; background: rgba(255,255,255,0.05); border-left: 3px solid var(--accent); border-radius: 8px; padding: 7px 10px; line-height: 1.45; }
+  .o-corpo .cur + .cur { margin-top: 6px; }
+  .o-corpo .cur b { color: var(--accent); }
+  .o-corpo .cur img { float: right; height: 150px; margin: 0 0 4px 10px; border-radius: 6px; background: #fff; cursor: zoom-in; }
+  .o-corpo .cur::after { content: ""; display: block; clear: both; }
+
+  .crediti-img { margin-top: 18px; font-size: 11.5px; color: #7F93B2; }
+  .crediti-img summary { cursor: pointer; color: #9FB3CE; }
+  .crediti-img li { margin: 3px 0; } .crediti-img a { color: #7DD3FC; }
+  footer.piede { position: relative; z-index: 1; text-align: center; font-size: 13px; color: #9FB3CE; padding: 12px 12px 24px; }
+  @media (prefers-reduced-motion: reduce) { .card, .meta { transition: none; } }
+</style>
+</head>
+<body>
+<a class="casetta" href="storia.html" aria-label="Torna alla storia della musica" title="Torna alla storia della musica">←</a>
+<main>
+
+  <div class="banner" id="banner">
+    <div class="meta sx" data-mondo="sx" title="Intimismo"><img src="media/storia/romanticismo/banner-intimismo.jpg" alt="Una serata musicale tra amici con Schubert al pianoforte"></div>
+    <div class="meta dx" data-mondo="dx" title="Virtuosismo"><img src="media/storia/romanticismo/banner-virtuosismo.jpg" alt="I palchi del Teatro alla Scala di Milano"></div>
+    <div class="titolo-epoca">
+      <div class="sopra">Storia della musica</div>
+      <h1>Il Romanticismo</h1>
+      <div class="date">1820 – 1900</div>
+    </div>
+    <button class="etich-meta sx" data-mondo="sx">🕯️ Intimismo<span class="lungo"> · salotto, pianoforte, canto</span></button>
+    <button class="etich-meta dx" data-mondo="dx">🔥 Virtuosismo<span class="lungo"> · solisti prodigio, grandi orchestre</span></button>
+  </div>
+
+  <p class="atmosfera">L'Ottocento è il secolo dei sentimenti. Da una parte la musica sussurrata: un pianoforte in salotto, una voce tra amici, un sogno a occhi aperti. Dall'altra la musica che lascia a bocca aperta: virtuosi che sembrano fare magie, orchestre enormi, teatri pieni fino all'ultimo palco.</p>
+
+  <nav class="schede" aria-label="Sezioni">
+    <button class="scheda attiva" data-scheda="ascolti">🎧 Ascolti <span class="n" id="nAscolti"></span></button>
+    <button class="scheda" data-scheda="strumenti">🎺 Strumenti <span class="n" id="nStrumenti"></span></button>
+    <button class="scheda speciale" data-scheda="opera">🎭 Teatro dell'Opera</button>
+    <button class="scheda" data-scheda="suonare">🎼 Da suonare <span class="n" id="nSuonare"></span></button>
+  </nav>
+
+  <div class="grid" id="griglia"></div>
+
+  <!-- ===== TEATRO DELL'OPERA: sezione speciale (testi qui sotto, nell'oggetto SPECIALE dello script) ===== -->
+  <section class="fuga" id="opera" hidden aria-label="Teatro dell'Opera: La Cenerentola di Rossini">
+    <div class="o-video">
+      <div class="schermo" id="oSchermo"></div>
+      <div class="o-sotto">Opera completa · film del 1981 con il Teatro alla Scala, dirige Claudio Abbado, regia di Jean-Pierre Ponnelle · <a id="oLink" target="_blank" rel="noopener">Apri su YouTube ↗</a></div>
+    </div>
+    <div class="o-info">
+      <span class="label">Roma, 1817 · opera buffa</span>
+      <h3>La Cenerentola</h3>
+      <div class="chi">Gioachino Rossini · libretto di Jacopo Ferretti</div>
+      <div class="gancio">La fiaba che conosci… ma senza fata e senza scarpetta.</div>
+      <div class="o-tab" role="tablist">
+        <button class="o-t attiva" data-o="cosa">📖 La fiaba</button>
+        <button class="o-t" data-o="ascolto">🎬 La storia</button>
+        <button class="o-t" data-o="curiosita">💡 Curiosità</button>
+      </div>
+      <div class="o-corpo" id="oCorpo"></div>
+    </div>
+  </section>
+
+  <details class="crediti-img">
+    <summary>Crediti delle immagini e dei video</summary>
+    <ul id="listaCrediti"></ul>
+    <p>I video sono incorporati da YouTube e restano dei rispettivi titolari: non fanno parte della licenza del sito.</p>
+  </details>
+</main>
+<footer class="piede">Cristiano Arata · musicascuole.it — <a href="crediti.html">Crediti e licenza</a> · <a href="privacy.html">Privacy</a></footer>
+
+<div class="velo" id="velo" role="dialog" aria-modal="true" aria-labelledby="fTitolo">
+  <div class="finestra" id="finestra">
+    <button class="chiudi" id="chiudi" aria-label="Chiudi">✕</button>
+    <div class="schermo" id="schermo"></div>
+    <div class="info">
+      <span class="label" id="fLabel"></span>
+      <h3 id="fTitolo"></h3>
+      <div class="chi" id="fChi"></div>
+      <div class="gancio" id="fGancio"></div>
+      <ul id="fPunti"></ul>
+      <div class="sapevi" id="fSapevi"></div>
+      <div class="piede">
+        <div class="frecce"><button class="freccia" id="prec">◀</button><button class="freccia" id="succ">▶</button></div>
+        <div id="fFonte"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+(function () {
+  "use strict";
+  const IMG = "media/storia/romanticismo/";
+
+  /* =========================================================
+     CONTENUTI — per cambiare un video basta cambiare "yt"
+     mondo: "sx" = Intimismo (metà sinistra del banner), "dx" = Virtuosismo (metà destra)
+     ========================================================= */
+  const ASCOLTI = [
+    { id: "erlkonig", mondo: "sx", label: "Intimismo · lied", titolo: "Il re degli Elfi (Erlkönig)", chi: "Franz Schubert · Vienna, 1815", img: "erlkonig.jpg", yt: "m0Wwr582RGs", canale: "Alpha Classics (canale ufficiale)",
+      gancio: "Una cavalcata nella notte, una voce sola e quattro personaggi.",
+      punti: ["È un <b>lied</b>: una poesia (qui di Goethe) cantata con il pianoforte. In tedesco «Lied» vuol dire proprio «canto».",
+              "Un padre galoppa nella notte con il figlio malato in braccio. Il re degli Elfi chiama il bambino per portarlo via.",
+              "Un solo cantante fa tutti: il narratore, il padre che rassicura, il bambino spaventato e il re degli Elfi che lo tenta con voce dolce.",
+              "Il pianoforte ribatte note velocissime: sono gli zoccoli del cavallo, che non si fermano mai… fino all'ultima frase."],
+      sapevi: "Schubert lo scrisse a 18 anni e compose più di 600 lied. Li suonava con gli amici in serate chiamate «Schubertiadi»: una è nel disegno del banner, a sinistra." },
+    { id: "chopin", mondo: "sx", label: "Intimismo · notturno", titolo: "Notturno op. 9 n. 2", chi: "Fryderyk Chopin · Parigi, 1832", img: "chopin.jpg", yt: "axSlHNHtFWc", canale: "Sony Classical (canale ufficiale)",
+      gancio: "Il pianoforte che canta come una voce.",
+      punti: ["Il <b>notturno</b> è un brano per pianoforte dall'atmosfera sognante, come una serenata alla luna.",
+              "La mano destra canta una melodia lunga e piena di abbellimenti, come una cantante d'opera.",
+              "La mano sinistra accompagna dondolando, sempre con lo stesso disegno."],
+      sapevi: "Chopin era polacco e visse a Parigi. Amava i salotti più delle grandi sale: in tutta la vita diede pochissimi concerti pubblici." },
+    { id: "traumerei", mondo: "sx", label: "Intimismo · pianoforte", titolo: "Träumerei (Sogno)", chi: "Robert Schumann · Scene infantili, 1838", img: "traumerei.jpg", yt: "3fhKaAX5dOc", canale: "medici.tv (canale ufficiale)",
+      gancio: "Un adulto che ricorda com'era essere bambino.",
+      punti: ["Fa parte delle <b>Scene infantili</b>: tredici brevi pezzi per pianoforte, ognuno con un titolo.",
+              "La melodia sale piano piano, come un pensiero che si allontana, e poi torna giù.",
+              "Qui la suona Vladimir Horowitz, uno dei più grandi pianisti del Novecento, durante un concerto a Mosca nel 1986."],
+      sapevi: "Schumann scrisse le Scene infantili pensando a Clara, che sarebbe diventata sua moglie. Nella foto ci sono loro due, nel 1850." },
+    { id: "clara", mondo: "sx", label: "Intimismo · romanza", titolo: "Romanza op. 11 n. 1", chi: "Clara Schumann · 1839", img: "clara.jpg", yt: "wE2sr7nndiM", canale: "Stefania Passamonte (canale ufficiale)",
+      gancio: "La pianista più famosa d'Europa… e anche compositrice.",
+      punti: ["La <b>romanza</b> è un brano breve e cantabile, senza parole.",
+              "Ascolta come la melodia passa tra le due mani e si scalda verso la metà.",
+              "Clara la scrisse a vent'anni, quando era già una concertista famosa."],
+      sapevi: "Clara Wieck suonava in pubblico da quando aveva nove anni. Ebbe otto figli, continuò a fare concerti per tutta la vita, e il suo ritratto è finito sulle banconote tedesche." },
+    { id: "mendelssohn", mondo: "sx", label: "Intimismo · romanza senza parole", titolo: "Canzone di primavera", chi: "Felix Mendelssohn · Romanze senza parole op. 62 n. 6, 1844", img: "mendelssohn.jpg", yt: "YICUeGM-YIc", canale: "DiapaSound Classic (canale ufficiale)",
+      gancio: "Una canzone… senza cantante.",
+      punti: ["Mendelssohn scrisse otto libri di <b>Romanze senza parole</b>: melodie come canzoni, affidate solo al pianoforte.",
+              "La melodia saltella leggera, con piccoli arpeggi che la fanno brillare.",
+              "Era musica pensata per chi suonava a casa, nei salotti delle famiglie."],
+      sapevi: "Anche la sorella, Fanny Mendelssohn, era una bravissima compositrice: alcune sue canzoni furono pubblicate con il nome del fratello." },
+    { id: "brahms", mondo: "sx", label: "Intimismo · lied", titolo: "Ninna nanna (Wiegenlied)", chi: "Johannes Brahms · 1868", img: "brahms.jpg", yt: "3nNvz8UFEHY", canale: "Renée Fleming (canale ufficiale)",
+      gancio: "Forse la ninna nanna più famosa del mondo.",
+      punti: ["È un <b>lied</b> per voce e pianoforte: una melodia semplicissima, che si ricorda subito.",
+              "Il pianoforte dondola come una culla.",
+              "Nel video scorrono le parole in tedesco: «Buona sera, buona notte…»."],
+      sapevi: "Brahms la scrisse come regalo per un'amica, Bertha Faber, quando nacque il suo secondo figlio. Oggi suona in tantissimi carillon." },
+
+    { id: "paganini", mondo: "dx", label: "Virtuosismo · violino", titolo: "Capriccio n. 24", chi: "Niccolò Paganini · pubblicato nel 1820", img: "paganini.jpg", yt: "MFvdjfPIeDA", canale: "Augustin Hadelich (canale ufficiale)",
+      gancio: "Il violinista che sembrava fare magie.",
+      punti: ["È un <b>tema con variazioni</b>: un tema breve, poi undici variazioni sempre più difficili.",
+              "Ascolta i trucchi del virtuoso: note velocissime, salti enormi, corde pizzicate con la mano sinistra mentre l'arco suona.",
+              "Il violino è da solo, senza accompagnamento."],
+      sapevi: "Paganini, nato a Genova, era così bravo che si diceva avesse fatto un patto con il diavolo. Il suo violino, «il Cannone», è conservato a Genova. Il tema di questo capriccio è stato ripreso da Liszt, Brahms, Rachmaninov e molti altri." },
+    { id: "liszt", mondo: "dx", label: "Virtuosismo · pianoforte", titolo: "La campanella", chi: "Franz Liszt · Studi da Paganini, 1851", img: "liszt.jpg", yt: "MD6xMyuZls0", canale: "Valentina Lisitsa (canale ufficiale)",
+      gancio: "Un campanello… suonato con salti da acrobata.",
+      punti: ["Il tema viene da un concerto di Paganini: Liszt voleva fare con il pianoforte quello che Paganini faceva con il violino.",
+              "La nota acuta ripetuta, come un campanello, torna in continuazione.",
+              "Guarda la mano destra: salti velocissimi da un capo all'altro della tastiera."],
+      sapevi: "Ai concerti di Liszt il pubblico impazziva: lo chiamavano «Lisztomania». Fu tra i primi a suonare un concerto intero da solo e a mettere il pianoforte di lato, per farsi vedere di profilo." },
+    { id: "quinta", mondo: "dx", label: "Virtuosismo · orchestra", titolo: "Quinta Sinfonia", chi: "Ludwig van Beethoven · 1808 · primo movimento", img: "quinta.jpg", yt: "I7AQeN-x_Xs", canale: "DW Classical Music (canale ufficiale)",
+      gancio: "Quattro note che tutti conoscono.",
+      punti: ["Tutto il movimento è costruito su un motivo di quattro note: tre brevi e una lunga.",
+              "Il motivo passa da uno strumento all'altro, a volte piano, a volte con tutta l'orchestra.",
+              "Il giovane Beethoven lo hai incontrato nel Classicismo: qui la musica diventa più drammatica e potente."],
+      sapevi: "Si racconta che Beethoven descrivesse l'inizio così: «È il destino che bussa alla porta». Quando la scrisse stava già perdendo l'udito." },
+    { id: "inno", mondo: "dx", label: "Virtuosismo · orchestra e coro", titolo: "Inno alla gioia", chi: "Ludwig van Beethoven · Nona Sinfonia, 1824 · ultimo movimento", img: "inno.jpg", yt: "cep8Ru4TL4k", canale: "DW Classical Music (canale ufficiale)",
+      gancio: "Per la prima volta, in una sinfonia, entrano le voci.",
+      punti: ["Prima suona solo l'orchestra; poi il tema dell'Inno parte piano dai contrabbassi e cresce, strumento dopo strumento.",
+              "Poi entrano i cantanti solisti e il coro, con la poesia di Schiller «Alla gioia».",
+              "È un movimento lungo: puoi ascoltarlo a pezzi, cercando ogni volta il ritorno della melodia dell'Inno."],
+      sapevi: "Alla prima esecuzione Beethoven era completamente sordo: una cantante lo girò verso il pubblico perché vedesse gli applausi. Oggi la melodia è l'inno dell'Unione Europea." },
+    { id: "verdi", mondo: "dx", label: "Virtuosismo · coro d'opera", titolo: "Va' pensiero", chi: "Giuseppe Verdi · Nabucco, Milano, 1842", img: "verdi.jpg", yt: "MBYmhYxEvUM", canale: "Teatro dell'Opera di Roma (canale ufficiale)",
+      gancio: "Un popolo lontano da casa canta la sua nostalgia.",
+      punti: ["Nell'opera <b>Nabucco</b> gli Ebrei sono prigionieri a Babilonia e pensano alla patria perduta.",
+              "Per gran parte del coro tutte le voci cantano la stessa melodia insieme: è come una voce sola, enorme.",
+              "Dirige Riccardo Muti, con il coro del Teatro dell'Opera di Roma."],
+      sapevi: "Durante il Risorgimento il Va' pensiero divenne un simbolo per gli italiani che sognavano un Paese unito. Si racconta che ai funerali di Verdi, nel 1901, la folla lo cantò spontaneamente." },
+    { id: "valchirie", mondo: "dx", label: "Virtuosismo · orchestra", titolo: "Cavalcata delle valchirie", chi: "Richard Wagner · La valchiria, 1870", img: "valchirie.jpg", yt: "CzPA2dL_Khg", canale: "EuroArts (canale ufficiale)",
+      gancio: "Guerriere a cavallo che volano tra le nuvole.",
+      punti: ["Nella mitologia nordica le <b>valchirie</b> galoppano nel cielo su cavalli alati.",
+              "Gli archi e i legni fanno il vento e il galoppo; gli ottoni suonano il tema, potente e famosissimo.",
+              "Wagner usa un'orchestra enorme, con tantissimi ottoni."],
+      sapevi: "Wagner si fece costruire un teatro tutto suo, a Bayreuth, con l'orchestra nascosta sotto il palcoscenico. Questa musica si sente spesso nei film." },
+    { id: "calabrone", mondo: "dx", label: "Virtuosismo · orchestra", titolo: "Il volo del calabrone", chi: "Nikolaj Rimskij-Korsakov · La fiaba dello zar Saltan, 1900", img: "calabrone.jpg", yt: "pSxqpD3s0zc", canale: "Berliner Philharmoniker (canale ufficiale)",
+      gancio: "Un minuto e mezzo di ronzio velocissimo.",
+      punti: ["Nell'opera un principe viene trasformato in calabrone per volare dal padre.",
+              "Gli archi suonano note velocissime e vicine tra loro: è il ronzio dell'insetto che va e viene.",
+              "È diventato il brano preferito dei virtuosi: c'è chi lo suona con il violino, la tromba, il pianoforte… perfino la tuba."],
+      sapevi: "Rimskij-Korsakov era ufficiale della marina e da giovane navigò per quasi tre anni, fino all'America. Poi divenne uno dei più grandi maestri di orchestrazione." }
+  ];
+
+  const STRUMENTI = [
+    { id: "pianoforte", label: "Tastiera", titolo: "Pianoforte a coda", chi: "Il re dell'Ottocento", img: "pianoforte.jpg", yt: "aZYYoDDmg8M", canale: "Istituto Chopin (canale ufficiale)",
+      gancio: "Più grande, più forte, più veloce.",
+      punti: ["Nell'Ottocento il pianoforte cresce: telaio di ferro, corde più tese, suono molto più potente.",
+              "Una nuova meccanica permette di ripetere velocemente la stessa nota: perfetto per i virtuosi.",
+              "Qui il pianista Seong-Jin Cho suona la Polacca «Eroica» di Chopin."],
+      sapevi: "Il pianoforte della foto apparteneva proprio a Chopin: era un Pleyel, la sua marca preferita. Nell'Ottocento il pianoforte entra in tutte le case borghesi." },
+    { id: "tuba", label: "Ottoni", titolo: "Tuba", chi: "Nata nel 1835", img: "tuba.jpg", yt: "jLiBi4RPW5U", canale: "ARD Klassik (canale ufficiale)",
+      gancio: "Il gigante degli ottoni.",
+      punti: ["È l'ottone più grave dell'orchestra: un tubo lunghissimo, arrotolato su se stesso.",
+              "Grazie ai pistoni può suonare tutte le note, anche velocissime.",
+              "Qui suona la «Csárdás» di Monti, una danza ungherese: prima lenta, poi scatenata."],
+      sapevi: "La tuba fu brevettata a Berlino nel 1835. Quella della foto viene dalla bottega Moritz di Berlino, la famiglia di uno dei due inventori." },
+    { id: "sassofono", label: "Fiati", titolo: "Sassofono", chi: "L'invenzione di Adolphe Sax", img: "sassofono.jpg", yt: "3-pfnVhAuPc", canale: "ARD Klassik (canale ufficiale)",
+      gancio: "Di metallo, ma è un legno.",
+      punti: ["È di ottone, ma si suona con un'ancia semplice come il clarinetto: per questo è nella famiglia dei legni.",
+              "Ha un suono caldo e potente, a metà tra un legno e un ottone.",
+              "Qui ascolti un concerto per sassofono e orchestra di Glazunov (1934)."],
+      sapevi: "Lo inventò il belga Adolphe Sax, che lo brevettò nel 1846. Il sassofono della foto è uscito dalla sua bottega di Parigi. Più tardi diventerà lo strumento simbolo del jazz." },
+    { id: "tromba", label: "Ottoni", titolo: "Cornetta a pistoni", chi: "Finalmente tutte le note", img: "tromba.jpg", yt: "Ia6c6uIIb_Q", canale: "United States Navy Band (canale ufficiale)",
+      gancio: "Tre pistoni cambiano tutto.",
+      punti: ["Premendo i <b>pistoni</b> l'aria fa un giro più lungo nel tubo e la nota cambia: niente più limiti come nella tromba naturale.",
+              "La cornetta è sorella della tromba, più corta e dal suono più morbido.",
+              "Qui suona «Il carnevale di Venezia» di Arban: tema e variazioni da virtuoso."],
+      sapevi: "I pistoni furono inventati in Germania intorno al 1815. La cornetta della foto, costruita a Parigi nel 1833, ha ancora i pezzi di tubo di ricambio nell'astuccio." },
+    { id: "celesta", label: "Percussioni a tastiera", titolo: "Celesta", chi: "Un pianoforte di campanelli", img: "celesta.jpg", yt: "TpG1LffJqoU", canale: "Toronto Symphony Orchestra (canale ufficiale)",
+      gancio: "Sembra un piccolo pianoforte, ma suona come un carillon.",
+      punti: ["Premendo i tasti, dei martelletti colpiscono piastre di metallo: il suono è delicato, come gocce di cristallo.",
+              "La inventò Auguste Mustel a Parigi nel 1886.",
+              "La rese famosa Čajkovskij con la «Danza della fata Confetto» dello Schiaccianoci."],
+      sapevi: "Si racconta che Čajkovskij, dopo averla scoperta a Parigi, la fece arrivare in Russia in gran segreto, perché nessun altro compositore la usasse prima di lui." },
+    { id: "xilofono", label: "Percussioni", titolo: "Xilofono", chi: "Il suono del legno", img: "xilofono.jpg", yt: "ZDWMoJz8OYU", canale: "ARD Klassik (canale ufficiale)",
+      gancio: "Ossa che ballano a mezzanotte.",
+      punti: ["Ha barrette di legno di lunghezze diverse, colpite con le bacchette: «xilofono» vuol dire «voce del legno».",
+              "Nella «Danza macabra» di Saint-Saëns la Morte suona il violino a mezzanotte e gli scheletri ballano.",
+              "Ascolta lo xilofono: imita il rumore delle ossa che sbattono!"],
+      sapevi: "Saint-Saëns fu tra i primi a portare lo xilofono in orchestra, nel 1874. Lo riusò poi nel Carnevale degli animali, nel brano dei «Fossili»." }
+  ];
+
+  const SUONARE = [
+    { titolo: "Inno alla gioia", chi: "Ludwig van Beethoven", img: "inno.jpg" },
+    { titolo: "Ninna nanna", chi: "Johannes Brahms", img: "brahms.jpg" },
+    { titolo: "Va' pensiero (tema)", chi: "Giuseppe Verdi", img: "verdi.jpg" }
+  ];
+
+  /* ---------- Teatro dell'Opera: La Cenerentola (pulsante speciale) ---------- */
+  const SPECIALE = {
+    yt: "EITAZI5TeNY", canale: "OperaForYou", img: "cenerentola-banner.jpg", nome: "La Cenerentola di Rossini",
+    cosa: [
+      ["🧹", "Angelina, detta Cenerentola, fa la serva in casa del <b>patrigno</b> Don Magnifico e delle sorellastre Clorinda e Tisbe."],
+      ["🧙", "Niente fata: ad aiutarla c'è <b>Alidoro</b>, il saggio maestro del principe, che si traveste da mendicante per mettere alla prova il suo buon cuore."],
+      ["🎭", "Il principe <b>Don Ramiro</b> si traveste da scudiero, e il suo servo Dandini si finge principe: da qui nascono equivoci e risate."],
+      ["💍", "Niente scarpetta: Angelina dà al principe un <b>braccialetto</b>, gemello di quello che tiene lei. «Cercami, e riconoscimi da questo»."],
+      ["❤️", "Il sottotitolo è «La bontà in trionfo»: alla fine Angelina perdona tutti."]
+    ],
+    ascolto: [
+      ["Atto I", "Le sorellastre si fanno belle. Angelina dà da mangiare a un mendicante (è Alidoro travestito)."],
+      ["Atto I", "Arriva Ramiro vestito da scudiero: lui e Angelina si guardano e si innamorano subito."],
+      ["Atto I", "Il finto principe Dandini invita tutti al ballo. Don Magnifico non lascia andare Angelina, ma Alidoro la porta a palazzo."],
+      ["Atto I", "Al ballo entra una dama misteriosa, con il volto coperto: tutti restano a bocca aperta."],
+      ["Atto II", "Angelina dice di no al finto principe: ama lo scudiero. Gli lascia il braccialetto e scappa."],
+      ["Atto II", "Ramiro giura di ritrovarla. Scoppia un temporale (ascolta l'orchestra!) e la carrozza si rompe proprio davanti alla casa di Don Magnifico."],
+      ["Atto II", "Ramiro vede il braccialetto al polso di Angelina. Tutti cantano insieme lo stupore: «Questo è un nodo avviluppato…»."],
+      ["Finale", "Angelina diventa principessa e canta l'aria più difficile dell'opera: «Non più mesta». E perdona patrigno e sorellastre."]
+    ],
+    curiosita: [
+      `<a href="${IMG}rossini.jpg" target="_blank" rel="noopener"><img src="${IMG}rossini.jpg" alt="Ritratto di Gioachino Rossini da giovane"></a><b>Velocissimo.</b> Rossini aveva 25 anni e scrisse tutta l'opera in poco più di tre settimane. La prima fu al Teatro Valle di Roma, il 25 gennaio 1817.`,
+      "<b>Una sinfonia riciclata.</b> Per fare in tempo, Rossini usò come sinfonia d'apertura quella di una sua opera precedente, «La gazzetta».",
+      "<b>Perché il braccialetto?</b> Si racconta che a Roma non si potesse mostrare in scena il piede nudo di una cantante: così la scarpetta diventò un braccialetto.",
+      "<b>Il crescendo rossiniano.</b> Un motivo si ripete più volte, ogni volta più forte e con più strumenti, fino all'esplosione finale. Cercalo nella sinfonia e nei finali degli atti!",
+      "<b>Una voce grave.</b> Angelina non è un soprano ma un <b>contralto</b>, una voce femminile scura e calda, capace di note velocissime.",
+      "<b>Lo scioglilingua.</b> Nel sestetto «Questo è un nodo avviluppato» i cantanti fanno rotolare le erre come se la musica si ingarbugliasse davvero.",
+      "<b>Il teatro d'opera.</b> Nell'Ottocento l'opera era lo spettacolo più amato dagli italiani: dopo Rossini vennero Bellini, Donizetti e Verdi, e ogni città voleva il suo teatro."
+    ]
+  };
+
+  /* crediti delle immagini (tutte ospitate nel sito) */
+  const CREDITI_IMG = [
+    "Moritz von Schwind, «Una Schubertiade in casa di Joseph von Spaun» (Schubert al pianoforte tra gli amici), disegno a seppia, 1868 – dettaglio — <a href=\"https://commons.wikimedia.org/wiki/File:Moritz_von_Schwind_Schubertiade_large.jpg\" target=\"_blank\" rel=\"noopener\">fonte</a>, pubblico dominio.",
+    "Milano, Teatro alla Scala: i palchi e la platea (foto 2015) – dettaglio della foto panoramica, foto di Wolfgang Moroder — <a href=\"https://commons.wikimedia.org/wiki/File:Teatro_alla_Scala_interior_Milan.jpg\" target=\"_blank\" rel=\"noopener\">fonte</a>, <a href=\"https://creativecommons.org/licenses/by-sa/3.0/deed.it\" target=\"_blank\" rel=\"noopener\">CC BY-SA 3.0</a>.",
+    "Wilhelm August Rieder, ritratto di Franz Schubert, acquerello, 1825 (Österreichische Nationalbibliothek, Vienna) – dettaglio — <a href=\"https://commons.wikimedia.org/wiki/File:Franz_Schubert,_watercolor_portrait_by_Wilhelm_August_Rieder,_1825.jpg\" target=\"_blank\" rel=\"noopener\">fonte</a>, pubblico dominio.",
+    "Eugène Delacroix, ritratto di Fryderyk Chopin, 1838 (Musée du Louvre, Parigi) – dettaglio — <a href=\"https://commons.wikimedia.org/wiki/File:Fr%C3%A9d%C3%A9ric_Chopin_-_Eug%C3%A8ne_Delacroix_-_Mus%C3%A9e_du_Louvre_Peintures_RF_1717.jpg\" target=\"_blank\" rel=\"noopener\">fonte</a>, pubblico dominio.",
+    "Johann Anton Völlner, Robert e Clara Schumann, dagherrotipo, Amburgo 1850 – dettaglio — <a href=\"https://commons.wikimedia.org/wiki/File:Robert_and_Clara_Schumann_Daguerrotype.jpg\" target=\"_blank\" rel=\"noopener\">fonte</a>, pubblico dominio.",
+    "Andreas Staub, ritratto di Clara Wieck (poi Schumann), litografia, 1839 circa – dettaglio — <a href=\"https://commons.wikimedia.org/wiki/File:Andreas_Staub_-_Clara_Wieck_(Lithographie_1839).jpg\" target=\"_blank\" rel=\"noopener\">fonte</a>, pubblico dominio.",
+    "Eduard Magnus, ritratto di Felix Mendelssohn Bartholdy, 1846 – dettaglio — <a href=\"https://commons.wikimedia.org/wiki/File:Felix_Mendelssohn_Bartholdy_-_Edward_Magnus_1846.jpg\" target=\"_blank\" rel=\"noopener\">fonte</a>, pubblico dominio.",
+    "Johannes Brahms a circa 32 anni, fotografia di autore sconosciuto, 1865 circa – dettaglio — <a href=\"https://commons.wikimedia.org/wiki/File:Johannes_Brahms_(1833%E2%80%931897)_ca_1865.jpg\" target=\"_blank\" rel=\"noopener\">fonte</a>, pubblico dominio.",
+    "Georg Friedrich Kersting, «Il violinista Niccolò Paganini», 1829 circa – dettaglio — <a href=\"https://commons.wikimedia.org/wiki/File:Georg_Friedrich_Kersting_-_Der_Geiger_Niccol%C3%B2_Paganini_(ca._1829).jpg\" target=\"_blank\" rel=\"noopener\">fonte</a>, pubblico dominio.",
+    "Henri Lehmann, ritratto di Franz Liszt, 1839 (Musée Carnavalet, Parigi) – dettaglio — <a href=\"https://commons.wikimedia.org/wiki/File:Henri_Lehmann_-_Portrait_de_Franz_Liszt_(1811-1886),_compositeur_et_pianiste_-_P1683_-_Mus%C3%A9e_Carnavalet_-_2.jpg\" target=\"_blank\" rel=\"noopener\">fonte</a>, CC0 (pubblico dominio).",
+    "Joseph Karl Stieler, ritratto di Ludwig van Beethoven mentre compone la Missa solemnis, 1820 (Beethoven-Haus, Bonn) – dettaglio — <a href=\"https://commons.wikimedia.org/wiki/File:BeethovenFXD.jpg\" target=\"_blank\" rel=\"noopener\">fonte</a>, pubblico dominio.",
+    "Ludwig van Beethoven, Nona Sinfonia op. 125, una pagina della partitura autografa, 1822-1824 (Staatsbibliothek zu Berlin) – dettaglio — <a href=\"https://commons.wikimedia.org/wiki/File:Ninth_Symphony_original.png\" target=\"_blank\" rel=\"noopener\">fonte</a>, pubblico dominio.",
+    "Giovanni Boldini, ritratto di Giuseppe Verdi, pastello, 1886 (Galleria Nazionale d'Arte Moderna, Roma) – dettaglio — <a href=\"https://commons.wikimedia.org/wiki/File:Boldini_-_Ritratto_di_Giuseppe_Verdi_(1886)_Google_Art_Project.jpg\" target=\"_blank\" rel=\"noopener\">fonte</a>, pubblico dominio.",
+    "Franz von Lenbach, ritratto di Richard Wagner, 1882-1883 circa – dettaglio — <a href=\"https://commons.wikimedia.org/wiki/File:LenbachRichardWagner.jpg\" target=\"_blank\" rel=\"noopener\">fonte</a>, pubblico dominio.",
+    "Valentin Serov, ritratto di Nikolaj Rimskij-Korsakov, 1898 (Galleria Tret'jakov, Mosca) – dettaglio — <a href=\"https://commons.wikimedia.org/wiki/File:Walentin_Alexandrowitsch_Serow_004.jpg\" target=\"_blank\" rel=\"noopener\">fonte</a>, pubblico dominio.",
+    "Pianoforte a coda Pleyel appartenuto a Fryderyk Chopin (Parigi, metà Ottocento), Musée Chopin – Bibliothèque polonaise, Parigi – dettaglio, foto di Charlotte-Jaxa — <a href=\"https://commons.wikimedia.org/wiki/File:Piano-Chopin.jpg\" target=\"_blank\" rel=\"noopener\">fonte</a>, <a href=\"https://creativecommons.org/licenses/by-sa/4.0/deed.it\" target=\"_blank\" rel=\"noopener\">CC BY-SA 4.0</a>.",
+    "C. W. Moritz (Berlino), tuba, 1855 circa (The Metropolitan Museum of Art, New York) – sfondo esteso ai lati — <a href=\"https://www.metmuseum.org/art/collection/search/631124\" target=\"_blank\" rel=\"noopener\">fonte</a>, pubblico dominio (Open Access).",
+    "Adolphe Sax (Parigi), sassofono contralto in mi bemolle, 1855 circa (The Metropolitan Museum of Art, New York) – sfondo esteso ai lati — <a href=\"https://www.metmuseum.org/art/collection/search/503909\" target=\"_blank\" rel=\"noopener\">fonte</a>, pubblico dominio (Open Access).",
+    "Courtois frères (Parigi), cornetta a pistoni in si bemolle con astuccio e ritorti, 1833 (The Metropolitan Museum of Art, New York) – dettaglio — <a href=\"https://www.metmuseum.org/art/collection/search/503546\" target=\"_blank\" rel=\"noopener\">fonte</a>, pubblico dominio (Open Access).",
+    "Schiedmayer (Stoccarda), celesta, 1920 circa (Musikinstrumenten-Museum, Berlino, n. 1592) – sfondo esteso ai lati, foto di Museumsinsulaner — <a href=\"https://commons.wikimedia.org/wiki/File:Celesta_Schiedmayer_MIM_1592.jpg\" target=\"_blank\" rel=\"noopener\">fonte</a>, pubblico dominio.",
+    "Xilofono in legno con battenti, non datato (Kunsthistorisches Museum, Sammlung alter Musikinstrumente, Vienna) – sfondo esteso sopra e sotto, foto di Andreas Praefcke — <a href=\"https://commons.wikimedia.org/wiki/File:Xylophon_Wien_SAM.jpg\" target=\"_blank\" rel=\"noopener\">fonte</a>, pubblico dominio.",
+    "Alessandro Sanquirico, bozzetto di scena per «La Cenerentola» di Rossini (atto I, scena 3), acquerello, Teatro alla Scala, Milano 1817 – dettaglio — <a href=\"https://commons.wikimedia.org/wiki/File:Rossini_-_La_Cenerentola_-_1._acte_3._scene_-_watercolor_stage_design_draft_by_Alessandro_Sanquirico_-_Scala_-_Mailand_1817.png\" target=\"_blank\" rel=\"noopener\">fonte</a>, pubblico dominio.",
+    "Vincenzo Camuccini, ritratto di Gioachino Rossini, 1816 circa – dettaglio — <a href=\"https://commons.wikimedia.org/wiki/File:Rossini-portrait-0.jpg\" target=\"_blank\" rel=\"noopener\">fonte</a>, pubblico dominio."
+  ];
+
+  /* ---------- costruzione della griglia ---------- */
+  const griglia = document.getElementById("griglia");
+  document.getElementById("nAscolti").textContent = ASCOLTI.length;
+  document.getElementById("nStrumenti").textContent = STRUMENTI.length;
+  document.getElementById("nSuonare").textContent = SUONARE.length;
+
+  let scheda = "ascolti", mondo = null, elenco = [];
+  function disegna() {
+    griglia.innerHTML = "";
+    const conSpeciale = scheda === "opera";
+    document.getElementById("opera").hidden = !conSpeciale;
+    griglia.hidden = conSpeciale;
+    if (conSpeciale) { preparaSpeciale(); return; }
+    oSchermo.innerHTML = "";   // si esce dalla sezione speciale: il video si ferma
+    if (scheda === "suonare") {
+      SUONARE.forEach(s => {
+        const c = document.createElement("div"); c.className = "card suona empty";
+        c.innerHTML = `<div class="foto" style="background-image:url('${IMG + s.img}')"></div>
+          <div class="testo"><span class="label">Da suonare</span><h2>${s.titolo}</h2><span class="chi">${s.chi}</span></div>`;
+        griglia.appendChild(c);
+      });
+      return;
+    }
+    const dati = scheda === "ascolti" ? ASCOLTI : STRUMENTI;
+    elenco = dati.filter(d => !mondo || !d.mondo || d.mondo === mondo);
+    elenco.forEach((d, i) => {
+      const c = document.createElement("button"); c.type = "button";
+      c.className = "card " + (scheda === "ascolti" ? d.mondo : "strum");
+      c.innerHTML = `<div class="foto" style="background-image:url('${IMG + d.img}')"></div>
+        <div class="testo"><span class="label">${d.label}</span><h2>${d.titolo}</h2><span class="chi">${d.chi}</span><p>${d.gancio}</p></div>`;
+      c.addEventListener("click", () => apri(i));
+      griglia.appendChild(c);
+    });
+  }
+
+  document.querySelectorAll(".scheda").forEach(b => b.addEventListener("click", () => {
+    scheda = b.dataset.scheda;
+    document.querySelectorAll(".scheda").forEach(x => x.classList.toggle("attiva", x === b));
+    disegna();
+  }));
+
+  /* ---------- banner: musica vocale / musica strumentale ---------- */
+  const banner = document.getElementById("banner");
+  function impostaMondo(m, senzaDisegno) {
+    mondo = m;
+    banner.classList.toggle("f-sx", m === "sx");
+    banner.classList.toggle("f-dx", m === "dx");
+    document.querySelectorAll(".etich-meta").forEach(e => e.classList.toggle("attiva", e.dataset.mondo === m));
+    if (!senzaDisegno) {
+      if (scheda !== "ascolti") { scheda = "ascolti"; document.querySelectorAll(".scheda").forEach(x => x.classList.toggle("attiva", x.dataset.scheda === "ascolti")); }
+      disegna();
+    }
+  }
+  banner.querySelectorAll("[data-mondo]").forEach(el => el.addEventListener("click", () => impostaMondo(mondo === el.dataset.mondo ? null : el.dataset.mondo)));
+
+  /* ---------- finestra con il video ---------- */
+  const velo = document.getElementById("velo"), schermo = document.getElementById("schermo"), finestra = document.getElementById("finestra");
+  let attuale = 0;
+  function apri(i) {
+    attuale = (i + elenco.length) % elenco.length;
+    const d = elenco[attuale];
+    finestra.style.setProperty("--accent", scheda === "ascolti" ? (d.mondo === "dx" ? "#a78bfa" : "#F99D1C") : "#5EC8D8");
+    document.getElementById("fLabel").textContent = d.label;
+    document.getElementById("fTitolo").textContent = d.titolo;
+    document.getElementById("fChi").textContent = d.chi;
+    document.getElementById("fGancio").textContent = d.gancio;
+    document.getElementById("fPunti").innerHTML = d.punti.map(p => `<li>${p}</li>`).join("");
+    document.getElementById("fSapevi").innerHTML = `<b>Lo sapevi?</b> ${d.sapevi}`;
+    document.getElementById("fFonte").innerHTML = `<a href="https://www.youtube.com/watch?v=${d.yt}" target="_blank" rel="noopener">Apri su YouTube ↗</a>`;
+    // anteprima: nessuna richiesta a YouTube finché non si preme play
+    schermo.innerHTML = "";
+    schermo.style.backgroundImage = `url('${IMG + d.img}')`;
+    const b = document.createElement("button"); b.className = "avvio"; b.type = "button";
+    b.innerHTML = `<span class="tondo">▶</span><span class="nota">Il video si carica da YouTube quando premi play</span>`;
+    b.addEventListener("click", () => {
+      schermo.innerHTML = `<iframe src="https://www.youtube-nocookie.com/embed/${d.yt}?autoplay=1&rel=0&playsinline=1" title="${d.titolo}"
+        allow="autoplay; encrypted-media; picture-in-picture; fullscreen" allowfullscreen referrerpolicy="strict-origin-when-cross-origin"></iframe>`;
+    });
+    schermo.appendChild(b);
+    velo.classList.add("aperto");
+    document.body.style.overflow = "hidden";
+    b.focus({ preventScroll: true });
+  }
+  function chiudi() { velo.classList.remove("aperto"); schermo.innerHTML = ""; document.body.style.overflow = ""; }
+  document.getElementById("chiudi").addEventListener("click", chiudi);
+  velo.addEventListener("click", e => { if (e.target === velo) chiudi(); });
+  document.getElementById("prec").addEventListener("click", () => apri(attuale - 1));
+  document.getElementById("succ").addEventListener("click", () => apri(attuale + 1));
+  document.addEventListener("keydown", e => {
+    if (!velo.classList.contains("aperto")) return;
+    if (e.key === "Escape") chiudi();
+    if (e.key === "ArrowRight") apri(attuale + 1);
+    if (e.key === "ArrowLeft") apri(attuale - 1);
+  });
+
+  /* ---------- La forma sonata ---------- */
+  const oSchermo = document.getElementById("oSchermo"), oCorpo = document.getElementById("oCorpo");
+  document.getElementById("oLink").href = "https://www.youtube.com/watch?v=" + SPECIALE.yt;
+  function preparaSpeciale() {
+    oSchermo.innerHTML = "";
+    oSchermo.style.backgroundImage = `url('${IMG + SPECIALE.img}')`;
+    const b = document.createElement("button"); b.className = "avvio"; b.type = "button";
+    b.innerHTML = `<span class="tondo">▶</span><span class="nota">Il video si carica da YouTube quando premi play</span>`;
+    b.addEventListener("click", () => {
+      oSchermo.innerHTML = `<iframe src="https://www.youtube-nocookie.com/embed/${SPECIALE.yt}?autoplay=1&rel=0&playsinline=1" title="${SPECIALE.nome}"
+        allow="autoplay; encrypted-media; picture-in-picture; fullscreen" allowfullscreen referrerpolicy="strict-origin-when-cross-origin"></iframe>`;
+    });
+    oSchermo.appendChild(b);
+  }
+  function mostraSpeciale(parte) {
+    document.querySelectorAll(".o-t").forEach(t => t.classList.toggle("attiva", t.dataset.o === parte));
+    if (parte === "cosa") oCorpo.innerHTML = "<ul>" + SPECIALE.cosa.map(([i, t]) => `<li data-i="${i}">${t}</li>`).join("") + "</ul>";
+    if (parte === "ascolto") oCorpo.innerHTML = SPECIALE.ascolto.map(([a, t]) => `<div class="atto"><b>${a}</b><span>${t}</span></div>`).join("");
+    if (parte === "curiosita") oCorpo.innerHTML = SPECIALE.curiosita.map(t => `<div class="cur">${t}</div>`).join("");
+    oCorpo.scrollTop = 0;
+  }
+  document.querySelectorAll(".o-t").forEach(t => t.addEventListener("click", () => mostraSpeciale(t.dataset.o)));
+  mostraSpeciale("cosa");
+
+  /* ---------- crediti ---------- */
+  document.getElementById("listaCrediti").innerHTML = CREDITI_IMG.map(c => `<li>${c}</li>`).join("") +
+    [...ASCOLTI, ...STRUMENTI].map(d => `<li>${d.titolo} (${d.chi}): video di <a href="https://www.youtube.com/watch?v=${d.yt}" target="_blank" rel="noopener">${d.canale}</a> su YouTube</li>`).join("") +
+    `<li>La Cenerentola (Gioachino Rossini), film del 1981 diretto da Claudio Abbado: video di <a href="https://www.youtube.com/watch?v=${SPECIALE.yt}" target="_blank" rel="noopener">${SPECIALE.canale}</a> su YouTube</li>`;
+
+  disegna();
+})();
+</script>
+</body>
+</html>
