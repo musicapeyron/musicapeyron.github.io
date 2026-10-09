@@ -1,0 +1,102 @@
+# Solfeggio cantato — lezioni scritte per musicascuole.it (Cristiano Arata, licenza del sito)
+# Formato come il Bona (_sviluppo/omr/bona_omr.py): una battuta tra due "|".
+# La riga che comincia con "@" dà gli accordi dell'accompagnamento, battuta per battuta:
+# più accordi nella stessa battuta si dividono la battuta in parti uguali (in 3/4 "C C G" = un accordo per movimento).
+# Accordi: C, Dm, G7, F#m, Bb… (maggiore, m = minore, 7 = settima di dominante).
+# Rigenerare i MusicXML: python3 _sviluppo/cantato/genera.py
+
+# Lezione 1 | Do e re | tempo=4/4
+c4w | d4w | c4w | d4w | c4h d4h | c4h d4h | d4h c4h | c4w |
+@ C | G | C | G | C G | C G | G C | C
+
+# Lezione 2 | Do, re, mi | tempo=4/4
+c4w | d4w | e4w | d4w | e4h d4h | c4h d4h | e4h d4h | c4w |
+@ C | G | C | G | C G | C G | C G | C
+
+# Lezione 3 | Do, re, mi in semiminime | tempo=4/4
+c4q d4q e4h | e4q d4q c4h | c4q d4q e4q e4q | d4q d4q d4h | c4q d4q e4h | e4q d4q c4h | e4q d4q c4q d4q | c4w |
+@ C | C | C | G | C | C | C G | C
+
+# Lezione 4 | Do, re, mi in tre | tempo=3/4
+c4h d4q | e4h. | e4h d4q | c4h. | e4q d4q c4q | d4h e4q | d4h. | c4h. |
+@ C | C | C | C | C | G | G | C
+
+# Lezione 5 | Fino al fa | tempo=4/4
+c4h d4h | e4h f4h | e4w | d4w | e4h f4h | e4h d4h | e4h d4h | c4w |
+@ C | C F | C | G | C F | C G | C G | C
+
+# Lezione 6 | Fino al sol | tempo=4/4
+c4q d4q e4q f4q | g4w | g4q f4q e4q d4q | c4w | e4q f4q g4h | e4q f4q g4h | g4q f4q e4q d4q | c4w |
+@ C | C | C G | C | C | C | C G | C
+
+# Lezione 7 | Le prime cinque note in tre | tempo=3/4
+g4h f4q | e4h d4q | c4h e4q | d4h. | e4q f4q g4q | f4q e4q d4q | e4h d4q | c4h. |
+@ C | C | C | G | C | G7 | C C G | C
+
+# Lezione 8 | Le prime cinque, con le crome | tempo=4/4
+c4q d48 e48 f4q g4q | g4h e4h | f4q e48 d48 e4q f4q | d4w | c4q d48 e48 f4q g4q | g4h e4h | f4q e4q d4q d4q | c4w |
+@ C | C | G7 | G | C | C | G7 | C
+
+# Lezione 9 | La scala in semibrevi | tempo=4/4
+c4w | d4w | e4w | f4w | g4w | a4w | b4w | c5w | c5w | b4w | a4w | g4w | f4w | e4w | d4w | c4w |
+@ C | G | C | F | C | F | G | C | C | G | F | C | G7 | C | G | C
+
+# Lezione 10 | La scala in minime | tempo=4/4
+c4h d4h | e4h f4h | g4h a4h | b4h c5h | b4h a4h | g4h f4h | e4h d4h | c4w |
+@ C G | C F | C F | G C | G F | C G7 | C G | C
+
+# Lezione 11 | La scala in tre | tempo=3/4
+c4q d4q e4q | f4q g4q a4q | b4q c5h | c5h. | c5q b4q a4q | g4q f4q e4q | d4q e4q d4q | c4h. |
+@ C | F | G C C | C | F | C | G | C
+
+# Lezione 12 | Su e giù per la scala | tempo=4/4
+c4q d4q e4q f4q | g4q a4q b4q c5q | c5q b4q a4q g4q | f4q e4q d4q c4q | e4q f4q g4h | a4q b4q c5h | b4q a4q g4q f4q | e4h c4h |
+@ C | C F G C | C G F C | G7 C G C | C | F G C C | G F C G7 | C
+
+# Lezione 13 | Do, mi, sol | tempo=4/4
+c4h e4h | g4w | g4h e4h | c4w | e4h g4h | e4h c4h | d4w | c4w |
+@ C | C | C | C | C | C | G | C
+
+# Lezione 14 | Do, mi, sol, do | tempo=4/4
+c4q e4q g4h | c5w | c5q g4q e4h | c4w | e4q g4q c5h | g4q e4q g4h | f4q e4q d4h | c4w |
+@ C | C | C | C | C | C | G7 | C
+
+# Lezione 15 | L'accordo di sol | tempo=4/4
+c4q e4q g4h | g4q b4q d5h | c5q g4q e4h | d4w | e4q g4q c5h | b4q g4q d4h | e4q f4q d4h | c4w |
+@ C | G | C | G | C | G | C G7 | C
+
+# Lezione 16 | Do, mi, sol in tre | tempo=3/4
+c4q e4q g4q | c5h g4q | e4h c4q | d4h. | e4q g4q c5q | b4h g4q | f4q e4q d4q | c4h. |
+@ C | C | C | G | C | G | G7 | C
+
+# Lezione 17 | Salti di quarta e di quinta | tempo=4/4
+c4h f4h | e4w | c4h g4h | e4w | d4h g4h | e4h c4h | d4w | c4w |
+@ C F | C | C | C | G | C | G | C
+
+# Lezione 18 | Dal sol al do | tempo=4/4
+g4h c5h | b4w | g4h e4h | c4w | d4h g4h | f4h d4h | e4h d4h | c4w |
+@ C | G | C | C | G | G7 | C G | C
+
+# Lezione 19 | Salti in tre | tempo=3/4
+c4h g4q | e4h c4q | f4h a4q | g4h. | e4h c5q | g4h e4q | f4q e4q d4q | c4h. |
+@ C | C | F | C | C | C | G7 | C
+
+# Lezione 20 | Salti misti | tempo=4/4
+e4h g4h | c5h g4h | a4h f4h | d4w | g4h e4h | c4h e4h | d4h g4h | c4w |
+@ C | C | F | G | C | C | G | C
+
+# Lezione 21 | Sol maggiore | armatura=1 tempo=4/4
+g4h a4h | b4h a4h | g4h f#4h | g4w | b4q c5q d5h | c5q b4q a4h | b4q a4q g4q f#4q | g4w |
+@ G | G D | G D | G | G | C D | G D | G
+
+# Lezione 22 | Fa maggiore | armatura=-1 tempo=4/4
+f4h g4h | a4h g4h | f4h e4h | f4w | a4q bb4q c5h | bb4q a4q g4h | a4q g4q f4q e4q | f4w |
+@ F C | F C | F C | F | F | C7 | F C7 | F
+
+# Lezione 23 | Re maggiore | armatura=2 tempo=4/4
+d4q e4q f#4q g4q | a4h f#4h | g4h e4h | f#4w | b4q a4q g4q f#4q | e4h a4h | g4q f#4q e4h | d4w |
+@ D | D | A7 | D | G D | A | A7 | D
+
+# Lezione 24 | Una piccola melodia | tempo=3/4
+e4q f4q g4q | c5h g4q | a4q g4q f4q | e4h. | d4q e4q f4q | g4h e4q | f4q e4q d4q | c4h. |
+@ C | C | F | C | G7 | C | G7 | C

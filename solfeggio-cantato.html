@@ -1,0 +1,714 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Solfeggio cantato — musicascuole.it</title>
+<meta name="description" content="Solfeggio cantato: brevi melodie da intonare in classe, con l'accompagnamento del pianoforte, il conteggio e le schede da stampare.">
+<link rel="icon" href="favicon.svg" type="image/svg+xml">
+<link rel="icon" href="favicon-32.png" type="image/png" sizes="32x32">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
+<!--
+  SOLFEGGIO CANTATO — le lezioni sono in media/solfeggio/cantato/cantato-NNN.musicxml, con gli accordi
+  dell'accompagnamento (<harmony>). Si scrivono in _sviluppo/cantato/lezioni.txt e si rigenerano con
+  python3 _sviluppo/cantato/genera.py; poi si aggiungono i numeri nell'elenco ARGOMENTI qui sotto.
+-->
+<link rel="stylesheet" href="fonts/caratteri.css">
+<link rel="stylesheet" href="comune.css">
+<style>
+  * { box-sizing: border-box; }
+  html, body { margin: 0; min-height: 100%; }
+  body { min-height: 100vh; font-family: 'Inter', 'Segoe UI', Arial, sans-serif; color: #EAF2FF; -webkit-font-smoothing: antialiased;
+    background: #0f172a; overflow-x: hidden; position: relative; }
+  .casetta { position: fixed; top: 12px; left: 12px; z-index: 40; width: 44px; height: 44px; border-radius: 50%; display: grid; place-items: center;
+    background: rgba(15,23,42,0.75); border: 1px solid rgba(255,255,255,0.18); text-decoration: none; font-size: 20px; color: #EAF2FF; font-weight: 700; }
+  main { position: relative; z-index: 1; max-width: 1500px; margin: 0 auto; padding: 12px 20px 16px; display: flex; flex-direction: column; gap: 10px; min-height: 100vh; min-height: 100dvh; }
+
+  /* ---------- testa ---------- */
+  .testa { display: flex; align-items: baseline; justify-content: center; gap: 14px; flex-wrap: wrap; padding: 2px 50px 0; }
+  h1 { font-family: 'Fredoka', 'Manrope', sans-serif; font-weight: 600; font-size: clamp(24px, 2.6vw, 34px); margin: 0; }
+  .testa p { margin: 0; color: #9FB3CE; font-size: 13px; }
+
+  /* ---------- argomenti ---------- */
+  .argomenti { display: flex; gap: 6px; flex-wrap: wrap; justify-content: center; }
+  .arg { font: 700 12.5px 'Manrope', sans-serif; color: #EAF2FF; cursor: pointer; padding: 6px 12px; border-radius: 999px;
+    background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.14); white-space: nowrap; }
+  .arg:hover { background: rgba(255,255,255,0.12); }
+  .arg.attivo { background: #E21C48; border-color: #E21C48; color: #fff; }
+  .arg .n { opacity: .6; font-size: 11px; margin-left: 3px; }
+  .numeri { display: flex; gap: 5px; flex-wrap: wrap; justify-content: center; }
+  .num { font: 800 13px 'Manrope', sans-serif; width: 34px; height: 34px; border-radius: 50%; cursor: pointer; color: #EAF2FF;
+    background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.16); }
+  .num:hover { background: rgba(255,255,255,0.14); }
+  .num.attivo { background: #FFE58A; color: #0f172a; border-color: #FFE58A; }
+
+  /* ---------- lettore ---------- */
+  .lettore { flex: 1; min-height: 340px; display: flex; flex-direction: column; background: #fff; color: #1F2430; border-radius: 18px; overflow: hidden;
+    border-top: 4px solid #E21C48; box-shadow: 0 10px 40px rgba(0,0,0,.35); }
+  .l-testa { display: flex; align-items: center; gap: 10px; padding: 10px 14px 4px; }
+  .l-num { width: 42px; height: 42px; border-radius: 50%; background: #5E50A1; color: #fff; display: grid; place-items: center; font: 700 20px 'Fredoka', sans-serif; flex: none; }
+  .l-titolo { font-family: 'Fredoka', sans-serif; font-weight: 600; font-size: clamp(20px, 2vw, 28px); line-height: 1.1; }
+  .l-titolo small { display: block; font: 600 12.5px 'Manrope', sans-serif; color: #64748B; }
+  .freccia { margin-left: auto; display: flex; gap: 6px; }
+  .freccia button { width: 40px; height: 40px; border-radius: 50%; border: 1px solid #CBD5E1; background: #F1F5F9; color: #1F2430; font-size: 17px; font-weight: 800; cursor: pointer; }
+  .freccia button:hover { background: #E2E8F0; }
+  .l-spartito { flex: 1; min-height: 0; display: flex; align-items: center; justify-content: center; padding: 6px 18px 10px; overflow: hidden; }
+  .l-spartito .spartito { width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; }
+  .l-spartito svg { display: block; }
+
+  /* ---------- comandi ---------- */
+  .comandi { display: flex; align-items: center; justify-content: center; gap: 8px; flex-wrap: wrap; padding: 10px 12px; background: #F8FAFC; border-top: 1px solid #E2E8F0; }
+  .via { font: 800 16px 'Manrope', sans-serif; color: #fff; background: #E21C48; border: 0; border-radius: 999px; padding: 10px 22px; cursor: pointer; box-shadow: 0 3px 0 #A3122F; min-width: 150px; }
+  .via.in-corso { background: #334155; box-shadow: 0 3px 0 #1E293B; }
+  .gruppo { display: inline-flex; align-items: center; gap: 4px; background: #fff; border: 1px solid #E2E8F0; border-radius: 999px; padding: 4px 6px; }
+  .gruppo button.tondo { width: 32px; height: 32px; border-radius: 50%; border: 1px solid #CBD5E1; background: #F1F5F9; font-weight: 800; font-size: 16px; cursor: pointer; color: #1F2430; }
+  .bpm { font: 800 14px 'Manrope', sans-serif; min-width: 64px; text-align: center; }
+  .interr { display: inline-flex; align-items: center; gap: 6px; font: 700 13px 'Manrope', sans-serif; color: #1F2430; background: #fff; border: 1px solid #E2E8F0;
+    border-radius: 999px; padding: 7px 12px; cursor: pointer; user-select: none; }
+  .interr input { width: 16px; height: 16px; accent-color: #E21C48; margin: 0; }
+  .interr.senza { border: 0; padding: 4px 6px; }
+  .clic-g select { font: 700 13px 'Manrope', sans-serif; color: #1F2430; background: #F1F5F9; border: 1px solid #CBD5E1; border-radius: 999px; padding: 6px 8px; cursor: pointer; }
+  .azione { font: 700 13px 'Manrope', sans-serif; color: #1F2430; background: #fff; border: 1px solid #CBD5E1; border-radius: 999px; padding: 8px 14px; cursor: pointer; }
+  .azione:hover { background: #F1F5F9; }
+
+  footer.piede { position: relative; z-index: 1; text-align: center; font-size: 12px; color: #9FB3CE; padding: 6px 12px 14px; }
+
+  /* schermo intero (LIM): solo il lettore */
+  body.lim main { padding: 8px; max-width: none; }
+  body.lim .testa, body.lim .argomenti, body.lim footer, body.lim .casetta { display: none; }
+  body.lim .numeri { order: 3; }
+
+  @media (max-width: 640px) {
+    main { padding: 64px 10px 12px; }
+    .testa { padding: 0; }
+    .numeri { flex-wrap: nowrap; overflow-x: auto; justify-content: flex-start; padding-bottom: 4px; }
+    .num { flex: none; }
+    .argomenti { flex-wrap: nowrap; overflow-x: auto; justify-content: flex-start; padding-bottom: 4px; }
+    .via { min-width: 0; width: 100%; }
+    .lettore { min-height: 300px; }
+  }
+
+  /* ---------- scheda da stampare ---------- */
+  .velo { position: fixed; inset: 0; z-index: 60; background: rgba(2,6,23,0.82); display: none; align-items: center; justify-content: center; padding: 14px; }
+  .velo.aperto { display: flex; }
+  .finestra { width: min(1200px, 100%); max-height: calc(100vh - 28px); background: #131c33; border: 1px solid rgba(255,255,255,0.14); border-top: 3px solid #E21C48;
+    border-radius: 18px; display: grid; grid-template-columns: 340px 1fr; overflow: hidden; position: relative; }
+  @media (max-width: 820px) { .finestra { grid-template-columns: 1fr; overflow: auto; } }
+  .f-scelte { padding: 16px; display: flex; flex-direction: column; gap: 12px; overflow: auto; }
+  .f-scelte h3 { margin: 0; font-family: 'Fredoka', sans-serif; font-weight: 600; font-size: 22px; }
+  .f-scelte .sp { font-size: 12.5px; color: #9FB3CE; margin: -6px 0 0; line-height: 1.4; }
+  .f-scelte label.riga { display: flex; align-items: center; gap: 8px; font-size: 13.5px; cursor: pointer; }
+  .f-scelte select, .f-scelte input[type=text] { width: 100%; font: 600 14px 'Manrope', sans-serif; padding: 8px 10px; border-radius: 10px; border: 1px solid rgba(255,255,255,0.2); background: #0f172a; color: #EAF2FF; }
+  .f-griglia { display: grid; grid-template-columns: repeat(8, 1fr); gap: 4px; }
+  .f-griglia button { font: 800 12px 'Manrope', sans-serif; aspect-ratio: 1; border-radius: 8px; border: 1px solid rgba(255,255,255,0.18); background: rgba(255,255,255,0.05); color: #EAF2FF; cursor: pointer; padding: 0; }
+  .f-griglia button.si { background: #E21C48; border-color: #E21C48; }
+  .f-pulsanti { display: flex; gap: 8px; flex-wrap: wrap; margin-top: auto; }
+  .f-pulsanti button { flex: 1; font: 800 14px 'Manrope', sans-serif; border: 0; border-radius: 999px; padding: 10px 14px; cursor: pointer; color: #fff; background: #5E50A1; box-shadow: 0 3px 0 #43397A; }
+  .f-pulsanti button.secondo { background: #009C95; box-shadow: 0 3px 0 #00706B; }
+  .f-pulsanti button:disabled { opacity: .5; cursor: wait; }
+  .f-anteprima { background: #475569; padding: 16px; overflow: auto; display: flex; flex-direction: column; align-items: center; gap: 14px; max-height: calc(100vh - 30px); }
+  .f-anteprima > svg { width: min(520px, 100%); height: auto; background: #fff; box-shadow: 0 6px 20px rgba(0,0,0,.35); flex: none; }
+  .f-info { font-size: 12.5px; color: #CBD5E1; }
+  .chiudi { position: absolute; top: 8px; right: 8px; z-index: 3; width: 38px; height: 38px; border-radius: 50%; border: 1px solid rgba(255,255,255,0.25); background: rgba(15,23,42,0.85); color: #fff; font-size: 17px; cursor: pointer; }
+
+  #areaStampa { display: none; }
+  @media print {
+    @page { size: A4 portrait; margin: 0; }
+    body.stampa > *:not(#areaStampa) { display: none !important; }
+    body.stampa { background: #fff !important; margin: 0; }
+    body.stampa::after, body.stampa::before { display: none !important; }
+    body.stampa #areaStampa { display: block; }
+    #areaStampa > svg { width: 210mm; height: 296mm; display: block; page-break-after: always; break-after: page; }
+  }
+  @media (prefers-reduced-motion: reduce) { * { scroll-behavior: auto !important; } }
+</style>
+</head>
+<body>
+<a class="casetta" href="solfeggio.html" aria-label="Torna a Solfeggio" title="Torna a Solfeggio">←</a>
+<main>
+  <div class="testa">
+    <h1>Solfeggio cantato</h1>
+    <p>Melodie da intonare insieme, con il pianoforte</p>
+  </div>
+  <nav class="argomenti" id="argomenti" aria-label="Argomenti"></nav>
+  <nav class="numeri" id="numeri" aria-label="Lezioni"></nav>
+
+  <section class="lettore" id="lettore" aria-live="polite">
+    <div class="l-testa">
+      <div class="l-num" id="lNum"></div>
+      <div class="l-titolo" id="lTitolo"></div>
+      <div class="freccia"><button type="button" id="prec" aria-label="Lezione precedente" title="Lezione precedente (←)">◀</button><button type="button" id="succ" aria-label="Lezione successiva" title="Lezione successiva (→)">▶</button></div>
+    </div>
+    <div class="l-spartito" id="lSpartito"><div class="spartito" id="spartito"></div></div>
+    <div class="comandi">
+      <button type="button" class="via" id="via">▶ Canta</button>
+      <span class="gruppo clic-g"><select id="guida" aria-label="Quanto aiuta il pianoforte" title="Quanto aiuta il pianoforte">
+          <option value="1">🎹 Melodia e accompagnamento</option><option value="2">🎹 Solo accompagnamento</option><option value="3">🎤 Da soli</option></select></span>
+      <label class="interr" title="Una battuta sì e una no si canta solo nella testa: il pianoforte tace e si riprende insieme"><input type="checkbox" id="testa"> 🧠 Nella testa</label>
+      <label class="interr" title="Il pianoforte suona la melodia un'ottava sotto, per chi ha già la voce cambiata"><input type="checkbox" id="cambiate"> Voci cambiate</label>
+      <span class="gruppo" title="Velocità (battiti al minuto)"><button type="button" class="tondo" id="meno" aria-label="Più lento">−</button><span class="bpm" id="bpm"></span><button type="button" class="tondo" id="piu" aria-label="Più veloce">+</button></span>
+      <span class="gruppo clic-g"><label class="interr senza" title="Metronomo udibile durante l'esercizio (il conteggio iniziale si sente sempre)"><input type="checkbox" id="clic"> Clic</label>
+        <select id="sudd" aria-label="Suddivisione del clic" title="Suddivisione: oltre ai movimenti, il clic batte anche le parti di ogni movimento (più piano)">
+          <option value="1">♩ movimenti</option><option value="2">♪♪ in 2</option><option value="3">♪♪♪ in 3</option><option value="4">♬♬ in 4</option></select></span>
+      <label class="interr" title="Scrive il nome sopra ogni nota"><input type="checkbox" id="nomi"> Nomi</label>
+      <label class="interr" title="Colora le note"><input type="checkbox" id="colori"> Colori</label>
+      <label class="interr" title="Le stesse lezioni in chiave di basso"><input type="checkbox" id="basso"> 𝄢 Chiave di basso</label>
+      <button type="button" class="azione" id="intero" title="Schermo intero, per la LIM">⛶ Schermo intero</button>
+      <button type="button" class="azione" id="apriScheda">🖨️ Prepara una scheda</button>
+    </div>
+  </section>
+</main>
+<footer class="piede">Lezioni e accompagnamenti di musicascuole.it · Cristiano Arata · Pianoforte: Salamander Grand Piano di Alexander Holm (CC BY 3.0) — <a href="crediti.html">Crediti e licenza</a> · <a href="privacy.html">Privacy</a></footer>
+
+<div class="velo" id="velo" role="dialog" aria-modal="true" aria-labelledby="fTitolo">
+  <div class="finestra">
+    <button type="button" class="chiudi" id="chiudi" aria-label="Chiudi">✕</button>
+    <div class="f-scelte">
+      <h3 id="fTitolo">Prepara una scheda</h3>
+      <p class="sp">Le melodie vanno su fogli A4, una sotto l'altra, con le note grandi. Scegli un argomento o tocca i numeri.</p>
+      <select id="fArg" aria-label="Argomento"></select>
+      <div class="f-griglia" id="fGriglia"></div>
+      <input type="text" id="fTitoloScheda" placeholder="Titolo della scheda (facoltativo)" aria-label="Titolo della scheda">
+      <label class="riga"><input type="checkbox" id="fNome" checked> Spazio per nome e classe</label>
+      <label class="riga"><input type="checkbox" id="fColori"> Note colorate</label>
+      <label class="riga"><input type="checkbox" id="fNomi"> Nomi sopra le note</label>
+      <label class="riga"><input type="checkbox" id="fBasso"> Chiave di basso</label>
+      <div class="f-info" id="fInfo"></div>
+      <div class="f-pulsanti"><button type="button" id="fStampa">🖨️ Stampa</button><button type="button" class="secondo" id="fPdf">⬇️ Salva PDF</button></div>
+    </div>
+    <div class="f-anteprima" id="fAnteprima"></div>
+  </div>
+</div>
+<div id="areaStampa"></div>
+
+<script src="vexflow.js"></script>
+<script src="motore-schemi.js?v=2026-10-09a"></script>
+<script>
+(function () {
+  "use strict";
+  const CARTELLA = "media/solfeggio/cantato/";
+  const ARGOMENTI = [
+    { nome: "Do re mi", lezioni: [1, 2, 3, 4], dettagli: { 1: "Do e re", 2: "Do, re, mi", 3: "Do, re, mi in semiminime", 4: "Do, re, mi in tre" } },
+    { nome: "Fino al sol", lezioni: [5, 6, 7, 8], dettagli: { 5: "Fino al fa", 6: "Fino al sol", 7: "Le prime cinque note in tre", 8: "Le prime cinque, con le crome" } },
+    { nome: "La scala", lezioni: [9, 10, 11, 12], dettagli: { 9: "La scala in semibrevi", 10: "La scala in minime", 11: "La scala in tre", 12: "Su e giù per la scala" } },
+    { nome: "L'accordo", lezioni: [13, 14, 15, 16], dettagli: { 13: "Do, mi, sol", 14: "Do, mi, sol, do", 15: "L'accordo di sol", 16: "Do, mi, sol in tre" } },
+    { nome: "Salti", lezioni: [17, 18, 19, 20], dettagli: { 17: "Salti di quarta e di quinta", 18: "Dal sol al do", 19: "Salti in tre", 20: "Salti misti" } },
+    { nome: "Nuove tonalità", lezioni: [21, 22, 23], dettagli: { 21: "Sol maggiore", 22: "Fa maggiore", 23: "Re maggiore" } },
+    { nome: "Melodie", lezioni: [24], dettagli: { 24: "Una piccola melodia" } }
+  ];
+  const TUTTE = ARGOMENTI.flatMap(a => a.lezioni).sort((x, y) => x - y);
+  const argDi = n => ARGOMENTI.find(a => a.lezioni.includes(n));
+  const titoloDi = n => { const a = argDi(n); return (a.dettagli && a.dettagli[n]) || a.titolo; };
+
+  /* ---------- impostazioni ricordate (solo in questo browser) ---------- */
+  const leggi = (k, d) => { try { const v = localStorage.getItem("cantato." + k); return v === null ? d : v; } catch (e) { return d; } };
+  const scrivi = (k, v) => { try { localStorage.setItem("cantato." + k, v); } catch (e) {} };
+  const S = { bpm: +leggi("bpm", "72") || 72, guida: [1, 2, 3].includes(+leggi("guida", "1")) ? +leggi("guida", "1") : 1, testa: leggi("testa", "0") === "1", cambiate: leggi("cambiate", "0") === "1", sudd: [1, 2, 3, 4].includes(+leggi("sudd", "1")) ? +leggi("sudd", "1") : 1, clic: leggi("clic", "0") === "1", nomi: leggi("nomi", "0") === "1", colori: leggi("colori", "0") === "1", basso: leggi("basso", "0") === "1" };
+  let attuale = +leggi("lezione", "1"); if (!TUTTE.includes(attuale)) attuale = 1;
+  let argomento = null;   // null = tutte
+
+  /* ---------- lezioni ---------- */
+  const cache = {};
+  const carica = n => cache[n] || (cache[n] = fetch(CARTELLA + "cantato-" + String(n).padStart(3, "0") + ".musicxml")
+    .then(r => { if (!r.ok) throw new Error("manca la lezione " + n); return r.text(); })
+    .then(t => { const b = MotoreSchemi.leggiMusicXML(t); b.accordi = accordiDa(t); return b; }));
+  /* chiave di basso: stessi nomi delle note, scritte una o due ottave sotto; per ogni lezione si sceglie
+     lo spostamento che fa stare le note il più possibile dentro il rigo (meno tagli addizionali) */
+  const LETTERE = "cdefgab";
+  function spostaBasso(brano) {
+    const gradi = []; brano.battute.forEach(b => b.eventi.forEach(e => { if (e.nota) gradi.push(e.nota.ottava * 7 + LETTERE.indexOf(e.nota.lettera)); }));
+    const tagli = sp => gradi.reduce((t, g0) => { const g = g0 + sp * 7; return t + (g < 18 ? Math.floor((18 - g) / 2) : g > 26 ? Math.floor((g - 26) / 2) : 0); }, 0);
+    return tagli(-1) < tagli(-2) ? -1 : -2;   // rigo di basso: dal sol2 (grado 18) al la3 (grado 26)
+  }
+  const chiaveDi = (brano, basso) => basso ? { chiave: "bass", spostaOttave: spostaBasso(brano) } : {};
+  const opzioni = (extra) => Object.assign({ strumento: "flauto", colori: S.colori, nomi: S.nomi, titolo: false, schema: false, testi: false }, chiaveDi(branoAttuale, S.basso), extra);
+
+  /* ---------- argomenti e numeri ---------- */
+  const elArg = document.getElementById("argomenti"), elNum = document.getElementById("numeri");
+  function disegnaArgomenti() {
+    elArg.innerHTML = `<button type="button" class="arg${argomento === null ? " attivo" : ""}" data-a="">Tutte<span class="n">${TUTTE.length}</span></button>` +
+      ARGOMENTI.map((a, i) => `<button type="button" class="arg${argomento === i ? " attivo" : ""}" data-a="${i}">${a.nome}<span class="n">${a.lezioni.length}</span></button>`).join("");
+    const elenco = argomento === null ? TUTTE : ARGOMENTI[argomento].lezioni;
+    elNum.innerHTML = elenco.map(n => `<button type="button" class="num${n === attuale ? " attivo" : ""}" data-n="${n}" title="${titoloDi(n)}">${n}</button>`).join("");
+  }
+  elArg.addEventListener("click", e => {
+    const b = e.target.closest(".arg"); if (!b) return;
+    argomento = b.dataset.a === "" ? null : +b.dataset.a;
+    if (argomento !== null && !ARGOMENTI[argomento].lezioni.includes(attuale)) mostra(ARGOMENTI[argomento].lezioni[0]);
+    else disegnaArgomenti();
+  });
+  elNum.addEventListener("click", e => { const b = e.target.closest(".num"); if (b) mostra(+b.dataset.n); });
+
+  /* ---------- lettore ---------- */
+  const area = document.getElementById("lSpartito"), div = document.getElementById("spartito");
+  let branoAttuale = null;
+  async function mostra(n) {
+    ferma();
+    attuale = n; scrivi("lezione", n);
+    document.getElementById("lNum").textContent = n;
+    document.getElementById("lTitolo").innerHTML = `Lezione ${n}<small>${titoloDi(n)}</small>`;
+    disegnaArgomenti();
+    const a = elNum.querySelector(".num.attivo"); if (a && elNum.scrollWidth > elNum.clientWidth) elNum.scrollLeft = a.offsetLeft - elNum.clientWidth / 2;
+    try { branoAttuale = await carica(n); } catch (e) { div.textContent = "Lezione non trovata."; return; }
+    if (n !== attuale) return;
+    aggiornaBpm(); disegna();
+  }
+  function disegna() {
+    if (!branoAttuale) return;
+    const w = area.clientWidth - 36, h = area.clientHeight - 16;
+    const ad = adatta(div, branoAttuale, opzioni(), Math.max(200, w), Math.max(120, h));
+    const vb = ad.svg.viewBox.baseVal, k = Math.min(ad.scala, 2.6);
+    ad.svg.style.width = vb.width * k + "px"; ad.svg.style.height = vb.height * k + "px";
+    segnaTesta(ad.svg);
+  }
+  /* «nella testa»: le battute da cantare in silenzio hanno uno sfondo azzurro e un cervellino */
+  function segnaTesta(svg) {
+    svg.querySelectorAll(".testa-b").forEach(g => g.remove());
+    if (!S.testa || !svg._mappa) return;
+    const NS = "http://www.w3.org/2000/svg", n = svg._mappa.length;
+    svg._mappa.forEach((mp, m) => {
+      if (!inTesta(m, n)) return;
+      const x0 = mp.xNote != null ? mp.xNote - 10 : mp.x0, g = document.createElementNS(NS, "g");
+      g.setAttribute("class", "testa-b");
+      g.innerHTML = `<rect x="${x0}" y="${mp.y0 - 24}" width="${Math.max(0, mp.x1 - x0)}" height="${mp.y1 - mp.y0 + 48}" rx="8" fill="rgba(94,80,161,0.13)"/>` +
+        `<text x="${mp.x1 - 8}" y="${mp.y0 - 2}" text-anchor="end" font-size="18">🧠</text>`;
+      svg.insertBefore(g, svg.firstChild);
+    });
+  }
+  /* come MotoreSchemi.adattaBrano, ma le battute molto fitte (biscrome) ricevono lo spazio che serve */
+  const notePiuFitte = brano => Math.max(...brano.battute.map(b => b.eventi.length));
+  function adatta(contenitore, brano, opz, larghArea, altoArea) {
+    const minBattuta = Math.max(150, notePiuFitte(brano) * 26), testa = 120;
+    let migliore = null;
+    for (let perRiga = 1; perRiga <= 8; perRiga++) {
+      if (perRiga > brano.battute.length) break;
+      if (perRiga === 1 && brano.battute.length > 1 && minBattuta <= 150) continue;
+      const minimo = minBattuta * perRiga + testa;
+      MotoreSchemi.disegnaBrano(contenitore, brano, Object.assign({}, opz, { larghezza: minimo, perRiga }));
+      const altoLogico = contenitore.querySelector("svg").viewBox.baseVal.height;
+      const larghezza = Math.max(minimo, altoLogico * larghArea / altoArea);
+      const scala = Math.min(larghArea / larghezza, altoArea / altoLogico);
+      if (!migliore || scala > migliore.scala + 1e-6) migliore = { perRiga, larghezza, scala };
+    }
+    MotoreSchemi.disegnaBrano(contenitore, brano, Object.assign({}, opz, { larghezza: Math.round(migliore.larghezza), perRiga: migliore.perRiga }));
+    const svg = contenitore.querySelector("svg"), vb = svg.viewBox.baseVal;
+    return { svg, scala: Math.min(larghArea / vb.width, altoArea / vb.height) };
+  }
+  const passo = d => {
+    const elenco = argomento === null ? TUTTE : ARGOMENTI[argomento].lezioni;
+    const i = elenco.indexOf(attuale);
+    mostra(elenco[(i + d + elenco.length) % elenco.length]);
+  };
+  document.getElementById("prec").addEventListener("click", () => passo(-1));
+  document.getElementById("succ").addEventListener("click", () => passo(1));
+
+  /* ---------- comandi ---------- */
+  const elBpm = document.getElementById("bpm");
+  const simboloBattito = () => { const b = battitoDi(branoAttuale); return b === 1.5 ? "♩." : b === 2 ? "𝅗𝅥" : b === 0.5 ? "♪" : "♩"; };
+  const aggiornaBpm = () => elBpm.textContent = simboloBattito() + " = " + S.bpm;
+  aggiornaBpm();
+  document.getElementById("meno").addEventListener("click", () => { cambiaBpm(Math.max(30, S.bpm - 4)); scrivi("bpm", S.bpm); aggiornaBpm(); });
+  document.getElementById("piu").addEventListener("click", () => { cambiaBpm(Math.min(200, S.bpm + 4)); scrivi("bpm", S.bpm); aggiornaBpm(); });
+  const elSudd = document.getElementById("sudd"); elSudd.value = String(S.sudd);
+  elSudd.addEventListener("change", () => {
+    const nuovo = +elSudd.value;
+    if (solf) { const p = posA(adesso()); solf.griglia = Math.ceil((p + solf.lung) / solf.B * nuovo - 1e-6); }
+    S.sudd = nuovo; scrivi("sudd", nuovo);
+  });
+  [["clic", false], ["nomi", true], ["colori", true], ["basso", true], ["testa", true], ["cambiate", false]].forEach(([k, ridisegna]) => {
+    const c = document.getElementById(k); c.checked = S[k];
+    c.addEventListener("change", () => { S[k] = c.checked; scrivi(k, c.checked ? "1" : "0"); if (ridisegna) { ferma(); disegna(); } });
+  });
+  const elGuida = document.getElementById("guida"); elGuida.value = String(S.guida);
+  elGuida.addEventListener("change", () => { S.guida = +elGuida.value; scrivi("guida", S.guida); ferma(); });
+  document.getElementById("intero").addEventListener("click", () => {
+    const on = !document.body.classList.contains("lim");
+    document.body.classList.toggle("lim", on);
+    try { if (on && document.documentElement.requestFullscreen) document.documentElement.requestFullscreen(); else if (!on && document.fullscreenElement) document.exitFullscreen(); } catch (e) {}
+    setTimeout(disegna, 150);
+  });
+  document.addEventListener("fullscreenchange", () => { if (!document.fullscreenElement && document.body.classList.contains("lim")) { document.body.classList.remove("lim"); setTimeout(disegna, 150); } });
+  /* si ridisegna solo se cambia la larghezza: sul telefono, mentre si scorre, la barra dell'indirizzo
+     compare e sparisce e cambia solo l'altezza (ridisegnare ogni volta scalderebbe il telefono) */
+  let attesa, larghezzaDisegno = window.innerWidth;
+  window.addEventListener("resize", () => { clearTimeout(attesa); attesa = setTimeout(() => {
+    if (Math.abs(window.innerWidth - larghezzaDisegno) < 2 && !document.body.classList.contains("lim")) return;
+    larghezzaDisegno = window.innerWidth; ferma(); disegna(); }, 200); });
+  document.addEventListener("keydown", e => {
+    if (velo.classList.contains("aperto") || /INPUT|SELECT|TEXTAREA/.test(e.target.tagName)) return;
+    if (e.key === "ArrowRight") passo(1);
+    else if (e.key === "ArrowLeft") passo(-1);
+    else if (e.key === " " && e.target.tagName !== "BUTTON") { e.preventDefault(); solf ? ferma() : avvia(); }
+  });
+
+  /* ---------- canto: introduzione, conteggio, pianoforte e triangolino sulla nota da cantare ----------
+     Il tempo lo dà l'orologio dell'audio: note, accordi e clic sono programmati in anticipo (150 ms),
+     così restano precisi. Prima di cominciare il pianoforte dà l'accordo della tonalità e la prima nota,
+     poi una battuta di conteggio. Guida: 1 = melodia e accompagnamento, 2 = solo accompagnamento, 3 = da soli. */
+  let ctx = null, solf = null, timer = null, suoni = [], uscita = null;
+  const DURQ = { w: 4, h: 2, q: 1, "8": 0.5, "16": 0.25, "32": 0.125 };
+  const audio = () => {
+    try {
+      if (!ctx) {
+        ctx = new (window.AudioContext || window.webkitAudioContext)();
+        // limitatore: accordi e melodia insieme non devono mai distorcere
+        const lim = ctx.createDynamicsCompressor();
+        lim.threshold.value = -10; lim.knee.value = 8; lim.ratio.value = 6; lim.attack.value = 0.004; lim.release.value = 0.25;
+        uscita = ctx.createGain(); uscita.gain.value = 0.9; uscita.connect(lim); lim.connect(ctx.destination);
+      }
+      if (ctx.state === "suspended") ctx.resume();
+    } catch (e) { ctx = null; }
+    return ctx;
+  };
+  const adesso = () => ctx ? ctx.currentTime : performance.now() / 1000;
+  function clic(t, tipo) {   // tipo: 2 = primo movimento, 1 = movimento, 0 = suddivisione
+    if (!ctx) return;
+    try {
+      const o = ctx.createOscillator(), g = ctx.createGain();
+      o.type = "triangle"; o.frequency.value = [1250, 780, 520][2 - tipo];
+      const v = [0.06, 0.12, 0.18][tipo];
+      g.gain.setValueAtTime(0.0001, t); g.gain.exponentialRampToValueAtTime(v, t + 0.006); g.gain.exponentialRampToValueAtTime(0.0001, t + (tipo ? 0.08 : 0.05));
+      o.connect(g).connect(uscita); o.start(t); o.stop(t + 0.1);
+      suoni.push(o);
+    } catch (e) {}
+  }
+
+  /* pianoforte: Salamander Grand Piano (Alexander Holm, CC BY 3.0), gli stessi suoni del dettato melodico;
+     si scaricano solo la prima volta che si preme «Canta» */
+  const CAMPIONI = [["A2", 45], ["C3", 48], ["Ds3", 51], ["Fs3", 54], ["A3", 57], ["C4", 60], ["Ds4", 63],
+    ["Fs4", 66], ["A4", 69], ["C5", 72], ["Ds5", 75], ["Fs5", 78], ["A5", 81], ["C6", 84]];
+  let piano = null, pianoInArrivo = null;
+  function caricaPiano() {
+    if (piano) return Promise.resolve(piano);
+    if (pianoInArrivo) return pianoInArrivo;
+    pianoInArrivo = Promise.all(CAMPIONI.map(([nome, midi]) => fetch("media/suoni/pianoforte/" + nome + ".mp3")
+      .then(r => r.arrayBuffer()).then(d => new Promise(ok => ctx.decodeAudioData(d, buf => {
+        const c = buf.getChannelData(0); let picco = 0; for (let i = 0; i < c.length; i++) picco = Math.max(picco, Math.abs(c[i]));
+        let i0 = 0; while (i0 < c.length && Math.abs(c[i0]) < picco * 0.03) i0++;
+        ok({ midi, buf, inizio: Math.max(0, i0 / buf.sampleRate - 0.002) });
+      }, () => ok(null)))).catch(() => null)))
+      .then(l => (piano = l.filter(Boolean)));
+    return pianoInArrivo;
+  }
+  function suonaNota(midi, t, dur, vol) {
+    if (!piano || !piano.length) return;
+    let s = piano[0]; piano.forEach(c => { if (Math.abs(c.midi - midi) < Math.abs(s.midi - midi)) s = c; });
+    const src = ctx.createBufferSource(), g = ctx.createGain(), fine = t + Math.max(0.12, dur);
+    src.buffer = s.buf; src.playbackRate.value = Math.pow(2, (midi - s.midi) / 12);
+    g.gain.setValueAtTime(vol, t); g.gain.setValueAtTime(vol, fine); g.gain.setTargetAtTime(0.0001, fine, 0.09);
+    src.connect(g).connect(uscita); src.start(t, s.inizio); src.stop(fine + 0.6);
+    suoni.push(src);
+  }
+
+  /* dalle note scritte all'altezza: do centrale = 60 */
+  const SEMI = { c: 0, d: 2, e: 4, f: 5, g: 7, a: 9, b: 11 };
+  const midiDi = n => (n.ottava + 1) * 12 + SEMI[n.lettera] + (n.alt === "#" ? 1 : n.alt === "b" ? -1 : 0);
+  /* accordi: radice (0-11) e tipo, letti dagli elementi <harmony> del MusicXML */
+  function accordiDa(testo) {
+    const doc = new DOMParser().parseFromString(testo, "application/xml");
+    return [...doc.querySelectorAll("measure")].map(m => [...m.querySelectorAll("harmony")].map(h => {
+      const passo = h.querySelector("root-step").textContent.trim(), alt = +(h.querySelector("root-alter") || { textContent: 0 }).textContent;
+      return { radice: (SEMI[passo.toLowerCase()] + alt + 12) % 12, tipo: h.querySelector("kind").textContent.trim() };
+    }));
+  }
+  const INTERVALLI = { major: [0, 4, 7], minor: [0, 3, 7], dominant: [0, 4, 7, 10], "minor-seventh": [0, 3, 7, 10], "major-seventh": [0, 4, 7, 11] };
+  function voci(acc) {   // accordo in posizione stretta tra il re3 e il re4, basso tra il mi2 e il re#3
+    const note = (INTERVALLI[acc.tipo] || INTERVALLI.major).map(i => { let m = 48 + (acc.radice + i) % 12; if (m < 50) m += 12; return m; });
+    let basso = 36 + acc.radice; if (basso < 40) basso += 12;
+    return { basso, note };
+  }
+  const tonicaDi = brano => (((brano.armatura || 0) * 7) % 12 + 12) % 12;
+  // battute «nella testa»: una sì e una no (la seconda, la quarta…), mai l'ultima
+  const inTesta = (m, n) => S.testa && m % 2 === 1 && m < n - 1;
+
+  const via = document.getElementById("via");
+  via.addEventListener("click", () => (solf || via.classList.contains("in-corso")) ? ferma() : avvia());
+  /* il battito: semiminima in 2/4, 3/4, 4/4; semiminima puntata in 6/8, 9/8, 12/8 (e 3/8); minima in 2/2 */
+  function battitoDi(b) { if (!b) return 1; const [num, den] = b.tempo; return den === 8 && num % 3 === 0 ? 1.5 : (b.simboloTempo === "cut" || den === 2) ? 2 : 4 / den; }
+  const posA = t => solf.ancora.pos + (t - solf.ancora.t) * S.bpm / 60 * solf.B;   // posizione in semiminime (negativa nel conteggio)
+  const tempoDi = p => solf.ancora.t + (p - solf.ancora.pos) * 60 / S.bpm / solf.B;
+  async function avvia() {
+    const svg = div.querySelector("svg"); if (!branoAttuale || !svg || !svg._mappa) return;
+    if (!audio()) return;
+    via.textContent = "… un momento"; via.classList.add("in-corso");
+    await caricaPiano();
+    if (solf || via.textContent !== "… un momento") return;
+    const brano = branoAttuale, [num, den] = brano.tempo, lung = num * 4 / den, B = battitoDi(brano);
+    const durE = e => e.intera ? lung : (DURQ[e.durata] || 1) * (2 - Math.pow(0.5, e.punti || 0)) * (e.tupla ? e.tupla.normali / e.tupla.reali : 1);
+    const durB = b => { const q = b.eventi.reduce((t, e) => t + durE(e), 0); return q > 0 ? q : lung; };
+    const inizi = []; let tot = 0;
+    brano.battute.forEach(b => { inizi.push(tot); tot += durB(b); });
+    const nb = brano.battute.length, ottava = S.cambiate ? -12 : 0, eventi = [];
+    // la melodia (guida 1) e la prima nota da cantare
+    let primaNota = null, ultimaNota = null;
+    brano.battute.forEach((b, m) => {
+      let p = inizi[m];
+      b.eventi.forEach(e => {
+        const d = durE(e);
+        if (e.nota) {
+          const midi = midiDi(e.nota) + ottava;
+          if (e.legaFine && ultimaNota) ultimaNota.dur += d;
+          else { ultimaNota = { p, dur: d, midi, vol: 0.55, tipo: "melodia", m }; if (!primaNota) primaNota = ultimaNota; if (S.guida === 1) eventi.push(ultimaNota); }
+        }
+        p += d;
+      });
+    });
+    // l'accompagnamento (guida 1 e 2): basso e accordo all'inizio, poi l'accordo più piano su ogni movimento
+    if (S.guida <= 2 && brano.accordi) brano.battute.forEach((b, m) => {
+      const ac = brano.accordi[m] || []; if (!ac.length) return;
+      const parte = (inizi[m + 1] !== undefined ? inizi[m + 1] : tot) - inizi[m], pezzo = parte / ac.length;
+      ac.forEach((a, k) => {
+        const v = voci(a), p0 = inizi[m] + k * pezzo, uguale = k > 0 && ac[k - 1].radice === a.radice && ac[k - 1].tipo === a.tipo;
+        if (!uguale) eventi.push({ p: p0, dur: pezzo, midi: v.basso, vol: 0.32, tipo: "acc", m });
+        for (let q = 0; q < pezzo - 1e-6; q += B) v.note.forEach(n => eventi.push({ p: p0 + q, dur: Math.min(B, pezzo - q), midi: n, vol: q === 0 && !uguale ? 0.2 : 0.12, tipo: "acc", m }));
+      });
+    });
+    // introduzione: accordo della tonalità (2 movimenti), poi la prima nota (2 movimenti), poi una battuta di conteggio
+    const ton = tonicaDi(brano), intro = 4 * B, inizio = -lung - intro, tv = voci({ radice: ton, tipo: "major" });
+    [tv.basso, ...tv.note].forEach(n => eventi.push({ p: inizio, dur: 2 * B, midi: n, vol: 0.25, tipo: "intro" }));
+    if (primaNota) eventi.push({ p: inizio + 2 * B, dur: 2 * B, midi: primaNota.midi, vol: 0.55, tipo: "intro" });
+    // da soli: alla fine il pianoforte suona l'ultima nota e l'accordo, per sentire se si è rimasti intonati
+    if (S.guida === 3 && ultimaNota) {
+      eventi.push({ p: tot, dur: 2 * B, midi: ultimaNota.midi, vol: 0.55, tipo: "verifica" });
+      [tv.basso, ...tv.note].forEach(n => eventi.push({ p: tot, dur: 2 * B, midi: n, vol: 0.22, tipo: "verifica" }));
+    }
+    const fine = S.guida === 3 ? tot + 2 * B : tot;
+    eventi.sort((a, b) => a.p - b.p);
+    solf = { svg, inizi, tot, fine, lung, B, eventi, prossimo: 0, nb, ancora: { t: adesso() + 0.15, pos: inizio }, griglia: 0, conteggio: -lung };
+    via.textContent = "■ Ferma";
+    programma(); timer = setInterval(programma, 25);
+    requestAnimationFrame(avanti);
+  }
+  function programma() {   // programma suoni e clic dei prossimi 150 ms
+    if (!solf) return;
+    const fine = adesso() + 0.15, ora = adesso();
+    while (solf.prossimo < solf.eventi.length) {
+      const e = solf.eventi[solf.prossimo], t = tempoDi(e.p); if (t > fine) break;
+      solf.prossimo++;
+      if (t < ora - 0.02) continue;
+      if (e.m !== undefined && inTesta(e.m, solf.nb)) continue;   // battuta da cantare «nella testa»: il pianoforte tace
+      suonaNota(e.midi, t, tempoDi(e.p + e.dur) - t - 0.02, e.vol);
+    }
+    // clic: sempre nella battuta di conteggio, poi solo se richiesto
+    const sud = S.sudd;
+    for (;;) {
+      const p = solf.conteggio + solf.griglia * solf.B / sud;
+      if (p >= solf.tot - 1e-6) break;
+      const t = tempoDi(p); if (t > fine) break;
+      const movimento = solf.griglia % sud === 0;
+      if (t >= ora - 0.01 && (p < 0 ? movimento : S.clic)) {
+        let tipo = movimento ? 1 : 0;
+        if (movimento) { const inBattuta = p < 0 ? p + solf.lung : p - solf.inizi.reduce((a, x) => x <= p + 1e-6 ? x : a, 0); if (Math.abs(inBattuta) < 1e-6) tipo = 2; }
+        if (movimento || sud > 1) clic(t, tipo);
+      }
+      solf.griglia++;
+    }
+  }
+  function ferma() {
+    clearInterval(timer); timer = null;
+    suoni.forEach(o => { try { o.stop(); } catch (e) {} }); suoni = [];
+    div.querySelectorAll("svg .solf-g, svg .solf-sb").forEach(g => g.remove());
+    solf = null; via.textContent = "▶ Canta"; via.classList.remove("in-corso");
+    // risparmio energetico: l'audio si mette in pausa quando non si canta
+    setTimeout(() => { if (!solf && ctx && ctx.state === "running") ctx.suspend().catch(() => {}); }, 1500);
+  }
+  function cambiaBpm(nuovo) {   // durante il canto la velocità cambia senza salti
+    if (solf) {
+      const t = adesso(), p = posA(t); solf.ancora = { t, pos: p };
+      suoni.forEach(o => { try { o.stop(t + 0.05); } catch (e) {} }); suoni = [];
+      solf.prossimo = solf.eventi.findIndex(e => e.p >= p - 1e-6); if (solf.prossimo < 0) solf.prossimo = solf.eventi.length;
+      solf.griglia = Math.max(0, Math.ceil((p - solf.conteggio) / solf.B * S.sudd - 1e-6));
+    }
+    S.bpm = nuovo;
+  }
+  function avanti() {
+    if (!solf) return;
+    const pos = posA(adesso()), { inizi, tot } = solf;
+    if (pos >= solf.fine + 0.5) { ferma(); return; }
+    let m = 0, qIn = 0, conta = 0, attivo = pos >= 0 && pos < tot;
+    if (pos < solf.conteggio) conta = "♪";   // introduzione: si ascolta il pianoforte
+    else if (pos < 0) conta = Math.ceil(-pos / solf.B - 1e-6);
+    else if (pos < tot) { while (m + 1 < inizi.length && inizi[m + 1] <= pos + 1e-6) m++; qIn = pos - inizi[m]; }
+    else { m = inizi.length - 1; qIn = tot - inizi[m]; }
+    segna(solf.svg, m, qIn, conta, attivo);
+    requestAnimationFrame(avanti);
+  }
+  function segna(svg, m, qIn, conta, attivo) {
+    const NS = "http://www.w3.org/2000/svg", mp = svg._mappa[m]; if (!mp) return;
+    let g = svg.querySelector(".solf-g");
+    if (!g) {
+      g = document.createElementNS(NS, "g"); g.setAttribute("class", "solf-g");
+      g.innerHTML = '<rect class="solf-sb" rx="8" fill="rgba(226,28,72,0.07)"/><path class="tri" fill="#E21C48" stroke="#fff" stroke-width="2.5" stroke-linejoin="round"/>' +
+        '<text class="sc" text-anchor="middle" font-family="Fredoka, Manrope, Arial" font-weight="700" font-size="72" fill="#E21C48" stroke="#fff" stroke-width="9" paint-order="stroke"></text>';
+      svg.insertBefore(g.querySelector(".solf-sb"), svg.firstChild);   // lo sfondo della battuta sta sotto le note
+      svg.appendChild(g);
+    }
+    { let i0 = 0; for (let k = 0; k < mp.punti.length; k++) if (qIn >= mp.punti[k].q - 1e-6) i0 = k;   // risparmio energetico:
+      const chiave = [m, i0, conta, attivo].join("|"); if (g._chiave === chiave) return; g._chiave = chiave; }   // si ridisegna solo quando cambia
+    const sb = svg.querySelector(".solf-sb"), x0 = mp.xNote != null ? mp.xNote - 10 : mp.x0;
+    sb.setAttribute("x", x0); sb.setAttribute("y", mp.y0 - 24); sb.setAttribute("width", Math.max(0, mp.x1 - x0)); sb.setAttribute("height", mp.y1 - mp.y0 + 48);
+    sb.style.display = attivo ? "" : "none";
+    let i = 0; for (let k = 0; k < mp.punti.length; k++) if (qIn >= mp.punti[k].q - 1e-6) i = k;
+    const p = mp.punti[i] || { x: mp.x0 }, x = p.x, y = mp.y0 - 30;
+    const tri = g.querySelector(".tri"); tri.setAttribute("d", `M${x - 10} ${y - 16} L${x + 10} ${y - 16} L${x} ${y} Z`); tri.style.display = attivo ? "" : "none";
+    const c = g.querySelector(".sc"); c.textContent = conta || "";
+    c.setAttribute("x", (x0 + mp.x1) / 2); c.setAttribute("y", (mp.y0 + mp.y1) / 2 + 25);
+  }
+
+  /* ---------- scheda da stampare: fogli A4 verticali, lezioni una sotto l'altra, note grandi ---------- */
+  const NS = "http://www.w3.org/2000/svg", PW = 794, PH = 1123, MG = 46, BATTUTE_RIGA = 4;
+  const COL = ["#E21C48", "#F99D1C", "#FFF428", "#BED958", "#009C95", "#5E50A1", "#CF3E96"];
+  const esc = t => String(t).replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
+  const velo = document.getElementById("velo"), fArg = document.getElementById("fArg"), fGriglia = document.getElementById("fGriglia");
+  let scelte = new Set();
+  fArg.innerHTML = `<option value="">— scegli tu le lezioni —</option>` + ARGOMENTI.map((a, i) => `<option value="${i}">${a.nome} (${a.lezioni.join(", ")})</option>`).join("");
+  fGriglia.innerHTML = TUTTE.map(n => `<button type="button" data-n="${n}" title="${titoloDi(n)}">${n}</button>`).join("");
+  const aggiornaGriglia = () => fGriglia.querySelectorAll("button").forEach(b => b.classList.toggle("si", scelte.has(+b.dataset.n)));
+  fArg.addEventListener("change", () => { if (fArg.value !== "") { scelte = new Set(ARGOMENTI[+fArg.value].lezioni); aggiornaGriglia(); anteprima(); } });
+  fGriglia.addEventListener("click", e => {
+    const b = e.target.closest("button"); if (!b) return; const n = +b.dataset.n;
+    scelte.has(n) ? scelte.delete(n) : scelte.add(n); fArg.value = ""; aggiornaGriglia(); anteprima();
+  });
+  ["fNome", "fColori", "fNomi", "fBasso"].forEach(id => document.getElementById(id).addEventListener("change", anteprima));
+  let attesaTitolo; document.getElementById("fTitoloScheda").addEventListener("input", () => { clearTimeout(attesaTitolo); attesaTitolo = setTimeout(anteprima, 300); });
+  document.getElementById("apriScheda").addEventListener("click", () => {
+    ferma();
+    const a = argDi(attuale); fArg.value = String(ARGOMENTI.indexOf(a)); scelte = new Set(a.lezioni);
+    document.getElementById("fColori").checked = S.colori; document.getElementById("fNomi").checked = S.nomi; document.getElementById("fBasso").checked = S.basso;
+    aggiornaGriglia(); velo.classList.add("aperto"); document.body.style.overflow = "hidden"; anteprima();
+  });
+  const chiudi = () => { velo.classList.remove("aperto"); document.body.style.overflow = ""; };
+  document.getElementById("chiudi").addEventListener("click", chiudi);
+  velo.addEventListener("click", e => { if (e.target === velo) chiudi(); });
+  document.addEventListener("keydown", e => { if (e.key === "Escape" && velo.classList.contains("aperto")) chiudi(); });
+
+  function titoloScheda(lezioni) {
+    const scritto = document.getElementById("fTitoloScheda").value.trim(); if (scritto) return scritto;
+    const args = [...new Set(lezioni.map(n => argDi(n)))];
+    return args.length === 1 ? (args[0].titolo || args[0].nome) : "Solfeggio cantato";
+  }
+  async function costruisciPagine() {
+    const lezioni = TUTTE.filter(n => scelte.has(n));
+    if (!lezioni.length) return [];
+    const opz = { strumento: "flauto", colori: document.getElementById("fColori").checked, nomi: document.getElementById("fNomi").checked, titolo: false, schema: false, testi: false };
+    const fuori = document.createElement("div"); fuori.style.cssText = "position:fixed;left:-20000px;top:0;width:1200px"; document.body.appendChild(fuori);
+    const larg = PW - 2 * MG;
+    const pagine = []; let pagina = null, y = 0;
+    const nuova = (prima) => {
+      pagina = document.createElementNS(NS, "svg"); pagina.setAttribute("xmlns", NS); pagina.setAttribute("viewBox", `0 0 ${PW} ${PH}`);
+      let c = `<rect width="${PW}" height="${PH}" fill="#fff"/>`;
+      y = MG;
+      if (prima) {
+        const t = titoloScheda(lezioni); let k = 0;
+        const fs = Math.min(40, Math.max(24, larg / Math.max(8, t.length * 0.56)));
+        c += `<text x="${MG}" y="${y + 34}" font-family="Fredoka, 'Arial Rounded MT Bold', Arial, sans-serif" font-weight="700" font-size="${fs}" stroke="#1F2430" stroke-width="${fs / 13}" paint-order="stroke" stroke-linejoin="round">` +
+          [...t].map(ch => ch === " " ? " " : `<tspan fill="${COL[k++ % 7]}">${esc(ch)}</tspan>`).join("") + `</text>`;
+        c += `<text x="${PW - MG}" y="${y + 30}" text-anchor="end" font-family="Arial, sans-serif" font-size="13" fill="#64748B">Solfeggio cantato · musicascuole.it</text>`;
+        y += 50;
+        if (document.getElementById("fNome").checked) {
+          c += `<text x="${MG}" y="${y + 22}" font-family="Arial, sans-serif" font-size="15" fill="#1F2430">Nome</text><line x1="${MG + 48}" y1="${y + 24}" x2="${MG + 420}" y2="${y + 24}" stroke="#94A3B8" stroke-width="1.2"/>` +
+            `<text x="${MG + 450}" y="${y + 22}" font-family="Arial, sans-serif" font-size="15" fill="#1F2430">Classe</text><line x1="${MG + 505}" y1="${y + 24}" x2="${PW - MG}" y2="${y + 24}" stroke="#94A3B8" stroke-width="1.2"/>`;
+          y += 40;
+        }
+        y += 6;
+      }
+      pagina.innerHTML = c; pagine.push(pagina);
+    };
+    nuova(true);
+    try {
+      for (const n of lezioni) {
+        const brano = await carica(n);
+        const d = document.createElement("div"); fuori.appendChild(d);
+        const perRiga = Math.max(1, Math.min(BATTUTE_RIGA, brano.battute.length, Math.floor((larg - 60) / (notePiuFitte(brano) * 22))));
+        MotoreSchemi.disegnaBrano(d, brano, Object.assign({}, opz, chiaveDi(brano, document.getElementById("fBasso").checked), { larghezza: larg, perRiga }));
+        const s = d.querySelector("svg"), vb = s.viewBox.baseVal;
+        let h = vb.height * larg / vb.width, k = 1;
+        const spazio = PH - MG - 22 - y - 30 - 18;
+        if (h > spazio && h * 0.85 <= spazio) { k = spazio / h; h = spazio; }   // ci sta quasi: la rimpicciolisco appena
+        else if (h > spazio && y > MG + 10) nuova(false);
+        const altezza = 30 + h + 18;
+        pagina.insertAdjacentHTML("beforeend",
+          `<circle cx="${MG + 14}" cy="${y + 13}" r="14" fill="#5E50A1"/><text x="${MG + 14}" y="${y + 18.5}" text-anchor="middle" font-family="Fredoka, Arial, sans-serif" font-weight="700" font-size="15" fill="#fff">${n}</text>` +
+          `<text x="${MG + 36}" y="${y + 19}" font-family="Arial, sans-serif" font-weight="700" font-size="15" fill="#1F2430">${esc(titoloDi(n))}</text>`);
+        const nido = document.createElementNS(NS, "svg");
+        nido.setAttribute("x", MG + larg * (1 - k) / 2); nido.setAttribute("y", y + 26); nido.setAttribute("width", larg * k); nido.setAttribute("height", h);
+        nido.setAttribute("viewBox", s.getAttribute("viewBox"));
+        [...s.attributes].forEach(a => { if (!["width", "height", "viewBox", "style", "xmlns", "x", "y"].includes(a.name)) nido.setAttribute(a.name, a.value); });
+        nido.innerHTML = s.innerHTML; pagina.appendChild(nido);
+        y += altezza;
+        d.remove();
+      }
+    } finally { fuori.remove(); }
+    pagine.forEach((p, i) => { if (pagine.length > 1) p.insertAdjacentHTML("beforeend", `<text x="${PW / 2}" y="${PH - 20}" text-anchor="middle" font-family="Arial, sans-serif" font-size="12" fill="#94A3B8">${i + 1} / ${pagine.length}</text>`); });
+    return pagine;
+  }
+  let ultimePagine = [], giro = 0;
+  async function anteprima() {
+    const mio = ++giro;
+    const pagine = await costruisciPagine();
+    if (mio !== giro) return;
+    ultimePagine = pagine;
+    const box = document.getElementById("fAnteprima"); box.innerHTML = "";
+    pagine.forEach(p => box.appendChild(p.cloneNode(true)));
+    const n = scelte.size;
+    document.getElementById("fInfo").textContent = n ? `${n} ${n === 1 ? "lezione" : "lezioni"} · ${pagine.length} ${pagine.length === 1 ? "foglio" : "fogli"} A4` : "Scegli almeno una lezione.";
+    document.getElementById("fStampa").disabled = document.getElementById("fPdf").disabled = !n;
+  }
+  document.getElementById("fStampa").addEventListener("click", () => {
+    const area = document.getElementById("areaStampa"); area.innerHTML = "";
+    ultimePagine.forEach(p => area.appendChild(p.cloneNode(true)));
+    document.body.classList.add("stampa"); window.print();
+  });
+  window.addEventListener("afterprint", () => { document.body.classList.remove("stampa"); document.getElementById("areaStampa").innerHTML = ""; });
+
+  /* PDF di più pagine: ogni foglio diventa un'immagine ad alta risoluzione (A4 verticale, senza margini) */
+  let fontPdf = null;
+  const fontTitolo = () => fontPdf || (fontPdf = fetch("fonts/fredoka.woff").then(r => r.ok ? r.arrayBuffer() : Promise.reject()).then(buf => {
+    let bin = ""; const v = new Uint8Array(buf); for (let i = 0; i < v.length; i += 0x8000) bin += String.fromCharCode.apply(null, v.subarray(i, i + 0x8000));
+    return `@font-face{font-family:'Fredoka';font-weight:300 700;src:url(data:font/woff;base64,${btoa(bin)}) format('woff');}`;
+  }).catch(() => ""));
+  async function jpegDi(pagina, font) {
+    const copia = pagina.cloneNode(true);
+    if (font) { const st = document.createElementNS(NS, "style"); st.textContent = font; copia.insertBefore(st, copia.firstChild); }
+    copia.setAttribute("width", PW); copia.setAttribute("height", PH);
+    const scala = 2.4, url = URL.createObjectURL(new Blob([new XMLSerializer().serializeToString(copia)], { type: "image/svg+xml" }));
+    const img = new Image(); await new Promise((ok, ko) => { img.onload = ok; img.onerror = ko; img.src = url; });
+    const cv = document.createElement("canvas"); cv.width = Math.round(PW * scala); cv.height = Math.round(PH * scala);
+    const c = cv.getContext("2d"); c.fillStyle = "#fff"; c.fillRect(0, 0, cv.width, cv.height); c.drawImage(img, 0, 0, cv.width, cv.height); URL.revokeObjectURL(url);
+    const dati = atob(cv.toDataURL("image/jpeg", 0.9).split(",")[1]); const b = new Uint8Array(dati.length); for (let i = 0; i < dati.length; i++) b[i] = dati.charCodeAt(i);
+    return { b, w: cv.width, h: cv.height };
+  }
+  document.getElementById("fPdf").addEventListener("click", async () => {
+    const btn = document.getElementById("fPdf"); btn.disabled = true; const testo = btn.textContent; btn.textContent = "Preparo…";
+    try {
+      const font = await fontTitolo(), imm = [];
+      for (const p of ultimePagine) imm.push(await jpegDi(p, font));
+      const W = 595, H = 842, enc = new TextEncoder(), parti = [], off = []; let lung = 0;
+      const sc = d => { const x = typeof d === "string" ? enc.encode(d) : d; parti.push(x); lung += x.length; };
+      const ogg = (n, t) => { off[n] = lung; sc(`${n} 0 obj\n${t}\nendobj\n`); };
+      const N = imm.length, kids = imm.map((_, i) => `${3 + i * 3} 0 R`).join(" ");
+      sc("%PDF-1.4\n");
+      ogg(1, "<< /Type /Catalog /Pages 2 0 R >>");
+      ogg(2, `<< /Type /Pages /Kids [${kids}] /Count ${N} >>`);
+      imm.forEach((im, i) => {
+        const p = 3 + i * 3, contenuto = `q ${W} 0 0 ${H} 0 0 cm /Im0 Do Q`;
+        ogg(p, `<< /Type /Page /Parent 2 0 R /MediaBox [0 0 ${W} ${H}] /Resources << /XObject << /Im0 ${p + 1} 0 R >> >> /Contents ${p + 2} 0 R >>`);
+        off[p + 1] = lung;
+        sc(`${p + 1} 0 obj\n<< /Type /XObject /Subtype /Image /Width ${im.w} /Height ${im.h} /ColorSpace /DeviceRGB /BitsPerComponent 8 /Filter /DCTDecode /Length ${im.b.length} >>\nstream\n`);
+        sc(im.b); sc("\nendstream\nendobj\n");
+        ogg(p + 2, `<< /Length ${contenuto.length} >>\nstream\n${contenuto}\nendstream`);
+      });
+      const tot = 3 + N * 3, xref = lung;
+      sc(`xref\n0 ${tot}\n0000000000 65535 f \n` + Array.from({ length: tot - 1 }, (_, i) => String(off[i + 1]).padStart(10, "0") + " 00000 n \n").join(""));
+      sc(`trailer\n<< /Size ${tot} /Root 1 0 R >>\nstartxref\n${xref}\n%%EOF`);
+      const href = URL.createObjectURL(new Blob(parti, { type: "application/pdf" }));
+      const a = document.createElement("a"); a.href = href; a.download = "Solfeggio - " + titoloScheda(TUTTE.filter(n => scelte.has(n))).replace(/[\\/:*?"<>|]/g, "") + ".pdf";
+      document.body.appendChild(a); a.click(); a.remove(); setTimeout(() => URL.revokeObjectURL(href), 3000);
+    } finally { btn.disabled = false; btn.textContent = testo; }
+  });
+
+  mostra(attuale);
+})();
+</script>
+</body>
+</html>
