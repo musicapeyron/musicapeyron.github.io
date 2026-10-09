@@ -35,6 +35,7 @@
 
 <link rel="stylesheet" href="fonts/caratteri.css">
 
+<link rel="stylesheet" href="comune.css">
 <style>
   * { box-sizing: border-box; }
 
@@ -48,16 +49,6 @@
     background: #0f172a;
     overflow-x: hidden;
     position: relative;
-  }
-  body::before {
-    content: "";
-    position: fixed;
-    inset: 0;
-    z-index: 0;
-    pointer-events: none;
-    opacity: 0.5;
-    background-image: radial-gradient(rgba(255,255,255,0.035) 1px, transparent 1px);
-    background-size: 3px 3px;
   }
 
   .site-home-button {
@@ -318,12 +309,6 @@
     font-size: 11px;
     color: #5C7091;
   }
-
-  /* ===== risparmio energetico (telefoni): vedi _sviluppo/risparmio_energetico.py ===== */
-  /* lo sfondo sfumato sta su uno strato fisso a parte: il telefono lo disegna una volta sola */
-  body::after { content: ""; position: fixed; inset: 0; z-index: -1; pointer-events: none;
-    background: radial-gradient(circle at 50% 0%, #3730a3 0%, transparent 45%),
-      linear-gradient(135deg, #0f172a, #1e1b4b); }
   .brano-card { -webkit-backdrop-filter: none; backdrop-filter: none; }
 </style>
 </head>

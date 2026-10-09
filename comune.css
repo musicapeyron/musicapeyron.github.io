@@ -1,0 +1,29 @@
+/* =========================================================
+   comune.css — stile condiviso da tutte le pagine di musicascuole.it
+   Si carica prima dello stile della pagina: ogni pagina può sempre
+   ridefinire una regola nel proprio <style>.
+   Qui vanno solo le cose davvero uguali dappertutto: una correzione
+   fatta in questo file vale per tutto il sito.
+   ========================================================= */
+
+/* colori ufficiali delle note (per le pagine nuove: var(--do), var(--re)...) */
+:root {
+  --do: #E21C48; --re: #F99D1C; --mi: #FFF428; --fa: #BED958;
+  --sol: #009C95; --la: #5E50A1; --si: #CF3E96;
+}
+
+/* sfondo sfumato: uno strato fisso a parte, che il telefono disegna una volta sola
+   (niente background-attachment: fixed, che fa ridisegnare tutto a ogni scorrimento) */
+body::after {
+  content: ""; position: fixed; inset: 0; z-index: -1; pointer-events: none;
+  background: radial-gradient(circle at 50% 0%, #3730a3 0%, transparent 45%), linear-gradient(135deg, #0f172a, #1e1b4b);
+}
+
+/* trama di puntini sopra lo sfondo (senza mix-blend-mode: costa troppo ai telefoni) */
+body::before {
+  content: ""; position: fixed; inset: 0; z-index: 0; pointer-events: none; opacity: 0.5;
+  background-image: radial-gradient(rgba(255,255,255,0.035) 1px, transparent 1px); background-size: 3px 3px;
+}
+
+/* piè di pagina */
+footer.piede a { color: #7DD3FC; }

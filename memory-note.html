@@ -12,6 +12,7 @@
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='.9em' font-size='90'%3E%F0%9F%83%8F%3C/text%3E%3C/svg%3E">
 <!-- VexFlow (disegno dei pentagrammi): file locale accanto a questa pagina -->
 <script src="vexflow.js"></script>
+<link rel="stylesheet" href="comune.css">
 <style>
 *, *::before, *::after { box-sizing: border-box; }
 :root {
@@ -282,12 +283,6 @@ h1 { margin: 0; font-family: "Sora", "Inter", Arial, sans-serif; font-size: 2rem
     transition: transform 0.15s ease, background 0.15s ease;
 }
 .site-home-button:hover { background: linear-gradient(180deg, rgba(255,255,255,0.22), rgba(255,255,255,0.08)); transform: translateY(-2px); }
-
-  /* ===== risparmio energetico (telefoni): vedi _sviluppo/risparmio_energetico.py ===== */
-  /* lo sfondo sfumato sta su uno strato fisso a parte: il telefono lo disegna una volta sola */
-  body::after { content: ""; position: fixed; inset: 0; z-index: -1; pointer-events: none;
-    background: radial-gradient(circle at 50% 0%, #3730a3 0%, transparent 45%),
-        linear-gradient(135deg, #0f172a, #1e1b4b); }
 </style>
 </head>
 <body>

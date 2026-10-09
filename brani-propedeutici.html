@@ -21,6 +21,7 @@
 <link rel="apple-touch-icon" href="apple-touch-icon.png">
 <meta name="description" content="Brani propedeutici: 21 brani progressivi da sol a re, con basi, spartiti colorati e schemi per flauto, tastiera, chitarra e ukulele.">
 <link rel="stylesheet" href="fonts/caratteri.css">
+<link rel="stylesheet" href="comune.css">
 <style>
   * { box-sizing: border-box; }
 
@@ -34,16 +35,6 @@
     background: #0f172a;
     overflow-x: hidden;
     position: relative;
-  }
-  body::before {
-    content: "";
-    position: fixed;
-    inset: 0;
-    z-index: 0;
-    pointer-events: none;
-    opacity: 0.5;
-    background-image: radial-gradient(rgba(255,255,255,0.035) 1px, transparent 1px);
-    background-size: 3px 3px;
   }
 
   .site-home-button {
@@ -599,12 +590,6 @@
   .confetti-piece { position: absolute; width: 8px; height: 8px; border-radius: 2px; animation: confettiBurst 0.9s ease-out forwards; }
   @keyframes confettiBurst { 0% { transform: translate(-50%, -50%) rotate(0deg); opacity: 1; } 100% { transform: translate(calc(-50% + var(--dx)), calc(-50% + var(--dy))) rotate(var(--rot)); opacity: 0; } }
   @media (prefers-reduced-motion: reduce) { .festa::before, .palla-dondola, .tessera, .raggio, .scintilla, .palco, svg .bravi { animation: none; } .nota-amica { transition: none; } .confetti-piece { display: none; } }
-
-  /* ===== risparmio energetico (telefoni): vedi _sviluppo/risparmio_energetico.py ===== */
-  /* lo sfondo sfumato sta su uno strato fisso a parte: il telefono lo disegna una volta sola */
-  body::after { content: ""; position: fixed; inset: 0; z-index: -1; pointer-events: none;
-    background: radial-gradient(circle at 50% 0%, #3730a3 0%, transparent 45%),
-      linear-gradient(135deg, #0f172a, #1e1b4b); }
   .brano-card { -webkit-backdrop-filter: none; backdrop-filter: none; }
   .barra-fissa { -webkit-backdrop-filter: none; backdrop-filter: none; background: rgba(15, 23, 42, 0.97); }
   .strumenti-bar { -webkit-backdrop-filter: none; backdrop-filter: none; background: rgba(15, 23, 42, 0.97); }

@@ -12,15 +12,12 @@
   PAGINA SOLFEGGIO — per attivare una sezione: scrivi il suo indirizzo in "url" nell'elenco VOCI qui sotto.
 -->
 <link rel="stylesheet" href="fonts/caratteri.css">
+<link rel="stylesheet" href="comune.css">
 <style>
   * { box-sizing: border-box; }
   html, body { margin: 0; min-height: 100%; }
   body { min-height: 100vh; font-family: 'Inter', 'Segoe UI', Arial, sans-serif; color: #EAF2FF; -webkit-font-smoothing: antialiased;
     background: #0f172a; overflow-x: hidden; position: relative; }
-  body::after { content: ""; position: fixed; inset: 0; z-index: -1; pointer-events: none;
-    background: radial-gradient(circle at 50% 0%, #3730a3 0%, transparent 45%), linear-gradient(135deg, #0f172a, #1e1b4b); }
-  body::before { content: ""; position: fixed; inset: 0; z-index: 0; pointer-events: none; opacity: 0.5;
-    background-image: radial-gradient(rgba(255,255,255,0.035) 1px, transparent 1px); background-size: 3px 3px; }
   .casetta { position: fixed; top: 12px; left: 12px; z-index: 40; width: 44px; height: 44px; border-radius: 50%; display: grid; place-items: center;
     background: rgba(15,23,42,0.75); border: 1px solid rgba(255,255,255,0.18); text-decoration: none; font-size: 20px; }
   header { position: relative; z-index: 1; text-align: center; padding: 26px 20px 14px; }
@@ -44,7 +41,6 @@
   .card.presto h2 { color: #8EA3C0; }
   .card.presto .date { color: #7F93B2; background: rgba(255,255,255,0.06); }
   footer.piede { position: relative; z-index: 1; text-align: center; font-size: 13px; color: #9FB3CE; padding: 12px 12px 24px; }
-  footer.piede a { color: #7DD3FC; }
 </style>
 </head>
 <body>

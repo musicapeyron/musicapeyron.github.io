@@ -21,6 +21,7 @@
 
 <link rel="stylesheet" href="fonts/caratteri.css">
 
+<link rel="stylesheet" href="comune.css">
 <style>
   * { box-sizing: border-box; }
 
@@ -37,28 +38,6 @@
     background: #0f172a;
     overflow-x: hidden;
     position: relative;
-  }
-  /* Sfondo su uno strato fisso: stesso aspetto dello sfondo "fissato",
-     ma il telefono non deve ridisegnarlo mentre si scorre la pagina */
-  body::after {
-    content: "";
-    position: fixed;
-    inset: 0;
-    z-index: -1;
-    pointer-events: none;
-    background:
-      radial-gradient(circle at 50% 0%, #3730a3 0%, transparent 45%),
-      linear-gradient(135deg, #0f172a, #1e1b4b);
-  }
-  body::before {
-    content: "";
-    position: fixed;
-    inset: 0;
-    z-index: 0;
-    pointer-events: none;
-    opacity: 0.5;
-    background-image: radial-gradient(rgba(255,255,255,0.035) 1px, transparent 1px);
-    background-size: 3px 3px;
   }
 
   /* ---------- hero ---------- */

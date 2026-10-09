@@ -215,3 +215,14 @@ Regole per non far scaldare i telefoni (valgono anche per le pagine nuove):
 - l'AudioContext si mette in pausa (`suspend`) quando non suona;
 - al ridimensionamento si ridisegna solo se cambia la larghezza (sul telefono l'altezza cambia di continuo con la barra dell'indirizzo).
 Lo script `_sviluppo/risparmio_energetico.py` applica le prime quattro regole a tutte le pagine (si può rilanciare).
+
+## File comune: comune.css (ottobre 2026)
+Le regole uguali in tutte le pagine stanno in `comune.css` (colori delle note come variabili `--do`…`--si`,
+sfondo sfumato, trama di puntini, link del piè di pagina). Ogni pagina lo carica prima del proprio `<style>`,
+quindi può sempre ridefinire una regola. Una correzione fatta lì vale per tutto il sito.
+- Pagina nuova: aggiungi `<link rel="stylesheet" href="comune.css">` prima del suo `<style>` e non ricopiare quelle regole.
+- `_sviluppo/comune.py` toglie dalle pagine le regole identiche a quelle di comune.css (si può rilanciare).
+- Non lo usano le pagine con una grafica tutta loro: crediti, privacy, note-uno, rap-con-le-note, rappa_le_note,
+  recita-le-note, registro-musica-app.
+- Il pulsante casetta non è comune: esiste in 14 versioni diverse (posizione, dimensioni, sfondo); unificarlo
+  vorrebbe dire scegliere un aspetto unico.

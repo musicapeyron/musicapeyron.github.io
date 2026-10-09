@@ -20,6 +20,7 @@
 
 <link rel="stylesheet" href="fonts/caratteri.css">
 
+<link rel="stylesheet" href="comune.css">
 <style>
   * { box-sizing: border-box; }
 
@@ -36,28 +37,6 @@
     background: #0f172a;
     overflow-x: hidden;
     position: relative;
-  }
-  /* Sfondo su uno strato fisso: stesso aspetto dello sfondo "fissato",
-     ma il telefono non deve ridisegnarlo mentre si scorre la pagina */
-  body::after {
-    content: "";
-    position: fixed;
-    inset: 0;
-    z-index: -1;
-    pointer-events: none;
-    background:
-      radial-gradient(circle at 50% 0%, #3730a3 0%, transparent 45%),
-      linear-gradient(135deg, #0f172a, #1e1b4b);
-  }
-  body::before {
-    content: "";
-    position: fixed;
-    inset: 0;
-    z-index: 0;
-    pointer-events: none;
-    opacity: 0.5;
-    background-image: radial-gradient(rgba(255,255,255,0.035) 1px, transparent 1px);
-    background-size: 3px 3px;
   }
 
   /* ---------- hero ---------- */
@@ -389,7 +368,6 @@
     .icona-raccolta { width: 46px; height: 46px; font-size: 22px; } }
   .ico { width: 70%; height: 70%; display: block; overflow: visible; }
   footer.piede { text-align: center; font-size: 13px; color: #9FB3CE; padding: 18px 12px 28px; }
-  footer.piede a { color: #7DD3FC; }
 </style>
 </head>
 <body>

@@ -21,6 +21,7 @@
 //# sourceMappingURL=vexflow.js.map
 </script>
 
+<link rel="stylesheet" href="comune.css">
 <style>
 *, *::before, *::after { box-sizing: border-box; }
 :root {
@@ -35,10 +36,6 @@ body {
     -webkit-font-smoothing: antialiased; color: white;
     background: #0f172a;
     display: flex; justify-content: center; align-items: flex-start; overflow-x: hidden; position: relative;
-}
-body::before {
-    content: ""; position: fixed; inset: 0; z-index: 0; pointer-events: none; opacity: 0.5;
-    background-image: radial-gradient(rgba(255,255,255,0.035) 1px, transparent 1px); background-size: 3px 3px; mix-blend-mode: overlay;
 }
 .game, .menu-screen { position: relative; z-index: 1; width: min(600px, 100%); max-width: 100%; text-align: center; }
 .menu-screen { animation: menuScreenIn 0.5s var(--ease-out-soft); }
@@ -193,11 +190,6 @@ h1 { margin: 0; font-family: "Sora", "Inter", Arial, sans-serif; font-size: 2rem
     .staff-wrap { margin-bottom: 10px; padding: 6px; }
     .message { min-height: 20px; }
 }
-
-  /* ===== risparmio energetico (telefoni): vedi _sviluppo/risparmio_energetico.py ===== */
-  /* lo sfondo sfumato sta su uno strato fisso a parte: il telefono lo disegna una volta sola */
-  body::after { content: ""; position: fixed; inset: 0; z-index: -1; pointer-events: none;
-    background: radial-gradient(circle at 50% 0%, #3730a3 0%, transparent 45%), linear-gradient(135deg, #0f172a, #1e1b4b); }
   .hero-badge { animation-iteration-count: 3; }   /* il badge galleggia per qualche secondo, poi sta fermo */
 </style>
 </head>

@@ -1,5 +1,5 @@
---- /home/claude/repo/musicapeyron.github.io-main/brani-propedeutici.html	2026-10-09 01:11:28.943551808 +0000
-+++ /home/claude/repo/musicapeyron.github.io-main/diabelli.html	2026-10-09 01:11:56.744416169 +0000
+--- /home/claude/musicapeyron.github.io/brani-propedeutici.html	2026-10-09 02:35:29.048446131 +0000
++++ /home/claude/musicapeyron.github.io/diabelli.html	2026-10-09 02:35:29.103036975 +0000
 @@ -5,21 +5,18 @@
  <meta name="viewport" content="width=device-width, initial-scale=1.0">
  <!--
@@ -27,9 +27,9 @@
 -<meta name="description" content="Brani propedeutici: 21 brani progressivi da sol a re, con basi, spartiti colorati e schemi per flauto, tastiera, chitarra e ukulele.">
 +<meta name="description" content="Diabelli, Studi melodici op. 149: spartiti per flauto, tastiera, chitarra e ukulele, con basi a diverse velocità.">
  <link rel="stylesheet" href="fonts/caratteri.css">
+ <link rel="stylesheet" href="comune.css">
  <style>
-   * { box-sizing: border-box; }
-@@ -599,6 +596,11 @@
+@@ -590,6 +587,11 @@
    .confetti-piece { position: absolute; width: 8px; height: 8px; border-radius: 2px; animation: confettiBurst 0.9s ease-out forwards; }
    @keyframes confettiBurst { 0% { transform: translate(-50%, -50%) rotate(0deg); opacity: 1; } 100% { transform: translate(calc(-50% + var(--dx)), calc(-50% + var(--dy))) rotate(var(--rot)); opacity: 0; } }
    @media (prefers-reduced-motion: reduce) { .festa::before, .palla-dondola, .tessera, .raggio, .scintilla, .palco, svg .bravi { animation: none; } .nota-amica { transition: none; } .confetti-piece { display: none; } }
@@ -38,10 +38,10 @@
 +  .bp-titolo { font-family: 'Manrope', sans-serif !important; font-size: clamp(20px, 2.6vw, 28px) !important; color: #1F2430; }
 +  .lim-lato .bp-titolo { font-size: clamp(20px, 2vw, 28px) !important; }
 +  .tel-titolo { font-family: 'Manrope', sans-serif !important; font-size: 14px !important; }
- 
-   /* ===== risparmio energetico (telefoni): vedi _sviluppo/risparmio_energetico.py ===== */
-   /* lo sfondo sfumato sta su uno strato fisso a parte: il telefono lo disegna una volta sola */
-@@ -618,9 +620,8 @@
+   .brano-card { -webkit-backdrop-filter: none; backdrop-filter: none; }
+   .barra-fissa { -webkit-backdrop-filter: none; backdrop-filter: none; background: rgba(15, 23, 42, 0.97); }
+   .strumenti-bar { -webkit-backdrop-filter: none; backdrop-filter: none; background: rgba(15, 23, 42, 0.97); }
+@@ -603,9 +605,8 @@
  
  <header class="hero">
    <a class="breadcrumb" href="spartiti.html">← Spartiti</a>
@@ -53,7 +53,7 @@
  </header>
  
  <div class="barra-fissa">
-@@ -638,12 +639,11 @@
+@@ -623,12 +624,11 @@
  <footer></footer>
  
  <script>
@@ -69,7 +69,7 @@
    /* solfeggio: spento di base; velocità e clic ricordati */
    const leggi = (k, d) => { try { const v = localStorage.getItem(k); return v === null ? d : v; } catch (e) { return d; } };
    const scrivi = (k, v) => { try { localStorage.setItem(k, v); } catch (e) {} };
-@@ -656,7 +656,7 @@
+@@ -641,7 +641,7 @@
      return `<button type="button" class="solf-via${on ? ' in-corso' : ''}" data-solf="${n}">${on ? '■ Ferma' : '▶ Solfeggia'}</button>`; };
  
    /* sorpresa nel finale: da questa battuta l'evidenziatore diventa un ballerino (con Segui la base o Solfeggio) */
@@ -78,7 +78,7 @@
    let festa = null, festaOn = false;
  
    /* interruttore "Segui la base": spento di base, la scelta viene ricordata */
-@@ -664,13 +664,15 @@
+@@ -649,13 +649,15 @@
    const interruttoreSegui = n => SINCRO[n] === undefined ? '' :
      `<label class="segui" title="Mentre la base suona, la figura da suonare si illumina"><input type="checkbox" class="chk-segui" ${segui ? 'checked' : ''}><span>Segui la base</span></label>`;
              // testo accanto al numero nell'indice (es. la tonalità delle scale)
@@ -98,7 +98,7 @@
    const riquadroHTML = testo => {
      const righe = testo.split(/\n/).map(r => r.trim()).filter(Boolean);
      const novita = /^NOVIT/i.test(righe[0]);
-@@ -699,26 +701,22 @@
+@@ -684,26 +686,22 @@
  
    /* Novità che nei file MusicXML non hanno il loro riquadro: si aggiungono qui.
       "prima": il riquadro va prima di quelli già presenti nel brano (es. la nota prima della figura). */
@@ -130,7 +130,7 @@
  
  
    /* ---------- barra degli strumenti ---------- */
-@@ -749,7 +747,7 @@
+@@ -734,7 +732,7 @@
    async function apriTelefono(n, versione) {
      const brano = await caricaBrano(n), note = MotoreSchemi.noteUsate(brano);
      const verticale = window.innerHeight > window.innerWidth;
@@ -139,7 +139,7 @@
      const riquadri = brano.riquadri.map(riquadroHTML).join("") + comandiBasi(n);
      lightboxInner.innerHTML = verticale
        ? `<div class="tel tel-vert">${testa}<div class="tel-riquadri">${riquadri}</div><div class="tel-spartito"><div class="spartito"></div></div><div class="tel-carte lim-carte"></div></div>`
-@@ -822,7 +820,7 @@
+@@ -807,7 +805,7 @@
        <div class="lim-lato">
          <div class="lim-testa">
            <div><div class="bp-numero">${n}</div><h2 class="bp-titolo">${titoloColorato(brano.titoloBreve)}</h2></div>
@@ -148,7 +148,7 @@
          </div>
          ${brano.riquadri.map(riquadroHTML).join("")}${comandiBasi(n)}
          <div class="lim-carte"></div>
-@@ -897,18 +895,14 @@
+@@ -882,18 +880,14 @@
        <div class="bp-testa">
          <div class="bp-numero">${n}</div>
          <h2 class="bp-titolo"></h2>
@@ -172,7 +172,7 @@
        <div class="versions">${VERSIONI.map((v, i) => `<button type="button" data-v="${i}" class="${i === VERSIONE_INIZIALE ? 'active' : ''}">${v.label}</button>`).join('')}</div>
        ${pulsanteSolfeggia(n)}
        <div class="dit-scelta"><span class="dit-etichetta">Diteggiatura</span>${[['no', 'No'], ['prima', 'Prima volta'], ['sempre', 'Sempre']].map(([d, t]) => `<button type="button" data-d="${d}" class="${d === 'no' ? 'active' : ''}">${t}</button>`).join('')}</div>
-@@ -956,7 +950,7 @@
+@@ -941,7 +935,7 @@
        const testo = btnPdf.textContent; btnPdf.textContent = 'Preparo il PDF…'; btnPdf.disabled = true;
        try {
          const brano = await caricaBrano(n);
