@@ -26,10 +26,7 @@
     line-height:1.5;
     -webkit-font-smoothing:antialiased;
     color:var(--ink);
-    background:
-      radial-gradient(circle at 50% 0%, #3730a3 0%, transparent 45%),
-      linear-gradient(135deg, #0f172a, #1e1b4b);
-    background-attachment:fixed;
+    background: #0f172a;
     display:flex;
     justify-content:center;
     position:relative;
@@ -43,7 +40,6 @@
     opacity:0.5;
     background-image: radial-gradient(rgba(255,255,255,0.035) 1px, transparent 1px);
     background-size:3px 3px;
-    mix-blend-mode:overlay;
   }
   .sheet{
     position:relative;
@@ -490,6 +486,13 @@
     background: linear-gradient(180deg, rgba(255,255,255,0.22), rgba(255,255,255,0.08));
     transform: translateY(-2px);
 }
+
+  /* ===== risparmio energetico (telefoni): vedi _sviluppo/risparmio_energetico.py ===== */
+  /* lo sfondo sfumato sta su uno strato fisso a parte: il telefono lo disegna una volta sola */
+  body::after { content: ""; position: fixed; inset: 0; z-index: -1; pointer-events: none;
+    background: radial-gradient(circle at 50% 0%, #3730a3 0%, transparent 45%),
+      linear-gradient(135deg, #0f172a, #1e1b4b); }
+  .legend-panel, .training-bar { -webkit-backdrop-filter: none; backdrop-filter: none; }
 </style>
 </head>
 <body>

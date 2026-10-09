@@ -31,10 +31,7 @@
     font-family: 'Inter', 'Segoe UI', Arial, sans-serif;
     color: #EAF2FF;
     -webkit-font-smoothing: antialiased;
-    background:
-      radial-gradient(circle at 50% 0%, #3730a3 0%, transparent 45%),
-      linear-gradient(135deg, #0f172a, #1e1b4b);
-    background-attachment: fixed;
+    background: #0f172a;
     overflow-x: hidden;
     position: relative;
   }
@@ -47,7 +44,6 @@
     opacity: 0.5;
     background-image: radial-gradient(rgba(255,255,255,0.035) 1px, transparent 1px);
     background-size: 3px 3px;
-    mix-blend-mode: overlay;
   }
 
   .site-home-button {
@@ -603,6 +599,15 @@
   .confetti-piece { position: absolute; width: 8px; height: 8px; border-radius: 2px; animation: confettiBurst 0.9s ease-out forwards; }
   @keyframes confettiBurst { 0% { transform: translate(-50%, -50%) rotate(0deg); opacity: 1; } 100% { transform: translate(calc(-50% + var(--dx)), calc(-50% + var(--dy))) rotate(var(--rot)); opacity: 0; } }
   @media (prefers-reduced-motion: reduce) { .festa::before, .palla-dondola, .tessera, .raggio, .scintilla, .palco, svg .bravi { animation: none; } .nota-amica { transition: none; } .confetti-piece { display: none; } }
+
+  /* ===== risparmio energetico (telefoni): vedi _sviluppo/risparmio_energetico.py ===== */
+  /* lo sfondo sfumato sta su uno strato fisso a parte: il telefono lo disegna una volta sola */
+  body::after { content: ""; position: fixed; inset: 0; z-index: -1; pointer-events: none;
+    background: radial-gradient(circle at 50% 0%, #3730a3 0%, transparent 45%),
+      linear-gradient(135deg, #0f172a, #1e1b4b); }
+  .brano-card { -webkit-backdrop-filter: none; backdrop-filter: none; }
+  .barra-fissa { -webkit-backdrop-filter: none; backdrop-filter: none; background: rgba(15, 23, 42, 0.97); }
+  .strumenti-bar { -webkit-backdrop-filter: none; backdrop-filter: none; background: rgba(15, 23, 42, 0.97); }
 </style>
 <script src="vexflow.js"></script>
 <script src="motore-schemi.js?v=2026-10-08c"></script>
@@ -1078,6 +1083,8 @@
     const mm = m + 1, bt = Math.floor(qIn + 1e-6);
     const tempoPasso = mm < F.fine - 2 ? m * 4 + bt : mm === F.fine - 2 ? m * 4 : mm === F.fine - 1 ? m * 4 + (bt >= 2 ? 2 : 0) : m * 4;
     if (tempoPasso !== festa.ultimoPasso) { festa.ultimoPasso = tempoPasso; festa.passi = (festa.passi || 0) + 1; }
+    { const aperta = lightbox.classList.contains('open') ? 'L' + (limAperta && limAperta.n) : '';   // risparmio energetico: si ridisegna solo se cambia qualcosa
+      const k = [m, i, festa.passi, conBallerino, aperta, svgs.length].join('|'); if (festa.ultima === k) { festaOn = !!conBallerino; return; } festa.ultima = k; }
     const conts = contenitoriFesta(card), dove = conts.slice(-1)[0];
     conts.forEach(c => c.classList.add('festa'));
     // palla animata al posto del disegno (nella scheda; a schermo intero grande, al posto di titolo e novità)
@@ -1201,6 +1208,9 @@
       sopra.innerHTML = '<text class="sc" text-anchor="middle" font-family="Fredoka, Manrope, Arial" font-weight="700" font-size="72" fill="#F99D1C" stroke="#fff" stroke-width="9" paint-order="stroke" opacity="0.95"></text>';
       svg.appendChild(sopra);
     }
+    // risparmio energetico: si tocca lo spartito solo quando cambia la figura o il conteggio, non 60 volte al secondo
+    { let i0 = 0; for (let k = 0; k < mp.punti.length; k++) if (qIn >= mp.punti[k].q - 1e-6) i0 = k;
+      const chiave = [m, i0, conta, attivo, festaOn].join('|'); if (g._chiave === chiave && sopra._chiave === chiave) return; g._chiave = sopra._chiave = chiave; }
     const x0 = mp.xNote != null ? mp.xNote - 10 : mp.x0, x1 = mp.x1;
     const r = g.querySelector('.sb'); r.setAttribute('x', x0); r.setAttribute('y', mp.y0 - 24); r.setAttribute('width', Math.max(0, x1 - x0)); r.setAttribute('height', mp.y1 - mp.y0 + 48);
     r.style.display = attivo ? '' : 'none';
@@ -1259,6 +1269,8 @@
     aggiornaPulsantiSolf(); requestAnimationFrame(passoSolf);
   }
   function fermaSolf() {
+    // risparmio energetico: l'audio del clic si mette in pausa quando il solfeggio è fermo
+    setTimeout(() => { if (!solf && ctxSolf && ctxSolf.state === 'running') ctxSolf.suspend().catch(() => {}); }, 1500);
     document.querySelectorAll('svg .solf').forEach(g => g.remove());
     solf = null; aggiornaPulsantiSolf(); spegniFesta();
   }
@@ -1300,6 +1312,7 @@
       svg.appendChild(g);
     }
     let i = 0; for (let k = 0; k < mp.punti.length; k++) if (qIn >= mp.punti[k].q - 1e-6) i = k;
+    { const chiave = [m, i, conta, attivo, festaOn].join('|'); if (g._chiave === chiave) return; g._chiave = chiave; }   // risparmio energetico
     const p = mp.punti[i] || { x: mp.x0 }, x = p.x, y = mp.y0 - 30;
     const tri = g.querySelector('.tri');
     tri.setAttribute('d', `M${x - 10} ${y - 16} L${x + 10} ${y - 16} L${x} ${y} Z`);
@@ -1354,7 +1367,8 @@
     const a = indice.querySelector('.ind.attivo');   // l'indice scorre per tenere visibile il numero attivo
     if (a && indice.scrollWidth > indice.clientWidth) indice.scrollLeft = a.offsetLeft - indice.clientWidth / 2 + a.offsetWidth / 2;
   };
-  window.addEventListener('scroll', aggiornaIndice, { passive: true });
+  let indiceInAttesa = false;   // risparmio energetico: al massimo un controllo per fotogramma
+  window.addEventListener('scroll', () => { if (indiceInAttesa) return; indiceInAttesa = true; requestAnimationFrame(() => { indiceInAttesa = false; aggiornaIndice(); }); }, { passive: true });
   aggiornaIndice();
 
   let ultimaLarghezza = window.innerWidth, attesa;

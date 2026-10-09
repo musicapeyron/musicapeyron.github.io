@@ -35,10 +35,7 @@ body {
     line-height: 1.55;
     -webkit-font-smoothing: antialiased;
     color: white;
-    background:
-        radial-gradient(circle at 50% 0%, #3730a3 0%, transparent 45%),
-        linear-gradient(135deg, #0f172a, #1e1b4b);
-    background-attachment: fixed;
+    background: #0f172a;
     display: flex;
     justify-content: center;
     align-items: flex-start;
@@ -55,7 +52,6 @@ body::before {
     opacity: 0.5;
     background-image: radial-gradient(rgba(255,255,255,0.035) 1px, transparent 1px);
     background-size: 3px 3px;
-    mix-blend-mode: overlay;
 }
 
 .app {
@@ -472,6 +468,14 @@ input[type="range"]::-moz-range-thumb {
     .master-volume input[type="range"] { width: 60px; }
     .harmonic-col input[type="range"] { height: 84px; }
 }
+
+  /* ===== risparmio energetico (telefoni): vedi _sviluppo/risparmio_energetico.py ===== */
+  /* lo sfondo sfumato sta su uno strato fisso a parte: il telefono lo disegna una volta sola */
+  body::after { content: ""; position: fixed; inset: 0; z-index: -1; pointer-events: none;
+    background: radial-gradient(circle at 50% 0%, #3730a3 0%, transparent 45%),
+        linear-gradient(135deg, #0f172a, #1e1b4b); }
+  .panel { -webkit-backdrop-filter: none; backdrop-filter: none; }
+  .hero-badge { animation-iteration-count: 3; }   /* il badge galleggia per qualche secondo, poi sta fermo */
 </style>
 </head>
 <body>

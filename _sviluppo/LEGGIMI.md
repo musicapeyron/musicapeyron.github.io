@@ -204,3 +204,14 @@ quella modifica si perde.
   crome/semicrome senza parentesi, quelle di semiminime con la parentesi. Verificato: 138 spartiti identici a prima.
 - Metronomo del solfeggio: il battito segue il tempo (semiminima; minima nel ¢; semiminima puntata in 6/8, 9/8, 12/8, 3/8).
 - Versione del motore nelle pagine: v=2026-10-08c.
+
+## Risparmio energetico (telefoni) — ottobre 2026
+Regole per non far scaldare i telefoni (valgono anche per le pagine nuove):
+- niente `background-attachment: fixed`: lo sfondo sfumato va su uno strato fisso a parte (`body::after { position: fixed; z-index: -1 }`), come nelle pagine della storia;
+- niente `mix-blend-mode` su strati a tutto schermo;
+- niente `backdrop-filter: blur()` su schede o barre che scorrono sopra lo sfondo (va bene solo su finestre a comparsa ferme);
+- niente animazioni CSS infinite: se servono, poche ripetizioni oppure un timer lento che si ferma quando la pagina non è visibile;
+- durante la riproduzione (Segui la base, Solfeggia) lo spartito si ritocca solo quando cambia la figura, non a ogni fotogramma;
+- l'AudioContext si mette in pausa (`suspend`) quando non suona;
+- al ridimensionamento si ridisegna solo se cambia la larghezza (sul telefono l'altezza cambia di continuo con la barra dell'indirizzo).
+Lo script `_sviluppo/risparmio_energetico.py` applica le prime quattro regole a tutte le pagine (si può rilanciare).

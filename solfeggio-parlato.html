@@ -319,7 +319,12 @@
     setTimeout(disegna, 150);
   });
   document.addEventListener("fullscreenchange", () => { if (!document.fullscreenElement && document.body.classList.contains("lim")) { document.body.classList.remove("lim"); setTimeout(disegna, 150); } });
-  let attesa; window.addEventListener("resize", () => { clearTimeout(attesa); attesa = setTimeout(() => { ferma(); disegna(); }, 200); });
+  /* si ridisegna solo se cambia la larghezza: sul telefono, mentre si scorre, la barra dell'indirizzo
+     compare e sparisce e cambia solo l'altezza (ridisegnare ogni volta scalderebbe il telefono) */
+  let attesa, larghezzaDisegno = window.innerWidth;
+  window.addEventListener("resize", () => { clearTimeout(attesa); attesa = setTimeout(() => {
+    if (Math.abs(window.innerWidth - larghezzaDisegno) < 2 && !document.body.classList.contains("lim")) return;
+    larghezzaDisegno = window.innerWidth; ferma(); disegna(); }, 200); });
   document.addEventListener("keydown", e => {
     if (velo.classList.contains("aperto") || /INPUT|SELECT|TEXTAREA/.test(e.target.tagName)) return;
     if (e.key === "ArrowRight") passo(1);
@@ -384,6 +389,8 @@
     suoni.forEach(o => { try { o.stop(); } catch (e) {} }); suoni = [];
     div.querySelectorAll("svg .solf-g, svg .solf-sb").forEach(g => g.remove());
     solf = null; via.textContent = "▶ Solfeggia"; via.classList.remove("in-corso");
+    // risparmio energetico: l'audio si mette in pausa quando il solfeggio è fermo
+    setTimeout(() => { if (!solf && ctx && ctx.state === "running") ctx.suspend().catch(() => {}); }, 1500);
   }
   function cambiaBpm(nuovo) {   // durante l'esercizio la velocità cambia senza salti
     if (solf) { const t = adesso(), p = posA(t); solf.ancora = { t, pos: p }; solf.griglia = Math.ceil((p + solf.lung) / solf.B * S.sudd - 1e-6); suoni.forEach(o => { try { o.stop(); } catch (e) {} }); suoni = []; }
@@ -409,6 +416,8 @@
       svg.insertBefore(g.querySelector(".solf-sb"), svg.firstChild);   // lo sfondo della battuta sta sotto le note
       svg.appendChild(g);
     }
+    { let i0 = 0; for (let k = 0; k < mp.punti.length; k++) if (qIn >= mp.punti[k].q - 1e-6) i0 = k;   // risparmio energetico:
+      const chiave = [m, i0, conta, attivo].join("|"); if (g._chiave === chiave) return; g._chiave = chiave; }   // si ridisegna solo quando cambia
     const sb = svg.querySelector(".solf-sb"), x0 = mp.xNote != null ? mp.xNote - 10 : mp.x0;
     sb.setAttribute("x", x0); sb.setAttribute("y", mp.y0 - 24); sb.setAttribute("width", Math.max(0, mp.x1 - x0)); sb.setAttribute("height", mp.y1 - mp.y0 + 48);
     sb.style.display = attivo ? "" : "none";

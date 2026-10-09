@@ -130,7 +130,7 @@
        ma si stacca dallo sfondo (serve soprattutto al la, viola su viola) */
     stroke: rgba(255,255,255,0.7);
     stroke-width: 0.9;
-    animation: melody 7s step-end infinite;
+    /* si muove con un piccolo timer in fondo alla pagina (risparmio energetico) */
   }
   @keyframes melody {
     0.0% { transform: translate(32.0px, 31px); fill: #FFF428; }
@@ -462,5 +462,24 @@
   });
 </script>
 
+<script>
+/* risparmio energetico: la notina sul rigo si sposta con un timer due volte al secondo
+   (un'animazione CSS con i colori obbliga il telefono a ricalcolare la pagina 60 volte al secondo).
+   Si ferma quando la pagina non è visibile o il rigo è fuori dallo schermo. */
+(function () {
+  const nota = document.querySelector(".staff .melody-note"); if (!nota) return;
+  if (window.matchMedia && matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+  const X = [32.0, 51.8, 71.7, 91.5, 111.4, 131.2, 151.1, 170.9, 190.8, 210.6, 230.5, 250.3, 270.2, 290.0];
+  const Y = [31, 27.75, 24.5, 21.25, 18, 14.75, 11.5, 8.25, 11.5, 14.75, 18, 21.25, 24.5, 27.75];
+  const C = ["#FFF428", "#BED958", "#009C95", "#5E50A1", "#CF3E96", "#E21C48", "#F99D1C", "#FFF428", "#F99D1C", "#E21C48", "#CF3E96", "#5E50A1", "#009C95", "#BED958"];
+  let i = 0, timer = null, inVista = true;
+  const passo = () => { i = (i + 1) % X.length; nota.setAttribute("transform", "translate(" + X[i] + " " + Y[i] + ")"); nota.style.fill = C[i]; };
+  const aggiorna = () => { const via = inVista && !document.hidden; if (via && !timer) timer = setInterval(passo, 500); if (!via && timer) { clearInterval(timer); timer = null; } };
+  nota.style.transform = "none"; nota.setAttribute("transform", "translate(" + X[0] + " " + Y[0] + ")");
+  document.addEventListener("visibilitychange", aggiorna);
+  if ("IntersectionObserver" in window) new IntersectionObserver(e => { inVista = e[0].isIntersecting; aggiorna(); }).observe(nota.closest("svg") || nota);
+  aggiorna();
+})();
+</script>
 </body>
 </html>

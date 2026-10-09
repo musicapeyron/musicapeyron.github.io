@@ -1,5 +1,5 @@
---- /home/claude/repo/musicapeyron.github.io-main/brani-propedeutici.html	2026-10-08 21:42:03.943402989 +0000
-+++ /home/claude/repo/musicapeyron.github.io-main/primi-brani-2.html	2026-10-08 21:42:03.947099594 +0000
+--- /home/claude/repo/musicapeyron.github.io-main/brani-propedeutici.html	2026-10-09 01:11:28.943551808 +0000
++++ /home/claude/repo/musicapeyron.github.io-main/primi-brani-2.html	2026-10-09 01:11:56.742959122 +0000
 @@ -5,21 +5,18 @@
  <meta name="viewport" content="width=device-width, initial-scale=1.0">
  <!--
@@ -29,7 +29,7 @@
  <link rel="stylesheet" href="fonts/caratteri.css">
  <style>
    * { box-sizing: border-box; }
-@@ -603,6 +600,11 @@
+@@ -599,6 +596,11 @@
    .confetti-piece { position: absolute; width: 8px; height: 8px; border-radius: 2px; animation: confettiBurst 0.9s ease-out forwards; }
    @keyframes confettiBurst { 0% { transform: translate(-50%, -50%) rotate(0deg); opacity: 1; } 100% { transform: translate(calc(-50% + var(--dx)), calc(-50% + var(--dy))) rotate(var(--rot)); opacity: 0; } }
    @media (prefers-reduced-motion: reduce) { .festa::before, .palla-dondola, .tessera, .raggio, .scintilla, .palco, svg .bravi { animation: none; } .nota-amica { transition: none; } .confetti-piece { display: none; } }
@@ -38,10 +38,10 @@
 +  .bp-titolo { font-family: 'Manrope', sans-serif !important; font-size: clamp(20px, 2.6vw, 28px) !important; color: #1F2430; }
 +  .lim-lato .bp-titolo { font-size: clamp(20px, 2vw, 28px) !important; }
 +  .tel-titolo { font-family: 'Manrope', sans-serif !important; font-size: 14px !important; }
- </style>
- <script src="vexflow.js"></script>
- <script src="motore-schemi.js?v=2026-10-08c"></script>
-@@ -613,9 +615,8 @@
+ 
+   /* ===== risparmio energetico (telefoni): vedi _sviluppo/risparmio_energetico.py ===== */
+   /* lo sfondo sfumato sta su uno strato fisso a parte: il telefono lo disegna una volta sola */
+@@ -618,9 +620,8 @@
  
  <header class="hero">
    <a class="breadcrumb" href="spartiti.html">← Spartiti</a>
@@ -53,7 +53,7 @@
  </header>
  
  <div class="barra-fissa">
-@@ -633,12 +634,11 @@
+@@ -638,12 +639,11 @@
  <footer></footer>
  
  <script>
@@ -69,7 +69,7 @@
    /* solfeggio: spento di base; velocità e clic ricordati */
    const leggi = (k, d) => { try { const v = localStorage.getItem(k); return v === null ? d : v; } catch (e) { return d; } };
    const scrivi = (k, v) => { try { localStorage.setItem(k, v); } catch (e) {} };
-@@ -651,7 +651,7 @@
+@@ -656,7 +656,7 @@
      return `<button type="button" class="solf-via${on ? ' in-corso' : ''}" data-solf="${n}">${on ? '■ Ferma' : '▶ Solfeggia'}</button>`; };
  
    /* sorpresa nel finale: da questa battuta l'evidenziatore diventa un ballerino (con Segui la base o Solfeggio) */
@@ -78,7 +78,7 @@
    let festa = null, festaOn = false;
  
    /* interruttore "Segui la base": spento di base, la scelta viene ricordata */
-@@ -659,13 +659,15 @@
+@@ -664,13 +664,15 @@
    const interruttoreSegui = n => SINCRO[n] === undefined ? '' :
      `<label class="segui" title="Mentre la base suona, la figura da suonare si illumina"><input type="checkbox" class="chk-segui" ${segui ? 'checked' : ''}><span>Segui la base</span></label>`;
              // testo accanto al numero nell'indice (es. la tonalità delle scale)
@@ -98,7 +98,7 @@
    const riquadroHTML = testo => {
      const righe = testo.split(/\n/).map(r => r.trim()).filter(Boolean);
      const novita = /^NOVIT/i.test(righe[0]);
-@@ -694,22 +696,18 @@
+@@ -699,22 +701,18 @@
  
    /* Novità che nei file MusicXML non hanno il loro riquadro: si aggiungono qui.
       "prima": il riquadro va prima di quelli già presenti nel brano (es. la nota prima della figura). */
@@ -125,7 +125,7 @@
    // la diteggiatura (no / prima volta / sempre) viaggia insieme alla versione; il flauto non ne ha
    const opzioni = (versione, extra, n) => Object.assign({ strumento: strumento.id, colori: versione.colori, nomi: versione.nomi,
      diteggiatura: strumento.id === 'flauto' ? 'no' : (versione.dit || 'no'),
-@@ -744,7 +742,7 @@
+@@ -749,7 +747,7 @@
    async function apriTelefono(n, versione) {
      const brano = await caricaBrano(n), note = MotoreSchemi.noteUsate(brano);
      const verticale = window.innerHeight > window.innerWidth;
@@ -134,7 +134,7 @@
      const riquadri = brano.riquadri.map(riquadroHTML).join("") + comandiBasi(n);
      lightboxInner.innerHTML = verticale
        ? `<div class="tel tel-vert">${testa}<div class="tel-riquadri">${riquadri}</div><div class="tel-spartito"><div class="spartito"></div></div><div class="tel-carte lim-carte"></div></div>`
-@@ -817,7 +815,7 @@
+@@ -822,7 +820,7 @@
        <div class="lim-lato">
          <div class="lim-testa">
            <div><div class="bp-numero">${n}</div><h2 class="bp-titolo">${titoloColorato(brano.titoloBreve)}</h2></div>
@@ -143,7 +143,7 @@
          </div>
          ${brano.riquadri.map(riquadroHTML).join("")}${comandiBasi(n)}
          <div class="lim-carte"></div>
-@@ -892,18 +890,14 @@
+@@ -897,18 +895,14 @@
        <div class="bp-testa">
          <div class="bp-numero">${n}</div>
          <h2 class="bp-titolo"></h2>
@@ -167,7 +167,7 @@
        <div class="versions">${VERSIONI.map((v, i) => `<button type="button" data-v="${i}" class="${i === VERSIONE_INIZIALE ? 'active' : ''}">${v.label}</button>`).join('')}</div>
        ${pulsanteSolfeggia(n)}
        <div class="dit-scelta"><span class="dit-etichetta">Diteggiatura</span>${[['no', 'No'], ['prima', 'Prima volta'], ['sempre', 'Sempre']].map(([d, t]) => `<button type="button" data-d="${d}" class="${d === 'no' ? 'active' : ''}">${t}</button>`).join('')}</div>
-@@ -951,7 +945,7 @@
+@@ -956,7 +950,7 @@
        const testo = btnPdf.textContent; btnPdf.textContent = 'Preparo il PDF…'; btnPdf.disabled = true;
        try {
          const brano = await caricaBrano(n);
