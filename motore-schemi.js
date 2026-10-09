@@ -394,6 +394,10 @@
   function disegnaBrano(contenitore, brano, opzioni) {
     const VF = (global.Vex && global.Vex.Flow) ? global.Vex.Flow : global.VexFlow;
     const o = Object.assign({ strumento: "flauto", colori: false, nomi: false, larghezza: 760 }, opzioni);
+    /* chiave: "treble" (di violino, come sempre) o "bass" (di basso). spostaOttave sposta tutte le note
+       di quel numero di ottave (es. -2 in chiave di basso: stessi nomi, scritte due ottave sotto) */
+    const chiaveRigo = o.chiave === "bass" ? "bass" : "treble", sposta = o.spostaOttave || 0;
+    const tasto = n => n.lettera + n.alt + "/" + (n.ottava + sposta);
     const tastiera = o.strumento === "tastiera";
     /* diteggiatura: undefined = come sempre (tastiera con le dita, nessuna indicazione per le corde);
        "no" | "prima" (solo alla prima comparsa di ogni nota) | "sempre" */
@@ -459,7 +463,7 @@
         const b = u.b, ultima = u.battute[u.battute.length - 1];
         const w = spazio * pesi[i] / pesoTot + (i === 0 ? testa : 0);
         const st = new VF.Stave(x, y, w);
-        if (i === 0) { st.addClef("treble", "default", brano.chiaveOttava ? "8va" : undefined); if (keySpec) st.addKeySignature(keySpec); if (r === 0) st.addTimeSignature(brano.simboloTempo === "cut" ? "C|" : brano.simboloTempo === "common" ? "C" : brano.tempo.join("/")); }
+        if (i === 0) { st.addClef(chiaveRigo, "default", chiaveRigo === "treble" && brano.chiaveOttava ? "8va" : undefined); if (keySpec) st.addKeySignature(keySpec); if (r === 0) st.addTimeSignature(brano.simboloTempo === "cut" ? "C|" : brano.simboloTempo === "common" ? "C" : brano.tempo.join("/")); }
         if (b.inizioRitornello) st.setBegBarType(VF.Barline.type.REPEAT_BEGIN);
         if (b.segno) st.setRepetitionType(VF.Repetition.type.SEGNO_LEFT, -6);   // il segno 𝄋 sopra l'inizio della battuta
         if (b.volta) volteRiga.push({ st, volta: b.volta });   // le volte si disegnano dopo, sopra i nomi
@@ -477,8 +481,9 @@
         const note = b.eventi.map(e => {
           const durata = e.durata + (e.pausa ? "r" : "");
           // gambo come nel file, se indicato; altrimenti automatico
-          const dirGambo = e.gambo === "up" ? 1 : e.gambo === "down" ? -1 : null;
-          const sn = new VF.StaveNote(Object.assign({ keys: [e.pausa ? (e.intera ? "d/5" : "b/4") : e.nota.lettera + e.nota.alt + "/" + e.nota.ottava], duration: durata, dots: e.punti, clef: "treble", align_center: !!e.intera },
+          // (in chiave di basso le note cambiano posto sul rigo: i gambi si calcolano da capo)
+          const dirGambo = chiaveRigo !== "treble" ? null : e.gambo === "up" ? 1 : e.gambo === "down" ? -1 : null;
+          const sn = new VF.StaveNote(Object.assign({ keys: [e.pausa ? (chiaveRigo === "bass" ? (e.intera ? "f/3" : "d/3") : (e.intera ? "d/5" : "b/4")) : tasto(e.nota)], duration: durata, dots: e.punti, clef: chiaveRigo, align_center: !!e.intera },
             dirGambo ? { stem_direction: dirGambo } : { auto_stem: true }));
           sn._ev = e; sn._riga = r;
           for (let k = 0; k < e.punti; k++) VF.Dot.buildAndAttach([sn], { all: true });
@@ -496,7 +501,7 @@
           if (e.corona) sn.addModifier(new VF.Articulation("a@a").setPosition(POS.ABOVE), 0);
           // acciaccature
           if (e.acciaccature) {
-            const gn = e.acciaccature.map(a => new VF.GraceNote({ keys: [a.nota.lettera + a.nota.alt + "/" + a.nota.ottava], duration: a.durata, slash: a.slash && e.acciaccature.length === 1 }));
+            const gn = e.acciaccature.map(a => new VF.GraceNote({ keys: [tasto(a.nota)], clef: chiaveRigo, duration: a.durata, slash: a.slash && e.acciaccature.length === 1 }));
             const gruppo = new VF.GraceNoteGroup(gn, true); if (gn.length > 1) gruppo.beamNotes();
             sn.addModifier(gruppo, 0);
           }

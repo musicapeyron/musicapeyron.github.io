@@ -226,3 +226,8 @@ quindi può sempre ridefinire una regola. Una correzione fatta lì vale per tutt
   recita-le-note, registro-musica-app.
 - Il pulsante casetta non è comune: esiste in 14 versioni diverse (posizione, dimensioni, sfondo); unificarlo
   vorrebbe dire scegliere un aspetto unico.
+
+## Chiave di basso (ottobre 2026)
+`motore-schemi.js` accetta `chiave: "bass"` e `spostaOttave` (es. -2) nelle opzioni di `disegnaBrano`: stessi nomi delle note,
+scritte più in basso; in chiave di basso le direzioni dei gambi si ricalcolano (quelle del file valgono per la chiave di violino).
+Nel Bona l'opzione «𝄢 Chiave di basso» sceglie per ogni lezione lo spostamento (una o due ottave) che lascia meno tagli addizionali.

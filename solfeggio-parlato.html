@@ -148,6 +148,7 @@
           <option value="1">♩ movimenti</option><option value="2">♪♪ in 2</option><option value="3">♪♪♪ in 3</option><option value="4">♬♬ in 4</option></select></span>
       <label class="interr" title="Scrive il nome sopra ogni nota"><input type="checkbox" id="nomi"> Nomi</label>
       <label class="interr" title="Colora le note"><input type="checkbox" id="colori"> Colori</label>
+      <label class="interr" title="Le stesse lezioni in chiave di basso"><input type="checkbox" id="basso"> 𝄢 Chiave di basso</label>
       <button type="button" class="azione" id="intero" title="Schermo intero, per la LIM">⛶ Schermo intero</button>
       <button type="button" class="azione" id="apriScheda">🖨️ Prepara una scheda</button>
     </div>
@@ -167,6 +168,7 @@
       <label class="riga"><input type="checkbox" id="fNome" checked> Spazio per nome e classe</label>
       <label class="riga"><input type="checkbox" id="fColori"> Note colorate</label>
       <label class="riga"><input type="checkbox" id="fNomi"> Nomi sopra le note</label>
+      <label class="riga"><input type="checkbox" id="fBasso"> Chiave di basso</label>
       <div class="f-info" id="fInfo"></div>
       <div class="f-pulsanti"><button type="button" id="fStampa">🖨️ Stampa</button><button type="button" class="secondo" id="fPdf">⬇️ Salva PDF</button></div>
     </div>
@@ -176,7 +178,7 @@
 <div id="areaStampa"></div>
 
 <script src="vexflow.js"></script>
-<script src="motore-schemi.js?v=2026-10-08c"></script>
+<script src="motore-schemi.js?v=2026-10-09a"></script>
 <script>
 (function () {
   "use strict";
@@ -219,7 +221,7 @@
   /* ---------- impostazioni ricordate (solo in questo browser) ---------- */
   const leggi = (k, d) => { try { const v = localStorage.getItem("bona." + k); return v === null ? d : v; } catch (e) { return d; } };
   const scrivi = (k, v) => { try { localStorage.setItem("bona." + k, v); } catch (e) {} };
-  const S = { bpm: +leggi("bpm", "60") || 60, sudd: [1, 2, 3, 4].includes(+leggi("sudd", "1")) ? +leggi("sudd", "1") : 1, clic: leggi("clic", "1") === "1", nomi: leggi("nomi", "0") === "1", colori: leggi("colori", "0") === "1" };
+  const S = { bpm: +leggi("bpm", "60") || 60, sudd: [1, 2, 3, 4].includes(+leggi("sudd", "1")) ? +leggi("sudd", "1") : 1, clic: leggi("clic", "1") === "1", nomi: leggi("nomi", "0") === "1", colori: leggi("colori", "0") === "1", basso: leggi("basso", "0") === "1" };
   let attuale = +leggi("lezione", "1"); if (!TUTTE.includes(attuale)) attuale = 1;
   let argomento = null;   // null = tutte
 
@@ -227,7 +229,16 @@
   const cache = {};
   const carica = n => cache[n] || (cache[n] = fetch(CARTELLA + "bona-" + String(n).padStart(3, "0") + ".musicxml")
     .then(r => { if (!r.ok) throw new Error("manca la lezione " + n); return r.text(); }).then(t => MotoreSchemi.leggiMusicXML(t)));
-  const opzioni = (extra) => Object.assign({ strumento: "flauto", colori: S.colori, nomi: S.nomi, titolo: false, schema: false, testi: false }, extra);
+  /* chiave di basso: stessi nomi delle note, scritte una o due ottave sotto; per ogni lezione si sceglie
+     lo spostamento che fa stare le note il più possibile dentro il rigo (meno tagli addizionali) */
+  const LETTERE = "cdefgab";
+  function spostaBasso(brano) {
+    const gradi = []; brano.battute.forEach(b => b.eventi.forEach(e => { if (e.nota) gradi.push(e.nota.ottava * 7 + LETTERE.indexOf(e.nota.lettera)); }));
+    const tagli = sp => gradi.reduce((t, g0) => { const g = g0 + sp * 7; return t + (g < 18 ? Math.floor((18 - g) / 2) : g > 26 ? Math.floor((g - 26) / 2) : 0); }, 0);
+    return tagli(-1) < tagli(-2) ? -1 : -2;   // rigo di basso: dal sol2 (grado 18) al la3 (grado 26)
+  }
+  const chiaveDi = (brano, basso) => basso ? { chiave: "bass", spostaOttave: spostaBasso(brano) } : {};
+  const opzioni = (extra) => Object.assign({ strumento: "flauto", colori: S.colori, nomi: S.nomi, titolo: false, schema: false, testi: false }, chiaveDi(branoAttuale, S.basso), extra);
 
   /* ---------- argomenti e numeri ---------- */
   const elArg = document.getElementById("argomenti"), elNum = document.getElementById("numeri");
@@ -306,7 +317,7 @@
     if (solf) { const p = posA(adesso()); solf.griglia = Math.ceil((p + solf.lung) / solf.B * nuovo - 1e-6); }
     S.sudd = nuovo; scrivi("sudd", nuovo);
   });
-  [["clic", false], ["nomi", true], ["colori", true]].forEach(([k, ridisegna]) => {
+  [["clic", false], ["nomi", true], ["colori", true], ["basso", true]].forEach(([k, ridisegna]) => {
     const c = document.getElementById(k); c.checked = S[k];
     c.addEventListener("change", () => { S[k] = c.checked; scrivi(k, c.checked ? "1" : "0"); if (ridisegna) { ferma(); disegna(); } });
   });
@@ -440,12 +451,12 @@
     const b = e.target.closest("button"); if (!b) return; const n = +b.dataset.n;
     scelte.has(n) ? scelte.delete(n) : scelte.add(n); fArg.value = ""; aggiornaGriglia(); anteprima();
   });
-  ["fNome", "fColori", "fNomi"].forEach(id => document.getElementById(id).addEventListener("change", anteprima));
+  ["fNome", "fColori", "fNomi", "fBasso"].forEach(id => document.getElementById(id).addEventListener("change", anteprima));
   let attesaTitolo; document.getElementById("fTitoloScheda").addEventListener("input", () => { clearTimeout(attesaTitolo); attesaTitolo = setTimeout(anteprima, 300); });
   document.getElementById("apriScheda").addEventListener("click", () => {
     ferma();
     const a = argDi(attuale); fArg.value = String(ARGOMENTI.indexOf(a)); scelte = new Set(a.lezioni);
-    document.getElementById("fColori").checked = S.colori; document.getElementById("fNomi").checked = S.nomi;
+    document.getElementById("fColori").checked = S.colori; document.getElementById("fNomi").checked = S.nomi; document.getElementById("fBasso").checked = S.basso;
     aggiornaGriglia(); velo.classList.add("aperto"); document.body.style.overflow = "hidden"; anteprima();
   });
   const chiudi = () => { velo.classList.remove("aperto"); document.body.style.overflow = ""; };
@@ -491,7 +502,7 @@
         const brano = await carica(n);
         const d = document.createElement("div"); fuori.appendChild(d);
         const perRiga = Math.max(1, Math.min(BATTUTE_RIGA, brano.battute.length, Math.floor((larg - 60) / (notePiuFitte(brano) * 22))));
-        MotoreSchemi.disegnaBrano(d, brano, Object.assign({}, opz, { larghezza: larg, perRiga }));
+        MotoreSchemi.disegnaBrano(d, brano, Object.assign({}, opz, chiaveDi(brano, document.getElementById("fBasso").checked), { larghezza: larg, perRiga }));
         const s = d.querySelector("svg"), vb = s.viewBox.baseVal;
         let h = vb.height * larg / vb.width, k = 1;
         const spazio = PH - MG - 22 - y - 30 - 18;
