@@ -307,6 +307,18 @@ h1 {
 }
 .strip-card.covered .card-back { opacity: 1; }
 
+/* lineetta tra le coppie e i gruppi di una sequenza (do mi | re fa) */
+.strip-card.cell-start::before {
+    content: "";
+    position: absolute;
+    left: calc(var(--gap) / -2 - 1px);
+    top: 14%; bottom: 14%;
+    width: 2px;
+    border-radius: 2px;
+    background: rgba(255,255,255,0.45);
+}
+.strip-card.outside.cell-start::before { opacity: 0.3; }
+
 /* scelta della modalità nella schermata iniziale */
 .mode-switch { display: flex; gap: 8px; justify-content: center; margin: 4px 0 2px; }
 .mode-chip {
@@ -576,7 +588,54 @@ h1 {
 .pass-row:nth-child(3) .pass-badge { background: #ef4444; }
 .pass-text { font-size: 0.86rem; color: #cbd5e1; }
 
-.levels { display: flex; flex-direction: column; gap: 12px; margin: 22px 0 6px; }
+.levels { display: flex; flex-direction: column; gap: 12px; margin: 12px 0 6px; }
+
+/* SCELTA DELLA SEQUENZA: una riga sola, il resto si apre a richiesta */
+.type-pick {
+    display: flex; align-items: center; gap: 12px;
+    width: 100%; margin: 22px 0 0; padding: 11px 14px;
+    border-radius: 14px;
+    border: 1px solid rgba(250,204,21,0.35);
+    background: rgba(250,204,21,0.08);
+    color: #e2e8f0; text-align: left; cursor: pointer;
+    font-family: "Sora", "Inter", Arial, sans-serif;
+}
+.type-pick:hover { background: rgba(250,204,21,0.14); }
+.type-pick-icon { font-size: 1.35rem; flex: 0 0 auto; }
+.type-pick-text { flex: 1; min-width: 0; }
+.type-pick-label { display: block; font-size: 0.66rem; font-weight: 700; letter-spacing: 0.5px; text-transform: uppercase; color: #fde68a; }
+.type-pick-name { display: block; font-size: 1.02rem; font-weight: 800; color: #ffffff; line-height: 1.3; }
+.type-pick-change {
+    flex: 0 0 auto; padding: 7px 13px; border-radius: 999px;
+    background: rgba(255,255,255,0.12); border: 1px solid rgba(255,255,255,0.18);
+    font-size: 0.8rem; font-weight: 700; color: #ffffff;
+}
+
+.type-card { width: min(480px, 100%); text-align: left; padding: 22px 20px 20px; }
+.type-card h2 { text-align: center; font-size: 1.3rem; }
+.type-card .type-sub { text-align: center; margin: 0 0 6px; font-size: 0.86rem; }
+.type-group-title { font-size: 0.66rem; font-weight: 700; letter-spacing: 0.5px; text-transform: uppercase; color: #a5b4fc; margin: 16px 0 8px; }
+.type-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; }
+.type-grid.two { grid-template-columns: repeat(2, 1fr); }
+.type-choice {
+    display: flex; flex-direction: column; align-items: flex-start; gap: 2px;
+    width: 100%; padding: 10px 12px;
+    border-radius: 12px;
+    border: 1px solid rgba(255,255,255,0.16);
+    background: rgba(255,255,255,0.06);
+    color: #f1f5f9; text-align: left; cursor: pointer;
+    font-family: "Sora", "Inter", Arial, sans-serif; font-weight: 800; font-size: 0.92rem;
+}
+.type-choice:hover { background: rgba(255,255,255,0.12); }
+.type-choice small { font-family: "Inter", Arial, sans-serif; font-weight: 500; font-size: 0.74rem; color: #a5b4fc; }
+.type-choice.active {
+    background: linear-gradient(135deg, #f59e0b, #b45309);
+    border-color: rgba(255,255,255,0.35); color: #ffffff;
+}
+.type-choice.active small { color: #fef3c7; }
+@media (max-width: 400px) {
+    .type-grid { grid-template-columns: repeat(2, 1fr); }
+}
 
 .level-card {
     display: flex;
@@ -724,6 +783,15 @@ h1 {
         <label><input type="radio" name="staffnames" value="0"> senza il nome delle note</label>
     </div>
 
+    <button class="type-pick" id="typePick" aria-haspopup="dialog">
+        <span class="type-pick-icon">🎵</span>
+        <span class="type-pick-text">
+            <span class="type-pick-label">Che cosa reciti</span>
+            <span class="type-pick-name" id="typeName">Scale</span>
+        </span>
+        <span class="type-pick-change">Cambia</span>
+    </button>
+
     <div class="levels">
         <button class="level-card" data-level="0">
             <span class="level-badge">1</span>
@@ -836,6 +904,38 @@ h1 {
 
 </div>
 
+<!-- SCELTA DELLA SEQUENZA -->
+<div class="overlay" id="typeOverlay">
+    <div class="overlay-card type-card" role="dialog" aria-modal="true" aria-labelledby="typeTitle">
+        <h2 id="typeTitle">Che cosa vuoi recitare?</h2>
+        <p class="type-sub">Poi scegli se salire, scendere o fare tutte e due le cose.</p>
+
+        <div class="type-group-title">Scale</div>
+        <button class="type-choice" data-type="scale">Scale <small>do re mi fa sol la si do</small></button>
+
+        <div class="type-group-title">Intervalli a coppie, come nel Bona</div>
+        <div class="type-grid">
+            <button class="type-choice" data-type="terze">Terze <small>do mi · re fa</small></button>
+            <button class="type-choice" data-type="quarte">Quarte <small>do fa · re sol</small></button>
+            <button class="type-choice" data-type="quinte">Quinte <small>do sol · re la</small></button>
+            <button class="type-choice" data-type="seste">Seste <small>do la · re si</small></button>
+            <button class="type-choice" data-type="settime">Settime <small>do si · re do</small></button>
+            <button class="type-choice" data-type="ottave">Ottave <small>do do · re re</small></button>
+        </div>
+
+        <div class="type-group-title">Arpeggi</div>
+        <button class="type-choice" data-type="arpeggi">Arpeggi <small>do mi sol do · re fa la re</small></button>
+
+        <div class="type-group-title">Progressioni</div>
+        <div class="type-grid two">
+            <button class="type-choice" data-type="prog4">do mi re do <small>poi re fa mi re…</small></button>
+            <button class="type-choice" data-type="hanon">Hanon n. 1 <small>do mi fa sol la sol fa mi</small></button>
+        </div>
+
+        <div class="overlay-buttons" style="margin-top:20px"><button class="btn" id="typeClose">Chiudi</button></div>
+    </div>
+</div>
+
 <!-- FINE -->
 <div class="overlay" id="finalOverlay">
     <div class="overlay-card">
@@ -871,8 +971,6 @@ const NOTE_COLORS = ["#E21C48", "#F99D1C", "#FFF428", "#BED958", "#009C95", "#5E
 // stessa tinta, scurita quanto basta per leggersi sulle carte chiare
 const NOTE_INKS = ["#E21C48", "#A66912", "#7F7913", "#6E7D33", "#00847E", "#5E50A1", "#CC3D94"];
 const WINDOW_CARDS = 8;       // quante carte si vedono: una sequenza
-const SEQUENCES = 8;          // otto partenze per ogni livello
-const TOTAL_CARDS = SEQUENCES + WINDOW_CARDS - 1;
 const SUBDIVISIONS = [1, 2, 4];
 
 /* La base: 18 battute (54 secondi esatti) costruite apposta per il gioco,
@@ -883,47 +981,148 @@ const PULSE = 0.75;
 const TRACK_BPM = 80;
 
 /*
-   Ogni livello dice come si chiamano le carte del nastro e in che
-   ordine si accendono dentro la sequenza.
-   nameIdx: nome della carta in posizione i
-   card:    quale carta si accende alla nota n della sequenza s
+   COME È FATTO UN ESERCIZIO
+
+   Ogni esercizio è una fila di carte, ciascuna con la sua altezza in
+   gradi (0 = Do centrale, 7 = Do sopra, 14 = Do acuto), e un elenco di
+   sequenze. Ogni sequenza dice da quale carta parte la finestra
+   visibile e quali carte si accendono, nell'ordine.
+
+   Le scale usano il nastro di sempre: carte in ordine di altezza e
+   finestra che scorre di un posto. Le altre sequenze hanno salti,
+   quindi le carte stanno nell'ordine in cui si recitano, otto per
+   sequenza, e a ogni sequenza la fila cambia tutta.
+
+   Le altezze restano sempre tra 0 e 14, le quindici note già
+   disegnate: si sale partendo dal Do centrale e si scende partendo
+   dal Do acuto, come nelle scale.
 */
-const LEVELS = [
-    {
-        name: "Sequenze ascendenti",
-        info: "Si sale di una nota a ogni sequenza",
-        perSeq: 8,
-        nameIdx: i => mod7(i),
-        step: i => i,                 // altezza sul pentagramma: dal Do centrale in su
-        card: (s, n) => s + n
-    },
-    {
-        name: "Sequenze discendenti",
-        info: "Si scende di una nota a ogni sequenza",
-        perSeq: 8,
-        nameIdx: i => mod7(-i),
-        step: i => 14 - i,            // dal Do acuto in giù
-        card: (s, n) => s + n
-    },
-    {
-        name: "Salita e discesa",
-        info: "La formula intera: andata e ritorno, poi si riparte dalla nota dopo",
-        perSeq: 16,
-        nameIdx: i => mod7(i),
-        step: i => i,
-        // 0…7 in salita, poi 7…0 in discesa (il Do acuto si dice due volte)
-        card: (s, n) => (n < 8 ? s + n : s + 15 - n)
-    }
+
+const DIRECTIONS = ["Salita", "Discesa", "Salita e discesa"];
+const LEVEL_COUNT = DIRECTIONS.length;
+
+const TYPES = [
+    { id: "scale",   kind: "scale",    name: "Scale",   short: "Scale" },
+    { id: "terze",   kind: "cells",    name: "Terze",   short: "Terze",   shape: [0, 2], cell: 2 },
+    { id: "quarte",  kind: "cells",    name: "Quarte",  short: "Quarte",  shape: [0, 3], cell: 2 },
+    { id: "quinte",  kind: "cells",    name: "Quinte",  short: "Quinte",  shape: [0, 4], cell: 2 },
+    { id: "seste",   kind: "cells",    name: "Seste",   short: "Seste",   shape: [0, 5], cell: 2 },
+    { id: "settime", kind: "cells",    name: "Settime", short: "Settime", shape: [0, 6], cell: 2 },
+    { id: "ottave",  kind: "cells",    name: "Ottave",  short: "Ottave",  shape: [0, 7], cell: 2 },
+    { id: "arpeggi", kind: "arpeggio", name: "Arpeggi", short: "Arpeggi", cell: 4 },
+    /* progressioni: un disegno ripetuto partendo da ogni nota.
+       In discesa il disegno si capovolge, come nell'Hanon. */
+    { id: "prog4",   kind: "cells",    name: "Progressione «do mi re do»", short: "Progressione",
+      shape: [0, 2, 1, 0], cell: 4 },
+    { id: "hanon",   kind: "cells",    name: "Hanon n. 1", short: "Hanon n. 1",
+      shape: [0, 2, 3, 4, 5, 4, 3, 2], cell: 8 }
 ];
 
-let currentLevel = 0;
+/* da a fino a b compreso, in su o in giù */
+function range(a, b) {
+    const out = [];
+    const d = a <= b ? 1 : -1;
+    for (let x = a; x !== b + d; x += d) out.push(x);
+    return out;
+}
+
+function buildExercise(type, dir) {
+    if (type.kind === "scale") {
+        const cards = range(0, 14).map(i => dir === 1 ? 14 - i : i);
+        const rows = range(0, 7).map(s => ({
+            offset: s,
+            // salita e discesa: 0…7 in salita, poi 7…0 (il Do acuto si dice due volte)
+            notes: dir === 2
+                ? range(0, 15).map(n => n < 8 ? s + n : s + 15 - n)
+                : range(0, 7).map(n => s + n)
+        }));
+        return { cards, rows };
+    }
+
+    const steps = [];
+    if (type.kind === "arpeggio") {
+        // do mi sol do in su; do sol mi do in giù, dal Do acuto
+        const up = [0, 2, 4, 7], down = [0, -3, -5, -7];
+        (dir === 1 ? range(14, 7) : range(0, 7)).forEach(x => {
+            const a = (dir === 1 ? down : up).map(o => x + o);
+            // otto carte: l'arpeggio due volte, oppure andata e ritorno
+            steps.push(...a, ...(dir === 2 ? a.slice().reverse() : a));
+        });
+    } else {
+        const up = type.shape;
+        const down = up.map(o => -o);
+        const top = Math.max(...up);
+        const cell = (x, shape) => shape.map(o => x + o);
+        if (dir === 0) range(0, 7).forEach(x => steps.push(...cell(x, up)));
+        if (dir === 1) range(14, 7).forEach(x => steps.push(...cell(x, down)));
+        if (dir === 2) {
+            // si sale dal Do centrale fino al Do sopra, poi si torna giù
+            // con il disegno capovolto fino a ritrovare il Do centrale
+            range(0, 7).forEach(x => steps.push(...cell(x, up)));
+            range(7 + top, top).forEach(x => steps.push(...cell(x, down)));
+        }
+    }
+    const rows = [];
+    for (let o = 0; o < steps.length; o += WINDOW_CARDS) {
+        rows.push({ offset: o, notes: range(o, o + WINDOW_CARDS - 1) });
+    }
+    return { cards: steps, rows };
+}
+
+const SCALE_TEXT = [
+    { name: "Sequenze ascendenti", info: "Si sale di una nota a ogni sequenza",
+      example: "do re mi fa sol la si do, poi si riparte dal re" },
+    { name: "Sequenze discendenti", info: "Si scende di una nota a ogni sequenza",
+      example: "do si la sol fa mi re do, poi si riparte dal si" },
+    { name: "Salita e discesa", info: "La formula intera: andata e ritorno, poi si riparte dalla nota dopo",
+      example: "la formula intera, andata e ritorno, poi dal re" }
+];
+
+function levelName(type, dir) {
+    if (type.kind === "scale") return SCALE_TEXT[dir].name;
+    return type.name + " " + ["in salita", "in discesa", "in salita e discesa"][dir];
+}
+
+function levelInfo(type, dir) {
+    if (type.kind === "scale") return SCALE_TEXT[dir].info;
+    if (type.kind === "arpeggio") return [
+        "L'arpeggio due volte, poi si riparte dalla nota dopo",
+        "Dal Do acuto in giù, due volte, poi si riparte dalla nota sotto",
+        "Su e giù sull'arpeggio, poi si riparte dalla nota dopo"][dir];
+    if (type.shape.length === 2) return [
+        "Due note alla volta, e ogni coppia sale di un gradino",
+        "Due note alla volta, e ogni coppia scende di un gradino",
+        "Si sale a coppie fino al Do sopra, poi si torna giù"][dir];
+    return [
+        "Lo stesso disegno, partendo ogni volta dalla nota dopo",
+        "Il disegno capovolto, partendo ogni volta dalla nota sotto",
+        "Prima si sale, poi si scende con il disegno capovolto"][dir];
+}
+
+/* esempio per il pulsante del livello: le prime otto note, a gruppi */
+function levelExample(type, dir) {
+    if (type.kind === "scale") return SCALE_TEXT[dir].example;
+    const e = buildExercise(type, dir);
+    const names = e.rows[0].notes.map(i => NOTE_NAMES[mod7(e.cards[i])].toLowerCase());
+    const groups = [];
+    const size = type.cell === 8 ? 8 : type.cell;
+    for (let i = 0; i < names.length; i += size) groups.push(names.slice(i, i + size).join(" "));
+    return groups.join(" · ") + (type.kind === "cells" && dir === 2 ? " … e ritorno" : " …");
+}
+
+let currentType = TYPES[0];
+let ex = buildExercise(currentType, 0);
+let currentLevel = 0;      // 0 salita, 1 discesa, 2 salita e discesa
 let quiz = false;          // verifica: note centrali coperte
 let staffMode = false;     // note sul pentagramma
 let staffNames = true;     // con il nome sotto al pentagramma
 let staffClef = "treble";  // chiave di violino oppure di basso
-function level() { return LEVELS[currentLevel]; }
-function notesPerSeq() { return level().perSeq; }
-function totalNotes() { return SUBDIVISIONS.length * SEQUENCES * notesPerSeq(); }
+function level() {
+    return { name: levelName(currentType, currentLevel), info: levelInfo(currentType, currentLevel) };
+}
+function sequences() { return ex.rows.length; }
+function notesPerSeq() { return ex.rows[0].notes.length; }
+function totalNotes() { return SUBDIVISIONS.length * sequences() * notesPerSeq(); }
 
 const PASS_TITLES = ["Una nota per battito", "Due note per battito", "Quattro note per battito"];
 const PASS_SYMBOLS = ["♩", "♫", "♬"];
@@ -1140,12 +1339,12 @@ function buildTimeline() {
         }
         const base = pos + 8;
         const per = notesPerSeq();
-        for (let s = 0; s < SEQUENCES; s++) {
+        for (let s = 0; s < sequences(); s++) {
             for (let n = 0; n < per; n++) {
                 events.push({
                     beat: base + (s * per + n) / sub,
                     type: "note",
-                    card: level().card(s, n),
+                    card: ex.rows[s].notes[n],
                     seq: s,
                     note: n,
                     pass: p,
@@ -1153,7 +1352,7 @@ function buildTimeline() {
                 });
             }
         }
-        pos = base + (SEQUENCES * per) / sub;
+        pos = base + (sequences() * per) / sub;
     });
 
     events.push({ beat: pos + 1, type: "wrapup" });
@@ -1173,11 +1372,14 @@ function buildStrip() {
     strip.classList.toggle("staffmode", staffMode);
     strip.classList.toggle("staffmode-noname", staffMode && !staffNames);
 
-    for (let i = 0; i < TOTAL_CARDS; i++) {
-        const idx = level().nameIdx(i);
+    for (let i = 0; i < ex.cards.length; i++) {
+        const step = Math.max(0, Math.min(14, ex.cards[i]));
+        const idx = mod7(step);
         const card = document.createElement("div");
         card.className = "strip-card";
-        const step = Math.max(0, Math.min(14, level().step(i)));
+        // una lineetta separa le coppie e i gruppi dentro la sequenza
+        const cell = currentType.cell;
+        if (cell && cell < WINDOW_CARDS && i % WINDOW_CARDS !== 0 && i % cell === 0) card.classList.add("cell-start");
         card.innerHTML =
             "<div class=\"face\" style=\"--note-color:" + NOTE_COLORS[idx] + ";--note-ink:" + NOTE_INKS[idx] + "\">" +
                 "<span class=\"staff\">" + STAFF_SVG[staffClef]["d" + step] + "</span>" +
@@ -1199,11 +1401,12 @@ function setStripOffset(k, durationMs) {
 
 /* le carte della sequenza in corso sono in piena luce, le altre in penombra */
 function markSequence(s) {
+    const off = ex.rows[s].offset;
     cardEls.forEach((el, i) => {
-        const inside = i >= s && i <= s + WINDOW_CARDS - 1;
+        const inside = i >= off && i <= off + WINDOW_CARDS - 1;
         el.classList.toggle("outside", !inside);
         // nella verifica restano scoperte solo la prima e l'ultima della sequenza
-        el.classList.toggle("covered", quiz && inside && i > s && i < s + WINDOW_CARDS - 1);
+        el.classList.toggle("covered", quiz && inside && i > off && i < off + WINDOW_CARDS - 1);
     });
 }
 
@@ -1256,6 +1459,7 @@ function beginRun() {
     const ctx = getAudioContext();
     newRunGain();
 
+    ex = buildExercise(currentType, currentLevel);
     const built = buildTimeline();
     timeline = built.events;
     totalBeats = built.totalBeats;
@@ -1275,8 +1479,10 @@ function beginRun() {
     startMusic(musicStart);
 
     setMessage("");
-    stageLabel.textContent = (quiz ? "📝 Verifica — livello " : "Livello ") + (currentLevel + 1) + ": " + level().name.toLowerCase();
-    $("levelNumber").textContent = (currentLevel + 1) + " / " + LEVELS.length;
+    stageLabel.textContent = currentType.kind === "scale"
+        ? (quiz ? "📝 Verifica — livello " : "Livello ") + (currentLevel + 1) + ": " + level().name.toLowerCase()
+        : (quiz ? "📝 Verifica — " : "") + currentType.short + " · " + DIRECTIONS[currentLevel].toLowerCase();
+    $("levelNumber").textContent = (currentLevel + 1) + " / " + LEVEL_COUNT;
     $("levelInfo").textContent = level().info;
     pauseButton.textContent = "⏸ Pausa";
     updateStats();
@@ -1398,11 +1604,12 @@ function handleEvent(ev) {
         }
         // il nastro scivola durante l'ultima nota, così la sequenza
         // dopo è già al suo posto sul primo battito
-        if (ev.note === notesPerSeq() - 1 && ev.seq < SEQUENCES - 1) {
-            setStripOffset(ev.seq + 1, Math.min(220, (spb / ev.sub) * 900));
+        if (ev.note === notesPerSeq() - 1 && ev.seq < sequences() - 1) {
+            const nextOff = ex.rows[ev.seq + 1].offset;
+            setStripOffset(nextOff, Math.min(nextOff - ex.rows[ev.seq].offset > 1 ? 260 : 220, (spb / ev.sub) * 900));
             // nella verifica la nuova nota di partenza si scopre subito anche a
             // sinistra, mentre il nastro scorre, non solo entrando da destra
-            if (quiz && cardEls[ev.seq + 1]) cardEls[ev.seq + 1].classList.remove("covered");
+            if (quiz && cardEls[nextOff]) cardEls[nextOff].classList.remove("covered");
         }
         updateProgress();
         return;
@@ -1486,7 +1693,7 @@ function setMessage(text) {
 
 function updateStats() {
     passValue.textContent = (currentPass + 1) + " / " + SUBDIVISIONS.length;
-    seqValue.textContent = (currentSeq + 1) + " / " + SEQUENCES;
+    seqValue.textContent = (currentSeq + 1) + " / " + sequences();
     rateValue.textContent = SUBDIVISIONS[currentPass];
     bpmValue.textContent = Math.round(TRACK_BPM * rate);
 }
@@ -1551,12 +1758,12 @@ function finishRun() {
     stopEngine(1.4);
     hideBanner();
     $("finalNotes").textContent = notesDone;
-    $("finalSeqs").textContent = SEQUENCES * SUBDIVISIONS.length;
+    $("finalSeqs").textContent = sequences() * SUBDIVISIONS.length;
     $("finalBpm").textContent = Math.round(TRACK_BPM * rate) + " bpm";
     $("finalTime").textContent = formatTime(elapsedAtEnd);
-    $("finalTitle").textContent = (quiz ? "Verifica del livello " : "Livello ") + (currentLevel + 1) + " completata! 🎤";
+    $("finalTitle").textContent = (quiz ? "Verifica del livello " : "Livello ") + (currentLevel + 1) + (quiz ? " completata! 🎤" : " completato! 🎤");
     $("finalSubtitle").textContent = level().name + ", tre passaggi senza fermarsi.";
-    $("nextLevelButton").style.display = currentLevel < LEVELS.length - 1 ? "" : "none";
+    $("nextLevelButton").style.display = currentLevel < LEVEL_COUNT - 1 ? "" : "none";
     finalOverlay.classList.add("show");
 }
 
@@ -1618,6 +1825,48 @@ document.querySelectorAll('input[name="staffnames"]').forEach(r => {
     r.addEventListener("change", () => { staffNames = r.value === "1"; });
 });
 
+/* scelta della sequenza: il nome sul pulsante e gli esempi dei tre livelli */
+const typeOverlay = $("typeOverlay");
+const TYPE_STORE = "rappaLeNote.sequenza";
+
+function setType(id) {
+    currentType = TYPES.find(t => t.id === id) || TYPES[0];
+    $("typeName").textContent = currentType.name;
+    document.querySelectorAll(".type-choice").forEach(b => b.classList.toggle("active", b.dataset.type === currentType.id));
+    document.querySelectorAll(".level-card").forEach(card => {
+        const d = parseInt(card.dataset.level, 10);
+        card.querySelector("b").textContent = currentType.kind === "scale" ? SCALE_TEXT[d].name : DIRECTIONS[d];
+        card.querySelector("small").textContent = levelExample(currentType, d);
+    });
+    try { localStorage.setItem(TYPE_STORE, currentType.id); } catch (e) {}
+}
+
+function openTypes() {
+    typeOverlay.classList.add("show");
+    const active = typeOverlay.querySelector(".type-choice.active");
+    if (active) active.focus();
+}
+function closeTypes() {
+    typeOverlay.classList.remove("show");
+    $("typePick").focus();
+}
+
+$("typePick").addEventListener("click", openTypes);
+$("typeClose").addEventListener("click", closeTypes);
+typeOverlay.addEventListener("click", e => { if (e.target === typeOverlay) closeTypes(); });
+document.querySelectorAll(".type-choice").forEach(btn => {
+    btn.addEventListener("click", () => { setType(btn.dataset.type); closeTypes(); });
+});
+document.addEventListener("keydown", e => {
+    if (e.key === "Escape" && typeOverlay.classList.contains("show")) closeTypes();
+});
+
+(function () {
+    let saved = null;
+    try { saved = localStorage.getItem(TYPE_STORE); } catch (e) {}
+    setType(saved || "scale");
+})();
+
 function playLevel(i) {
     currentLevel = i;
     finished = false;
@@ -1631,7 +1880,7 @@ document.querySelectorAll(".level-card").forEach(btn => {
 });
 
 $("nextLevelButton").addEventListener("click", () => {
-    playLevel(Math.min(currentLevel + 1, LEVELS.length - 1));
+    playLevel(Math.min(currentLevel + 1, LEVEL_COUNT - 1));
 });
 $("pauseButton").addEventListener("click", togglePause);
 $("stopButton").addEventListener("click", stopByUser);
