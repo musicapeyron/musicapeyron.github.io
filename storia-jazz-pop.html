@@ -1,0 +1,585 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Jazz e popular — Storia della musica — musicascuole.it</title>
+<meta name="description" content="Jazz e musica popular raccontati attraverso gli ascolti: blues, ragtime, New Orleans, swing, be-bop, bossa nova; e il pop dai Beatles al rap e alla musica elettronica.">
+<link rel="icon" href="favicon.svg" type="image/svg+xml">
+<link rel="icon" href="favicon-32.png" type="image/png" sizes="32x32">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
+<link rel="stylesheet" href="fonts/caratteri.css">
+<link rel="stylesheet" href="comune.css">
+<style>
+  * { box-sizing: border-box; }
+  html, body { margin: 0; min-height: 100%; }
+  body { min-height: 100vh; font-family: 'Inter', 'Segoe UI', Arial, sans-serif; color: #EAF2FF; -webkit-font-smoothing: antialiased;
+    background: #0f172a; overflow-x: hidden; position: relative; }
+
+  .casetta { position: fixed; top: 12px; left: 12px; z-index: 40; width: 44px; height: 44px; border-radius: 50%; display: grid; place-items: center;
+    background: rgba(15,23,42,0.75); border: 1px solid rgba(255,255,255,0.18); text-decoration: none; font-size: 20px; color: #EAF2FF; font-weight: 700; }
+
+  main { position: relative; z-index: 1; max-width: 1400px; margin: 0 auto; padding: 12px 20px 24px; }
+
+  /* ---------- doppio banner ---------- */
+  .banner { position: relative; height: clamp(170px, 30vh, 320px); border-radius: 18px; overflow: hidden; background: #111827;
+    border: 1px solid rgba(255,255,255,0.1); user-select: none; -webkit-user-select: none; }
+  .meta { position: absolute; inset: 0; cursor: pointer; transition: filter .35s ease, opacity .35s ease; -webkit-tap-highlight-color: transparent; }
+  .meta img { width: 100%; height: 100%; object-fit: cover; display: block; }
+  .meta.sx { clip-path: polygon(0 0, 56% 0, 44% 100%, 0 100%); }
+  .meta.dx { clip-path: polygon(56% 0, 100% 0, 100% 100%, 44% 100%); }
+  .meta.sx img { width: 58%; object-position: 50% 55%; }
+  .meta.dx img { width: 58%; margin-left: 42%; object-position: 50% 40%; }
+  .banner.f-sx .meta.dx, .banner.f-dx .meta.sx { filter: grayscale(.85) brightness(.45); }
+  .banner::after { content: ""; position: absolute; inset: 0; pointer-events: none;
+    background: radial-gradient(ellipse at 50% 55%, rgba(15,23,42,0.55) 0%, rgba(15,23,42,0) 60%), linear-gradient(0deg, rgba(15,23,42,0.75), rgba(15,23,42,0) 45%); }
+  .titolo-epoca { position: absolute; left: 50%; top: 50%; transform: translate(-50%, -58%); text-align: center; z-index: 2; pointer-events: none; }
+  .titolo-epoca .sopra { font-family: 'Manrope', sans-serif; font-weight: 800; font-size: 11.5px; letter-spacing: .16em; text-transform: uppercase; color: #FDE7C7; text-shadow: 0 1px 6px rgba(0,0,0,.8); }
+  .titolo-epoca h1 { font-family: 'Fredoka', 'Manrope', sans-serif; font-weight: 600; margin: 0; font-size: clamp(32px, 6vw, 62px); line-height: 1.05; text-shadow: 0 2px 18px rgba(0,0,0,.85); }
+  .titolo-epoca .date { font-family: 'Manrope', sans-serif; font-weight: 800; color: #FFE58A; font-size: clamp(13px, 1.6vw, 17px); text-shadow: 0 1px 8px rgba(0,0,0,.9); }
+  .etich-meta { position: absolute; bottom: 12px; z-index: 3; font-family: 'Manrope', sans-serif; font-weight: 800; font-size: 12.5px;
+    padding: 6px 12px; border-radius: 999px; background: rgba(15,23,42,0.72); border: 1px solid rgba(255,255,255,0.22); cursor: pointer; white-space: nowrap; }
+  .etich-meta.sx { left: 12px; color: #FBC877; } .etich-meta.dx { right: 12px; color: #C4B5FD; }
+  .etich-meta.attiva { background: #EAF2FF; color: #0f172a; }
+  @media (max-width: 560px) { .etich-meta { font-size: 11px; padding: 5px 9px; bottom: 8px; } .etich-meta .lungo { display: none; } }
+
+  .atmosfera { text-align: center; color: #9FB3CE; font-size: 13px; font-style: italic; margin: 10px auto 12px; max-width: 760px; line-height: 1.45; }
+
+  /* ---------- schede ---------- */
+  .schede { display: flex; justify-content: center; gap: 8px; flex-wrap: wrap; margin-bottom: 12px; }
+  .scheda { font: 700 13.5px 'Manrope', sans-serif; color: #EAF2FF; cursor: pointer; padding: 8px 16px; border-radius: 999px;
+    background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.14); display: inline-flex; align-items: center; gap: 7px; }
+  .scheda:hover { background: rgba(255,255,255,0.12); }
+  .scheda.attiva { background: #EAF2FF; color: #0f172a; border-color: #EAF2FF; }
+  .scheda .n { font-size: 11px; opacity: .65; }
+  @media (max-width: 560px) { main { padding-top: 64px !important; } .schede { flex-wrap: nowrap; gap: 6px; } .scheda { font-size: 12.5px; padding: 7px 11px; gap: 5px; } .scheda .n { display: none; } }
+
+  /* ---------- griglia di card (come in home) ---------- */
+  .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 12px; }
+  @media (min-width: 1200px) { .grid { grid-template-columns: repeat(5, 1fr); } }
+  @media (max-width: 520px) { .grid { grid-template-columns: repeat(2, 1fr); gap: 9px; } main { padding: 10px 12px 20px; } }
+  .card { --accent: #5EC8D8; position: relative; background: rgba(255,255,255,0.035); border: 1px solid rgba(255,255,255,0.09); border-top: 2px solid var(--accent);
+    border-radius: 12px; overflow: hidden; display: flex; flex-direction: column; text-align: left; font: inherit; color: inherit; padding: 0; cursor: pointer;
+    transition: border-color .2s ease, transform .2s ease, background .2s ease; }
+  .card:hover { transform: translateY(-2px); background: rgba(255,255,255,0.06); border-color: color-mix(in srgb, var(--accent) 55%, transparent); border-top-color: var(--accent); }
+  .card:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+  .card .foto { aspect-ratio: 16 / 10; background: #1e293b center / cover no-repeat; position: relative; }
+  .card .foto::after { content: "▶"; position: absolute; right: 8px; bottom: 8px; width: 30px; height: 30px; border-radius: 50%; display: grid; place-items: center;
+    font-size: 12px; background: rgba(15,23,42,0.8); color: #fff; border: 1px solid rgba(255,255,255,0.3); }
+  .card .testo { padding: 9px 11px 11px; display: flex; flex-direction: column; gap: 3px; flex: 1; }
+  .card .label { align-self: flex-start; font-size: 9px; font-weight: 700; letter-spacing: .05em; text-transform: uppercase; color: var(--accent);
+    background: color-mix(in srgb, var(--accent) 14%, transparent); padding: 2px 7px; border-radius: 999px; }
+  .card h2 { font-family: 'Manrope', sans-serif; font-weight: 700; font-size: 14px; margin: 2px 0 0; letter-spacing: -0.01em; line-height: 1.25; }
+  .card .chi { font-size: 11px; color: #9FB3CE; font-weight: 600; }
+  .card p { font-size: 11.5px; line-height: 1.4; color: #B8C7DD; margin: 2px 0 0; }
+  .card.dx { --accent: #a78bfa; } .card.sx { --accent: #F99D1C; } .card.strum { --accent: #5EC8D8; } .card.suona { --accent: #BED958; }
+  .card.empty { cursor: default; border-style: dashed; background: transparent; }
+  .card.empty:hover { transform: none; }
+  .card.empty .foto::after { content: "presto"; width: auto; height: auto; padding: 3px 9px; border-radius: 999px; font: 700 10.5px 'Manrope', sans-serif; letter-spacing: .04em; }
+  .card.nascosta { display: none; }
+
+  /* ---------- finestra dell'ascolto ---------- */
+  .velo { position: fixed; inset: 0; z-index: 60; background: rgba(2,6,23,0.82); display: none; align-items: center; justify-content: center; padding: 16px; }
+  .velo.aperto { display: flex; }
+  .finestra { position: relative; width: min(1180px, 100%); max-height: calc(100vh - 32px); overflow: auto; background: #131c33; border: 1px solid rgba(255,255,255,0.14);
+    border-top: 3px solid var(--accent, #5EC8D8); border-radius: 18px; display: grid; grid-template-columns: 1.55fr 1fr; gap: 0; box-shadow: 0 20px 60px rgba(0,0,0,.5); }
+  @media (max-width: 860px) { .finestra { grid-template-columns: 1fr; } }
+  .schermo { position: relative; aspect-ratio: 16 / 9; background: #000 center / cover no-repeat; }
+  .schermo iframe { position: absolute; inset: 0; width: 100%; height: 100%; border: 0; }
+  .avvio { position: absolute; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 10px; cursor: pointer;
+    background: rgba(2,6,23,0.55); border: 0; color: #fff; font: inherit; width: 100%; }
+  .avvio .tondo { width: 76px; height: 76px; border-radius: 50%; background: #FFE58A; color: #0f172a; display: grid; place-items: center; font-size: 30px; padding-left: 6px; box-shadow: 0 6px 24px rgba(0,0,0,.45); }
+  .avvio:hover .tondo { transform: scale(1.06); }
+  .avvio .nota { font-size: 12px; color: #DCE6F5; background: rgba(15,23,42,0.7); padding: 4px 10px; border-radius: 999px; }
+  .info { padding: 16px 18px 14px; display: flex; flex-direction: column; gap: 8px; }
+  .info .label { align-self: flex-start; font-size: 10px; font-weight: 800; letter-spacing: .06em; text-transform: uppercase; color: var(--accent); background: color-mix(in srgb, var(--accent) 16%, transparent); padding: 3px 9px; border-radius: 999px; }
+  .info h3 { font-family: 'Manrope', sans-serif; font-weight: 800; font-size: 22px; margin: 0; line-height: 1.2; }
+  .info .chi { font-size: 13px; color: #9FB3CE; font-weight: 600; margin-top: -4px; }
+  .info .gancio { font-family: 'Manrope', sans-serif; font-weight: 700; font-size: 16px; color: #FFE58A; margin: 2px 0 0; }
+  .info ul { margin: 0; padding-left: 0; list-style: none; display: flex; flex-direction: column; gap: 6px; }
+  .info li { font-size: 14.5px; color: #DCE6F5; line-height: 1.45; padding-left: 24px; position: relative; }
+  .info li::before { content: "🎧"; position: absolute; left: 0; top: 0; font-size: 13px; }
+  .info .sapevi { font-size: 13.5px; color: #DCE6F5; background: rgba(255,255,255,0.05); border-left: 3px solid var(--accent); border-radius: 8px; padding: 8px 10px; line-height: 1.45; }
+  .info .sapevi b { color: var(--accent); }
+  .info .piede { margin-top: auto; display: flex; justify-content: space-between; align-items: flex-end; gap: 10px; flex-wrap: wrap; font-size: 11px; color: #7F93B2; }
+  .info .piede a { color: #7DD3FC; }
+  .chiudi { position: absolute; top: 8px; right: 8px; z-index: 3; width: 40px; height: 40px; border-radius: 50%; border: 1px solid rgba(255,255,255,0.25);
+    background: rgba(15,23,42,0.85); color: #fff; font-size: 18px; cursor: pointer; }
+  .frecce { display: flex; gap: 8px; }
+  .freccia { font: 700 13px 'Manrope', sans-serif; color: #EAF2FF; background: rgba(255,255,255,0.08); border: 1px solid rgba(255,255,255,0.18); border-radius: 999px; padding: 7px 14px; cursor: pointer; }
+  .freccia:hover { background: rgba(255,255,255,0.15); }
+
+  /* ---------- Sezione speciale (pulsante dorato) ---------- */
+  .scheda.speciale { background: linear-gradient(135deg, rgba(180,83,9,0.55), rgba(124,45,18,0.55)); border-color: #FBBF24; color: #FFE58A; }
+  .scheda.speciale:hover { background: linear-gradient(135deg, rgba(180,83,9,0.8), rgba(124,45,18,0.8)); }
+  .scheda.speciale.attiva { background: #FFE58A; color: #0f172a; border-color: #FFE58A; }
+  .fuga { --accent: #FBBF24; display: grid; grid-template-columns: 1.55fr 1fr; background: #131c33; border: 1px solid rgba(255,255,255,0.14);
+    border-top: 3px solid var(--accent); border-radius: 18px; overflow: hidden; }
+  .fuga[hidden], .grid[hidden] { display: none; }
+  @media (max-width: 860px) { .fuga { grid-template-columns: 1fr; } }
+  .o-video { display: flex; flex-direction: column; background: #000; }
+  .o-sotto { font-size: 11.5px; color: #9FB3CE; padding: 8px 12px; background: #0b1224; }
+  .o-sotto a { color: #7DD3FC; }
+  .o-info { padding: 14px 16px 14px; display: flex; flex-direction: column; gap: 6px; min-height: 0; }
+  .o-info .label { align-self: flex-start; font-size: 10px; font-weight: 800; letter-spacing: .06em; text-transform: uppercase; color: var(--accent); background: color-mix(in srgb, var(--accent) 16%, transparent); padding: 3px 9px; border-radius: 999px; }
+  .o-info h3 { font-family: 'Fredoka', 'Manrope', sans-serif; font-weight: 600; font-size: 28px; margin: 0; line-height: 1.1; }
+  .o-info .chi { font-size: 13px; color: #9FB3CE; font-weight: 600; }
+  .o-info .gancio { font-family: 'Manrope', sans-serif; font-weight: 700; font-size: 15px; color: #FFE58A; }
+  .o-tab { display: flex; gap: 6px; margin-top: 4px; flex-wrap: wrap; }
+  .o-t { font: 700 12.5px 'Manrope', sans-serif; color: #EAF2FF; cursor: pointer; padding: 6px 12px; border-radius: 999px; background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.16); }
+  .o-t:hover { background: rgba(255,255,255,0.12); }
+  .o-t.attiva { background: var(--accent); color: #0f172a; border-color: var(--accent); }
+  .o-corpo { flex: 1; min-height: 0; overflow: auto; padding-right: 4px; }
+  @media (min-width: 861px) { .o-info { contain: size; } }   /* la colonna dei testi si adatta all'altezza del video e scorre */
+  .o-corpo ul { margin: 4px 0 0; padding: 0; list-style: none; display: flex; flex-direction: column; gap: 7px; }
+  .o-corpo li { font-size: 14px; color: #DCE6F5; line-height: 1.45; padding-left: 24px; position: relative; }
+  .o-corpo li::before { content: attr(data-i); position: absolute; left: 0; top: 0; font-size: 13px; }
+  .o-corpo .atto { display: grid; grid-template-columns: 62px 1fr; gap: 8px; align-items: baseline; padding: 6px 8px; border-radius: 8px; background: rgba(255,255,255,0.04); font-size: 13.5px; color: #DCE6F5; line-height: 1.4; }
+  .o-corpo .atto b { font: 800 11px 'Manrope', sans-serif; color: var(--accent); text-transform: uppercase; letter-spacing: .05em; }
+  .o-corpo .atto + .atto { margin-top: 5px; }
+  .o-corpo .cur { font-size: 13.5px; color: #DCE6F5; background: rgba(255,255,255,0.05); border-left: 3px solid var(--accent); border-radius: 8px; padding: 7px 10px; line-height: 1.45; }
+  .o-corpo .cur + .cur { margin-top: 6px; }
+  .o-corpo .cur b { color: var(--accent); }
+  .o-corpo .cur img { float: right; height: 150px; margin: 0 0 4px 10px; border-radius: 6px; background: #fff; cursor: zoom-in; }
+  .o-corpo .cur::after { content: ""; display: block; clear: both; }
+
+  .crediti-img { margin-top: 18px; font-size: 11.5px; color: #7F93B2; }
+  .crediti-img summary { cursor: pointer; color: #9FB3CE; }
+  .crediti-img li { margin: 3px 0; } .crediti-img a { color: #7DD3FC; }
+  footer.piede { position: relative; z-index: 1; text-align: center; font-size: 13px; color: #9FB3CE; padding: 12px 12px 24px; }
+  @media (prefers-reduced-motion: reduce) { .card, .meta { transition: none; } }
+</style>
+</head>
+<body>
+<a class="casetta" href="storia.html" aria-label="Torna alla storia della musica" title="Torna alla storia della musica">←</a>
+<main>
+
+  <div class="banner" id="banner">
+    <div class="meta sx" data-mondo="sx" title="Jazz"><img src="media/storia/jazz-pop/banner-jazz.jpg" alt="La 52ª strada di New York nel 1948, con le insegne dei club jazz"></div>
+    <div class="meta dx" data-mondo="dx" title="Pop e rock"><img src="media/storia/jazz-pop/banner-pop.jpg" alt="Un grande concerto rock, con le luci e il pubblico"></div>
+    <div class="titolo-epoca">
+      <div class="sopra">Storia della musica</div>
+      <h1>Jazz e popular</h1>
+      <div class="date">dal 1900 a oggi</div>
+    </div>
+    <button class="etich-meta sx" data-mondo="sx">🎷 Jazz<span class="lungo"> · da New Orleans al be-bop</span></button>
+    <button class="etich-meta dx" data-mondo="dx">🎸 Pop e rock<span class="lungo"> · dai Beatles a oggi</span></button>
+  </div>
+
+  <p class="atmosfera">Nel Novecento la musica esce dalle sale da concerto ed entra dappertutto: nei locali, alla radio, nei dischi, in televisione, nelle cuffie. Tutto comincia nel Sud degli Stati Uniti, dai canti degli afroamericani: da lì nascono il jazz e, più tardi, il rock e il pop che ascolti ogni giorno.</p>
+
+  <nav class="schede" aria-label="Sezioni">
+    <button class="scheda attiva" data-scheda="ascolti">🎧 Ascolti <span class="n" id="nAscolti"></span></button>
+    <button class="scheda" data-scheda="strumenti">🥁 Strumenti <span class="n" id="nStrumenti"></span></button>
+    <button class="scheda speciale" data-scheda="blues">🎸 Il blues</button>
+    <button class="scheda" data-scheda="suonare">🎼 Da suonare <span class="n" id="nSuonare"></span></button>
+  </nav>
+
+  <div class="grid" id="griglia"></div>
+
+  <!-- ===== IL BLUES: sezione speciale (testi qui sotto, nell'oggetto SPECIALE dello script) ===== -->
+  <section class="fuga" id="blues" hidden aria-label="Il blues">
+    <div class="o-video">
+      <div class="schermo" id="oSchermo"></div>
+      <div class="o-sotto">B.B. King dal vivo · «Every Day I Have the Blues» · <a id="oLink" target="_blank" rel="noopener">Apri su YouTube ↗</a></div>
+    </div>
+    <div class="o-info">
+      <span class="label">Sud degli Stati Uniti · fine Ottocento</span>
+      <h3>Il blues</h3>
+      <div class="chi">B.B. King · «Every Day I Have the Blues»</div>
+      <div class="gancio">Dodici battute e tre accordi: da qui nascono il jazz e il rock.</div>
+      <div class="o-tab" role="tablist">
+        <button class="o-t attiva" data-o="cosa">❓ Cos'è il blues</button>
+        <button class="o-t" data-o="ascolto">👂 Come ascoltarlo</button>
+        <button class="o-t" data-o="curiosita">💡 Curiosità</button>
+      </div>
+      <div class="o-corpo" id="oCorpo"></div>
+    </div>
+  </section>
+
+  <details class="crediti-img">
+    <summary>Crediti delle immagini e dei video</summary>
+    <ul id="listaCrediti"></ul>
+    <p>I video sono incorporati da YouTube e restano dei rispettivi titolari: non fanno parte della licenza del sito.</p>
+  </details>
+</main>
+<footer class="piede">Cristiano Arata · musicascuole.it — <a href="crediti.html">Crediti e licenza</a> · <a href="privacy.html">Privacy</a></footer>
+
+<div class="velo" id="velo" role="dialog" aria-modal="true" aria-labelledby="fTitolo">
+  <div class="finestra" id="finestra">
+    <button class="chiudi" id="chiudi" aria-label="Chiudi">✕</button>
+    <div class="schermo" id="schermo"></div>
+    <div class="info">
+      <span class="label" id="fLabel"></span>
+      <h3 id="fTitolo"></h3>
+      <div class="chi" id="fChi"></div>
+      <div class="gancio" id="fGancio"></div>
+      <ul id="fPunti"></ul>
+      <div class="sapevi" id="fSapevi"></div>
+      <div class="piede">
+        <div class="frecce"><button class="freccia" id="prec">◀</button><button class="freccia" id="succ">▶</button></div>
+        <div id="fFonte"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+(function () {
+  "use strict";
+  const IMG = "media/storia/jazz-pop/";
+
+  /* =========================================================
+     CONTENUTI — per cambiare un video basta cambiare "yt"
+     mondo: "sx" = Jazz (metà sinistra del banner), "dx" = Pop e rock (metà destra)
+     ========================================================= */
+  const ASCOLTI = [
+    { id: "blues", mondo: "sx", label: "Jazz · blues", titolo: "St. Louis Blues", chi: "Bessie Smith · 1925", img: "blues.jpg", yt: "cwRbsULaQIo", canale: "Bessie Smith (canale ufficiale)",
+      gancio: "L'Imperatrice del blues.",
+      punti: ["Il <b>blues</b> nasce tra gli afroamericani del Sud degli Stati Uniti: canzoni di tristezza, fatica e speranza.",
+              "Una voce potente canta una frase, e la cornetta le risponde: è la <b>chiamata e risposta</b>.",
+              "Alla cornetta c'è un giovane Louis Armstrong. All'armonium Fred Longshaw."],
+      sapevi: "Bessie Smith fu una delle artiste afroamericane più pagate degli anni Venti. Il pulsante dorato «Il blues» ti spiega come è fatto un blues." },
+    { id: "ragtime", mondo: "sx", label: "Jazz · ragtime", titolo: "Maple Leaf Rag", chi: "Scott Joplin · 1899", img: "ragtime.jpg", yt: "pMAtL7n_-rc", canale: "TomJ (rullo di pianola suonato da Joplin)",
+      gancio: "Il pianoforte che zoppica… apposta.",
+      punti: ["«Ragtime» vuol dire più o meno «tempo stracciato».",
+              "La mano sinistra va regolare come una marcia; la destra mette gli accenti dove non te li aspetti: è la <b>sincope</b>.",
+              "Questa registrazione è un rullo di carta forata per pianola, inciso da Joplin in persona nel 1916."],
+      sapevi: "Lo spartito del Maple Leaf Rag vendette moltissime copie: la gente lo suonava a casa sul proprio pianoforte, perché i dischi erano ancora rari." },
+    { id: "armstrong", mondo: "sx", label: "Jazz · New Orleans", titolo: "When the Saints Go Marching In", chi: "Louis Armstrong · canto tradizionale", img: "armstrong.jpg", yt: "nxKHu79lfsU", canale: "Louis Armstrong (canale ufficiale)",
+      gancio: "Il jazz nasce per le strade di New Orleans.",
+      punti: ["A New Orleans le bande accompagnavano i funerali: lente all'andata, allegre e scatenate al ritorno.",
+              "Tromba, clarinetto e trombone improvvisano insieme, intrecciando le melodie.",
+              "Armstrong suona la tromba e canta con la sua voce roca, inconfondibile."],
+      sapevi: "Lo chiamavano «Satchmo». È stato uno dei primi grandi solisti del jazz: con lui l'assolo improvvisato diventa il momento più atteso." },
+    { id: "ellington", mondo: "sx", label: "Jazz · swing", titolo: "Take the «A» Train", chi: "Duke Ellington Orchestra · 1941", img: "ellington.jpg", yt: "r2G1fKYFgVU", canale: "Duke Ellington (canale ufficiale)",
+      gancio: "La musica da ballo delle grandi orchestre.",
+      punti: ["Lo <b>swing</b> è il jazz delle <b>big band</b>: sezioni di sassofoni, trombe e tromboni che si rispondono.",
+              "Il ritmo «ondeggia» ed è perfetto per ballare.",
+              "Il titolo parla della linea A della metropolitana di New York, quella che portava a Harlem."],
+      sapevi: "Il brano lo scrisse Billy Strayhorn, il pianista e compositore che lavorò accanto a Ellington per quasi trent'anni." },
+    { id: "ella", mondo: "sx", label: "Jazz · voce e scat", titolo: "Mr. Paganini", chi: "Ella Fitzgerald · in TV", img: "ella.jpg", yt: "cPeAtfDie_c", canale: "The Ed Sullivan Show (canale ufficiale)",
+      gancio: "Una voce che suona come una tromba.",
+      punti: ["Lo <b>scat</b> è un canto improvvisato con sillabe senza senso: «du-bi-du-ba»…",
+              "Ella imita gli strumenti e inventa melodie velocissime, tutte a orecchio.",
+              "Il titolo ricorda Paganini: lo hai incontrato nel Romanticismo, il violinista che faceva cose impossibili."],
+      sapevi: "A 17 anni Ella vinse un concorso per dilettanti all'Apollo Theater di Harlem. Divenne la «First Lady of Song», la prima signora della canzone." },
+    { id: "bebop", mondo: "sx", label: "Jazz · be-bop", titolo: "Hot House", chi: "Charlie Parker e Dizzy Gillespie · TV, 1952", img: "bebop.jpg", yt: "4PiKHAEcEvM", canale: "ebjazz93",
+      gancio: "Velocissimo, difficilissimo: jazz da ascoltare, non da ballare.",
+      punti: ["Il <b>be-bop</b> nasce negli anni Quaranta: piccoli gruppi, tempi velocissimi, armonie complicate.",
+              "Parker al sassofono contralto e Gillespie alla tromba suonano il tema insieme, poi improvvisano a turno.",
+              "È una delle pochissime riprese video in cui suonano insieme."],
+      sapevi: "Charlie Parker era chiamato «Bird», l'uccello: per le sue frasi agili come un volo. Gillespie, quando suonava, gonfiava le guance come due palloncini." },
+    { id: "miles", mondo: "sx", label: "Jazz · modale", titolo: "So What", chi: "Miles Davis · Kind of Blue, 1959", img: "miles.jpg", yt: "zqNTltOGh5c", canale: "Miles Davis (canale ufficiale)",
+      gancio: "Calmo, elegante: il jazz si raffredda.",
+      punti: ["Il contrabbasso propone una frase; i fiati rispondono con due accordi, come a dire «so what?» («e allora?»).",
+              "Gli accordi sono pochissimi: i solisti hanno tanto spazio per improvvisare.",
+              "Con Miles c'è John Coltrane al sassofono tenore."],
+      sapevi: "«Kind of Blue» è il disco di jazz più venduto di tutti i tempi. Questa è una ripresa della televisione americana del 1959." },
+    { id: "bossanova", mondo: "sx", label: "Jazz · bossa nova", titolo: "The Girl from Ipanema", chi: "Stan Getz, João e Astrud Gilberto · 1964", img: "bossanova.jpg", yt: "T-ojIx2fdcQ", canale: "Verve Records (canale ufficiale)",
+      gancio: "Il jazz va in Brasile, sulla spiaggia.",
+      punti: ["La <b>bossa nova</b> unisce il ritmo della samba brasiliana e le armonie del jazz.",
+              "Prima canta João Gilberto in portoghese, poi Astrud in inglese; poi il sassofono di Stan Getz.",
+              "La chitarra suona morbida, con un ritmo che dondola."],
+      sapevi: "Astrud Gilberto non era una cantante professionista: questa fu la sua prima incisione, e divenne famosa in tutto il mondo." },
+
+    { id: "beatles", mondo: "dx", label: "Pop · anni '60", titolo: "Hey Jude", chi: "The Beatles · 1968", img: "beatles.jpg", yt: "A_MjCqQoLLA", canale: "The Beatles (canale ufficiale)",
+      gancio: "Il gruppo che ha cambiato la musica pop.",
+      punti: ["Comincia con voce e pianoforte, poi entrano a poco a poco gli altri strumenti.",
+              "Nella lunga parte finale tutti cantano «na na na»: una canzone di oltre sette minuti, lunghissima per l'epoca.",
+              "I Beatles venivano da Liverpool e suonavano chitarre, basso e batteria: il modello di tante band."],
+      sapevi: "Paul McCartney scrisse «Hey Jude» per consolare Julian, il figlio di John Lennon, quando i suoi genitori si separarono. All'inizio era «Hey Jules»." },
+    { id: "aretha", mondo: "dx", label: "Pop · soul", titolo: "Respect", chi: "Aretha Franklin · 1967", img: "aretha.jpg", yt: "JzqGZjFnYnA", canale: "Aretha Franklin (canale ufficiale)",
+      gancio: "La Regina del soul chiede rispetto.",
+      punti: ["Il <b>soul</b> unisce il gospel delle chiese afroamericane e il rhythm and blues.",
+              "Ascolta il coro che risponde alla voce solista, come in chiesa.",
+              "A un certo punto Aretha scandisce la parola lettera per lettera: R-E-S-P-E-C-T."],
+      sapevi: "La canzone era di Otis Redding, ma la versione di Aretha divenne un inno per chi lottava per i diritti degli afroamericani e delle donne." },
+    { id: "battisti", mondo: "dx", label: "Pop · cantautori", titolo: "Il mio canto libero", chi: "Lucio Battisti e Mogol · 1972", img: "battisti.jpg", yt: "UtUHEsPfjjE", canale: "Lucio Battisti (canale ufficiale)",
+      gancio: "La canzone italiana d'autore.",
+      punti: ["Battisti scriveva la musica e cantava; Mogol scriveva le parole.",
+              "La canzone parte calma, con la chitarra, e cresce fino all'entrata degli archi.",
+              "I <b>cantautori</b> raccontano storie e sentimenti con testi curati, quasi poesie."],
+      sapevi: "Nella foto Battisti è con Mina, un'altra grande voce della musica italiana. Insieme a Battisti, negli anni '70 ci sono De André, Dalla, Guccini, De Gregori." },
+    { id: "queen", mondo: "dx", label: "Pop · rock", titolo: "Bohemian Rhapsody", chi: "Queen · 1975", img: "queen.jpg", yt: "fJ9rUzIMcZQ", canale: "Queen (canale ufficiale)",
+      gancio: "Una canzone rock… con dentro un'opera.",
+      punti: ["Sono sei minuti divisi in parti diversissime: una ballata, una sezione d'opera, un pezzo di hard rock e un finale calmo.",
+              "Nella parte d'opera le voci si rispondono come in un coro: «Galileo! Figaro!».",
+              "Il cantante Freddie Mercury aveva una voce dall'estensione eccezionale."],
+      sapevi: "Il suo video è considerato uno dei primi videoclip della storia. Figaro è un personaggio dell'opera: lo hai incontrato con Mozart e con Rossini." },
+    { id: "abba", mondo: "dx", label: "Pop · disco", titolo: "Dancing Queen", chi: "ABBA · 1976", img: "abba.jpg", yt: "xFrGuyw1V8s", canale: "ABBA (canale ufficiale)",
+      gancio: "La musica nata per la pista da ballo.",
+      punti: ["La <b>disco music</b> ha la cassa della batteria su ogni battito: «tum, tum, tum, tum».",
+              "Pianoforte, archi e voci in coro rendono il suono pieno e brillante.",
+              "Gli ABBA erano svedesi: due coppie che cantavano e suonavano insieme."],
+      sapevi: "Gli ABBA diventarono famosi vincendo l'Eurovision nel 1974 con «Waterloo». «Dancing Queen» fu il loro unico numero uno negli Stati Uniti." },
+    { id: "marley", mondo: "dx", label: "Pop · reggae", titolo: "Three Little Birds", chi: "Bob Marley & The Wailers · 1977", img: "marley.jpg", yt: "HNBCVM4KbUM", canale: "Bob Marley (canale ufficiale)",
+      gancio: "«Don't worry about a thing»: non preoccuparti di niente.",
+      punti: ["Il <b>reggae</b> nasce in Giamaica negli anni '60.",
+              "Ascolta la chitarra: suona solo in levare, tra un battito e l'altro.",
+              "Il basso è grave e rotondo, e guida tutta la canzone."],
+      sapevi: "Bob Marley ha fatto conoscere il reggae in tutto il mondo. Questo video ufficiale è un cartone animato." },
+    { id: "jackson", mondo: "dx", label: "Pop · anni '80", titolo: "Billie Jean", chi: "Michael Jackson · Thriller, 1982", img: "jackson.jpg", yt: "Zi_XLOBDo_Y", canale: "Michael Jackson (canale ufficiale)",
+      gancio: "Il Re del pop.",
+      punti: ["La canzone parte con la sola batteria, poi entra un giro di basso che non si dimentica.",
+              "Ritmo, basso e voce sono pensati per ballare: il pop diventa anche spettacolo di danza.",
+              "Nel video il marciapiede si illumina a ogni passo."],
+      sapevi: "«Thriller» è l'album più venduto della storia. Nel 1983, cantando «Billie Jean» in televisione, Jackson fece per la prima volta il famoso passo del moonwalk." },
+    { id: "rap", mondo: "dx", label: "Pop · hip hop", titolo: "It's Like That", chi: "Run-DMC · 1983", img: "rap.jpg", yt: "X0Dd4PvaGhU", canale: "Certified (Sony, canale ufficiale)",
+      gancio: "Parole a ritmo, su una base di batteria.",
+      punti: ["L'<b>hip hop</b> nasce nel Bronx, a New York, nelle feste di quartiere degli anni '70.",
+              "Il <b>rap</b> è un parlato ritmico: le rime cadono a tempo sulla base.",
+              "La base è fatta quasi solo di batteria elettronica: niente chitarre, niente melodia."],
+      sapevi: "Il testo parla di disoccupazione, guerra e povertà: il rap è nato anche per raccontare la vita difficile dei quartieri." },
+    { id: "daftpunk", mondo: "dx", label: "Pop · elettronica", titolo: "Around the World", chi: "Daft Punk · 1997", img: "elettronica.jpg", yt: "K0HSD_i2DvA", canale: "Daft Punk (canale ufficiale)",
+      gancio: "Due parole ripetute… e un video da guardare con attenzione.",
+      punti: ["La <b>musica elettronica</b> si fa con sintetizzatori, drum machine e computer.",
+              "Le parole «around the world» si ripetono per tutto il brano, trasformate da una macchina.",
+              "Nel video ogni gruppo di ballerini è uno strumento: i robot sono la voce, gli scheletri la chitarra, le nuotatrici le tastiere, le mummie la batteria. Riesci a seguirli?"],
+      sapevi: "I Daft Punk erano un duo francese. Nelle foto e sul palco apparivano quasi sempre con caschi da robot, per non farsi riconoscere." }
+  ];
+
+  const STRUMENTI = [
+    { id: "batteria", label: "Percussioni", titolo: "Batteria", chi: "Un'orchestra di percussioni per una persona", img: "batteria.jpg", yt: "ZXWVQE6ESwY", canale: "Drumeo",
+      gancio: "Mani e piedi, tutti insieme.",
+      punti: ["Nasce con il jazz: un solo musicista suona cassa (con il pedale), rullante, tom e piatti.",
+              "Ogni arto fa una cosa diversa: è come suonare quattro strumenti insieme.",
+              "Qui suona Antonio Sanchez, batterista jazz messicano."],
+      sapevi: "Prima della batteria, nelle bande di New Orleans servivano più percussionisti. Il pedale della cassa permise a uno solo di fare tutto." },
+    { id: "contrabbasso", label: "Archi", titolo: "Contrabbasso", chi: "Pizzicato, nel jazz", img: "contrabbasso.jpg", yt: "TNYN_IA8Y1g", canale: "WDR Rockpalast (canale ufficiale)",
+      gancio: "Nel jazz l'arco resta quasi sempre a riposo.",
+      punti: ["Nel jazz il contrabbasso si suona quasi sempre <b>pizzicando</b> le corde con le dita.",
+              "Il <b>walking bass</b> «cammina»: una nota per ogni battito, sempre in movimento.",
+              "Qui suona Avishai Cohen, contrabbassista israeliano, con il suo trio."],
+      sapevi: "È lo stesso strumento dell'orchestra classica: cambia solo il modo di suonarlo." },
+    { id: "tromba", label: "Ottoni", titolo: "Tromba con sordina", chi: "Il suono di Miles", img: "tromba.jpg", yt: "QV0jfcw0mvY", canale: "Herbie Hancock (canale ufficiale)",
+      gancio: "Un tappo nella campana cambia tutto.",
+      punti: ["La <b>sordina</b> si infila nella campana: il suono diventa più piccolo, ronzante, misterioso.",
+              "Nel jazz ce ne sono di tanti tipi; Miles Davis usava spesso la sordina «harmon», di metallo.",
+              "Qui ascolti il quintetto di Miles Davis in «'Round Midnight», nel 1967."],
+      sapevi: "Le sordine esistono anche nella musica classica, ma il jazz ne ha inventate di nuove, perfino con lo sturalavandini!" },
+    { id: "vibrafono", label: "Percussioni", titolo: "Vibrafono", chi: "Barre di metallo che vibrano", img: "vibrafono.jpg", yt: "0d-Ix0ZBQNo", canale: "Berklee College of Music (canale ufficiale)",
+      gancio: "Uno xilofono di metallo con un motore.",
+      punti: ["Ha barre di metallo; sotto ogni barra un tubo fa risuonare la nota.",
+              "Un piccolo motore fa girare dei dischi dentro i tubi: il suono «ondeggia», con il vibrato.",
+              "Gary Burton suona con quattro bacchette, due per mano, per fare accordi."],
+      sapevi: "Il vibrafono è stato inventato negli Stati Uniti negli anni '20 ed è diventato uno strumento tipico del jazz." },
+    { id: "chitarra", label: "Corde elettriche", titolo: "Chitarra elettrica", chi: "Il suono del rock", img: "chitarra-elettrica.jpg", yt: "sLo07Spf2t8", canale: "North Sea Jazz (canale ufficiale)",
+      gancio: "Corde di metallo, magneti e un amplificatore.",
+      punti: ["Sotto le corde ci sono i <b>pickup</b>, piccoli magneti che trasformano la vibrazione in segnale elettrico.",
+              "Senza amplificatore suona pianissimo; con l'amplificatore e gli effetti può fare di tutto.",
+              "Qui Jeff Beck suona con le dita, senza plettro, usando la leva per «piegare» le note."],
+      sapevi: "La chitarra della foto è una Fender Stratocaster, nata nel 1954: uno dei modelli più famosi della storia." },
+    { id: "basso", label: "Corde elettriche", titolo: "Basso elettrico", chi: "Il ritmo sotto la musica", img: "basso-elettrico.jpg", yt: "n-eH8tkIs9s", canale: "MusicRadar",
+      gancio: "Quattro corde grosse che fanno muovere tutti.",
+      punti: ["Ha quattro corde accordate come le quattro più gravi della chitarra, ma un'ottava sotto.",
+              "Insieme alla batteria forma la «sezione ritmica» di quasi ogni gruppo pop e rock.",
+              "Victor Wooten usa lo <b>slap</b>: colpisce le corde con il pollice e le tira con le dita."],
+      sapevi: "Il primo basso elettrico di successo fu il Fender Precision del 1951: lo stesso modello della foto." },
+    { id: "synth", label: "Elettronici", titolo: "Sintetizzatore", chi: "Suoni costruiti da zero", img: "sintetizzatore.jpg", yt: "SWGaYd_P_H0", canale: "Bonedo Synthesizers",
+      gancio: "Manopole che inventano suoni nuovi.",
+      punti: ["Il sintetizzatore crea il suono con circuiti elettrici, gli <b>oscillatori</b>.",
+              "Girando le manopole si cambiano timbro, attacco, durata: si possono inventare suoni mai sentiti.",
+              "Questo è il Minimoog, del 1970: piccolo e portatile, conquistò i musicisti pop e rock."],
+      sapevi: "Lo inventò l'ingegnere americano Robert Moog. Prima del Minimoog i sintetizzatori erano grandi come armadi." },
+    { id: "808", label: "Elettronici", titolo: "Drum machine", chi: "Roland TR-808", img: "drum-machine.jpg", yt: "YBnT9h8Zw2Y", canale: "Perfect Circuit",
+      gancio: "Una batteria dentro una scatola.",
+      punti: ["La <b>drum machine</b> suona da sola i ritmi di batteria che programmi con i pulsanti.",
+              "La 808 ha una cassa grave e lunga, un rullante secco e piatti metallici: suoni inconfondibili.",
+              "Ascolta come il ritmo si costruisce strato dopo strato."],
+      sapevi: "Uscì nel 1980 e all'inizio vendette poco. Poi la adottarono l'hip hop e la musica elettronica, e diventò leggendaria." }
+  ];
+
+  const SUONARE = [
+    { titolo: "When the Saints Go Marching In", chi: "canto tradizionale", img: "armstrong.jpg" },
+    { titolo: "Giro di blues in do", chi: "dodici battute", img: "blues.jpg" }
+  ];
+
+  /* ---------- Il blues (pulsante speciale) ---------- */
+  const SPECIALE = {
+    yt: "2Tt9JqXa7-Y", canale: "SoundStage (canale ufficiale)", img: "blues-banner.jpg", nome: "B.B. King, Every Day I Have the Blues",
+    cosa: [
+      ["🌾", "Il blues nasce alla fine dell'Ottocento tra gli afroamericani del Sud degli Stati Uniti, dai canti di lavoro e dagli spiritual."],
+      ["💙", "«To feel blue» in inglese vuol dire «sentirsi giù»: il blues canta la tristezza, ma anche la voglia di andare avanti."],
+      ["🔢", "Il giro classico dura <b>12 battute</b> e usa solo <b>tre accordi</b>: quelli sul I, sul IV e sul V grado (in do: do, fa, sol)."],
+      ["📝", "Il testo segue lo schema <b>A A B</b>: una frase, la stessa frase ripetuta, e una frase che risponde."],
+      ["🗣️", "Voce e chitarra si alternano: la voce chiama, la chitarra risponde. È la <b>chiamata e risposta</b>."],
+      ["🎵", "Le <b>blue notes</b> sono note un po' «calanti», a metà tra maggiore e minore: danno al blues il suo colore malinconico."]
+    ],
+    ascolto: [
+      ["Batt. 1–4", "Accordo del I grado: la prima frase del testo (A)."],
+      ["Batt. 5–8", "Accordo del IV grado, poi di nuovo il I: la stessa frase ripetuta (A)."],
+      ["Batt. 9–12", "Accordo del V, poi il IV e il I: la frase che risponde (B). Poi si ricomincia da capo."],
+      ["Chitarra", "Dopo ogni frase cantata, ascolta la chitarra di B.B. King che risponde con poche note."],
+      ["Sfida 1", "Conta le battute da 1 a 12: senti quando il giro ricomincia?"],
+      ["Sfida 2", "Batti le mani sul secondo e sul quarto battito, come si fa nel blues e nel jazz."]
+    ],
+    curiosita: [
+      "<b>Lucille.</b> B.B. King chiamava tutte le sue chitarre Lucille: si racconta che una volta rischiò la vita per salvarne una da un incendio scoppiato durante un concerto, causato da due uomini che litigavano per una donna di nome Lucille.",
+      "<b>Il papà di tutti.</b> Dal blues nascono il jazz, il rhythm and blues, il rock'n'roll e il rock. Anche i Beatles e i Rolling Stones hanno cominciato suonando blues.",
+      "<b>Come Paganini.</b> Si racconta che il bluesman Robert Johnson avesse venduto l'anima al diavolo a un incrocio per suonare così bene: la stessa leggenda che si raccontava di Paganini!",
+      "<b>Da suonare.</b> Con tre accordi e dodici battute un blues lo può suonare chiunque: trovi il giro di blues nella scheda «Da suonare»."
+    ]
+  };
+
+  /* crediti delle immagini (tutte ospitate nel sito) */
+  const CREDITI_IMG = [
+    "New York, la 52nd Street di notte con le insegne dei club jazz (Onyx, Jimmy Ryan's, Three Deuces, Club Carousel…), foto a colori di William P. Gottlieb, maggio 1948 (Library of Congress, Gottlieb Collection) – dettaglio — <a href=\"https://commons.wikimedia.org/wiki/File:52nd_Street,_New_York,_by_Gottlieb,_1948.jpg\" target=\"_blank\" rel=\"noopener\">fonte</a>, pubblico dominio.",
+    "Un grande concerto rock: i Guns N' Roses sul palco con luci e pubblico, 16 giugno 2017, foto di Raph_PH – dettaglio — <a href=\"https://commons.wikimedia.org/wiki/File:GunsNRoses160617-61_(35271773841).jpg\" target=\"_blank\" rel=\"noopener\">fonte</a>, <a href=\"https://creativecommons.org/licenses/by/2.0/deed.it\" target=\"_blank\" rel=\"noopener\">CC BY 2.0</a>.",
+    "Il chitarrista blues Lonnie Johnson (a sinistra) con il suo trio in un locale di Chicago, aprile 1941, foto di Russell Lee per la Farm Security Administration (Library of Congress) – dettaglio — <a href=\"https://commons.wikimedia.org/wiki/File:LonnieJohnsonTrioRussellLee1941.jpg\" target=\"_blank\" rel=\"noopener\">fonte</a>, pubblico dominio.",
+    "Bessie Smith, «l'imperatrice del blues», foto di Carl Van Vechten, 3 febbraio 1936 (Library of Congress; restauro di Adam Cuerden) – dettaglio — <a href=\"https://commons.wikimedia.org/wiki/File:Bessie_Smith_(1936)_by_Carl_Van_Vechten.jpg\" target=\"_blank\" rel=\"noopener\">fonte</a>, pubblico dominio.",
+    "Scott Joplin, il «re del ragtime», ritratto fotografico pubblicato su «American Musician», 1907 (fotografo sconosciuto) – dettaglio — <a href=\"https://commons.wikimedia.org/wiki/File:Scott_Joplin_portrait_photo_highres.jpg\" target=\"_blank\" rel=\"noopener\">fonte</a>, pubblico dominio.",
+    "Louis Armstrong suona la tromba all'Aquarium di New York, luglio 1946, foto di William P. Gottlieb (Library of Congress) – dettaglio — <a href=\"https://commons.wikimedia.org/wiki/File:Louis_Armstrong,_Aquarium,_New_York,_N.Y.,_ca._July_1946_(William_P._Gottlieb_00271).jpg\" target=\"_blank\" rel=\"noopener\">fonte</a>, pubblico dominio.",
+    "Duke Ellington al pianoforte all'Aquarium di New York, novembre 1946, foto di William P. Gottlieb (Library of Congress) – dettaglio — <a href=\"https://commons.wikimedia.org/wiki/File:(Portrait_of_Duke_Ellington,_Aquarium,_New_York,_N.Y.,_ca._Nov._1946)_(LOC)_(4931776281).jpg\" target=\"_blank\" rel=\"noopener\">fonte</a>, pubblico dominio.",
+    "Ella Fitzgerald, New York, novembre 1946, foto di William P. Gottlieb (Library of Congress) – dettaglio — <a href=\"https://commons.wikimedia.org/wiki/File:Ella_Fitzgerald_(Gottlieb_02871).jpg\" target=\"_blank\" rel=\"noopener\">fonte</a>, pubblico dominio.",
+    "Charlie Parker suona il sax contralto al Three Deuces di New York, agosto 1947, foto di William P. Gottlieb (Library of Congress) – dettaglio — <a href=\"https://commons.wikimedia.org/wiki/File:Portrait_of_Charlie_Parker_in_1947.jpg\" target=\"_blank\" rel=\"noopener\">fonte</a>, pubblico dominio.",
+    "Il giovane Miles Davis alla tromba accanto a Charlie Parker (sax, a sinistra) al Three Deuces di New York, agosto 1947, foto di William P. Gottlieb (Library of Congress) – dettaglio — <a href=\"https://commons.wikimedia.org/wiki/File:Charlie_Parker,_Tommy_Potter,_Miles_Davis,_Duke_Jordan,_Max_Roach_(Gottlieb_06851).jpg\" target=\"_blank\" rel=\"noopener\">fonte</a>, pubblico dominio.",
+    "Astrud Gilberto canta al Grand Gala du Disque, Concertgebouw di Amsterdam, 2 ottobre 1966, foto di Ron Kroon per Anefo (Nationaal Archief, Paesi Bassi) – dettaglio, foto di Ron Kroon / Anefo — <a href=\"https://commons.wikimedia.org/wiki/File:Optreden_van_de_Amerikaans-Braziliaans_zangeres_Astrud_Gilberto,_Bestanddeelnr_919-6267.jpg\" target=\"_blank\" rel=\"noopener\">fonte</a>, CC0 (pubblico dominio).",
+    "I Beatles salutano i fan all'arrivo all'aeroporto JFK di New York, 7 febbraio 1964, foto United Press International (Library of Congress) – dettaglio — <a href=\"https://commons.wikimedia.org/wiki/File:The_Beatles_arrive_at_JFK_Airport.jpg\" target=\"_blank\" rel=\"noopener\">fonte</a>, pubblico dominio.",
+    "Aretha Franklin canta «My Country, 'Tis of Thee» al Campidoglio di Washington, 20 gennaio 2009, foto di Cecilio Ricardo (U.S. Air Force) – dettaglio — <a href=\"https://commons.wikimedia.org/wiki/File:Aretha_Franklin_on_January_20,_2009_(cropped).jpg\" target=\"_blank\" rel=\"noopener\">fonte</a>, pubblico dominio.",
+    "Lucio Battisti (con Mina, a destra), marzo 1973, foto pubblicata su «Radiocorriere» (fotografo sconosciuto) – dettaglio — <a href=\"https://commons.wikimedia.org/wiki/File:Mina_and_Lucio_Battisti.jpg\" target=\"_blank\" rel=\"noopener\">fonte</a>, pubblico dominio.",
+    "Freddie Mercury dei Queen canta dal vivo a New Haven (USA), 16 novembre 1977, foto di Carl Lender – dettaglio — <a href=\"https://commons.wikimedia.org/wiki/File:Queen_-_Freddie_Mercury.jpg\" target=\"_blank\" rel=\"noopener\">fonte</a>, <a href=\"https://creativecommons.org/licenses/by/2.0/deed.it\" target=\"_blank\" rel=\"noopener\">CC BY 2.0</a>.",
+    "Gli ABBA (da sinistra Benny, Anni-Frid, Agnetha e Björn) all'aeroporto di Schiphol, Paesi Bassi, 19 novembre 1976, foto di Bert Verhoeff per Anefo (Nationaal Archief) – dettaglio, foto di Bert Verhoeff / Anefo — <a href=\"https://commons.wikimedia.org/wiki/File:Zweedse_popgroep_ABBA_in_Nederland_v.l.n.r._Benny,_Anni-Frid,_Agnetha_en_Bjorn_,_Bestanddeelnr_928-8962.jpg\" target=\"_blank\" rel=\"noopener\">fonte</a>, CC0 (pubblico dominio).",
+    "Bob Marley canta e suona la chitarra in concerto all'Hallenstadion di Zurigo, maggio 1980, foto di Patrick Lüthy (ETH-Bibliothek Zürich, archivio Comet Photo) – dettaglio — <a href=\"https://commons.wikimedia.org/wiki/File:Bob_Marley_%26_The_Wailing_Wailers_Z%C3%BCrich_Com_L29-0351-0006-0007.tif\" target=\"_blank\" rel=\"noopener\">fonte</a>, <a href=\"https://creativecommons.org/licenses/by-sa/4.0/deed.it\" target=\"_blank\" rel=\"noopener\">CC BY-SA 4.0</a>.",
+    "Michael Jackson riceve un riconoscimento dal presidente Ronald Reagan alla Casa Bianca, 14 maggio 1984, foto della Casa Bianca (Ronald Reagan Presidential Library) – dettaglio, foto di White House Photo Office — <a href=\"https://commons.wikimedia.org/wiki/File:Michael_Jackson_receives_the_Presidential_Public_Safety_Commendation_at_the_White_House_(C21788-18).tif\" target=\"_blank\" rel=\"noopener\">fonte</a>, pubblico dominio.",
+    "Run-DMC (Joseph «Run» Simmons e Darryl «D.M.C.» McDaniels) in concerto alla Long Beach Arena, 10 dicembre 1984, foto di Ian Dryden per il «Los Angeles Times» (UCLA Library) – dettaglio — <a href=\"https://commons.wikimedia.org/wiki/File:Run-DMC_performing_in_Long_Beach,_1984.jpg\" target=\"_blank\" rel=\"noopener\">fonte</a>, <a href=\"https://creativecommons.org/licenses/by/4.0/deed.it\" target=\"_blank\" rel=\"noopener\">CC BY 4.0</a>.",
+    "I Daft Punk in concerto dentro la loro piramide luminosa, festival Summercase, Barcellona, 15 luglio 2006, foto di Papouten – dettaglio — <a href=\"https://commons.wikimedia.org/wiki/File:Daft_punk_summercase_2006.jpg\" target=\"_blank\" rel=\"noopener\">fonte</a>, <a href=\"https://creativecommons.org/licenses/by-sa/4.0/deed.it\" target=\"_blank\" rel=\"noopener\">CC BY-SA 4.0</a>.",
+    "Batteria completa Gretsch Catalina (cassa, rullante, tom, timpano e piatti), foto di claudioverfuerth, 2022 – dettaglio — <a href=\"https://commons.wikimedia.org/wiki/File:Gretsch_Catalina_Special_Edition_2020.jpg\" target=\"_blank\" rel=\"noopener\">fonte</a>, <a href=\"https://creativecommons.org/licenses/by-sa/4.0/deed.it\" target=\"_blank\" rel=\"noopener\">CC BY-SA 4.0</a>.",
+    "Contrabbasso visto di fronte e di lato, foto di Andrew Kepert, 2003 (sfondo bianco esteso) — <a href=\"https://commons.wikimedia.org/wiki/File:AGK_bass1_full.jpg\" target=\"_blank\" rel=\"noopener\">fonte</a>, <a href=\"https://creativecommons.org/licenses/by-sa/3.0/deed.it\" target=\"_blank\" rel=\"noopener\">CC BY-SA 3.0</a>.",
+    "Tromba con la sordina inserita nella campana, foto di Žiga, 2005 (sfondo esteso) — <a href=\"https://commons.wikimedia.org/wiki/File:Trobenta_z_dusilcem.jpg\" target=\"_blank\" rel=\"noopener\">fonte</a>, CC0 (pubblico dominio).",
+    "Vibrafono Musser M-55 visto dall'alto, con varie bacchette, foto di «Why? I Ask», 2022 — <a href=\"https://commons.wikimedia.org/wiki/File:Vibraphone_overhead_with_mallets.jpg\" target=\"_blank\" rel=\"noopener\">fonte</a>, <a href=\"https://creativecommons.org/licenses/by-sa/4.0/deed.it\" target=\"_blank\" rel=\"noopener\">CC BY-SA 4.0</a>.",
+    "Chitarra elettrica Fender Stratocaster del 1958 (finitura sunburst), foto di Lightburst, 2018 (sfondo esteso) — <a href=\"https://commons.wikimedia.org/wiki/File:1958_Fender_Stratocaster.jpg\" target=\"_blank\" rel=\"noopener\">fonte</a>, <a href=\"https://creativecommons.org/licenses/by-sa/4.0/deed.it\" target=\"_blank\" rel=\"noopener\">CC BY-SA 4.0</a>.",
+    "Basso elettrico Fender Precision Bass (modello Road Worn '50s), foto di muzyczny.pl, 2011 (sfondo bianco esteso) — <a href=\"https://commons.wikimedia.org/wiki/File:Gitara_basowa_Road_Worn_50%27s_P-Bass_firmy_Fender.jpg\" target=\"_blank\" rel=\"noopener\">fonte</a>, <a href=\"https://creativecommons.org/licenses/by-sa/4.0/deed.it\" target=\"_blank\" rel=\"noopener\">CC BY-SA 4.0</a>.",
+    "Sintetizzatore analogico Minimoog Model D (anni '70), foto di Ville Hyvönen, 2017 (sfondo esteso) — <a href=\"https://commons.wikimedia.org/wiki/File:Minimoog_Ville_Hyv%C3%B6nen_2017.jpg\" target=\"_blank\" rel=\"noopener\">fonte</a>, <a href=\"https://creativecommons.org/licenses/by-sa/2.0/deed.it\" target=\"_blank\" rel=\"noopener\">CC BY-SA 2.0</a>.",
+    "Drum machine Roland TR-808 Rhythm Composer (1980), foto di Brandon Daniel, scontornata da Clusternote — <a href=\"https://commons.wikimedia.org/wiki/File:Roland_TR-808_(large).jpg\" target=\"_blank\" rel=\"noopener\">fonte</a>, <a href=\"https://creativecommons.org/licenses/by-sa/2.0/deed.it\" target=\"_blank\" rel=\"noopener\">CC BY-SA 2.0</a>."
+  ];
+
+  /* ---------- costruzione della griglia ---------- */
+  const griglia = document.getElementById("griglia");
+  document.getElementById("nAscolti").textContent = ASCOLTI.length;
+  document.getElementById("nStrumenti").textContent = STRUMENTI.length;
+  document.getElementById("nSuonare").textContent = SUONARE.length;
+
+  let scheda = "ascolti", mondo = null, elenco = [];
+  function disegna() {
+    griglia.innerHTML = "";
+    const conSpeciale = scheda === "blues";
+    document.getElementById("blues").hidden = !conSpeciale;
+    griglia.hidden = conSpeciale;
+    if (conSpeciale) { preparaSpeciale(); return; }
+    oSchermo.innerHTML = "";   // si esce dalla sezione speciale: il video si ferma
+    if (scheda === "suonare") {
+      SUONARE.forEach(s => {
+        const c = document.createElement("div"); c.className = "card suona empty";
+        c.innerHTML = `<div class="foto" style="background-image:url('${IMG + s.img}')"></div>
+          <div class="testo"><span class="label">Da suonare</span><h2>${s.titolo}</h2><span class="chi">${s.chi}</span></div>`;
+        griglia.appendChild(c);
+      });
+      return;
+    }
+    const dati = scheda === "ascolti" ? ASCOLTI : STRUMENTI;
+    elenco = dati.filter(d => !mondo || !d.mondo || d.mondo === mondo);
+    elenco.forEach((d, i) => {
+      const c = document.createElement("button"); c.type = "button";
+      c.className = "card " + (scheda === "ascolti" ? d.mondo : "strum");
+      c.innerHTML = `<div class="foto" style="background-image:url('${IMG + d.img}')"></div>
+        <div class="testo"><span class="label">${d.label}</span><h2>${d.titolo}</h2><span class="chi">${d.chi}</span><p>${d.gancio}</p></div>`;
+      c.addEventListener("click", () => apri(i));
+      griglia.appendChild(c);
+    });
+  }
+
+  document.querySelectorAll(".scheda").forEach(b => b.addEventListener("click", () => {
+    scheda = b.dataset.scheda;
+    document.querySelectorAll(".scheda").forEach(x => x.classList.toggle("attiva", x === b));
+    disegna();
+  }));
+
+  /* ---------- banner: musica vocale / musica strumentale ---------- */
+  const banner = document.getElementById("banner");
+  function impostaMondo(m, senzaDisegno) {
+    mondo = m;
+    banner.classList.toggle("f-sx", m === "sx");
+    banner.classList.toggle("f-dx", m === "dx");
+    document.querySelectorAll(".etich-meta").forEach(e => e.classList.toggle("attiva", e.dataset.mondo === m));
+    if (!senzaDisegno) {
+      if (scheda !== "ascolti") { scheda = "ascolti"; document.querySelectorAll(".scheda").forEach(x => x.classList.toggle("attiva", x.dataset.scheda === "ascolti")); }
+      disegna();
+    }
+  }
+  banner.querySelectorAll("[data-mondo]").forEach(el => el.addEventListener("click", () => impostaMondo(mondo === el.dataset.mondo ? null : el.dataset.mondo)));
+
+  /* ---------- finestra con il video ---------- */
+  const velo = document.getElementById("velo"), schermo = document.getElementById("schermo"), finestra = document.getElementById("finestra");
+  let attuale = 0;
+  function apri(i) {
+    attuale = (i + elenco.length) % elenco.length;
+    const d = elenco[attuale];
+    finestra.style.setProperty("--accent", scheda === "ascolti" ? (d.mondo === "dx" ? "#a78bfa" : "#F99D1C") : "#5EC8D8");
+    document.getElementById("fLabel").textContent = d.label;
+    document.getElementById("fTitolo").textContent = d.titolo;
+    document.getElementById("fChi").textContent = d.chi;
+    document.getElementById("fGancio").textContent = d.gancio;
+    document.getElementById("fPunti").innerHTML = d.punti.map(p => `<li>${p}</li>`).join("");
+    document.getElementById("fSapevi").innerHTML = `<b>Lo sapevi?</b> ${d.sapevi}`;
+    document.getElementById("fFonte").innerHTML = `<a href="https://www.youtube.com/watch?v=${d.yt}" target="_blank" rel="noopener">Apri su YouTube ↗</a>`;
+    // anteprima: nessuna richiesta a YouTube finché non si preme play
+    schermo.innerHTML = "";
+    schermo.style.backgroundImage = `url('${IMG + d.img}')`;
+    const b = document.createElement("button"); b.className = "avvio"; b.type = "button";
+    b.innerHTML = `<span class="tondo">▶</span><span class="nota">Il video si carica da YouTube quando premi play</span>`;
+    b.addEventListener("click", () => {
+      schermo.innerHTML = `<iframe src="https://www.youtube-nocookie.com/embed/${d.yt}?autoplay=1&rel=0&playsinline=1" title="${d.titolo}"
+        allow="autoplay; encrypted-media; picture-in-picture; fullscreen" allowfullscreen referrerpolicy="strict-origin-when-cross-origin"></iframe>`;
+    });
+    schermo.appendChild(b);
+    velo.classList.add("aperto");
+    document.body.style.overflow = "hidden";
+    b.focus({ preventScroll: true });
+  }
+  function chiudi() { velo.classList.remove("aperto"); schermo.innerHTML = ""; document.body.style.overflow = ""; }
+  document.getElementById("chiudi").addEventListener("click", chiudi);
+  velo.addEventListener("click", e => { if (e.target === velo) chiudi(); });
+  document.getElementById("prec").addEventListener("click", () => apri(attuale - 1));
+  document.getElementById("succ").addEventListener("click", () => apri(attuale + 1));
+  document.addEventListener("keydown", e => {
+    if (!velo.classList.contains("aperto")) return;
+    if (e.key === "Escape") chiudi();
+    if (e.key === "ArrowRight") apri(attuale + 1);
+    if (e.key === "ArrowLeft") apri(attuale - 1);
+  });
+
+  /* ---------- La forma sonata ---------- */
+  const oSchermo = document.getElementById("oSchermo"), oCorpo = document.getElementById("oCorpo");
+  document.getElementById("oLink").href = "https://www.youtube.com/watch?v=" + SPECIALE.yt;
+  function preparaSpeciale() {
+    oSchermo.innerHTML = "";
+    oSchermo.style.backgroundImage = `url('${IMG + SPECIALE.img}')`;
+    const b = document.createElement("button"); b.className = "avvio"; b.type = "button";
+    b.innerHTML = `<span class="tondo">▶</span><span class="nota">Il video si carica da YouTube quando premi play</span>`;
+    b.addEventListener("click", () => {
+      oSchermo.innerHTML = `<iframe src="https://www.youtube-nocookie.com/embed/${SPECIALE.yt}?autoplay=1&rel=0&playsinline=1" title="${SPECIALE.nome}"
+        allow="autoplay; encrypted-media; picture-in-picture; fullscreen" allowfullscreen referrerpolicy="strict-origin-when-cross-origin"></iframe>`;
+    });
+    oSchermo.appendChild(b);
+  }
+  function mostraSpeciale(parte) {
+    document.querySelectorAll(".o-t").forEach(t => t.classList.toggle("attiva", t.dataset.o === parte));
+    if (parte === "cosa") oCorpo.innerHTML = "<ul>" + SPECIALE.cosa.map(([i, t]) => `<li data-i="${i}">${t}</li>`).join("") + "</ul>";
+    if (parte === "ascolto") oCorpo.innerHTML = SPECIALE.ascolto.map(([a, t]) => `<div class="atto"><b>${a}</b><span>${t}</span></div>`).join("");
+    if (parte === "curiosita") oCorpo.innerHTML = SPECIALE.curiosita.map(t => `<div class="cur">${t}</div>`).join("");
+    oCorpo.scrollTop = 0;
+  }
+  document.querySelectorAll(".o-t").forEach(t => t.addEventListener("click", () => mostraSpeciale(t.dataset.o)));
+  mostraSpeciale("cosa");
+
+  /* ---------- crediti ---------- */
+  document.getElementById("listaCrediti").innerHTML = CREDITI_IMG.map(c => `<li>${c}</li>`).join("") +
+    [...ASCOLTI, ...STRUMENTI].map(d => `<li>${d.titolo} (${d.chi}): video di <a href="https://www.youtube.com/watch?v=${d.yt}" target="_blank" rel="noopener">${d.canale}</a> su YouTube</li>`).join("") +
+    `<li>Il blues: B.B. King, «Every Day I Have the Blues», video di <a href="https://www.youtube.com/watch?v=${SPECIALE.yt}" target="_blank" rel="noopener">${SPECIALE.canale}</a> su YouTube</li>`;
+
+  disegna();
+})();
+</script>
+</body>
+</html>
