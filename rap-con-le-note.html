@@ -615,6 +615,7 @@ h1 {
 .type-card h2 { text-align: center; font-size: 1.3rem; }
 .type-card .type-sub { text-align: center; margin: 0 0 6px; font-size: 0.86rem; }
 .type-group-title { font-size: 0.66rem; font-weight: 700; letter-spacing: 0.5px; text-transform: uppercase; color: #a5b4fc; margin: 16px 0 8px; }
+.type-group-note { text-transform: none; letter-spacing: 0; font-weight: 500; color: #94a3b8; margin-left: 6px; }
 .type-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; }
 .type-grid.two { grid-template-columns: repeat(2, 1fr); }
 .type-choice {
@@ -783,6 +784,11 @@ h1 {
         <label><input type="radio" name="staffnames" value="0"> senza il nome delle note</label>
     </div>
 
+    <label class="opt-row">
+        <input type="checkbox" id="notesToggle">
+        <span>🎹 Suona le note<br><span style="font-weight:500;font-size:0.76rem;color:#94a3b8">pianoforte e batteria al posto della base</span></span>
+    </label>
+
     <button class="type-pick" id="typePick" aria-haspopup="dialog">
         <span class="type-pick-icon">🎵</span>
         <span class="type-pick-text">
@@ -913,7 +919,7 @@ h1 {
         <div class="type-group-title">Scale</div>
         <button class="type-choice" data-type="scale">Scale <small>do re mi fa sol la si do</small></button>
 
-        <div class="type-group-title">Intervalli a coppie, come nel Bona</div>
+        <div class="type-group-title">Intervalli a coppie, dal metodo Bona</div>
         <div class="type-grid">
             <button class="type-choice" data-type="terze">Terze <small>do mi · re fa</small></button>
             <button class="type-choice" data-type="quarte">Quarte <small>do fa · re sol</small></button>
@@ -926,10 +932,16 @@ h1 {
         <div class="type-group-title">Arpeggi</div>
         <button class="type-choice" data-type="arpeggi">Arpeggi <small>do mi sol do · re fa la re</small></button>
 
-        <div class="type-group-title">Progressioni</div>
+        <div class="type-group-title">Progressioni Hanon <span class="type-group-note">dalla più facile</span></div>
         <div class="type-grid two">
-            <button class="type-choice" data-type="prog4">do mi re do <small>poi re fa mi re…</small></button>
-            <button class="type-choice" data-type="hanon">Hanon n. 1 <small>do mi fa sol la sol fa mi</small></button>
+            <button class="type-choice" data-type="hanon15">Hanon n. 15 <small>do mi re fa mi sol fa la</small></button>
+            <button class="type-choice" data-type="hanon7">Hanon n. 7 <small>do mi re fa mi sol fa mi</small></button>
+            <button class="type-choice" data-type="hanon14">Hanon n. 14 <small>do re fa mi fa mi sol fa</small></button>
+            <button class="type-choice" data-type="hanon1">Hanon n. 1 <small>do mi fa sol la sol fa mi</small></button>
+            <button class="type-choice" data-type="hanon2">Hanon n. 2 <small>do mi la sol fa sol fa mi</small></button>
+            <button class="type-choice" data-type="hanon6">Hanon n. 6 <small>do la sol la fa la mi la</small></button>
+            <button class="type-choice" data-type="hanon5">Hanon n. 5 <small>do la sol la fa sol mi fa</small></button>
+            <button class="type-choice" data-type="hanon9">Hanon n. 9 <small>do mi fa mi sol fa la sol</small></button>
         </div>
 
         <div class="overlay-buttons" style="margin-top:20px"><button class="btn" id="typeClose">Chiudi</button></div>
@@ -1010,13 +1022,25 @@ const TYPES = [
     { id: "settime", kind: "cells",    name: "Settime", short: "Settime", shape: [0, 6], cell: 2 },
     { id: "ottave",  kind: "cells",    name: "Ottave",  short: "Ottave",  shape: [0, 7], cell: 2 },
     { id: "arpeggi", kind: "arpeggio", name: "Arpeggi", short: "Arpeggi", cell: 4 },
-    /* progressioni: un disegno ripetuto partendo da ogni nota.
-       In discesa il disegno si capovolge, come nell'Hanon. */
-    { id: "prog4",   kind: "cells",    name: "Progressione «do mi re do»", short: "Progressione",
-      shape: [0, 2, 1, 0], cell: 4 },
-    { id: "hanon",   kind: "cells",    name: "Hanon n. 1", short: "Hanon n. 1",
-      shape: [0, 2, 3, 4, 5, 4, 3, 2], cell: 8 }
+    /* Progressioni Hanon (Il pianista virtuoso, prima parte): un disegno di
+       otto note ripetuto partendo da ogni nota. Le due forme sono quelle
+       scritte da Hanon, prese dal testo dell'edizione Mutopia: la salita
+       e la discesa, che non sempre è la salita capovolta. Le suonano le
+       due mani insieme, a un'ottava di distanza. In ordine di difficoltà. */
+    hanon(15, [0, 2, 1, 3, 2, 4, 3, 5], [0, -2, -1, -3, -2, -4, -3, -5]),
+    hanon(7,  [0, 2, 1, 3, 2, 4, 3, 2], [0, -2, -1, -3, -2, -4, -3, -2]),
+    hanon(14, [0, 1, 3, 2, 3, 2, 4, 3], [0, -1, -3, -2, -3, -2, -4, -3]),
+    hanon(1,  [0, 2, 3, 4, 5, 4, 3, 2], [0, -2, -3, -4, -5, -4, -3, -2]),
+    hanon(2,  [0, 2, 5, 4, 3, 4, 3, 2], [0, -3, -5, -4, -3, -4, -3, -2]),
+    hanon(6,  [0, 5, 4, 5, 3, 5, 2, 5], [0, -5, -4, -5, -3, -5, -2, -5]),
+    hanon(5,  [0, 5, 4, 5, 3, 4, 2, 3], [0, 1, 0, 2, 1, 3, 2, 4]),
+    hanon(9,  [0, 2, 3, 2, 4, 3, 5, 4], [0, -2, -3, -2, -4, -3, -5, -4])
 ];
+
+function hanon(n, up, down) {
+    return { id: "hanon" + n, kind: "cells", name: "Hanon n. " + n, short: "Hanon n. " + n,
+             shape: up, down: down, cell: 8, hands: 2 };
+}
 
 /* da a fino a b compreso, in su o in giù */
 function range(a, b) {
@@ -1050,16 +1074,23 @@ function buildExercise(type, dir) {
         });
     } else {
         const up = type.shape;
-        const down = up.map(o => -o);
-        const top = Math.max(...up);
+        // la discesa: quella scritta da Hanon, oppure il disegno capovolto
+        const down = type.down || up.map(o => -o);
+        const lo = Math.min(...down), hi = Math.max(...down);
+        const fits = x0 => x0 + hi <= 14 && x0 - 7 + lo >= 0;
         const cell = (x, shape) => shape.map(o => x + o);
         if (dir === 0) range(0, 7).forEach(x => steps.push(...cell(x, up)));
-        if (dir === 1) range(14, 7).forEach(x => steps.push(...cell(x, down)));
+        if (dir === 1) {
+            // si scende dal Do acuto; se il disegno non ci sta, dal Do sopra
+            const x0 = fits(14) ? 14 : 7;
+            range(x0, x0 - 7).forEach(x => steps.push(...cell(x, down)));
+        }
         if (dir === 2) {
             // si sale dal Do centrale fino al Do sopra, poi si torna giù
-            // con il disegno capovolto fino a ritrovare il Do centrale
+            // fino a ritrovare il Do centrale nell'ultimo disegno
             range(0, 7).forEach(x => steps.push(...cell(x, up)));
-            range(7 + top, top).forEach(x => steps.push(...cell(x, down)));
+            const x1 = 7 - lo;
+            range(x1, x1 - 7).forEach(x => steps.push(...cell(x, down)));
         }
     }
     const rows = [];
@@ -1095,8 +1126,8 @@ function levelInfo(type, dir) {
         "Si sale a coppie fino al Do sopra, poi si torna giù"][dir];
     return [
         "Lo stesso disegno, partendo ogni volta dalla nota dopo",
-        "Il disegno capovolto, partendo ogni volta dalla nota sotto",
-        "Prima si sale, poi si scende con il disegno capovolto"][dir];
+        "Il disegno della discesa, partendo ogni volta dalla nota sotto",
+        "Prima si sale, poi si scende, come nel metodo"][dir];
 }
 
 /* esempio per il pulsante del livello: le prime otto note, a gruppi */
@@ -1236,6 +1267,216 @@ function click(t, strong) {
     osc.connect(gain); gain.connect(runGain);
     osc.start(t); osc.stop(t + 0.09);
     return osc;
+}
+
+/* =========================================================
+   SUONA LE NOTE
+
+   Al posto della base registrata suonano una batteria, costruita
+   qui dentro, e il pianoforte, che fa sentire ogni nota nel momento
+   in cui la carta si accende. Nelle progressioni Hanon il pianoforte
+   suona a due mani, a un'ottava di distanza, come nel metodo.
+
+   Tutto si programma in anticipo sull'orologio dell'audio, poco più
+   di un secondo alla volta, approfittando dei risvegli che il gioco
+   fa già per le carte: nessun ciclo in più.
+========================================================= */
+
+let playNotes = false;
+
+/* pianoforte: Salamander Grand Piano (Alexander Holm, CC BY 3.0),
+   gli stessi campioni dei dettati, scaricati solo se servono */
+const PIANO_SAMPLES = [["A2", 45], ["C3", 48], ["Ds3", 51], ["Fs3", 54], ["A3", 57], ["C4", 60], ["Ds4", 63],
+    ["Fs4", 66], ["A4", 69], ["C5", 72], ["Ds5", 75], ["Fs5", 78], ["A5", 81], ["C6", 84]]
+    .map(([nome, midi]) => ({ midi, url: "media/suoni/pianoforte/" + nome + ".mp3" }));
+const NAT_SEMI = [0, 2, 4, 5, 7, 9, 11];
+const PIANO_GAIN = 1.1;
+const DRUM_GAIN = 0.32;
+const LOOKAHEAD = 1.2;          // secondi di musica programmati in anticipo
+
+let pianoBuffers = null;
+let pianoLoading = null;
+let drumKit = null;
+
+function loadPiano() {
+    if (pianoBuffers) return Promise.resolve(pianoBuffers);
+    if (pianoLoading) return pianoLoading;
+    const ctx = getAudioContext();
+    pianoLoading = Promise.all(PIANO_SAMPLES.map(smp =>
+        fetch(smp.url)
+            .then(r => { if (!r.ok) throw new Error(smp.url); return r.arrayBuffer(); })
+            .then(b => new Promise((ok, ko) => ctx.decodeAudioData(b, ok, ko)))
+            .then(buf => ({ midi: smp.midi, buf }))
+    )).then(list => {
+        pianoBuffers = list;
+        buildDrums();
+        return list;
+    }).catch(err => { pianoLoading = null; throw err; });
+    return pianoLoading;
+}
+
+/* La batteria si costruisce una volta sola, in pochi millisecondi:
+   cassa, rullante, battimani, charleston chiuso e aperto. */
+function buildDrums() {
+    if (drumKit) return;
+    const ctx = audioContext;
+    const sr = ctx.sampleRate;
+    let seed = 12345;
+    const rnd = () => (seed = (seed * 16807) % 2147483647) / 1073741823.5 - 1;
+    function make(dur, fill) {
+        const n = Math.floor(dur * sr);
+        const b = ctx.createBuffer(1, n, sr);
+        fill(b.getChannelData(0), n);
+        return b;
+    }
+    // rumore "acuto": la differenza tra un campione e il precedente toglie i bassi
+    function brightNoise(n, passes) {
+        const out = new Float32Array(n);
+        for (let i = 0; i < n; i++) out[i] = rnd();
+        for (let k = 0; k < passes; k++) {
+            let prev = 0;
+            for (let i = 0; i < n; i++) { const v = out[i]; out[i] = v - prev; prev = v; }
+        }
+        return out;
+    }
+    const kick = make(0.5, (d, n) => {
+        let ph = 0;
+        for (let i = 0; i < n; i++) {
+            const t = i / sr;
+            ph += 2 * Math.PI * (46 + 105 * Math.exp(-t * 32)) / sr;
+            let v = Math.sin(ph) * Math.exp(-t * 6);
+            if (t < 0.003) v += rnd() * 0.35 * (1 - t / 0.003);
+            d[i] = Math.tanh(v * 1.9) * 0.95;
+        }
+    });
+    const snare = make(0.32, (d, n) => {
+        const nz = brightNoise(n, 1);
+        for (let i = 0; i < n; i++) {
+            const t = i / sr;
+            d[i] = nz[i] * 0.42 * Math.exp(-t * 15) + Math.sin(2 * Math.PI * 188 * t) * 0.55 * Math.exp(-t * 30);
+        }
+    });
+    const clap = make(0.3, (d, n) => {
+        const nz = brightNoise(n, 1);
+        const hits = [0, 0.011, 0.022, 0.034];
+        for (let i = 0; i < n; i++) {
+            const t = i / sr;
+            let e = 0;
+            hits.forEach((h, k) => { if (t >= h) e += Math.exp(-(t - h) * (k === 3 ? 18 : 140)) * (k === 3 ? 1 : 0.7); });
+            d[i] = nz[i] * 0.3 * e;
+        }
+    });
+    const hat = make(0.07, (d, n) => {
+        const nz = brightNoise(n, 2);
+        for (let i = 0; i < n; i++) d[i] = nz[i] * 0.16 * Math.exp(-(i / sr) * 60);
+    });
+    const open = make(0.32, (d, n) => {
+        const nz = brightNoise(n, 2);
+        for (let i = 0; i < n; i++) d[i] = nz[i] * 0.13 * Math.exp(-(i / sr) * 9);
+    });
+    drumKit = { kick, snare, clap, hat, open };
+}
+
+/* Il ritmo: sedici sedicesimi per battuta, cassa e rullante come nel
+   rap classico. Ogni quattro battute un piccolo stacco porta alla frase
+   dopo, senza mai coprire le note. Il numero è l'intensità del colpo. */
+const GROOVE = {
+    kick:  [1, 0, 0, 0,  0, 0, 0, .7,  0, 0, .9, 0,  0, 0, 0, 0],
+    snare: [0, 0, 0, 0,  1, 0, 0, 0,   0, 0, 0, 0,   1, 0, 0, 0],
+    clap:  [0, 0, 0, 0,  .8, 0, 0, 0,  0, 0, 0, 0,   .8, 0, 0, 0],
+    hat:   [1, 0, .7, .4, 1, 0, .7, 0,  1, 0, .7, .4, 1, 0, 0, 0],
+    open:  [0, 0, 0, 0,  0, 0, 0, 0,   0, 0, 0, 0,   0, 0, .8, 0]
+};
+const FILL = {           // la quarta battuta di ogni frase finisce così
+    kick:  [1, 0, 0, 0,  0, 0, 0, .7,  0, 0, .9, 0,  0, .8, 0, 0],
+    snare: [0, 0, 0, 0,  1, 0, 0, 0,   0, 0, 0, 0,   1, 0, .45, .7],
+    clap:  [0, 0, 0, 0,  .8, 0, 0, 0,  0, 0, 0, 0,   .8, 0, 0, 0],
+    hat:   [1, 0, .7, .4, 1, 0, .7, 0,  1, 0, .7, .4, 1, 0, 0, 0],
+    open:  [0, 0, 0, 0,  0, 0, 0, 0,   0, 0, 0, 0,   0, 0, 0, 0]
+};
+
+let drumStep = 0;       // prossimo sedicesimo della batteria
+let audioIdx = 0;       // prossimo evento della tabella da far suonare
+let playing = [];       // note programmate, per poterle fermare
+
+function playBuffer(buf, when, gain, rateMul, stopAt) {
+    const ctx = audioContext;
+    const src = ctx.createBufferSource();
+    src.buffer = buf;
+    if (rateMul !== 1) src.playbackRate.value = rateMul;
+    const g = ctx.createGain();
+    g.gain.value = gain;
+    src.connect(g); g.connect(runGain);
+    src.start(when);
+    if (stopAt) {
+        g.gain.setValueAtTime(gain, stopAt);
+        g.gain.setTargetAtTime(0, stopAt, 0.05);
+        src.stop(stopAt + 0.35);
+    }
+    return src;
+}
+
+function playDrumStep(k, t) {
+    const pos = k % 16;
+    const pattern = Math.floor(k / 16) % 4 === 3 ? FILL : GROOVE;
+    for (const name in pattern) {
+        const v = pattern[name][pos];
+        if (v) playBuffer(drumKit[name], t, v * DRUM_GAIN, 1, 0);
+    }
+}
+
+/* altezza vera della carta: in chiave di violino dal Do centrale,
+   in chiave di basso due ottave sotto, come è scritta */
+function stepMidi(step) {
+    const base = staffMode && staffClef === "bass" ? 36 : 60;
+    return base + 12 * Math.floor(step / 7) + NAT_SEMI[step % 7];
+}
+
+function pianoNote(midi, when, dur, vel) {
+    let best = pianoBuffers[0];
+    for (const smp of pianoBuffers) if (Math.abs(smp.midi - midi) < Math.abs(best.midi - midi)) best = smp;
+    const src = playBuffer(best.buf, when, vel * PIANO_GAIN, Math.pow(2, (midi - best.midi) / 12), when + dur);
+    playing.push({ src, when });
+}
+
+function pumpAudio() {
+    if (!playNotes || !running || paused || !drumKit) return;
+    const now = audioContext.currentTime;
+    const horizon = now + LOOKAHEAD;
+    const spb = 60 / bpm;
+
+    // la batteria segue la griglia della base, che non si ferma mai
+    while (musicStart + drumStep * spb / 4 < horizon) {
+        const t = musicStart + drumStep * spb / 4;
+        if (t >= now - 0.005) playDrumStep(drumStep, t);
+        drumStep++;
+    }
+
+    // le note seguono la tabella delle carte
+    while (audioIdx < timeline.length) {
+        const ev = timeline[audioIdx];
+        const t = startTime + ev.beat * spb;
+        if (t >= horizon) break;
+        if (ev.type === "note" && t >= now - 0.005) {
+            const midi = stepMidi(ex.cards[ev.card]);
+            const dur = (spb / ev.sub) * 0.92;
+            const vel = ev.note === 0 ? 0.62 : 0.5;     // un piccolo accento sulla prima
+            pianoNote(midi, t, dur, vel);
+            // la seconda mano: un'ottava sotto (sopra, in chiave di basso)
+            if (currentType.hands === 2) pianoNote(midi + (stepMidi(0) < 60 ? 12 : -12), t, dur, vel * 0.85);
+        }
+        audioIdx++;
+    }
+    playing = playing.filter(n => n.when > now - 4);
+}
+
+/* dopo un salto di passaggio: zitte le note già programmate */
+function cancelFutureNotes(fromBeat) {
+    const now = audioContext.currentTime;
+    playing.forEach(n => { if (n.when > now) { try { n.src.stop(); } catch (e) {} } });
+    playing = playing.filter(n => n.when <= now);
+    audioIdx = timeline.findIndex(e => e.beat >= fromBeat);
+    if (audioIdx < 0) audioIdx = timeline.length;
 }
 
 /* Le note sul pentagramma, disegnate con VexFlow (chiave di violino,
@@ -1445,13 +1686,13 @@ shortLandscape.addEventListener("change", fitStage);
 
 function startRun() {
     const ctx = getAudioContext();
-    setMessage("Carico la base…");
-    loadMusic().then(() => {
+    setMessage(playNotes ? "Carico il pianoforte…" : "Carico la base…");
+    (playNotes ? loadPiano() : loadMusic()).then(() => {
         if (gameContainer.style.display === "none") return;
         beginRun();
     }).catch(err => {
         console.error(err);
-        setMessage("Non riesco a caricare la base 😕");
+        setMessage(playNotes ? "Non riesco a caricare il pianoforte 😕" : "Non riesco a caricare la base 😕");
     });
 }
 
@@ -1476,7 +1717,11 @@ function beginRun() {
     // il battito 0 coincide con il primo movimento della base
     musicStart = ctx.currentTime + 0.35;
     startTime = musicStart;
-    startMusic(musicStart);
+    drumStep = 0;
+    audioIdx = 0;
+    playing = [];
+    if (playNotes) pumpAudio();
+    else startMusic(musicStart);
 
     setMessage("");
     stageLabel.textContent = currentType.kind === "scale"
@@ -1556,6 +1801,7 @@ function visualStep() {
         nextTick = beat + 1;
         updateTimer(now - startTime);
     }
+    pumpAudio();
     scheduleVisual();
 }
 
@@ -1648,6 +1894,7 @@ function jumpToPass(p) {
     startTime = resume - target * spb;
     pendingPass = p;
     nextEvent = timeline.findIndex(e => e.beat >= target);
+    if (playNotes) cancelFutureNotes(target);
     timeline.forEach(ev => { ev.scheduled = ev.beat < target; });
 
     notesDone = timeline.filter(e => e.type === "note" && e.beat < target).length;
@@ -1662,6 +1909,7 @@ function jumpToPass(p) {
     clearCountIn();   // i clic della fase vecchia non devono più suonare
     lastDot = -1;
     nextTick = Math.max(0, Math.floor((audioContext.currentTime - startTime) / (60 / bpm)) + 1);
+    pumpAudio();
     scheduleVisual();
 }
 
@@ -1727,6 +1975,7 @@ function stopEngine(fadeSeconds) {
     paused = false;
     stopMusic(fadeSeconds);
     clearCountIn();
+    playing = [];
     clearTimeout(rafId); rafId = null;
     if (runGain) { runGain.disconnect(); runGain = null; }
     beatDots.forEach(d => d.classList.remove("on"));
@@ -1741,6 +1990,7 @@ function togglePause() {
         hideBanner();
         setMessage("");
         audioContext.resume();
+        pumpAudio();
         scheduleVisual();   // le carte ripartono
     } else {
         paused = true;
@@ -1816,6 +2066,8 @@ $("staffToggle").addEventListener("change", () => {
         document.querySelector('input[name="staffclef"][value="treble"]').checked = true;
     }
 });
+
+$("notesToggle").addEventListener("change", () => { playNotes = $("notesToggle").checked; });
 
 document.querySelectorAll('input[name="staffclef"]').forEach(r => {
     r.addEventListener("change", () => { staffClef = r.value; });
