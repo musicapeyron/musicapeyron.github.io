@@ -1,0 +1,565 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Il Classicismo — Storia della musica — musicascuole.it</title>
+<meta name="description" content="La musica del Classicismo raccontata attraverso gli ascolti: la corte di Haydn e la città di Mozart e del giovane Beethoven, la sinfonia, il quartetto, la forma sonata e gli strumenti nuovi.">
+<link rel="icon" href="favicon.svg" type="image/svg+xml">
+<link rel="icon" href="favicon-32.png" type="image/png" sizes="32x32">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
+<link rel="stylesheet" href="fonts/caratteri.css">
+<style>
+  * { box-sizing: border-box; }
+  html, body { margin: 0; min-height: 100%; }
+  body { min-height: 100vh; font-family: 'Inter', 'Segoe UI', Arial, sans-serif; color: #EAF2FF; -webkit-font-smoothing: antialiased;
+    background: #0f172a; overflow-x: hidden; position: relative; }
+  body::after { content: ""; position: fixed; inset: 0; z-index: -1; pointer-events: none;
+    background: radial-gradient(circle at 50% 0%, #3730a3 0%, transparent 45%), linear-gradient(135deg, #0f172a, #1e1b4b); }
+  body::before { content: ""; position: fixed; inset: 0; z-index: 0; pointer-events: none; opacity: 0.5;
+    background-image: radial-gradient(rgba(255,255,255,0.035) 1px, transparent 1px); background-size: 3px 3px; }
+
+  .casetta { position: fixed; top: 12px; left: 12px; z-index: 40; width: 44px; height: 44px; border-radius: 50%; display: grid; place-items: center;
+    background: rgba(15,23,42,0.75); border: 1px solid rgba(255,255,255,0.18); text-decoration: none; font-size: 20px; color: #EAF2FF; font-weight: 700; }
+
+  main { position: relative; z-index: 1; max-width: 1400px; margin: 0 auto; padding: 12px 20px 24px; }
+
+  /* ---------- doppio banner ---------- */
+  .banner { position: relative; height: clamp(170px, 30vh, 320px); border-radius: 18px; overflow: hidden; background: #111827;
+    border: 1px solid rgba(255,255,255,0.1); user-select: none; -webkit-user-select: none; }
+  .meta { position: absolute; inset: 0; cursor: pointer; transition: filter .35s ease, opacity .35s ease; -webkit-tap-highlight-color: transparent; }
+  .meta img { width: 100%; height: 100%; object-fit: cover; display: block; }
+  .meta.sx { clip-path: polygon(0 0, 56% 0, 44% 100%, 0 100%); }
+  .meta.dx { clip-path: polygon(56% 0, 100% 0, 100% 100%, 44% 100%); }
+  .meta.sx img { width: 58%; object-position: 50% 55%; }
+  .meta.dx img { width: 58%; margin-left: 42%; object-position: 50% 40%; }
+  .banner.f-sx .meta.dx, .banner.f-dx .meta.sx { filter: grayscale(.85) brightness(.45); }
+  .banner::after { content: ""; position: absolute; inset: 0; pointer-events: none;
+    background: radial-gradient(ellipse at 50% 55%, rgba(15,23,42,0.55) 0%, rgba(15,23,42,0) 60%), linear-gradient(0deg, rgba(15,23,42,0.75), rgba(15,23,42,0) 45%); }
+  .titolo-epoca { position: absolute; left: 50%; top: 50%; transform: translate(-50%, -58%); text-align: center; z-index: 2; pointer-events: none; }
+  .titolo-epoca .sopra { font-family: 'Manrope', sans-serif; font-weight: 800; font-size: 11.5px; letter-spacing: .16em; text-transform: uppercase; color: #FDE7C7; text-shadow: 0 1px 6px rgba(0,0,0,.8); }
+  .titolo-epoca h1 { font-family: 'Fredoka', 'Manrope', sans-serif; font-weight: 600; margin: 0; font-size: clamp(32px, 6vw, 62px); line-height: 1.05; text-shadow: 0 2px 18px rgba(0,0,0,.85); }
+  .titolo-epoca .date { font-family: 'Manrope', sans-serif; font-weight: 800; color: #FFE58A; font-size: clamp(13px, 1.6vw, 17px); text-shadow: 0 1px 8px rgba(0,0,0,.9); }
+  .etich-meta { position: absolute; bottom: 12px; z-index: 3; font-family: 'Manrope', sans-serif; font-weight: 800; font-size: 12.5px;
+    padding: 6px 12px; border-radius: 999px; background: rgba(15,23,42,0.72); border: 1px solid rgba(255,255,255,0.22); cursor: pointer; white-space: nowrap; }
+  .etich-meta.sx { left: 12px; color: #FBC877; } .etich-meta.dx { right: 12px; color: #C4B5FD; }
+  .etich-meta.attiva { background: #EAF2FF; color: #0f172a; }
+  @media (max-width: 560px) { .etich-meta { font-size: 11px; padding: 5px 9px; bottom: 8px; } .etich-meta .lungo { display: none; } }
+
+  .atmosfera { text-align: center; color: #9FB3CE; font-size: 13px; font-style: italic; margin: 10px auto 12px; max-width: 760px; line-height: 1.45; }
+
+  /* ---------- schede ---------- */
+  .schede { display: flex; justify-content: center; gap: 8px; flex-wrap: wrap; margin-bottom: 12px; }
+  .scheda { font: 700 13.5px 'Manrope', sans-serif; color: #EAF2FF; cursor: pointer; padding: 8px 16px; border-radius: 999px;
+    background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.14); display: inline-flex; align-items: center; gap: 7px; }
+  .scheda:hover { background: rgba(255,255,255,0.12); }
+  .scheda.attiva { background: #EAF2FF; color: #0f172a; border-color: #EAF2FF; }
+  .scheda .n { font-size: 11px; opacity: .65; }
+  @media (max-width: 560px) { main { padding-top: 64px !important; } .schede { flex-wrap: nowrap; gap: 6px; } .scheda { font-size: 12.5px; padding: 7px 11px; gap: 5px; } .scheda .n { display: none; } }
+
+  /* ---------- griglia di card (come in home) ---------- */
+  .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 12px; }
+  @media (min-width: 1200px) { .grid { grid-template-columns: repeat(5, 1fr); } }
+  @media (max-width: 520px) { .grid { grid-template-columns: repeat(2, 1fr); gap: 9px; } main { padding: 10px 12px 20px; } }
+  .card { --accent: #5EC8D8; position: relative; background: rgba(255,255,255,0.035); border: 1px solid rgba(255,255,255,0.09); border-top: 2px solid var(--accent);
+    border-radius: 12px; overflow: hidden; display: flex; flex-direction: column; text-align: left; font: inherit; color: inherit; padding: 0; cursor: pointer;
+    transition: border-color .2s ease, transform .2s ease, background .2s ease; }
+  .card:hover { transform: translateY(-2px); background: rgba(255,255,255,0.06); border-color: color-mix(in srgb, var(--accent) 55%, transparent); border-top-color: var(--accent); }
+  .card:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+  .card .foto { aspect-ratio: 16 / 10; background: #1e293b center / cover no-repeat; position: relative; }
+  .card .foto::after { content: "▶"; position: absolute; right: 8px; bottom: 8px; width: 30px; height: 30px; border-radius: 50%; display: grid; place-items: center;
+    font-size: 12px; background: rgba(15,23,42,0.8); color: #fff; border: 1px solid rgba(255,255,255,0.3); }
+  .card .testo { padding: 9px 11px 11px; display: flex; flex-direction: column; gap: 3px; flex: 1; }
+  .card .label { align-self: flex-start; font-size: 9px; font-weight: 700; letter-spacing: .05em; text-transform: uppercase; color: var(--accent);
+    background: color-mix(in srgb, var(--accent) 14%, transparent); padding: 2px 7px; border-radius: 999px; }
+  .card h2 { font-family: 'Manrope', sans-serif; font-weight: 700; font-size: 14px; margin: 2px 0 0; letter-spacing: -0.01em; line-height: 1.25; }
+  .card .chi { font-size: 11px; color: #9FB3CE; font-weight: 600; }
+  .card p { font-size: 11.5px; line-height: 1.4; color: #B8C7DD; margin: 2px 0 0; }
+  .card.dx { --accent: #a78bfa; } .card.sx { --accent: #F99D1C; } .card.strum { --accent: #5EC8D8; } .card.suona { --accent: #BED958; }
+  .card.empty { cursor: default; border-style: dashed; background: transparent; }
+  .card.empty:hover { transform: none; }
+  .card.empty .foto::after { content: "presto"; width: auto; height: auto; padding: 3px 9px; border-radius: 999px; font: 700 10.5px 'Manrope', sans-serif; letter-spacing: .04em; }
+  .card.nascosta { display: none; }
+
+  /* ---------- finestra dell'ascolto ---------- */
+  .velo { position: fixed; inset: 0; z-index: 60; background: rgba(2,6,23,0.82); display: none; align-items: center; justify-content: center; padding: 16px; }
+  .velo.aperto { display: flex; }
+  .finestra { position: relative; width: min(1180px, 100%); max-height: calc(100vh - 32px); overflow: auto; background: #131c33; border: 1px solid rgba(255,255,255,0.14);
+    border-top: 3px solid var(--accent, #5EC8D8); border-radius: 18px; display: grid; grid-template-columns: 1.55fr 1fr; gap: 0; box-shadow: 0 20px 60px rgba(0,0,0,.5); }
+  @media (max-width: 860px) { .finestra { grid-template-columns: 1fr; } }
+  .schermo { position: relative; aspect-ratio: 16 / 9; background: #000 center / cover no-repeat; }
+  .schermo iframe { position: absolute; inset: 0; width: 100%; height: 100%; border: 0; }
+  .avvio { position: absolute; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 10px; cursor: pointer;
+    background: rgba(2,6,23,0.55); border: 0; color: #fff; font: inherit; width: 100%; }
+  .avvio .tondo { width: 76px; height: 76px; border-radius: 50%; background: #FFE58A; color: #0f172a; display: grid; place-items: center; font-size: 30px; padding-left: 6px; box-shadow: 0 6px 24px rgba(0,0,0,.45); }
+  .avvio:hover .tondo { transform: scale(1.06); }
+  .avvio .nota { font-size: 12px; color: #DCE6F5; background: rgba(15,23,42,0.7); padding: 4px 10px; border-radius: 999px; }
+  .info { padding: 16px 18px 14px; display: flex; flex-direction: column; gap: 8px; }
+  .info .label { align-self: flex-start; font-size: 10px; font-weight: 800; letter-spacing: .06em; text-transform: uppercase; color: var(--accent); background: color-mix(in srgb, var(--accent) 16%, transparent); padding: 3px 9px; border-radius: 999px; }
+  .info h3 { font-family: 'Manrope', sans-serif; font-weight: 800; font-size: 22px; margin: 0; line-height: 1.2; }
+  .info .chi { font-size: 13px; color: #9FB3CE; font-weight: 600; margin-top: -4px; }
+  .info .gancio { font-family: 'Manrope', sans-serif; font-weight: 700; font-size: 16px; color: #FFE58A; margin: 2px 0 0; }
+  .info ul { margin: 0; padding-left: 0; list-style: none; display: flex; flex-direction: column; gap: 6px; }
+  .info li { font-size: 14.5px; color: #DCE6F5; line-height: 1.45; padding-left: 24px; position: relative; }
+  .info li::before { content: "🎧"; position: absolute; left: 0; top: 0; font-size: 13px; }
+  .info .sapevi { font-size: 13.5px; color: #DCE6F5; background: rgba(255,255,255,0.05); border-left: 3px solid var(--accent); border-radius: 8px; padding: 8px 10px; line-height: 1.45; }
+  .info .sapevi b { color: var(--accent); }
+  .info .piede { margin-top: auto; display: flex; justify-content: space-between; align-items: flex-end; gap: 10px; flex-wrap: wrap; font-size: 11px; color: #7F93B2; }
+  .info .piede a { color: #7DD3FC; }
+  .chiudi { position: absolute; top: 8px; right: 8px; z-index: 3; width: 40px; height: 40px; border-radius: 50%; border: 1px solid rgba(255,255,255,0.25);
+    background: rgba(15,23,42,0.85); color: #fff; font-size: 18px; cursor: pointer; }
+  .frecce { display: flex; gap: 8px; }
+  .freccia { font: 700 13px 'Manrope', sans-serif; color: #EAF2FF; background: rgba(255,255,255,0.08); border: 1px solid rgba(255,255,255,0.18); border-radius: 999px; padding: 7px 14px; cursor: pointer; }
+  .freccia:hover { background: rgba(255,255,255,0.15); }
+
+  /* ---------- Sezione speciale (pulsante dorato) ---------- */
+  .scheda.speciale { background: linear-gradient(135deg, rgba(180,83,9,0.55), rgba(124,45,18,0.55)); border-color: #FBBF24; color: #FFE58A; }
+  .scheda.speciale:hover { background: linear-gradient(135deg, rgba(180,83,9,0.8), rgba(124,45,18,0.8)); }
+  .scheda.speciale.attiva { background: #FFE58A; color: #0f172a; border-color: #FFE58A; }
+  .fuga { --accent: #FBBF24; display: grid; grid-template-columns: 1.55fr 1fr; background: #131c33; border: 1px solid rgba(255,255,255,0.14);
+    border-top: 3px solid var(--accent); border-radius: 18px; overflow: hidden; }
+  .fuga[hidden], .grid[hidden] { display: none; }
+  @media (max-width: 860px) { .fuga { grid-template-columns: 1fr; } }
+  .o-video { display: flex; flex-direction: column; background: #000; }
+  .o-sotto { font-size: 11.5px; color: #9FB3CE; padding: 8px 12px; background: #0b1224; }
+  .o-sotto a { color: #7DD3FC; }
+  .o-info { padding: 14px 16px 14px; display: flex; flex-direction: column; gap: 6px; min-height: 0; }
+  .o-info .label { align-self: flex-start; font-size: 10px; font-weight: 800; letter-spacing: .06em; text-transform: uppercase; color: var(--accent); background: color-mix(in srgb, var(--accent) 16%, transparent); padding: 3px 9px; border-radius: 999px; }
+  .o-info h3 { font-family: 'Fredoka', 'Manrope', sans-serif; font-weight: 600; font-size: 28px; margin: 0; line-height: 1.1; }
+  .o-info .chi { font-size: 13px; color: #9FB3CE; font-weight: 600; }
+  .o-info .gancio { font-family: 'Manrope', sans-serif; font-weight: 700; font-size: 15px; color: #FFE58A; }
+  .o-tab { display: flex; gap: 6px; margin-top: 4px; flex-wrap: wrap; }
+  .o-t { font: 700 12.5px 'Manrope', sans-serif; color: #EAF2FF; cursor: pointer; padding: 6px 12px; border-radius: 999px; background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.16); }
+  .o-t:hover { background: rgba(255,255,255,0.12); }
+  .o-t.attiva { background: var(--accent); color: #0f172a; border-color: var(--accent); }
+  .o-corpo { flex: 1; min-height: 0; overflow: auto; padding-right: 4px; }
+  @media (min-width: 861px) { .o-info { contain: size; } }   /* la colonna dei testi si adatta all'altezza del video e scorre */
+  .o-corpo ul { margin: 4px 0 0; padding: 0; list-style: none; display: flex; flex-direction: column; gap: 7px; }
+  .o-corpo li { font-size: 14px; color: #DCE6F5; line-height: 1.45; padding-left: 24px; position: relative; }
+  .o-corpo li::before { content: attr(data-i); position: absolute; left: 0; top: 0; font-size: 13px; }
+  .o-corpo .atto { display: grid; grid-template-columns: 62px 1fr; gap: 8px; align-items: baseline; padding: 6px 8px; border-radius: 8px; background: rgba(255,255,255,0.04); font-size: 13.5px; color: #DCE6F5; line-height: 1.4; }
+  .o-corpo .atto b { font: 800 11px 'Manrope', sans-serif; color: var(--accent); text-transform: uppercase; letter-spacing: .05em; }
+  .o-corpo .atto + .atto { margin-top: 5px; }
+  .o-corpo .cur { font-size: 13.5px; color: #DCE6F5; background: rgba(255,255,255,0.05); border-left: 3px solid var(--accent); border-radius: 8px; padding: 7px 10px; line-height: 1.45; }
+  .o-corpo .cur + .cur { margin-top: 6px; }
+  .o-corpo .cur b { color: var(--accent); }
+  .o-corpo .cur img { float: right; height: 150px; margin: 0 0 4px 10px; border-radius: 6px; background: #fff; cursor: zoom-in; }
+  .o-corpo .cur::after { content: ""; display: block; clear: both; }
+
+  .crediti-img { margin-top: 18px; font-size: 11.5px; color: #7F93B2; }
+  .crediti-img summary { cursor: pointer; color: #9FB3CE; }
+  .crediti-img li { margin: 3px 0; } .crediti-img a { color: #7DD3FC; }
+  footer.piede { position: relative; z-index: 1; text-align: center; font-size: 13px; color: #9FB3CE; padding: 12px 12px 24px; }
+  footer.piede a { color: #7DD3FC; }
+  @media (prefers-reduced-motion: reduce) { .card, .meta { transition: none; } }
+</style>
+</head>
+<body>
+<a class="casetta" href="storia.html" aria-label="Torna alla storia della musica" title="Torna alla storia della musica">←</a>
+<main>
+
+  <div class="banner" id="banner">
+    <div class="meta sx" data-mondo="sx" title="La corte"><img src="media/storia/classicismo/banner-corte.jpg" alt="Il palazzo Esterházy di Fertőd, in Ungheria"></div>
+    <div class="meta dx" data-mondo="dx" title="La città"><img src="media/storia/classicismo/banner-citta.jpg" alt="Il Duomo di Santo Stefano a Vienna"></div>
+    <div class="titolo-epoca">
+      <div class="sopra">Storia della musica</div>
+      <h1>Il Classicismo</h1>
+      <div class="date">1750 – 1820</div>
+    </div>
+    <button class="etich-meta sx" data-mondo="sx">🏰 La corte<span class="lungo"> · principi, imperatori, servitori</span></button>
+    <button class="etich-meta dx" data-mondo="dx">🏙️ La città<span class="lungo"> · concerti, teatri, editori</span></button>
+  </div>
+
+  <p class="atmosfera">Per secoli il musicista è stato un servitore: vive a corte, indossa la livrea e scrive la musica che il principe ordina. Nel Settecento qualcosa cambia. In città nascono i concerti a pagamento, gli editori stampano musica per chi suona in casa, e un musicista può provare a vivere da solo.</p>
+
+  <nav class="schede" aria-label="Sezioni">
+    <button class="scheda attiva" data-scheda="ascolti">🎧 Ascolti <span class="n" id="nAscolti"></span></button>
+    <button class="scheda" data-scheda="strumenti">🎺 Strumenti <span class="n" id="nStrumenti"></span></button>
+    <button class="scheda speciale" data-scheda="sonata">📐 La forma sonata</button>
+    <button class="scheda" data-scheda="suonare">🎼 Da suonare <span class="n" id="nSuonare"></span></button>
+  </nav>
+
+  <div class="grid" id="griglia"></div>
+
+  <!-- ===== LA FORMA SONATA: sezione speciale (testi qui sotto, nell'oggetto SONATA dello script) ===== -->
+  <section class="fuga" id="sonata" hidden aria-label="La forma sonata: Mozart, Sonata K 545">
+    <div class="o-video">
+      <div class="schermo" id="oSchermo"></div>
+      <div class="o-sotto">Le note cadono sui tasti del pianoforte: guarda le due mani · video di Rousseau · <a id="oLink" target="_blank" rel="noopener">Apri su YouTube ↗</a></div>
+    </div>
+    <div class="o-info">
+      <span class="label">Vienna, 1788 · primo movimento</span>
+      <h3>La forma sonata</h3>
+      <div class="chi">Wolfgang Amadeus Mozart · Sonata in do maggiore K 545</div>
+      <div class="gancio">Un movimento costruito come un racconto: presentazione, avventura, ritorno a casa.</div>
+      <div class="o-tab" role="tablist">
+        <button class="o-t attiva" data-o="cosa">📐 Cos'è</button>
+        <button class="o-t" data-o="ascolto">👂 Come ascoltarla</button>
+        <button class="o-t" data-o="curiosita">💡 Curiosità</button>
+      </div>
+      <div class="o-corpo" id="oCorpo"></div>
+    </div>
+  </section>
+
+  <details class="crediti-img">
+    <summary>Crediti delle immagini e dei video</summary>
+    <ul id="listaCrediti"></ul>
+    <p>I video sono incorporati da YouTube e restano dei rispettivi titolari: non fanno parte della licenza del sito.</p>
+  </details>
+</main>
+<footer class="piede">Cristiano Arata · musicascuole.it — <a href="crediti.html">Crediti e licenza</a> · <a href="privacy.html">Privacy</a></footer>
+
+<div class="velo" id="velo" role="dialog" aria-modal="true" aria-labelledby="fTitolo">
+  <div class="finestra" id="finestra">
+    <button class="chiudi" id="chiudi" aria-label="Chiudi">✕</button>
+    <div class="schermo" id="schermo"></div>
+    <div class="info">
+      <span class="label" id="fLabel"></span>
+      <h3 id="fTitolo"></h3>
+      <div class="chi" id="fChi"></div>
+      <div class="gancio" id="fGancio"></div>
+      <ul id="fPunti"></ul>
+      <div class="sapevi" id="fSapevi"></div>
+      <div class="piede">
+        <div class="frecce"><button class="freccia" id="prec">◀</button><button class="freccia" id="succ">▶</button></div>
+        <div id="fFonte"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+(function () {
+  "use strict";
+  const IMG = "media/storia/classicismo/";
+
+  /* =========================================================
+     CONTENUTI — per cambiare un video basta cambiare "yt"
+     mondo: "sx" = La corte (metà sinistra del banner), "dx" = La città (metà destra)
+     ========================================================= */
+  const ASCOLTI = [
+    { id: "addii", mondo: "sx", label: "Corte · sinfonia", titolo: "Sinfonia degli addii", chi: "Joseph Haydn · Sinfonia n. 45, Esterháza, 1772 · ultimo movimento", img: "addii.jpg", yt: "0YhtR43eNEs", canale: "Concerto Classic Wien (canale ufficiale)",
+      gancio: "I musicisti se ne vanno… uno alla volta.",
+      punti: ["L'estate a Esterháza non finiva mai: il principe restava nel palazzo e i musicisti erano lontani dalle loro famiglie.",
+              "Haydn trovò un modo gentile per farlo capire: nell'ultimo movimento gli strumenti smettono di suonare uno dopo l'altro.",
+              "Ogni musicista spegne la candela e lascia il palco. Alla fine restano solo due violini."],
+      sapevi: "Il principe capì il messaggio: il giorno dopo si partì e tutti tornarono a casa. Haydn restò al servizio della famiglia Esterházy per quasi trent'anni." },
+    { id: "imperatore", mondo: "sx", label: "Corte · quartetto d'archi", titolo: "Quartetto «Imperatore»", chi: "Joseph Haydn · op. 76 n. 3, Vienna, 1797 · secondo movimento", img: "imperatore.jpg", yt: "FWX2ozwjbyQ", canale: "TomatoClassic (Abel Quartet)",
+      gancio: "Un inno per l'imperatore, passato di mano in mano.",
+      punti: ["Il <b>quartetto d'archi</b> è formato da due violini, una viola e un violoncello.",
+              "Qui suonano un inno che Haydn aveva scritto per il compleanno dell'imperatore Francesco II.",
+              "Sono <b>variazioni</b>: la melodia passa al secondo violino, poi al violoncello, poi alla viola, poi torna al primo violino. Riesci a seguirla?"],
+      sapevi: "Quella melodia è diventata l'inno nazionale della Germania, che si canta ancora oggi prima delle partite." },
+    { id: "gluck", mondo: "sx", label: "Corte · opera", titolo: "Che farò senza Euridice", chi: "Christoph Willibald Gluck · Orfeo ed Euridice, Vienna, 1762", img: "gluck.jpg", yt: "D2EoqOcIuuM", canale: "Warner Classics (canale ufficiale)",
+      gancio: "Orfeo è tornato, 150 anni dopo Monteverdi.",
+      punti: ["È la stessa storia dell'Orfeo del Rinascimento: Orfeo si volta e perde Euridice per sempre.",
+              "Gluck voleva un'opera più semplice e sincera, senza virtuosismi inutili: conta la storia, non la bravura del cantante.",
+              "La melodia è dolce, quasi serena, anche se le parole sono disperate."],
+      sapevi: "L'opera fu rappresentata nel teatro della corte imperiale di Vienna per la festa dell'imperatore. Qui la canta un controtenore, un uomo che canta con voce acuta." },
+    { id: "figaro", mondo: "sx", label: "Corte · opera buffa", titolo: "Se vuol ballare, signor contino", chi: "Wolfgang Amadeus Mozart · Le nozze di Figaro, Vienna, 1786", img: "figaro.jpg", yt: "dWFRlcW-prQ", canale: "OperaVision (Royal Opera House)",
+      gancio: "Un servitore sfida il suo padrone.",
+      punti: ["Figaro, il servitore, scopre che il Conte vuole corteggiare Susanna, la sua fidanzata.",
+              "Arrabbiato, canta: «Se vuol ballare, signor contino, il chitarrino le suonerò». Cioè: la musica la decido io!",
+              "Il ritmo è quello di un <b>minuetto</b>, la danza dei nobili, ma usato per prendere in giro un nobile."],
+      sapevi: "L'opera nasce da una commedia francese che a Vienna era stata vietata: un servo più furbo del padrone sembrava un'idea pericolosa. Il librettista, l'italiano Lorenzo Da Ponte, tolse le parti più politiche." },
+    { id: "boccherini", mondo: "sx", label: "Corte · minuetto", titolo: "Minuetto", chi: "Luigi Boccherini · Quintetto op. 11 n. 5, Madrid, 1771", img: "boccherini.jpg", yt: "qmf3vZBKt3Q", canale: "Halidon Music (canale ufficiale)",
+      gancio: "Il minuetto più famoso di tutti.",
+      punti: ["Il <b>minuetto</b> era la danza elegante dei saloni nobili, in tre tempi, a piccoli passi.",
+              "Ascolta la melodia elegante del primo violino e l'accompagnamento leggero degli altri archi.",
+              "È scritto per cinque archi, con due violoncelli: Boccherini era un grande violoncellista."],
+      sapevi: "Boccherini era nato a Lucca e lavorò alla corte di Spagna, al servizio del fratello del re. Il suo Minuetto è stato usato in tantissimi film e pubblicità." },
+    { id: "martines", mondo: "sx", label: "Corte · sonata", titolo: "Sonata in sol maggiore", chi: "Marianna Martines · Vienna, Settecento", img: "martines.jpg", yt: "hKjPKI0bz8Q", canale: "Béatrice Martin (canale ufficiale)",
+      gancio: "Una compositrice che suonava per l'imperatrice.",
+      punti: ["È una <b>sonata</b>: un brano per strumento a tastiera, in tre movimenti, veloce, lento, veloce.",
+              "Qui la suona un clavicembalo antico: il pianoforte stava appena arrivando.",
+              "Ascolta le note veloci e brillanti del primo movimento, poi la calma del secondo."],
+      sapevi: "Marianna Martines prese lezioni dal giovane Haydn, che abitava nel suo stesso palazzo. Suonò davanti all'imperatrice Maria Teresa e fu la prima donna accolta nell'Accademia Filarmonica di Bologna." },
+
+    { id: "nachtmusik", mondo: "dx", label: "Città · serenata", titolo: "Eine kleine Nachtmusik", chi: "Wolfgang Amadeus Mozart · Vienna, 1787 · primo movimento", img: "nachtmusik.jpg", yt: "G3V-AYG9JYM", canale: "Voices of Music (canale ufficiale)",
+      gancio: "«Una piccola musica notturna»: forse il brano più famoso di Mozart.",
+      punti: ["È una <b>serenata</b> per archi: musica leggera, da suonare all'aperto o durante le feste.",
+              "L'inizio è un motivo che sale deciso, come un saluto: lo riconoscerai subito.",
+              "Questo movimento è in <b>forma sonata</b>: due temi, uno sviluppo e il ritorno. Scoprila nel pulsante speciale!"],
+      sapevi: "Non sappiamo per chi o per quale occasione Mozart l'abbia scritta. Fu pubblicata solo molti anni dopo la sua morte." },
+    { id: "turca", mondo: "dx", label: "Città · rondò", titolo: "Rondò alla turca", chi: "Wolfgang Amadeus Mozart · Sonata K 331, Vienna, 1784", img: "turca.jpg", yt: "gxxpMvte04U", canale: "Luc Beauséjour",
+      gancio: "Una banda militare turca… dentro un pianoforte.",
+      punti: ["A Vienna erano di moda le bande dei <b>giannizzeri</b>, i soldati turchi, con tamburi, piatti e campanelli.",
+              "La mano sinistra imita i colpi dei tamburi con accordi ribattuti.",
+              "È un <b>rondò</b>: un ritornello che torna sempre, alternato a parti diverse."],
+      sapevi: "Qui la suona un <b>fortepiano</b>, il pianoforte di Mozart. Alcuni fortepiani avevano perfino un pedale «alla turca» che faceva suonare un campanello e un tamburo nascosti." },
+    { id: "stellina", mondo: "dx", label: "Città · tema con variazioni", titolo: "Variazioni su «Ah vous dirai-je, maman»", chi: "Wolfgang Amadeus Mozart · Vienna, 1781–82", img: "stellina.jpg", yt: "fGGWtz_v6xM", canale: "ClassicalSoundings (Steven Lubin)",
+      gancio: "È «Brilla brilla la stellina»… in dodici travestimenti.",
+      punti: ["Prima si sente il <b>tema</b>: una canzoncina francese che conosci di sicuro.",
+              "Poi arrivano 12 <b>variazioni</b>: la melodia resta, ma cambia vestito ogni volta.",
+              "Ascolta: note velocissime, accordi pieni, una variazione triste in minore e una lenta, prima del gran finale."],
+      sapevi: "A Vienna Mozart viveva anche dando lezioni e vendendo musica agli editori: le variazioni su melodie famose piacevano moltissimo a chi suonava in casa." },
+    { id: "sinfonia40", mondo: "dx", label: "Città · sinfonia", titolo: "Sinfonia n. 40", chi: "Wolfgang Amadeus Mozart · Vienna, 1788 · primo movimento", img: "sinfonia40.jpg", yt: "7shwnh5mst8", canale: "Boston Baroque (canale ufficiale)",
+      gancio: "Un tema agitato che non si dimentica.",
+      punti: ["La <b>sinfonia</b> è il grande brano per orchestra del Classicismo, in quattro movimenti.",
+              "Si apre con un motivo inquieto dei violini, sopra un accompagnamento che pulsa veloce.",
+              "Anche questo movimento è in <b>forma sonata</b>: prova a riconoscere il ritorno del primo tema."],
+      sapevi: "Mozart scrisse le sue ultime tre sinfonie in poche settimane, nell'estate del 1788. Questa è una delle sole due che compose in tonalità minore." },
+    { id: "regina", mondo: "dx", label: "Città · opera", titolo: "Der Hölle Rache (aria della Regina della notte)", chi: "Wolfgang Amadeus Mozart · Il flauto magico, Vienna, 1791", img: "regina.jpg", yt: "YuBeBjqKSGQ", canale: "Royal Ballet and Opera (canale ufficiale)",
+      gancio: "La nota più acuta di tutta l'opera.",
+      punti: ["La Regina della notte è furiosa: vuole vendetta e ordina alla figlia di aiutarla.",
+              "La voce fa salti e note velocissime, staccate, fino al <b>fa sovracuto</b>, altissimo.",
+              "Il Flauto magico è una fiaba in tedesco, con parti cantate e parti recitate."],
+      sapevi: "Non fu scritta per un teatro di corte ma per un teatro popolare di periferia, dove andava gente di ogni tipo. La prima Regina della notte fu Josepha Hofer, la cognata di Mozart." },
+    { id: "sorpresa", mondo: "dx", label: "Città · sinfonia", titolo: "Sinfonia «La sorpresa»", chi: "Joseph Haydn · Sinfonia n. 94, Londra, 1792 · secondo movimento", img: "sorpresa.jpg", yt: "VOLy6JxEDLw", canale: "Severinus Boethius (Berliner Philharmoniker, Mariss Jansons)",
+      gancio: "Shhh… BUM!",
+      punti: ["Il tema è semplicissimo, suonato pianissimo, quasi in punta di piedi.",
+              "Poi, all'improvviso, un accordo fortissimo con i timpani: la sorpresa!",
+              "Dopo, il tema viene trasformato in tante <b>variazioni</b>."],
+      sapevi: "Dopo la morte del principe Esterházy, Haydn fu libero di viaggiare: a Londra diresse concerti a pagamento davanti a un pubblico enorme e diventò una star. Si racconta che la sorpresa servisse a svegliare chi si addormentava." },
+    { id: "sirmen", mondo: "dx", label: "Città · concerto", titolo: "Concerto per violino in si bemolle", chi: "Maddalena Laura Sirmen · 1769 circa · primo movimento", img: "sirmen.jpg", yt: "Ty2U65aCVmc", canale: "Voices of Music (canale ufficiale)",
+      gancio: "Una violinista veneziana in tournée per l'Europa.",
+      punti: ["Nel <b>concerto</b> il violino solista dialoga con l'orchestra.",
+              "Ascolta i passaggi difficili del violino, pensati per farsi applaudire.",
+              "Il violino è di tipo classico, con le corde di budello."],
+      sapevi: "Maddalena Laura Lombardini crebbe in un ospedale-orfanotrofio di Venezia, come le ragazze di Vivaldi. Prese lezioni per lettera dal grande violinista Tartini, poi suonò nei concerti pubblici di Parigi e Londra e pubblicò la sua musica." },
+    { id: "patetica", mondo: "dx", label: "Città · sonata", titolo: "Sonata «Patetica»", chi: "Ludwig van Beethoven · op. 13, Vienna, 1798 · primo movimento", img: "patetica.jpg", yt: "hcczxDKkYhU", canale: "Deutsche Grammophon (canale ufficiale)",
+      gancio: "Il giovane Beethoven alza la voce.",
+      punti: ["Si apre con accordi lenti e pesanti, drammatici: è l'introduzione, il <b>Grave</b>.",
+              "Poi parte un <b>Allegro</b> velocissimo e agitato, che corre senza fermarsi.",
+              "Gli accordi dell'inizio ritornano più volte, come un ricordo che non se ne va."],
+      sapevi: "Beethoven arrivò a Vienna a 21 anni per studiare con Haydn. Visse dando concerti e vendendo la sua musica agli editori, aiutato da nobili ammiratori, ma senza essere servitore di nessuno. Lo ritroverai nel Romanticismo." }
+  ];
+
+  const STRUMENTI = [
+    { id: "fortepiano", label: "Tastiera", titolo: "Fortepiano", chi: "Il pianoforte di Mozart", img: "fortepiano.jpg", yt: "-LJ7uywsvIA", canale: "McNulty Fortepianos",
+      gancio: "Finalmente una tastiera che suona piano e forte.",
+      punti: ["Dentro, dei piccoli martelletti colpiscono le corde: più premi forte, più il suono è forte.",
+              "Per questo si chiama <b>forte-piano</b>: il clavicembalo non poteva farlo.",
+              "È più piccolo e leggero del pianoforte di oggi e ha un suono più chiaro."],
+      sapevi: "Al posto dei pedali, i fortepiani viennesi avevano delle leve da spingere con le ginocchia. Nel video suonano la copia di un fortepiano di Anton Walter, il costruttore viennese dello strumento di Mozart." },
+    { id: "clarinetto", label: "Fiati", titolo: "Clarinetto", chi: "Il preferito di Mozart", img: "clarinetto.jpg", yt: "l1MWuZ97nZk", canale: "Victoria Symphony Orchestra (canale ufficiale)",
+      gancio: "Un fiato nuovo, dalla voce calda.",
+      punti: ["Si suona con un'<b>ancia semplice</b>, una sola lamella di canna appoggiata sul bocchino.",
+              "Nel Classicismo entra per la prima volta stabilmente nell'orchestra.",
+              "Qui ascolti l'Adagio del Concerto per clarinetto di Mozart, uno dei suoi ultimi lavori."],
+      sapevi: "Da giovane Mozart sentì i clarinetti a Mannheim e scrisse al padre: «Ah, se avessimo anche noi i clarinetti!». Il concerto lo scrisse per l'amico clarinettista Anton Stadler." },
+    { id: "corno", label: "Ottoni", titolo: "Corno naturale", chi: "Senza valvole", img: "corno.jpg", yt: "MgwE22lg9cA", canale: "Orchestra of the Age of Enlightenment (canale ufficiale)",
+      gancio: "Le note si fanno con le labbra… e con la mano.",
+      punti: ["Non ha pistoni: il cornista cambia nota con le labbra e infilando la mano nella campana.",
+              "Per cambiare tonalità si aggiungono pezzi di tubo, le <b>ritorte</b>.",
+              "Il Rondò ha il ritmo saltellante di una caccia: il corno nasce proprio come strumento da caccia."],
+      sapevi: "Mozart scrisse i suoi concerti per corno per l'amico Joseph Leutgeb e sulle partiture gli lasciava battute scherzose, chiamandolo perfino «asino»." },
+    { id: "tromba", label: "Ottoni", titolo: "Tromba a chiavi", chi: "Un'invenzione viennese", img: "tromba-chiavi.jpg", yt: "WzHR46yaveQ", canale: "dingoandfox (Markus Würsch)",
+      gancio: "Una tromba con i fori, come un flauto.",
+      punti: ["La tromba naturale suonava solo alcune note. Con le <b>chiavi</b>, che aprono dei fori nel tubo, può suonarle tutte.",
+              "Ascolti l'ultimo movimento del Concerto per tromba di Haydn, brillante e allegro.",
+              "In questo video l'orchestra è sostituita da un fortepiano."],
+      sapevi: "La tromba a chiavi la inventò Anton Weidinger, trombettista della corte di Vienna. Haydn scrisse il concerto per lui nel 1796." },
+    { id: "arpa", label: "Corde pizzicate", titolo: "Arpa a pedali", chi: "Corde e pedali", img: "arpa.jpg", yt: "ps0bWrvia98", canale: "Alpha Classics (canale ufficiale)",
+      gancio: "Con i piedi si cambiano le note.",
+      punti: ["Ha tante corde, una per ogni nota della scala.",
+              "Premendo i <b>pedali</b> l'arpista alza le note di mezzo tono e può suonare in tutte le tonalità.",
+              "Ascolti il Concerto per flauto e arpa di Mozart, con un flauto e un'arpa d'epoca."],
+      sapevi: "Mozart scrisse questo concerto a Parigi, nel 1778, per un duca che suonava il flauto e per sua figlia, arpista. Alla ragazza dava anche lezioni di composizione." },
+    { id: "glassarmonica", label: "Curiosità", titolo: "Glassarmonica", chi: "Musica di vetro", img: "glassarmonica.jpg", yt: "hqse6LNFfgA", canale: "ARD Klassik (canale ufficiale)",
+      gancio: "Bicchieri che cantano.",
+      punti: ["Hai mai fatto «cantare» un bicchiere sfregando il bordo con un dito bagnato? La glassarmonica funziona così.",
+              "Tante coppe di vetro infilate su un asse girano, e il musicista le tocca con le dita bagnate.",
+              "Il suono è delicato e misterioso, quasi magico."],
+      sapevi: "L'inventò Benjamin Franklin, lo scienziato americano del parafulmine, nel 1761. Mozart scrisse questo Adagio nel 1791 per una giovane musicista cieca, Marianne Kirchgessner." },
+    { id: "timpani", label: "Percussioni", titolo: "Timpani", chi: "Tamburi intonati", img: "timpani.jpg", yt: "CMxCh0AYmy0", canale: "Orchestra of the Age of Enlightenment (canale ufficiale)",
+      gancio: "Tamburi che suonano note precise.",
+      punti: ["Sono grandi caldaie di metallo coperte da una pelle: tirando la pelle cambia la nota.",
+              "Nell'orchestra classica suonano quasi sempre insieme alle trombe.",
+              "Ascolti la Sinfonia «Rullo di timpani» di Haydn: si apre proprio con un rullo solitario."],
+      sapevi: "Da bambino Haydn imparò a suonare il tamburo per una processione: era così piccolo che il tamburo lo portava sulla schiena un'altra persona, che camminava davanti a lui." }
+  ];
+
+  const SUONARE = [
+    { titolo: "Ah vous dirai-je, maman (tema)", chi: "melodia francese, variata da Mozart", img: "stellina.jpg" },
+    { titolo: "Eine kleine Nachtmusik (tema)", chi: "Wolfgang Amadeus Mozart", img: "nachtmusik.jpg" },
+    { titolo: "Minuetto", chi: "Luigi Boccherini", img: "boccherini.jpg" }
+  ];
+
+  /* ---------- La forma sonata (pulsante speciale) ---------- */
+  const SPECIALE = {
+    yt: "qjk-YRuQZDE", canale: "Rousseau", img: "sonata-banner.jpg", nome: "La forma sonata (Mozart, Sonata K 545)",
+    cosa: [
+      ["🧩", "La forma sonata non è un brano: è uno <b>schema</b>, il modo in cui è costruito un movimento."],
+      ["📖", "Funziona come un racconto in tre parti: <b>esposizione</b>, <b>sviluppo</b>, <b>ripresa</b>."],
+      ["🎭", "<b>Esposizione</b>: si presentano due temi, come due personaggi diversi, ognuno nella sua tonalità."],
+      ["🌪️", "<b>Sviluppo</b>: i temi vengono spezzati e trasformati, e la musica si allontana da casa."],
+      ["🏠", "<b>Ripresa</b>: tornano i due temi, ma ora tutti e due nella tonalità di casa."],
+      ["🎼", "Nel Classicismo quasi tutti i primi movimenti di sonate, sinfonie, quartetti e concerti sono in forma sonata."]
+    ],
+    ascolto: [
+      ["Tema 1", "Una melodia tranquilla, in do maggiore. La mano sinistra accompagna con un movimento ondeggiante."],
+      ["Ponte", "Scale velocissime che salgono e scendono: la musica si sta spostando verso un'altra tonalità."],
+      ["Tema 2", "Una melodia nuova, più giocosa, in sol maggiore."],
+      ["Di nuovo!", "Tutta l'esposizione viene ripetuta: è l'occasione per memorizzare i due temi."],
+      ["Sviluppo", "Breve e inquieto: la musica passa in tonalità minori, più scure, e non trova pace."],
+      ["Ripresa", "Torna il tema 1… ma in fa maggiore! È la sorpresa di Mozart. Poi arriva il tema 2, questa volta in do: siamo a casa."],
+      ["Sfida", "Alza la mano ogni volta che torna il tema 1."]
+    ],
+    curiosita: [
+      `<a href="${IMG}sonata.jpg" target="_blank" rel="noopener"><img src="${IMG}sonata.jpg" alt="Due pagine del catalogo scritto a mano da Mozart, con date, titoli e prime battute"></a><b>Per principianti.</b> Mozart annotava ogni brano nuovo in un quaderno: data, titolo e prime battute. Accanto a questa sonata, il 26 giugno 1788, scrisse «per principianti». Per questo è chiamata <b>Sonata facile</b>.`,
+      "<b>Sonata o forma sonata?</b> La <b>sonata</b> è un brano per uno o due strumenti, in più movimenti. La <b>forma sonata</b> è lo schema con cui è costruito un movimento. Questo primo movimento è entrambe le cose!",
+      "<b>Cercala altrove.</b> Anche il primo movimento di Eine kleine Nachtmusik e quello della Sinfonia n. 40, tra gli ascolti di questa pagina, sono in forma sonata.",
+      "<b>Un nome arrivato dopo.</b> Haydn e Mozart non la chiamavano «forma sonata»: il nome lo inventarono gli studiosi nell'Ottocento, studiando la loro musica.",
+      "<b>Due fratelli alla tastiera.</b> Nel quadro che vedi prima di avviare il video Mozart suona a quattro mani con la sorella Nannerl, bravissima al clavicembalo. Da bambini giravano insieme le corti d'Europa."
+    ]
+  };
+
+  /* crediti delle immagini (tutte ospitate nel sito) */
+  const CREDITI_IMG = [
+    "Fertőd (Ungheria), Palazzo Esterházy (Esterháza), la reggia dove lavorò Haydn: facciata sul cortile d'onore – dettaglio della foto panoramica, foto di Guido Radig — <a href=\"https://commons.wikimedia.org/wiki/File:Esterh%C3%A0zy_Palace_(Fert%C5%91d_in_Hungary).jpg\" target=\"_blank\" rel=\"noopener\">fonte</a>, <a href=\"https://creativecommons.org/licenses/by-sa/4.0/deed.it\" target=\"_blank\" rel=\"noopener\">CC BY-SA 4.0</a>.",
+    "Vienna, il Duomo di Santo Stefano (Stephansdom): tetto a tegole colorate, Heidentürme e campanile sud – dettaglio, foto di Andrew Bossi — <a href=\"https://commons.wikimedia.org/wiki/File:0181-0183a_-_Wien_-_Stephansdom.jpg\" target=\"_blank\" rel=\"noopener\">fonte</a>, <a href=\"https://creativecommons.org/licenses/by-sa/2.5/deed.it\" target=\"_blank\" rel=\"noopener\">CC BY-SA 2.5</a>.",
+    "Christian Ludwig Seehas, ritratto di Joseph Haydn, 1785 (Staatliches Museum Schwerin) – dettaglio — <a href=\"https://commons.wikimedia.org/wiki/File:Seehas-Haydn.jpg\" target=\"_blank\" rel=\"noopener\">fonte</a>, pubblico dominio.",
+    "Joseph Haydn, «Gott erhalte Franz den Kaiser» (Inno dell'Imperatore, Hob. XXVIa:43), bella copia autografa, 1797 (Österreichische Nationalbibliothek, Vienna) – dettaglio — <a href=\"https://commons.wikimedia.org/wiki/File:Haydn_Kaiserlied_Reinschrift.jpg\" target=\"_blank\" rel=\"noopener\">fonte</a>, pubblico dominio.",
+    "Joseph-Siffred Duplessis, ritratto di Christoph Willibald Gluck al clavicembalo, 1775 (Kunsthistorisches Museum, Vienna) – dettaglio — <a href=\"https://commons.wikimedia.org/wiki/File:Joseph_Siffred_Duplessis_-_Christoph_Willibald_Gluck_-_Google_Art_Project.jpg\" target=\"_blank\" rel=\"noopener\">fonte</a>, pubblico dominio.",
+    "Claude-Nicolas Malapeau da Jacques-Philippe-Joseph de Saint-Quentin, «Le Mariage de Figaro» di Beaumarchais, atto I: il Conte scopre Cherubino nascosto nella poltrona, incisione dell'edizione originale, Parigi 1785 – dettaglio — <a href=\"https://commons.wikimedia.org/wiki/File:Malapeau_Saint-Quentin_Beaumarchais_Le_mariage_de_Figaro_1._Akt_1785.jpg\" target=\"_blank\" rel=\"noopener\">fonte</a>, pubblico dominio.",
+    "Pompeo Batoni (attribuito), ritratto di Luigi Boccherini con il violoncello, ca. 1764–67 (National Gallery of Victoria, Melbourne) – dettaglio — <a href=\"https://commons.wikimedia.org/wiki/File:LBoccherini.jpg\" target=\"_blank\" rel=\"noopener\">fonte</a>, pubblico dominio.",
+    "Anton von Maron (attribuito), ritratto di Marianna Martines, ca. 1773–80 (Vienna, Haydn-Haus / Wien Museum) – dettaglio — <a href=\"https://commons.wikimedia.org/wiki/File:Marianna_Martines,_Pupil_of_P._Metastasio%3B_born_in_Vienna,_4th_day_of_May_1744,_Member_Academia_Filarmonica.jpg\" target=\"_blank\" rel=\"noopener\">fonte</a>, pubblico dominio.",
+    "Bernardo Bellotto detto il Canaletto, «Vienna vista dal Belvedere», 1758–61 (Kunsthistorisches Museum, Vienna) – dettaglio con il campanile di Santo Stefano — <a href=\"https://commons.wikimedia.org/wiki/File:Bernardo_Bellotto,_called_Canaletto_-_Vienna_Viewed_from_the_Belvedere_Palace_-_Google_Art_Project.jpg\" target=\"_blank\" rel=\"noopener\">fonte</a>, pubblico dominio.",
+    "Levni (Abdulcelil Çelebi), la banda dei giannizzeri (mehterhâne) in corteo, miniatura dal «Surname-i Vehbi», ca. 1720 (Topkapı Sarayı, Istanbul) – dettaglio — <a href=\"https://commons.wikimedia.org/wiki/File:Levni_mehter.jpg\" target=\"_blank\" rel=\"noopener\">fonte</a>, pubblico dominio.",
+    "Pietro Antonio Lorenzoni (attribuito), Wolfgang Amadeus Mozart bambino nell'abito di gala donato dall'imperatrice Maria Teresa, 1763 (Mozarteum, Salisburgo) – dettaglio — <a href=\"https://commons.wikimedia.org/wiki/File:Wolfgang-amadeus-mozart_2.jpg\" target=\"_blank\" rel=\"noopener\">fonte</a>, pubblico dominio.",
+    "Barbara Krafft, ritratto postumo di Wolfgang Amadeus Mozart, 1819 (Gesellschaft der Musikfreunde, Vienna) – dettaglio — <a href=\"https://commons.wikimedia.org/wiki/File:Barbara_Krafft_-_Portr%C3%A4t_Wolfgang_Amadeus_Mozart_(1819).jpg\" target=\"_blank\" rel=\"noopener\">fonte</a>, pubblico dominio.",
+    "Karl Friedrich Schinkel, scenografia per «Il flauto magico»: la sala stellata della Regina della notte, ca. 1815 (Kupferstichkabinett, Berlino) — <a href=\"https://commons.wikimedia.org/wiki/File:Karl_Friedrich_Schinkel_-_Die_Sternenhalle_der_K%C3%B6nigin_der_Nacht_(ca._1815).jpg\" target=\"_blank\" rel=\"noopener\">fonte</a>, pubblico dominio.",
+    "Thomas Hardy, ritratto di Joseph Haydn, Londra 1791 (Royal College of Music, Londra) – dettaglio — <a href=\"https://commons.wikimedia.org/wiki/File:Joseph_Haydn_by_Thomas_Hardy.jpg\" target=\"_blank\" rel=\"noopener\">fonte</a>, pubblico dominio.",
+    "Ritratto di Maddalena Laura Sirmen (Lombardini), incisione, autore e data non indicati (riprodotta da IMSLP) — <a href=\"https://commons.wikimedia.org/wiki/File:%D0%9C%D0%B0%D0%B3%D0%B4%D0%B0%D0%BB%D0%B5%D0%BD%D0%B0_%D0%9B%D0%B0%D1%83%D1%80%D0%B0_%D0%A1%D0%B8%D1%80%D0%BC%D0%B5%D0%BD_(%D0%9B%D0%BE%D0%BC%D0%B1%D0%B0%D1%80%D0%B4%D0%B8%D0%BD%D0%B8).jpg\" target=\"_blank\" rel=\"noopener\">fonte</a>, pubblico dominio.",
+    "Johann Joseph Neidl da un disegno di Gandolph Ernst Stainhauser von Treuberg, ritratto di Ludwig van Beethoven, incisione, ca. 1800–01 – dettaglio — <a href=\"https://commons.wikimedia.org/wiki/File:Stainhauser,_Neidl_%E2%80%93_Beethoven_aged_about_thirty_(1801).jpg\" target=\"_blank\" rel=\"noopener\">fonte</a>, pubblico dominio.",
+    "Ferdinand Hofmann, fortepiano a coda, Vienna, ca. 1790 (Metropolitan Museum of Art, New York, 1984.34) — <a href=\"https://www.metmuseum.org/art/collection/search/503677\" target=\"_blank\" rel=\"noopener\">fonte</a>, pubblico dominio (Open Access).",
+    "Clarinetto in Do in bosso con chiavi, Francia, ca. 1800 (Metropolitan Museum of Art, New York, 2003.187) — <a href=\"https://www.metmuseum.org/art/collection/search/503619\" target=\"_blank\" rel=\"noopener\">fonte</a>, pubblico dominio (Open Access).",
+    "Joseph Raoux, corno naturale con le ritorte (tons de rechange), Parigi, fine XVIII secolo (Musée de la musique, Parigi), foto di BenP — <a href=\"https://commons.wikimedia.org/wiki/File:Cor_a_tons_de_rechange.jpg\" target=\"_blank\" rel=\"noopener\">fonte</a>, <a href=\"https://creativecommons.org/licenses/by-sa/3.0/deed.it\" target=\"_blank\" rel=\"noopener\">CC BY-SA 3.0</a>.",
+    "I. Bauer, tromba a chiavi in Sol, 1817 (Musikinstrumenten-Museum, Berlino), foto di Simon Schnepp — <a href=\"https://commons.wikimedia.org/wiki/File:Musikinstrumenten-Museum_Berlin_-_Klappentrompete_in_G_-_1106598.jpg\" target=\"_blank\" rel=\"noopener\">fonte</a>, <a href=\"https://creativecommons.org/licenses/by-sa/4.0/deed.it\" target=\"_blank\" rel=\"noopener\">CC BY-SA 4.0</a>.",
+    "Jean Henri Naderman, arpa a pedali (a movimento semplice), Parigi, ca. 1780 (Metropolitan Museum of Art, New York, 44.157.7) — <a href=\"https://www.metmuseum.org/art/collection/search/503900\" target=\"_blank\" rel=\"noopener\">fonte</a>, pubblico dominio (Open Access).",
+    "Glassarmonica (armonica a bicchieri), forse Germania, XVIII secolo (Metropolitan Museum of Art, New York, 89.4.1211) — <a href=\"https://www.metmuseum.org/art/collection/search/501781\" target=\"_blank\" rel=\"noopener\">fonte</a>, pubblico dominio (Open Access).",
+    "Franz Peter Bundsen, coppia di timpani in argento, Hannover, 1780 (Metropolitan Museum of Art, New York, 2010.138.1–.4) — <a href=\"https://www.metmuseum.org/art/collection/search/506174\" target=\"_blank\" rel=\"noopener\">fonte</a>, pubblico dominio (Open Access).",
+    "Johann Nepomuk della Croce, ritratto della famiglia Mozart (Nannerl e Wolfgang alla tastiera, Leopold con il violino, la madre nel ritratto appeso), 1780–81 (Mozarteum, Salisburgo) – dettaglio — <a href=\"https://commons.wikimedia.org/wiki/File:Mozart_Family_Croce.jpg\" target=\"_blank\" rel=\"noopener\">fonte</a>, pubblico dominio.",
+    "Wolfgang Amadeus Mozart, «Verzeichnüss aller meiner Werke», catalogo autografo delle proprie opere: due pagine con le registrazioni del 1784 (British Library, Londra) — <a href=\"https://commons.wikimedia.org/wiki/File:MozartPersonalCatalogSamplePage.png\" target=\"_blank\" rel=\"noopener\">fonte</a>, pubblico dominio."
+  ];
+
+  /* ---------- costruzione della griglia ---------- */
+  const griglia = document.getElementById("griglia");
+  document.getElementById("nAscolti").textContent = ASCOLTI.length;
+  document.getElementById("nStrumenti").textContent = STRUMENTI.length;
+  document.getElementById("nSuonare").textContent = SUONARE.length;
+
+  let scheda = "ascolti", mondo = null, elenco = [];
+  function disegna() {
+    griglia.innerHTML = "";
+    const conSpeciale = scheda === "sonata";
+    document.getElementById("sonata").hidden = !conSpeciale;
+    griglia.hidden = conSpeciale;
+    if (conSpeciale) { preparaSpeciale(); return; }
+    oSchermo.innerHTML = "";   // si esce dalla sezione speciale: il video si ferma
+    if (scheda === "suonare") {
+      SUONARE.forEach(s => {
+        const c = document.createElement("div"); c.className = "card suona empty";
+        c.innerHTML = `<div class="foto" style="background-image:url('${IMG + s.img}')"></div>
+          <div class="testo"><span class="label">Da suonare</span><h2>${s.titolo}</h2><span class="chi">${s.chi}</span></div>`;
+        griglia.appendChild(c);
+      });
+      return;
+    }
+    const dati = scheda === "ascolti" ? ASCOLTI : STRUMENTI;
+    elenco = dati.filter(d => !mondo || !d.mondo || d.mondo === mondo);
+    elenco.forEach((d, i) => {
+      const c = document.createElement("button"); c.type = "button";
+      c.className = "card " + (scheda === "ascolti" ? d.mondo : "strum");
+      c.innerHTML = `<div class="foto" style="background-image:url('${IMG + d.img}')"></div>
+        <div class="testo"><span class="label">${d.label}</span><h2>${d.titolo}</h2><span class="chi">${d.chi}</span><p>${d.gancio}</p></div>`;
+      c.addEventListener("click", () => apri(i));
+      griglia.appendChild(c);
+    });
+  }
+
+  document.querySelectorAll(".scheda").forEach(b => b.addEventListener("click", () => {
+    scheda = b.dataset.scheda;
+    document.querySelectorAll(".scheda").forEach(x => x.classList.toggle("attiva", x === b));
+    disegna();
+  }));
+
+  /* ---------- banner: musica vocale / musica strumentale ---------- */
+  const banner = document.getElementById("banner");
+  function impostaMondo(m, senzaDisegno) {
+    mondo = m;
+    banner.classList.toggle("f-sx", m === "sx");
+    banner.classList.toggle("f-dx", m === "dx");
+    document.querySelectorAll(".etich-meta").forEach(e => e.classList.toggle("attiva", e.dataset.mondo === m));
+    if (!senzaDisegno) {
+      if (scheda !== "ascolti") { scheda = "ascolti"; document.querySelectorAll(".scheda").forEach(x => x.classList.toggle("attiva", x.dataset.scheda === "ascolti")); }
+      disegna();
+    }
+  }
+  banner.querySelectorAll("[data-mondo]").forEach(el => el.addEventListener("click", () => impostaMondo(mondo === el.dataset.mondo ? null : el.dataset.mondo)));
+
+  /* ---------- finestra con il video ---------- */
+  const velo = document.getElementById("velo"), schermo = document.getElementById("schermo"), finestra = document.getElementById("finestra");
+  let attuale = 0;
+  function apri(i) {
+    attuale = (i + elenco.length) % elenco.length;
+    const d = elenco[attuale];
+    finestra.style.setProperty("--accent", scheda === "ascolti" ? (d.mondo === "dx" ? "#a78bfa" : "#F99D1C") : "#5EC8D8");
+    document.getElementById("fLabel").textContent = d.label;
+    document.getElementById("fTitolo").textContent = d.titolo;
+    document.getElementById("fChi").textContent = d.chi;
+    document.getElementById("fGancio").textContent = d.gancio;
+    document.getElementById("fPunti").innerHTML = d.punti.map(p => `<li>${p}</li>`).join("");
+    document.getElementById("fSapevi").innerHTML = `<b>Lo sapevi?</b> ${d.sapevi}`;
+    document.getElementById("fFonte").innerHTML = `<a href="https://www.youtube.com/watch?v=${d.yt}" target="_blank" rel="noopener">Apri su YouTube ↗</a>`;
+    // anteprima: nessuna richiesta a YouTube finché non si preme play
+    schermo.innerHTML = "";
+    schermo.style.backgroundImage = `url('${IMG + d.img}')`;
+    const b = document.createElement("button"); b.className = "avvio"; b.type = "button";
+    b.innerHTML = `<span class="tondo">▶</span><span class="nota">Il video si carica da YouTube quando premi play</span>`;
+    b.addEventListener("click", () => {
+      schermo.innerHTML = `<iframe src="https://www.youtube-nocookie.com/embed/${d.yt}?autoplay=1&rel=0&playsinline=1" title="${d.titolo}"
+        allow="autoplay; encrypted-media; picture-in-picture; fullscreen" allowfullscreen referrerpolicy="strict-origin-when-cross-origin"></iframe>`;
+    });
+    schermo.appendChild(b);
+    velo.classList.add("aperto");
+    document.body.style.overflow = "hidden";
+    b.focus({ preventScroll: true });
+  }
+  function chiudi() { velo.classList.remove("aperto"); schermo.innerHTML = ""; document.body.style.overflow = ""; }
+  document.getElementById("chiudi").addEventListener("click", chiudi);
+  velo.addEventListener("click", e => { if (e.target === velo) chiudi(); });
+  document.getElementById("prec").addEventListener("click", () => apri(attuale - 1));
+  document.getElementById("succ").addEventListener("click", () => apri(attuale + 1));
+  document.addEventListener("keydown", e => {
+    if (!velo.classList.contains("aperto")) return;
+    if (e.key === "Escape") chiudi();
+    if (e.key === "ArrowRight") apri(attuale + 1);
+    if (e.key === "ArrowLeft") apri(attuale - 1);
+  });
+
+  /* ---------- La forma sonata ---------- */
+  const oSchermo = document.getElementById("oSchermo"), oCorpo = document.getElementById("oCorpo");
+  document.getElementById("oLink").href = "https://www.youtube.com/watch?v=" + SPECIALE.yt;
+  function preparaSpeciale() {
+    oSchermo.innerHTML = "";
+    oSchermo.style.backgroundImage = `url('${IMG + SPECIALE.img}')`;
+    const b = document.createElement("button"); b.className = "avvio"; b.type = "button";
+    b.innerHTML = `<span class="tondo">▶</span><span class="nota">Il video si carica da YouTube quando premi play</span>`;
+    b.addEventListener("click", () => {
+      oSchermo.innerHTML = `<iframe src="https://www.youtube-nocookie.com/embed/${SPECIALE.yt}?autoplay=1&rel=0&playsinline=1" title="${SPECIALE.nome}"
+        allow="autoplay; encrypted-media; picture-in-picture; fullscreen" allowfullscreen referrerpolicy="strict-origin-when-cross-origin"></iframe>`;
+    });
+    oSchermo.appendChild(b);
+  }
+  function mostraSpeciale(parte) {
+    document.querySelectorAll(".o-t").forEach(t => t.classList.toggle("attiva", t.dataset.o === parte));
+    if (parte === "cosa") oCorpo.innerHTML = "<ul>" + SPECIALE.cosa.map(([i, t]) => `<li data-i="${i}">${t}</li>`).join("") + "</ul>";
+    if (parte === "ascolto") oCorpo.innerHTML = SPECIALE.ascolto.map(([a, t]) => `<div class="atto"><b>${a}</b><span>${t}</span></div>`).join("");
+    if (parte === "curiosita") oCorpo.innerHTML = SPECIALE.curiosita.map(t => `<div class="cur">${t}</div>`).join("");
+    oCorpo.scrollTop = 0;
+  }
+  document.querySelectorAll(".o-t").forEach(t => t.addEventListener("click", () => mostraSpeciale(t.dataset.o)));
+  mostraSpeciale("cosa");
+
+  /* ---------- crediti ---------- */
+  document.getElementById("listaCrediti").innerHTML = CREDITI_IMG.map(c => `<li>${c}</li>`).join("") +
+    [...ASCOLTI, ...STRUMENTI].map(d => `<li>${d.titolo} (${d.chi}): video di <a href="https://www.youtube.com/watch?v=${d.yt}" target="_blank" rel="noopener">${d.canale}</a> su YouTube</li>`).join("") +
+    `<li>Sonata in do maggiore K 545, I movimento (W. A. Mozart): video di <a href="https://www.youtube.com/watch?v=${SPECIALE.yt}" target="_blank" rel="noopener">${SPECIALE.canale}</a> su YouTube</li>`;
+
+  disegna();
+})();
+</script>
+</body>
+</html>
