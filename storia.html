@@ -12,44 +12,57 @@
   PAGINA STORIA DELLA MUSICA — per aggiungere un'epoca: crea la sua pagina
   (copiando storia-medioevo.html) e scrivi il suo indirizzo in "url" nell'elenco EPOCHE qui sotto.
 -->
-<link rel="stylesheet" href="fonts/caratteri.css">
 <link rel="stylesheet" href="comune.css">
+<link rel="stylesheet" href="sito.css">
 <style>
-  * { box-sizing: border-box; }
-  html, body { margin: 0; min-height: 100%; }
-  body { min-height: 100vh; font-family: 'Inter', 'Segoe UI', Arial, sans-serif; color: #EAF2FF; -webkit-font-smoothing: antialiased;
-    background: #0f172a; overflow-x: hidden; position: relative; }
-  .casetta { position: fixed; top: 12px; left: 12px; z-index: 40; width: 44px; height: 44px; border-radius: 50%; display: grid; place-items: center;
-    background: rgba(15,23,42,0.75); border: 1px solid rgba(255,255,255,0.18); text-decoration: none; font-size: 20px; }
-  header { position: relative; z-index: 1; text-align: center; padding: 26px 20px 14px; }
-  h1 { font-family: 'Manrope', sans-serif; font-weight: 800; font-size: 25px; margin: 0 0 6px; letter-spacing: -0.015em; }
-  header p { font-size: 13px; color: #9FB3CE; margin: 0 auto; max-width: 460px; line-height: 1.45; }
-  main { position: relative; z-index: 1; max-width: 1100px; margin: 0 auto; padding: 8px 20px 30px; }
-  .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(230px, 1fr)); gap: 12px; }
-  @media (max-width: 520px) { .grid { grid-template-columns: repeat(2, 1fr); gap: 9px; } main { padding: 6px 12px 24px; } header { padding-top: 64px; } }
-  .card { --accent: #CF3E96; position: relative; background: rgba(255,255,255,0.035); border: 1px solid rgba(255,255,255,0.09); border-top: 2px solid var(--accent);
-    border-radius: 12px; overflow: hidden; display: flex; flex-direction: column; text-decoration: none; color: inherit; transition: transform .2s ease, background .2s ease, border-color .2s ease; }
-  a.card:hover { transform: translateY(-2px); background: rgba(255,255,255,0.06); border-color: color-mix(in srgb, var(--accent) 55%, transparent); border-top-color: var(--accent); }
-  .card .foto { aspect-ratio: 16 / 9; background: #1e293b center / cover no-repeat; display: grid; place-items: center; font-size: 34px; }
-  .card .testo { padding: 10px 12px 12px; }
-  .card .date { font-size: 10px; font-weight: 800; letter-spacing: .06em; color: var(--accent); background: color-mix(in srgb, var(--accent) 14%, transparent); padding: 2px 8px; border-radius: 999px; display: inline-block; }
-  .card h2 { font-family: 'Manrope', sans-serif; font-weight: 700; font-size: 15px; margin: 5px 0 2px; }
-  .card p { font-size: 11.5px; color: #9FB3CE; margin: 0; line-height: 1.4; }
-  .card.presto { border-style: dashed; background: transparent; }
-  .card.presto .foto { background: rgba(255,255,255,0.03); color: rgba(234,242,255,0.35); }
-  .card.presto h2 { color: #8EA3C0; }
-  .card.presto .date { color: #7F93B2; background: rgba(255,255,255,0.06); }
-  footer.piede { position: relative; z-index: 1; text-align: center; font-size: 13px; color: #9FB3CE; padding: 12px 12px 24px; }
+  /* le epoche: qui le foto sono il contenuto, quindi restano schede con immagine */
+  .epoche { list-style: none; margin: clamp(22px, 2.6vw, 48px) 0 0; padding: 0;
+    display: grid; grid-template-columns: repeat(auto-fill, minmax(min(100%, 19rem), 1fr)); gap: clamp(14px, 1.4vw, 28px); }
+  .epoca { display: flex; flex-direction: column; height: 100%; text-decoration: none; color: inherit;
+    background: var(--superficie); border-radius: var(--raggio); overflow: hidden;
+    box-shadow: 0 1px 2px rgba(20,27,60,0.08), 0 8px 20px -14px rgba(20,27,60,0.35);
+    transition: transform 180ms var(--esci), box-shadow 180ms var(--esci); }
+  .epoca .foto { aspect-ratio: 16 / 10; background: var(--linea) center / cover no-repeat; }
+  .epoca .testo { padding: 0.9rem 1.1rem 1.15rem; }
+  .epoca .date { font-family: var(--titoli); font-weight: 800; font-size: 0.9rem; letter-spacing: 0.01em; color: var(--si); font-variant-numeric: tabular-nums; }
+  .epoca h2 { font-size: 1.35rem; font-weight: 800; letter-spacing: -0.015em; margin-top: 0.1em; }
+  .epoca p { margin: 0.3em 0 0; color: var(--inchiostro-2); font-size: 0.86rem; line-height: 1.4; }
+  .epoca:active { transform: scale(0.985); }
+  @media (hover: hover) and (pointer: fine) { a.epoca:hover { transform: translateY(-3px); box-shadow: 0 1px 2px rgba(20,27,60,0.08), 0 16px 26px -16px rgba(20,27,60,0.45); } }
+  .epoca.presto { opacity: 0.6; }
+  @media (prefers-color-scheme: dark) { .epoca .date { color: #F07FC1; } }
+  @media (max-width: 640px) {
+    .epoca { flex-direction: row; }
+    .epoca .foto { aspect-ratio: auto; width: 34%; flex: none; }
+    .epoca .testo { padding: 0.75rem 0.9rem; }
+    .epoca h2 { font-size: 1.15rem; }
+  }
+  @media (prefers-reduced-motion: reduce) { .epoca { transition: none; } .epoca:hover, .epoca:active { transform: none; } }
 </style>
 </head>
 <body>
-<a class="casetta" href="index.html" aria-label="Torna al sito" title="Torna al sito">🏠</a>
-<header>
-  <h1>Storia della musica</h1>
-  <p>Un'epoca alla volta, attraverso gli ascolti: brani, strumenti e curiosità.</p>
+
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <symbol id="freccia" viewBox="0 0 24 24"><path d="M5 12h13M13 6l6 6-6 6" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></symbol>
+</svg>
+
+<div class="barra-alta contenitore">
+  <a class="casa" href="index.html" aria-label="Torna alla pagina principale"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3.5 11 12 4l8.5 7M6 9.5V20h4.5v-5h3v5H18V9.5" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>musicascuole.it</a>
+</div>
+
+<header class="contenitore">
+  <div class="lamella-titolo" style="--col: var(--si);">
+    <span class="tasto"><svg viewBox="0 0 48 48" aria-hidden="true"><use href="icone.svg#ic-storia"/></svg></span>
+    <div><h1>Storia della musica</h1><p>Un'epoca alla volta, attraverso gli ascolti: brani, strumenti e curiosità.</p></div>
+  </div>
 </header>
-<main><div class="grid" id="grid"></div></main>
+
+<main class="contenitore">
+  <ol class="epoche" id="grid" aria-label="Le epoche, dalla più antica"></ol>
+</main>
+
 <footer class="piede">Cristiano Arata · musicascuole.it — <a href="crediti.html">Crediti e licenza</a> · <a href="privacy.html">Privacy</a></footer>
+
 <script>
   const EPOCHE = [
     { titolo: "Preistoria e antichità", date: "fino al 476 d.C.", desc: "Flauti d'osso, pietre sonore, la melodia più antica, Grecia e Roma.", url: "storia-antichita.html", img: "media/storia/antichita/banner-grotta.jpg" },
@@ -63,12 +76,12 @@
   ];
   const g = document.getElementById("grid");
   EPOCHE.forEach(e => {
-    const el = document.createElement(e.url ? "a" : "div");
-    el.className = "card" + (e.url ? "" : " presto");
-    if (e.url) el.href = e.url;
-    el.innerHTML = `<div class="foto" ${e.img ? `style="background-image:url('${e.img}')"` : ""}>${e.img ? "" : e.icona}</div>
-      <div class="testo"><span class="date">${e.url ? e.date : "presto"}</span><h2>${e.titolo}</h2><p>${e.url ? e.desc : e.date}</p></div>`;
-    g.appendChild(el);
+    const li = document.createElement("li");
+    li.innerHTML = `<${e.url ? `a href="${e.url}"` : "div"} class="epoca${e.url ? "" : " presto"}">
+        <div class="foto" ${e.img ? `style="background-image:url('${e.img}')"` : ""}></div>
+        <div class="testo"><span class="date">${e.url ? e.date : "presto"}</span><h2>${e.titolo}</h2><p>${e.url ? e.desc : e.date}</p></div>
+      </${e.url ? "a" : "div"}>`;
+    g.appendChild(li);
   });
 </script>
 </body>

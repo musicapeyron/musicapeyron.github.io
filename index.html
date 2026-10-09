@@ -23,484 +23,174 @@
   ============================================================
 -->
 
-<link rel="stylesheet" href="fonts/caratteri.css">
-
 <link rel="stylesheet" href="comune.css">
+<link rel="stylesheet" href="sito.css">
 <style>
-  * { box-sizing: border-box; }
-
-  html, body {
-    margin: 0;
-    min-height: 100%;
+  /* ---------- titolo ---------- */
+  header.titolo { padding-top: clamp(20px, 2.6vw, 52px); }
+  header.titolo h1 {
+    font-size: clamp(1.9rem, 0.9rem + 2.3vw, 3.4rem);
+    font-weight: 800; line-height: 1.02; letter-spacing: -0.03em;
+    max-width: 24ch;
   }
-
-  body {
-    min-height: 100vh;
-    font-family: 'Inter', 'Segoe UI', Arial, sans-serif;
-    color: #EAF2FF;
-    -webkit-font-smoothing: antialiased;
-    background: #0f172a;
-    overflow-x: hidden;
-    position: relative;
-  }
-
-  /* ---------- hero ---------- */
-  header.hero {
-    position: relative;
-    z-index: 1;
-    max-width: 820px;
-    margin: 0 auto;
-    padding: 24px 24px 16px;
-    text-align: center;
-  }
-
-  header.hero h1 {
-    font-family: 'Manrope', sans-serif;
-    font-weight: 800;
-    font-size: 25px;
-    line-height: 1.2;
-    margin: 0 0 6px;
-    letter-spacing: -0.015em;
-    /* sempre su una riga: su schermi stretti il testo si rimpicciolisce (vedi fitTitle) */
-    white-space: nowrap;
-  }
-  @media (max-width: 600px) {
-    header.hero { padding-left: 12px; padding-right: 12px; max-width: none; }
-    header.hero h1 { font-size: 20px; }
-  }
-
   /* parola "la" del titolo: identica al resto del testo, nessun indizio visivo */
-  header.hero h1 {
-    cursor: default;
-    -webkit-user-select: none;
-    user-select: none;
-  }
-  #secretLa {
-    -webkit-tap-highlight-color: transparent;
-    touch-action: manipulation;
-  }
+  header.titolo h1 { cursor: default; -webkit-user-select: none; user-select: none; }
+  #secretLa { -webkit-tap-highlight-color: transparent; touch-action: manipulation; }
 
-  header.hero p {
-    font-size: 12.5px;
-    color: #9FB3CE;
-    font-weight: 500;
-    line-height: 1.45;
-    max-width: 380px;
-    margin: 0 auto;
+  /* ---------- il metallofono: le cinque sezioni del sito ---------- */
+  /* Ogni lamella ha il colore di una nota, in ordine di scala (do, re, fa, sol, si):
+     la più lunga è la più grave, come su un vero metallofono. */
+  .metallofono {
+    display: grid; grid-template-columns: repeat(5, 1fr); align-items: center;
+    gap: clamp(10px, 1.1vw, 22px);
+    margin-top: clamp(22px, 2.6vw, 52px);
+    min-height: 16rem;
   }
-
-  /* ---------- staff line signature ---------- */
-  .staff {
-    max-width: 300px;
-    margin: 18px auto 8px;
-    height: 32px;
+  .lamella {
+    --alta: 16rem;
     position: relative;
+    min-height: calc(var(--alta) * var(--l, 1));
+    gap: 0.8rem;
+    display: flex; flex-direction: column; justify-content: space-between;
+    padding: 1.15rem 1.1rem 1.25rem;
+    border-radius: var(--raggio);
+    background: var(--col); color: var(--su-col, #fff);
+    text-decoration: none;
+    box-shadow: 0 1px 0 rgba(255,255,255,0.35) inset, 0 6px 14px -8px rgba(20,27,60,0.45);
+    transition: transform 180ms var(--esci), box-shadow 180ms var(--esci);
   }
-  .staff svg { width: 100%; height: 100%; display: block; overflow: visible; }
-  .staff line {
-    stroke: rgba(255,255,255,0.14);
-    stroke-width: 1;
+  /* i chiodini che tengono la lamella */
+  .lamella::before, .lamella::after {
+    content: ""; position: absolute; left: 50%; width: 11px; height: 11px; margin-left: -5.5px; border-radius: 50%;
+    background: rgba(10,14,38,0.32); box-shadow: inset 0 1px 1px rgba(255,255,255,0.4);
   }
-  /* La notina "cammina" sul rigo a scatti, suonando una scala
-     mi-fa-sol-la-si-do-re-mi e ritorno, con i colori ufficiali delle note.
-     A scatti (2 al secondo) invece che fluida: il telefono ridisegna
-     2 volte al secondo invece di 60, quindi non scalda e consuma pochissimo. */
-  /* chiave di violino: forma presa da VexFlow, la stessa degli esercizi */
-  .staff .clef { fill: rgba(255,255,255,0.42); }
-  .staff .melody-note {
-    transform: translate(32px, 31px);
-    fill: #FFF428;
-    /* contorno chiaro sottile: il colore resta quello della nota,
-       ma si stacca dallo sfondo (serve soprattutto al la, viola su viola) */
-    stroke: rgba(255,255,255,0.7);
-    stroke-width: 0.9;
-    /* si muove con un piccolo timer in fondo alla pagina (risparmio energetico) */
+  .lamella::before { top: 9px; }
+  .lamella::after { bottom: 9px; }
+  .lamella .tasto { width: 3.4rem; height: 3.4rem; margin-top: 0.4rem; background: rgba(10,14,38,0.88); }
+  .lamella .nome { font-family: var(--titoli); font-weight: 800; font-size: clamp(1.3rem, 0.9rem + 0.9vw, 1.9rem); line-height: 1.05; letter-spacing: -0.02em; }
+  .lamella .cosa { display: block; margin-top: 0.3em; font-size: 0.86rem; font-weight: 600; line-height: 1.3; opacity: 0.9; }
+  .lamella:active { transform: scale(0.97); }
+  @media (hover: hover) and (pointer: fine) {
+    .lamella:hover { transform: translateY(-4px); box-shadow: 0 1px 0 rgba(255,255,255,0.35) inset, 0 14px 22px -12px rgba(20,27,60,0.55); }
   }
-  @keyframes melody {
-    0.0% { transform: translate(32.0px, 31px); fill: #FFF428; }
-    7.143% { transform: translate(51.8px, 27.75px); fill: #BED958; }
-    14.286% { transform: translate(71.7px, 24.5px); fill: #009C95; }
-    21.429% { transform: translate(91.5px, 21.25px); fill: #5E50A1; }
-    28.571% { transform: translate(111.4px, 18px); fill: #CF3E96; }
-    35.714% { transform: translate(131.2px, 14.75px); fill: #E21C48; }
-    42.857% { transform: translate(151.1px, 11.5px); fill: #F99D1C; }
-    50.0% { transform: translate(170.9px, 8.25px); fill: #FFF428; }
-    57.143% { transform: translate(190.8px, 11.5px); fill: #F99D1C; }
-    64.286% { transform: translate(210.6px, 14.75px); fill: #E21C48; }
-    71.429% { transform: translate(230.5px, 18px); fill: #CF3E96; }
-    78.571% { transform: translate(250.3px, 21.25px); fill: #5E50A1; }
-    85.714% { transform: translate(270.2px, 24.5px); fill: #009C95; }
-    92.857% { transform: translate(290.0px, 27.75px); fill: #BED958; }
+
+  /* ---------- test d'ingresso: una lamella orizzontale, la nota mi ---------- */
+  .lamella-test {
+    position: relative;
+    display: flex; align-items: center; gap: 1rem;
+    margin-top: clamp(12px, 1.2vw, 22px);
+    padding: 0.85rem 2.2rem 0.85rem 1.6rem;
+    border-radius: var(--raggio);
+    background: var(--mi); color: #141B3C; text-decoration: none;
+    box-shadow: 0 1px 0 rgba(255,255,255,0.5) inset, 0 6px 14px -8px rgba(20,27,60,0.35);
+    transition: transform 180ms var(--esci);
+  }
+  .lamella-test::before, .lamella-test::after {
+    content: ""; position: absolute; top: 50%; width: 10px; height: 10px; margin-top: -5px; border-radius: 50%;
+    background: rgba(10,14,38,0.28); box-shadow: inset 0 1px 1px rgba(255,255,255,0.5);
+  }
+  .lamella-test::before { left: 9px; } .lamella-test::after { right: 9px; }
+  .lamella-test .tasto { width: 2.9rem; height: 2.9rem; }
+  .lamella-test h2 { font-size: 1.3rem; font-weight: 800; letter-spacing: -0.015em; }
+  .lamella-test p { margin: 0.1em 0 0; font-size: 0.9rem; font-weight: 600; color: #2B3255; }
+  .lamella-test .testo { flex: 1; }
+  .lamella-test .freccia { width: 1.5rem; height: 1.5rem; flex: none; }
+  .lamella-test:active { transform: scale(0.985); }
+  @media (hover: hover) and (pointer: fine) { .lamella-test:hover { transform: translateY(-2px); } }
+
+  /* colori dei tipi di attività (puntino accanto a Ascolto / Teoria / Ritmo) */
+  .tipo-ascolto { --puntino: var(--la); }
+  .tipo-teoria  { --puntino: var(--sol); }
+  .tipo-ritmo   { --puntino: var(--do); }
+  .tipo-verifica{ --puntino: var(--mi); }
+
+  .voce.vuota { color: var(--inchiostro-3); cursor: default; }
+  .voce.vuota .tasto { background: transparent; border: 2px dashed var(--linea); color: var(--inchiostro-3); font-size: 1.4rem; font-weight: 700; }
+
+  /* ---------- livelli P/M/L (spenti: MOSTRA_LIVELLI = false) ---------- */
+  .lv { display: inline-flex; align-items: center; justify-content: center; width: 1.3em; height: 1.3em; border-radius: 5px; font-size: 0.72rem; font-weight: 800; color: #141B3C; }
+  .lv-P { background: #f9a8d4; } .lv-M { background: #fcd34d; } .lv-L { background: #93c5fd; }
+  .voce .livelli { display: inline-flex; gap: 3px; margin-left: 0.5em; vertical-align: 0.1em; }
+  .livelli-bar { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 1.4rem; }
+  .livelli-bar button { display: inline-flex; align-items: center; gap: 0.45em; min-height: 44px; padding: 0 1em; border-radius: 999px; border: 1px solid var(--linea); background: var(--superficie); color: var(--inchiostro); font: 700 0.9rem var(--testo); cursor: pointer; }
+  .livelli-bar button.active { background: var(--inchiostro); color: var(--superficie); border-color: var(--inchiostro); }
+  .livelli-bar .corto { display: none; }
+
+  /* ---------- PC e tablet: lamelle più basse, senza descrizione (non ci starebbe) ---------- */
+  @media (max-width: 1599px), (max-height: 820px) {
+    .lamella .cosa { display: none; }
+    .metallofono { min-height: 12rem; }
+    .lamella { --alta: 12rem; }
+  }
+
+  /* ---------- telefono: il metallofono si gira, lamelle una sotto l'altra ---------- */
+  @media (max-width: 640px) {
+    .metallofono { grid-template-columns: 1fr; justify-items: center; gap: 8px; min-height: 0; }
+    .lamella {
+      width: calc(100% * var(--l, 1)); height: auto; min-height: 3.6rem;
+      flex-direction: row; align-items: center; justify-content: flex-start; gap: 0.85rem;
+      padding: 0.45rem 1.6rem 0.45rem 1.5rem;
+    }
+    .lamella::before, .lamella::after { left: auto; top: 50%; margin: -4px 0 0; width: 8px; height: 8px; }
+    .lamella::before { left: 8px; } .lamella::after { right: 8px; bottom: auto; }
+    .lamella .tasto { width: 2.5rem; height: 2.5rem; margin: 0; }
+    .lamella .nome { font-size: 1.2rem; }
+    .livelli-bar .lungo { display: none; } .livelli-bar .corto { display: inline; }
+    .lamella-test { padding: 0.7rem 1.5rem 0.7rem 1.3rem; gap: 0.8rem; }
+    .lamella-test h2 { font-size: 1.12rem; }
+    .lamella-test p { font-size: 0.82rem; }
   }
   @media (prefers-reduced-motion: reduce) {
-    .staff .melody-note { animation: none; }
+    .lamella, .lamella-test { transition: none; }
+    .lamella:hover, .lamella:active, .lamella-test:hover, .lamella-test:active { transform: none; }
   }
-
-  /* ---------- tools grid ---------- */
-  main {
-    position: relative;
-    z-index: 1;
-    max-width: 900px;
-    margin: 0 auto;
-    padding: 0 20px 40px;
-  }
-
-  .grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(190px, 1fr));
-    gap: 10px;
-  }
-
-  /* ---------- card in evidenza: Spartiti ---------- */
-  .featured-card {
-    display: flex;
-    align-items: center;
-    gap: 14px;
-    background: linear-gradient(135deg, rgba(94,200,216,0.12), rgba(255,255,255,0.035));
-    border: 1px solid rgba(94,200,216,0.35);
-    border-radius: 14px;
-    padding: 14px 18px;
-    text-decoration: none;
-    color: inherit;
-    margin-bottom: 16px;
-    transition: border-color 0.2s ease, transform 0.2s ease, background 0.2s ease;
-  }
-  .featured-card:hover {
-    border-color: rgba(94,200,216,0.6);
-    transform: translateY(-2px);
-    background: linear-gradient(135deg, rgba(94,200,216,0.18), rgba(255,255,255,0.05));
-  }
-  .featured-card .icon {
-    width: 34px;
-    height: 34px;
-    border-radius: 9px;
-    background: rgba(94, 200, 216, 0.18);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 16px;
-    flex-shrink: 0;
-  }
-  .featured-card .featured-text { flex: 1; }
-  .featured-card h2 {
-    font-family: 'Manrope', sans-serif;
-    font-weight: 700;
-    font-size: 15.5px;
-    margin: 0 0 2px;
-    letter-spacing: -0.01em;
-  }
-  .featured-card p {
-    font-size: 11.5px;
-    color: #9FB3CE;
-    font-weight: 500;
-    margin: 0;
-  }
-  .featured-card .arrow {
-    font-size: 16px;
-    color: #7FD8E4;
-    flex-shrink: 0;
-  }
-
-  .featured-row {
-    display: grid; grid-template-columns: repeat(5, 1fr); gap: 8px;
-    margin-bottom: 16px;
-  }
-  .featured-row .featured-card { margin-bottom: 0; padding: 11px 12px; gap: 10px; }
-  .featured-row .featured-card h2 { font-size: 14px; }
-  .featured-row .featured-card p { font-size: 11px; line-height: 1.35; }
-  .featured-row .featured-card .icon { width: 30px; height: 30px; }
-  .featured-row .featured-card .arrow { font-size: 14px; }
-  .featured-row .featured-card p, .featured-row .featured-card .arrow { display: none; }
-  .featured-row .featured-card { padding: 13px 12px; }
-  @media (max-width: 760px) { .featured-row { grid-template-columns: repeat(6, 1fr); } .featured-row .featured-card { grid-column: span 2; }
-    .featured-row .featured-card:nth-child(4), .featured-row .featured-card:nth-child(5) { grid-column: span 3; } }
-  @media (max-width: 420px) { .featured-row .featured-card p { display: none; } .featured-row .featured-card .arrow { display: none; } }
-  .featured-storia {
-    background: linear-gradient(135deg, rgba(207,62,150,0.14), rgba(255,255,255,0.035));
-    border-color: rgba(207,62,150,0.42);
-  }
-  .featured-storia:hover { border-color: rgba(207,62,150,0.7); background: linear-gradient(135deg, rgba(207,62,150,0.2), rgba(255,255,255,0.05)); }
-  .featured-storia .icon { background: rgba(207,62,150,0.18); }
-  .featured-storia .arrow { color: #E879B9; }
-  .featured-solfeggio {
-    background: linear-gradient(135deg, rgba(226,28,72,0.14), rgba(255,255,255,0.035));
-    border-color: rgba(226,28,72,0.42);
-  }
-  .featured-solfeggio:hover { border-color: rgba(226,28,72,0.7); background: linear-gradient(135deg, rgba(226,28,72,0.2), rgba(255,255,255,0.05)); }
-  .featured-solfeggio .icon { background: rgba(226,28,72,0.18); }
-  .featured-solfeggio .arrow { color: #F87171; }
-  .featured-giochi {
-    background: linear-gradient(135deg, rgba(249,157,28,0.14), rgba(255,255,255,0.035));
-    border-color: rgba(249,157,28,0.4);
-  }
-  .featured-giochi:hover { border-color: rgba(249,157,28,0.65); background: linear-gradient(135deg, rgba(249,157,28,0.2), rgba(255,255,255,0.05)); }
-  .featured-giochi .icon { background: rgba(249,157,28,0.18); }
-  .featured-giochi .arrow { color: #F99D1C; }
-  .featured-schemi {
-    background: linear-gradient(135deg, rgba(190,217,88,0.13), rgba(255,255,255,0.035));
-    border-color: rgba(190,217,88,0.4);
-  }
-  .featured-schemi:hover { border-color: rgba(190,217,88,0.65); background: linear-gradient(135deg, rgba(190,217,88,0.19), rgba(255,255,255,0.05)); }
-  .featured-schemi .icon { background: rgba(190,217,88,0.18); }
-  .featured-schemi .arrow { color: #BED958; }
-
-  /* ---------- livelli: P M L ---------- */
-  .lv {
-    display: inline-flex; align-items: center; justify-content: center;
-    width: 17px; height: 17px; border-radius: 5px;
-    font-family: 'Manrope', sans-serif; font-size: 10px; font-weight: 800;
-    color: rgba(234,242,255,0.28); border: 1px solid rgba(234,242,255,0.14);
-  }
-  .lv.on { color: #0f172a; border-color: transparent; }
-  .lv-P.on { background: #f9a8d4; }
-  .lv-M.on { background: #fcd34d; }
-  .lv-L.on { background: #93c5fd; }
-  .card .livelli { display: flex; gap: 3px; margin-top: 8px; }
-
-  .livelli-bar {
-    display: flex; flex-wrap: wrap; align-items: center; gap: 6px;
-    margin: 0 0 14px;
-  }
-  .livelli-bar .bar-label {
-    font-size: 11px; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase;
-    color: #9FB3CE; margin-right: 4px;
-  }
-  .livelli-bar button {
-    display: inline-flex; align-items: center; gap: 6px;
-    font-family: 'Manrope', sans-serif; font-weight: 700; font-size: 12.5px;
-    color: #EAF2FF; cursor: pointer; padding: 6px 12px; border-radius: 999px;
-    border: 1px solid rgba(255,255,255,0.16); background: rgba(255,255,255,0.05);
-  }
-  .livelli-bar button:hover { background: rgba(255,255,255,0.12); }
-  .livelli-bar .corto { display: none; }
-  @media (max-width: 600px) {
-    .livelli-bar { gap: 4px; flex-wrap: nowrap; }
-    .livelli-bar .bar-label { display: none; }
-    .livelli-bar .lungo { display: none; }
-    .livelli-bar .corto { display: inline; }
-    .livelli-bar button { font-size: 12px; padding: 6px 10px; gap: 5px; flex-shrink: 0; }
-  }
-  @media (max-width: 360px) { .livelli-bar button { font-size: 11px; padding: 5px 8px; } }
-  .livelli-bar button.active { background: #EAF2FF; color: #0f172a; border-color: #EAF2FF; }
-
-  /* Test d'ingresso: card a parte, larga e di un altro colore */
-  #testWrap { margin-bottom: 18px; }
-  #testWrap .card-test {
-    display: grid; grid-template-columns: auto 1fr auto; grid-template-rows: auto auto; column-gap: 14px;
-    align-items: center; min-height: 0; padding: 14px 18px;
-    background: linear-gradient(135deg, rgba(249,168,212,0.16), rgba(252,211,77,0.10));
-    border: 1px solid rgba(249,168,212,0.45);
-  }
-  #testWrap .card-test:hover { border-color: rgba(249,168,212,0.75); }
-  #testWrap .card-test .top-row { grid-row: 1 / span 2; margin: 0; }
-  #testWrap .card-test .top-row .label { display: none; }
-  #testWrap .card-test .icon { width: 34px; height: 34px; font-size: 16px; background: rgba(249,168,212,0.2); }
-  #testWrap .card-test h2 { grid-column: 2; margin: 0; font-size: 15.5px; }
-  #testWrap .card-test p { grid-column: 2; margin: 2px 0 0; }
-  #testWrap .card-test .livelli { grid-column: 3; grid-row: 1 / span 2; margin: 0; }
-  [hidden] { display: none !important; }
-
-  .divider {
-    height: 1px;
-    background: rgba(255,255,255,0.09);
-    margin: 0 0 16px;
-  }
-
-  /* ---------- sezioni ---------- */
-  .group { margin-top: 22px; }
-  .group:first-of-type { margin-top: 4px; }
-  .group-title {
-    display: flex; align-items: center; gap: 8px;
-    font-family: 'Manrope', sans-serif; font-weight: 800;
-    font-size: 12px; letter-spacing: 0.08em; text-transform: uppercase;
-    color: #cbd5e1; margin: 0 0 10px; padding-left: 10px;
-    border-left: 3px solid var(--accent);
-  }
-  .group-giochi    { --accent: #F99D1C; }
-  .group-base      { --accent: #5EC8D8; }
-  .group-avanzati  { --accent: #a78bfa; }
-  .group .card, .group .card:hover { border-top: 2px solid var(--accent); }
-  .group .card .label { color: var(--accent); background: color-mix(in srgb, var(--accent) 14%, transparent); }
-  .group-giochi .card { background: linear-gradient(180deg, rgba(249,157,28,0.08), rgba(255,255,255,0.03)); }
-
-  .card {
-    position: relative;
-    background: rgba(255,255,255,0.035);
-    border: 1px solid rgba(255,255,255,0.09);
-    border-radius: 12px;
-    padding: 11px 12px 11px;
-    transition: border-color 0.2s ease, transform 0.2s ease, background 0.2s ease;
-    display: flex;
-    flex-direction: column;
-    /* tutta la card è il link al gioco */
-    text-decoration: none;
-    color: inherit;
-    cursor: pointer;
-  }
-  .card:focus-visible { outline: 2px solid #5EC8D8; outline-offset: 2px; }
-
-  .card:hover {
-    border-color: rgba(94, 200, 216, 0.45);
-    background: rgba(255,255,255,0.055);
-    transform: translateY(-2px);
-  }
-
-  .card .top-row {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    margin-bottom: 7px;
-  }
-
-  .card .icon {
-    width: 25px;
-    height: 25px;
-    border-radius: 7px;
-    background: rgba(94, 200, 216, 0.12);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 13px;
-    flex-shrink: 0;
-  }
-
-  .card .label {
-    font-size: 9px;
-    font-weight: 700;
-    letter-spacing: 0.05em;
-    text-transform: uppercase;
-    color: #7FD8E4;
-    background: rgba(94, 200, 216, 0.1);
-    padding: 2px 7px;
-    border-radius: 999px;
-  }
-
-  .card h2 {
-    font-family: 'Manrope', sans-serif;
-    font-weight: 700;
-    font-size: 13.5px;
-    margin: 0 0 4px;
-    letter-spacing: -0.01em;
-  }
-
-  .card p {
-    font-size: 11px;
-    line-height: 1.4;
-    color: #9FB3CE;
-    font-weight: 500;
-    margin: 0;
-    flex: 1;
-  }
-
-  /* empty slot */
-  .card.empty {
-    align-items: center;
-    justify-content: center;
-    text-align: center;
-    border-style: dashed;
-    background: transparent;
-    color: #64789A;
-    cursor: default;
-  }
-  .card.empty:hover { transform: none; border-color: rgba(255,255,255,0.14); }
-  .card.empty .plus {
-    font-family: 'Manrope', sans-serif;
-    font-size: 17px;
-    color: #5EC8D8;
-    margin-bottom: 2px;
-  }
-  .card.empty div:last-child {
-    font-size: 10.5px;
-  }
-
-  footer {
-    position: relative;
-    z-index: 1;
-    text-align: center;
-    padding: 0 20px 22px;
-    font-size: 10.5px;
-    color: #5C7091;
-  }
-  .ico { width: 84%; height: 84%; display: block; overflow: visible; }
-  /* riquadro delle icone nelle card dei giochi: più grande, per le icone disegnate */
-  .card .icon { width: 34px !important; height: 34px !important; border-radius: 9px !important; }
-  .featured-card .icon .ico { width: 78%; height: 78%; }
-  footer.piede { text-align: center; font-size: 13px; color: #9FB3CE; padding: 18px 12px 28px; }
 </style>
 </head>
 <body>
 
-<header class="hero">
-  <h1>Strumenti interattivi per imparare <span id="secretLa">la</span> musica</h1>
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <symbol id="freccia" viewBox="0 0 24 24"><path d="M5 12h13M13 6l6 6-6 6" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></symbol>
+</svg>
 
-  <div class="staff" aria-hidden="true">
-    <svg viewBox="0 0 300 32" preserveAspectRatio="none">
-      <line x1="0" y1="5"  x2="300" y2="5"></line>
-      <line x1="0" y1="11.5" x2="300" y2="11.5"></line>
-      <line x1="0" y1="18" x2="300" y2="18"></line>
-      <line x1="0" y1="24.5" x2="300" y2="24.5"></line>
-      <line x1="0" y1="31" x2="300" y2="31"></line>
-      <path class="clef" transform="translate(-6.75 -34.0) scale(0.65)" d="M30.191 73.208C30.135 72.731,30.191 72.703,30.444 72.45C34.824 68.378,38.138 63.24,38.138 57.034C38.138 53.524,37.155 50.042,35.498 47.627C34.881 46.729,33.842 45.606,33.392 45.606C32.831 45.606,31.567 46.644,30.781 47.543C27.776 50.856,26.794 55.911,26.794 60.123C26.794 62.454,27.102 65.093,27.383 66.75C27.468 67.227,27.496 67.311,27.018 67.733C21.178 72.534,15 78.319,15 86.49C15 93.51,19.802 100.193,29.714 100.193C30.641 100.193,31.708 100.109,32.522 99.94C32.943 99.856,33.027 99.828,33.112 100.305C33.589 103.029,34.207 106.539,34.207 108.449C34.207 114.43,30.163 115.16,27.776 115.16C25.586 115.16,24.547 114.514,24.547 113.98C24.547 113.7,24.912 113.587,25.839 113.278C27.102 112.913,28.535 111.846,28.535 109.488C28.535 107.269,27.131 105.36,24.66 105.36C21.964 105.36,20.335 107.522,20.335 110.021C20.335 112.632,21.908 116.62,28.029 116.62C30.725 116.62,35.976 115.384,35.976 108.533C35.976 106.202,35.246 102.383,34.824 99.856C34.74 99.379,34.768 99.435,35.33 99.182C39.43 97.554,42.125 94.128,42.125 89.551C42.125 84.384,38.334 79.807,32.382 79.807C31.343 79.807,31.343 79.807,31.202 79.077M34.01 51.867C35.33 51.867,36.425 52.962,36.425 55.181C36.425 59.674,32.578 63.324,29.405 66.104C29.124 66.357,28.956 66.3,28.872 65.767C28.703 64.728,28.619 63.352,28.619 62.06C28.619 55.742,31.539 51.867,34.01 51.867M29.602 79.414C29.714 80.172,29.714 80.144,28.984 80.369C25.446 81.576,23.115 84.777,23.115 88.231C23.115 91.853,25.025 94.437,27.776 95.391C28.113 95.504,28.591 95.616,28.872 95.616C29.18 95.616,29.349 95.419,29.349 95.167C29.349 94.886,29.04 94.774,28.759 94.661C27.046 93.931,25.839 92.19,25.839 90.337C25.839 88.006,27.411 86.293,29.882 85.591C30.528 85.423,30.612 85.479,30.697 85.928L32.718 97.975C32.803 98.424,32.747 98.424,32.157 98.536C31.511 98.649,30.697 98.733,29.882 98.733C22.806 98.733,18.229 94.802,18.229 89.186C18.229 86.799,18.65 83.598,21.992 79.807C24.435 77.111,26.288 75.595,28.17 74.079C28.591 73.742,28.675 73.798,28.759 74.219M32.382 85.844C32.297 85.339,32.353 85.226,32.831 85.283C36.116 85.563,38.812 88.315,38.812 91.853C38.812 94.409,37.267 96.458,35.021 97.61C34.544 97.834,34.459 97.834,34.375 97.357"></path>
-      <circle class="melody-note" cx="0" cy="0" r="3"></circle>
-    </svg>
-  </div>
+<header class="titolo contenitore">
+  <h1>Strumenti interattivi per imparare <span id="secretLa">la</span> musica</h1>
 </header>
 
-<main>
-  <div class="featured-row">
-    <a class="featured-card" href="spartiti.html">
-      <div class="icon"><svg class="ico" viewBox="0 0 48 48" aria-hidden="true"><use href="icone.svg#ic-spartiti"/></svg></div>
-      <div class="featured-text">
-        <h2>Spartiti</h2>
-        <p>Spartiti progressivi, dai primi brani ai metodi classici.</p>
-      </div>
-      <span class="arrow">→</span>
+<main class="contenitore">
+  <nav class="metallofono" aria-label="Sezioni del sito">
+    <a class="lamella" href="solfeggio.html" style="--col: var(--do); --l: 1">
+      <span class="tasto"><svg viewBox="0 0 48 48" aria-hidden="true"><use href="icone.svg#ic-solfeggio"/></svg></span>
+      <span><span class="nome">Solfeggio</span><span class="cosa">Leggere ritmi e note a tempo.</span></span>
     </a>
-    <a class="featured-card featured-giochi" href="giochi.html">
-      <div class="icon"><svg class="ico" viewBox="0 0 48 48" aria-hidden="true"><use href="icone.svg#ic-giochi"/></svg></div>
-      <div class="featured-text">
-        <h2>Giochi</h2>
-        <p>Note-UNO e memory, anche a squadre.</p>
-      </div>
-      <span class="arrow">→</span>
+    <a class="lamella" href="giochi.html" style="--col: var(--re); --su-col: #141B3C; --l: 0.94">
+      <span class="tasto"><svg viewBox="0 0 48 48" aria-hidden="true"><use href="icone.svg#ic-giochi"/></svg></span>
+      <span><span class="nome">Giochi</span><span class="cosa">Note-UNO e memory, anche a squadre.</span></span>
     </a>
-    <a class="featured-card featured-schemi" href="schemi.html">
-      <div class="icon"><svg class="ico" viewBox="0 0 48 48" aria-hidden="true"><use href="icone.svg#ic-schemi"/></svg></div>
-      <div class="featured-text">
-        <h2>Schemi</h2>
-        <p>Vari schemi per le note musicali, gli accordi e altro.</p>
-      </div>
-      <span class="arrow">→</span>
+    <a class="lamella" href="schemi.html" style="--col: var(--fa); --su-col: #141B3C; --l: 0.88">
+      <span class="tasto"><svg viewBox="0 0 48 48" aria-hidden="true"><use href="icone.svg#ic-schemi"/></svg></span>
+      <span><span class="nome">Schemi</span><span class="cosa">Vari schemi per le note musicali, gli accordi e altro.</span></span>
     </a>
-    <a class="featured-card featured-storia" href="storia.html">
-      <div class="icon"><svg class="ico" viewBox="0 0 48 48" aria-hidden="true"><use href="icone.svg#ic-storia"/></svg></div>
-      <div class="featured-text">
-        <h2>Storia della musica</h2>
-        <p>Le epoche raccontate con gli ascolti.</p>
-      </div>
-      <span class="arrow">→</span>
+    <a class="lamella" href="spartiti.html" style="--col: var(--sol); --l: 0.82">
+      <span class="tasto"><svg viewBox="0 0 48 48" aria-hidden="true"><use href="icone.svg#ic-spartiti"/></svg></span>
+      <span><span class="nome">Spartiti</span><span class="cosa">Spartiti progressivi, dai primi brani ai metodi classici.</span></span>
     </a>
-    <a class="featured-card featured-solfeggio" href="solfeggio.html">
-      <div class="icon"><svg class="ico" viewBox="0 0 48 48" aria-hidden="true"><use href="icone.svg#ic-solfeggio"/></svg></div>
-      <div class="featured-text">
-        <h2>Solfeggio</h2>
-        <p>Leggere ritmi e note a tempo.</p>
-      </div>
-      <span class="arrow">→</span>
+    <a class="lamella" href="storia.html" style="--col: var(--si); --l: 0.76">
+      <span class="tasto"><svg viewBox="0 0 48 48" aria-hidden="true"><use href="icone.svg#ic-storia"/></svg></span>
+      <span><span class="nome">Storia della musica</span><span class="cosa">Le epoche raccontate con gli ascolti.</span></span>
     </a>
-  </div>
+  </nav>
 
   <div class="livelli-bar" id="livelliBar" aria-label="Per chi è"></div>
   <div id="testWrap"></div>
 
-  <section class="group group-base">
-    <h3 class="group-title">Suono, note e ritmo</h3>
-    <div class="grid" id="grid-base"></div>
+  <section class="sezione" aria-labelledby="t-base">
+    <div class="sezione-testa"><h2 id="t-base">Suono, note e ritmo</h2><span class="quante" id="q-base"></span></div>
+    <ul class="elenco" id="grid-base"></ul>
   </section>
 
-  <section class="group group-avanzati">
-    <h3 class="group-title">Intervalli, scale e accordi</h3>
-    <div class="grid" id="grid-avanzati"></div>
+  <section class="sezione" aria-labelledby="t-avanzati">
+    <div class="sezione-testa"><h2 id="t-avanzati">Intervalli, scale e accordi</h2><span class="quante" id="q-avanzati"></span></div>
+    <ul class="elenco" id="grid-avanzati"></ul>
   </section>
 </main>
 
@@ -717,21 +407,6 @@
     });
   })();
 
-  /* Titolo su una sola riga: se non ci sta, riduce la dimensione del testo
-     quanto basta (dipende dalla larghezza dello schermo e dal carattere caricato) */
-  function fitTitle() {
-    const h1 = document.querySelector('header.hero h1');
-    h1.style.fontSize = '';
-    let size = parseFloat(getComputedStyle(h1).fontSize);
-    while (h1.scrollWidth > h1.clientWidth && size > 11) {
-      size -= 0.5;
-      h1.style.fontSize = size + 'px';
-    }
-  }
-  fitTitle();
-  if (document.fonts && document.fonts.ready) document.fonts.ready.then(fitTitle);
-  window.addEventListener('resize', fitTitle);
-
   /* ---------- livelli: P primaria, M medie, L liceo musicale ----------
      Per ora i livelli NON si mostrano: i dati (campo "livelli" di ogni gioco) restano qui,
      ma non compaiono né le lettere P/M/L né il filtro "Per chi è", e l'indirizzo
@@ -744,35 +419,45 @@
   ];
   const segniLivello = lv => !MOSTRA_LIVELLI ? '' : '<span class="livelli" aria-label="Adatto a: ' +
     LIVELLI.filter(l => lv.includes(l.id)).map(l => l.nome).join(', ') + '">' +
-    LIVELLI.filter(l => lv.includes(l.id)).map(l => `<span class="lv lv-${l.id} on">${l.id}</span>`).join('') + '</span>';
+    LIVELLI.filter(l => lv.includes(l.id)).map(l => `<span class="lv lv-${l.id}">${l.id}</span>`).join('') + '</span>';
 
-  function creaCard(t, classe) {
-    const card = document.createElement('a');
-    card.className = 'card' + (classe ? ' ' + classe : '');
-    card.href = t.url;
-    card.dataset.livelli = t.livelli.join('');
-    card.innerHTML = `
-      <div class="top-row">
-        <div class="icon">${t.icon}</div>
-        <span class="label">${t.label}</span>
-      </div>
-      <h2>${t.title}</h2>
-      <p>${t.desc}</p>
-      ${segniLivello(t.livelli)}
-    `;
-    return card;
+  const FRECCIA = '<svg class="freccia" aria-hidden="true"><use href="#freccia"/></svg>';
+
+  /* una riga dell'elenco: icona su tasto scuro, titolo, descrizione, tipo (Ascolto / Teoria / Ritmo) */
+  function creaVoce(t) {
+    const li = document.createElement('li');
+    li.dataset.livelli = t.livelli.join('');
+    li.innerHTML = `
+      <a class="voce tipo-${t.label.toLowerCase()}" href="${t.url}">
+        <span class="tasto">${t.icon}</span>
+        <span class="testo">
+          <h3>${t.title}${segniLivello(t.livelli)}</h3>
+          <p>${t.desc}</p>
+          <span class="tipo"><i></i>${t.label}</span>
+        </span>
+        ${FRECCIA}
+      </a>`;
+    return li;
   }
   function fillGrid(id, list, withEmpty) {
     const grid = document.getElementById(id);
-    list.forEach(t => grid.appendChild(creaCard(t)));
+    list.forEach(t => grid.appendChild(creaVoce(t)));
+    document.getElementById(id.replace('grid', 'q')).textContent = list.length + ' attività';
     if (withEmpty) {
-      const empty = document.createElement('div');
-      empty.className = 'card empty';
-      empty.innerHTML = `<div class="plus">+</div><div>Prossimo strumento in arrivo</div>`;
-      grid.appendChild(empty);
+      const li = document.createElement('li');
+      li.className = 'vuoto';
+      li.innerHTML = `<div class="voce vuota"><span class="tasto" aria-hidden="true">+</span><span class="testo"><p>Prossimo strumento in arrivo</p></span></div>`;
+      grid.appendChild(li);
     }
   }
-  document.getElementById('testWrap').appendChild(creaCard(test, 'card-test'));
+
+  /* il Test d'ingresso: una lamella orizzontale tutta sua (la nota mi) */
+  document.getElementById('testWrap').innerHTML = `
+    <a class="lamella-test" href="${test.url}" data-livelli="${test.livelli.join('')}">
+      <span class="tasto">${test.icon}</span>
+      <span class="testo"><h2>${test.title}${segniLivello(test.livelli)}</h2><p>${test.desc}</p></span>
+      ${FRECCIA}
+    </a>`;
   fillGrid('grid-base', base, false);
   fillGrid('grid-avanzati', avanzati, true);
 
@@ -783,12 +468,12 @@
   else {
   barra.innerHTML =
     '<button type="button" data-l="">Tutti</button>' +
-    LIVELLI.map(l => `<button type="button" data-l="${l.id}"><span class="lv lv-${l.id} on">${l.id}</span><span class="lungo">${l.nome}</span><span class="corto">${l.corto || l.nome}</span></button>`).join('');
+    LIVELLI.map(l => `<button type="button" data-l="${l.id}"><span class="lv lv-${l.id}">${l.id}</span><span class="lungo">${l.nome}</span><span class="corto">${l.corto || l.nome}</span></button>`).join('');
   function applicaLivello(id, salva) {
     barra.querySelectorAll('button').forEach(b => b.classList.toggle('active', b.dataset.l === id));
-    document.querySelectorAll('a.card[data-livelli]').forEach(c => { c.hidden = !!id && !c.dataset.livelli.includes(id); });
-    document.querySelectorAll('.card.empty').forEach(c => { c.hidden = !!id; });
-    document.querySelectorAll('main section.group').forEach(sec => { sec.hidden = !sec.querySelector('a.card:not([hidden])'); });
+    document.querySelectorAll('[data-livelli]').forEach(c => { c.hidden = !!id && !c.dataset.livelli.includes(id); });
+    document.querySelectorAll('li.vuoto').forEach(c => { c.hidden = !!id; });
+    document.querySelectorAll('main section.sezione').forEach(sec => { sec.hidden = !sec.querySelector('li[data-livelli]:not([hidden])'); });
     if (salva) {
       const url = new URL(location.href);
       const l = LIVELLI.find(x => x.id === id);
@@ -804,26 +489,6 @@
     applicaLivello(l ? l.id : '', false);
   })();
   }
-</script>
-
-<script>
-/* risparmio energetico: la notina sul rigo si sposta con un timer due volte al secondo
-   (un'animazione CSS con i colori obbliga il telefono a ricalcolare la pagina 60 volte al secondo).
-   Si ferma quando la pagina non è visibile o il rigo è fuori dallo schermo. */
-(function () {
-  const nota = document.querySelector(".staff .melody-note"); if (!nota) return;
-  if (window.matchMedia && matchMedia("(prefers-reduced-motion: reduce)").matches) return;
-  const X = [32.0, 51.8, 71.7, 91.5, 111.4, 131.2, 151.1, 170.9, 190.8, 210.6, 230.5, 250.3, 270.2, 290.0];
-  const Y = [31, 27.75, 24.5, 21.25, 18, 14.75, 11.5, 8.25, 11.5, 14.75, 18, 21.25, 24.5, 27.75];
-  const C = ["#FFF428", "#BED958", "#009C95", "#5E50A1", "#CF3E96", "#E21C48", "#F99D1C", "#FFF428", "#F99D1C", "#E21C48", "#CF3E96", "#5E50A1", "#009C95", "#BED958"];
-  let i = 0, timer = null, inVista = true;
-  const passo = () => { i = (i + 1) % X.length; nota.setAttribute("transform", "translate(" + X[i] + " " + Y[i] + ")"); nota.style.fill = C[i]; };
-  const aggiorna = () => { const via = inVista && !document.hidden; if (via && !timer) timer = setInterval(passo, 500); if (!via && timer) { clearInterval(timer); timer = null; } };
-  nota.style.transform = "none"; nota.setAttribute("transform", "translate(" + X[0] + " " + Y[0] + ")");
-  document.addEventListener("visibilitychange", aggiorna);
-  if ("IntersectionObserver" in window) new IntersectionObserver(e => { inVista = e[0].isIntersecting; aggiorna(); }).observe(nota.closest("svg") || nota);
-  aggiorna();
-})();
 </script>
 </body>
 </html>

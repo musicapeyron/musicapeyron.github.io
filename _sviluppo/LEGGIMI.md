@@ -231,3 +231,18 @@ quindi può sempre ridefinire una regola. Una correzione fatta lì vale per tutt
 `motore-schemi.js` accetta `chiave: "bass"` e `spostaOttave` (es. -2) nelle opzioni di `disegnaBrano`: stessi nomi delle note,
 scritte più in basso; in chiave di basso le direzioni dei gambi si ricalcolano (quelle del file valgono per la chiave di violino).
 Nel Bona l'opzione «𝄢 Chiave di basso» sceglie per ogni lezione lo spostamento (una o due ottave) che lascia meno tagli addizionali.
+
+## Nuova grafica (prova, branch `redesign-prova`, ottobre 2026)
+Home (`index.html`) e pagine-indice (`giochi`, `storia`, `spartiti`, `solfeggio`, `schemi`) usano `sito.css`,
+caricato **dopo** `comune.css` (che resta per tutte le altre pagine: da lì vengono solo i colori delle note).
+- Pensata prima per la LIM: il carattere di base cresce con la larghezza (16px telefono, ~19px PC, 22px LIM),
+  il contenuto usa fino a 1760px. Fondo chiaro (si proietta meglio); tema scuro automatico se il dispositivo lo chiede.
+- Idea guida: il **metallofono**. Le cinque sezioni sono lamelle nei colori delle note in ordine di scala
+  (Solfeggio do, Giochi re, Schemi fa, Spartiti sol, Storia si; il Test d'ingresso è la lamella orizzontale mi);
+  ogni pagina-indice si apre con la sua lamella come intestazione.
+- Caratteri locali: Atkinson Hyperlegible Next (testo, `fonts/atkinson.woff2`) e Bricolage Grotesque (titoli,
+  `fonts/bricolage.woff2`, anche per le cifre: lo zero di Atkinson è barrato). Licenze OFL in `fonts/`.
+- Le icone di `icone.svg` hanno il tratto chiaro: stanno sempre su un "tasto" scuro (`.tasto`).
+- Elenchi di attività a righe (`.elenco` / `.voce`), non a schede; le schede restano solo dove c'è una foto (Storia).
+- Gli elenchi di dati (`base`, `avanzati`, `test`, `giochi`, `EPOCHE`, `raccolte`, `VOCI`, `GIA`, `elenco`)
+  sono rimasti identici e si modificano come prima.
