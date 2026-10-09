@@ -231,3 +231,13 @@ quindi può sempre ridefinire una regola. Una correzione fatta lì vale per tutt
 `motore-schemi.js` accetta `chiave: "bass"` e `spostaOttave` (es. -2) nelle opzioni di `disegnaBrano`: stessi nomi delle note,
 scritte più in basso; in chiave di basso le direzioni dei gambi si ricalcolano (quelle del file valgono per la chiave di violino).
 Nel Bona l'opzione «𝄢 Chiave di basso» sceglie per ogni lezione lo spostamento (una o due ottave) che lascia meno tagli addizionali.
+
+## Solfeggio cantato (ottobre 2026)
+- Pagina `solfeggio-cantato.html`, due raccolte: «Prime melodie» (`_sviluppo/cantato/lezioni.txt` → `genera.py`, accordi in `<harmony>`)
+  e «Lemoine-Carulli» (*Solfège des solfèges* vol. 1A, Lemoine 1923, IMSLP #910344, file «lavignac_-_solfege_des_solfeges_-_1a_-_piano_-_bw.pdf»).
+- Lemoine-Carulli: testo in `_sviluppo/cantato/carulli.txt` (canto V:, mano destra D:, sinistra S:), MusicXML a due parti con
+  `python3 _sviluppo/cantato/carulli.py scrivi _sviluppo/cantato/carulli.txt media/solfeggio/cantato/`; controllo visivo con
+  `carulli.py disegna` (pip: verovio, cairosvg). Istruzioni per i trascrittori: `_sviluppo/cantato/ISTRUZIONI-CARULLI.md`.
+  Fatte le lezioni 1–21 (pagine PDF 8–17; pagina stampata = pagina PDF − 2), ognuna verificata da un secondo lettore.
+- Il lettore suona la parte di pianoforte scritta se il MusicXML ne ha una (seconda parte), altrimenti gli accordi `<harmony>`.
+- Attenzione: la scansione ha segni a matita di un vecchio proprietario (lez. 13: chiave ripassata a matita, la stampa è in chiave di basso).

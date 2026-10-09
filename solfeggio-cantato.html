@@ -29,6 +29,13 @@
   h1 { font-family: 'Fredoka', 'Manrope', sans-serif; font-weight: 600; font-size: clamp(24px, 2.6vw, 34px); margin: 0; }
   .testa p { margin: 0; color: #9FB3CE; font-size: 13px; }
 
+  /* ---------- raccolte ---------- */
+  .raccolte { display: flex; gap: 6px; justify-content: center; flex-wrap: wrap; }
+  .raccolte button { font: 800 14px 'Manrope', sans-serif; color: #EAF2FF; cursor: pointer; padding: 7px 16px; border-radius: 12px;
+    background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.18); }
+  .raccolte button:hover { background: rgba(255,255,255,0.12); }
+  .raccolte button.attivo { background: #5E50A1; border-color: #5E50A1; color: #fff; }
+
   /* ---------- argomenti ---------- */
   .argomenti { display: flex; gap: 6px; flex-wrap: wrap; justify-content: center; }
   .arg { font: 700 12.5px 'Manrope', sans-serif; color: #EAF2FF; cursor: pointer; padding: 6px 12px; border-radius: 999px;
@@ -130,6 +137,9 @@
     <h1>Solfeggio cantato</h1>
     <p>Melodie da intonare insieme, con il pianoforte</p>
   </div>
+  <nav class="raccolte" id="raccolte" aria-label="Raccolta">
+    <button type="button" data-r="prime">🎵 Prime melodie</button><button type="button" data-r="carulli">🎹 Lemoine-Carulli</button>
+  </nav>
   <nav class="argomenti" id="argomenti" aria-label="Argomenti"></nav>
   <nav class="numeri" id="numeri" aria-label="Lezioni"></nav>
 
@@ -158,7 +168,7 @@
     </div>
   </section>
 </main>
-<footer class="piede">Lezioni e accompagnamenti di musicascuole.it · Cristiano Arata · Pianoforte: Salamander Grand Piano di Alexander Holm (CC BY 3.0) — <a href="crediti.html">Crediti e licenza</a> · <a href="privacy.html">Privacy</a></footer>
+<footer class="piede">Prime melodie: musicascuole.it · Cristiano Arata · Lemoine-Carulli: <i>Solfège des solfèges</i>, vol. 1A (Lemoine, Parigi 1923, pubblico dominio), trascritto per musicascuole.it · Pianoforte: Salamander Grand Piano di Alexander Holm (CC BY 3.0) — <a href="crediti.html">Crediti e licenza</a> · <a href="privacy.html">Privacy</a></footer>
 
 <div class="velo" id="velo" role="dialog" aria-modal="true" aria-labelledby="fTitolo">
   <div class="finestra">
@@ -187,31 +197,55 @@
 (function () {
   "use strict";
   const CARTELLA = "media/solfeggio/cantato/";
-  const ARGOMENTI = [
-    { nome: "Do re mi", lezioni: [1, 2, 3, 4], dettagli: { 1: "Do e re", 2: "Do, re, mi", 3: "Do, re, mi in semiminime", 4: "Do, re, mi in tre" } },
-    { nome: "Fino al sol", lezioni: [5, 6, 7, 8], dettagli: { 5: "Fino al fa", 6: "Fino al sol", 7: "Le prime cinque note in tre", 8: "Le prime cinque, con le crome" } },
-    { nome: "La scala", lezioni: [9, 10, 11, 12], dettagli: { 9: "La scala in semibrevi", 10: "La scala in minime", 11: "La scala in tre", 12: "Su e giù per la scala" } },
-    { nome: "L'accordo", lezioni: [13, 14, 15, 16], dettagli: { 13: "Do, mi, sol", 14: "Do, mi, sol, do", 15: "L'accordo di sol", 16: "Do, mi, sol in tre" } },
-    { nome: "Salti", lezioni: [17, 18, 19, 20], dettagli: { 17: "Salti di quarta e di quinta", 18: "Dal sol al do", 19: "Salti in tre", 20: "Salti misti" } },
-    { nome: "Nuove tonalità", lezioni: [21, 22, 23], dettagli: { 21: "Sol maggiore", 22: "Fa maggiore", 23: "Re maggiore" } },
-    { nome: "Melodie", lezioni: [24], dettagli: { 24: "Una piccola melodia" } }
-  ];
-  const TUTTE = ARGOMENTI.flatMap(a => a.lezioni).sort((x, y) => x - y);
+  /* due raccolte: le prime melodie (accompagnamento dagli accordi scritti nel file) e il Solfège des solfèges
+     di Lemoine-Carulli (il pianoforte suona la parte originale, seconda parte del MusicXML) */
+  const RACCOLTE = {
+    prime: { prefisso: "cantato-", fonte: "Solfeggio cantato · musicascuole.it", argomenti: [
+        { nome: "Do re mi", lezioni: [1, 2, 3, 4], dettagli: { 1: "Do e re", 2: "Do, re, mi", 3: "Do, re, mi in semiminime", 4: "Do, re, mi in tre" } },
+        { nome: "Fino al sol", lezioni: [5, 6, 7, 8], dettagli: { 5: "Fino al fa", 6: "Fino al sol", 7: "Le prime cinque note in tre", 8: "Le prime cinque, con le crome" } },
+        { nome: "La scala", lezioni: [9, 10, 11, 12], dettagli: { 9: "La scala in semibrevi", 10: "La scala in minime", 11: "La scala in tre", 12: "Su e giù per la scala" } },
+        { nome: "L'accordo", lezioni: [13, 14, 15, 16], dettagli: { 13: "Do, mi, sol", 14: "Do, mi, sol, do", 15: "L'accordo di sol", 16: "Do, mi, sol in tre" } },
+        { nome: "Salti", lezioni: [17, 18, 19, 20], dettagli: { 17: "Salti di quarta e di quinta", 18: "Dal sol al do", 19: "Salti in tre", 20: "Salti misti" } },
+        { nome: "Nuove tonalità", lezioni: [21, 22, 23], dettagli: { 21: "Sol maggiore", 22: "Fa maggiore", 23: "Re maggiore" } },
+        { nome: "Melodie", lezioni: [24], dettagli: { 24: "Una piccola melodia" } }
+      ] },
+    carulli: { prefisso: "carulli-", fonte: "Solfège des solfèges · Lemoine-Carulli", argomenti: [
+      { nome: "La scala", lezioni: [1, 2], dettagli: { 1: "La scala di do in semibrevi", 2: "La scala di do in minime" } },
+      { nome: "Intervalli", lezioni: [3, 4, 5, 6, 7, 8, 9, 10], dettagli: { 3: "Salti di seconda", 4: "Terze e seconde", 5: "Quarte e terze", 6: "Quinte e quarte",
+        7: "Seste e quinte", 8: "Settime e seste", 9: "Ottave e settime", 10: "Riepilogo degli intervalli" } },
+      { nome: "Semibrevi e pause", lezioni: [11, 12], titolo: "Semibrevi e pause", autori: { 11: "Henry Lemoine", 12: "Henry Lemoine" } },
+      { nome: "Minime e pause", lezioni: [13, 14, 15, 16, 17], titolo: "Minime e pause di minima", autori: { 13: "Rodolphe", 14: "Rodolphe", 15: "Henry Lemoine", 16: "Henry Lemoine", 17: "Henry Lemoine" } },
+      { nome: "Semibrevi e minime", lezioni: [18, 19, 20, 21], titolo: "Semibrevi e minime", autori: { 18: "Henry Lemoine", 19: "Gustavo Carulli", 20: "Henry Lemoine", 21: "Henry Lemoine" } }
+    ] }
+  };
+  let raccolta = "prime", ARGOMENTI, TUTTE;
   const argDi = n => ARGOMENTI.find(a => a.lezioni.includes(n));
-  const titoloDi = n => { const a = argDi(n); return (a.dettagli && a.dettagli[n]) || a.titolo; };
+  const titoloDi = n => { const a = argDi(n); return ((a.dettagli && a.dettagli[n]) || a.titolo) + (a.autori && a.autori[n] ? " · " + a.autori[n] : ""); };
 
   /* ---------- impostazioni ricordate (solo in questo browser) ---------- */
   const leggi = (k, d) => { try { const v = localStorage.getItem("cantato." + k); return v === null ? d : v; } catch (e) { return d; } };
   const scrivi = (k, v) => { try { localStorage.setItem("cantato." + k, v); } catch (e) {} };
   const S = { bpm: +leggi("bpm", "72") || 72, guida: [1, 2, 3].includes(+leggi("guida", "1")) ? +leggi("guida", "1") : 1, testa: leggi("testa", "0") === "1", cambiate: leggi("cambiate", "0") === "1", sudd: [1, 2, 3, 4].includes(+leggi("sudd", "1")) ? +leggi("sudd", "1") : 1, clic: leggi("clic", "0") === "1", nomi: leggi("nomi", "0") === "1", colori: leggi("colori", "0") === "1", basso: leggi("basso", "0") === "1" };
-  let attuale = +leggi("lezione", "1"); if (!TUTTE.includes(attuale)) attuale = 1;
+  let attuale = 1;
+  function impostaRaccolta(r) {
+    raccolta = RACCOLTE[r] ? r : "prime"; scrivi("raccolta", raccolta);
+    ARGOMENTI = RACCOLTE[raccolta].argomenti; TUTTE = ARGOMENTI.flatMap(a => a.lezioni).sort((x, y) => x - y);
+    attuale = +leggi("lezione." + raccolta, "1"); if (!TUTTE.includes(attuale)) attuale = 1;
+    argomento = null;
+    document.querySelectorAll("#raccolte button").forEach(b => b.classList.toggle("attivo", b.dataset.r === raccolta));
+  }
   let argomento = null;   // null = tutte
+  impostaRaccolta(leggi("raccolta", "prime"));
+  document.getElementById("raccolte").addEventListener("click", e => {
+    const b = e.target.closest("button"); if (!b || b.dataset.r === raccolta) return;
+    impostaRaccolta(b.dataset.r); preparaScheda(); mostra(attuale);
+  });
 
   /* ---------- lezioni ---------- */
   const cache = {};
-  const carica = n => cache[n] || (cache[n] = fetch(CARTELLA + "cantato-" + String(n).padStart(3, "0") + ".musicxml")
+  const carica = (n, rac = raccolta) => { const k = rac + n; return cache[k] || (cache[k] = fetch(CARTELLA + RACCOLTE[rac].prefisso + String(n).padStart(3, "0") + ".musicxml")
     .then(r => { if (!r.ok) throw new Error("manca la lezione " + n); return r.text(); })
-    .then(t => { const b = MotoreSchemi.leggiMusicXML(t); b.accordi = accordiDa(t); return b; }));
+    .then(t => { const b = MotoreSchemi.leggiMusicXML(t); b.accordi = accordiDa(t); b.piano = pianoDa(t); return b; })); };
   /* chiave di basso: stessi nomi delle note, scritte una o due ottave sotto; per ogni lezione si sceglie
      lo spostamento che fa stare le note il più possibile dentro il rigo (meno tagli addizionali) */
   const LETTERE = "cdefgab";
@@ -244,13 +278,14 @@
   let branoAttuale = null;
   async function mostra(n) {
     ferma();
-    attuale = n; scrivi("lezione", n);
+    attuale = n; scrivi("lezione." + raccolta, n);
     document.getElementById("lNum").textContent = n;
     document.getElementById("lTitolo").innerHTML = `Lezione ${n}<small>${titoloDi(n)}</small>`;
     disegnaArgomenti();
     const a = elNum.querySelector(".num.attivo"); if (a && elNum.scrollWidth > elNum.clientWidth) elNum.scrollLeft = a.offsetLeft - elNum.clientWidth / 2;
+    const rac = raccolta;
     try { branoAttuale = await carica(n); } catch (e) { div.textContent = "Lezione non trovata."; return; }
-    if (n !== attuale) return;
+    if (n !== attuale || rac !== raccolta) return;
     aggiornaBpm(); disegna();
   }
   function disegna() {
@@ -411,6 +446,34 @@
       return { radice: (SEMI[passo.toLowerCase()] + alt + 12) % 12, tipo: h.querySelector("kind").textContent.trim() };
     }));
   }
+  /* parte di pianoforte scritta (seconda parte del MusicXML, due pentagrammi): per ogni battuta le note con
+     posizione e durata in semiminime; le note legate diventano una nota sola */
+  function pianoDa(testo) {
+    const doc = new DOMParser().parseFromString(testo, "application/xml"), parti = doc.querySelectorAll("part");
+    if (parti.length < 2) return null;
+    let div = 1; const battute = [], aperte = {};
+    parti[1].querySelectorAll(":scope > measure").forEach((m, im) => {
+      const d = m.querySelector("attributes divisions"); if (d) div = +d.textContent;
+      const note = []; let pos = 0, inizioUltima = 0;
+      [...m.children].forEach(n => {
+        if (n.tagName === "backup") { pos -= +n.querySelector("duration").textContent / div; return; }
+        if (n.tagName === "forward") { pos += +n.querySelector("duration").textContent / div; return; }
+        if (n.tagName !== "note") return;
+        const dur = +n.querySelector("duration").textContent / div, accordo = !!n.querySelector("chord");
+        const q = accordo ? inizioUltima : pos;
+        if (!accordo) { inizioUltima = pos; pos += dur; }
+        const pt = n.querySelector("pitch"); if (!pt) return;
+        const midi = (+pt.querySelector("octave").textContent + 1) * 12 + SEMI[pt.querySelector("step").textContent.toLowerCase()] + +((pt.querySelector("alter") || {}).textContent || 0);
+        const fine = n.querySelector('tie[type="stop"]'), inizio = n.querySelector('tie[type="start"]');
+        let ev;
+        if (fine && aperte[midi]) { ev = aperte[midi]; ev.dur += dur; }
+        else { ev = { m: im, q, dur, midi }; note.push(ev); }
+        if (inizio) aperte[midi] = ev; else delete aperte[midi];
+      });
+      battute.push(note);
+    });
+    return battute;
+  }
   const INTERVALLI = { major: [0, 4, 7], minor: [0, 3, 7], dominant: [0, 4, 7, 10], "minor-seventh": [0, 3, 7, 10], "major-seventh": [0, 4, 7, 11] };
   function voci(acc) {   // accordo in posizione stretta tra il re3 e il re4, basso tra il mi2 e il re#3
     const note = (INTERVALLI[acc.tipo] || INTERVALLI.major).map(i => { let m = 48 + (acc.radice + i) % 12; if (m < 50) m += 12; return m; });
@@ -453,8 +516,11 @@
         p += d;
       });
     });
-    // l'accompagnamento (guida 1 e 2): basso e accordo all'inizio, poi l'accordo più piano su ogni movimento
-    if (S.guida <= 2 && brano.accordi) brano.battute.forEach((b, m) => {
+    // l'accompagnamento (guida 1 e 2): la parte di pianoforte scritta, se c'è (Lemoine-Carulli)…
+    if (S.guida <= 2 && brano.piano) brano.piano.forEach(note => note.forEach(n =>
+      eventi.push({ p: inizi[n.m] + n.q, dur: n.dur, midi: n.midi, vol: n.midi < 52 ? 0.26 : 0.2, tipo: "acc", m: n.m })));
+    // …altrimenti basso e accordo all'inizio, poi l'accordo più piano su ogni movimento
+    else if (S.guida <= 2 && brano.accordi) brano.battute.forEach((b, m) => {
       const ac = brano.accordi[m] || []; if (!ac.length) return;
       const parte = (inizi[m + 1] !== undefined ? inizi[m + 1] : tot) - inizi[m], pezzo = parte / ac.length;
       ac.forEach((a, k) => {
@@ -561,8 +627,11 @@
   const esc = t => String(t).replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
   const velo = document.getElementById("velo"), fArg = document.getElementById("fArg"), fGriglia = document.getElementById("fGriglia");
   let scelte = new Set();
-  fArg.innerHTML = `<option value="">— scegli tu le lezioni —</option>` + ARGOMENTI.map((a, i) => `<option value="${i}">${a.nome} (${a.lezioni.join(", ")})</option>`).join("");
-  fGriglia.innerHTML = TUTTE.map(n => `<button type="button" data-n="${n}" title="${titoloDi(n)}">${n}</button>`).join("");
+  function preparaScheda() {
+    fArg.innerHTML = `<option value="">— scegli tu le lezioni —</option>` + ARGOMENTI.map((a, i) => `<option value="${i}">${a.nome} (${a.lezioni.join(", ")})</option>`).join("");
+    fGriglia.innerHTML = TUTTE.map(n => `<button type="button" data-n="${n}" title="${titoloDi(n)}">${n}</button>`).join("");
+  }
+  preparaScheda();
   const aggiornaGriglia = () => fGriglia.querySelectorAll("button").forEach(b => b.classList.toggle("si", scelte.has(+b.dataset.n)));
   fArg.addEventListener("change", () => { if (fArg.value !== "") { scelte = new Set(ARGOMENTI[+fArg.value].lezioni); aggiornaGriglia(); anteprima(); } });
   fGriglia.addEventListener("click", e => {
@@ -603,7 +672,7 @@
         const fs = Math.min(40, Math.max(24, larg / Math.max(8, t.length * 0.56)));
         c += `<text x="${MG}" y="${y + 34}" font-family="Fredoka, 'Arial Rounded MT Bold', Arial, sans-serif" font-weight="700" font-size="${fs}" stroke="#1F2430" stroke-width="${fs / 13}" paint-order="stroke" stroke-linejoin="round">` +
           [...t].map(ch => ch === " " ? " " : `<tspan fill="${COL[k++ % 7]}">${esc(ch)}</tspan>`).join("") + `</text>`;
-        c += `<text x="${PW - MG}" y="${y + 30}" text-anchor="end" font-family="Arial, sans-serif" font-size="13" fill="#64748B">Solfeggio cantato · musicascuole.it</text>`;
+        c += `<text x="${PW - MG}" y="${y + 30}" text-anchor="end" font-family="Arial, sans-serif" font-size="13" fill="#64748B">${RACCOLTE[raccolta].fonte}</text>`;
         y += 50;
         if (document.getElementById("fNome").checked) {
           c += `<text x="${MG}" y="${y + 22}" font-family="Arial, sans-serif" font-size="15" fill="#1F2430">Nome</text><line x1="${MG + 48}" y1="${y + 24}" x2="${MG + 420}" y2="${y + 24}" stroke="#94A3B8" stroke-width="1.2"/>` +
