@@ -231,3 +231,14 @@ quindi può sempre ridefinire una regola. Una correzione fatta lì vale per tutt
 `motore-schemi.js` accetta `chiave: "bass"` e `spostaOttave` (es. -2) nelle opzioni di `disegnaBrano`: stessi nomi delle note,
 scritte più in basso; in chiave di basso le direzioni dei gambi si ricalcolano (quelle del file valgono per la chiave di violino).
 Nel Bona l'opzione «𝄢 Chiave di basso» sceglie per ogni lezione lo spostamento (una o due ottave) che lascia meno tagli addizionali.
+
+## Pagine che si allargano su PC e LIM (ottobre 2026, branch `migliora-design`)
+Home e pagine-indice (`giochi`, `storia`, `spartiti`, `solfeggio`, `schemi`) usano l'unità di scala `--u`
+definita in `comune.css`: vale 1px fino a circa 1150px di larghezza, poi cresce con lo schermo
+(≈1.2px su un PC 1366, 1.7px sulla LIM 1920). Nelle loro regole le misure sono scritte come
+`calc(14 * var(--u))` invece di `14px`: sul telefono non cambia nulla, su PC e LIM tutto diventa
+proporzionalmente più grande e la pagina usa tutta la larghezza (home: 6 schede per riga).
+- Pagina nuova dello stesso tipo: scrivi le misure con `calc(N * var(--u))` (non nelle condizioni `@media`,
+  dove le variabili non funzionano; i bordi da 1px restano in px).
+- Sugli schermi touch (LIM) l'effetto di passaggio del mouse non resta attaccato dopo il tocco;
+  quando si preme, la scheda si abbassa appena.
