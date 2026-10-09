@@ -215,6 +215,41 @@ h1 { margin: 0; font-family: "Sora", "Inter", Arial, sans-serif; font-size: 2rem
     .message { min-height: 20px; }
 }
   .hero-badge { animation-iteration-count: 3; }   /* il badge galleggia per qualche secondo, poi sta fermo */
+
+/* Gruppi per il layout a due colonne: sul telefono non esistono */
+.zona-destra, .zona-rigo, .zona-comandi { display: contents; }
+
+/* LIM e PC: tutto in una schermata, senza scorrere */
+@media (min-width: 900px) {
+    /* scelta delle qualità: elenco su due colonne */
+    #selectScreen { width: min(860px, 100%); }
+    #selectScreen .hero-badge { width: 56px; height: 56px; font-size: 1.6rem; margin-bottom: 8px; }
+    .toggle-list { display: grid; grid-template-columns: 1fr 1fr; }
+    .options-triple { width: min(600px, 100%); margin: 0 auto; }
+    #selectScreen .answer-mode-title { text-align: center; }
+    #selectScreen .mode-grid { width: min(600px, 100%); margin-left: auto; margin-right: auto; }
+    /* gioco: pentagramma e ascolto a sinistra, statistiche e risposte a destra */
+    #gameContainer:not([style*="none"]) { display: grid !important; }
+    .game {
+        width: min(1240px, 100%); column-gap: 32px; align-items: start;
+        grid-template-columns: minmax(0, 1fr) minmax(0, 1.1fr);
+        grid-template-areas: "titolo titolo" "sottotitolo sottotitolo" "rigo destra" "rigo comandi";
+        grid-template-rows: auto auto auto 1fr;
+    }
+    .game > h1 { grid-area: titolo; }
+    .game > .subtitle { grid-area: sottotitolo; }
+    .zona-destra { display: block; grid-area: destra; }
+    .zona-rigo { display: block; grid-area: rigo; }
+    .zona-comandi { display: block; grid-area: comandi; }
+    /* riquadro del pentagramma sempre della stessa altezza: non salta quando compare l'accordo */
+    .staff-wrap { margin-bottom: 12px; height: min(600px, calc(100vh - 240px)); }
+    #staffContainer svg { width: auto !important; height: 100% !important; aspect-ratio: 320 / 280; max-width: 100%; }
+    #staffContainer { height: 100%; display: flex; justify-content: center; }
+    .choice-row { margin-bottom: 10px; }
+    /* Invia, Avanti, Termina e volume più compatti */
+    .zona-comandi .submit-button, .zona-comandi .next-button { display: inline-block; vertical-align: middle; margin: 0 6px 8px; }
+    .zona-comandi .game-buttons, .zona-comandi .toolbar { display: inline-flex; vertical-align: middle; margin: 0 6px 8px; }
+}
 </style>
 </head>
 <body>
@@ -264,6 +299,7 @@ h1 { margin: 0; font-family: "Sora", "Inter", Arial, sans-serif; font-size: 2rem
     <h1>🎧 Ascolta l'accordo</h1>
     <p class="subtitle" id="gameSubtitle">Ascolta e rispondi.</p>
 
+    <div class="zona-destra">
     <div class="stats">
         <div class="stat total"><span class="stat-label">Risposte</span><span class="stat-value" id="total">0</span></div>
         <div class="stat correct" id="correctBox"><span class="stat-label">Corrette</span><span class="stat-value" id="correct">0</span></div>
@@ -284,6 +320,8 @@ h1 { margin: 0; font-family: "Sora", "Inter", Arial, sans-serif; font-size: 2rem
         </div>
     </div>
 
+    </div>
+    <div class="zona-rigo">
     <div class="staff-wrap">
         <div class="staff-placeholder" id="staffPlaceholder"><span class="staff-placeholder-emoji">🎧</span>Ascolta e indovina</div>
         <div id="staffContainer" style="display: none;"></div>
@@ -293,6 +331,8 @@ h1 { margin: 0; font-family: "Sora", "Inter", Arial, sans-serif; font-size: 2rem
         <button class="listen-button" id="replayButton" title="Riascolta">🔊 Riascolta</button>
         <button class="listen-button" id="replayArpeggioButton" title="Riascolta arpeggio">🎹 Riascolta arpeggio</button>
     </div>
+    </div>
+    <div class="zona-comandi">
 
     <div class="answer-section">
         <div class="answer-section-title">Qualità</div>
@@ -319,6 +359,7 @@ h1 { margin: 0; font-family: "Sora", "Inter", Arial, sans-serif; font-size: 2rem
             <span class="volume-icon">🔊</span>
             <input type="range" class="volume-slider" id="volumeSlider" min="0" max="100" value="75">
         </div>
+    </div>
     </div>
 
 </div>
@@ -668,7 +709,18 @@ function renderChord() {
     voice.addTickables([chord]);
     new Formatter().joinVoices([voice]).format([voice], SVG_W - 90);
     voice.draw(context, stave);
+    // LIM e PC: il pentagramma si ingrandisce con lo spazio disponibile
+    if (window.matchMedia("(min-width: 900px)").matches) {
+        const svg = staffContainer.querySelector("svg");
+        if (svg) svg.setAttribute("viewBox", "0 0 " + SVG_W + " " + SVG_H);
+    }
 }
+let lastStaffWidth = window.innerWidth;
+window.addEventListener("resize", () => {
+    if (window.innerWidth === lastStaffWidth) return;
+    lastStaffWidth = window.innerWidth;
+    if (currentQuestion && staffContainer.innerHTML) renderChord();
+});
 
 /* =========================================================
    STATO DI GIOCO

@@ -242,3 +242,11 @@ proporzionalmente più grande e la pagina usa tutta la larghezza (home: 6 schede
   dove le variabili non funzionano; i bordi da 1px restano in px).
 - Sugli schermi touch (LIM) l'effetto di passaggio del mouse non resta attaccato dopo il tocco;
   quando si preme, la scheda si abbassa appena.
+
+## Giochi in una sola schermata su LIM e PC (ottobre 2026, branch `migliora-design`)
+Tutti i giochi stanno senza scorrere in ogni schermata (menu, partita, risposte, finestre, riepilogo) a
+**1920×970** (LIM) e **1366×657** (PC): sono le misure reali della finestra del browser, tolte barre e
+barra di Windows. Le regole aggiunte stanno in media query `@media (min-width: 900px) ...` (spesso con
+condizioni sull'altezza): il telefono resta identico. Di solito: due colonne (pentagramma a sinistra,
+risposte a destra), statistiche e livello affiancati, pentagrammi e tastiere che seguono l'altezza.
+Per un gioco nuovo, provarlo a quelle due misure in tutte le schermate, compresi i riquadri interni che scorrono.

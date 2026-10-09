@@ -1192,6 +1192,12 @@ body { padding: 10px 18px 10px; }
 button:focus-visible { outline: 3px solid #fde047; outline-offset: 2px; }
   .level-box, .setup-card, .listen-panel { -webkit-backdrop-filter: none; backdrop-filter: none; }
   .hero-badge { animation-iteration-count: 3; }   /* il badge galleggia per qualche secondo, poi sta fermo */
+
+/* LIM e PC bassi: un po' di respiro in meno sotto, così non scorre */
+@media (min-width: 900px) and (min-height: 560px) and (max-height: 1000px) {
+    body { padding-bottom: 4px; }
+    .palette { margin-bottom: 6px; }
+}
 </style>
 </head>
 <body>

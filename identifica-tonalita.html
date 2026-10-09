@@ -520,7 +520,7 @@ h1 { margin: 0; font-family: "Sora", "Inter", Arial, sans-serif; font-size: 2rem
 
 .tut-answers .choice-btn.num-btn { min-width: 54px; padding: 9px 10px; font-size: 0.95rem; }
 @media (min-width: 900px) and (min-height: 560px) {
-    .tut-stats { height: calc(100vh - 72px); display: flex; flex-direction: column; }
+    .tut-stats { min-height: calc(100vh - 72px); display: flex; flex-direction: column; }
     .st-dettaglio { flex: 1 1 auto; min-height: 0; }
     .st-dettaglio .st-box { max-height: none; height: 100%; }
     .st-liste .st-box ul { max-height: 132px; }
@@ -530,6 +530,85 @@ h1 { margin: 0; font-family: "Sora", "Inter", Arial, sans-serif; font-size: 2rem
     .tut-msg.con-barra { flex-direction: column; text-align: center; }
 }
   .hero-badge { animation-iteration-count: 3; }   /* il badge galleggia per qualche secondo, poi sta fermo */
+
+/* colonne: sul telefono non esistono (contenuto come prima) */
+.home-col, .game-col { display: contents; }
+
+/* PC e LIM: tutto in una schermata, senza scorrere */
+@media (min-width: 900px) {
+    /* schermata iniziale: titolo sopra, impostazioni su due colonne */
+    .menu-screen { width: min(1100px, 100%); }
+    .hero-badge { width: 60px; height: 60px; font-size: 1.7rem; margin-bottom: 10px; }
+    #homeScreen .home-col.home-cols { display: grid; grid-template-columns: 1fr 1fr; gap: 0 28px; align-items: start; }
+    #homeScreen .home-col { display: block; }
+    #homeScreen .home-col > .mode-button.tutorial { width: 100%; margin-top: 14px; }
+
+    /* gioco: titolo sopra, a sinistra statistiche + domanda, a destra le risposte */
+    .game { width: min(1400px, 100%); }
+    .menu-screen h1, .game h1 { font-size: 1.9rem; }
+    .menu-screen .subtitle, .game .subtitle { margin: 4px 0 12px; font-size: 0.95rem; }
+    #gameContainer .game-col.game-cols { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 0 32px; align-items: center; }
+    #gameContainer .game-col { display: block; min-width: 0; }
+    /* modalità "Identifica le alterazioni": statistiche e livello affiancati, poi domanda e armature */
+    #gameContainer.modo-armature .game-col.game-cols { display: block; }
+    #gameContainer.modo-armature .game-cols > .game-col:first-child { display: grid; grid-template-columns: 1.1fr 1fr; gap: 12px; margin-bottom: 12px; }
+    #gameContainer.modo-armature .stats, #gameContainer.modo-armature .level-box { margin: 0; }
+    #gameContainer.modo-armature .question-box { max-width: 640px; }
+    #gameContainer .stats { margin-bottom: 10px; }
+    #gameContainer .stat { padding: 8px 4px 7px; }
+    #gameContainer .stat-value { font-size: 1.35rem; }
+    #gameContainer .level-box { margin-bottom: 10px; }
+    /* il pentagramma cresce con l'altezza dello schermo (più grande sulla LIM) */
+    #gameContainer .staff-wrap { margin-bottom: 0; padding: 8px; }
+    #staffContainer svg { width: auto !important; height: clamp(190px, calc(100vh - 330px), 560px) !important; }
+    #gameContainer .choice-btn { font-size: 1rem; padding: 14px 18px; }
+    #gameContainer .answer-section-title { font-size: 0.74rem; }
+    #gameContainer .question-box { max-width: none; padding: 18px 20px; }
+    #gameContainer .question-text { font-size: 1.6rem; }
+    #gameContainer .signature-grid { max-width: none; }
+    #gameContainer .signature-btn { zoom: 1.25; }
+    #gameContainer .message { min-height: 30px; }
+    #gameContainer .toolbar { margin-top: 12px; }
+
+    /* aiuto "?": più largo, il testo va su due colonne */
+    .help-card { max-width: min(1100px, 100%); width: min(1100px, 100%); max-height: calc(100vh - 40px); }
+    .help-content { column-count: 2; column-gap: 32px; }
+    .help-content h3 { column-span: all; }
+    .help-content .example, .help-content p { break-inside: avoid; }
+
+    /* statistiche del tutorial: più larghe, nessun riquadro che scorre; "Da ripassare" su due colonne */
+    .tut-screen { width: min(1500px, 100%); }   /* il tutorial resta centrato com'era: hanno larghezza fissa */
+    .tut-stats { width: min(1500px, 100%); }
+    .st-liste .st-box ul { max-height: none; overflow: visible; }
+    .st-liste { grid-template-columns: minmax(180px, 0.6fr) minmax(0, 3.4fr); }
+    /* titolo, numeri e pulsanti sulla stessa riga */
+    #tutStats:not([hidden]) { display: grid; grid-template-columns: auto minmax(0, 1fr) auto; grid-template-rows: auto auto auto 1fr; column-gap: 14px; align-items: center; }
+    #tutStats .st-head { display: contents; }
+    #tutStats .st-head > h2 { padding-left: 56px; } /* lascia posto al pulsante 🏠 */
+    #tutStats .st-numeri { grid-column: 2; grid-row: 1; margin: 0; }
+    #tutStats .st-bottoni { grid-column: 3; grid-row: 1; }
+    #tutStats .st-esito, #tutStats .st-liste, #tutStats .st-dettaglio { grid-column: 1 / -1; margin-top: 6px; }
+    #tutStats .st-dettaglio { align-self: stretch; }
+    #tutStats { min-height: calc(100vh - 84px); }
+    #tutStats .st-num strong { font-size: 1.15rem; }
+    #tutStats .st-num span { font-size: 0.7rem; }
+    #tutStats .st-dettaglio .st-box h3 { margin-bottom: 3px; }
+    #tutStats .st-barra { margin-bottom: 1px; }
+    .st-liste .st-box:last-child ul { column-count: 3; column-gap: 18px; }
+    .st-dettaglio .st-box { min-height: 0; }
+    .st-head { margin-bottom: 6px; }
+    .st-num { padding: 4px 10px; }
+    .st-num strong { font-size: 1.25rem; }
+    .st-numeri, .st-liste { margin-bottom: 6px; }
+    .st-box li { padding: 1px 0; }
+    .st-liste .st-box li { break-inside: avoid; }
+    .st-dettaglio .st-box { overflow: visible; }
+}
+/* schermi più larghi: aiuto su tre colonne */
+@media (min-width: 1200px) {
+    .help-card { max-width: min(1500px, 100%); width: min(1500px, 100%); }
+    .help-content { column-count: 3; }
+}
 </style>
 </head>
 <body>
@@ -542,6 +621,8 @@ h1 { margin: 0; font-family: "Sora", "Inter", Arial, sans-serif; font-size: 2rem
     <h1>Identifica la tonalità</h1>
     <p class="subtitle" id="homeSubtitle">Identifica la tonalità maggiore e minore dall'armatura di chiave.</p>
 
+    <div class="home-col home-cols">
+    <div class="home-col">
     <button class="mode-button tutorial" id="tutorialButton">
         <span class="mode-button-title">🎓 Tutorial</span>
         <span class="mode-button-desc">Impara passo passo a riconoscere la tonalità dall'armatura</span>
@@ -558,6 +639,8 @@ h1 { margin: 0; font-family: "Sora", "Inter", Arial, sans-serif; font-size: 2rem
             <span><strong>Identifica le alterazioni in chiave</strong><br><span class="toggle-desc">Identifica le alterazioni in chiave di una tonalità</span></span>
         </button>
     </div>
+    </div>
+    <div class="home-col">
 
     <div class="answer-mode-title">Alterazioni massime in chiave</div>
     <div class="options-row-7" id="maxAlterationsGroup">
@@ -583,6 +666,8 @@ h1 { margin: 0; font-family: "Sora", "Inter", Arial, sans-serif; font-size: 2rem
             <span class="mode-button-desc">100 tonalità, un livello ogni 10 risposte corrette</span>
         </button>
     </div>
+    </div>
+    </div>
 </div>
 
 <!-- SCHERMATA DI GIOCO -->
@@ -593,6 +678,8 @@ h1 { margin: 0; font-family: "Sora", "Inter", Arial, sans-serif; font-size: 2rem
     <h1>🔑 Identifica la tonalità</h1>
     <p class="subtitle" id="gameSubtitle">Osserva l'armatura e indica la tonalità maggiore e la relativa minore.</p>
 
+    <div class="game-col game-cols">
+    <div class="game-col">
     <div class="stats">
         <div class="stat total"><span class="stat-label">Risposte</span><span class="stat-value" id="total">0</span></div>
         <div class="stat correct" id="correctBox"><span class="stat-label">Corrette</span><span class="stat-value" id="correct">0</span></div>
@@ -613,11 +700,15 @@ h1 { margin: 0; font-family: "Sora", "Inter", Arial, sans-serif; font-size: 2rem
         </div>
     </div>
 
-    <div id="nameModeSection">
+    <div id="nameModeSection" class="game-col">
         <div class="staff-wrap">
             <div id="staffContainer"></div>
         </div>
+    </div>
+    </div>
 
+    <div class="game-col">
+    <div id="nameAnswerSection" class="game-col">
         <div class="answer-section">
             <div class="answer-section-title">Nota</div>
             <div class="choice-row" id="letterRow"></div>
@@ -651,6 +742,8 @@ h1 { margin: 0; font-family: "Sora", "Inter", Arial, sans-serif; font-size: 2rem
             <span class="volume-icon">🔊</span>
             <input type="range" class="volume-slider" id="volumeSlider" min="0" max="100" value="75">
         </div>
+    </div>
+    </div>
     </div>
 
 </div>
@@ -811,6 +904,7 @@ const homeSubtitle = document.getElementById("homeSubtitle");
 const gameModeGroup = document.getElementById("gameModeGroup");
 const nameModeSection = document.getElementById("nameModeSection");
 const signatureModeSection = document.getElementById("signatureModeSection");
+const nameAnswerSection = document.getElementById("nameAnswerSection"); // risposte della modalità "Nomina" (colonna destra su PC)
 const signatureQuestionText = document.getElementById("signatureQuestionText");
 const signatureGrid = document.getElementById("signatureGrid");
 const gameContainer = document.getElementById("gameContainer");
@@ -1469,12 +1563,16 @@ function startSession() {
     showGame();
     if (gameMode === "name") {
         nameModeSection.style.display = "block";
+        nameAnswerSection.style.display = "";
+        gameContainer.classList.remove("modo-armature");
         signatureModeSection.style.display = "none";
         gameSubtitle.textContent = "Osserva l'armatura e indica la tonalità maggiore e la relativa minore.";
         renderChoiceButtons();
         presentQuestion();
     } else {
         nameModeSection.style.display = "none";
+        nameAnswerSection.style.display = "none";
+        gameContainer.classList.add("modo-armature");
         signatureModeSection.style.display = "block";
         gameSubtitle.textContent = "Scegli l'armatura di chiave corretta per la tonalità indicata.";
         presentSignatureQuestion();

@@ -219,6 +219,34 @@ h1 { margin: 0; font-family: "Sora", "Inter", Arial, sans-serif; font-size: 2rem
     .message { min-height: 20px; }
 }
   .hero-badge { animation-iteration-count: 3; }   /* il badge galleggia per qualche secondo, poi sta fermo */
+
+/* gruppi del gioco: sul telefono non esistono (contenuto come prima) */
+.game-head, .game-col { display: contents; }
+
+/* PC e LIM: tutto in una schermata, senza scorrere */
+@media (min-width: 900px) {
+    .game { width: min(1400px, 100%); }
+    h1 { font-size: 2rem; }
+    .subtitle { margin: 4px 0 12px; font-size: 0.95rem; }
+    /* statistiche e livello affiancati */
+    .game-head { display: grid; grid-template-columns: 1.1fr 1fr; gap: 12px; align-items: stretch; margin-bottom: 10px; }
+    .game-head .stats, .game-head .level-box { margin: 0; }
+    .game-head .level-box { display: flex; flex-direction: column; justify-content: center; }
+    .stat { padding: 8px 4px 7px; }
+    .stat-value { font-size: 1.35rem; }
+    /* il pentagramma cresce con l'altezza dello schermo (più grande sulla LIM) */
+    .staff-wrap { min-height: clamp(150px, calc(100vh - 425px), 440px); margin-bottom: 14px; }
+    #staffContainer svg { width: auto !important; height: clamp(150px, calc(100vh - 445px), 420px) !important; max-width: 100%; }
+    /* sotto: a sinistra ascolto e risposte, a destra esito e pulsanti */
+    .game-col.game-cols { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; align-items: center; }
+    .game-col { display: block; }
+    .listen-controls { margin-bottom: 12px; }
+    .listen-button { font-size: 1rem; padding: 14px 22px; }
+    .choice-btn { font-size: 1rem; padding: 14px 18px; }
+    .answer-section, .choice-row { margin-bottom: 0; }
+    .message { min-height: 30px; }
+    .toolbar { margin-top: 12px; }
+}
 </style>
 </head>
 <body>
@@ -261,6 +289,7 @@ h1 { margin: 0; font-family: "Sora", "Inter", Arial, sans-serif; font-size: 2rem
     <h1>🎧 Ascolta la scala</h1>
     <p class="subtitle" id="gameSubtitle">Ascolta la scala e riconoscine il tipo.</p>
 
+    <div class="game-head">
     <div class="stats">
         <div class="stat total"><span class="stat-label">Risposte</span><span class="stat-value" id="total">0</span></div>
         <div class="stat correct" id="correctBox"><span class="stat-label">Corrette</span><span class="stat-value" id="correct">0</span></div>
@@ -280,12 +309,15 @@ h1 { margin: 0; font-family: "Sora", "Inter", Arial, sans-serif; font-size: 2rem
             <span class="level-name" id="levelName"></span>
         </div>
     </div>
+    </div>
 
     <div class="staff-wrap">
         <div class="staff-placeholder" id="staffPlaceholder"><span class="staff-placeholder-emoji">🎧</span>Ascolta e indovina</div>
         <div id="staffContainer" style="display: none;"></div>
     </div>
 
+    <div class="game-col game-cols">
+    <div class="game-col">
     <div class="listen-controls">
         <button class="listen-button" id="replayButton" title="Riascolta">🔊 Riascolta</button>
     </div>
@@ -294,6 +326,8 @@ h1 { margin: 0; font-family: "Sora", "Inter", Arial, sans-serif; font-size: 2rem
         <div class="answer-section-title">Tipo di scala</div>
         <div class="choice-row" id="scaleTypeRow"></div>
     </div>
+    </div>
+    <div class="game-col">
 
 
     <div class="message" id="message"></div>
@@ -309,6 +343,8 @@ h1 { margin: 0; font-family: "Sora", "Inter", Arial, sans-serif; font-size: 2rem
             <span class="volume-icon">🔊</span>
             <input type="range" class="volume-slider" id="volumeSlider" min="0" max="100" value="75">
         </div>
+    </div>
+    </div>
     </div>
 
 </div>

@@ -229,6 +229,38 @@ h1 { margin: 0; font-family: "Sora", "Inter", Arial, sans-serif; font-size: 2rem
     .stat { padding: 8px 3px; }
 }
   .hero-badge { animation-iteration-count: 3; }   /* il badge galleggia per qualche secondo, poi sta fermo */
+
+/* Gruppi per il layout a due colonne: sul telefono non esistono */
+.zona-stat, .zona-rigo, .zona-comandi { display: contents; }
+
+/* LIM e PC: tutto in una schermata, senza scorrere */
+@media (min-width: 900px) {
+    body { padding: 22px 18px; }
+    /* menu: modalità su due colonne */
+    .menu-screen { width: min(820px, 100%); }
+    .hero-badge { width: 64px; height: 64px; font-size: 1.8rem; margin-bottom: 10px; }
+    .subtitle { margin: 8px 0 16px; }
+    .options-triple { width: min(560px, 100%); margin: 0 auto 18px; }
+    .mode-grid { display: grid; grid-template-columns: 1fr 1fr; }
+    /* gioco: pentagramma a sinistra, statistiche e comandi a destra */
+    /* lo script mette display:block in linea: qui serve la griglia */
+    #gameContainer:not([style*="none"]) { display: grid !important; }
+    .game {
+        width: min(1180px, 100%); column-gap: 32px; align-items: start;
+        grid-template-columns: minmax(0, 1.25fr) minmax(0, 1fr);
+        grid-template-areas: "titolo titolo" "rigo stat" "rigo comandi";
+        grid-template-rows: auto auto 1fr;
+    }
+    .game > h1 { grid-area: titolo; margin-bottom: 12px; }
+    .zona-stat { display: block; grid-area: stat; }
+    .zona-rigo { display: block; grid-area: rigo; }
+    .zona-comandi { display: block; grid-area: comandi; }
+    .staff-wrap { margin-bottom: 0; }
+    .zona-comandi .build-controls, .zona-comandi .accidental-controls { display: inline-flex; vertical-align: middle; margin: 0 4px 12px; }
+    /* il pentagramma si adatta all'altezza dello schermo */
+    #staffContainer svg { width: min(100%, calc((100vh - 250px) * 300 / 260)) !important; height: auto !important; aspect-ratio: 300 / 260; margin: 0 auto; }
+    .toolbar { margin-top: 12px; }
+}
 </style>
 </head>
 <body>
@@ -271,6 +303,7 @@ h1 { margin: 0; font-family: "Sora", "Inter", Arial, sans-serif; font-size: 2rem
 
     <h1>🎹 Costruisci la triade</h1>
 
+    <div class="zona-stat">
     <div class="stats">
         <div class="stat total"><span class="stat-label">Risposte</span><span class="stat-value" id="total">0</span></div>
         <div class="stat correct" id="correctBox"><span class="stat-label">Corrette</span><span class="stat-value" id="correct">0</span></div>
@@ -290,7 +323,9 @@ h1 { margin: 0; font-family: "Sora", "Inter", Arial, sans-serif; font-size: 2rem
             <span class="level-name" id="levelName"></span>
         </div>
     </div>
+    </div>
 
+    <div class="zona-rigo">
     <div class="question-box">
         <div class="question-label">Costruisci</div>
         <div class="question-text" id="questionText">Re minore</div>
@@ -300,7 +335,9 @@ h1 { margin: 0; font-family: "Sora", "Inter", Arial, sans-serif; font-size: 2rem
     <div class="staff-wrap">
         <div id="staffContainer"></div>
     </div>
+    </div>
 
+    <div class="zona-comandi">
     <div class="note-tabs">
         <button class="note-tab active" id="tab0" data-slot="0">Nota 1</button>
         <button class="note-tab" id="tab1" data-slot="1">Nota 2</button>
@@ -333,6 +370,7 @@ h1 { margin: 0; font-family: "Sora", "Inter", Arial, sans-serif; font-size: 2rem
             <span class="volume-icon">🔊</span>
             <input type="range" class="volume-slider" id="volumeSlider" min="0" max="100" value="75">
         </div>
+    </div>
     </div>
 
 </div>
@@ -651,7 +689,18 @@ function renderChordDisplay() {
 
     new Formatter().joinVoices([voice]).format([voice], SVG_W - 90);
     voice.draw(context, stave);
+    // LIM e PC: il pentagramma si ingrandisce con lo spazio disponibile
+    if (window.matchMedia("(min-width: 900px)").matches) {
+        const svg = staffContainer.querySelector("svg");
+        if (svg) svg.setAttribute("viewBox", "0 0 " + SVG_W + " " + SVG_H);
+    }
 }
+let lastStaffWidth = window.innerWidth;
+window.addEventListener("resize", () => {
+    if (window.innerWidth === lastStaffWidth) return;
+    lastStaffWidth = window.innerWidth;
+    if (slots.length) renderChordDisplay();
+});
 
 /* =========================================================
    STATO DI GIOCO

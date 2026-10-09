@@ -1047,6 +1047,77 @@ h1 {
 .game.observe .listen-caption { color: #57482a; }
   .level-box { -webkit-backdrop-filter: none; backdrop-filter: none; }
   .hero-badge { animation-iteration-count: 3; }   /* il badge galleggia per qualche secondo, poi sta fermo */
+
+/* LIM e PC: ogni schermata sta tutta nello schermo, senza scorrere */
+@media (min-width: 900px) {
+    body { padding: 18px 18px 12px; }
+
+    /* menu: le quattro modalità affiancate, le due opzioni affiancate */
+    #homeScreen {
+        width: min(1240px, calc(100% - 120px));
+        display: grid; grid-template-columns: 1fr 1fr; column-gap: 14px; align-content: start;
+    }
+    #homeScreen > * { grid-column: 1 / -1; }
+    #homeScreen > .home-option { grid-column: auto; margin-top: 16px; }
+    #homeScreen .hero-badge { width: 64px; height: 64px; margin-bottom: 10px; font-size: 1.8rem; }
+    #homeScreen .mode-grid { display: grid; grid-template-columns: 1fr 1fr 1fr auto 1fr; gap: 14px; margin-top: 20px; }
+    #homeScreen .mode-divider { margin: 0 4px; border-top: none; border-left: 1px solid var(--border-soft); }
+    #homeScreen .mode-help { grid-column: 1 / -1; margin-top: 2px; text-align: center; }
+    #homeScreen .mode-button { justify-content: flex-start; }
+    #homeScreen .mode-sub { margin-top: auto; padding-top: 10px; }
+    #homeScreen .sound-status { margin-top: 16px; text-align: center; }
+    #homeScreen .credits-link { margin-top: 10px; justify-self: center; }
+
+    /* crediti: finestra larga, elenco su più colonne */
+    .credits-card { width: min(1500px, 100%); max-width: none; padding: 20px 26px; }
+    .credits-card h2 { margin-bottom: 4px; }
+    .credits-list { max-height: none; overflow: visible; columns: 3; column-gap: 34px; margin-bottom: 14px; }
+    .credits-list h3 { break-after: avoid; margin-top: 8px; }
+    .credits-list ul { margin: 0; padding-left: 18px; }
+    .credits-list li { break-inside: avoid; }
+
+    /* ascoltali tutti: la pianta si adatta all'altezza dello schermo */
+    .explore-screen { width: min(1240px, 100%); }
+    .orchestra-wrap { max-width: calc((100vh - 270px) * 1.75); padding: 10px 10px 4px; }
+    .orchestra-legend { margin-top: 8px; }
+    .explore-screen .back-button { margin-top: 12px; }
+
+    /* gioco: statistiche e livello affiancati, ascolto a sinistra e risposte a destra */
+    .game, .game.wide {
+        width: min(1500px, 100%);
+        display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+        column-gap: 24px; align-items: center;
+    }
+    .game > h1, .game > .subtitle, .game > .family-legend, .game > .game-buttons { grid-column: 1 / -1; }
+    .game > .subtitle { margin-bottom: 12px; }
+    .game .stats, .game .level-box { margin: 0 0 14px; align-self: stretch; }
+    .game .stats .stat { display: flex; flex-direction: column; justify-content: center; }
+    .game .level-box { display: flex; flex-direction: column; justify-content: center; }
+    .game .listen-row { margin: 0; }
+    .game .listen-card, .game.observe .listen-card { width: min(640px, 100%); min-height: clamp(200px, calc(100vh - 340px), 520px); }
+    .game .answers { margin: 0 auto; max-width: 740px; }
+    .game > .game-buttons { grid-row: 5; margin-top: 16px; }
+    .game > .toolbar { grid-column: 2; grid-row: 5; justify-self: end; margin: 16px 0 0; }
+
+    /* livelli completati: elenco su quattro colonne, tutto visibile */
+    .trophy-panel { top: 16px; width: min(940px, calc(100vw - 48px)); }
+    #trophyList { display: grid; grid-template-columns: repeat(4, 1fr); gap: 7px; }
+    #trophyList .trophy-row { margin-bottom: 0; }
+}
+/* PC (schermo basso) */
+@media (min-width: 900px) and (max-height: 800px) {
+    #homeScreen .hero-badge { width: 52px; height: 52px; font-size: 1.5rem; margin-bottom: 6px; }
+    #homeScreen .mode-grid { margin-top: 14px; }
+    #homeScreen .mode-button { padding: 16px 18px; }
+    .credits-list { columns: 4; column-gap: 26px; font-size: 0.74rem; line-height: 1.38; }
+}
+/* LIM (schermo alto): pulsante play e risposte più grandi, per leggerli da lontano */
+@media (min-width: 900px) and (min-height: 801px) {
+    .game .play-button { width: 132px; height: 132px; font-size: 3.6rem; padding-left: 10px; }
+    .game .listen-caption { font-size: 1.15rem; }
+    .game .answer { width: 168px; min-height: 62px; font-size: 1.15rem; }
+    .game .answers { max-width: 740px; gap: 10px; }
+}
 </style>
 </head>
 <body>
@@ -2029,7 +2100,9 @@ function presentQuestion() {
 function sizeQuestionImage() {
     if (!questionImg.naturalWidth) return;
     const card = document.querySelector(".listen-card");
-    const s = Math.min(0.75, (card.clientWidth - 40) / IMAGE_MAX_WIDTH, 262 / IMAGE_MAX_HEIGHT);
+    // su LIM e PC la foto cresce con l'altezza dello schermo (sul telefono resta com'era)
+    const maxH = window.innerWidth >= 900 ? Math.max(262, Math.min(window.innerHeight - 420, 440)) : 262;
+    const s = Math.min(window.innerWidth >= 900 ? 1 : 0.75, (card.clientWidth - 40) / IMAGE_MAX_WIDTH, maxH / IMAGE_MAX_HEIGHT);
     questionImg.style.width = Math.round(questionImg.naturalWidth * s) + "px";
 }
 

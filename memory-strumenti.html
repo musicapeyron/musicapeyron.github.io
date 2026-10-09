@@ -282,6 +282,30 @@ h1 { margin: 0; font-family: "Sora", "Inter", Arial, sans-serif; font-size: 2rem
     transition: transform 0.15s ease, background 0.15s ease;
 }
 .site-home-button:hover { background: linear-gradient(180deg, rgba(255,255,255,0.22), rgba(255,255,255,0.08)); transform: translateY(-2px); }
+
+/* LIM e PC: ogni schermata sta tutta nello schermo, senza scorrere */
+@media (min-width: 900px) {
+    body { padding-bottom: 10px; }
+    /* impostazioni: i pannelli affiancati su tre colonne */
+    #setupScreen {
+        width: min(1240px, 100%); display: grid; column-gap: 16px; align-items: start;
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
+    #setupScreen > .setup-badge, #setupScreen > h1, #setupScreen > .subtitle,
+    #setupScreen > .row-buttons, #setupScreen > .credits-link { grid-column: 1 / -1; }
+    #setupScreen > .credits-link { justify-self: center; }
+    #setupScreen > .panel:nth-child(4) { grid-column: 1; grid-row: 4 / span 2; }
+    #setupScreen > #clefPanel { grid-column: 2; grid-row: 4; }
+    #setupScreen > #optionsPanel { grid-column: 2; grid-row: 5; }
+    #setupScreen > #clefPanel[style*="none"] + #optionsPanel { grid-row: 4 / span 2; }
+    #setupScreen > .panel:nth-child(7) { grid-column: 3; grid-row: 4 / span 2; }
+    #setupScreen .subtitle { margin-bottom: 14px; }
+    /* crediti: l'elenco va su più colonne invece di scorrere */
+    #creditsOverlay .sheet { width: min(1240px, 100%); }
+    .credits-list { max-height: none; overflow: visible; column-width: 340px; column-gap: 28px; }
+    .credits-list h3 { break-after: avoid; }
+    .credits-list li { break-inside: avoid; }
+}
 </style>
 </head>
 <body>

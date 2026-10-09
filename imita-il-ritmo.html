@@ -478,6 +478,33 @@
     transform: translateY(-2px);
 }
   .legend-panel, .training-bar { -webkit-backdrop-filter: none; backdrop-filter: none; }
+
+/* LIM E PC: tutto in una schermata, senza scorrere (il telefono non cambia) */
+@media (min-width: 900px) and (min-height: 560px) and (max-height: 1000px){
+  body{ padding: 14px 24px 12px; }
+  h1{ margin:0 0 2px; }
+  .subtitle{ margin:0 0 12px; max-width:none; }
+  .controls{ padding:12px 18px; margin-bottom:12px; }
+  /* barra allenamento: "Torna al menu" a destra, sulla stessa riga */
+  .training-bar{ position:relative; padding:10px 190px 12px 20px; margin-bottom:12px; }
+  .training-bar-info{ margin-bottom:6px; }
+  .training-bar-bottom{ position:absolute; right:16px; top:50%; transform:translateY(-50%); margin:0; }
+  /* opzioni affiancate */
+  .options-panel{ flex-direction:row; flex-wrap:wrap; gap:8px 28px; padding:12px 18px; margin:-2px 0 12px; }
+  .options-panel > *{ flex:1 1 300px; }
+  .status-line{ margin:0 2px 8px; }
+  #score-wrap{ padding:14px 8px 6px; }
+  .legend-panel{ margin-top:10px; padding:8px 20px; }
+  /* scelta della sfida: tre colonne, sfide speciali affiancate */
+  .difficulty-row{ margin-bottom:16px; }
+  .challenge-grid{ grid-template-columns:repeat(6, 1fr); gap:10px; margin-bottom:0; }
+  .challenge-card{ grid-column: span 2; padding:10px 16px; }
+  .challenge-card-final, .challenge-card-legendary{ grid-column: span 3; padding:16px 16px; }
+}
+/* il pulsante casa fisso non copre il titolo */
+@media (min-width: 900px) and (max-width: 1760px) and (min-height: 560px) and (max-height: 1000px){
+  body{ padding-left: 80px; }
+}
 </style>
 </head>
 <body>
@@ -1223,7 +1250,36 @@ function getRenderScale(){
   const w = window.innerWidth;
   if(w < 480) return 0.56;
   if(w < 700) return 0.68;
+  if(schermoLargo() && currentMeasures && currentMeasures.length) return fitScale(currentMeasures.length);
   return 1;
+}
+
+// stessa condizione della media query CSS per LIM e PC
+function schermoLargo(){ return matchMedia('(min-width: 900px) and (min-height: 560px) and (max-height: 1000px)').matches; }
+
+// LIM e PC: la scala piu' grande (al massimo 1) con cui tutte le battute
+// stanno nello spazio rimasto sotto i pulsanti, senza scorrere la pagina.
+function fitScale(n){
+  const wrap = el.scoreWrap;
+  const cs = getComputedStyle(wrap);
+  const innerW = wrap.clientWidth - parseFloat(cs.paddingLeft) - parseFloat(cs.paddingRight);
+  const legend = document.querySelector('#screenMain .legend-panel');
+  const legendH = legend ? legend.offsetHeight + parseFloat(getComputedStyle(legend).marginTop) : 0;
+  const bodyPadB = parseFloat(getComputedStyle(document.body).paddingBottom) || 0;
+  const top = wrap.getBoundingClientRect().top + window.scrollY;
+  const availH = window.innerHeight - top - legendH - bodyPadB
+    - parseFloat(cs.paddingTop) - parseFloat(cs.paddingBottom) - 4;
+  const wFirst = measureTotalWidth(true), wOther = measureTotalWidth(false);
+  for(let sc = 1; sc > 0.42; sc -= 0.02){
+    let rows = 1, x = 0;
+    for(let i=0;i<n;i++){
+      const mw = (i===0 ? wFirst : wOther) * sc;
+      if(x > 0 && x + mw > innerW){ rows++; x = 0; }
+      x += mw;
+    }
+    if(rows * 130 * sc <= availH) return sc;
+  }
+  return 0.42;
 }
 
 function renderScore(measures, colorMap){
@@ -2036,6 +2092,10 @@ el.btnStop.addEventListener('click', stopPlayback);
 
 el.btnOptions.addEventListener('click', () => {
   el.optionsPanel.classList.toggle('show');
+  // LIM e PC: il pannello toglie spazio, le battute si ridimensionano
+  if(schermoLargo() && currentMeasures && currentMeasures.length){
+    renderScore(currentMeasures, liveColorMap);
+  }
 });
 el.bpm.addEventListener('change', () => {
   bpm = parseInt(el.bpm.value, 10) || 80;
@@ -2122,7 +2182,10 @@ el.scoreWrap.addEventListener('click', () => {
 // finestra) e la scala della notazione ne risente, ridisegna la battuta
 // corrente cosi' resta leggibile alla dimensione giusta.
 let lastRenderScale = getRenderScale();
+let lastResizeWidth = window.innerWidth;
 window.addEventListener('resize', () => {
+  if(window.innerWidth === lastResizeWidth) return; // si ridisegna solo se cambia la larghezza
+  lastResizeWidth = window.innerWidth;
   const s = getRenderScale();
   if(s !== lastRenderScale){
     lastRenderScale = s;

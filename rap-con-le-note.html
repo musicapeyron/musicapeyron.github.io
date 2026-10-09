@@ -750,6 +750,66 @@ h1 {
     .final-stats { grid-template-columns: repeat(3, 1fr); }
 }
 
+/* LIM e PC: tutto in una schermata, senza scorrere */
+@media (min-width: 900px) and (max-height: 1100px) {
+    /* schermata iniziale su due colonne: opzioni a sinistra, livelli a destra */
+    .menu-screen {
+        width: min(1000px, 100%);
+        display: grid;
+        grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+        column-gap: 28px;
+        align-items: start;
+    }
+    .menu-screen > * { grid-column: 1; }
+    .menu-screen > .hero-badge { grid-row: 1; grid-column: 1 / -1; }
+    .menu-screen > h1 { grid-row: 2; grid-column: 1 / -1; }
+    .menu-screen > .subtitle { grid-row: 3; grid-column: 1 / -1; }
+    .menu-screen > .mode-switch { grid-row: 4; }
+    .menu-screen > #modeNote { grid-row: 5; }
+    .menu-screen > label.opt-row:nth-of-type(1) { grid-row: 6; }
+    .menu-screen > #staffSub { grid-row: 7; }
+    .menu-screen > label.opt-row:nth-of-type(2) { grid-row: 8; }
+    .menu-screen > .type-pick { grid-row: 9; }
+    .menu-screen > .levels { grid-row: 4 / 10; grid-column: 2; align-self: start; margin-top: 4px; }
+    .menu-screen > .toolbar { grid-row: 4 / 10; grid-column: 2; align-self: end; }
+    .menu-screen > .home-note:not(#modeNote) { grid-row: 10; grid-column: 1 / -1; }
+    /* opzioni del pentagramma a coppie, una accanto all'altra */
+    .opt-sub.show { display: grid; grid-template-columns: 1fr 1fr; column-gap: 8px; }
+    .opt-gap { display: none; }
+}
+/* PC con schermo basso */
+@media (min-width: 900px) and (max-height: 800px) {
+    body { padding: 12px 18px 12px; }
+    .hero-badge { width: 56px; height: 56px; font-size: 1.6rem; margin-bottom: 8px; }
+    .subtitle { margin: 4px 0 12px; }
+    .type-pick { margin-top: 12px; }
+    .levels { gap: 10px; }
+
+    /* gioco: statistiche e livello affiancati, pulsanti e volume sulla stessa riga */
+    .game {
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: center;
+        align-items: center;
+        column-gap: 14px;
+    }
+    .game > h1, .game > .subtitle, .game > .rotate-hint, .game > .stage { flex: 0 0 100%; }
+    .game > .stats, .game > .level-box { flex: 1 1 0; margin: 0; }
+    .stats { gap: 8px; }
+    .stat { padding: 10px 6px 9px; }
+    .stat-label { margin-bottom: 2px; }
+    .level-box { padding: 12px 18px 12px; }
+    .game > .stage { margin: 12px 0 10px; }
+    .game > .toolbar { margin: 0; }
+
+    /* finestra "Che cosa vuoi recitare?": più larga, così sta tutta */
+    .type-card { width: min(780px, 100%); }
+    .type-group-title { margin: 10px 0 6px; }
+    .type-grid { grid-template-columns: repeat(6, 1fr); }
+    .type-grid.two { grid-template-columns: repeat(4, 1fr); }
+    .type-card .overlay-buttons { margin-top: 14px !important; }
+}
+
 @media (prefers-reduced-motion: reduce) {
     .hero-badge { animation: none; }
     .strip { transition-duration: 0.05s; }

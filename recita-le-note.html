@@ -1215,6 +1215,37 @@ h1 {
     .mode-divider { margin: 8px 0 0; }
 }
 
+/* LIM e PC: tutto in una schermata, senza scorrere */
+@media (min-width: 900px) and (max-height: 1000px) {
+    body { padding: 24px 18px 24px; }
+}
+/* PC con schermo basso: statistiche e livello affiancati,
+   pulsanti e volume sulla stessa riga */
+@media (min-width: 900px) and (max-height: 800px) {
+    body { padding: 12px 18px 12px; }
+    .game {
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: center;
+        align-items: center;
+        column-gap: 14px;
+    }
+    .game > h1, .game > .subtitle, .game > .play-area { flex: 0 0 100%; }
+    .stats, .level-box { flex: 1 1 0; }
+    h1 { font-size: 1.9rem; }
+    .subtitle { margin: 4px 0 12px; }
+    .stats { margin: 0; gap: 8px; }
+    .stat { padding: 10px 6px 9px; }
+    .stat-label { margin-bottom: 2px; }
+    .level-box { margin: 0; padding: 12px 18px 12px; }
+    .play-area { margin: 12px 0 10px; }
+    .answer { padding: 10px 6px; }
+    .cards { --step: 9px; padding-top: calc(7 * var(--step) + 50px); }
+    .message { margin-top: 4px; }
+    .game-buttons { margin-top: 0; flex-wrap: nowrap; }
+    .toolbar { margin: 0; }
+}
+
 @media (prefers-reduced-motion: reduce) {
     .card-anim[class*="enter-"],
     .card-anim[class*="exit-"] { animation-duration: 0.01ms !important; }

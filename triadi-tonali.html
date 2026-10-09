@@ -282,6 +282,58 @@ h1 { margin: 0; font-family: "Sora", "Inter", Arial, sans-serif; font-size: 2rem
     .toolbar { margin: 6px auto 0; }
 }
   .hero-badge { animation-iteration-count: 3; }   /* il badge galleggia per qualche secondo, poi sta fermo */
+
+/* colonne del gioco: sul telefono non esistono (contenuto come prima) */
+.game-col { display: contents; }
+
+/* PC e LIM: tutto in una schermata, senza scorrere */
+@media (min-width: 900px) {
+    /* gioco: titolo sopra, a sinistra statistiche e pentagramma, a destra i comandi per costruire */
+    .game { width: min(1500px, 100%); }
+    .game h1 { font-size: 1.9rem; margin-bottom: 10px; }
+    #gameContainer:not([style*="none"]) {
+        display: grid !important; grid-template-columns: minmax(0, 1.35fr) minmax(0, 1fr); column-gap: 28px; align-items: center;
+    }
+    #gameContainer > h1 { grid-column: 1 / -1; }
+    .game-col { display: block; min-width: 0; }
+    .stats { margin-bottom: 8px; }
+    .stat { padding: 7px 4px 6px; }
+    .stat-label { font-size: 0.6rem; }
+    .stat-value { font-size: 1.25rem; }
+    .level-box { margin-bottom: 8px; }
+    .level-title { font-size: 0.74rem; }
+    .level-info, .level-name { font-size: 0.7rem; }
+    .staff-wrap { margin-bottom: 0; }
+    /* il pentagramma doppio cresce con l'altezza dello schermo (più grande sulla LIM) */
+    #staffContainer svg { width: auto !important; max-width: 100%; height: clamp(240px, calc(100vh - 270px), 680px) !important; }
+    /* comandi: più grandi, la colonna ha spazio */
+    .question-box { margin-bottom: 18px; padding: 12px 16px; }
+    .question-label { font-size: 0.68rem; }
+    .question-text { font-size: 1.5rem; }
+    .question-inversion { font-size: 0.95rem; }
+    .note-tabs { margin-bottom: 8px; }
+    .note-tab { padding: 11px 22px; font-size: 1rem; }
+    .staff-hint { font-size: 0.8rem; margin-bottom: 12px; }
+    .build-controls { margin-bottom: 12px; }
+    .arrow-button { width: 56px; height: 56px; font-size: 1.5rem; }
+    .accidental-controls { margin-bottom: 12px; }
+    .accidental-button { padding: 11px 18px; font-size: 0.95rem; }
+    .quality-guess-row { margin-bottom: 10px; }
+    .quality-guess-btn { padding: 12px 18px; font-size: 0.98rem; }
+    .message { min-height: 26px; font-size: 1.05rem; margin-bottom: 6px; }
+    .cancel-button, .submit-button, .menu-button, .new-game { padding: 12px 22px; font-size: 0.92rem; }
+    .toolbar { margin-top: 12px; }
+}
+/* PC con schermo basso: comandi un po' più compatti */
+@media (min-width: 900px) and (max-height: 800px) {
+    .question-box { margin-bottom: 10px; padding: 9px 16px; }
+    .note-tab { padding: 9px 20px; }
+    .staff-hint { margin-bottom: 8px; }
+    .build-controls, .accidental-controls { margin-bottom: 8px; }
+    .arrow-button { width: 48px; height: 48px; font-size: 1.3rem; }
+    .quality-guess-row { margin-bottom: 6px; }
+    .toolbar { margin-top: 8px; }
+}
 </style>
 </head>
 <body>
@@ -325,6 +377,7 @@ h1 { margin: 0; font-family: "Sora", "Inter", Arial, sans-serif; font-size: 2rem
 
     <h1>🎹 Triadi in contesto tonale</h1>
 
+    <div class="game-col game-col-left">
     <div class="stats">
         <div class="stat total"><span class="stat-label">Risposte</span><span class="stat-value" id="total">0</span></div>
         <div class="stat correct" id="correctBox"><span class="stat-label">Corrette</span><span class="stat-value" id="correct">0</span></div>
@@ -345,16 +398,23 @@ h1 { margin: 0; font-family: "Sora", "Inter", Arial, sans-serif; font-size: 2rem
         </div>
     </div>
 
+    </div>
+
+    <div class="game-col game-col-right">
     <div class="question-box">
         <div class="question-label">Costruisci in stato fondamentale</div>
         <div class="question-text" id="questionText">Re minore</div>
         <div class="question-inversion" id="questionInversion" style="display: none;"></div>
     </div>
 
+    </div>
+    <div class="game-col game-col-left">
     <div class="staff-wrap">
         <div id="staffContainer"></div>
     </div>
+    </div>
 
+    <div class="game-col game-col-right">
     <div class="note-tabs">
         <button class="note-tab active" id="tab0" data-slot="0">Nota 1</button>
         <button class="note-tab" id="tab1" data-slot="1">Nota 2</button>
@@ -394,6 +454,7 @@ h1 { margin: 0; font-family: "Sora", "Inter", Arial, sans-serif; font-size: 2rem
             <span class="volume-icon">🔊</span>
             <input type="range" class="volume-slider" id="volumeSlider" min="0" max="100" value="75">
         </div>
+    </div>
     </div>
 
 </div>

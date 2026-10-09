@@ -308,6 +308,35 @@ h1 {
 }
   .level-box { -webkit-backdrop-filter: none; backdrop-filter: none; }
   .hero-badge { animation-iteration-count: 3; }   /* il badge galleggia per qualche secondo, poi sta fermo */
+
+/* colonne del gioco: sul telefono non esistono (contenuto come prima) */
+.game-col { display: contents; }
+
+/* PC e LIM: tutto in una schermata, senza scorrere */
+@media (min-width: 900px) {
+    body { padding: 16px 24px 16px; }
+    /* gioco: titolo sopra, a sinistra statistiche + pentagramma, a destra le risposte */
+    .game { width: min(1500px, 100%); }
+    .game h1 { font-size: 2rem; }
+    .game .subtitle { margin: 4px 0 14px; }
+    #gameContainer:not([style*="none"]) {
+        display: grid !important; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); column-gap: 32px; align-items: center;
+    }
+    #gameContainer > h1, #gameContainer > .subtitle { grid-column: 1 / -1; }
+    .game-col { display: block; min-width: 0; }
+    .stats { margin-bottom: 14px; }
+    .level-box { margin-bottom: 14px; padding: 12px 18px 14px; }
+    .staff-row { margin-bottom: 0; }
+    .staff-card { min-height: 0; width: auto; max-width: 100%; }   /* la scheda segue la larghezza del pentagramma */
+    /* il pentagramma cresce con l'altezza dello schermo (più grande sulla LIM) */
+    #staffInner svg { width: auto !important; height: clamp(200px, calc(100vh - 400px), 520px) !important; }
+    .answer-section { max-width: none; }
+    .choice-btn { font-size: 1rem; padding: 14px 18px; }
+    .toolbar { margin-top: 14px; }
+    /* finestra finale: statistiche in riga */
+    #gameOver .overlay-card { width: min(780px, 100%); }
+    #gameOver .final-stats { grid-template-columns: repeat(auto-fit, minmax(120px, 1fr)); }
+}
 </style>
 </head>
 <body>
@@ -348,6 +377,7 @@ h1 {
     <h1>🎹 Nomina la triade</h1>
     <p class="subtitle" id="gameSubtitle">Osserva l'armatura di chiave e la triade, poi rispondi.</p>
 
+    <div class="game-col game-col-left">
     <div class="stats">
         <div class="stat total"><span class="stat-label">Risposte</span><span class="stat-value" id="total">0</span></div>
         <div class="stat correct" id="correctBox"><span class="stat-label">Corrette</span><span class="stat-value" id="correct">0</span></div>
@@ -374,7 +404,9 @@ h1 {
             <div class="confetti-layer" id="confettiLayer"></div>
         </div>
     </div>
+    </div>
 
+    <div class="game-col game-col-right">
     <div class="answer-section">
         <div class="choice-row" id="answerRow"></div>
     </div>
@@ -391,6 +423,7 @@ h1 {
             <span class="volume-icon">🔊</span>
             <input type="range" class="volume-slider" id="volumeSlider" min="0" max="100" value="75">
         </div>
+    </div>
     </div>
 
 </div>

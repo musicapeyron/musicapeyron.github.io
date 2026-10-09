@@ -3545,6 +3545,237 @@ body.mobile-mode .note-popup-staff {
     margin: 0;
 }
   .level-box, .note-popup-card { -webkit-backdrop-filter: none; backdrop-filter: none; }
+
+/* =========================================================
+   LIM E PC (schermi larghi e non troppo alti):
+   tutto in una schermata, senza scorrere.
+   Solo versione PC: il telefono non cambia.
+========================================================= */
+
+@media (min-width: 900px) {
+    /* Il gioco dietro la scelta del dispositivo non allunga la pagina */
+    body:has(.device-select:not(.hidden)) .game {
+        display: none;
+    }
+}
+
+@media (min-width: 900px) and (min-height: 560px) and (max-height: 1000px) {
+
+    body:not(.mobile-mode) {
+        padding: 18px 8px 10px;
+        /* altezza dei tasti bianchi in base allo spazio */
+        --kh: clamp(160px, calc(100vh - 445px), 275px);
+    }
+
+    body:not(.mobile-mode) .subtitle {
+        margin: 4px 0 14px;
+    }
+
+    body:not(.mobile-mode) .level-box {
+        margin-bottom: 12px;
+        padding: 12px 20px 14px;
+    }
+
+    body:not(.mobile-mode) .keyboard-container {
+        padding-bottom: 14px;
+    }
+
+    body:not(.mobile-mode) .keyboard {
+        height: calc(var(--kh) + 5px);
+    }
+
+    body:not(.mobile-mode) .white-key {
+        height: var(--kh);
+    }
+
+    body:not(.mobile-mode) .black-key {
+        height: calc(var(--kh) * 0.636);
+    }
+
+    body:not(.mobile-mode) .key-note-label {
+        top: calc(var(--kh) * 0.72);
+    }
+
+    body:not(.mobile-mode) .answers {
+        margin: 6px auto 8px;
+    }
+
+    body:not(.mobile-mode) .message {
+        min-height: 30px;
+    }
+
+    /* Riquadro col pentagramma: rimpicciolito dal JS se sopra il tasto manca spazio */
+    body:not(.mobile-mode) .note-popup {
+        transform-origin: 50% 100%;
+        transform: translateY(10px) scale(calc(0.92 * var(--zoom, 1)));
+    }
+
+    body:not(.mobile-mode) .note-popup.show {
+        transform: scale(var(--zoom, 1));
+    }
+
+    /* Trofei di una categoria: più colonne, niente scorrimento */
+    body:not(.mobile-mode) .trophy-modal {
+        width: min(1120px, 100%);
+        max-height: 94vh;
+        padding: 18px 22px 20px;
+    }
+
+    body:not(.mobile-mode) .trophy-modal-grid {
+        grid-template-columns: repeat(auto-fill, minmax(190px, 1fr));
+        gap: 10px;
+    }
+
+    body:not(.mobile-mode) .trophy-card {
+        padding: 10px 10px;
+    }
+
+    body:not(.mobile-mode) .trophy-card-icon {
+        font-size: 1.7rem;
+        margin-bottom: 4px;
+    }
+
+    /* Risultato finale su due colonne */
+    body:not(.mobile-mode) .result-card {
+        width: min(960px, 100%);
+        column-count: 2;
+        column-gap: 36px;
+        padding: 26px 30px;
+    }
+
+    body:not(.mobile-mode) .result-card > * {
+        break-inside: avoid;
+    }
+
+    body:not(.mobile-mode) .result-card .calculation-box {
+        break-before: column;
+    }
+
+    body:not(.mobile-mode) .result-icon {
+        font-size: 3rem;
+    }
+}
+
+/* PC 1366: statistiche su una riga, pulsanti più bassi */
+@media (min-width: 900px) and (max-width: 1649px) and (min-height: 560px) and (max-height: 1000px) {
+
+    body:not(.mobile-mode) {
+        padding-top: 8px;
+        --kh: clamp(160px, calc(100vh - 470px), 275px);
+    }
+
+    body:not(.mobile-mode) h1 {
+        font-size: 1.8rem;
+    }
+
+    body:not(.mobile-mode) .subtitle {
+        margin: 0 0 8px;
+    }
+
+    body:not(.mobile-mode) .stats {
+        grid-template-columns: repeat(6, 1fr);
+        max-width: 1100px;
+        gap: 10px;
+        margin-bottom: 8px;
+    }
+
+    body:not(.mobile-mode) .stat {
+        padding: 6px 8px 7px;
+    }
+
+    body:not(.mobile-mode) .stat-label {
+        margin-bottom: 0;
+    }
+
+    body:not(.mobile-mode) .stat-value {
+        font-size: 1.3rem;
+    }
+
+    body:not(.mobile-mode) .level-box {
+        max-width: 1000px;
+        margin-bottom: 8px;
+        padding: 8px 18px 10px;
+    }
+
+    body:not(.mobile-mode) .level-header {
+        margin-bottom: 6px;
+    }
+
+    body:not(.mobile-mode) .level-info {
+        margin-top: 4px;
+    }
+
+    body:not(.mobile-mode) .mode-select-title {
+        margin-bottom: 8px;
+    }
+
+    body:not(.mobile-mode) .mode-button {
+        flex: 1 1 150px;
+        padding: 11px 10px;
+    }
+
+    body:not(.mobile-mode) .keyboard-container {
+        padding: 2px 5px 10px;
+    }
+
+    body:not(.mobile-mode) .keyboard-frame {
+        padding-top: 8px;
+    }
+
+    body:not(.mobile-mode) .keyboard-brand {
+        padding-bottom: 6px;
+    }
+
+    body:not(.mobile-mode) .answers {
+        margin: 2px auto 6px;
+    }
+
+    body:not(.mobile-mode) .answer {
+        padding: 12px 8px;
+    }
+
+    body:not(.mobile-mode) .message {
+        min-height: 28px;
+        line-height: 28px;
+    }
+
+    body:not(.mobile-mode) .game-buttons {
+        margin-top: 0;
+    }
+
+    body:not(.mobile-mode) .menu-button,
+    body:not(.mobile-mode) .new-game,
+    body:not(.mobile-mode) .finish-button {
+        padding-top: 10px;
+        padding-bottom: 10px;
+    }
+
+    body:not(.mobile-mode) .toolbar-sidebar {
+        margin-top: 10px;
+    }
+}
+
+/* Note naturali e alterate: due file di risposte, tasti un po' più bassi */
+@media (min-width: 900px) and (min-height: 560px) and (max-height: 1000px) {
+    body:not(.mobile-mode):has(.answers-mixed-altered.visible) {
+        --kh: clamp(160px, calc(100vh - 510px), 275px);
+    }
+}
+
+/* Barra strumenti accanto ai pulsanti di gioco, a destra */
+@media (min-width: 1200px) and (max-width: 1649px) and (min-height: 560px) and (max-height: 1000px) {
+
+    body:not(.mobile-mode) .game-layout {
+        position: relative;
+    }
+
+    body:not(.mobile-mode) .toolbar-sidebar {
+        position: absolute;
+        right: 8px;
+        bottom: 0;
+        margin: 0;
+    }
+}
 </style>
 
 </head>
@@ -7168,6 +7399,15 @@ function positionNotePopup(id) {
             (keyRect.top - stageRect.top) -
             popupHeight -
             14;
+
+
+        /* Schermi larghi e bassi: se sopra il tasto non c'è
+           spazio, il riquadro si rimpicciolisce (ancorato in basso). */
+        let zoom = 1;
+        if (window.matchMedia("(min-width: 900px) and (min-height: 560px) and (max-height: 1000px)").matches) {
+            zoom = Math.max(0.5, Math.min(1, (keyRect.top - 20) / popupHeight));
+        }
+        notePopup.style.setProperty("--zoom", zoom);
 
 
         notePopup.style.left =
