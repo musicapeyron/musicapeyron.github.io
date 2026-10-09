@@ -51,8 +51,12 @@ def lezioni_da_testo(testo):
         if m:
             opz = dict(p.split("=", 1) for p in re.split(r"\s+(?=\w+=)", m.group(3).strip()) if "=" in p)
             opz = {k: v.strip() for k, v in opz.items()}
-            cur = {"numero": int(m.group(1)), "titolo": m.group(2).strip(), "opz": opz, "V": [], "D": [], "S": []}
+            cur = {"numero": int(m.group(1)), "titolo": m.group(2).strip(), "opz": opz, "V": [], "D": [], "S": [], "ritornelli": []}
             out.append(cur)
+            continue
+        m = re.match(r"#\s*nota:\s*ritornello dalla battuta (\d+) alla (\d+)", riga)
+        if m and cur is not None:   # ritornello: si disegna e si esegue (il lettore permette di toglierlo)
+            cur["ritornelli"].append((int(m.group(1)), int(m.group(2))))
             continue
         m = re.match(r"([VDS]):\s*(.*)", riga)
         if m and cur is not None:
@@ -167,6 +171,7 @@ def musicxml(lez):
             x.append('      <barline location="right"><bar-style>light-heavy</bar-style></barline>')
         x.append('    </measure>')
     x.append('  </part>')
+    x[:] = segna_ritornelli(x, lez)
     # pianoforte: destra (pentagramma 1, voci 1-2), sinistra (pentagramma 2, voci 5-6)
     x.append('  <part id="P2">')
     aperte = {}
@@ -196,7 +201,30 @@ def musicxml(lez):
             x.append('      <barline location="right"><bar-style>light-heavy</bar-style></barline>')
         x.append('    </measure>')
     x += ['  </part>', '</score-partwise>', '']
-    return "\n".join(x)
+    return "\n".join(segna_ritornelli(x, lez))
+
+
+def segna_ritornelli(righe, lez):
+    """Aggiunge le stanghette di ritornello (inizio a sinistra della battuta X se X > 1, fine a destra della Y)
+    nella parte appena scritta (l'ultima <part> ancora senza ritornelli)."""
+    if not lez.get("ritornelli"):
+        return righe
+    inizio = max(i for i, r in enumerate(righe) if r.startswith('  <part id='))
+    out = righe[:inizio]
+    for r in righe[inizio:]:
+        m = re.match(r'    <measure number="(\d+)">', r)
+        if m:
+            num = int(m.group(1))
+        if r == '    </measure>':
+            for x0, y0 in lez["ritornelli"]:
+                if num == y0:
+                    out.append('      <barline location="right"><bar-style>light-heavy</bar-style><repeat direction="backward"/></barline>')
+        out.append(r)
+        if m:
+            for x0, y0 in lez["ritornelli"]:
+                if num == x0 and x0 > 1:
+                    out.append('      <barline location="left"><bar-style>heavy-light</bar-style><repeat direction="forward"/></barline>')
+    return out
 
 
 def scrivi(file_txt, cartella):

@@ -155,6 +155,7 @@
       <span class="gruppo clic-g"><select id="guida" aria-label="Quanto aiuta il pianoforte" title="Quanto aiuta il pianoforte">
           <option value="1">🎹 Melodia e accompagnamento</option><option value="2">🎹 Solo accompagnamento</option><option value="3">🎤 Da soli</option></select></span>
       <label class="interr" title="Una battuta sì e una no si canta solo nella testa: il pianoforte tace e si riprende insieme"><input type="checkbox" id="testa"> 🧠 Nella testa</label>
+      <label class="interr" id="ritG" title="Esegue i ritornelli (le battute tra i segni |: :| si cantano due volte)"><input type="checkbox" id="ritornelli"> 🔁 Ritornelli</label>
       <label class="interr" title="Il pianoforte suona la melodia un'ottava sotto, per chi ha già la voce cambiata"><input type="checkbox" id="cambiate"> Voci cambiate</label>
       <span class="gruppo" title="Velocità (battiti al minuto)"><button type="button" class="tondo" id="meno" aria-label="Più lento">−</button><span class="bpm" id="bpm"></span><button type="button" class="tondo" id="piu" aria-label="Più veloce">+</button></span>
       <span class="gruppo clic-g"><label class="interr senza" title="Metronomo udibile durante l'esercizio (il conteggio iniziale si sente sempre)"><input type="checkbox" id="clic"> Clic</label>
@@ -225,7 +226,7 @@
   /* ---------- impostazioni ricordate (solo in questo browser) ---------- */
   const leggi = (k, d) => { try { const v = localStorage.getItem("cantato." + k); return v === null ? d : v; } catch (e) { return d; } };
   const scrivi = (k, v) => { try { localStorage.setItem("cantato." + k, v); } catch (e) {} };
-  const S = { bpm: +leggi("bpm", "72") || 72, guida: [1, 2, 3].includes(+leggi("guida", "1")) ? +leggi("guida", "1") : 1, testa: leggi("testa", "0") === "1", cambiate: leggi("cambiate", "0") === "1", sudd: [1, 2, 3, 4].includes(+leggi("sudd", "1")) ? +leggi("sudd", "1") : 1, clic: leggi("clic", "0") === "1", nomi: leggi("nomi", "0") === "1", colori: leggi("colori", "0") === "1", basso: leggi("basso", "0") === "1" };
+  const S = { bpm: +leggi("bpm", "72") || 72, guida: [1, 2, 3].includes(+leggi("guida", "1")) ? +leggi("guida", "1") : 1, testa: leggi("testa", "0") === "1", cambiate: leggi("cambiate", "0") === "1", ritornelli: leggi("ritornelli", "1") === "1", sudd: [1, 2, 3, 4].includes(+leggi("sudd", "1")) ? +leggi("sudd", "1") : 1, clic: leggi("clic", "0") === "1", nomi: leggi("nomi", "0") === "1", colori: leggi("colori", "0") === "1", basso: leggi("basso", "0") === "1" };
   let attuale = 1;
   function impostaRaccolta(r) {
     raccolta = RACCOLTE[r] ? r : "prime"; scrivi("raccolta", raccolta);
@@ -286,6 +287,7 @@
     const rac = raccolta;
     try { branoAttuale = await carica(n); } catch (e) { div.textContent = "Lezione non trovata."; return; }
     if (n !== attuale || rac !== raccolta) return;
+    document.getElementById("ritG").style.display = haRitornelli(branoAttuale) ? "" : "none";
     aggiornaBpm(); disegna();
   }
   function disegna() {
@@ -350,9 +352,9 @@
     if (solf) { const p = posA(adesso()); solf.griglia = Math.ceil((p + solf.lung) / solf.B * nuovo - 1e-6); }
     S.sudd = nuovo; scrivi("sudd", nuovo);
   });
-  [["clic", false], ["nomi", true], ["colori", true], ["basso", true], ["testa", true], ["cambiate", false]].forEach(([k, ridisegna]) => {
+  [["clic", false], ["nomi", true], ["colori", true], ["basso", true], ["testa", true], ["cambiate", false], ["ritornelli", false]].forEach(([k, ridisegna]) => {
     const c = document.getElementById(k); c.checked = S[k];
-    c.addEventListener("change", () => { S[k] = c.checked; scrivi(k, c.checked ? "1" : "0"); if (ridisegna) { ferma(); disegna(); } });
+    c.addEventListener("change", () => { S[k] = c.checked; scrivi(k, c.checked ? "1" : "0"); if (ridisegna) { ferma(); disegna(); } else if (k !== "clic") ferma(); });
   });
   const elGuida = document.getElementById("guida"); elGuida.value = String(S.guida);
   elGuida.addEventListener("change", () => { S.guida = +elGuida.value; scrivi("guida", S.guida); ferma(); });
@@ -480,6 +482,18 @@
     let basso = 36 + acc.radice; if (basso < 40) basso += 12;
     return { basso, note };
   }
+  /* ritornelli: |: … :| si ripete una volta (se non c'è l'inizio, si torna da capo) */
+  function ordineBattute(brano, conRitornelli) {
+    const ordine = [], fatti = new Set(); let inizio = 0;
+    for (let m = 0; m < brano.battute.length; m++) {
+      const b = brano.battute[m];
+      if (b.inizioRitornello) inizio = m;
+      ordine.push(m);
+      if (conRitornelli && b.fineRitornello && !fatti.has(m)) { fatti.add(m); m = inizio - 1; }
+    }
+    return ordine;
+  }
+  const haRitornelli = brano => !!brano && brano.battute.some(b => b.fineRitornello);
   const tonicaDi = brano => (((brano.armatura || 0) * 7) % 12 + 12) % 12;
   // battute «nella testa»: una sì e una no (la seconda, la quarta…), mai l'ultima
   const inTesta = (m, n) => S.testa && m % 2 === 1 && m < n - 1;
@@ -499,13 +513,16 @@
     const brano = branoAttuale, [num, den] = brano.tempo, lung = num * 4 / den, B = battitoDi(brano);
     const durE = e => e.intera ? lung : (DURQ[e.durata] || 1) * (2 - Math.pow(0.5, e.punti || 0)) * (e.tupla ? e.tupla.normali / e.tupla.reali : 1);
     const durB = b => { const q = b.eventi.reduce((t, e) => t + durE(e), 0); return q > 0 ? q : lung; };
+    // ordine di esecuzione delle battute: con i ritornelli (se attivi) alcune si suonano due volte
+    const ordine = ordineBattute(brano, S.ritornelli);
     const inizi = []; let tot = 0;
-    brano.battute.forEach(b => { inizi.push(tot); tot += durB(b); });
+    ordine.forEach(m => { inizi.push(tot); tot += durB(brano.battute[m]); });
     const nb = brano.battute.length, ottava = S.cambiate ? -12 : 0, eventi = [];
     // la melodia (guida 1) e la prima nota da cantare
     let primaNota = null, ultimaNota = null;
-    brano.battute.forEach((b, m) => {
-      let p = inizi[m];
+    ordine.forEach((m, k) => {
+      const b = brano.battute[m];
+      let p = inizi[k];
       b.eventi.forEach(e => {
         const d = durE(e);
         if (e.nota) {
@@ -517,14 +534,14 @@
       });
     });
     // l'accompagnamento (guida 1 e 2): la parte di pianoforte scritta, se c'è (Lemoine-Carulli)…
-    if (S.guida <= 2 && brano.piano) brano.piano.forEach(note => note.forEach(n =>
-      eventi.push({ p: inizi[n.m] + n.q, dur: n.dur, midi: n.midi, vol: n.midi < 52 ? 0.26 : 0.2, tipo: "acc", m: n.m })));
+    if (S.guida <= 2 && brano.piano) ordine.forEach((m, k) => (brano.piano[m] || []).forEach(n =>
+      eventi.push({ p: inizi[k] + n.q, dur: n.dur, midi: n.midi, vol: n.midi < 52 ? 0.26 : 0.2, tipo: "acc", m })));
     // …altrimenti basso e accordo all'inizio, poi l'accordo più piano su ogni movimento
-    else if (S.guida <= 2 && brano.accordi) brano.battute.forEach((b, m) => {
+    else if (S.guida <= 2 && brano.accordi) ordine.forEach((m, kb) => {
       const ac = brano.accordi[m] || []; if (!ac.length) return;
-      const parte = (inizi[m + 1] !== undefined ? inizi[m + 1] : tot) - inizi[m], pezzo = parte / ac.length;
+      const parte = (inizi[kb + 1] !== undefined ? inizi[kb + 1] : tot) - inizi[kb], pezzo = parte / ac.length;
       ac.forEach((a, k) => {
-        const v = voci(a), p0 = inizi[m] + k * pezzo, uguale = k > 0 && ac[k - 1].radice === a.radice && ac[k - 1].tipo === a.tipo;
+        const v = voci(a), p0 = inizi[kb] + k * pezzo, uguale = k > 0 && ac[k - 1].radice === a.radice && ac[k - 1].tipo === a.tipo;
         if (!uguale) eventi.push({ p: p0, dur: pezzo, midi: v.basso, vol: 0.32, tipo: "acc", m });
         for (let q = 0; q < pezzo - 1e-6; q += B) v.note.forEach(n => eventi.push({ p: p0 + q, dur: Math.min(B, pezzo - q), midi: n, vol: q === 0 && !uguale ? 0.2 : 0.12, tipo: "acc", m }));
       });
@@ -540,7 +557,7 @@
     }
     const fine = S.guida === 3 ? tot + 2 * B : tot;
     eventi.sort((a, b) => a.p - b.p);
-    solf = { svg, inizi, tot, fine, lung, B, eventi, prossimo: 0, nb, ancora: { t: adesso() + 0.15, pos: inizio }, griglia: 0, conteggio: -lung };
+    solf = { svg, inizi, ordine, tot, fine, lung, B, eventi, prossimo: 0, nb, ancora: { t: adesso() + 0.15, pos: inizio }, griglia: 0, conteggio: -lung };
     via.textContent = "■ Ferma";
     programma(); timer = setInterval(programma, 25);
     requestAnimationFrame(avanti);
@@ -591,12 +608,12 @@
     if (!solf) return;
     const pos = posA(adesso()), { inizi, tot } = solf;
     if (pos >= solf.fine + 0.5) { ferma(); return; }
-    let m = 0, qIn = 0, conta = 0, attivo = pos >= 0 && pos < tot;
+    let k = 0, qIn = 0, conta = 0, attivo = pos >= 0 && pos < tot;
     if (pos < solf.conteggio) conta = "♪";   // introduzione: si ascolta il pianoforte
     else if (pos < 0) conta = Math.ceil(-pos / solf.B - 1e-6);
-    else if (pos < tot) { while (m + 1 < inizi.length && inizi[m + 1] <= pos + 1e-6) m++; qIn = pos - inizi[m]; }
-    else { m = inizi.length - 1; qIn = tot - inizi[m]; }
-    segna(solf.svg, m, qIn, conta, attivo);
+    else if (pos < tot) { while (k + 1 < inizi.length && inizi[k + 1] <= pos + 1e-6) k++; qIn = pos - inizi[k]; }
+    else { k = inizi.length - 1; qIn = tot - inizi[k]; }
+    segna(solf.svg, solf.ordine[k], qIn, conta, attivo);
     requestAnimationFrame(avanti);
   }
   function segna(svg, m, qIn, conta, attivo) {
