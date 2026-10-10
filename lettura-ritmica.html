@@ -65,7 +65,8 @@
   .l-spartito { position: relative; flex: 1; min-height: 0; display: flex; align-items: center; justify-content: center; padding: 4px 18px; overflow: hidden; }
   #spartito { display: flex; align-items: center; justify-content: center; width: 100%; height: 100%; }
   #spartito svg { display: block; }
-  .evid { transition: x .12s ease; }
+  /* il riquadro del movimento compare di colpo, a tempo (nessuno scorrimento) */
+  .evid { transition: none; }
   /* simbolo nascosto durante l'ascolto: lo spartito resta al suo posto (niente salti), coperto */
   .copri { position: absolute; inset: 6px 18px; display: none; flex-direction: column; align-items: center; justify-content: center; gap: 8px; cursor: pointer;
     background: #F8FAFC; border: 2px dashed #CBD5E1; border-radius: 16px; color: #64748B; font: 600 18px 'Manrope', sans-serif; text-align: center; padding: 10px; }
@@ -190,7 +191,7 @@
     .gradini button, .interr, .azione, .quale, .bpm { font-size: 15px; }
     .gruppo button.tondo { width: 38px; height: 38px; }
   }
-  @media (prefers-reduced-motion: reduce) { .evid, .fase { transition: none; } }
+  @media (prefers-reduced-motion: reduce) { .fase { transition: none; } }
 </style>
 </head>
 <body>
