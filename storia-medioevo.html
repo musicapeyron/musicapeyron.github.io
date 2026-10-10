@@ -10,6 +10,7 @@
 <link rel="apple-touch-icon" href="apple-touch-icon.png">
 <link rel="stylesheet" href="fonts/caratteri.css">
 <link rel="stylesheet" href="comune.css">
+<link rel="stylesheet" href="storia-attivita.css">
 <style>
   * { box-sizing: border-box; }
   html, body { margin: 0; min-height: 100%; }
@@ -52,7 +53,7 @@
   .scheda:hover { background: rgba(255,255,255,0.12); }
   .scheda.attiva { background: #EAF2FF; color: #0f172a; border-color: #EAF2FF; }
   .scheda .n { font-size: 11px; opacity: .65; }
-  @media (max-width: 560px) { main { padding-top: 64px !important; } .schede { flex-wrap: nowrap; gap: 6px; } .scheda { font-size: 12.5px; padding: 7px 11px; gap: 5px; } .scheda .n { display: none; } }
+  @media (max-width: 560px) { main { padding-top: 64px !important; } .schede { flex-wrap: wrap; gap: 6px; } .scheda .lungo { display: none; } .scheda { font-size: 12.5px; padding: 7px 11px; gap: 5px; } .scheda .n { display: none; } }
 
   /* ---------- griglia di card (come in home) ---------- */
   .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 12px; }
@@ -350,12 +351,18 @@
     <button class="scheda attiva" data-scheda="percorso">📖 Il percorso <span class="n" id="nCapitoli"></span></button>
     <button class="scheda" data-scheda="strumenti">🪕 Strumenti <span class="n" id="nStrumenti"></span></button>
     <button class="scheda" data-scheda="suonare">🎼 Da suonare <span class="n" id="nSuonare"></span></button>
+    <button class="scheda" data-scheda="mappa">🗺️ Mappa<span class="lungo"> concettuale</span></button>
+    <button class="scheda" data-scheda="esercizi">✏️ Esercizi</button>
+    <button class="scheda" data-scheda="schede">🖨️ Schede</button>
   </nav>
 
   <section id="vistaPercorso">
     <ol class="indice" id="indice"></ol>
   </section>
   <div class="grid" id="griglia" hidden></div>
+  <section class="vista vista-alta" id="vistaMappa" hidden></section>
+  <section class="vista vista-alta" id="vistaEsercizi" hidden></section>
+  <section class="vista vista-alta" id="vistaSchede" hidden></section>
 
   <details class="crediti-img">
     <summary>Crediti delle immagini e dei video</summary>
@@ -403,6 +410,7 @@
   </div>
 </div>
 
+<script src="storia-attivita.js"></script>
 <script>
 (function () {
   "use strict";
@@ -787,8 +795,9 @@
   document.querySelectorAll(".scheda").forEach(b => b.addEventListener("click", () => {
     const s = b.dataset.scheda;
     document.querySelectorAll(".scheda").forEach(x => x.classList.toggle("attiva", x === b));
-    vistaPercorso.hidden = s !== "percorso"; griglia.hidden = s === "percorso";
-    if (s !== "percorso") disegnaGriglia(s);
+    vistaPercorso.hidden = s !== "percorso"; griglia.hidden = s !== "strumenti" && s !== "suonare";
+    ["mappa", "esercizi", "schede"].forEach(v => { document.getElementById("vista" + v[0].toUpperCase() + v.slice(1)).hidden = s !== v; });
+    if (!griglia.hidden) disegnaGriglia(s);
   }));
 
   /* ---------- anteprima del video: nessuna richiesta a YouTube finché non si preme play ---------- */
@@ -945,8 +954,131 @@
   $("listaCrediti").innerHTML = [...CREDITI_IMG, ...CREDITI_PAGINE].map(c => `<li>${c}</li>`).join("") +
     [...videoCapitoli.map(c => ({ titolo: c.brano, chi: c.chi, yt: c.yt, canale: c.canale })), ...STRUMENTI]
       .map(d => `<li>${d.titolo} (${d.chi}): video di <a href="https://www.youtube.com/watch?v=${d.yt}" target="_blank" rel="noopener">${d.canale}</a> su YouTube</li>`).join("");
+
+  /* =========================================================
+     MAPPA, ESERCIZI E SCHEDE (motore comune: storia-attivita.js)
+     vf: [frase, vera?, spiegazione, nella versione breve?]
+     cruciverba: [parola, definizione, nella versione breve?]
+     ascolto.brani: per ogni ascolto, le risposte giuste (indici delle opzioni; più indici = vanno bene tutte)
+     ========================================================= */
+  const ATTIVITA = {
+    mappa: { rami: [
+      { nome: "Musica sacra", sotto: "chiese e monasteri", icona: "⛪", classe: "sacro", nodi: [
+        { titolo: "Canto gregoriano", cap: "gregoriano", parole: ["monodia", "a cappella", "latino"] },
+        { titolo: "Scrivere la musica", cap: "guido", parole: ["neumi", "Guido d'Arezzo", "tetragramma"] },
+        { titolo: "Ildegarda di Bingen", cap: "ildegarda", parole: ["badessa", "compositrice"] },
+        { titolo: "Polifonia", cap: "notredame", parole: ["Notre-Dame", "Leonino e Perotino", "tenor"] } ] },
+      { nome: "Musica profana", sotto: "corti, piazze e università", icona: "🏰", classe: "profano", nodi: [
+        { titolo: "Danze e strumenti", cap: "viaggio", parole: ["saltarello", "viella", "ciaramella"] },
+        { titolo: "Trovatori", cap: "trovatori", parole: ["amor cortese", "lingua d'oc", "giullari"] },
+        { titolo: "Goliardi", cap: "goliardi", parole: ["studenti", "Carmina Burana"] },
+        { titolo: "Canone", cap: "canone", parole: ["Sumer is icumen in", "inglese"] },
+        { titolo: "Ars nova", cap: "arsnova", parole: ["Trecento", "Machaut"] },
+        { titolo: "Firenze", cap: "landini", parole: ["Landini", "ballata", "italiano"] } ] } ] },
+    mappaBuchi: ["monodia", "a cappella", "neumi", "Guido d'Arezzo", "tetragramma", "badessa", "Polifonia", "tenor", "saltarello", "amor cortese", "giullari", "Goliardi", "Canone", "Ars nova", "ballata"],
+    mappaBuchiBreve: ["monodia", "neumi", "Guido d'Arezzo", "Polifonia", "amor cortese", "Goliardi", "Canone"],
+    mappaDistrattori: ["pentagramma", "violino", "opera"],
+    vf: [
+      ["Il Medioevo dura circa mille anni, dal 476 al 1492.", true, "", true],
+      ["Nel Medioevo quasi tutti sapevano leggere e scrivere.", false, "Pochissimi sapevano leggere e scrivere: la musica si imparava a memoria.", false],
+      ["Il canto gregoriano è cantato con molti strumenti.", false, "È a cappella: solo voci, senza strumenti.", true],
+      ["Nel canto gregoriano tutte le voci cantano la stessa melodia.", true, "È la monodia.", false],
+      ["I neumi sono i primi segni usati per scrivere la musica.", true, "Si scrivevano sopra le parole e indicavano se la melodia sale o scende.", true],
+      ["Guido d'Arezzo scriveva le note su cinque righe, come noi.", false, "Usava quattro righe: il tetragramma.", true],
+      ["I nomi delle note vengono dalle prime sillabe di un inno a San Giovanni.", true, "Ut, Re, Mi, Fa, Sol, La: l'Ut poi è diventato Do.", false],
+      ["Il SI è stato aggiunto da Guido d'Arezzo.", false, "Il SI arriva molto dopo, nel Cinquecento.", false],
+      ["Ildegarda di Bingen era una badessa che componeva musica.", true, "Scrisse più di settanta canti per le sue monache.", true],
+      ["Polifonia vuol dire «tante voci»: più melodie diverse cantate insieme.", true, "", true],
+      ["Il tenor è la voce che canta le note più veloci.", false, "Il tenor «tiene» le note lunghe del canto gregoriano.", false],
+      ["Leonino e Perotino lavoravano nella cattedrale di Notre-Dame, a Parigi.", true, "", false],
+      ["I trovatori cantavano in latino.", false, "Cantavano nella lingua di tutti i giorni del sud della Francia: la lingua d'oc.", true],
+      ["L'amor cortese è l'amore rispettoso di un cavaliere per una dama nobile.", true, "", false],
+      ["I giullari erano musicisti e artisti che viaggiavano di corte in corte.", true, "Erano anche acrobati e cantastorie.", false],
+      ["I goliardi erano monaci che cantavano solo musica sacra.", false, "Erano studenti che scrivevano canzoni allegre in latino.", true],
+      ["I Carmina Burana sono una raccolta di canzoni dei goliardi.", true, "", false],
+      ["In un canone le voci cantano la stessa melodia, entrando una dopo l'altra.", true, "", true],
+      ["«Sumer is icumen in» è scritto in francese.", false, "È in inglese antico.", false],
+      ["Francesco Landini era un organista di Firenze, cieco fin da bambino.", true, "Scrisse tante ballate in italiano.", true]
+    ],
+    personaggi: [
+      ["Guido d'Arezzo", "Dà un nome alle note e le scrive su quattro righe."],
+      ["Ildegarda di Bingen", "Badessa tedesca: scrive libri e compone canti per le sue monache."],
+      ["Carlo Magno", "Vuole che in tutto il suo impero si canti allo stesso modo."],
+      ["Leonino", "Maestro di Notre-Dame: scrive la polifonia a due voci."],
+      ["Perotino", "Porta la polifonia di Notre-Dame fino a quattro voci."],
+      ["La Contessa di Dia", "Una delle trobairitz, le donne trovatore."],
+      ["Raimbaut de Vaqueiras", "Trovatore: scrive le parole di «Kalenda maya» su una danza."],
+      ["Guillaume de Machaut", "Poeta e musicista francese del Trecento, il più famoso dell'Ars nova."],
+      ["Francesco Landini", "Organista cieco di Firenze, autore di tante ballate."],
+      ["San Benedetto", "Scrive la regola dei monaci: «ora et labora»."]
+    ],
+    cruciverba: [
+      ["MONODIA", "Una sola melodia, cantata da una o più voci", true],
+      ["NEUMI", "I primi segni per scrivere la musica, sopra le parole", true],
+      ["TETRAGRAMMA", "Le quattro righe di Guido d'Arezzo", false],
+      ["POLIFONIA", "Più melodie diverse cantate insieme", true],
+      ["TENOR", "La voce che «tiene» le note lunghe", false],
+      ["CANONE", "Le voci cantano la stessa melodia, una dopo l'altra", true],
+      ["TROVATORI", "Poeti-musicisti delle corti del sud della Francia", true],
+      ["GOLIARDI", "Studenti che scrivevano canzoni in latino", false],
+      ["GIULLARI", "Artisti di strada che andavano di corte in corte", false],
+      ["BADESSA", "La monaca che guida un monastero, come Ildegarda", false],
+      ["BALLATA", "Canzone italiana del Trecento, come quelle di Landini", false],
+      ["VIELLA", "Strumento ad arco, antenato del violino", true],
+      ["LIUTO", "Strumento a corde pizzicate arrivato dal mondo arabo", false],
+      ["GUIDO", "Il monaco di Arezzo che diede il nome alle note", true]
+    ],
+    ascolto: {
+      breve: ["amb", "chi", "tess"],
+      criteri: [
+        { id: "amb", nome: "Che musica è?", opz: ["Sacra", "Profana"] },
+        { id: "chi", nome: "Chi suona o canta?", opz: ["Solo voci", "Solo strumenti", "Voci e strumenti"] },
+        { id: "tess", nome: "Quante melodie insieme?", opz: ["Una sola (monodia)", "Più melodie (polifonia)"] },
+        { id: "ling", nome: "In che lingua?", opz: ["Latino", "Greco", "Lingua d'oc", "Francese", "Inglese", "Italiano", "Nessuna: solo strumenti"] },
+        { id: "ritmo", nome: "Che ritmo?", opz: ["Libero, segue le parole", "Regolare, si batte il tempo"] }
+      ],
+      brani: [
+        { cap: "viaggio", breve: true, r: { amb: [1], chi: [1], tess: [0], ling: [6], ritmo: [1] } },
+        { cap: "gregoriano", breve: true, r: { amb: [0], chi: [0], tess: [0], ling: [1], ritmo: [0] }, nota: "Attenzione: «Kyrie eleison» è greco, anche se il resto della Messa era in latino." },
+        { cap: "guido", r: { amb: [0], chi: [0], tess: [0], ling: [0], ritmo: [0] } },
+        { cap: "ildegarda", r: { amb: [0], chi: [0, 2], tess: [0], ling: [0], ritmo: [0] } },
+        { cap: "notredame", breve: true, r: { amb: [0], chi: [0], tess: [1], ling: [0], ritmo: [1] }, nota: "Le voci acute si muovono con un ritmo regolare, il tenor tiene le note lunghe." },
+        { cap: "trovatori", breve: true, r: { amb: [1], chi: [2], tess: [0], ling: [2], ritmo: [1] } },
+        { cap: "goliardi", r: { amb: [1], chi: [2], tess: [0, 1], ling: [0], ritmo: [1] } },
+        { cap: "canone", breve: true, r: { amb: [1], chi: [0], tess: [1], ling: [4], ritmo: [1] } },
+        { cap: "arsnova", r: { amb: [1], chi: [0, 2], tess: [0], ling: [3], ritmo: [1] } },
+        { cap: "landini", breve: true, r: { amb: [1], chi: [0, 2], tess: [1], ling: [5], ritmo: [1] } }
+      ] },
+    riassunto: {
+      testo: "Il <b>Medioevo</b> dura circa mille anni. La musica non si può registrare: vive nella memoria di chi la canta e la suona. La conosciamo in due grandi mondi: la musica <b>sacra</b>, nelle chiese e nei monasteri, e la musica <b>profana</b>, nelle corti, nelle piazze e nelle università. In questi secoli nasce anche il modo di <b>scrivere la musica</b>.",
+      immagini: [["p-gregoriano-2.jpg", "Monaci che cantano"], ["p-guido-3.jpg", "La mano guidoniana"], ["p-trovatori-4.jpg", "Musicisti alla corte"], ["p-canone-2.jpg", "«Sumer is icumen in»"]],
+      punti: [
+        ["Musica sacra", ["<b>Canto gregoriano</b>: in latino, a una voce (monodia), senza strumenti.", "<b>Guido d'Arezzo</b>: le note su quattro righe e i loro nomi (Ut, Re, Mi...).", "<b>Ildegarda di Bingen</b>: badessa e compositrice.", "<b>Notre-Dame</b>: Leonino e Perotino inventano la polifonia."]],
+        ["Musica profana", ["<b>Trovatori</b> e <b>giullari</b>: canzoni d'amore e danze nelle corti.", "<b>Goliardi</b>: canzoni di studenti in latino (Carmina Burana).", "<b>Ars nova</b>: nel Trecento Machaut in Francia e Landini a Firenze."]]
+      ] },
+    verifica: {
+      vf: [0, 2, 4, 5, 8, 9, 10, 12, 15, 17], vfBreve: [0, 2, 5, 9, 12, 15],
+      collega: ["Monodia", "Polifonia", "Neumi", "Tetragramma", "Canone", "Goliardi"], collegaBreve: ["Monodia", "Polifonia", "Neumi", "Canone"],
+      scelte: [
+        ["Chi diede il nome alle note?", ["Guido d'Arezzo", "Ildegarda di Bingen", "Perotino"], 0],
+        ["Che cos'è la monodia?", ["Una sola melodia", "Tante melodie insieme", "Una danza veloce"], 0],
+        ["Dove nasce la polifonia di Leonino e Perotino?", ["A Parigi, a Notre-Dame", "A Firenze", "A Londra"], 0],
+        ["Chi erano i goliardi?", ["Studenti che scrivevano canzoni in latino", "Cavalieri al servizio di una dama", "Monaci che copiavano libri"], 0],
+        ["In quale lingua cantavano i trovatori?", ["Lingua d'oc", "Latino", "Tedesco"], 0],
+        ["Quale strumento è l'antenato del violino?", ["La viella", "La ciaramella", "Il salterio"], 0],
+        ["Che cosa vuol dire «Ars nova»?", ["Arte nuova", "Canto nuovo", "Nuova cattedrale"], 0],
+        ["Chi era Francesco Landini?", ["Un organista e compositore di Firenze", "Un trovatore francese", "Un papa"], 0]
+      ],
+      scelteBreve: [0, 1, 3, 4, 5],
+      aperte: [
+        ["Che differenza c'è tra musica sacra e musica profana? Fai un esempio per ciascuna.", 2, "la sacra è per la preghiera, in chiese e monasteri (es. canto gregoriano); la profana per feste, corti, piazze (es. trovatori, Saltarello)."],
+        ["Perché l'invenzione di Guido d'Arezzo è così importante?", 2, "le note su righe hanno un'altezza precisa e un nome: si può leggere e imparare un canto nuovo senza saperlo a memoria; è l'antenato del nostro pentagramma."]
+      ] }
+  };
+  StoriaAttivita.avvia({ epoca: "Il Medioevo", date: "476 – 1492", img: IMG, capitoli: CAPITOLI, strumenti: STRUMENTI, linea: LINEA,
+    attivita: ATTIVITA, apriCapitolo: i => apriCapitolo(i), preparaSchermo });
 })();
 </script>
-<script src="adatta-schermo.js" data-schermate="#cTelaio, #contenuto"></script>
+<script src="adatta-schermo.js" data-schermate="#cTelaio, #aTelaio, #contenuto"></script>
 </body>
 </html>
