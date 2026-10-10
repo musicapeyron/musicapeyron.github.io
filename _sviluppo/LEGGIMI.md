@@ -250,3 +250,17 @@ barra di Windows. Le regole aggiunte stanno in media query `@media (min-width: 9
 condizioni sull'altezza): il telefono resta identico. Di solito: due colonne (pentagramma a sinistra,
 risposte a destra), statistiche e livello affiancati, pentagrammi e tastiere che seguono l'altezza.
 Per un gioco nuovo, provarlo a quelle due misure in tutte le schermate, compresi i riquadri interni che scorrono.
+
+### Come funziona ora: `adatta-schermo.js`
+- Ogni gioco ha, in `@media (min-width: 900px) and (min-height: 560px)`, una disposizione "larga" con
+  **misure fisse in px** (es. `.game { width: 1200px }`, pentagramma `width: 420px`), niente `vh`.
+  La condizione sull'altezza tiene fuori i telefoni girati in orizzontale.
+- In fondo alla pagina: `<script src="adatta-schermo.js" data-schermate="#homeScreen, #gameContainer"></script>`.
+  Lo script ingrandisce (zoom del body) la schermata visibile finché riempie la finestra senza scorrere.
+- Con lo zoom: finestre con `max-height` in vh vanno divise per `var(--zoom, 1)`; se il gioco sposta
+  elementi con differenze di `getBoundingClientRect`, dividerle per `window.fattoreSchermo()`.
+- Per non far "saltare" l'ingrandimento fra un passo e l'altro (tutorial, riquadro del pentagramma che
+  compare dopo la risposta) dare altezze fisse o minime ai riquadri.
+- Pulsanti delle risposte: **niente `transform` su `:hover`/`:active`** (il pulsante si spostava e il clic
+  sul bordo alto non contava); usare `filter: brightness(...)`.
+- Non usano lo script (per scelta): Imita il ritmo, Le note sul pianoforte, Note-UNO, i due Memory.
