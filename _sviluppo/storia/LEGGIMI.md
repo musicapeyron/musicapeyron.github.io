@@ -23,18 +23,25 @@ La pagina dell'epoca:
    `StoriaAttivita.avvia({ epoca, date, img, capitoli, strumenti, linea, attivita, apriCapitolo, preparaSchermo })`;
 4. in `adatta-schermo.js` mette `data-schermate="#cTelaio, #aTelaio, #contenuto"`.
 
-Dentro `ATTIVITA`:
-- `mappa`: due rami (sacra/profana o quelli giusti per l'epoca), ogni nodo con `titolo`, `cap` (id del capitolo) e `parole`;
-  `mappaBuchi` / `mappaBuchiBreve` (parole da nascondere, scritte uguali a quelle della mappa), `mappaDistrattori`.
-- `vf`: `[frase, vera?, spiegazione, nella versione breve?]` (15–20 frasi).
-- `personaggi`: `[nome, cosa ha fatto]` (almeno 7). Le parole da collegare e gli strumenti vengono dai capitoli.
-- `cruciverba`: `[PAROLA, definizione, nella versione breve?]` (10–14 parole, senza spazi né accenti).
-- `ascolto`: `criteri` (domande con opzioni), `breve` (criteri della versione breve), `brani` (un elemento per
-  capitolo con le risposte giuste come indici; più indici = vanno bene tutte; `nota` facoltativa).
-- `riassunto`: testo, 4 immagini piccole, punti per la scheda riassuntiva.
-- `verifica`: indici delle frasi vero/falso, parole da collegare, domande a scelta multipla `[domanda, opzioni, indice giusta]`,
-  domande aperte `[domanda, punti, cosa dovrebbe esserci]`, e le liste per la versione breve.
-Le verifiche A e B hanno le stesse domande in ordine diverso (sempre lo stesso ordine a ogni stampa).
+Dentro `ATTIVITA` (niente emoji: Cristiano le vuole solo nei pulsanti delle schede in alto):
+- `mappa`: mappa concettuale «alla Novak» su un foglio di W x H px: `nodi` (riquadri con x, y, w, h, testo `t`, sottotitolo `s`,
+  `tipo` = radice | quadro | sacro | profano | c-sacro | c-profano | dettaglio, `cap` = capitolo da aprire) e `archi`
+  (frecce `da` → `a` con la parola-legame `l`; `forma`: normale (scende ad angolo), "orizz", "curva" tratteggiata;
+  `lato: "padre"` mette la parola vicino al riquadro di partenza). Le parole chiave si scrivono `[[così]]`.
+  Nel pannello la mappa è piccola («Tocca per ingrandire») e si apre a schermo intero.
+  `mappaBuchi` (parole `[[...]]` da nascondere nell'esercizio e nella stampa) e `mappaDistrattori`.
+- `vf`: `[frase, vera?, spiegazione]` (circa 20). La stampa le rimescola ogni volta.
+- `personaggi`: `[nome, cosa ha fatto]` (almeno 7). Le parole da collegare e gli strumenti vengono dai capitoli
+  («Che strumento è?» mostra gli strumenti uno alla volta).
+- `cruciverba`: `[PAROLA, definizione]` (10–14 parole, senza spazi né accenti).
+- `ascolto`: `criteri` (domande con opzioni) e `brani` (risposte giuste come indici; più indici = vanno bene tutte; `nota` facoltativa).
+  Serve sia per «Esercizi di ascolto» sia per la scheda d'ascolto da stampare.
+- `riassunto` (testo, 4 immagini, punti) e `riassuntoBreve` (testo, 5 date, 8 parole) per la scheda riassuntiva;
+  `raccontoBreve` (2–3 frasi per capitolo) per il racconto in versione breve (stampato a caratteri grandi).
+- `verifica`: `quanti` (quante domande pescare per tipo), `scelte` `[domanda, opzioni, indice giusta]`, `frasi` da completare
+  (con la parola `[[così]]`), `frasiDistrattori`, `aperte` `[domanda, punti, cosa dovrebbe esserci]`.
+  A ogni apertura della pagina si pescano le domande e si creano A e B: stesso contenuto, ordine diverso di esercizi,
+  domande e risposte. Deve stare su **due facciate**: controllare con `attivita_stampe.py` più volte (pagina 3 = soluzioni).
 
 Prove: `attivita_prove.py` (schermate e misure di mappa/esercizi/schede), `attivita_gioca.py` (risolve ogni esercizio),
 `attivita_stampe.py` (fa i PDF di tutte le schede; poi `pdftoppm -r 50 -png` per guardarli).

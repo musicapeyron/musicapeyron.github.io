@@ -99,7 +99,7 @@
   .info .gancio { font-family: 'Manrope', sans-serif; font-weight: 700; font-size: 16px; color: #FFE58A; margin: 2px 0 0; }
   .info ul { margin: 0; padding-left: 0; list-style: none; display: flex; flex-direction: column; gap: 6px; }
   .info li { font-size: 14.5px; color: #DCE6F5; line-height: 1.45; padding-left: 24px; position: relative; }
-  .info li::before { content: "🎧"; position: absolute; left: 0; top: 0; font-size: 13px; }
+  .info li::before { content: ""; position: absolute; left: 6px; top: 8px; width: 8px; height: 8px; border-radius: 50%; background: var(--accent); }
   .info .sapevi { font-size: 13.5px; color: #DCE6F5; background: rgba(255,255,255,0.05); border-left: 3px solid var(--accent); border-radius: 8px; padding: 8px 10px; line-height: 1.45; }
   .info .sapevi b { color: var(--accent); }
   .info .piede { margin-top: auto; display: flex; justify-content: space-between; align-items: flex-end; gap: 10px; flex-wrap: wrap; font-size: 11px; color: #7F93B2; }
@@ -190,7 +190,7 @@
   .c-gancio { font: 700 17px 'Manrope', sans-serif; color: #FFE58A; margin: 4px 0 8px; }
   .c-punti { margin: 0; padding: 0; list-style: none; display: flex; flex-direction: column; gap: 7px; }
   .c-punti li { font-size: 16px; line-height: 1.45; color: #DCE6F5; padding-left: 28px; position: relative; }
-  .c-punti li::before { content: "🎧"; position: absolute; left: 0; top: 1px; font-size: 15px; }
+  .c-punti li::before { content: ""; position: absolute; left: 6px; top: .55em; width: 9px; height: 9px; border-radius: 50%; background: var(--accent); }
   .c-sapevi { font-size: 15px; line-height: 1.5; color: #DCE6F5; background: rgba(255,255,255,0.05); border-left: 4px solid var(--accent); border-radius: 10px;
     padding: 9px 13px; margin-top: 12px; }
   .c-sapevi b { color: var(--accent); }
@@ -227,6 +227,7 @@
     font: 700 12px 'Manrope', sans-serif; cursor: pointer; padding: 0; display: grid; place-items: center; }
   .pallino.fatto { border-color: color-mix(in srgb, var(--accent) 60%, transparent); color: #DCE6F5; }
   .pallino.qui { background: var(--accent); border-color: var(--accent); color: #0f172a; }
+  .pallino svg { width: 16px; height: 16px; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
   @media (max-width: 560px) {
     .c-barra { padding: 30px 10px 6px; gap: 8px; }
     .c-num, .c-data { display: none; }
@@ -618,7 +619,7 @@
       strumenti: ["organetto", "salterio"],
       parole: [["Ballata", "canzone italiana del Trecento con una ripresa che torna."]] },
 
-    { id: "riepilogo", mondo: "sacro", label: "Ricapitoliamo", titolo: "Che cosa abbiamo scoperto", data: "476 – 1492", riepilogo: true,
+    { id: "riepilogo", mondo: "sacro", label: "Ricapitoliamo", titolo: "Che cosa abbiamo scoperto", data: "476 – 1492", riepilogo: true, img: "p-trovatori-4.jpg",
       pagine: [
         { img: "p-gregoriano-2.jpg", did: "Monaci che cantano davanti al leggio (Italia, 1476).",
           t: ["Mille anni di musica in pochi passi: dal canto dei monaci alle ballate di Firenze.",
@@ -766,9 +767,9 @@
   document.getElementById("indice").innerHTML = `<li><button type="button" class="inizia" id="inizia">▶ Comincia il viaggio</button></li>` + CAPITOLI.map((c, i) => `
     <li><button type="button" class="voce ${c.mondo}${c.riepilogo ? " fine" : ""}" data-i="${i}" style="--accent:${accento(c)}">
       <span class="v-num">${c.riepilogo ? "★" : i + 1}</span>
-      ${c.img ? `<span class="v-foto" style="background-image:url('${IMG + c.img}')"></span>` : `<span class="v-foto v-vuota">📜</span>`}
+      ${c.img ? `<span class="v-foto" style="background-image:url('${IMG + c.img}')"></span>` : `<span class="v-foto v-vuota"></span>`}
       <span class="v-testo"><span class="v-data">${c.data}</span><span class="v-titolo">${c.titolo}</span>
-        <span class="v-brano">${c.brano ? "🎧 " + c.brano + " · " + c.chi : "Le date e le parole da ricordare"}</span></span>
+        <span class="v-brano">${c.brano ? "♪ " + c.brano + " · " + c.chi : "Le date e le parole da ricordare"}</span></span>
       <span class="v-vai" aria-hidden="true">›</span></button></li>`).join("");
   document.getElementById("indice").addEventListener("click", e => { const b = e.target.closest(".voce"); if (b) apriCapitolo(+b.dataset.i); });
   document.getElementById("inizia").addEventListener("click", () => apriCapitolo(0));
@@ -842,6 +843,10 @@
     if (cambia && !daStoria) history.pushState({ c: attuale }, "", "#capitolo-" + (attuale + 1));
     mostraPagina(ultima ? diapo.length - 1 : 0);
   }
+  // icone dei pallini (niente emoji)
+  const svg = p => `<svg viewBox="0 0 24 24" aria-hidden="true">${p}</svg>`;
+  const ICO = { cuffie: svg('<path d="M4 15v-3a8 8 0 0 1 16 0v3"/><rect x="3" y="14" width="4" height="7" rx="1.5"/><rect x="17" y="14" width="4" height="7" rx="1.5"/>'),
+    foglio: svg('<path d="M6 2h9l5 5v15H6z"/><path d="M9 12h8M9 16h8"/>'), orologio: svg('<circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/>') };
   function mostraPagina(k) {
     pag = k;
     const c = CAPITOLI[attuale], d = diapo[pag];
@@ -852,23 +857,23 @@
         <div class="d-testo">${p.t.map(x => `<p>${x}</p>`).join("")}</div>`;
     } else if (d.tipo === "ascolto") {
       cDiapo.innerHTML = `<div class="d-sx"><div class="schermo c-schermo" id="cSchermo"></div><div class="c-fonte" id="cFonte"></div>
-          <div class="c-altri" id="cAltri">${(c.altri || []).map((a, k) => `<button type="button" class="altro" data-k="${k}">🎧 Ascolta anche: <b>${a.brano}</b> · ${a.chi}</button>`).join("")}</div></div>
-        <div class="d-dx"><span class="d-tag">🎧 Ascoltiamo</span><h3 class="d-brano" id="cBrano">${c.brano}</h3><div class="c-chi" id="cChi">${c.chi}</div>
+          <div class="c-altri" id="cAltri">${(c.altri || []).map((a, k) => `<button type="button" class="altro" data-k="${k}">Ascolta anche: <b>${a.brano}</b> · ${a.chi}</button>`).join("")}</div></div>
+        <div class="d-dx"><span class="d-tag">Ascoltiamo</span><h3 class="d-brano" id="cBrano">${c.brano}</h3><div class="c-chi" id="cChi">${c.chi}</div>
           <div class="c-gancio">${c.gancio}</div><ul class="c-punti">${c.punti.map(p => `<li>${p}</li>`).join("")}</ul>
           <div class="c-sapevi"><b>Lo sapevi?</b> ${c.sapevi}</div></div>`;
       mostraAscolto(c);
     } else if (d.tipo === "ricorda") {
       const strum = (c.strumenti || []).map(id => STRUMENTI.findIndex(s => s.id === id)).filter(k => k >= 0);
-      cDiapo.innerHTML = `<h3 class="d-sez">📝 Parole da ricordare</h3><dl class="c-parole">${(c.parole || []).map(([t, x]) => `<div><dt>${t}</dt><dd>${x}</dd></div>`).join("")}</dl>` +
-        (strum.length ? `<h3 class="d-sez">🪕 Gli strumenti di questo capitolo <small>(tocca per ascoltare)</small></h3><div class="c-strumenti">${strum.map(k => `<button type="button" class="c-strum" data-k="${k}"><span class="foto" style="background-image:url('${IMG + STRUMENTI[k].img}')"></span>
+      cDiapo.innerHTML = `<h3 class="d-sez">Parole da ricordare</h3><dl class="c-parole">${(c.parole || []).map(([t, x]) => `<div><dt>${t}</dt><dd>${x}</dd></div>`).join("")}</dl>` +
+        (strum.length ? `<h3 class="d-sez">Gli strumenti di questo capitolo <small>(tocca per ascoltare)</small></h3><div class="c-strumenti">${strum.map(k => `<button type="button" class="c-strum" data-k="${k}"><span class="foto" style="background-image:url('${IMG + STRUMENTI[k].img}')"></span>
           <span><b>${STRUMENTI[k].titolo}</b><small>${STRUMENTI[k].chi}</small></span></button>`).join("")}</div>` : "");
     } else if (d.tipo === "linea") {
-      cDiapo.innerHTML = `<h3 class="d-sez">🕰️ La linea del tempo</h3><ol class="linea">${LINEA.map(([x, t]) => `<li><b>${x}</b><span>${t}</span></li>`).join("")}</ol>`;
+      cDiapo.innerHTML = `<h3 class="d-sez">La linea del tempo</h3><ol class="linea">${LINEA.map(([x, t]) => `<li><b>${x}</b><span>${t}</span></li>`).join("")}</ol>`;
     } else {
-      cDiapo.innerHTML = `<h3 class="d-sez">📝 Tutte le parole da ricordare</h3><dl class="c-parole tutte">${CAPITOLI.flatMap(x => x.parole || []).map(([t, x]) => `<div><dt>${t}</dt><dd>${x}</dd></div>`).join("")}</dl>
+      cDiapo.innerHTML = `<h3 class="d-sez">Tutte le parole da ricordare</h3><dl class="c-parole tutte">${CAPITOLI.flatMap(x => x.parole || []).map(([t, x]) => `<div><dt>${t}</dt><dd>${x}</dd></div>`).join("")}</dl>
         <p class="d-prossima">Il viaggio continua con il <b>Rinascimento</b>: premi la freccia ▶</p>`;
     }
-    $("cPallini").innerHTML = diapo.map((x, j) => `<button type="button" class="pallino${j === pag ? " qui" : j < pag ? " fatto" : ""}" data-j="${j}" aria-label="Pagina ${j + 1}">${x.tipo === "ascolto" ? "🎧" : x.tipo === "ricorda" || x.tipo === "fine" ? "📝" : x.tipo === "linea" ? "🕰️" : j + 1}</button>`).join("");
+    $("cPallini").innerHTML = diapo.map((x, j) => `<button type="button" class="pallino${j === pag ? " qui" : j < pag ? " fatto" : ""}" data-j="${j}" aria-label="Pagina ${j + 1}">${x.tipo === "ascolto" ? ICO.cuffie : x.tipo === "ricorda" || x.tipo === "fine" ? ICO.foglio : x.tipo === "linea" ? ICO.orologio : j + 1}</button>`).join("");
     const prima = attuale === 0 && pag === 0;
     $("cPrec").disabled = prima;
     $("cSucc").disabled = false;
@@ -895,7 +900,7 @@
       const torna = b.classList.toggle("attivo");
       mostraAscolto(torna ? a : c);
       $("cBrano").textContent = torna ? a.brano : c.brano; $("cChi").textContent = torna ? a.chi : c.chi;
-      b.innerHTML = torna ? `↩ Torna a: <b>${c.brano}</b> · ${c.chi}` : `🎧 Ascolta anche: <b>${a.brano}</b> · ${a.chi}`;
+      b.innerHTML = torna ? `Torna a: <b>${c.brano}</b> · ${c.chi}` : `Ascolta anche: <b>${a.brano}</b> · ${a.chi}`;
       return;
     }
     const st = e.target.closest(".c-strum");
@@ -957,26 +962,54 @@
 
   /* =========================================================
      MAPPA, ESERCIZI E SCHEDE (motore comune: storia-attivita.js)
-     vf: [frase, vera?, spiegazione, nella versione breve?]
-     cruciverba: [parola, definizione, nella versione breve?]
+     vf: [frase, vera?, spiegazione]
+     cruciverba: [parola, definizione]
      ascolto.brani: per ogni ascolto, le risposte giuste (indici delle opzioni; più indici = vanno bene tutte)
      ========================================================= */
   const ATTIVITA = {
-    mappa: { rami: [
-      { nome: "Musica sacra", sotto: "chiese e monasteri", icona: "⛪", classe: "sacro", nodi: [
-        { titolo: "Canto gregoriano", cap: "gregoriano", parole: ["monodia", "a cappella", "latino"] },
-        { titolo: "Scrivere la musica", cap: "guido", parole: ["neumi", "Guido d'Arezzo", "tetragramma"] },
-        { titolo: "Ildegarda di Bingen", cap: "ildegarda", parole: ["badessa", "compositrice"] },
-        { titolo: "Polifonia", cap: "notredame", parole: ["Notre-Dame", "Leonino e Perotino", "tenor"] } ] },
-      { nome: "Musica profana", sotto: "corti, piazze e università", icona: "🏰", classe: "profano", nodi: [
-        { titolo: "Danze e strumenti", cap: "viaggio", parole: ["saltarello", "viella", "ciaramella"] },
-        { titolo: "Trovatori", cap: "trovatori", parole: ["amor cortese", "lingua d'oc", "giullari"] },
-        { titolo: "Goliardi", cap: "goliardi", parole: ["studenti", "Carmina Burana"] },
-        { titolo: "Canone", cap: "canone", parole: ["Sumer is icumen in", "inglese"] },
-        { titolo: "Ars nova", cap: "arsnova", parole: ["Trecento", "Machaut"] },
-        { titolo: "Firenze", cap: "landini", parole: ["Landini", "ballata", "italiano"] } ] } ] },
-    mappaBuchi: ["monodia", "a cappella", "neumi", "Guido d'Arezzo", "tetragramma", "badessa", "Polifonia", "tenor", "saltarello", "amor cortese", "giullari", "Goliardi", "Canone", "Ars nova", "ballata"],
-    mappaBuchiBreve: ["monodia", "neumi", "Guido d'Arezzo", "Polifonia", "amor cortese", "Goliardi", "Canone"],
+    /* mappa concettuale: riquadri (x, y, larghezza, altezza in px su un foglio di 1280 x 552) e frecce con le parole-legame.
+       [[parola]] = parola chiave (in grassetto; nell'esercizio può diventare un buco). cap = capitolo che si apre toccando. */
+    mappa: { W: 1280, H: 552,
+      nodi: [
+        { id: "rad", x: 520, y: 0, w: 240, h: 60, t: "IL MEDIOEVO", s: "476 – 1492", tipo: "radice" },
+        { id: "anni", x: 10, y: 0, w: 330, h: 64, t: "circa mille anni", s: "dal 476 (cade l'Impero romano) al 1492 (Colombo arriva in America)", tipo: "quadro", cap: "viaggio" },
+        { id: "soc", x: 940, y: 0, w: 330, h: 64, t: "una società divisa in tre", s: "chi prega, chi combatte, chi lavora", tipo: "quadro", cap: "viaggio" },
+        { id: "mem", x: 450, y: 98, w: 380, h: 52, t: "si impara [[a memoria]]", s: "non esistono le registrazioni", tipo: "quadro", cap: "viaggio" },
+        { id: "sacra", x: 140, y: 204, w: 320, h: 58, t: "MUSICA SACRA", s: "nelle chiese e nei monasteri", tipo: "sacro" },
+        { id: "prof", x: 790, y: 204, w: 370, h: 58, t: "MUSICA PROFANA", s: "nelle corti, nelle piazze, nelle università", tipo: "profano" },
+        { id: "g", x: 0, y: 318, w: 142, h: 50, t: "[[Canto gregoriano]]", tipo: "c-sacro", cap: "gregoriano" },
+        { id: "gu", x: 152, y: 318, w: 142, h: 50, t: "Guido d'Arezzo", tipo: "c-sacro", cap: "guido" },
+        { id: "il", x: 304, y: 318, w: 142, h: 50, t: "Ildegarda di Bingen", tipo: "c-sacro", cap: "ildegarda" },
+        { id: "po", x: 456, y: 318, w: 142, h: 50, t: "[[Polifonia]]", tipo: "c-sacro", cap: "notredame" },
+        { id: "da", x: 640, y: 318, w: 120, h: 50, t: "Danze e strumenti", tipo: "c-profano", cap: "viaggio" },
+        { id: "tr", x: 770, y: 318, w: 120, h: 50, t: "[[Trovatori]]", tipo: "c-profano", cap: "trovatori" },
+        { id: "go", x: 900, y: 318, w: 120, h: 50, t: "[[Goliardi]]", tipo: "c-profano", cap: "goliardi" },
+        { id: "ca", x: 1030, y: 318, w: 120, h: 50, t: "[[Canone]]", tipo: "c-profano", cap: "canone" },
+        { id: "an", x: 1160, y: 318, w: 120, h: 50, t: "[[Ars nova]]", tipo: "c-profano", cap: "arsnova" },
+        { id: "dg", x: 0, y: 410, w: 142, h: 90, t: "una sola melodia, la [[monodia]]; [[a cappella]], in latino", tipo: "dettaglio", cap: "gregoriano" },
+        { id: "dgu", x: 152, y: 410, w: 142, h: 90, t: "dai [[neumi]] al [[tetragramma]]; i nomi delle note: Ut, Re, Mi...", tipo: "dettaglio", cap: "guido" },
+        { id: "dil", x: 304, y: 410, w: 142, h: 90, t: "[[badessa]] e compositrice: canti per le sue monache", tipo: "dettaglio", cap: "ildegarda" },
+        { id: "dpo", x: 456, y: 410, w: 142, h: 90, t: "a Notre-Dame, con Leonino e Perotino; il [[tenor]] tiene le note lunghe", tipo: "dettaglio", cap: "notredame" },
+        { id: "dda", x: 640, y: 410, w: 120, h: 90, t: "il [[saltarello]]; viella, liuto, ciaramella", tipo: "dettaglio", cap: "viaggio" },
+        { id: "dtr", x: 770, y: 410, w: 120, h: 90, t: "l'[[amor cortese]], in lingua d'oc; i [[giullari]]", tipo: "dettaglio", cap: "trovatori" },
+        { id: "dgo", x: 900, y: 410, w: 120, h: 90, t: "canzoni in latino: i Carmina Burana", tipo: "dettaglio", cap: "goliardi" },
+        { id: "dca", x: 1030, y: 410, w: 120, h: 90, t: "«Sumer is icumen in», in inglese", tipo: "dettaglio", cap: "canone" },
+        { id: "dan", x: 1160, y: 410, w: 120, h: 90, t: "Machaut in Francia; [[Landini]] e la ballata a Firenze", tipo: "dettaglio", cap: "landini" }
+      ],
+      archi: [
+        { da: "rad", a: "anni", l: "dura", forma: "orizz" }, { da: "rad", a: "soc", l: "ha", forma: "orizz" },
+        { da: "rad", a: "mem", l: "la musica", lato: "padre" },
+        { da: "mem", a: "sacra", l: "si divide in", lato: "padre" }, { da: "mem", a: "prof" },
+        { da: "sacra", a: "g", l: "nei monasteri:" }, { da: "sacra", a: "gu", l: "per scriverla:" },
+        { da: "sacra", a: "il", l: "una compositrice:" }, { da: "sacra", a: "po", l: "nelle cattedrali:" },
+        { da: "prof", a: "da", l: "nelle piazze:" }, { da: "prof", a: "tr", l: "nelle corti:" }, { da: "prof", a: "go", l: "nelle università:" },
+        { da: "prof", a: "ca", l: "in Inghilterra:" }, { da: "prof", a: "an", l: "nel Trecento:" },
+        { da: "g", a: "dg", l: "è" }, { da: "gu", a: "dgu", l: "porta" }, { da: "il", a: "dil", l: "è" }, { da: "po", a: "dpo", l: "nasce" },
+        { da: "da", a: "dda", l: "si balla" }, { da: "tr", a: "dtr", l: "cantano" }, { da: "go", a: "dgo", l: "scrivono" },
+        { da: "ca", a: "dca", l: "il più famoso:" }, { da: "an", a: "dan", l: "con" },
+        { da: "dca", a: "dpo", l: "anche il canone è polifonia", forma: "curva" }
+      ] },
+    mappaBuchi: ["a memoria", "Canto gregoriano", "monodia", "a cappella", "neumi", "tetragramma", "badessa", "Polifonia", "tenor", "saltarello", "Trovatori", "amor cortese", "giullari", "Goliardi", "Canone", "Ars nova", "Landini"],
     mappaDistrattori: ["pentagramma", "violino", "opera"],
     vf: [
       ["Il Medioevo dura circa mille anni, dal 476 al 1492.", true, "", true],
@@ -1029,7 +1062,6 @@
       ["GUIDO", "Il monaco di Arezzo che diede il nome alle note", true]
     ],
     ascolto: {
-      breve: ["amb", "chi", "tess"],
       criteri: [
         { id: "amb", nome: "Che musica è?", opz: ["Sacra", "Profana"] },
         { id: "chi", nome: "Chi suona o canta?", opz: ["Solo voci", "Solo strumenti", "Voci e strumenti"] },
@@ -1038,16 +1070,16 @@
         { id: "ritmo", nome: "Che ritmo?", opz: ["Libero, segue le parole", "Regolare, si batte il tempo"] }
       ],
       brani: [
-        { cap: "viaggio", breve: true, r: { amb: [1], chi: [1], tess: [0], ling: [6], ritmo: [1] } },
-        { cap: "gregoriano", breve: true, r: { amb: [0], chi: [0], tess: [0], ling: [1], ritmo: [0] }, nota: "Attenzione: «Kyrie eleison» è greco, anche se il resto della Messa era in latino." },
+        { cap: "viaggio", r: { amb: [1], chi: [1], tess: [0], ling: [6], ritmo: [1] } },
+        { cap: "gregoriano", r: { amb: [0], chi: [0], tess: [0], ling: [1], ritmo: [0] }, nota: "Attenzione: «Kyrie eleison» è greco, anche se il resto della Messa era in latino." },
         { cap: "guido", r: { amb: [0], chi: [0], tess: [0], ling: [0], ritmo: [0] } },
         { cap: "ildegarda", r: { amb: [0], chi: [0, 2], tess: [0], ling: [0], ritmo: [0] } },
-        { cap: "notredame", breve: true, r: { amb: [0], chi: [0], tess: [1], ling: [0], ritmo: [1] }, nota: "Le voci acute si muovono con un ritmo regolare, il tenor tiene le note lunghe." },
-        { cap: "trovatori", breve: true, r: { amb: [1], chi: [2], tess: [0], ling: [2], ritmo: [1] } },
+        { cap: "notredame", r: { amb: [0], chi: [0], tess: [1], ling: [0], ritmo: [1] }, nota: "Le voci acute si muovono con un ritmo regolare, il tenor tiene le note lunghe." },
+        { cap: "trovatori", r: { amb: [1], chi: [2], tess: [0], ling: [2], ritmo: [1] } },
         { cap: "goliardi", r: { amb: [1], chi: [2], tess: [0, 1], ling: [0], ritmo: [1] } },
-        { cap: "canone", breve: true, r: { amb: [1], chi: [0], tess: [1], ling: [4], ritmo: [1] } },
+        { cap: "canone", r: { amb: [1], chi: [0], tess: [1], ling: [4], ritmo: [1] } },
         { cap: "arsnova", r: { amb: [1], chi: [0, 2], tess: [0], ling: [3], ritmo: [1] } },
-        { cap: "landini", breve: true, r: { amb: [1], chi: [0, 2], tess: [1], ling: [5], ritmo: [1] } }
+        { cap: "landini", r: { amb: [1], chi: [0, 2], tess: [1], ling: [5], ritmo: [1] } }
       ] },
     riassunto: {
       testo: "Il <b>Medioevo</b> dura circa mille anni. La musica non si può registrare: vive nella memoria di chi la canta e la suona. La conosciamo in due grandi mondi: la musica <b>sacra</b>, nelle chiese e nei monasteri, e la musica <b>profana</b>, nelle corti, nelle piazze e nelle università. In questi secoli nasce anche il modo di <b>scrivere la musica</b>.",
@@ -1056,9 +1088,25 @@
         ["Musica sacra", ["<b>Canto gregoriano</b>: in latino, a una voce (monodia), senza strumenti.", "<b>Guido d'Arezzo</b>: le note su quattro righe e i loro nomi (Ut, Re, Mi...).", "<b>Ildegarda di Bingen</b>: badessa e compositrice.", "<b>Notre-Dame</b>: Leonino e Perotino inventano la polifonia."]],
         ["Musica profana", ["<b>Trovatori</b> e <b>giullari</b>: canzoni d'amore e danze nelle corti.", "<b>Goliardi</b>: canzoni di studenti in latino (Carmina Burana).", "<b>Ars nova</b>: nel Trecento Machaut in Francia e Landini a Firenze."]]
       ] },
+    /* versione breve della scheda riassuntiva e del racconto (caratteri grandi, poche righe) */
+    riassuntoBreve: {
+      testo: "Il <b>Medioevo</b> dura circa mille anni. La musica si impara <b>a memoria</b>. Ci sono due mondi: la musica <b>sacra</b>, per pregare, e la musica <b>profana</b>, per fare festa.",
+      date: [["476", "comincia il Medioevo"], ["1025", "Guido d'Arezzo dà un nome alle note"], ["1163", "comincia la costruzione di Notre-Dame"], ["1348", "la peste nera"], ["1492", "finisce il Medioevo"]],
+      parole: [["Monodia", "una sola melodia."], ["Polifonia", "più melodie insieme."], ["A cappella", "solo voci, senza strumenti."], ["Neumi", "i primi segni per scrivere la musica."], ["Trovatori", "poeti e musicisti delle corti."], ["Goliardi", "studenti che scrivono canzoni in latino."], ["Canone", "voci che entrano una dopo l'altra."], ["Ballata", "canzone italiana del Trecento."]] },
+    raccontoBreve: {
+      viaggio: "Il Medioevo dura circa mille anni, dal 476 al 1492. La musica non si può registrare: si impara a memoria. C'è la musica sacra, per pregare, e la musica profana, per fare festa.",
+      gregoriano: "Nei monasteri i monaci pregano cantando. Nasce il canto gregoriano: una sola melodia, in latino, senza strumenti.",
+      guido: "Guido d'Arezzo scrive le note su quattro righe e dà loro un nome: Ut, Re, Mi, Fa, Sol, La. Così si impara a cantare più in fretta.",
+      ildegarda: "Ildegarda di Bingen è una badessa. Scrive libri e compone canti per le sue monache.",
+      notredame: "Nelle cattedrali nasce la polifonia: più melodie cantate insieme. A Notre-Dame, a Parigi, lavorano Leonino e Perotino.",
+      trovatori: "Nelle corti i trovatori cantano l'amor cortese. I giullari portano le canzoni di corte in corte.",
+      goliardi: "I goliardi sono studenti. Scrivono canzoni allegre in latino, raccolte nei Carmina Burana.",
+      canone: "«Sumer is icumen in» è un canone inglese: le voci cantano la stessa melodia, una dopo l'altra.",
+      arsnova: "Nel Trecento nasce l'Ars nova, l'«arte nuova». Il musicista più famoso è Guillaume de Machaut.",
+      landini: "A Firenze Francesco Landini, organista cieco, scrive ballate in italiano." },
+    /* verifica: a ogni apertura della pagina si pescano «quanti» elementi per tipo; A e B hanno ordini diversi */
     verifica: {
-      vf: [0, 2, 4, 5, 8, 9, 10, 12, 15, 17], vfBreve: [0, 2, 5, 9, 12, 15],
-      collega: ["Monodia", "Polifonia", "Neumi", "Tetragramma", "Canone", "Goliardi"], collegaBreve: ["Monodia", "Polifonia", "Neumi", "Canone"],
+      quanti: { vf: 14, collega: 6, personaggi: 5, scelte: 10, frasi: 7, aperte: 2 },
       scelte: [
         ["Chi diede il nome alle note?", ["Guido d'Arezzo", "Ildegarda di Bingen", "Perotino"], 0],
         ["Che cos'è la monodia?", ["Una sola melodia", "Tante melodie insieme", "Una danza veloce"], 0],
@@ -1067,12 +1115,34 @@
         ["In quale lingua cantavano i trovatori?", ["Lingua d'oc", "Latino", "Tedesco"], 0],
         ["Quale strumento è l'antenato del violino?", ["La viella", "La ciaramella", "Il salterio"], 0],
         ["Che cosa vuol dire «Ars nova»?", ["Arte nuova", "Canto nuovo", "Nuova cattedrale"], 0],
-        ["Chi era Francesco Landini?", ["Un organista e compositore di Firenze", "Un trovatore francese", "Un papa"], 0]
+        ["Chi era Francesco Landini?", ["Un organista e compositore di Firenze", "Un trovatore francese", "Un papa"], 0],
+        ["In che anno inizia il Medioevo?", ["476", "800", "1492"], 0],
+        ["Che cosa vuol dire «a cappella»?", ["Solo voci, senza strumenti", "Cantato in una cappella", "Con l'organo"], 0],
+        ["Chi era Ildegarda di Bingen?", ["Una badessa e compositrice", "Una regina", "Una cantante di corte"], 0],
+        ["Che cosa sono i Carmina Burana?", ["Una raccolta di canzoni dei goliardi", "Un libro di canto gregoriano", "Una danza"], 0],
+        ["Chi portava le canzoni di corte in corte e di piazza in piazza?", ["I giullari", "I monaci", "I vescovi"], 0],
+        ["Quante voci ha il canone «Sumer is icumen in»?", ["Sei", "Due", "Una"], 0]
       ],
-      scelteBreve: [0, 1, 3, 4, 5],
+      frasi: [
+        "Il canto gregoriano è cantato [[a cappella]], cioè senza strumenti.",
+        "I primi segni per scrivere la musica si chiamano [[neumi]].",
+        "Guido d'Arezzo scrive le note su quattro righe: il [[tetragramma]].",
+        "Ildegarda di Bingen era una [[badessa]].",
+        "Nella polifonia di Notre-Dame il [[tenor]] tiene le note lunghe.",
+        "I trovatori cantano l'[[amor cortese]].",
+        "Gli studenti che scrivono canzoni in latino si chiamano [[goliardi]].",
+        "In un [[canone]] le voci entrano una dopo l'altra con la stessa melodia.",
+        "Nel Trecento i musicisti francesi parlano di [[Ars nova]].",
+        "Francesco Landini scrive [[ballate]] in italiano.",
+        "Il [[saltarello]] è una danza: si balla saltando.",
+        "Più melodie diverse cantate insieme formano la [[polifonia]]."
+      ],
+      frasiDistrattori: ["pentagramma", "violino"],
       aperte: [
-        ["Che differenza c'è tra musica sacra e musica profana? Fai un esempio per ciascuna.", 2, "la sacra è per la preghiera, in chiese e monasteri (es. canto gregoriano); la profana per feste, corti, piazze (es. trovatori, Saltarello)."],
-        ["Perché l'invenzione di Guido d'Arezzo è così importante?", 2, "le note su righe hanno un'altezza precisa e un nome: si può leggere e imparare un canto nuovo senza saperlo a memoria; è l'antenato del nostro pentagramma."]
+        ["Che differenza c'è tra musica sacra e musica profana? Fai un esempio per ciascuna.", 3, "la sacra è per la preghiera, in chiese e monasteri (es. canto gregoriano); la profana per feste, corti, piazze (es. trovatori, Saltarello)."],
+        ["Perché l'invenzione di Guido d'Arezzo è così importante?", 3, "le note su righe hanno un'altezza precisa e un nome: si può leggere e imparare un canto nuovo senza saperlo a memoria; è l'antenato del nostro pentagramma."],
+        ["Chi erano i trovatori e di che cosa cantavano?", 3, "poeti-musicisti delle corti del sud della Francia, cantavano in lingua d'oc l'amor cortese; i giullari portavano le canzoni in giro."],
+        ["Che cos'è un canone? Fai un esempio.", 3, "più voci cantano la stessa melodia entrando una dopo l'altra; esempio: «Sumer is icumen in»."]
       ] }
   };
   StoriaAttivita.avvia({ epoca: "Il Medioevo", date: "476 – 1492", img: IMG, capitoli: CAPITOLI, strumenti: STRUMENTI, linea: LINEA,

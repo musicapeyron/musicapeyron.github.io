@@ -2,9 +2,10 @@ import asyncio, sys
 from playwright.async_api import async_playwright
 U="http://127.0.0.1:8765/storia-medioevo.html"
 # (nome, opzioni js, bottone i.j)
-LAV=[("riassunto","",(0,0)),("riassunto-noimg","document.querySelector('#sImg button[data-v=\"0\"]').click()",(0,0)),("completa","",(1,0)),
-     ("vf","",(2,1)),("mappa","",(3,1)),("mappa-breve","document.querySelector('#sVers button[data-v=\"1\"]').click()",(3,1)),("ascolto","",(4,1)),
-     ("cruci","",(5,1)),("verificaA","",(6,0)),("verificaB","",(6,1)),("verificaA-breve","document.querySelector('#sVers button[data-v=\"1\"]').click()",(6,0))]
+LAV=[("riassunto","",(0,0)),("riassunto-breve","document.querySelector('.a-scelta[data-o=\"riassunto\"][data-k=\"breve\"] button[data-v=\"1\"]').click()",(0,0)),
+     ("completa","",(1,0)),("completa-breve","document.querySelector('.a-scelta[data-o=\"completa\"][data-k=\"breve\"] button[data-v=\"1\"]').click()",(1,0)),
+     ("completa-breve-noimg","document.querySelector('.a-scelta[data-o=\"completa\"][data-k=\"breve\"] button[data-v=\"1\"]').click();document.querySelector('.a-scelta[data-o=\"completa\"][data-k=\"img\"] button[data-v=\"0\"]').click()",(1,0)),
+     ("vf","",(2,1)),("mappa","",(3,1)),("ascolto","",(4,1)),("cruci","",(5,1)),("verificaA","",(6,0)),("verificaB","",(6,1))]
 async def main():
     async with async_playwright() as p:
         b=await p.chromium.launch()
