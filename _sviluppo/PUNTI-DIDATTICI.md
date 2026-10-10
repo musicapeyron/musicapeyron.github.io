@@ -212,7 +212,7 @@ Le voci descrivono i giochi come sono nel codice (ottobre 2026).
 - Pulsazione e sua tenuta, anche nei silenzi e nelle durate lunghe.
 - Figure e pause: semiminima, croma, minima, semibreve, minima puntata, semiminima puntata, croma puntata,
   semicroma, terzina; pause di semiminima, minima, semibreve, croma, semicroma.
-- Legatura di valore, controtempo (croma in levare), sincope.
+- Legatura di valore (anche oltre la stanghetta), contrattempo (croma in levare), sincope.
 - Metri: 4/4, 3/4, 2/4 e tempo composto 6/8 (il movimento si divide in tre).
 - Lettura ritmica a prima vista, memoria uditiva, imitazione.
 
@@ -253,7 +253,7 @@ Le voci descrivono i giochi come sono nel codice (ottobre 2026).
 | 10 | Semiminima puntata | semiminima puntata e croma |
 | 11 | 3/4 e 2/4 | cambiano i metri, non le figure |
 | 12 | Contrattempo | pausa di croma e croma in levare |
-| 13 | Legatura e semiminima puntata | la legatura (♩‿♪) e il punto che la sostituisce |
+| 13 | Legatura di valore | due note legate = un suono solo: prima dentro la battuta (♩‿♩, ♩‿♪), poi oltre la stanghetta |
 | 14 | La sincope | prima scritta con la legatura, poi croma–semiminima–croma |
 | 15 | Croma puntata e pause di semicroma | le figure più fitte |
 | 16 | La terzina | tre suoni in un movimento; la pausa dentro la terzina solo in Difficile |
