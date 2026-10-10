@@ -646,7 +646,7 @@
     bpm: Math.min(160, Math.max(40, +leggi("bpm", "80") || 80)),
     simbolo: leggi("simbolo", "1") === "1",       // di base il ritmo si vede anche durante l'ascolto
     suono: leggi("suono2", "rullante") === "piano" ? "piano" : "rullante",   // rullante | piano (suono lungo)
-    pause: leggi("pause", "1") === "1",            // colpetto di maracas sulle pause
+    pause: ["piede", "chiuso", "legno", "no"].includes(leggi("pause2", "piede")) ? leggi("pause2", "piede") : "piede",   // suono sulle pause
     clic: leggi("clic", "0") === "1",              // metronomo durante l'esercizio (spento: solo il conteggio iniziale)
     sudd: leggi("sudd", "0") === "1" ? "1" : "0",  // il clic batte anche le suddivisioni
     ripeti: +leggi("ripeti", "1") === 2 ? 2 : 1,   // ogni ritmo 1 o 2 volte
@@ -655,7 +655,7 @@
   };
   const OPZIONI = [
     { k: "suono", chiave: "suono2", et: "Suono del ritmo", v: [["rullante", "🥁 Rullante"], ["piano", "🎹 Pianoforte (suono lungo)"]] },
-    { k: "pause", et: "Sulle pause", v: [[true, "Colpetto di maracas"], [false, "Silenzio"]] },
+    { k: "pause", chiave: "pause2", et: "Sulle pause", v: [["piede", "Charleston col piede"], ["chiuso", "Charleston chiuso"], ["legno", "Legnetto"], ["no", "Silenzio"]] },
     { k: "sudd", et: "Il clic batte", v: [["0", "Solo i movimenti"], ["1", "Anche le suddivisioni"]] },
     { k: "ripeti", et: "Ogni ritmo", v: [[1, "Una volta"], [2, "Due volte"]] },
     { k: "battute", et: "Battute per ritmo", v: [["tappa", "Come la tappa"], ["1", "1"], ["2", "2"], ["4", "4"]] },
@@ -792,10 +792,11 @@
     } catch (e) {}
   }
   /* suoni campionati, nel sito (nessun servizio esterno):
-     rullante e maracas dalla libreria VCSL (CC0); pianoforte Salamander Grand Piano (CC BY 3.0),
+     rullante, charleston e legnetto dalla libreria VCSL (CC0); pianoforte Salamander Grand Piano (CC BY 3.0),
      lo stesso del Dettato ritmico: il campione Fa#4 suonato un semitono sopra dà il Sol4. */
-  const CAMPIONI = { rullante: "media/suoni/ritmo/rullante.mp3", maracas1: "media/suoni/ritmo/maracas-1.mp3",
-    maracas2: "media/suoni/ritmo/maracas-2.mp3", piano: "media/suoni/pianoforte/Fs4.mp3" };
+  const CAMPIONI = { rullante: "media/suoni/ritmo/rullante.mp3", piede1: "media/suoni/ritmo/charleston-piede-1.mp3",
+    piede2: "media/suoni/ritmo/charleston-piede-2.mp3", chiuso: "media/suoni/ritmo/charleston-chiuso.mp3",
+    legno: "media/suoni/ritmo/legnetto.mp3", piano: "media/suoni/pianoforte/Fs4.mp3" };
   const buf = {}, inizio = {};
   let caricamento = null;
   function caricaSuoni() {
@@ -829,7 +830,11 @@
     if (S.suono === "piano") { if (!campione("piano", t, 0.9, dur, Math.pow(2, 1 / 12))) clic(t, 1); }
     else if (!campione("rullante", t, 0.75)) clic(t, 1);
   }
-  function suonoPausa(t) { campione((alterna++ % 2) ? "maracas2" : "maracas1", t, 0.3); }
+  function suonoPausa(t) {   // un segno leggero, più piano delle note: dice "qui c'è silenzio" senza coprirlo
+    if (S.pause === "piede") campione((alterna++ % 2) ? "piede2" : "piede1", t, 0.32);
+    else if (S.pause === "chiuso") campione("chiuso", t, 0.22);
+    else if (S.pause === "legno") campione("legno", t, 0.25);
+  }
 
   /* i segmenti in ordine: { tipo: conta|ascolta|eco, i (ritmo), t0, t1, spu (secondi per unità) } */
   function* scaletta(da) {
@@ -871,7 +876,7 @@
       if (seg.tipo === "ascolta") {
         const ev = eventiDi(r);
         attacchiDi(ev).forEach(a => suonoNota(seg.t0 + a.inizio * seg.spu, a.dur * seg.spu));
-        if (S.pause) ev.forEach(x => { if (x.e.pausa) suonoPausa(seg.t0 + x.inizio * seg.spu); });
+        if (S.pause !== "no") ev.forEach(x => { if (x.e.pausa) suonoPausa(seg.t0 + x.inizio * seg.spu); });
       }
       play.segs.push(seg); if (play.segs.length > 8) play.segs.shift();
       play.prossimoT = seg.t1;

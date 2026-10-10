@@ -166,10 +166,10 @@ quella modifica si perde.
   al massimo due movimenti muti di fila, ecc.), si ordinano dalla più facile alla più difficile e la serie sale piano.
   In una serie non ci sono mai due ritmi uguali: se i ritmi possibili sono meno di quelli chiesti, la serie è più corta.
 - Durante l'esercizio si illumina il **movimento** in cui ci si trova (non la singola nota).
-- Suoni: rullante e maracas (sulle pause) dalla libreria VCSL (CC0), in `media/suoni/ritmo/`; in alternativa il pianoforte
+- Suoni: rullante e, sulle pause, charleston col piede (o charleston chiuso, legnetto, silenzio) dalla libreria VCSL (CC0), in `media/suoni/ritmo/`; in alternativa il pianoforte
   Salamander (il campione Fa#4 un semitono sopra = Sol4). Il clic si accende dalla barra (spento di base: solo conteggio).
 - Di base il ritmo scritto si vede anche mentre suona; spegnendo l'interruttore si vede solo quando tocca a voi
-  (prima il suono, poi il simbolo). Opzioni: rullante o pianoforte, maracas sulle pause sì/no, clic sui movimenti o
+  (prima il suono, poi il simbolo). Opzioni: rullante o pianoforte, suono sulle pause, clic sui movimenti o
   anche sulle suddivisioni, ogni ritmo 1 o 2 volte, battute per ritmo, ritmi per serie. Chiavi `lettura.*` in localStorage.
 - Spartito disegnato direttamente con VexFlow su una sola linea (non con `motore-schemi.js`).
 - Prove: `window.LetturaRitmica.ritmiPossibili(gradino, battute)` restituisce tutti i ritmi di un gradino.
