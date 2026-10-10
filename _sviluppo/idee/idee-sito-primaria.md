@@ -6,7 +6,7 @@ Raccolta di idee per nuovi giochi, app e sezioni. Ogni idea: concetto, come funz
 
 ## 1. Grafia musicale
 
-**Destinatari:** scuola primaria.
+**Destinatari:** scuola primaria. Esiste anche una versione distinta per le medie (ripasso e regole), vedi `idee-sito-secondaria.md`.
 
 **Concetto:** guida passo passo per imparare a disegnare a mano gli elementi del pentagramma.
 
