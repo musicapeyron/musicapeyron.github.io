@@ -24,3 +24,29 @@ Raccolta di idee per nuovi giochi, app e sezioni. Ogni idea: concetto, come funz
 - Nessun microfono/fotocamera, nessuna raccolta dati.
 
 ---
+
+## 2. Body percussion per imitazione
+
+**Destinatari:** scuola primaria. Esiste una versione distinta per le medie, vedi `idee-sito-secondaria.md`.
+
+**Concetto:** l'app propone brevi sequenze di suoni del corpo; la classe ascolta, guarda e ripete "a eco". I suoni sono rappresentati da **simboli-immagine** facili da riconoscere, senza notazione tradizionale.
+
+**Come funziona:**
+- Pochi suoni, introdotti uno alla volta: mani (battito), cosce (pacca), petto, piedi (pestata), schiocco di dita.
+- Ogni suono ha un'icona grande e semplice (mano, gamba, piede…) con un colore suo, e un suono registrato.
+- Sequenze di 4 pulsazioni, poi 8; tempo lento e regolabile; la pulsazione è sempre visibile (cerchi che si accendono).
+- Modalità "eco": l'app esegue (suono + icona che si illumina + figurina animata che fa il gesto), poi lascia lo spazio vuoto in cui la classe ripete.
+- Livelli: solo un suono → due suoni alternati → sequenze miste → piccole pause (icona "silenzio").
+- L'app **non ascolta** la classe: nessun microfono, la verifica la fa l'insegnante.
+
+**Punti di forza didattici:**
+- Pulsazione e memoria ritmica con tutto il corpo: si impara facendo, non leggendo.
+- I simboli-immagine preparano alla lettura: un segno = un suono, da sinistra a destra, nel tempo.
+- Attività di gruppo alla LIM, coinvolge anche chi non suona uno strumento; coordinazione e ascolto reciproco.
+
+**Note di sviluppo:**
+- Una sola schermata su PC e LIM, senza scorrere.
+- Nessun microfono/fotocamera, nessuna raccolta dati.
+- Animazioni lente, niente lampeggi.
+
+---

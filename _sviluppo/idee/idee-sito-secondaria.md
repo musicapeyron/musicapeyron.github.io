@@ -32,3 +32,32 @@ Raccolta di idee per nuovi giochi, app e sezioni. Ogni idea: concetto, come funz
 - Il motore di animazione del tratto può essere lo stesso della primaria; cambiano contenuti, grafica e velocità.
 
 ---
+
+## 2. Body percussion per imitazione (versione medie)
+
+**Destinatari:** secondaria di primo grado. Ben distinta dalla versione della primaria (vedi `idee-sito-primaria.md`): qui si passa dall'imitazione alla **lettura** con notazione vera.
+
+**Concetto:** imitazione e lettura di pattern di body percussion scritti con **simboli ritmici reali** su un rigo a più linee, una linea per ogni parte del corpo (come nelle partiture per percussioni).
+
+**Come funziona:**
+- Partitura "a righe": ogni linea è un suono del corpo (piedi in basso, cosce, petto, mani, schiocco in alto), con una piccola icona a inizio riga come legenda.
+- Figure ritmiche vere: semiminime, crome, pause, poi sedicesimi, sincopi, ritmi puntati; tempi in 4/4, 3/4 e 6/8.
+- Due modalità:
+  - **Eco:** l'app esegue una battuta (suono + nota evidenziata), la classe ripete; la scrittura appare dopo, per collegare ciò che si è fatto a ciò che si legge.
+  - **Lettura:** la partitura appare prima, la classe esegue con il metronomo; l'app poi esegue la versione corretta per confronto.
+- Gioco d'insieme: ostinato a più parti (gruppi della classe su righe diverse) e canone.
+- Tempo regolabile, ripetizione in loop di una battuta.
+- L'app **non ascolta** la classe: nessun microfono, la verifica la fa l'insegnante.
+
+**Punti di forza didattici:**
+- Collega corpo, orecchio e notazione: la figura ritmica diventa un gesto.
+- Dall'imitazione alla lettura autonoma, con difficoltà graduale (fino a sincopi e sedicesimi).
+- Polifonia ritmica: ogni gruppo tiene la sua parte ascoltando le altre; ottimo per lavorare in classe alla LIM.
+- Si collega a "Imita il ritmo", "Lettura ritmica" e "Figure ritmiche" già presenti nel sito.
+
+**Note di sviluppo:**
+- Una sola schermata su PC e LIM, senza scorrere.
+- Nessun microfono/fotocamera, nessuna raccolta dati.
+- La partitura può usare il motore degli spartiti (VexFlow, rigo percussioni).
+
+---
