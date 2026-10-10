@@ -5,9 +5,11 @@
    Uguale per tutte le epoche: la pagina passa solo i dati.
 
    Uso, in fondo alla pagina (dopo storia-attivita.js, prima di adatta-schermo.js):
-     StoriaPercorso.avvia({ epoca, date, img, capitoli, linea, strumenti, suonare, crediti, attivita,
+     StoriaPercorso.avvia({ epoca, date, img, capitoli, linea, strumenti, suonare, crediti, attivita, schedeCapitolo,
                             prossima: { nome: "Rinascimento", articolo: "il", url: "storia-rinascimento.html" },
                             colori: { sacro: "#a78bfa", profano: "#F99D1C" } });   // colori: facoltativo
+   mondo dei capitoli: "sacro"/"profano" oppure "sx"/"dx" (metà sinistra/destra del banner: arancio/viola).
+   schedeCapitolo: { nomeScheda: idCapitolo } per un pulsante in alto che apre direttamente un capitolo.
    La pagina ha il banner, le schede (data-scheda), #vistaPercorso con #indice, #griglia, le viste
    di mappa/esercizi/schede e #listaCrediti. Il capitolo (#capitolo) e la finestra degli strumenti
    (#velo) li crea questo script. Formato dei dati: _sviluppo/storia/LEGGIMI.md.
@@ -65,7 +67,7 @@
   if (nC) nC.textContent = CAPITOLI.length - 1;
   if (nS) nS.textContent = STRUMENTI.length;
   if (nD) nD.textContent = SUONARE.length;
-  const accento = c => (cfg.colori || { sacro: "#a78bfa", profano: "#F99D1C" })[c.mondo] || "#F99D1C";
+  const accento = c => Object.assign({ sacro: "#a78bfa", profano: "#F99D1C", sx: "#F99D1C", dx: "#a78bfa" }, cfg.colori || {})[c.mondo] || "#F99D1C";
 
   /* indice del percorso */
   document.getElementById("indice").innerHTML = `<li><button type="button" class="inizia" id="inizia">▶ Comincia il viaggio</button></li>` + CAPITOLI.map((c, i) => `
@@ -99,6 +101,9 @@
   }
   document.querySelectorAll(".scheda").forEach(b => b.addEventListener("click", () => {
     const s = b.dataset.scheda;
+    // schede speciali che aprono direttamente un capitolo (es. «L'Orfeo» nel Rinascimento)
+    const capS = (cfg.schedeCapitolo || {})[s];
+    if (capS) { const k = CAPITOLI.findIndex(c => c.id === capS); if (k >= 0) apriCapitolo(k); return; }
     document.querySelectorAll(".scheda").forEach(x => x.classList.toggle("attiva", x === b));
     vistaPercorso.hidden = s !== "percorso"; griglia.hidden = s !== "strumenti" && s !== "suonare";
     ["mappa", "esercizi", "schede"].forEach(v => { document.getElementById("vista" + v[0].toUpperCase() + v.slice(1)).hidden = s !== v; });

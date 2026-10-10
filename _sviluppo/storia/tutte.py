@@ -18,11 +18,13 @@ async def main():
                   return {o:d.scrollHeight-d.clientHeight, s:document.documentElement.scrollHeight-innerHeight, z:document.body.style.zoom, t:document.getElementById('cTitolo').textContent, img:imgs.every(x=>x), h:location.hash}}""")
                 n+=1; zooms.add(r["z"])
                 if (r["o"]>1 and nome in("tuo","pc")) or (r["s"]>0 and nome in("tuo","pc")) or not r["img"]: prob.append((r["t"][:25],r["o"],r["s"],r["img"]))
-                if await pg.evaluate("document.getElementById('cSuccTesto').textContent")=="Il Rinascimento": break
+                if await pg.evaluate("document.getElementById('cNum').textContent==='Fine del percorso' && [...document.querySelectorAll('#cPallini .pallino')].pop().classList.contains('qui')"): break
                 await pg.click("#cSucc"); await pg.wait_for_timeout(120)
-            # strumento dal capitolo 6
-            await pg.goto(U+"#capitolo-6"); await pg.wait_for_timeout(300)
-            for _ in range(6): await pg.click("#cSucc"); await pg.wait_for_timeout(80)
+            # il primo strumento che compare nei capitoli
+            await pg.goto(U+"#capitolo-1"); await pg.wait_for_timeout(300)
+            for _ in range(40):
+                if await pg.locator(".c-strum").count(): break
+                await pg.click("#cSucc"); await pg.wait_for_timeout(80)
             await pg.click(".c-strum"); await pg.wait_for_timeout(200)
             vel=await pg.evaluate("document.getElementById('velo').classList.contains('aperto')")
             await pg.keyboard.press("Escape"); await pg.keyboard.press("Escape"); await pg.wait_for_timeout(400)

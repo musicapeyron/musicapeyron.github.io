@@ -72,7 +72,7 @@ Dentro `ATTIVITA` (niente emoji: Cristiano le vuole solo nei pulsanti delle sche
 - `personaggi`: `[nome, cosa ha fatto]` (almeno 7). Le parole da collegare e gli strumenti vengono dai capitoli
   («Che strumento è?» mostra gli strumenti uno alla volta).
 - `cruciverba`: `[PAROLA, definizione]` (10–14 parole, senza spazi né accenti).
-- `ascolto`: `criteri` (domande con opzioni) e `brani` (risposte giuste come indici; più indici = vanno bene tutte; `nota` facoltativa).
+- `ascolto`: `descr` (facoltativa: frase sotto il titolo della carta), `criteri` (domande con opzioni) e `brani` (risposte giuste come indici; più indici = vanno bene tutte; `nota` facoltativa).
   Serve sia per «Esercizi di ascolto» sia per la scheda d'ascolto da stampare.
 - `riassunto` (testo, 4 immagini, punti) e `riassuntoBreve` (testo, 5 date, 8 parole) per la scheda riassuntiva;
   `raccontoBreve` (2–3 frasi per capitolo) per il racconto in versione breve (stampato a caratteri grandi).
@@ -81,7 +81,8 @@ Dentro `ATTIVITA` (niente emoji: Cristiano le vuole solo nei pulsanti delle sche
   A ogni apertura della pagina si pescano le domande e si creano A e B: stesso contenuto, ordine diverso di esercizi,
   domande e risposte. Deve stare su **due facciate**: controllare con `attivita_stampe.py` più volte (pagina 3 = soluzioni).
 
-Prove: `attivita_prove.py` (schermate e misure di mappa/esercizi/schede), `attivita_gioca.py` (risolve ogni esercizio),
+Prove (`PAGINA=storia-<epoca>.html CARTELLA=/tmp/prove python3 ...`; senza PAGINA provano il Medioevo):
+`attivita_prove.py` (schermate e misure di mappa/esercizi/schede), `attivita_gioca.py` (risolve ogni esercizio),
 `attivita_stampe.py` (fa i PDF di tutte le schede; poi `pdftoppm -r 50 -png` per guardarli).
 
 ## Le immagini delle pagine (la parte lenta)

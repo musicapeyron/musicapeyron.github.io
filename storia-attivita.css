@@ -54,11 +54,11 @@ button.mc-n:hover { filter: brightness(1.18); }
 .mc-n.radice .mc-s { color: #3b2f05; font-weight: 800; font-size: 13px; }
 .mc-n.quadro { border-style: dashed; background: rgba(27,37,71,0.9); }
 .mc-n.quadro .mc-t { font-weight: 600; font-size: 14.5px; }
-.mc-n.sacro, .mc-n.profano { border-width: 3px; }
-.mc-n.sacro { border-color: #a78bfa; background: #2a2160; } .mc-n.profano { border-color: #F99D1C; background: #3a2512; }
-.mc-n.sacro .mc-t, .mc-n.profano .mc-t { font: 800 20px 'Manrope', sans-serif; letter-spacing: .03em; }
-.mc-n.c-sacro { border-color: #a78bfa; } .mc-n.c-profano { border-color: #F99D1C; }
-.mc-n.c-sacro .mc-t, .mc-n.c-profano .mc-t { font-size: 15px; font-weight: 800; }
+.mc-n.sacro, .mc-n.profano, .mc-n.sx, .mc-n.dx { border-width: 3px; }
+.mc-n.sacro, .mc-n.dx { border-color: #a78bfa; background: #2a2160; } .mc-n.profano, .mc-n.sx { border-color: #F99D1C; background: #3a2512; }
+.mc-n.sacro .mc-t, .mc-n.profano .mc-t, .mc-n.sx .mc-t, .mc-n.dx .mc-t { font: 800 20px 'Manrope', sans-serif; letter-spacing: .03em; }
+.mc-n.c-sacro, .mc-n.c-dx { border-color: #a78bfa; } .mc-n.c-profano, .mc-n.c-sx { border-color: #F99D1C; }
+.mc-n.c-sacro .mc-t, .mc-n.c-profano .mc-t, .mc-n.c-sx .mc-t, .mc-n.c-dx .mc-t { font-size: 15px; font-weight: 800; }
 .mc-n.dettaglio { border: 1px solid rgba(255,255,255,0.2); background: rgba(15,23,42,0.75); }
 .mc-n.dettaglio .mc-t { font: 500 13px/1.3 'Inter', sans-serif; }
 .mc-anteprima { display: block; margin: 0 auto; padding: 0; border: 0; background: none; cursor: zoom-in; position: relative; color: inherit; font: inherit; }
@@ -266,6 +266,7 @@ button.mc-n:hover { filter: brightness(1.18); }
 #stampa .mc { color: #000; }
 #stampa .mc-n { background: #fff !important; color: #000 !important; border-color: #000 !important; }
 #stampa .mc-n.radice { border-width: 3px; }
+#stampa .mc-n.radice .mc-t { white-space: nowrap; }
 #stampa .mc-t b, #stampa .mc-s b, #stampa .mc-s, #stampa .mc-n.radice .mc-s { color: #000; }
 #stampa .mc-l { background: #fff; color: #000; }
 #stampa .mc-f { stroke: #000; } #stampa .mc-svg marker path { fill: #000; }

@@ -4,151 +4,14 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Il Rinascimento — Storia della musica — musicascuole.it</title>
-<meta name="description" content="La musica del Rinascimento raccontata attraverso gli ascolti: Roma e Palestrina, Venezia e i cori battenti di Gabrieli, il madrigale, la stampa musicale, le danze e gli strumenti.">
+<meta name="description" content="Il Rinascimento in musica, un capitolo alla volta: la stampa, Josquin, il madrigale, Palestrina e il Concilio di Trento, Maddalena Casulana, Victoria, il concerto delle dame di Ferrara, Gabrieli a San Marco e l'Orfeo di Monteverdi, con ascolti, strumenti, esercizi e schede.">
 <link rel="icon" href="favicon.svg" type="image/svg+xml">
 <link rel="icon" href="favicon-32.png" type="image/png" sizes="32x32">
 <link rel="apple-touch-icon" href="apple-touch-icon.png">
 <link rel="stylesheet" href="fonts/caratteri.css">
 <link rel="stylesheet" href="comune.css">
-<style>
-  * { box-sizing: border-box; }
-  html, body { margin: 0; min-height: 100%; }
-  body { min-height: 100vh; font-family: 'Inter', 'Segoe UI', Arial, sans-serif; color: #EAF2FF; -webkit-font-smoothing: antialiased;
-    background: #0f172a; overflow-x: hidden; position: relative; }
-
-  .casetta { position: fixed; top: 12px; left: 12px; z-index: 40; width: 44px; height: 44px; border-radius: 50%; display: grid; place-items: center;
-    background: rgba(15,23,42,0.75); border: 1px solid rgba(255,255,255,0.18); text-decoration: none; font-size: 20px; color: #EAF2FF; font-weight: 700; }
-
-  main { position: relative; z-index: 1; max-width: 1400px; margin: 0 auto; padding: 12px 20px 24px; }
-
-  /* ---------- doppio banner ---------- */
-  .banner { position: relative; height: clamp(170px, 30vh, 320px); border-radius: 18px; overflow: hidden; background: #111827;
-    border: 1px solid rgba(255,255,255,0.1); user-select: none; -webkit-user-select: none; }
-  .meta { position: absolute; inset: 0; cursor: pointer; transition: filter .35s ease, opacity .35s ease; -webkit-tap-highlight-color: transparent; }
-  .meta img { width: 100%; height: 100%; object-fit: cover; display: block; }
-  .meta.sx { clip-path: polygon(0 0, 56% 0, 44% 100%, 0 100%); }
-  .meta.dx { clip-path: polygon(56% 0, 100% 0, 100% 100%, 44% 100%); }
-  .meta.sx img { width: 58%; object-position: 50% 55%; }
-  .meta.dx img { width: 58%; margin-left: 42%; object-position: 50% 40%; }
-  .banner.f-sx .meta.dx, .banner.f-dx .meta.sx { filter: grayscale(.85) brightness(.45); }
-  .banner::after { content: ""; position: absolute; inset: 0; pointer-events: none;
-    background: radial-gradient(ellipse at 50% 55%, rgba(15,23,42,0.55) 0%, rgba(15,23,42,0) 60%), linear-gradient(0deg, rgba(15,23,42,0.75), rgba(15,23,42,0) 45%); }
-  .titolo-epoca { position: absolute; left: 50%; top: 50%; transform: translate(-50%, -58%); text-align: center; z-index: 2; pointer-events: none; }
-  .titolo-epoca .sopra { font-family: 'Manrope', sans-serif; font-weight: 800; font-size: 11.5px; letter-spacing: .16em; text-transform: uppercase; color: #FDE7C7; text-shadow: 0 1px 6px rgba(0,0,0,.8); }
-  .titolo-epoca h1 { font-family: 'Fredoka', 'Manrope', sans-serif; font-weight: 600; margin: 0; font-size: clamp(32px, 6vw, 62px); line-height: 1.05; text-shadow: 0 2px 18px rgba(0,0,0,.85); }
-  .titolo-epoca .date { font-family: 'Manrope', sans-serif; font-weight: 800; color: #FFE58A; font-size: clamp(13px, 1.6vw, 17px); text-shadow: 0 1px 8px rgba(0,0,0,.9); }
-  .etich-meta { position: absolute; bottom: 12px; z-index: 3; font-family: 'Manrope', sans-serif; font-weight: 800; font-size: 12.5px;
-    padding: 6px 12px; border-radius: 999px; background: rgba(15,23,42,0.72); border: 1px solid rgba(255,255,255,0.22); cursor: pointer; white-space: nowrap; }
-  .etich-meta.sx { left: 12px; color: #FBC877; } .etich-meta.dx { right: 12px; color: #C4B5FD; }
-  .etich-meta.attiva { background: #EAF2FF; color: #0f172a; }
-  @media (max-width: 560px) { .etich-meta { font-size: 11px; padding: 5px 9px; bottom: 8px; } .etich-meta .lungo { display: none; } }
-
-  .atmosfera { text-align: center; color: #9FB3CE; font-size: 13px; font-style: italic; margin: 10px auto 12px; max-width: 760px; line-height: 1.45; }
-
-  /* ---------- schede ---------- */
-  .schede { display: flex; justify-content: center; gap: 8px; flex-wrap: wrap; margin-bottom: 12px; }
-  .scheda { font: 700 13.5px 'Manrope', sans-serif; color: #EAF2FF; cursor: pointer; padding: 8px 16px; border-radius: 999px;
-    background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.14); display: inline-flex; align-items: center; gap: 7px; }
-  .scheda:hover { background: rgba(255,255,255,0.12); }
-  .scheda.attiva { background: #EAF2FF; color: #0f172a; border-color: #EAF2FF; }
-  .scheda .n { font-size: 11px; opacity: .65; }
-  @media (max-width: 560px) { main { padding-top: 64px !important; } .schede { flex-wrap: nowrap; gap: 6px; } .scheda { font-size: 12.5px; padding: 7px 11px; gap: 5px; } .scheda .n { display: none; } }
-
-  /* ---------- griglia di card (come in home) ---------- */
-  .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 12px; }
-  @media (min-width: 1200px) { .grid { grid-template-columns: repeat(5, 1fr); } }
-  @media (max-width: 520px) { .grid { grid-template-columns: repeat(2, 1fr); gap: 9px; } main { padding: 10px 12px 20px; } }
-  .card { --accent: #5EC8D8; position: relative; background: rgba(255,255,255,0.035); border: 1px solid rgba(255,255,255,0.09); border-top: 2px solid var(--accent);
-    border-radius: 12px; overflow: hidden; display: flex; flex-direction: column; text-align: left; font: inherit; color: inherit; padding: 0; cursor: pointer;
-    transition: border-color .2s ease, transform .2s ease, background .2s ease; }
-  .card:hover { transform: translateY(-2px); background: rgba(255,255,255,0.06); border-color: color-mix(in srgb, var(--accent) 55%, transparent); border-top-color: var(--accent); }
-  .card:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
-  .card .foto { aspect-ratio: 16 / 10; background: #1e293b center / cover no-repeat; position: relative; }
-  .card .foto::after { content: "▶"; position: absolute; right: 8px; bottom: 8px; width: 30px; height: 30px; border-radius: 50%; display: grid; place-items: center;
-    font-size: 12px; background: rgba(15,23,42,0.8); color: #fff; border: 1px solid rgba(255,255,255,0.3); }
-  .card .testo { padding: 9px 11px 11px; display: flex; flex-direction: column; gap: 3px; flex: 1; }
-  .card .label { align-self: flex-start; font-size: 9px; font-weight: 700; letter-spacing: .05em; text-transform: uppercase; color: var(--accent);
-    background: color-mix(in srgb, var(--accent) 14%, transparent); padding: 2px 7px; border-radius: 999px; }
-  .card h2 { font-family: 'Manrope', sans-serif; font-weight: 700; font-size: 14px; margin: 2px 0 0; letter-spacing: -0.01em; line-height: 1.25; }
-  .card .chi { font-size: 11px; color: #9FB3CE; font-weight: 600; }
-  .card p { font-size: 11.5px; line-height: 1.4; color: #B8C7DD; margin: 2px 0 0; }
-  .card.dx { --accent: #a78bfa; } .card.sx { --accent: #F99D1C; } .card.strum { --accent: #5EC8D8; } .card.suona { --accent: #BED958; }
-  .card.empty { cursor: default; border-style: dashed; background: transparent; }
-  .card.empty:hover { transform: none; }
-  .card.empty .foto::after { content: "presto"; width: auto; height: auto; padding: 3px 9px; border-radius: 999px; font: 700 10.5px 'Manrope', sans-serif; letter-spacing: .04em; }
-  .card.nascosta { display: none; }
-
-  /* ---------- finestra dell'ascolto ---------- */
-  .velo { position: fixed; inset: 0; z-index: 60; background: rgba(2,6,23,0.82); display: none; align-items: center; justify-content: center; padding: 16px; }
-  .velo.aperto { display: flex; }
-  .finestra { position: relative; width: min(1180px, 100%); max-height: calc(100vh - 32px); overflow: auto; background: #131c33; border: 1px solid rgba(255,255,255,0.14);
-    border-top: 3px solid var(--accent, #5EC8D8); border-radius: 18px; display: grid; grid-template-columns: 1.55fr 1fr; gap: 0; box-shadow: 0 20px 60px rgba(0,0,0,.5); }
-  @media (max-width: 860px) { .finestra { grid-template-columns: 1fr; } }
-  .schermo { position: relative; aspect-ratio: 16 / 9; background: #000 center / cover no-repeat; }
-  .schermo iframe { position: absolute; inset: 0; width: 100%; height: 100%; border: 0; }
-  .avvio { position: absolute; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 10px; cursor: pointer;
-    background: rgba(2,6,23,0.55); border: 0; color: #fff; font: inherit; width: 100%; }
-  .avvio .tondo { width: 76px; height: 76px; border-radius: 50%; background: #FFE58A; color: #0f172a; display: grid; place-items: center; font-size: 30px; padding-left: 6px; box-shadow: 0 6px 24px rgba(0,0,0,.45); }
-  .avvio:hover .tondo { transform: scale(1.06); }
-  .avvio .nota { font-size: 12px; color: #DCE6F5; background: rgba(15,23,42,0.7); padding: 4px 10px; border-radius: 999px; }
-  .info { padding: 16px 18px 14px; display: flex; flex-direction: column; gap: 8px; }
-  .info .label { align-self: flex-start; font-size: 10px; font-weight: 800; letter-spacing: .06em; text-transform: uppercase; color: var(--accent); background: color-mix(in srgb, var(--accent) 16%, transparent); padding: 3px 9px; border-radius: 999px; }
-  .info h3 { font-family: 'Manrope', sans-serif; font-weight: 800; font-size: 22px; margin: 0; line-height: 1.2; }
-  .info .chi { font-size: 13px; color: #9FB3CE; font-weight: 600; margin-top: -4px; }
-  .info .gancio { font-family: 'Manrope', sans-serif; font-weight: 700; font-size: 16px; color: #FFE58A; margin: 2px 0 0; }
-  .info ul { margin: 0; padding-left: 0; list-style: none; display: flex; flex-direction: column; gap: 6px; }
-  .info li { font-size: 14.5px; color: #DCE6F5; line-height: 1.45; padding-left: 24px; position: relative; }
-  .info li::before { content: "🎧"; position: absolute; left: 0; top: 0; font-size: 13px; }
-  .info .sapevi { font-size: 13.5px; color: #DCE6F5; background: rgba(255,255,255,0.05); border-left: 3px solid var(--accent); border-radius: 8px; padding: 8px 10px; line-height: 1.45; }
-  .info .sapevi b { color: var(--accent); }
-  .info .piede { margin-top: auto; display: flex; justify-content: space-between; align-items: flex-end; gap: 10px; flex-wrap: wrap; font-size: 11px; color: #7F93B2; }
-  .info .piede a { color: #7DD3FC; }
-  .chiudi { position: absolute; top: 8px; right: 8px; z-index: 3; width: 40px; height: 40px; border-radius: 50%; border: 1px solid rgba(255,255,255,0.25);
-    background: rgba(15,23,42,0.85); color: #fff; font-size: 18px; cursor: pointer; }
-  .frecce { display: flex; gap: 8px; }
-  .freccia { font: 700 13px 'Manrope', sans-serif; color: #EAF2FF; background: rgba(255,255,255,0.08); border: 1px solid rgba(255,255,255,0.18); border-radius: 999px; padding: 7px 14px; cursor: pointer; }
-  .freccia:hover { background: rgba(255,255,255,0.15); }
-
-  /* ---------- L'Orfeo ---------- */
-  .scheda.speciale { background: linear-gradient(135deg, rgba(180,83,9,0.55), rgba(124,45,18,0.55)); border-color: #FBBF24; color: #FFE58A; }
-  .scheda.speciale:hover { background: linear-gradient(135deg, rgba(180,83,9,0.8), rgba(124,45,18,0.8)); }
-  .scheda.speciale.attiva { background: #FFE58A; color: #0f172a; border-color: #FFE58A; }
-  .orfeo { --accent: #FBBF24; display: grid; grid-template-columns: 1.55fr 1fr; background: #131c33; border: 1px solid rgba(255,255,255,0.14);
-    border-top: 3px solid var(--accent); border-radius: 18px; overflow: hidden; }
-  .orfeo[hidden], .grid[hidden] { display: none; }
-  @media (max-width: 860px) { .orfeo { grid-template-columns: 1fr; } }
-  .o-video { display: flex; flex-direction: column; background: #000; }
-  .o-sotto { font-size: 11.5px; color: #9FB3CE; padding: 8px 12px; background: #0b1224; }
-  .o-sotto a { color: #7DD3FC; }
-  .o-info { padding: 14px 16px 14px; display: flex; flex-direction: column; gap: 6px; min-height: 0; }
-  .o-info .label { align-self: flex-start; font-size: 10px; font-weight: 800; letter-spacing: .06em; text-transform: uppercase; color: var(--accent); background: color-mix(in srgb, var(--accent) 16%, transparent); padding: 3px 9px; border-radius: 999px; }
-  .o-info h3 { font-family: 'Fredoka', 'Manrope', sans-serif; font-weight: 600; font-size: 28px; margin: 0; line-height: 1.1; }
-  .o-info .chi { font-size: 13px; color: #9FB3CE; font-weight: 600; }
-  .o-info .gancio { font-family: 'Manrope', sans-serif; font-weight: 700; font-size: 15px; color: #FFE58A; }
-  .o-tab { display: flex; gap: 6px; margin-top: 4px; flex-wrap: wrap; }
-  .o-t { font: 700 12.5px 'Manrope', sans-serif; color: #EAF2FF; cursor: pointer; padding: 6px 12px; border-radius: 999px; background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.16); }
-  .o-t:hover { background: rgba(255,255,255,0.12); }
-  .o-t.attiva { background: var(--accent); color: #0f172a; border-color: var(--accent); }
-  .o-corpo { flex: 1; min-height: 0; overflow: auto; padding-right: 4px; }
-  @media (min-width: 861px) { .o-info { contain: size; } }   /* la colonna dei testi si adatta all'altezza del video e scorre */
-  .o-corpo ul { margin: 4px 0 0; padding: 0; list-style: none; display: flex; flex-direction: column; gap: 7px; }
-  .o-corpo li { font-size: 14px; color: #DCE6F5; line-height: 1.45; padding-left: 24px; position: relative; }
-  .o-corpo li::before { content: attr(data-i); position: absolute; left: 0; top: 0; font-size: 13px; }
-  .o-corpo .atto { display: grid; grid-template-columns: 62px 1fr; gap: 8px; align-items: baseline; padding: 6px 8px; border-radius: 8px; background: rgba(255,255,255,0.04); font-size: 13.5px; color: #DCE6F5; line-height: 1.4; }
-  .o-corpo .atto b { font: 800 11px 'Manrope', sans-serif; color: var(--accent); text-transform: uppercase; letter-spacing: .05em; }
-  .o-corpo .atto + .atto { margin-top: 5px; }
-  .o-corpo .cur { font-size: 13.5px; color: #DCE6F5; background: rgba(255,255,255,0.05); border-left: 3px solid var(--accent); border-radius: 8px; padding: 7px 10px; line-height: 1.45; }
-  .o-corpo .cur + .cur { margin-top: 6px; }
-  .o-corpo .cur b { color: var(--accent); }
-  .o-corpo .cur img { float: right; height: 150px; margin: 0 0 4px 10px; border-radius: 6px; background: #fff; cursor: zoom-in; }
-  .o-corpo .cur::after { content: ""; display: block; clear: both; }
-
-  .crediti-img { margin-top: 18px; font-size: 11.5px; color: #7F93B2; }
-  .crediti-img summary { cursor: pointer; color: #9FB3CE; }
-  .crediti-img li { margin: 3px 0; } .crediti-img a { color: #7DD3FC; }
-  footer.piede { position: relative; z-index: 1; text-align: center; font-size: 13px; color: #9FB3CE; padding: 12px 12px 24px; }
-  @media (prefers-reduced-motion: reduce) { .card, .meta { transition: none; } }
-</style>
+<link rel="stylesheet" href="storia-attivita.css">
+<link rel="stylesheet" href="storia-percorso.css">
 <!-- per i motori di ricerca e la condivisione -->
 <link rel="canonical" href="https://musicascuole.it/storia-rinascimento.html">
 <meta property="og:type" content="website">
@@ -156,7 +19,7 @@
 <meta property="og:locale" content="it_IT">
 <meta property="og:url" content="https://musicascuole.it/storia-rinascimento.html">
 <meta property="og:title" content="Il Rinascimento — Storia della musica — musicascuole.it">
-<meta property="og:description" content="La musica del Rinascimento raccontata attraverso gli ascolti: Roma e Palestrina, Venezia e i cori battenti di Gabrieli, il madrigale, la stampa musicale, le danze e gli strumenti.">
+<meta property="og:description" content="Il Rinascimento in musica, un capitolo alla volta: la stampa, Josquin, il madrigale, Palestrina e il Concilio di Trento, Maddalena Casulana, Victoria, il concerto delle dame di Ferrara, Gabrieli a San Marco e l'Orfeo di Monteverdi, con ascolti, strumenti, esercizi e schede.">
 <meta property="og:image" content="https://musicascuole.it/media/condivisione.jpg">
 <meta property="og:image:width" content="1200">
 <meta property="og:image:height" content="630">
@@ -169,179 +32,313 @@
 <main>
 
   <div class="banner" id="banner">
-    <div class="meta sx" data-mondo="sx" title="Roma"><img src="media/storia/rinascimento/banner-roma.jpg" alt="La basilica di San Pietro a Roma"></div>
-    <div class="meta dx" data-mondo="dx" title="Venezia"><img src="media/storia/rinascimento/banner-venezia.jpg" alt="La basilica di San Marco a Venezia"></div>
+    <div class="meta sx" title="Roma"><img src="media/storia/rinascimento/banner-roma.jpg" alt="La basilica di San Pietro a Roma"></div>
+    <div class="meta dx" title="Venezia"><img src="media/storia/rinascimento/banner-venezia.jpg" alt="La basilica di San Marco a Venezia"></div>
     <div class="titolo-epoca">
       <div class="sopra">Storia della musica</div>
       <h1>Il Rinascimento</h1>
       <div class="date">1450 – 1600</div>
     </div>
-    <button class="etich-meta sx" data-mondo="sx">⛪ Roma<span class="lungo"> · voci a cappella</span></button>
-    <button class="etich-meta dx" data-mondo="dx">🎺 Venezia<span class="lungo"> · cori, strumenti, stampa</span></button>
+    <span class="etich-meta sx">⛪ Roma<span class="lungo"> · voci a cappella</span></span>
+    <span class="etich-meta dx">🎺 Venezia<span class="lungo"> · cori, strumenti, stampa</span></span>
   </div>
 
+  <div class="contenuto" id="contenuto">
   <p class="atmosfera">Due città, due modi di fare musica. A Roma le voci, pure e ordinate, al servizio della preghiera. A Venezia cori che si rispondono da un lato all'altro della basilica, strumenti squillanti… e i primi spartiti stampati.</p>
 
   <nav class="schede" aria-label="Sezioni">
-    <button class="scheda attiva" data-scheda="ascolti">🎧 Ascolti <span class="n" id="nAscolti"></span></button>
+    <button class="scheda attiva" data-scheda="percorso">📖 Il percorso <span class="n" id="nCapitoli"></span></button>
     <button class="scheda" data-scheda="strumenti">🪕 Strumenti <span class="n" id="nStrumenti"></span></button>
-    <button class="scheda speciale" data-scheda="orfeo">🎭 L'Orfeo</button>
+    <button class="scheda" data-scheda="orfeo">🎭 L'Orfeo</button>
     <button class="scheda" data-scheda="suonare">🎼 Da suonare <span class="n" id="nSuonare"></span></button>
+    <button class="scheda" data-scheda="mappa">🗺️ Mappa<span class="lungo"> concettuale</span></button>
+    <button class="scheda" data-scheda="esercizi">✏️ Esercizi</button>
+    <button class="scheda" data-scheda="schede">🖨️ Schede</button>
   </nav>
 
-  <div class="grid" id="griglia"></div>
-
-  <!-- ===== L'ORFEO: sezione speciale (testi qui sotto, nell'oggetto ORFEO dello script) ===== -->
-  <section class="orfeo" id="orfeo" hidden aria-label="L'Orfeo di Monteverdi">
-    <div class="o-video">
-      <div class="schermo" id="oSchermo"></div>
-      <div class="o-sotto">Opera completa, versione del 1609, con i sottotitoli in italiano · <a id="oLink" target="_blank" rel="noopener">Apri su YouTube ↗</a></div>
-    </div>
-    <div class="o-info">
-      <span class="label">Mantova, 1607 · nasce l'opera</span>
-      <h3>L'Orfeo</h3>
-      <div class="chi">Claudio Monteverdi · libretto di Alessandro Striggio</div>
-      <div class="gancio">Una favola cantata dall'inizio alla fine: la prima grande opera della storia.</div>
-      <div class="o-tab" role="tablist">
-        <button class="o-t attiva" data-o="mito">🏛️ Il mito</button>
-        <button class="o-t" data-o="storia">📜 La storia</button>
-        <button class="o-t" data-o="curiosita">💡 Curiosità</button>
-      </div>
-      <div class="o-corpo" id="oCorpo"></div>
-    </div>
+  <section id="vistaPercorso">
+    <ol class="indice" id="indice"></ol>
   </section>
+  <div class="grid" id="griglia" hidden></div>
+  <section class="vista vista-alta" id="vistaMappa" hidden></section>
+  <section class="vista vista-alta" id="vistaEsercizi" hidden></section>
+  <section class="vista vista-alta" id="vistaSchede" hidden></section>
 
   <details class="crediti-img">
     <summary>Crediti delle immagini e dei video</summary>
     <ul id="listaCrediti"></ul>
     <p>I video sono incorporati da YouTube e restano dei rispettivi titolari: non fanno parte della licenza del sito.</p>
   </details>
+  </div>
 </main>
 
-<div class="velo" id="velo" role="dialog" aria-modal="true" aria-labelledby="fTitolo">
-  <div class="finestra" id="finestra">
-    <button class="chiudi" id="chiudi" aria-label="Chiudi">✕</button>
-    <div class="schermo" id="schermo"></div>
-    <div class="info">
-      <span class="label" id="fLabel"></span>
-      <h3 id="fTitolo"></h3>
-      <div class="chi" id="fChi"></div>
-      <div class="gancio" id="fGancio"></div>
-      <ul id="fPunti"></ul>
-      <div class="sapevi" id="fSapevi"></div>
-      <div class="piede">
-        <div class="frecce"><button class="freccia" id="prec">◀</button><button class="freccia" id="succ">▶</button></div>
-        <div id="fFonte"></div>
-      </div>
-    </div>
-  </div>
-</div>
-
+<script src="storia-attivita.js"></script>
+<script src="storia-percorso.js"></script>
 <script>
 (function () {
   "use strict";
   const IMG = "media/storia/rinascimento/";
 
   /* =========================================================
-     CONTENUTI — per cambiare un video basta cambiare "yt"
-     mondo: "sx" = Roma (metà sinistra del banner), "dx" = Venezia (metà destra)
+     IL PERCORSO — un capitolo per ogni ascolto, in ordine di tempo (dopo l'introduzione).
+     mondo: "sx" = Roma (metà sinistra del banner, arancio), "dx" = Venezia e le corti (metà destra, viola).
+     pagine: { img, did (didascalia), t: [paragrafi] }. Per cambiare un video basta cambiare "yt".
      ========================================================= */
-  const ASCOLTI = [
-    { id: "missa", mondo: "sx", label: "Roma · Messa", titolo: "Missa Papae Marcelli", chi: "Palestrina · Roma, 1562 circa", img: "missa.jpg", yt: "965WSmercZQ", canale: "Cappella Musicale Pontificia Sistina (canale ufficiale)",
-      gancio: "La Messa che, secondo la leggenda, salvò la polifonia.",
-      punti: ["Siamo nell'epoca del <b>Concilio di Trento</b>: la Chiesa vuole che le parole sacre si capiscano bene.",
-              "Le voci sono sei, ma l'intreccio è chiaro e ordinato: nessuna voce copre le altre.",
-              "Solo voci, senza strumenti: è lo stile <b>a cappella</b> romano.",
-              "La canta il coro del Papa, la Cappella Sistina, che esiste ancora oggi."],
-      sapevi: "Si racconta che i cardinali volessero vietare la polifonia in chiesa e che Palestrina li abbia convinti con questa Messa. È una leggenda, ma per secoli Palestrina è stato il modello della musica sacra." },
-    { id: "sicut", mondo: "sx", label: "Roma · mottetto", titolo: "Sicut cervus", chi: "Palestrina · Roma, 1584", img: "sicut.jpg", yt: "dU7k-hiiVjw", canale: "VOCES8",
-      gancio: "«Come la cerva cerca l'acqua…»",
-      punti: ["È un <b>mottetto</b>: un brano sacro in latino, a più voci.",
-              "Ascolta l'<b>imitazione</b>: una voce comincia la melodia, le altre la ripetono una dopo l'altra.",
-              "Le frasi sono lunghe e morbide, senza salti bruschi: è la calma tipica della scuola romana."],
-      sapevi: "Palestrina fu maestro di cappella a San Pietro e a Santa Maria Maggiore e scrisse più di cento Messe." },
-    { id: "josquin", mondo: "sx", label: "Roma · mottetto", titolo: "Ave Maria… virgo serena", chi: "Josquin Desprez · fine Quattrocento", img: "josquin.jpg", yt: "zco6iS9KfQs", canale: "The Hilliard Ensemble (caricato da Air Musica)",
-      gancio: "Il compositore più famoso d'Europa intorno al 1500.",
-      punti: ["Josquin veniva dalle Fiandre e cantò per alcuni anni nel <b>coro del Papa</b>, a Roma.",
-              "Le voci entrano a coppie, imitandosi: ascolta come «Ave Maria» passa da una voce all'altra.",
-              "Alla fine tutte le voci si fermano su accordi lenti per l'ultima preghiera."],
-      sapevi: "Martin Lutero disse di lui: «Josquin è padrone delle note: loro fanno ciò che vuole lui; gli altri compositori fanno ciò che vogliono le note»." },
-    { id: "victoria", mondo: "sx", label: "Roma · mottetto", titolo: "O magnum mysterium", chi: "Tomás Luis de Victoria · Roma, 1572", img: "victoria.jpg", yt: "c1qj4gl3mIs", canale: "Ensemble Plus Ultra",
-      gancio: "Uno spagnolo a Roma racconta il Natale.",
-      punti: ["È un <b>mottetto</b> di Natale: «Oh grande mistero: gli animali videro il Signore appena nato, deposto in una mangiatoia».",
-              "L'inizio è lento e raccolto, come chi entra in punta di piedi nella stalla.",
-              "Alla fine l'<b>Alleluia</b> cambia ritmo e diventa quasi una danza in tre."],
-      sapevi: "Victoria era spagnolo: visse a Roma una ventina d'anni, forse allievo di Palestrina, prima di tornare a Madrid. Questo mottetto fu stampato a Venezia nel 1572." },
-    { id: "gabrieli", mondo: "dx", label: "Venezia · cori battenti", titolo: "Sonata pian' e forte", chi: "Giovanni Gabrieli · Venezia, 1597", img: "gabrieli.jpg", yt: "QXRITlQBitc", canale: "Bartje Bartmans",
-      gancio: "Una delle prime musiche in cui è scritto «piano» e «forte».",
-      punti: ["Due gruppi di strumenti suonano a turno e poi insieme: sono i <b>cori battenti</b>.",
-              "Nella basilica di San Marco i due gruppi stavano su due balconate opposte: il suono arrivava da destra e da sinistra.",
-              "Nel video scorre la partitura: cerca le parole <b>pian</b> e <b>forte</b> scritte sotto le note."],
-      sapevi: "Gabrieli è tra i primi compositori a scrivere sulla partitura come suonare: «pian» e «forte». Nasce così la dinamica." },
-    { id: "grillo", mondo: "dx", label: "Venezia · stampa musicale", titolo: "El grillo", chi: "Josquin Desprez · stampato a Venezia, 1505", img: "grillo.jpg", yt: "62-aBOZrqh8", canale: "Profeti della Quinta",
-      gancio: "«Il grillo è un buon cantore»… e Venezia inventa gli spartiti stampati.",
-      punti: ["È una <b>frottola</b>: una canzone allegra in italiano, a quattro voci.",
-              "Le voci imitano il verso del grillo con note veloci e ripetute.",
-              "Ascolta la nota lunga, tenuta come il canto di un grillo nella notte d'estate."],
-      sapevi: "Nel 1501 a Venezia Ottaviano Petrucci stampò il primo libro di musica polifonica con i caratteri mobili. El grillo uscì in una sua raccolta del 1505." },
-    { id: "arcadelt", mondo: "dx", label: "Venezia · madrigale", titolo: "Il bianco e dolce cigno", chi: "Jacques Arcadelt · stampato a Venezia, 1539", img: "arcadelt.jpg", yt: "gFbT7mZzioY", canale: "Ars Nova Copenhagen",
-      gancio: "Il madrigale: la poesia diventa musica.",
-      punti: ["Il <b>madrigale</b> mette in musica una poesia in italiano, a quattro o cinque voci.",
-              "La musica «dipinge» le parole: ascolta come cambia su «piangendo» e su «morire».",
-              "Si cantava tra amici, nelle case e nelle corti, leggendo ognuno la propria parte."],
-      sapevi: "Il primo libro di madrigali di Arcadelt, stampato a Venezia nel 1539, fu ristampato per più di cent'anni: un vero successo editoriale." },
-    { id: "casulana", mondo: "dx", label: "Venezia · madrigale", titolo: "Morir non può il mio cuore", chi: "Maddalena Casulana · stampato a Venezia, 1566", img: "casulana.jpg", yt: "5yklIyYenzU", canale: "The Sixteen",
-      gancio: "La prima donna a pubblicare la propria musica.",
-      punti: ["È un <b>madrigale</b> a quattro voci, uscito a Venezia nel 1566.",
-              "Ascolta come le voci si inseguono e poi si ritrovano insieme sulle parole più importanti.",
-              "Due anni dopo Casulana pubblicò un intero libro di madrigali tutto suo."],
-      sapevi: "Nella dedica del suo libro (1568) scrisse di voler mostrare «il vano error degli uomini», convinti che l'intelligenza e il talento fossero solo loro." },
-    { id: "dame", label: "Ferrara · concerto delle dame", titolo: "O dolcezze amarissime d'amore", chi: "Luzzasco Luzzaschi · Ferrara, fine Cinquecento", img: "dame.jpg", yt: "T2GoNO0upAw", canale: "Outhere Music (canale ufficiale)",
-      gancio: "Le cantanti più famose d'Italia… in un castello.",
-      punti: ["Alla corte degli Este, a <b>Ferrara</b>, il duca Alfonso II riunì tre cantanti bravissime: Laura Peverara, Anna Guarini e Livia d'Arco.",
-              "Era il <b>concerto delle dame</b>: cantavano per pochi ospiti, in privato, con voci acute e piene di virtuosismi.",
-              "Ascolta i ghirigori veloci delle voci, accompagnate dal clavicembalo."],
-      sapevi: "Altre corti, come Mantova e Firenze, cercarono subito di imitarle. Luzzaschi pubblicò i madrigali scritti per loro solo nel 1601." },
-    { id: "mainerio", mondo: "dx", label: "Venezia · danza", titolo: "Schiarazula Marazula", chi: "Giorgio Mainerio · stampato a Venezia, 1578", img: "mainerio.jpg", yt: "xhLFMEZKkK0", canale: "Ulsamer Collegium (canale ufficiale)",
+  const CAPITOLI = [
+    { id: "viaggio", mondo: "dx", label: "Introduzione", titolo: "Una nuova nascita", data: "1450 – 1600",
+      pagine: [
+        { img: "p-viaggio-1.jpg", did: "La cupola di Santa Maria del Fiore a Firenze, costruita da Brunelleschi tra il 1420 e il 1436: un simbolo del Rinascimento.",
+          t: ["Dopo il Medioevo arriva il <b>Rinascimento</b>, cioè «nuova nascita». Va più o meno dal <b>1450</b> al <b>1600</b>.",
+          "Artisti e studiosi riscoprono l'arte e i libri degli antichi Greci e Romani, e mettono al centro l'<b>uomo</b>, con la sua intelligenza e la sua creatività."] },
+        { img: "p-viaggio-2.jpg", did: "Una tipografia del Cinquecento: si compongono le pagine con i caratteri e si stampano con il torchio (incisione di Jost Amman, 1568).",
+          t: ["Intorno al 1450 Gutenberg inventa la <b>stampa a caratteri mobili</b>: i libri non si copiano più a mano e costano molto meno.",
+          "Presto si stampa anche la musica, e gli spartiti viaggiano in tutta Europa."] },
+        { img: "p-viaggio-3.jpg", did: "Tre amici e un liuto: Giovanni Cariani, Concerto (inizio del Cinquecento).",
+          t: ["La musica ama la <b>polifonia</b>: tante voci, ognuna con la sua melodia, intrecciate con ordine.",
+          "In Italia due città diventano capitali della musica: <b>Roma</b>, con le voci della Chiesa, e <b>Venezia</b>, con cori, strumenti e tipografie. Cominciamo con una danza stampata a Venezia."] }
+      ],
+      brano: "Schiarazula Marazula", chi: "Giorgio Mainerio · stampato a Venezia, 1578", img: "mainerio.jpg", yt: "xhLFMEZKkK0", canale: "Ulsamer Collegium (canale ufficiale)",
       gancio: "Una danza del Cinquecento che si suona ancora a scuola.",
       punti: ["Viene dal <b>Primo libro de balli</b> di Mainerio, stampato a Venezia nel 1578.",
               "La melodia è semplice e si ripete, con un ritmo ben marcato.",
               "La suonano strumenti dell'epoca: cromorni, flauti, percussioni."],
-      sapevi: "Giorgio Mainerio, nato a Parma, era maestro di cappella ad Aquileia, in Friuli. Il titolo è misterioso: nessuno sa con certezza che cosa significhi." }
+      sapevi: "Giorgio Mainerio, nato a Parma, era maestro di cappella ad Aquileia, in Friuli. Il titolo è misterioso: nessuno sa con certezza che cosa significhi.",
+      strumenti: ["cromorno", "flauto"],
+      parole: [["Rinascimento", "«nuova nascita»: l'epoca tra il 1450 e il 1600 che riscopre l'arte degli antichi."], ["Polifonia", "tante voci, ognuna con la sua melodia, cantate insieme."]] },
+
+    { id: "josquin", mondo: "sx", label: "Roma", titolo: "Josquin, il principe della musica", data: "fine Quattrocento",
+      pagine: [
+        { img: "p-josquin-1.jpg", did: "Un grande libro di coro preparato nelle Fiandre, nella bottega di Petrus Alamire, per l'imperatore Massimiliano e Bianca Maria Sforza.",
+          t: ["Intorno al 1500 il compositore più famoso d'Europa è <b>Josquin Desprez</b>.",
+          "Viene dalle <b>Fiandre</b>, una regione tra Francia e Belgio: da lì arrivano in Italia tanti musicisti bravissimi."] },
+        { img: "p-josquin-2.jpg", did: "Ercole I d'Este, duca di Ferrara, che volle Josquin alla sua corte (ritratto della cerchia di Dosso Dossi).",
+          t: ["Lavora nelle corti di Milano e di Ferrara e canta per alcuni anni nel <b>coro del Papa</b>, a Roma.",
+          "I principi se lo contendono: un duca di Ferrara lo volle a tutti i costi, anche se chiedeva uno stipendio altissimo."] },
+        { img: "p-josquin-3.jpg", did: "Una pagina di mottetti stampata da Petrucci a Venezia nel 1503: ogni voce ha la sua parte.",
+          t: ["Nella sua musica le voci si <b>imitano</b>: una canta una frase, le altre la ripetono una dopo l'altra, come in un dialogo.",
+          "I suoi brani sacri in latino si chiamano <b>mottetti</b>."] }
+      ],
+      brano: "Ave Maria… virgo serena", chi: "Josquin Desprez · fine Quattrocento", img: "josquin.jpg", yt: "zco6iS9KfQs", canale: "The Hilliard Ensemble (caricato da Air Musica)",
+      gancio: "Il compositore più famoso d'Europa intorno al 1500.",
+      punti: ["Le voci entrano a coppie, imitandosi: ascolta come «Ave Maria» passa da una voce all'altra.",
+              "Ogni voce è indipendente, ma tutte insieme formano un intreccio ordinato.",
+              "Alla fine tutte le voci si fermano su accordi lenti per l'ultima preghiera."],
+      sapevi: "Martin Lutero disse di lui: «Josquin è padrone delle note: loro fanno ciò che vuole lui; gli altri compositori fanno ciò che vogliono le note».",
+      parole: [["Imitazione", "una voce canta una melodia e le altre la ripetono, una dopo l'altra."], ["Mottetto", "brano sacro a più voci, su parole in latino."]] },
+
+    { id: "grillo", mondo: "dx", label: "Venezia", titolo: "Venezia stampa la musica", data: "1501",
+      pagine: [
+        { img: "p-grillo-1.jpg", did: "La prima pagina di un libro di coro scritto e decorato a mano nelle Fiandre (inizio del Cinquecento).",
+          t: ["Prima della stampa ogni brano si copiava a mano, nota per nota: un lavoro lunghissimo.",
+          "Nei grandi libri di coro le parti erano scritte così grandi che tutti i cantori leggevano dalla stessa pagina."] },
+        { img: "p-grillo-2.jpg", did: "Una pagina dell'Odhecaton, il libro di canzoni stampato da Petrucci a Venezia (edizione del 1504).",
+          t: ["Nel <b>1501</b>, a Venezia, <b>Ottaviano Petrucci</b> stampa il primo libro di musica polifonica con i caratteri mobili: l'<i>Odhecaton</i>, cioè «cento canzoni».",
+          "Da quel momento Venezia diventa la capitale della musica stampata."] },
+        { img: "p-grillo-3.jpg", did: "Un giovane suonatore di liuto (Maestro del Suonatore di liuto, inizio del Seicento).",
+          t: ["Tra le musiche stampate ci sono anche canzoni allegre in italiano, le <b>frottole</b>, che si cantavano nelle case e nelle corti, spesso con il liuto."] }
+      ],
+      brano: "El grillo", chi: "Josquin Desprez · stampato a Venezia, 1505", img: "grillo.jpg", yt: "62-aBOZrqh8", canale: "Profeti della Quinta",
+      gancio: "«Il grillo è un buon cantore»… e Venezia inventa gli spartiti stampati.",
+      punti: ["È una <b>frottola</b>: una canzone allegra in italiano, a quattro voci.",
+              "Le voci imitano il verso del grillo con note veloci e ripetute.",
+              "Ascolta la nota lunga, tenuta come il canto di un grillo nella notte d'estate."],
+      sapevi: "El grillo uscì in una raccolta di frottole stampata da Petrucci nel 1505: era di Josquin, il compositore del capitolo precedente.",
+      strumenti: ["liuto"],
+      parole: [["Frottola", "canzone allegra in italiano, a più voci, del primo Cinquecento."], ["Stampa musicale", "gli spartiti stampati: il primo libro di polifonia esce a Venezia nel 1501."]] },
+
+    { id: "arcadelt", mondo: "dx", label: "Venezia", titolo: "Il madrigale: la poesia diventa musica", data: "1539",
+      pagine: [
+        { img: "p-arcadelt-1.jpg", did: "Tre cantanti e un liuto: Lorenzo Costa, Un concerto (1485 – 1495 circa).",
+          t: ["Nel Cinquecento la moda è il <b>madrigale</b>: una poesia in italiano messa in musica per quattro o cinque voci.",
+          "Spesso le poesie sono di grandi poeti, come Petrarca."] },
+        { img: "p-arcadelt-2.jpg", did: "Il frontespizio di un libro di madrigali di Luca Marenzio, stampato a Venezia nel 1599.",
+          t: ["La musica «dipinge» le parole: se il testo parla di pianto la melodia scende triste, se parla di gioia corre veloce.",
+          "Questi effetti si chiamano <b>madrigalismi</b>."] },
+        { img: "p-arcadelt-3.jpg", did: "Tre musicisti intorno a una tastiera: Il concerto, attribuito a Tiziano (1510 circa).",
+          t: ["I madrigali non si cantavano in chiesa ma in casa, tra amici: ognuno leggeva la sua parte da un libretto, seduto intorno a un tavolo."] }
+      ],
+      brano: "Il bianco e dolce cigno", chi: "Jacques Arcadelt · stampato a Venezia, 1539", img: "arcadelt.jpg", yt: "gFbT7mZzioY", canale: "Ars Nova Copenhagen",
+      gancio: "Il madrigale: la poesia diventa musica.",
+      punti: ["Il <b>madrigale</b> mette in musica una poesia in italiano, a quattro o cinque voci.",
+              "La musica «dipinge» le parole: ascolta come cambia su «piangendo» e su «morire».",
+              "Si cantava tra amici, nelle case e nelle corti, leggendo ognuno la propria parte."],
+      sapevi: "Il primo libro di madrigali di Arcadelt, stampato a Venezia nel 1539, fu ristampato per più di cent'anni: un vero successo editoriale.",
+      strumenti: ["gamba"],
+      parole: [["Madrigale", "poesia in italiano messa in musica per più voci."], ["Madrigalismo", "quando la musica «dipinge» il significato delle parole."]] },
+
+    { id: "palestrina", mondo: "sx", label: "Roma", titolo: "Roma, il Concilio e Palestrina", data: "1562 circa",
+      pagine: [
+        { img: "p-palestrina-1.jpg", did: "Una seduta del Concilio di Trento (dipinto del Cinquecento, Castello del Buonconsiglio, Trento).",
+          t: ["A metà del Cinquecento la Chiesa cattolica si riunisce nel <b>Concilio di Trento</b> (1545 – 1563) per rinnovarsi.",
+          "Si discute anche di musica: in chiesa le parole sacre devono capirsi bene."] },
+        { img: "p-palestrina-2.jpg", did: "La nuova basilica di San Pietro in costruzione, disegnata da Maarten van Heemskerck verso il 1535.",
+          t: ["Il musicista che meglio risponde è <b>Giovanni Pierluigi da Palestrina</b>, maestro di cappella a San Pietro.",
+          "Nella sua musica le voci sono tante, ma l'intreccio è chiaro e calmo: si capisce ogni parola."] },
+        { img: "p-palestrina-3.jpg", did: "L'inizio della Missa Papae Marcelli nella stampa del 1567: le note del Cinquecento.",
+          t: ["Si canta <b>a cappella</b>: solo voci, senza strumenti.",
+          "È lo stile della <b>scuola romana</b>, che per secoli sarà il modello della musica sacra."] }
+      ],
+      brano: "Missa Papae Marcelli", chi: "Palestrina · Roma, 1562 circa", img: "missa.jpg", yt: "965WSmercZQ", canale: "Cappella Musicale Pontificia Sistina (canale ufficiale)",
+      gancio: "La Messa che, secondo la leggenda, salvò la polifonia.",
+      punti: ["Le voci sono sei, ma l'intreccio è chiaro e ordinato: nessuna voce copre le altre.",
+              "Solo voci, senza strumenti: è lo stile <b>a cappella</b> romano.",
+              "La canta il coro del Papa, la Cappella Sistina, che esiste ancora oggi."],
+      sapevi: "Si racconta che i cardinali volessero vietare la polifonia in chiesa e che Palestrina li abbia convinti con questa Messa. È una leggenda, ma per secoli Palestrina è stato il modello della musica sacra.",
+      altri: [{ brano: "Sicut cervus", chi: "Palestrina · Roma, 1584", img: "sicut.jpg", yt: "dU7k-hiiVjw", canale: "VOCES8" }],
+      parole: [["Concilio di Trento", "la grande riunione della Chiesa cattolica (1545 – 1563)."], ["Messa", "la preghiera più importante della Chiesa, messa in musica in più parti (Kyrie, Gloria…)."], ["Scuola romana", "lo stile sacro di Palestrina: voci a cappella, chiare e ordinate."]] },
+
+    { id: "casulana", mondo: "dx", label: "Venezia", titolo: "Maddalena Casulana, compositrice", data: "1566 – 1568",
+      pagine: [
+        { img: "p-casulana-1.jpg", did: "Sofonisba Anguissola, pittrice, si ritrae alla spinetta (1555 circa): le donne suonavano, ma raramente potevano pubblicare.",
+          t: ["Nel Cinquecento quasi tutti i compositori sono uomini: le donne possono suonare e cantare, ma raramente pubblicare la propria musica."] },
+        { img: "p-casulana-2.jpg", did: "Un'altra pittrice musicista: Lavinia Fontana si ritrae alla spinetta (1577).",
+          t: ["<b>Maddalena Casulana</b> è la prima donna a stampare un libro tutto di musica sua: esce a Venezia nel <b>1568</b>.",
+          "Nella dedica scrive di voler mostrare «il vano error degli uomini», convinti che il talento sia solo loro."] }
+      ],
+      brano: "Morir non può il mio cuore", chi: "Maddalena Casulana · stampato a Venezia, 1566", img: "casulana.jpg", yt: "5yklIyYenzU", canale: "The Sixteen",
+      gancio: "La prima donna a pubblicare la propria musica.",
+      punti: ["È un <b>madrigale</b> a quattro voci, uscito a Venezia nel 1566.",
+              "Ascolta come le voci si inseguono e poi si ritrovano insieme sulle parole più importanti.",
+              "Due anni dopo Casulana pubblicò un intero libro di madrigali tutto suo."],
+      sapevi: "Le sue musiche erano conosciute anche fuori d'Italia: Orlando di Lasso fece eseguire una sua musica alla corte di Baviera, per le nozze del principe, nel 1568.",
+      parole: [["Compositrice", "una donna che scrive musica."]] },
+
+    { id: "victoria", mondo: "sx", label: "Roma", titolo: "Uno spagnolo a Roma", data: "1572",
+      pagine: [
+        { img: "p-victoria-1.jpg", did: "Roma alla fine del Cinquecento: il Borgo e il Vaticano nella grande pianta di Antonio Tempesta (1593).",
+          t: ["Roma attira musicisti da tutta Europa. Uno dei più grandi è lo spagnolo <b>Tomás Luis de Victoria</b>.",
+          "Vive a Roma una ventina d'anni, forse allievo di Palestrina, poi torna a Madrid."] },
+        { img: "p-victoria-2.jpg", did: "Una pagina di musica di Victoria stampata nel Cinquecento: in alto la parte del soprano, «Cantus».",
+          t: ["Scrive soltanto musica sacra, intensa e piena di emozione.",
+          "Il suo <i>O magnum mysterium</i> racconta la notte di Natale: il bue e l'asino che guardano Gesù nella mangiatoia."] }
+      ],
+      brano: "O magnum mysterium", chi: "Tomás Luis de Victoria · Roma, 1572", img: "victoria.jpg", yt: "c1qj4gl3mIs", canale: "Ensemble Plus Ultra",
+      gancio: "Uno spagnolo a Roma racconta il Natale.",
+      punti: ["È un <b>mottetto</b> di Natale: «Oh grande mistero: gli animali videro il Signore appena nato, deposto in una mangiatoia».",
+              "L'inizio è lento e raccolto, come chi entra in punta di piedi nella stalla.",
+              "Alla fine l'<b>Alleluia</b> cambia ritmo e diventa quasi una danza in tre."],
+      sapevi: "Questo mottetto fu stampato a Venezia nel 1572: anche i musicisti di Roma facevano stampare la loro musica nelle tipografie veneziane.",
+      parole: [["Maestro di cappella", "chi dirige i cantori e scrive la musica per una chiesa o una corte."]] },
+
+    { id: "dame", mondo: "dx", label: "Ferrara", titolo: "Ferrara e il concerto delle dame", data: "1580 – 1597",
+      pagine: [
+        { img: "p-dame-1.jpg", did: "Alfonso II d'Este, l'ultimo duca di Ferrara (Metropolitan Museum).",
+          t: ["Le corti del Rinascimento fanno a gara per avere i musicisti migliori.",
+          "A <b>Ferrara</b> il duca <b>Alfonso II d'Este</b> riunisce tre cantanti bravissime: Laura Peverara, Anna Guarini e Livia d'Arco."] },
+        { img: "p-dame-2.jpg", did: "«O dolcezze amarissime d'amore» nell'edizione del 1601: sopra le voci, sotto la parte del clavicembalo.",
+          t: ["È il <b>concerto delle dame</b>: cantano per pochi ospiti, in privato, con voci acute e agilissime.",
+          "Altre corti, come Mantova e Firenze, cercano subito di imitarle."] }
+      ],
+      brano: "O dolcezze amarissime d'amore", chi: "Luzzasco Luzzaschi · Ferrara, fine Cinquecento", img: "dame.jpg", yt: "T2GoNO0upAw", canale: "Outhere Music (canale ufficiale)",
+      gancio: "Le cantanti più famose d'Italia… in un castello.",
+      punti: ["Tre voci femminili acute cantano insieme, accompagnate dal clavicembalo.",
+              "Ascolta i ghirigori veloci delle voci: sono i <b>virtuosismi</b>.",
+              "È musica da camera: pensata per una sala, non per una chiesa."],
+      sapevi: "Luzzasco Luzzaschi, organista della corte, pubblicò i madrigali scritti per le dame solo nel 1601, quando ormai Ferrara non aveva più il suo duca.",
+      strumenti: ["virginale"],
+      parole: [["Virtuosismo", "grande bravura tecnica: note velocissime e difficili."], ["Corte", "il palazzo di un signore, con la sua famiglia, i nobili e gli artisti."]] },
+
+    { id: "gabrieli", mondo: "dx", label: "Venezia", titolo: "San Marco e i cori battenti", data: "1597",
+      pagine: [
+        { img: "p-gabrieli-1.jpg", did: "L'interno della basilica di San Marco a Venezia (dipinto di Luigi Querena, 1860).",
+          t: ["La basilica di <b>San Marco</b> a Venezia ha due grandi balconate, una di fronte all'altra, ognuna con il suo organo.",
+          "I musicisti le usano per i <b>cori battenti</b>: due gruppi si rispondono da una parte all'altra, come un'eco."] },
+        { img: "p-gabrieli-2.jpg", did: "L'inizio della Sonata pian' e forte in un'edizione moderna: sotto le note si legge «pian».",
+          t: ["<b>Giovanni Gabrieli</b>, organista di San Marco, scrive musica per voci e strumenti: cornetti, tromboni, violini.",
+          "Nel 1597 stampa la <i>Sonata pian' e forte</i>: una delle prime musiche in cui il compositore scrive quanto piano o forte suonare."] }
+      ],
+      brano: "Sonata pian' e forte", chi: "Giovanni Gabrieli · Venezia, 1597", img: "gabrieli.jpg", yt: "QXRITlQBitc", canale: "Bartje Bartmans",
+      gancio: "Una delle prime musiche in cui è scritto «piano» e «forte».",
+      punti: ["Due gruppi di strumenti suonano a turno e poi insieme: sono i <b>cori battenti</b>.",
+              "Nella basilica i due gruppi stavano su due balconate opposte: il suono arrivava da destra e da sinistra.",
+              "Nel video scorre la partitura: cerca le parole <b>pian</b> e <b>forte</b> scritte sotto le note."],
+      sapevi: "Nasce così la <b>dinamica</b>: da quel momento i compositori cominciano a scrivere sulla partitura anche come suonare, non solo quali note.",
+      strumenti: ["cornetto", "trombone"],
+      parole: [["Cori battenti", "due gruppi di musicisti che si rispondono da due lati."], ["Dinamica", "quanto forte o piano si suona: «piano», «forte»."]] },
+
+    { id: "orfeo", mondo: "dx", label: "Mantova", titolo: "1607: nasce l'opera", data: "1607",
+      pagine: [
+        { img: "p-orfeo-1.jpg", did: "Il cantante e compositore Jacopo Peri nel costume di Arione, per uno spettacolo di Firenze del 1589: un passo verso l'opera.",
+          t: ["Alla fine del Cinquecento, a Firenze, poeti e musicisti vogliono far rinascere il teatro degli antichi Greci, tutto cantato.",
+          "Nasce così l'<b>opera</b>: una storia recitata cantando, con costumi, scene e strumenti."] },
+        { img: "p-orfeo-2.jpg", did: "Claudio Monteverdi in un ritratto di Bernardo Strozzi (1630 circa).",
+          t: ["Il primo capolavoro è l'<b>Orfeo</b> di <b>Claudio Monteverdi</b>, rappresentato a <b>Mantova</b> il 24 febbraio 1607, alla corte dei Gonzaga.",
+          "Racconta il mito di Orfeo, il cantore che con la sua musica incanta animali, alberi e perfino pietre."] },
+        { img: "orfeo.jpg", did: "Il frontespizio della partitura dell'Orfeo, stampata a Venezia nel 1609.",
+          t: ["Sua moglie <b>Euridice</b> muore, morsa da un serpente. Orfeo scende negli Inferi e con il suo canto ottiene di riportarla a casa.",
+          "A un patto: non deve voltarsi a guardarla. Ma Orfeo si volta… e la perde per sempre."] },
+        { img: "orfeo-strumenti.jpg", did: "L'elenco dei personaggi e degli strumenti nella partitura dell'Orfeo (1609).",
+          t: ["Nella partitura Monteverdi scrive quali strumenti devono suonare: flauti, violini e arpa per i pastori, tromboni e un organo dal suono ruvido, il <b>regale</b>, per il regno dei morti.",
+          "Pochi anni dopo diventerà maestro di cappella a San Marco, a Venezia. Il Barocco è alle porte!"] }
+      ],
+      brano: "L'Orfeo", chi: "Claudio Monteverdi · Mantova, 1607", img: "orfeo-mantova.jpg", yt: "wI9QKoopNik", canale: "Agapò te Musikè 2",
+      gancio: "Una favola cantata dall'inizio alla fine: la prima grande opera della storia.",
+      punti: ["Si apre con la <b>Toccata</b>: una fanfara di trombe, ripetuta tre volte, per salutare il duca e i suoi ospiti.",
+              "Poi entra in scena la Musica in persona: «Io la Musica son…».",
+              "Nel terzo atto Orfeo canta «Possente spirto» per convincere Caronte, il traghettatore dei morti, a farlo passare."],
+      sapevi: "Il libretto del 1607 finiva in modo cupo. Nella partitura stampata nel 1609 arriva invece il dio Apollo, padre di Orfeo, e lo porta con sé tra le stelle: è il finale di questo video, con i sottotitoli in italiano.",
+      parole: [["Opera", "una storia recitata cantando, con scene, costumi e strumenti."], ["Libretto", "il testo dell'opera."]] },
+
+    { id: "riepilogo", mondo: "sx", label: "Ricapitoliamo", titolo: "Che cosa abbiamo scoperto", data: "1450 – 1600", riepilogo: true, img: "p-gabrieli-1.jpg",
+      pagine: [
+        { img: "p-viaggio-2.jpg", did: "Una tipografia del Cinquecento (Jost Amman, 1568).",
+          t: ["Il Rinascimento riscopre l'arte degli antichi e mette al centro l'uomo.",
+          "Con la <b>stampa</b> la musica viaggia in tutta Europa: Venezia ne diventa la capitale."] },
+        { img: "p-palestrina-2.jpg", did: "La nuova San Pietro in costruzione (Maarten van Heemskerck, 1535 circa).",
+          t: ["A <b>Roma</b> trionfa la polifonia sacra a cappella: Josquin, Palestrina, Victoria.",
+          "A <b>Venezia</b> e nelle corti nascono i madrigali, i cori battenti e la dinamica; si suonano danze e si stampano frottole."] },
+        { img: "p-orfeo-2.jpg", did: "Claudio Monteverdi (Bernardo Strozzi, 1630 circa).",
+          t: ["Alla fine del secolo la musica si mette al servizio delle parole e del teatro: nel 1607 nasce l'<b>opera</b>.",
+          "Comincia il Barocco."] }
+      ] }
+  ];
+
+  const LINEA = [
+    ["1450 circa", "Gutenberg inventa la stampa a caratteri mobili."],
+    ["1490 circa", "Josquin Desprez canta nel coro del Papa."],
+    ["1492", "Colombo arriva in America."],
+    ["1501", "A Venezia Petrucci stampa il primo libro di musica polifonica."],
+    ["1539", "Il primo libro di madrigali di Arcadelt."],
+    ["1545 – 1563", "Il Concilio di Trento."],
+    ["1562 circa", "La Missa Papae Marcelli di Palestrina."],
+    ["1568", "Maddalena Casulana pubblica il suo libro di madrigali."],
+    ["1578", "Il Primo libro de balli di Mainerio."],
+    ["1597", "Gabrieli scrive «pian» e «forte»."],
+    ["1607", "L'Orfeo di Monteverdi: nasce l'opera."]
   ];
 
   const STRUMENTI = [
-    { id: "flauto", label: "Fiati", titolo: "Flauto dolce", chi: "Una famiglia intera", img: "flauto.jpg", yt: "WXkRgUvY6PM", canale: "The Royal Wind Music",
+    { id: "flauto", label: "Fiati", titolo: "Flauto dolce", chi: "Una famiglia intera", img: "flauto.jpg", epoca: "flauto-epoca.jpg", foto: "flauto.jpg", cerchio: [471, 208, 22, 66, -8], yt: "WXkRgUvY6PM", canale: "The Royal Wind Music",
       gancio: "Lo stesso flauto che suoni a scuola.",
       punti: ["Nel Rinascimento si costruiva in tutte le misure, dal piccolissimo soprano al grande basso.",
               "Insieme formavano un <b>consort</b>, un gruppo di strumenti della stessa famiglia."],
       sapevi: "Era uno degli strumenti più amati: il re Enrico VIII d'Inghilterra ne possedeva più di settanta." },
-    { id: "liuto", label: "Corde pizzicate", titolo: "Liuto", chi: "Il re degli strumenti", img: "liuto.jpg", yt: "csaKmdYJuW4", canale: "Paul Kieffer",
+    { id: "liuto", label: "Corde pizzicate", titolo: "Liuto", chi: "Il re degli strumenti", img: "liuto.jpg", epoca: "liuto-epoca.jpg", foto: "liuto.jpg", yt: "csaKmdYJuW4", canale: "Paul Kieffer",
       gancio: "Lo strumento più amato del Rinascimento.",
       punti: ["Ha la cassa a mezza pera, molte corde doppie e il manico con i tasti.",
               "Si suonava da solo, per accompagnare il canto o insieme ad altri strumenti."],
       sapevi: "Francesco da Milano, autore del ricercare che ascolti qui, era così bravo che lo chiamavano «il divino»." },
-    { id: "gamba", label: "Corde strofinate", titolo: "Viola da gamba", chi: "Si suona tra le gambe", img: "gamba.jpg", yt: "sZh-NN-T1uY", canale: "Voices of Music",
+    { id: "gamba", label: "Corde strofinate", titolo: "Viola da gamba", chi: "Si suona tra le gambe", img: "gamba.jpg", epoca: "gamba-epoca.jpg", foto: "gamba.jpg", cerchio: [83, 227, 48, 118, 14], yt: "sZh-NN-T1uY", canale: "Voices of Music",
       gancio: "Una viola che si tiene tra le gambe.",
       punti: ["Si appoggia sulle gambe o tra le ginocchia; l'arco si tiene dal basso, col palmo in su.",
               "Sul manico ha i tasti, come una chitarra; anche le viole formavano consort di più misure."],
       sapevi: "Non è la nonna del violoncello: viole da gamba e violini sono due famiglie diverse, nate quasi nello stesso periodo." },
-    { id: "cornetto", label: "Fiati", titolo: "Cornetto", chi: "Lo strumento che canta", img: "cornetto.jpg", yt: "qFVNdp4XiQY", canale: "Voices of Music",
+    { id: "cornetto", label: "Fiati", titolo: "Cornetto", chi: "Lo strumento che canta", img: "cornetto.jpg", epoca: "cornetto-epoca.jpg", foto: "cornetto.jpg", yt: "qFVNdp4XiQY", canale: "Voices of Music",
       gancio: "Fori come un flauto, bocchino come una tromba.",
       punti: ["È di legno ricoperto di cuoio, curvo, con i fori per le dita.",
               "Si suona con un piccolo bocchino: il suono assomiglia moltissimo alla voce umana."],
       sapevi: "A San Marco i cornetti suonavano accanto ai cantori nelle grandi feste: qui accompagna un mottetto di Palestrina." },
-    { id: "trombone", label: "Ottoni", titolo: "Trombone rinascimentale", chi: "Il nonno del trombone", img: "trombone.jpg", yt: "RPw_4I6ayc4", canale: "Sabine Gassner",
+    { id: "trombone", label: "Ottoni", titolo: "Trombone rinascimentale", chi: "Il nonno del trombone", img: "trombone.jpg", epoca: "trombone-epoca.jpg", foto: "trombone.jpg", cerchio: [337, 230, 84, 24, -23], yt: "RPw_4I6ayc4", canale: "Sabine Gassner",
       gancio: "Una tromba che si allunga e si accorcia.",
       punti: ["Ha già la <b>coulisse</b>, il tubo che scorre per cambiare nota.",
               "La campana è più stretta di quella moderna: il suono è morbido e si fonde con le voci."],
       sapevi: "Qui suona le «diminuzioni» di Giovanni Bassano, cornettista di San Marco: un madrigale arricchito di note velocissime (Venezia, 1591)." },
-    { id: "cromorno", label: "Fiati", titolo: "Cromorno", chi: "Il «corno storto»", img: "cromorno.jpg", yt: "VeQGk38rp8c", canale: "ReRenaissance",
+    { id: "cromorno", label: "Fiati", titolo: "Cromorno", chi: "Il «corno storto»", img: "cromorno.jpg", epoca: "cromorno-epoca.jpg", foto: "cromorno.jpg", yt: "VeQGk38rp8c", canale: "ReRenaissance",
       gancio: "Un fiato a forma di J, dal suono ronzante.",
       punti: ["L'ancia doppia è chiusa in una capsula: il musicista non la tocca con le labbra.",
               "Il suono è nasale e un po' buffo, perfetto per le danze."],
       sapevi: "Il nome viene dal tedesco Krummhorn, che significa proprio «corno storto»." },
-    { id: "virginale", label: "Tastiera", titolo: "Virginale", chi: "Piccolo clavicembalo", img: "virginale.jpg", yt: "YOG_PPvTvW0", canale: "My Life With Early Music",
+    { id: "virginale", label: "Tastiera", titolo: "Virginale", chi: "Piccolo clavicembalo", img: "virginale.jpg", epoca: "virginale-epoca.jpg", foto: "virginale.jpg", yt: "YOG_PPvTvW0", canale: "My Life With Early Music",
       gancio: "Una tastiera che pizzica le corde.",
       punti: ["Premendo un tasto, una piccola punta pizzica la corda, come nel clavicembalo.",
               "Era spesso decorato con pitture e scritte, come un mobile prezioso."],
@@ -352,35 +349,9 @@
     { titolo: "Schiarazula Marazula", chi: "Giorgio Mainerio", img: "mainerio.jpg" }
   ];
 
-  /* ---------- L'Orfeo (pulsante speciale) ---------- */
-  const ORFEO = {
-    yt: "wI9QKoopNik", canale: "Agapò te Musikè 2", img: "orfeo-mantova.jpg",
-    mito: [
-      ["🎶", "Orfeo è il più grande cantore della mitologia greca: con la sua lira incanta gli animali, gli alberi e perfino le pietre."],
-      ["💍", "Sposa la ninfa <b>Euridice</b>, ma poco dopo le nozze lei viene morsa da un serpente e muore."],
-      ["🔥", "Orfeo scende negli <b>Inferi</b>, il regno dei morti, e con il suo canto commuove chi lo governa: potrà riportarla a casa."],
-      ["⚠️", "A un patto: non dovrà voltarsi a guardarla finché non saranno usciti. Ma Orfeo si volta… e la perde per sempre."]
-    ],
-    storia: [
-      ["Prologo", "La Musica in persona entra in scena e si presenta: «Io la Musica son…»."],
-      ["Atto I", "Festa di nozze tra ninfe e pastori: Orfeo ed Euridice sono felici."],
-      ["Atto II", "Orfeo canta allegro, ma arriva la Messaggera: Euridice è morta. Orfeo: «Tu se' morta, mia vita…»."],
-      ["Atto III", "Accompagnato dalla Speranza, Orfeo arriva al fiume dei morti. Con l'aria «Possente spirto» fa addormentare il traghettatore Caronte e passa."],
-      ["Atto IV", "Proserpina convince Plutone: Euridice può tornare, se Orfeo non si volta. Lui si volta… e lei svanisce."],
-      ["Atto V", "Orfeo piange da solo e gli risponde soltanto l'eco. Scende dal cielo il dio Apollo, suo padre, e lo porta con sé tra le stelle."]
-    ],
-    curiosita: [
-      "<b>Prima volta.</b> Fu rappresentato il 24 febbraio 1607 nel Palazzo Ducale di Mantova, a Carnevale, per pochi invitati della corte dei Gonzaga. Ognuno ricevette il libretto stampato per seguire le parole.",
-      "<b>La sigla iniziale.</b> L'opera si apre con una <b>Toccata</b>: una fanfara di trombe suonata tre volte, per salutare il duca e i suoi ospiti.",
-      `<a href="${IMG}orfeo-strumenti.jpg" target="_blank" rel="noopener"><img src="${IMG}orfeo-strumenti.jpg" alt="Elenco dei personaggi e degli strumenti nella partitura del 1609"></a><b>Gli strumenti raccontano.</b> Nella partitura Monteverdi scrive quali strumenti devono suonare: flauti, violini e arpa per i pastori, tromboni e un organo dal suono ruvido, il <b>regale</b>, per il regno dei morti e per Caronte.`,
-      "<b>Un verso di Dante.</b> All'ingresso degli Inferi la Speranza abbandona Orfeo leggendo una scritta: «Lasciate ogni speranza, voi ch'entrate». Viene dalla Divina Commedia!",
-      "<b>Due finali.</b> Nel libretto del 1607 l'opera finiva in modo cupo, con le Baccanti furiose. Nella partitura stampata nel 1609 arriva invece Apollo con il lieto fine: è la versione di questo video.",
-      "<b>Da Mantova a Venezia.</b> Pochi anni dopo, nel 1613, Monteverdi divenne maestro di cappella proprio a <b>San Marco</b>, a Venezia. Il Barocco è alle porte!"
-    ]
-  };
 
   /* crediti delle immagini (tutte ospitate nel sito) */
-const CREDITI_IMG = [
+  const CREDITI_IMG = [
     'Banner: facciata della basilica di San Pietro, foto di Palickap — <a href="https://commons.wikimedia.org/wiki/File:Roma,_Basilica_di_San_Pietro,_facciata.jpg" target="_blank" rel="noopener">fonte</a>, <a href="https://creativecommons.org/licenses/by-sa/4.0/deed.it" target="_blank" rel="noopener">CC BY-SA 4.0</a>, ritagliata.',
     'Banner: basilica di San Marco, foto di InSapphoWeTrust — <a href="https://commons.wikimedia.org/wiki/File:Basilica_Cattedrale_Patriarcale_di_San_Marco,_Venezia_(5354215510).jpg" target="_blank" rel="noopener">fonte</a>, <a href="https://creativecommons.org/licenses/by-sa/2.0/deed.it" target="_blank" rel="noopener">CC BY-SA 2.0</a>, ritagliata.',
     'Missa Papae Marcelli: Palestrina presenta le sue Messe a papa Giulio III (1554) — <a href="https://commons.wikimedia.org/wiki/File:Giovanni_Palestrina_and_Pope_Julius_III.jpg" target="_blank" rel="noopener">fonte</a>, pubblico dominio.',
@@ -405,132 +376,225 @@ const CREDITI_IMG = [
     'Virginale doppio di Hans Ruckers, 1581 (Metropolitan Museum) — <a href="https://www.metmuseum.org/art/collection/search/503676" target="_blank" rel="noopener">fonte</a>, pubblico dominio (Open Access).'
   ];
 
-  /* ---------- costruzione della griglia ---------- */
-  const griglia = document.getElementById("griglia");
-  document.getElementById("nAscolti").textContent = ASCOLTI.length;
-  document.getElementById("nStrumenti").textContent = STRUMENTI.length;
-  document.getElementById("nSuonare").textContent = SUONARE.length;
+  const CREDITI_PAGINE = [
+  "La cupola di Santa Maria del Fiore a Firenze, costruita da Brunelleschi tra il 1420 e il 1436: un simbolo del Rinascimento — <a href=\"https://commons.wikimedia.org/wiki/File:Cupola_di_santa_maria_del_fiore_dal_campanile_di_giotto,_01.JPG\" target=\"_blank\" rel=\"noopener\">fonte</a>, foto di sailko, <a href=\"https://creativecommons.org/licenses/by/2.5/deed.it\" target=\"_blank\" rel=\"noopener\">CC BY 2.5</a>, ritagliata.",
+  "Una tipografia del Cinquecento: si compongono le pagine con i caratteri e si stampano con il torchio (incisione di Jost Amman, 1568) — <a href=\"https://commons.wikimedia.org/wiki/File:Printer_in_1568-ce.png\" target=\"_blank\" rel=\"noopener\">fonte</a>, pubblico dominio.",
+  "Tre amici e un liuto: Giovanni Cariani, Concerto (inizio del Cinquecento) — <a href=\"https://commons.wikimedia.org/wiki/File:Cariani_-_A_Concert_-_Google_Art_Project.jpg\" target=\"_blank\" rel=\"noopener\">fonte</a>, pubblico dominio.",
+  "Un grande libro di coro preparato nelle Fiandre, nella bottega di Petrus Alamire, per l'imperatore Massimiliano e Bianca Maria Sforza — <a href=\"https://commons.wikimedia.org/wiki/File:Choirbook_of_Maximillian_I_and_Bianca_Maria_Sforza_from_workshop_Petrus_Alamire.jpg\" target=\"_blank\" rel=\"noopener\">fonte</a>, CC0 (pubblico dominio), ritagliata.",
+  "Ercole I d'Este, duca di Ferrara, che volle Josquin alla sua corte (ritratto della cerchia di Dosso Dossi) — <a href=\"https://commons.wikimedia.org/wiki/File:Dosso_dossi,_ritratto_di_ercole_I_d%27este_(da_ercole_de%27_roberti),_1524-28_ca.jpg\" target=\"_blank\" rel=\"noopener\">fonte</a>, foto di Sailko, <a href=\"https://creativecommons.org/licenses/by-sa/4.0/deed.it\" target=\"_blank\" rel=\"noopener\">CC BY-SA 4.0</a>, ritagliata.",
+  "Una pagina di mottetti stampata da Petrucci a Venezia nel 1503: ogni voce ha la sua parte — <a href=\"https://commons.wikimedia.org/wiki/File:Motetti_de_passione_de_cruce_de_Sacramento_-_de_beata_virgine_et_huiusmodi_-_B_-_(Au_colophon)_Impressum_Venetiis_per_Octavianum_Petrutium_forosempronien_-_sem_1503_Die_10_Maij._Cum_privilegio..._-_btv1b525000385_(013_of_144).jpg\" target=\"_blank\" rel=\"noopener\">fonte</a>, pubblico dominio.",
+  "La prima pagina di un libro di coro scritto e decorato a mano nelle Fiandre (inizio del Cinquecento) — <a href=\"https://commons.wikimedia.org/wiki/File:First_page_choirbook_Alamire_of_the_archduke_Charles.jpg\" target=\"_blank\" rel=\"noopener\">fonte</a>, CC0 (pubblico dominio).",
+  "Una pagina dell'Odhecaton, il libro di canzoni stampato da Petrucci a Venezia (edizione del 1504) — <a href=\"https://commons.wikimedia.org/wiki/File:Harmonice_musices_-_Odhecaton_-_A_-_Au_colophon_-_Impssum_Venetiis_per_octavianum_Petrutium_forosemp(ro)nien_-_sem_1504_die_25_maij_-_Marque_de_Petrucci_-_btv1b55007217d_(028_of_208).jpg\" target=\"_blank\" rel=\"noopener\">fonte</a>, pubblico dominio.",
+  "Un giovane suonatore di liuto (Maestro del Suonatore di liuto, inizio del Seicento) — <a href=\"https://commons.wikimedia.org/wiki/File:Lute_Player,_Master_of_the_Lute_Player.jpg\" target=\"_blank\" rel=\"noopener\">fonte</a>, <a href=\"https://creativecommons.org/licenses/by-sa/4.0/deed.it\" target=\"_blank\" rel=\"noopener\">CC BY-SA 4.0</a>.",
+  "Tre cantanti e un liuto: Lorenzo Costa, Un concerto (1485 – 1495 circa) — <a href=\"https://commons.wikimedia.org/wiki/File:Lorenzo_Costa_-_Un_concerto_(National_Gallery,_London).jpg\" target=\"_blank\" rel=\"noopener\">fonte</a>, pubblico dominio.",
+  "Il frontespizio di un libro di madrigali di Luca Marenzio, stampato a Venezia nel 1599 — <a href=\"https://commons.wikimedia.org/wiki/File:Luca_Marenzio_-_Nono_Libro_di_madrigali_a_cinque_voci_(1599).png\" target=\"_blank\" rel=\"noopener\">fonte</a>, pubblico dominio.",
+  "Tre musicisti intorno a una tastiera: Il concerto, attribuito a Tiziano (1510 circa) — <a href=\"https://commons.wikimedia.org/wiki/File:Tiziano,_concerto_a_tre,_1510_ca._01.jpg\" target=\"_blank\" rel=\"noopener\">fonte</a>, pubblico dominio, ritagliata.",
+  "Una seduta del Concilio di Trento (dipinto del Cinquecento, Castello del Buonconsiglio, Trento) — <a href=\"https://commons.wikimedia.org/wiki/File:Concilio_Trento_Museo_Buonconsiglio.jpg\" target=\"_blank\" rel=\"noopener\">fonte</a>, foto di Laurom, <a href=\"https://creativecommons.org/licenses/by-sa/3.0/deed.it\" target=\"_blank\" rel=\"noopener\">CC BY-SA 3.0</a>, ritagliata.",
+  "La nuova basilica di San Pietro in costruzione, disegnata da Maarten van Heemskerck verso il 1535 — <a href=\"https://commons.wikimedia.org/wiki/File:Heemskerck_Construction_of_St_Peters.jpg\" target=\"_blank\" rel=\"noopener\">fonte</a>, pubblico dominio.",
+  "L'inizio della Missa Papae Marcelli nella stampa del 1567: le note del Cinquecento — <a href=\"https://commons.wikimedia.org/wiki/File:Mensuralnotation-Missa_papae_marcelli.jpg\" target=\"_blank\" rel=\"noopener\">fonte</a>, pubblico dominio.",
+  "Sofonisba Anguissola, pittrice, si ritrae alla spinetta (1555 circa): le donne suonavano, ma raramente potevano pubblicare — <a href=\"https://commons.wikimedia.org/wiki/File:Autoritratto_alla_spinetta,_Sofonisba_Anguissola_001.JPG\" target=\"_blank\" rel=\"noopener\">fonte</a>, foto di Mentnafunangann, <a href=\"https://creativecommons.org/licenses/by-sa/4.0/deed.it\" target=\"_blank\" rel=\"noopener\">CC BY-SA 4.0</a>.",
+  "Un'altra pittrice musicista: Lavinia Fontana si ritrae alla spinetta (1577) — <a href=\"https://commons.wikimedia.org/wiki/File:Lavinia_Fontana_-_Self-Portrait_at_the_Spinet_-_WGA07985.jpg\" target=\"_blank\" rel=\"noopener\">fonte</a>, pubblico dominio.",
+  "Roma alla fine del Cinquecento: il Borgo e il Vaticano nella grande pianta di Antonio Tempesta (1593) — <a href=\"https://commons.wikimedia.org/wiki/File:Churches_in_Borgo_(detail)_by_Antonio_Tempesta_(1593).jpg\" target=\"_blank\" rel=\"noopener\">fonte</a>, pubblico dominio.",
+  "Una pagina di musica di Victoria stampata nel Cinquecento: in alto la parte del soprano, «Cantus» — <a href=\"https://commons.wikimedia.org/wiki/File:Missa_alma_redemptoris_(Luis_de_Victoria).jpg\" target=\"_blank\" rel=\"noopener\">fonte</a>, pubblico dominio.",
+  "Alfonso II d'Este, l'ultimo duca di Ferrara (Metropolitan Museum) — <a href=\"https://commons.wikimedia.org/wiki/File:Alfonso_II_d%27Este_(1533%E2%80%931597),_Duke_of_Ferrara_MET_DT326979.jpg\" target=\"_blank\" rel=\"noopener\">fonte</a>, CC0 (pubblico dominio).",
+  "«O dolcezze amarissime d'amore» nell'edizione del 1601: sopra le voci, sotto la parte del clavicembalo — <a href=\"https://commons.wikimedia.org/wiki/File:O_Dolcezze2.jpg\" target=\"_blank\" rel=\"noopener\">fonte</a>, pubblico dominio.",
+  "L'interno della basilica di San Marco a Venezia (dipinto di Luigi Querena, 1860) — <a href=\"https://commons.wikimedia.org/wiki/File:(Padova)_Interno_della_Basilica_di_San_Marco_a_Venezia_-_Il_pulpito,_di_Luigi_Querena_1860_-_Bottacin_Museum.jpg\" target=\"_blank\" rel=\"noopener\">fonte</a>, foto di Didier Descouens, <a href=\"https://creativecommons.org/licenses/by-sa/4.0/deed.it\" target=\"_blank\" rel=\"noopener\">CC BY-SA 4.0</a>.",
+  "L'inizio della Sonata pian' e forte in un'edizione moderna: sotto le note si legge «pian» — <a href=\"https://commons.wikimedia.org/wiki/File:Gabrieli_-_Sonata_pian%27_e_forte_(Beginn).png\" target=\"_blank\" rel=\"noopener\">fonte</a>, di Thepriest75, <a href=\"https://creativecommons.org/licenses/by-sa/4.0/deed.it\" target=\"_blank\" rel=\"noopener\">CC BY-SA 4.0</a>.",
+  "Il cantante e compositore Jacopo Peri nel costume di Arione, per uno spettacolo di Firenze del 1589: un passo verso l'opera — <a href=\"https://commons.wikimedia.org/wiki/File:Jacopo_Peri.jpg\" target=\"_blank\" rel=\"noopener\">fonte</a>, pubblico dominio.",
+  "Claudio Monteverdi in un ritratto di Bernardo Strozzi (1630 circa) — <a href=\"https://commons.wikimedia.org/wiki/File:Bernardo_Strozzi_-_Claudio_Monteverdi_(c.1630).jpg\" target=\"_blank\" rel=\"noopener\">fonte</a>, pubblico dominio.",
+  "Flauto dolce: «Il concerto» di Callisto Piazza (1525 circa) — <a href=\"https://commons.wikimedia.org/wiki/File:Callisto_Piazza_Da_Lodi_-_The_Concert_-_WGA17409.jpg\" target=\"_blank\" rel=\"noopener\">fonte</a>, pubblico dominio, ritagliata.",
+  "Liuto: «Concerto» di Giovanni Cariani (1518–1520 circa) — <a href=\"https://commons.wikimedia.org/wiki/File:Cariani_-_A_Concert_-_Google_Art_Project.jpg\" target=\"_blank\" rel=\"noopener\">fonte</a>, pubblico dominio.",
+  "Viola da gamba: il «Collegium musicum» di Lauingen (1590) — <a href=\"https://commons.wikimedia.org/wiki/File:Collegium_musicum_1590.jpg\" target=\"_blank\" rel=\"noopener\">fonte</a>, pubblico dominio, ritagliata.",
+  "Cornetto: «Doppio ritratto con suonatore di cornetto» di Bartolomeo Passarotti — <a href=\"https://commons.wikimedia.org/wiki/File:Doppio_ritratto_con_suonatore_di_cornetto_-_Passarotti.jpg\" target=\"_blank\" rel=\"noopener\">fonte</a>, pubblico dominio, ritagliata.",
+  "Trombone: «Concertino di gentiluomini» di Girolamo Romanino (anni 1540) — <a href=\"https://commons.wikimedia.org/wiki/File:Concertino_di_gentiluomini,_by_Girolamo_Romanino_circa_1540s.jpg\" target=\"_blank\" rel=\"noopener\">fonte</a>, pubblico dominio, ritagliata.",
+  "Cromorno: angelo musicante, particolare da un dipinto di Vittore Carpaccio (1510) — <a href=\"https://commons.wikimedia.org/wiki/File:Cromorne.jpg\" target=\"_blank\" rel=\"noopener\">fonte</a>, pubblico dominio.",
+  "Virginale: «Ragazza al virginale» di Catharina van Hemessen (1548) — <a href=\"https://commons.wikimedia.org/wiki/File:Catharina_van_Hemessen_-_Girl_at_the_Virginal.jpg\" target=\"_blank\" rel=\"noopener\">fonte</a>, pubblico dominio."
+  ];
 
-  let scheda = "ascolti", mondo = null, elenco = [];
-  function disegna() {
-    griglia.innerHTML = "";
-    const conOrfeo = scheda === "orfeo";
-    document.getElementById("orfeo").hidden = !conOrfeo;
-    griglia.hidden = conOrfeo;
-    if (conOrfeo) { preparaOrfeo(); return; }
-    oSchermo.innerHTML = "";   // si esce dall'Orfeo: il video si ferma
-    if (scheda === "suonare") {
-      SUONARE.forEach(s => {
-        const c = document.createElement("div"); c.className = "card suona empty";
-        c.innerHTML = `<div class="foto" style="background-image:url('${IMG + s.img}')"></div>
-          <div class="testo"><span class="label">Da suonare</span><h2>${s.titolo}</h2><span class="chi">${s.chi}</span></div>`;
-        griglia.appendChild(c);
-      });
-      return;
-    }
-    const dati = scheda === "ascolti" ? ASCOLTI : STRUMENTI;
-    elenco = dati.filter(d => !mondo || !d.mondo || d.mondo === mondo);
-    elenco.forEach((d, i) => {
-      const c = document.createElement("button"); c.type = "button";
-      c.className = "card " + (scheda === "ascolti" ? d.mondo : "strum");
-      c.innerHTML = `<div class="foto" style="background-image:url('${IMG + d.img}')"></div>
-        <div class="testo"><span class="label">${d.label}</span><h2>${d.titolo}</h2><span class="chi">${d.chi}</span><p>${d.gancio}</p></div>`;
-      c.addEventListener("click", () => apri(i));
-      griglia.appendChild(c);
-    });
-  }
+  /* =========================================================
+     MAPPA, ESERCIZI E SCHEDE (motore comune: storia-attivita.js; formato in _sviluppo/storia/LEGGIMI.md)
+     ========================================================= */
+  const ATTIVITA = {
+    mappa: { W: 1280, H: 520,
+      nodi: [
+        { id: "rad", x: 520, y: 0, w: 240, h: 60, t: "IL RINASCIMENTO", s: "1450 – 1600", tipo: "radice" },
+        { id: "nasc", x: 10, y: 0, w: 330, h: 64, t: "«nuova nascita»", s: "si riscoprono gli antichi Greci e Romani; l'uomo al centro", tipo: "quadro", cap: "viaggio" },
+        { id: "stampa", x: 940, y: 0, w: 330, h: 64, t: "la [[stampa]]", s: "con Gutenberg i libri non si copiano più a mano", tipo: "quadro", cap: "grillo" },
+        { id: "danze", x: 10, y: 98, w: 330, h: 52, t: "le [[danze]]", s: "Mainerio, «Schiarazula Marazula»", tipo: "quadro", cap: "viaggio" },
+        { id: "mem", x: 470, y: 98, w: 340, h: 52, t: "la [[polifonia]]", s: "tante voci intrecciate con ordine", tipo: "quadro", cap: "viaggio" },
+        { id: "opera", x: 940, y: 98, w: 330, h: 52, t: "nel 1607 nasce l'[[opera]]", s: "Monteverdi, «L'Orfeo» (Mantova)", tipo: "quadro", cap: "orfeo" },
+        { id: "sx", x: 140, y: 204, w: 320, h: 58, t: "ROMA", s: "la voce della Chiesa", tipo: "sx" },
+        { id: "dx", x: 790, y: 204, w: 370, h: 58, t: "VENEZIA E LE CORTI", s: "stampa, cori, strumenti, madrigali", tipo: "dx" },
+        { id: "j", x: 0, y: 318, w: 185, h: 50, t: "[[Josquin]]", tipo: "c-sx", cap: "josquin" },
+        { id: "p", x: 205, y: 318, w: 185, h: 50, t: "[[Palestrina]]", tipo: "c-sx", cap: "palestrina" },
+        { id: "v", x: 410, y: 318, w: 185, h: 50, t: "Victoria", tipo: "c-sx", cap: "victoria" },
+        { id: "pe", x: 640, y: 318, w: 120, h: 50, t: "Petrucci", tipo: "c-dx", cap: "grillo" },
+        { id: "ma", x: 770, y: 318, w: 120, h: 50, t: "[[Madrigale]]", tipo: "c-dx", cap: "arcadelt" },
+        { id: "ca", x: 900, y: 318, w: 120, h: 50, t: "Casulana", tipo: "c-dx", cap: "casulana" },
+        { id: "cb", x: 1030, y: 318, w: 120, h: 50, t: "[[Cori battenti]]", tipo: "c-dx", cap: "gabrieli" },
+        { id: "fe", x: 1160, y: 318, w: 120, h: 50, t: "Ferrara", tipo: "c-dx", cap: "dame" },
+        { id: "dj", x: 0, y: 410, w: 185, h: 90, t: "le voci si [[imitano]]: una canta, le altre ripetono", tipo: "dettaglio", cap: "josquin" },
+        { id: "dp", x: 205, y: 410, w: 185, h: 90, t: "polifonia chiara e [[a cappella]]: si capiscono le parole", tipo: "dettaglio", cap: "palestrina" },
+        { id: "dv", x: 410, y: 410, w: 185, h: 90, t: "mottetti intensi, come «O magnum mysterium»", tipo: "dettaglio", cap: "victoria" },
+        { id: "dpe", x: 640, y: 410, w: 120, h: 90, t: "1501: il primo libro di polifonia; [[frottole]]", tipo: "dettaglio", cap: "grillo" },
+        { id: "dma", x: 770, y: 410, w: 120, h: 90, t: "poesia in musica: la musica dipinge le parole", tipo: "dettaglio", cap: "arcadelt" },
+        { id: "dca", x: 900, y: 410, w: 120, h: 90, t: "la prima [[compositrice]] che stampa la sua musica", tipo: "dettaglio", cap: "casulana" },
+        { id: "dcb", x: 1030, y: 410, w: 120, h: 90, t: "Gabrieli: «pian» e «forte», la [[dinamica]]", tipo: "dettaglio", cap: "gabrieli" },
+        { id: "dfe", x: 1160, y: 410, w: 120, h: 90, t: "il concerto delle dame: voci [[virtuose]]", tipo: "dettaglio", cap: "dame" }
+      ],
+      archi: [
+        { da: "rad", a: "nasc", l: "vuol dire", forma: "orizz" }, { da: "rad", a: "stampa", l: "ha", forma: "orizz" },
+        { da: "rad", a: "mem", l: "la musica ama", lato: "padre" },
+        { da: "mem", a: "danze", l: "si stampano anche", forma: "orizz" }, { da: "mem", a: "opera", l: "e alla fine", forma: "orizz" },
+        { da: "mem", a: "sx", l: "fiorisce a", lato: "padre" }, { da: "mem", a: "dx" },
+        { da: "sx", a: "j", l: "nel coro del Papa:" }, { da: "sx", a: "p", l: "dopo il Concilio:" }, { da: "sx", a: "v", l: "dalla Spagna:" },
+        { da: "dx", a: "pe", l: "si stampa:" }, { da: "dx", a: "ma", l: "nelle case:" }, { da: "dx", a: "ca", l: "una donna:" },
+        { da: "dx", a: "cb", l: "a San Marco:" }, { da: "dx", a: "fe", l: "nelle corti:" },
+        { da: "j", a: "dj", l: "con lui" }, { da: "p", a: "dp", l: "scrive" }, { da: "v", a: "dv", l: "scrive" },
+        { da: "pe", a: "dpe", l: "stampa" }, { da: "ma", a: "dma", l: "è" }, { da: "ca", a: "dca", l: "è" }, { da: "cb", a: "dcb", l: "con" }, { da: "fe", a: "dfe", l: "con" }
+      ] },
+    mappaBuchi: ["stampa", "danze", "polifonia", "opera", "Josquin", "Palestrina", "imitano", "a cappella", "frottole", "Madrigale", "compositrice", "Cori battenti", "dinamica", "virtuose"],
+    mappaDistrattori: ["neumi", "trovatori", "tetragramma"],
+    vf: [
+      ["Rinascimento vuol dire «nuova nascita».", true, ""],
+      ["Il Rinascimento va più o meno dal 1450 al 1600.", true, ""],
+      ["Nel Rinascimento i libri si copiavano ancora tutti a mano.", false, "Con la stampa di Gutenberg i libri si stampano: costano meno e viaggiano di più."],
+      ["Il primo libro di musica polifonica stampato uscì a Venezia nel 1501.", true, "Lo stampò Ottaviano Petrucci."],
+      ["Josquin Desprez veniva dalla Spagna.", false, "Veniva dalle Fiandre, tra Francia e Belgio."],
+      ["Nell'imitazione le voci ripetono la stessa melodia, una dopo l'altra.", true, ""],
+      ["Il Concilio di Trento voleva che in chiesa le parole sacre si capissero bene.", true, ""],
+      ["Palestrina scriveva soprattutto musica per strumenti.", false, "Scriveva musica sacra per voci, a cappella."],
+      ["«A cappella» vuol dire solo voci, senza strumenti.", true, ""],
+      ["Il madrigale è una poesia in italiano messa in musica per più voci.", true, ""],
+      ["I madrigali si cantavano soprattutto in chiesa, durante la Messa.", false, "Si cantavano in casa e nelle corti, tra amici."],
+      ["Maddalena Casulana fu la prima donna a stampare un libro tutto di musica sua.", true, "Uscì a Venezia nel 1568."],
+      ["Tomás Luis de Victoria era un compositore francese.", false, "Era spagnolo e lavorò a Roma."],
+      ["Nei cori battenti due gruppi di musicisti si rispondono da due lati.", true, "A San Marco stavano su due balconate opposte."],
+      ["Gabrieli è tra i primi a scrivere «piano» e «forte» sulla partitura.", true, ""],
+      ["Il concerto delle dame era un gruppo di cantanti della corte di Ferrara.", true, ""],
+      ["«El grillo» è un canto gregoriano.", false, "È una frottola: una canzone allegra in italiano."],
+      ["Il cromorno è uno strumento a corde.", false, "È un fiato a forma di J, con l'ancia doppia."],
+      ["La viola da gamba si suona tenendola tra le gambe.", true, ""],
+      ["L'Orfeo di Monteverdi fu rappresentato a Mantova nel 1607.", true, ""]
+    ],
+    personaggi: [
+      ["Josquin Desprez", "Compositore fiammingo, cantò nel coro del Papa: il più famoso intorno al 1500."],
+      ["Ottaviano Petrucci", "Stampò a Venezia il primo libro di musica polifonica (1501)."],
+      ["Palestrina", "Maestro di cappella a San Pietro: musica sacra chiara, a cappella."],
+      ["Maddalena Casulana", "La prima donna a stampare un libro tutto di musica sua."],
+      ["Tomás Luis de Victoria", "Compositore spagnolo che lavorò a Roma per vent'anni."],
+      ["Giovanni Gabrieli", "Organista di San Marco: cori battenti, «pian» e «forte»."],
+      ["Alfonso II d'Este", "Duca di Ferrara: creò il concerto delle dame."],
+      ["Claudio Monteverdi", "Compose L'Orfeo, una delle prime opere (Mantova, 1607)."],
+      ["Jacques Arcadelt", "Il suo primo libro di madrigali fu ristampato per più di cent'anni."],
+      ["Giorgio Mainerio", "Pubblicò il Primo libro de balli, con la Schiarazula Marazula."]
+    ],
+    cruciverba: [
+      ["MADRIGALE", "Poesia in italiano messa in musica per più voci"],
+      ["IMITAZIONE", "Le voci ripetono la stessa melodia, una dopo l'altra"],
+      ["STAMPA", "Con lei i libri non si copiano più a mano"],
+      ["PALESTRINA", "Il maestro della musica sacra a Roma"],
+      ["MOTTETTO", "Brano sacro a più voci, in latino"],
+      ["FROTTOLA", "Canzone allegra in italiano, come «El grillo»"],
+      ["CORNETTO", "Fiato di legno, curvo, che «canta» come una voce"],
+      ["CROMORNO", "Il «corno storto», dal suono ronzante"],
+      ["LIUTO", "Il re degli strumenti del Rinascimento"],
+      ["VIRGINALE", "Piccola tastiera che pizzica le corde"],
+      ["OPERA", "Una storia recitata cantando: nasce nel 1607"],
+      ["DINAMICA", "Quanto forte o piano si suona"],
+      ["VENEZIA", "La città della stampa musicale e dei cori battenti"],
+      ["JOSQUIN", "Il compositore fiammingo più famoso intorno al 1500"]
+    ],
+    ascolto: {
+      descr: "Ascolta ogni brano e rispondi: sacro o profano? Voci o strumenti? Come si intrecciano le voci?",
+      criteri: [
+        { id: "amb", nome: "Che musica è?", opz: ["Sacra", "Profana"] },
+        { id: "chi", nome: "Chi suona o canta?", opz: ["Solo voci", "Solo strumenti", "Voci e strumenti"] },
+        { id: "come", nome: "Come si muovono le parti?", opz: ["Una dopo l'altra (imitazione)", "Tutte insieme, come accordi", "Due gruppi che si rispondono"] },
+        { id: "ling", nome: "In che lingua?", opz: ["Latino", "Italiano", "Nessuna: solo strumenti"] },
+        { id: "ritmo", nome: "Che carattere ha?", opz: ["Calmo, scorre morbido", "Vivace, da ballare"] }
+      ],
+      brani: [
+        { cap: "viaggio", r: { amb: [1], chi: [1], come: [1], ling: [2], ritmo: [1] } },
+        { cap: "josquin", r: { amb: [0], chi: [0], come: [0], ling: [0], ritmo: [0] } },
+        { cap: "grillo", r: { amb: [1], chi: [0, 2], come: [1], ling: [1], ritmo: [1] } },
+        { cap: "arcadelt", r: { amb: [1], chi: [0], come: [1, 0], ling: [1], ritmo: [0] } },
+        { cap: "palestrina", r: { amb: [0], chi: [0], come: [0, 1], ling: [0], ritmo: [0] }, nota: "Palestrina alterna imitazione e accordi: così le parole si capiscono bene." },
+        { cap: "casulana", r: { amb: [1], chi: [0], come: [0, 1], ling: [1], ritmo: [0] } },
+        { cap: "victoria", r: { amb: [0], chi: [0], come: [0, 1], ling: [0], ritmo: [0, 1] }, nota: "L'inizio è calmo; l'Alleluia finale diventa quasi una danza." },
+        { cap: "dame", r: { amb: [1], chi: [2], come: [0, 1], ling: [1], ritmo: [0, 1] } },
+        { cap: "gabrieli", r: { amb: [0, 1], chi: [1], come: [2], ling: [2], ritmo: [0] }, nota: "È musica strumentale, ma si suonava nella basilica di San Marco, nelle feste solenni." }
+      ] },
+    riassunto: {
+      testo: "Il <b>Rinascimento</b> (1450 – 1600) riscopre l'arte degli antichi e mette al centro l'uomo. Con la <b>stampa</b> la musica viaggia in tutta Europa. Trionfa la <b>polifonia</b>: a <b>Roma</b> la musica sacra a cappella, a <b>Venezia</b> e nelle corti la stampa, i madrigali, gli strumenti. Alla fine del secolo nasce l'<b>opera</b>.",
+      immagini: [["p-viaggio-2.jpg", "La stampa"], ["p-palestrina-1.jpg", "Il Concilio di Trento"], ["p-arcadelt-1.jpg", "Un concerto in casa"], ["p-gabrieli-1.jpg", "San Marco a Venezia"]],
+      punti: [
+        ["Roma", ["<b>Josquin Desprez</b>: le voci si imitano.", "<b>Palestrina</b>: dopo il Concilio di Trento, polifonia chiara e a cappella.", "<b>Victoria</b>: uno spagnolo a Roma."]],
+        ["Venezia e le corti", ["<b>Petrucci</b> stampa la musica (1501); frottole e madrigali.", "<b>Maddalena Casulana</b>, la prima compositrice a stampare la sua musica.", "<b>Gabrieli</b>: cori battenti e dinamica. <b>Ferrara</b>: il concerto delle dame.", "<b>Monteverdi</b>: l'Orfeo (1607), nasce l'opera."]]
+      ] },
+    riassuntoBreve: {
+      testo: "Il <b>Rinascimento</b> è la «nuova nascita» dell'arte. Con la <b>stampa</b> la musica viaggia ovunque. A <b>Roma</b> si canta la musica sacra, a <b>Venezia</b> si stampano spartiti e si suonano strumenti.",
+      date: [["1450", "comincia il Rinascimento, nasce la stampa"], ["1501", "il primo libro di musica stampato, a Venezia"], ["1562", "la Messa di Palestrina"], ["1597", "Gabrieli scrive «piano» e «forte»"], ["1607", "nasce l'opera: L'Orfeo"]],
+      parole: [["Polifonia", "tante voci insieme."], ["Imitazione", "le voci si ripetono, una dopo l'altra."], ["A cappella", "solo voci."], ["Madrigale", "poesia in musica, in italiano."], ["Frottola", "canzone allegra in italiano."], ["Cori battenti", "due gruppi che si rispondono."], ["Dinamica", "piano e forte."], ["Opera", "una storia cantata."]] },
+    raccontoBreve: {
+      viaggio: "Il Rinascimento va dal 1450 al 1600. Si riscopre l'arte degli antichi e nasce la stampa: i libri e gli spartiti viaggiano ovunque.",
+      josquin: "Josquin Desprez viene dalle Fiandre e canta nel coro del Papa. Nei suoi mottetti le voci si imitano.",
+      grillo: "Nel 1501 a Venezia Petrucci stampa il primo libro di musica. Si stampano anche canzoni allegre, le frottole.",
+      arcadelt: "Il madrigale è una poesia in italiano cantata a più voci. Si canta in casa, tra amici.",
+      palestrina: "Dopo il Concilio di Trento, Palestrina scrive musica sacra chiara, a cappella: si capisce ogni parola.",
+      casulana: "Maddalena Casulana è la prima donna a stampare un libro tutto di musica sua (1568).",
+      victoria: "Lo spagnolo Victoria lavora a Roma e scrive musica sacra piena di emozione.",
+      dame: "A Ferrara il duca riunisce tre cantanti bravissime: è il concerto delle dame.",
+      gabrieli: "A San Marco due gruppi di musicisti si rispondono: sono i cori battenti. Gabrieli scrive «piano» e «forte».",
+      orfeo: "Nel 1607 a Mantova Monteverdi presenta l'Orfeo: una storia tutta cantata. Nasce l'opera." },
+    verifica: {
+      quanti: { vf: 14, collega: 6, personaggi: 5, scelte: 10, frasi: 7, aperte: 2 },
+      scelte: [
+        ["Che cosa vuol dire «Rinascimento»?", ["Nuova nascita", "Nuova musica", "Nuova città"], 0],
+        ["Chi inventò la stampa a caratteri mobili?", ["Gutenberg", "Petrucci", "Palestrina"], 0],
+        ["In quale città si stampò il primo libro di musica polifonica?", ["Venezia", "Roma", "Firenze"], 0],
+        ["Da dove veniva Josquin Desprez?", ["Dalle Fiandre", "Dalla Spagna", "Da Napoli"], 0],
+        ["Che cos'è l'imitazione?", ["Le voci ripetono la melodia una dopo l'altra", "Tutte le voci cantano la stessa nota", "Si canta senza strumenti"], 0],
+        ["Che cosa chiedeva il Concilio di Trento per la musica in chiesa?", ["Che le parole si capissero bene", "Che si usassero molti strumenti", "Che si cantasse in italiano"], 0],
+        ["Che cos'è un madrigale?", ["Una poesia in italiano cantata a più voci", "Una danza", "Una Messa"], 0],
+        ["Chi fu la prima donna a stampare un libro tutto di musica sua?", ["Maddalena Casulana", "Laura Peverara", "Lavinia Fontana"], 0],
+        ["Che cosa sono i cori battenti?", ["Due gruppi che si rispondono da due lati", "Un coro che batte le mani", "Un coro di bambini"], 0],
+        ["Chi scrisse per primo «pian» e «forte» sulla partitura?", ["Giovanni Gabrieli", "Josquin Desprez", "Victoria"], 0],
+        ["Dove si trovava il concerto delle dame?", ["A Ferrara", "A Venezia", "A Roma"], 0],
+        ["Che tipo di strumento è il cornetto rinascimentale?", ["Un fiato di legno con i fori", "Una piccola tromba d'ottone", "Uno strumento a corde"], 0],
+        ["In che anno fu rappresentato L'Orfeo di Monteverdi?", ["1607", "1501", "1450"], 0],
+        ["Che cosa vuol dire «a cappella»?", ["Solo voci, senza strumenti", "Con l'organo", "In una cappella piccola"], 0]
+      ],
+      frasi: [
+        "Rinascimento vuol dire «nuova [[nascita]]».",
+        "Nel 1501 a Venezia Petrucci stampa il primo libro di musica [[polifonica]].",
+        "Quando le voci ripetono la stessa melodia una dopo l'altra si parla di [[imitazione]].",
+        "Il madrigale è una [[poesia]] in italiano cantata a più voci.",
+        "Palestrina scrive musica sacra [[a cappella]], cioè senza strumenti.",
+        "La prima donna a stampare un libro di musica sua è Maddalena [[Casulana]].",
+        "Nei cori [[battenti]] due gruppi di musicisti si rispondono.",
+        "Gabrieli scrive sulla partitura «pian» e «forte»: nasce la [[dinamica]].",
+        "A Ferrara canta il concerto delle [[dame]].",
+        "Le canzoni allegre in italiano del primo Cinquecento si chiamano [[frottole]].",
+        "Nel 1607 Monteverdi presenta l'[[Orfeo]].",
+        "Il [[cromorno]] è un fiato a forma di J."
+      ],
+      frasiDistrattori: ["gregoriano", "trovatori"],
+      aperte: [
+        ["Perché l'invenzione della stampa fu così importante per la musica?", 3, "gli spartiti non si copiano più a mano: costano meno, si diffondono in tutta Europa; Venezia diventa la capitale della musica stampata (Petrucci, 1501)."],
+        ["Che differenza c'è tra la musica di Roma e quella di Venezia nel Rinascimento?", 3, "Roma: musica sacra per voci a cappella, chiara (Palestrina); Venezia: stampa, strumenti, cori battenti (Gabrieli), madrigali."],
+        ["Che cos'è un madrigale e dove si cantava?", 3, "una poesia in italiano messa in musica per più voci; si cantava in casa e nelle corti, tra amici; la musica «dipinge» le parole."],
+        ["Che cosa chiese il Concilio di Trento alla musica, e come rispose Palestrina?", 3, "che le parole sacre si capissero bene; Palestrina scrisse polifonia chiara e ordinata, a cappella (Missa Papae Marcelli)."]
+      ] }
+  };
 
-  document.querySelectorAll(".scheda").forEach(b => b.addEventListener("click", () => {
-    scheda = b.dataset.scheda;
-    document.querySelectorAll(".scheda").forEach(x => x.classList.toggle("attiva", x === b));
-    disegna();
-  }));
-
-  /* ---------- banner: preistoria / antichità ---------- */
-  const banner = document.getElementById("banner");
-  function impostaMondo(m, senzaDisegno) {
-    mondo = m;
-    banner.classList.toggle("f-sx", m === "sx");
-    banner.classList.toggle("f-dx", m === "dx");
-    document.querySelectorAll(".etich-meta").forEach(e => e.classList.toggle("attiva", e.dataset.mondo === m));
-    if (!senzaDisegno) {
-      if (scheda === "suonare" || scheda === "orfeo") { scheda = "ascolti"; document.querySelectorAll(".scheda").forEach(x => x.classList.toggle("attiva", x.dataset.scheda === "ascolti")); }
-      disegna();
-    }
-  }
-  banner.querySelectorAll("[data-mondo]").forEach(el => el.addEventListener("click", () => impostaMondo(mondo === el.dataset.mondo ? null : el.dataset.mondo)));
-
-  /* ---------- finestra con il video ---------- */
-  const velo = document.getElementById("velo"), schermo = document.getElementById("schermo"), finestra = document.getElementById("finestra");
-  let attuale = 0;
-  function apri(i) {
-    attuale = (i + elenco.length) % elenco.length;
-    const d = elenco[attuale];
-    finestra.style.setProperty("--accent", scheda === "ascolti" ? (d.mondo === "dx" ? "#a78bfa" : "#F99D1C") : "#5EC8D8");
-    document.getElementById("fLabel").textContent = d.label;
-    document.getElementById("fTitolo").textContent = d.titolo;
-    document.getElementById("fChi").textContent = d.chi;
-    document.getElementById("fGancio").textContent = d.gancio;
-    document.getElementById("fPunti").innerHTML = d.punti.map(p => `<li>${p}</li>`).join("");
-    document.getElementById("fSapevi").innerHTML = `<b>Lo sapevi?</b> ${d.sapevi}`;
-    document.getElementById("fFonte").innerHTML = `<a href="https://www.youtube.com/watch?v=${d.yt}" target="_blank" rel="noopener">Apri su YouTube ↗</a>`;
-    // anteprima: nessuna richiesta a YouTube finché non si preme play
-    schermo.innerHTML = "";
-    schermo.style.backgroundImage = `url('${IMG + d.img}')`;
-    const b = document.createElement("button"); b.className = "avvio"; b.type = "button";
-    b.innerHTML = `<span class="tondo">▶</span><span class="nota">Il video si carica da YouTube quando premi play</span>`;
-    b.addEventListener("click", () => {
-      schermo.innerHTML = `<iframe src="https://www.youtube-nocookie.com/embed/${d.yt}?autoplay=1&rel=0&playsinline=1" title="${d.titolo}"
-        allow="autoplay; encrypted-media; picture-in-picture; fullscreen" allowfullscreen referrerpolicy="strict-origin-when-cross-origin"></iframe>`;
-    });
-    schermo.appendChild(b);
-    velo.classList.add("aperto");
-    document.body.style.overflow = "hidden";
-    b.focus({ preventScroll: true });
-  }
-  function chiudi() { velo.classList.remove("aperto"); schermo.innerHTML = ""; document.body.style.overflow = ""; }
-  document.getElementById("chiudi").addEventListener("click", chiudi);
-  velo.addEventListener("click", e => { if (e.target === velo) chiudi(); });
-  document.getElementById("prec").addEventListener("click", () => apri(attuale - 1));
-  document.getElementById("succ").addEventListener("click", () => apri(attuale + 1));
-  document.addEventListener("keydown", e => {
-    if (!velo.classList.contains("aperto")) return;
-    if (e.key === "Escape") chiudi();
-    if (e.key === "ArrowRight") apri(attuale + 1);
-    if (e.key === "ArrowLeft") apri(attuale - 1);
-  });
-
-  /* ---------- L'Orfeo ---------- */
-  const oSchermo = document.getElementById("oSchermo"), oCorpo = document.getElementById("oCorpo");
-  document.getElementById("oLink").href = "https://www.youtube.com/watch?v=" + ORFEO.yt;
-  function preparaOrfeo() {
-    oSchermo.innerHTML = "";
-    oSchermo.style.backgroundImage = `url('${IMG + ORFEO.img}')`;
-    const b = document.createElement("button"); b.className = "avvio"; b.type = "button";
-    b.innerHTML = `<span class="tondo">▶</span><span class="nota">Il video si carica da YouTube quando premi play</span>`;
-    b.addEventListener("click", () => {
-      oSchermo.innerHTML = `<iframe src="https://www.youtube-nocookie.com/embed/${ORFEO.yt}?autoplay=1&rel=0&playsinline=1" title="L'Orfeo di Monteverdi"
-        allow="autoplay; encrypted-media; picture-in-picture; fullscreen" allowfullscreen referrerpolicy="strict-origin-when-cross-origin"></iframe>`;
-    });
-    oSchermo.appendChild(b);
-  }
-  function mostraOrfeo(parte) {
-    document.querySelectorAll(".o-t").forEach(t => t.classList.toggle("attiva", t.dataset.o === parte));
-    if (parte === "mito") oCorpo.innerHTML = "<ul>" + ORFEO.mito.map(([i, t]) => `<li data-i="${i}">${t}</li>`).join("") + "</ul>";
-    if (parte === "storia") oCorpo.innerHTML = ORFEO.storia.map(([a, t]) => `<div class="atto"><b>${a}</b><span>${t}</span></div>`).join("");
-    if (parte === "curiosita") oCorpo.innerHTML = ORFEO.curiosita.map(t => `<div class="cur">${t}</div>`).join("");
-    oCorpo.scrollTop = 0;
-  }
-  document.querySelectorAll(".o-t").forEach(t => t.addEventListener("click", () => mostraOrfeo(t.dataset.o)));
-  mostraOrfeo("mito");
-
-  /* ---------- crediti ---------- */
-  document.getElementById("listaCrediti").innerHTML = CREDITI_IMG.map(c => `<li>${c}</li>`).join("") +
-    [...ASCOLTI, ...STRUMENTI].map(d => `<li>${d.titolo} (${d.chi}): video di <a href="https://www.youtube.com/watch?v=${d.yt}" target="_blank" rel="noopener">${d.canale}</a> su YouTube</li>`).join("") +
-    `<li>L'Orfeo (Claudio Monteverdi): video di <a href="https://www.youtube.com/watch?v=${ORFEO.yt}" target="_blank" rel="noopener">${ORFEO.canale}</a> su YouTube</li>`;
-
-  disegna();
+  /* tutto il resto (indice, capitoli, strumenti, mappa, esercizi, schede) lo fanno storia-percorso.js e storia-attivita.js */
+  StoriaPercorso.avvia({ epoca: "Il Rinascimento", date: "1450 – 1600", img: IMG, capitoli: CAPITOLI, linea: LINEA,
+    strumenti: STRUMENTI, suonare: SUONARE, crediti: [...CREDITI_IMG, ...CREDITI_PAGINE], attivita: ATTIVITA,
+    schedeCapitolo: { orfeo: "orfeo" },
+    prossima: { nome: "Barocco", articolo: "il", url: "storia-barocco.html" } });
 })();
 </script>
+<script src="adatta-schermo.js" data-schermate="#cTelaio, #aTelaio, #contenuto"></script>
 </body>
 </html>

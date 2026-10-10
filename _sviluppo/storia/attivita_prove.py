@@ -1,6 +1,6 @@
 import asyncio, sys
 from playwright.async_api import async_playwright
-U="http://127.0.0.1:8765/storia-medioevo.html"
+import os; U="http://127.0.0.1:8765/"+os.environ.get("PAGINA","storia-medioevo.html")  # PAGINA=storia-<epoca>.html
 STATI=sys.argv[2].split(",")
 async def main():
     async with async_playwright() as p:

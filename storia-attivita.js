@@ -181,7 +181,7 @@
       const o = s.cerchio;   // ovale rosso sullo strumento giusto, se nell'immagine d'epoca ce ne sono due
       const ovale = vista === "epoca" && o ? `<svg class="ovale" viewBox="0 0 640 400" aria-hidden="true"><ellipse cx="${o[0]}" cy="${o[1]}" rx="${o[2]}" ry="${o[3]}" transform="rotate(${o[4]} ${o[0]} ${o[1]})"/></svg>` : "";
       const f = vista === "foto" && s.foto ? s.foto : (s.epoca || s.img);
-      return `<img src="${C.img + f}" alt="Uno strumento medievale: quale?">${ovale}`;
+      return `<img src="${C.img + f}" alt="Uno strumento: quale?">${ovale}`;
     };
     const mostra = () => {
       if (k >= lista.length) {
@@ -638,7 +638,7 @@
       ["vf", "Vero o falso?", `${A.vf.length} frasi: tocca VERO o FALSO e scopri subito se è giusto.`, esVF],
       ["mappa", "Completa la mappa", "Metti ogni parola al suo posto nella mappa concettuale.", esMappa],
       ["griglia", "Cruciverba", "Le parole da ricordare, incrociate.", esCruci],
-      ["cuffie", "Esercizi di ascolto", "Ascolta ogni brano e rispondi: sacro o profano? Voci o strumenti?", esAscolto]
+      ["cuffie", "Esercizi di ascolto", (A.ascolto && A.ascolto.descr) || "Ascolta ogni brano e rispondi: sacro o profano? Voci o strumenti?", esAscolto]
     ];
     const ve = $("vistaEsercizi");
     ve.innerHTML = `<div class="a-carte es">${ES.map((e, i) => `<button type="button" class="a-carta" data-i="${i}" style="--accent:${COLORI[i]}">${icona(e[0])}<span><b>${e[1]}</b><small>${e[2]}</small></span></button>`).join("")}</div>`;

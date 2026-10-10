@@ -1,6 +1,6 @@
 import asyncio
 from playwright.async_api import async_playwright
-U="http://127.0.0.1:8765/storia-medioevo.html"
+import os; U="http://127.0.0.1:8765/"+os.environ.get("PAGINA","storia-medioevo.html")  # PAGINA=storia-<epoca>.html
 async def main():
     async with async_playwright() as p:
         b=await p.chromium.launch(); pg=await b.new_page(viewport={"width":1920,"height":915}); err=[]
@@ -14,18 +14,19 @@ async def main():
                 sx=pg.locator('.cl.sx:not(.fatto)').first; idx=await sx.get_attribute("data-i")
                 await sx.click(); await pg.locator(f'.cl.dx[data-i="{idx}"]').click()
             print("collega",es, await pg.inner_text(".a-msg"))
-            await pg.screenshot(path=f"g-collega{es}.png")
+            await pg.screenshot(path=os.environ.get("CARTELLA",".")+f"/g-collega{es}.png")
             await pg.click("#aChiudi")
         # strumenti uno alla volta: sbaglia il primo, poi indovina tutti (il nome giusto si legge dall'immagine)
         await pg.click('[data-scheda="esercizi"]'); await pg.click('#vistaEsercizi .a-carta[data-i="2"]')
-        for k in range(8):
+        for k in range(30):
+            if not await pg.locator(".strum1 img").count(): break
             src=await pg.get_attribute(".strum1 img","src")
             nome=await pg.evaluate("s=>{const t=[...document.querySelectorAll('.nomi .cl')].map(b=>b.dataset.n); return t}", src)
             ok=False
             for n in nome:
                 await pg.click(f'.nomi .cl[data-n="{n}"]'); await pg.wait_for_timeout(30)
                 if await pg.evaluate("!document.querySelector('#aNav .avanti').disabled"): ok=True; break
-            if k==0: await pg.screenshot(path="g-strum.png")
+            if k==0: await pg.screenshot(path=os.environ.get("CARTELLA",".")+"/g-strum.png")
             await pg.click("#aNav .avanti")
         print("strumenti", await pg.inner_text(".vf"))
         await pg.click("#aChiudi")
@@ -38,30 +39,33 @@ async def main():
             await pg.click(".vf .tasti .v"); 
             await pg.click("#aNav .avanti")
         print("vf", await pg.inner_text(".vf"))
-        await pg.screenshot(path="g-vf.png"); await pg.click("#aChiudi")
+        await pg.screenshot(path=os.environ.get("CARTELLA",".")+"/g-vf.png"); await pg.click("#aChiudi")
         # mappa: riempi tutto
         await pg.click('[data-scheda="esercizi"]'); await pg.click('#vistaEsercizi .a-carta[data-i="4"]')
         ws=await pg.evaluate("[...document.querySelectorAll('.m-buco')].map(b=>b.dataset.w)")
-        await pg.click('.banca button[data-w="violino"]'); await pg.locator('.m-buco').first.click()
+        # prima una parola sbagliata (un distrattore): non deve entrare
+        tutte=await pg.evaluate("[...document.querySelectorAll('.banca button[data-w]')].map(b=>b.dataset.w)")
+        sb=[w for w in tutte if w not in ws][0]
+        await pg.click(f'.banca button[data-w="{sb}"]'); await pg.locator('.m-buco').first.click()
         for w in ws:
             await pg.click(f'.banca button[data-w="{w}"]'); await pg.locator(f'.m-buco[data-w="{w}"]:not(.pieno)').first.click()
-        print("mappa", await pg.inner_text(".banca")); await pg.screenshot(path="g-mappa2.png")
-        await pg.screenshot(path="g-mappa.png"); await pg.click(".torna-b")
+        print("mappa", await pg.inner_text(".banca")); await pg.screenshot(path=os.environ.get("CARTELLA",".")+"/g-mappa2.png")
+        await pg.screenshot(path=os.environ.get("CARTELLA",".")+"/g-mappa.png"); await pg.click(".torna-b")
         # cruciverba: scrivi una parola con la tastiera, poi soluzione
         await pg.click('[data-scheda="esercizi"]'); await pg.click('#vistaEsercizi .a-carta[data-i="5"]')
         await pg.locator(".definizioni p").first.click()
         await pg.keyboard.type("ABC")
         await pg.click("#aNav .avanti"); await pg.wait_for_timeout(100)
-        await pg.screenshot(path="g-cruci1.png")
+        await pg.screenshot(path=os.environ.get("CARTELLA",".")+"/g-cruci1.png")
         await pg.click("#aNav .c-freccia:first-child"); await pg.wait_for_timeout(100)
         print("cruci", await pg.inner_text(".a-msg"))
-        await pg.screenshot(path="g-cruci2.png"); await pg.click("#aChiudi")
+        await pg.screenshot(path=os.environ.get("CARTELLA",".")+"/g-cruci2.png"); await pg.click("#aChiudi")
         # ascolto
         await pg.click('[data-scheda="esercizi"]'); await pg.click('#vistaEsercizi .a-carta[data-i="6"]')
         for c in await pg.locator(".criterio").all(): await c.locator("button").first.click()
         await pg.click("#aNav .avanti"); await pg.wait_for_timeout(100)
         print("ascolto", await pg.inner_text(".a-msg"))
-        await pg.screenshot(path="g-asc.png")
+        await pg.screenshot(path=os.environ.get("CARTELLA",".")+"/g-asc.png")
         print("errori", err)
         await b.close()
 asyncio.run(main())
