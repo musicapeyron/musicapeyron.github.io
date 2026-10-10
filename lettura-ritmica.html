@@ -272,6 +272,9 @@
     ER_E:  { b: 1, ev: [p("8"), n("8")], diff: 2 },
     E_ER:  { b: 1, ev: [n("8"), p("8")], diff: 1.4 },
     QT_E:  { b: 2, ev: [lega(n("q")), n("8"), n("8")], trav: [[1, 2]], dove: DUE, diff: 1.5 },
+    QTQ:   { b: 2, ev: [lega(n("q")), n("q")], dove: DUE, diff: 0.8 },                       // semiminima legata a semiminima
+    // semiminima sull'ultimo movimento, legata alla prima nota della battuta dopo (legatura oltre la stanghetta)
+    QL:    { b: 1, ev: [lega(n("q"))], dove: { "4/4": [3], "3/4": [2], "2/4": [1] }, legaOltre: true, diff: 1.8 },
     QD_E:  { b: 2, ev: [pt(n("q")), n("8")], dove: DUE, diff: 1.5 },
     SYNT:  { b: 2, ev: [n("8"), lega(n("8")), n("8"), n("8")], trav: [[0, 1], [2, 3]], dove: DUE, diff: 2 },
     SYN:   { b: 2, ev: [n("8"), n("q"), n("8")], dove: { "4/4": [0, 2], "2/4": [0], "3/4": [0, 1] }, diff: 2.4 },
@@ -348,10 +351,10 @@
       { celle: ["Q", "EE", "QR", "ER_E"], nuove: ["ER_E"], max: { ER_E: 1 }, suono: true },
       { celle: ["Q", "EE", "QR", "ER_E", "E_ER"], nuove: ["ER_E"], suono: true },
       { celle: ["Q", "EE", "QR", "H", "ER_E", "E_ER"], nuove: ["ER_E"], metri: ["4/4", "3/4"], battute: 2 } ] },
-    { nome: "Legatura e semiminima puntata", desc: "Dalla legatura al punto", gradini: [
-      { celle: ["Q", "EE", "QT_E"], nuove: ["QT_E"], max: { QT_E: 1 } },
-      { celle: ["Q", "EE", "QR", "QT_E", "QD_E"], nuove: ["QT_E", "QD_E"], battute: 2 },
-      { celle: ["Q", "EE", "QR", "H", "HD", "QT_E", "QD_E"], nuove: ["QD_E", "QT_E"], metri: ["4/4", "3/4"], battute: 2 } ] },
+    { nome: "Legatura di valore", desc: "Due note legate: un suono solo", gradini: [
+      { celle: ["Q", "EE", "QTQ", "QT_E"], nuove: ["QTQ", "QT_E"], max: { QTQ: 1, QT_E: 1 }, suono: true },
+      { celle: ["Q", "EE", "QR", "QTQ", "QT_E", "QL"], nuove: ["QL"], battute: 2, suono: true },
+      { celle: ["Q", "EE", "QR", "H", "HD", "QD_E", "QTQ", "QT_E", "QL"], nuove: ["QL", "QT_E"], metri: ["4/4", "3/4"], battute: 2 } ] },
     { nome: "La sincope", desc: "Croma, semiminima, croma", gradini: [
       { celle: ["Q", "EE", "SYNT"], nuove: ["SYNT"], max: { SYNT: 1 } },
       { celle: ["Q", "EE", "SYN"], nuove: ["SYN"] },
@@ -444,6 +447,9 @@
       if (r.battute.every(seq => suoniDi(seq) === 0)) return false;
       if (r.battute.length > 1 && r.battute.every(seq => seq.join() === r.battute[0].join())) return false;   // tutte uguali: no
       if (r.battute.some((seq, i) => i > 0 && seq[0] === "WR" && r.battute[i - 1][0] === "WR")) return false;   // due battute mute di fila: no
+      // legatura oltre la stanghetta: ci vuole una battuta dopo, che cominci con una nota
+      if (r.battute.some((seq, i) => CELLE[seq[seq.length - 1]].legaOltre &&
+        (i === r.battute.length - 1 || CELLE[r.battute[i + 1][0]].ev[0].pausa))) return false;
       // silenzio: al massimo due movimenti di fila, anche a cavallo della stanghetta (la pausa di semibreve fa eccezione)
       let muto = 0;
       for (const x of eventiDi(r)) { if (x.e.pausa && !x.e.intera) { muto += x.dur; if (muto > 2 * r.metro.bu + 1e-6) return false; } else muto = 0; }
@@ -553,6 +559,7 @@
     const note = [], righeY = [], movimenti = [];
     const eventi = eventiDi(r);
     let k = 0;
+    let pendente = null;   // nota legata alla prima nota della battuta dopo
     for (let riga = 0; riga < righe; riga++) {
       const battute = r.battute.slice(riga * perRiga, (riga + 1) * perRiga);
       // le battute di una riga si allargano in proporzione fino a riempirla
@@ -582,7 +589,7 @@
           });
           (c.trav || []).forEach(gr => trav.push(gr.map(i => sn[prime + i])));
           if (c.terz) terz.push(sn.slice(prime, prime + 3));
-          c.ev.forEach((e, i) => { if (e.lega) leg.push([sn[prime + i], sn[prime + i + 1]]); });
+          c.ev.forEach((e, i) => { if (e.lega && i + 1 < c.ev.length) leg.push([sn[prime + i], sn[prime + i + 1]]); });
         });
         const tupl = terz.map(t => new VF.Tuplet(t, { num_notes: 3, notes_occupied: 2, location: 1, bracketed: false }));
         const beams = trav.map(t => new VF.Beam(t));
@@ -593,6 +600,15 @@
         beams.forEach(b => b.setContext(ctx).draw());
         tupl.forEach(t => t.setContext(ctx).draw());
         leg.forEach(([a, b]) => new VF.StaveTie({ first_note: a, last_note: b, first_indices: [0], last_indices: [0] }).setContext(ctx).draw());
+        if (pendente) {   // legatura oltre la stanghetta (spezzata in due se si va a capo)
+          if (pendente.riga === riga) new VF.StaveTie({ first_note: pendente.nota, last_note: sn[0], first_indices: [0], last_indices: [0] }).setContext(ctx).draw();
+          else {
+            new VF.StaveTie({ first_note: pendente.nota, last_note: null, first_indices: [0], last_indices: [0] }).setContext(ctx).draw();
+            new VF.StaveTie({ first_note: null, last_note: sn[0], first_indices: [0], last_indices: [0] }).setContext(ctx).draw();
+          }
+          pendente = null;
+        }
+        if (CELLE[seq[seq.length - 1]].legaOltre) pendente = { nota: sn[sn.length - 1], riga };
         // punti di riferimento tempo → posizione: l'inizio di ogni figura e la stanghetta finale
         const punti = [];
         sn.forEach(nota => {
