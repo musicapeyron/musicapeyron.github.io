@@ -279,6 +279,10 @@ h1 {
     box-shadow: inset 0 -2px 0 rgba(0,0,0,0.18);
 }
 
+/* opzione "Colori" spenta: carte in bianco e nero (striscia, nome, pallino e nota sul pentagramma) */
+body.senza-colori .face { --note-color: #1F2430 !important; --note-ink: #1F2430 !important; }
+body.senza-colori .staff g.vf-stavenote { fill: #111827; stroke: #111827; }
+
 /* retro da carta da gioco: copre le note centrali nella verifica */
 .card-back {
     position: absolute; inset: 0;
@@ -781,7 +785,10 @@ h1 {
     .menu-screen > .toolbar { grid-row: 4 / 10; grid-column: 2; align-self: end; }
     .menu-screen > .home-note:not(#modeNote) { grid-row: 10; grid-column: 1 / -1; }
     /* opzioni del pentagramma a coppie, una accanto all'altra */
-    .opt-sub.show { display: grid; grid-template-columns: 1fr 1fr; column-gap: 8px; }
+    /* lo spazio delle scelte del pentagramma resta sempre riservato: così la
+       schermata iniziale non cambia dimensione quando si spunta "Note sul pentagramma" */
+    .opt-sub, .opt-sub.show { display: grid; grid-template-columns: 1fr 1fr; column-gap: 8px; visibility: hidden; }
+    .opt-sub.show { visibility: visible; }
     .opt-gap { display: none; }
 }
 @media (min-width: 900px) and (min-height: 560px) {
@@ -977,6 +984,12 @@ h1 {
         <button class="options-choice active" data-rate="1">normale</button>
         <button class="options-choice" data-rate="1.12">🐇 veloce</button>
     </div>
+
+    <div class="options-group-title">Carte</div>
+    <label class="options-toggle-row">
+        <span>🎨 Colori</span>
+        <input type="checkbox" id="coloriToggle" checked>
+    </label>
 
 </div>
 
@@ -1283,6 +1296,17 @@ const progressFill = $("progressFill");
 const timerDisplay = $("timerDisplay");
 const pauseButton = $("pauseButton");
 const optionsPanel = $("optionsPanel");
+/* opzione "Colori": accesa di base; la scelta si ricorda su questo dispositivo */
+const coloriToggle = $("coloriToggle");
+function applicaColori(acceso) {
+    document.body.classList.toggle("senza-colori", !acceso);
+    coloriToggle.checked = acceso;
+}
+try { applicaColori(localStorage.getItem("rap.colori") !== "0"); } catch (e) { applicaColori(true); }
+coloriToggle.addEventListener("change", () => {
+    applicaColori(coloriToggle.checked);
+    try { localStorage.setItem("rap.colori", coloriToggle.checked ? "1" : "0"); } catch (e) {}
+});
 const bpmButtons = Array.from(optionsPanel.querySelectorAll("[data-rate]"));
 const finalOverlay = $("finalOverlay");
 

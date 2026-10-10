@@ -3762,6 +3762,25 @@ body.mobile-mode .note-popup-staff {
     }
 }
 
+/* Schermi larghi (LIM, PC grandi): tastiera più alta e pulsanti più grandi,
+   così si usa anche lo spazio che restava vuoto in basso */
+@media (min-width: 1650px) and (min-height: 560px) and (max-height: 1000px) {
+    body:not(.mobile-mode) {
+        --kh: clamp(160px, calc(100vh - 480px), 440px);
+    }
+    body:not(.mobile-mode):has(.answers-mixed-altered.visible) {
+        --kh: clamp(160px, calc(100vh - 560px), 440px);
+    }
+    /* schermata iniziale: il menu delle modalità è più alto della barra del livello */
+    body:not(.mobile-mode):has(#modeSelectPanel:not(.hidden)) {
+        --kh: clamp(160px, calc(100vh - 560px), 440px);
+    }
+    body:not(.mobile-mode) .answer {
+        font-size: 1.3rem;
+        padding: 20px 10px;
+    }
+}
+
 /* Barra strumenti accanto ai pulsanti di gioco, a destra */
 @media (min-width: 1200px) and (max-width: 1649px) and (min-height: 560px) and (max-height: 1000px) {
 

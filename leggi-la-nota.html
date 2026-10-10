@@ -332,6 +332,14 @@ h1 {
 .answer.sol { background: #009C95; }
 .answer.la { background: #5E50A1; }
 .answer.si { background: #CF3E96; }
+/* opzione "Colori" spenta: pulsanti delle note in bianco e nero */
+body.senza-colori .answer.do, body.senza-colori .answer.re, body.senza-colori .answer.mi,
+body.senza-colori .answer.fa, body.senza-colori .answer.sol, body.senza-colori .answer.la,
+body.senza-colori .answer.si {
+    background: #ffffff; color: #111827; text-shadow: none;
+    box-shadow: inset 0 0 0 2px #111827, 0 5px 0 rgba(0,0,0,0.35), 0 8px 16px rgba(0,0,0,0.28);
+}
+body.senza-colori .answer::after { display: none; }
 
 .message { min-height: 34px; font-size: 1.1rem; font-weight: 700; letter-spacing: 0.1px; }
 .correct-message { color: #86efac; }
@@ -986,6 +994,10 @@ body.mode-tutorial #trophyButton {
     <label class="options-toggle-row">
         <span>Mostra schema</span>
         <input type="checkbox" id="showSchemaToggle">
+    </label>
+    <label class="options-toggle-row">
+        <span>🎨 Colori</span>
+        <input type="checkbox" id="coloriToggle" checked>
     </label>
 </div>
 
@@ -2200,6 +2212,18 @@ document.addEventListener("click", e => {
    automaticamente più a sinistra perché lo schema fa
    parte della stessa riga centrata.
 */
+/* opzione "Colori": accesa di base; la scelta si ricorda su questo dispositivo */
+const coloriToggle = document.getElementById("coloriToggle");
+function applicaColori(acceso) {
+    document.body.classList.toggle("senza-colori", !acceso);
+    coloriToggle.checked = acceso;
+}
+try { applicaColori(localStorage.getItem("leggiNota.colori") !== "0"); } catch (e) { applicaColori(true); }
+coloriToggle.addEventListener("change", () => {
+    applicaColori(coloriToggle.checked);
+    try { localStorage.setItem("leggiNota.colori", coloriToggle.checked ? "1" : "0"); } catch (e) {}
+});
+
 showSchemaToggle.addEventListener("change", () => {
     if (showSchemaToggle.checked) {
         referenceCard.classList.add("show");
