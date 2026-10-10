@@ -215,8 +215,10 @@ h1 {
         0 2px 5px rgba(0,0,0,0.4);
 }
 .answer::after { content: ""; position: absolute; inset: 0; background: linear-gradient(180deg, rgba(255,255,255,0.22), rgba(255,255,255,0) 55%); pointer-events: none; }
-.answer:hover { transform: translateY(-3px); }
-.answer:active { transform: translateY(3px); }
+/* i pulsanti NON si spostano quando li si preme: prima salivano al passaggio del mouse e
+   scendevano alla pressione, così un clic sul bordo alto usciva dal pulsante e non contava */
+.answer:hover { filter: brightness(1.08); }
+.answer:active { filter: brightness(0.92); }
 
 /* Colori delle note (do re mi fa sol la si): tavolozza ufficiale del sito */
 .answer.do  { background: #E21C48; --glow: rgba(226,28,72,0.9); }

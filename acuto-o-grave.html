@@ -295,8 +295,10 @@ h1 {
         0 2px 5px rgba(0,0,0,0.4);
 }
 .answer::after { content: ""; position: absolute; inset: 0; background: linear-gradient(180deg, rgba(255,255,255,0.22), rgba(255,255,255,0) 55%); pointer-events: none; }
-.answer:hover { filter: brightness(1.1); transform: translateY(-3px); }
-.answer:active { transform: translateY(3px); }
+/* i pulsanti NON si spostano quando li si preme: prima salivano al passaggio del mouse e
+   scendevano alla pressione, così un clic sul bordo alto usciva dal pulsante e non contava */
+.answer:hover { filter: brightness(1.1); }
+.answer:active { filter: brightness(0.92); }
 .answer:disabled { opacity: 0.45; cursor: not-allowed; filter: grayscale(0.3); transform: none; }
 
 .answer.wrong-flash { animation: buttonShake 0.4s ease-in-out; }
