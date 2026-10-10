@@ -630,23 +630,58 @@ h1 {
   .level-box { -webkit-backdrop-filter: none; backdrop-filter: none; }
   .hero-badge { animation-iteration-count: 3; }   /* il badge galleggia per qualche secondo, poi sta fermo */
 
-/* PC con schermo basso: tutto in una schermata, senza scorrere */
-@media (min-width: 900px) and (max-height: 900px) {
-    body { padding: 16px 18px 16px; }
-    .subtitle { margin: 4px 0 8px; }
-    .level-box { margin-bottom: 8px; padding: 10px 18px 11px; }
-    .level-header { margin-bottom: 8px; }
-    .question-prompt { margin-bottom: 6px; }
-    .listen-button { margin-bottom: 8px; }
-    .staff-row { margin-bottom: 10px; }
-    .keyboard-stage { margin-bottom: 10px; }
-    /* risposte su una sola riga */
-    .answers { max-width: 720px; margin-bottom: 8px; }
-    .toolbar { margin-top: 6px; }
-    /* cartoncino più basso: si toglie solo lo spazio vuoto sopra e sotto il rigo */
-    .staff-card { min-height: 0; padding: 12px 16px; }
-    .staff-inner > svg { margin: -24px 0 -92px; }
-    .staff-card .vex-figure { height: 160px; }
+/* =========================================================
+   SCHERMI LARGHI (PC e LIM): nei mini-giochi con figura
+   (tastiera, figure, pentagramma) la figura sta a sinistra e
+   domanda e risposte a destra. Poi tutta la schermata si ingrandisce
+   fino a riempire lo schermo (adatta-schermo.js). Il telefono non cambia.
+   ========================================================= */
+@media (min-width: 900px) and (min-height: 560px) {
+    body { padding: 14px 24px; min-height: 0; }
+    .game { width: 1120px; max-width: none; }
+    .game-intro { max-width: 640px; margin-left: auto; margin-right: auto; }
+    .game-intro-text { font-size: 1.1rem; }
+    .subtitle { margin: 4px 0 12px; font-size: 1rem; }
+    .level-box { margin-bottom: 0; }
+    .question-prompt { font-size: 1.5rem; margin: 22px 0 14px; }
+    .answer { font-size: 1.25rem; padding: 18px 10px; }
+    .message { font-size: 1.15rem; min-height: 32px; }
+    .toolbar { margin-top: 14px; }
+
+    /* con la figura: due colonne */
+    .game-content:has(#staffRow:not([style*="none"])),
+    .game-content:has(#keyboardStage:not([style*="none"])) {
+        display: grid;
+        grid-template-columns: 560px 1fr;
+        grid-template-areas:
+            "sub    sub"
+            "level  level"
+            "fig    question"
+            "fig    listen"
+            "fig    answers"
+            "fig    message"
+            "fig    toolbar";
+        grid-template-rows: auto auto auto auto auto auto 1fr;
+        column-gap: 36px;
+        align-items: start;
+    }
+    .game-content > .subtitle { grid-area: sub; }
+    .game-content > .level-box { grid-area: level; margin: 0; }
+    .game-content > .question-prompt { grid-area: question; }
+    .game-content > .listen-button { grid-area: listen; justify-self: center; }
+    .game-content > .staff-row, .game-content > .keyboard-stage { grid-area: fig; margin: 22px 0 0; }
+    .game-content > .answers { grid-area: answers; max-width: none; }
+    .game-content > .message { grid-area: message; }
+    .game-content > .toolbar { grid-area: toolbar; align-self: start; }
+    /* il cartoncino della figura occupa tutta la colonna */
+    .staff-card { width: 100%; min-height: 300px; }
+    /* pentagramma grande: si toglie solo lo spazio vuoto sopra e sotto il rigo (i tagli addizionali restano dentro) */
+    .staff-inner > svg { width: 100% !important; height: auto !important; margin: -7% 0 -26%; }
+    .staff-card .vex-figure { width: 170px; height: 250px; }
+    .answer.figure-answer .vex-figure { width: 76px; height: 108px; }
+    .keyboard-stage .keyboard-frame { width: 100%; }
+
+    .final-screen { width: 720px; }
 }
 </style>
 </head>
@@ -1736,5 +1771,6 @@ function checkLeggiAnswer(note, btn) {
 showScreen("home");
 
 </script>
+<script src="adatta-schermo.js" data-schermate="#homeScreen, #gameIntro, #gameContent, #finalScreen"></script>
 </body>
 </html>
