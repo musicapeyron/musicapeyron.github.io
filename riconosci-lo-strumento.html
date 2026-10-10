@@ -22,7 +22,7 @@
 }
 
 html, body { margin: 0; padding: 0; min-height: 100%; }
-html { background: #0f172a; }   /* niente fondo bianco quando la pagina scorre */
+/* (tolto lo sfondo fisso su html: copriva lo sfondo sfumato comune a tutti i giochi) */
 
 body {
     min-height: 100vh;
@@ -211,8 +211,10 @@ h1 {
         0 2px 5px rgba(0,0,0,0.4);
 }
 .answer::after { content: ""; position: absolute; inset: 0; background: linear-gradient(180deg, rgba(255,255,255,0.22), rgba(255,255,255,0) 55%); pointer-events: none; }
-.answer:hover { filter: brightness(1.1); transform: translateY(-3px); }
-.answer:active { transform: translateY(3px); }
+/* il pulsante NON si sposta quando lo si preme: prima saliva al passaggio del mouse e
+   scendeva alla pressione, così un clic sul bordo alto "usciva" dal pulsante e non contava */
+.answer:hover { filter: brightness(1.1); }
+.answer:active { filter: brightness(0.9); }
 .answer.locked { display: none; }
 
 .answer.wrong-flash { animation: buttonShake 0.4s ease-in-out; }
@@ -1049,7 +1051,7 @@ h1 {
   .hero-badge { animation-iteration-count: 3; }   /* il badge galleggia per qualche secondo, poi sta fermo */
 
 /* LIM e PC: ogni schermata sta tutta nello schermo, senza scorrere */
-@media (min-width: 900px) {
+@media (min-width: 900px) and (min-height: 560px) {
     body { padding: 18px 18px 12px; }
 
     /* menu: le quattro modalità affiancate, le due opzioni affiancate */
@@ -1105,7 +1107,7 @@ h1 {
     #trophyList .trophy-row { margin-bottom: 0; }
 }
 /* PC (schermo basso) */
-@media (min-width: 900px) and (max-height: 800px) {
+@media (min-width: 900px) and (min-height: 560px) and (max-height: 800px) {
     #homeScreen .hero-badge { width: 52px; height: 52px; font-size: 1.5rem; margin-bottom: 6px; }
     #homeScreen .mode-grid { margin-top: 14px; }
     #homeScreen .mode-button { padding: 16px 18px; }
@@ -1115,8 +1117,30 @@ h1 {
 @media (min-width: 900px) and (min-height: 801px) {
     .game .play-button { width: 132px; height: 132px; font-size: 3.6rem; padding-left: 10px; }
     .game .listen-caption { font-size: 1.15rem; }
-    .game .answer { width: 168px; min-height: 62px; font-size: 1.15rem; }
+    .game .answer { width: 190px; min-height: 72px; font-size: 1.3rem; }
+    .game .answers { max-width: 640px; gap: 10px; }
     .game .answers { max-width: 740px; gap: 10px; }
+}
+
+/* =========================================================
+   SCHERMI LARGHI (PC e LIM): misure fisse al posto di quelle legate
+   all'altezza dello schermo, poi tutta la schermata si ingrandisce fino
+   a riempire lo schermo (adatta-schermo.js). Il telefono non cambia.
+   ========================================================= */
+@media (min-width: 900px) and (min-height: 560px) {
+    body { padding: 14px 24px 10px; min-height: 0; }
+    #homeScreen { width: 1240px; max-width: none; }
+    .explore-screen { width: 1240px; max-width: none; }
+    .orchestra-wrap { max-width: 1000px; }
+    .game, .game.wide { width: 1400px; max-width: none; }
+    .game .listen-card, .game.observe .listen-card { width: 620px; min-height: 380px; }
+    .game .play-button { width: 120px; height: 120px; font-size: 3.3rem; padding-left: 10px; }
+    .game .listen-caption { font-size: 1.15rem; }
+    .game .answer { width: 190px; min-height: 72px; font-size: 1.3rem; }
+    .game .answers { max-width: 640px; gap: 10px; }
+    /* con lo zoom anche i vh crescono: finestre e pannelli restano dentro lo schermo */
+    .trophy-panel { max-height: calc((100vh - 32px) / var(--zoom, 1)); }
+    .overlay-card { max-height: calc((100vh - 32px) / var(--zoom, 1)); }
 }
 </style>
 </head>
@@ -2101,7 +2125,9 @@ function sizeQuestionImage() {
     if (!questionImg.naturalWidth) return;
     const card = document.querySelector(".listen-card");
     // su LIM e PC la foto cresce con l'altezza dello schermo (sul telefono resta com'era)
-    const maxH = window.innerWidth >= 900 ? Math.max(262, Math.min(window.innerHeight - 420, 440)) : 262;
+    // (su PC e LIM la foto ha un'altezza fissa: è poi l'ingrandimento di tutta la pagina a farla grande)
+    const largo = window.matchMedia("(min-width: 900px) and (min-height: 560px)").matches;
+    const maxH = largo ? 340 : (window.innerWidth >= 900 ? Math.max(262, Math.min(window.innerHeight - 420, 440)) : 262);
     const s = Math.min(window.innerWidth >= 900 ? 1 : 0.75, (card.clientWidth - 40) / IMAGE_MAX_WIDTH, maxH / IMAGE_MAX_HEIGHT);
     questionImg.style.width = Math.round(questionImg.naturalWidth * s) + "px";
 }
@@ -3071,5 +3097,6 @@ showScreen("home");
 preloadImages();
 loadSounds();
 </script>
+<script src="adatta-schermo.js" data-schermate="#homeScreen, #exploreScreen, #gameContainer"></script>
 </body>
 </html>
