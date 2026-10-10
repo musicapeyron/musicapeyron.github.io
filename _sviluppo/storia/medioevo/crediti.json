@@ -1,0 +1,278 @@
+{
+ "chiavi": {
+  "viaggio-1": "Les Très Riches Heures du duc de Berry mars.jpg",
+  "viaggio-2": "Cleric, Knight, and Workman representing the Three Classes.jpg",
+  "viaggio-3": "Cantigas de Santa Maria, Musician's Codex, page 209R.jpg",
+  "gregoriano-1": "Unknown-artist-eadwine-the-scribe-at-work-eadwine-psalter-christ-church-canterbury-england-uk-circa-1160-70.jpg",
+  "gregoriano-3": "Charlemagne coronation.jpg",
+  "gregoriano-4": "St. Gallen Stiftsbibliothek, Cod. Sang. 359, S. 25.jpg",
+  "guido-1": "Guido of Arezzo and Bishop Tedald Working on Monochord, 11th Century Miniature (21954743795).jpg",
+  "guido-2": "Manuscript Leaf, from a Gradual MET sf31-134-7bs1.jpg",
+  "guido-3": "The Hand of Guido.jpg",
+  "ildegarda-1": "Kloster Disibodenberg 01.jpg",
+  "ildegarda-2": "Meister des Hildegardis-Codex 001 cropped.jpg",
+  "ildegarda-3": "Riesencodex - fl.0466r.jpg",
+  "notredame-1": "Nave of Notre-Dame de Paris towards the portal, 2024 (1).jpg",
+  "notredame-2": "Paris Notre-Dame Vaults 01.JPG",
+  "notredame-3": "Pluteous 29.1, folio 1v.jpg",
+  "notredame-4": "Perotin - Alleluia nativitas.jpg",
+  "trovatori-1": "BnF ms. 12473 fol. 15v - Bernart de Ventadour (1).jpg",
+  "trovatori-2": "BnF ms. 12473 fol. 126v - La comtesse de Die (1).jpg",
+  "trovatori-3": "Altstetten.jpg",
+  "trovatori-4": "Codex Manesse Heinrich von Meißen (Frauenlob).jpg",
+  "trovatori-5": "Codex Manesse Walther von der Vogelweide.jpg",
+  "goliardi-1": "Laurentius de Voltolina 001.jpg",
+  "goliardi-2": "Codex Buranus-89v-dettaglio.jpg",
+  "goliardi-3": "Meister der Carmina Burana 001.jpg",
+  "canone-1": "Les Très Riches Heures du duc de Berry juin.jpg",
+  "canone-2": "Sumer is icumen in - Summer Canon (Reading Rota) (mid 13th C), f.11v - BL Harley MS 978.jpg",
+  "arsnova-1": "Roman de Fauvel - BNF Ms. fr. 146, folio 11r.jpg",
+  "arsnova-2": "Burying Plague Victims of Tournai.jpg",
+  "arsnova-3": "Guillaume de Machaut et Bon Espoir - Le Remede de Fortune.jpg",
+  "arsnova-4": "Guillaume de Machaut, Le remède de fortune (dance), Paris, Ms. fr. 1586.jpg",
+  "landini-1": "Dante Domenico di Michelino.jpg",
+  "landini-2": "Decameron - BNF Ms 239 - Départ des conteurs du Decameron de Florence - détail.jpg",
+  "landini-3": "Bernardo daddi, madonna della misericordia, con più antica veduta di firenze, 1342, 06 vecchio duomo.JPG",
+  "landini-4": "Andrea da Firenze (Squarcialupi Codex).jpg"
+ },
+ "file": {
+  "Altstetten.jpg": {
+   "lic": "Public domain",
+   "url": "",
+   "autore": "Master of the Codex Manesse",
+   "desc": "Codex Manesse, UB Heidelberg, Cod. Pal. germ. 848, fol. 249v: Herr Konrad von Altstetten. Das Geschlecht derer von Altstetten ist seit 1166 bezeugt und hatte seinen Sitz im Oberrheintal. Es stand in d",
+   "pagina": "https://commons.wikimedia.org/wiki/File:Altstetten.jpg"
+  },
+  "Andrea da Firenze (Squarcialupi Codex).jpg": {
+   "lic": "Public domain",
+   "url": "",
+   "autore": "Unknown artistUnknown artist",
+   "desc": "Andrea da Firenze as depicted in the Squarcialupi Codex",
+   "pagina": "https://commons.wikimedia.org/wiki/File:Andrea_da_Firenze_(Squarcialupi_Codex).jpg"
+  },
+  "Bernardo daddi, madonna della misericordia, con più antica veduta di firenze, 1342, 06 vecchio duomo.JPG": {
+   "lic": "CC BY 3.0",
+   "url": "https://creativecommons.org/licenses/by/3.0",
+   "autore": "Sailko",
+   "desc": "Bigallo Madonna of Mercy",
+   "pagina": "https://commons.wikimedia.org/wiki/File:Bernardo_daddi,_madonna_della_misericordia,_con_pi%C3%B9_antica_veduta_di_firenze,_1342,_06_vecchio_duomo.JPG"
+  },
+  "Charlemagne coronation.jpg": {
+   "lic": "Public domain",
+   "url": "",
+   "autore": "http://www.uncp.edu/home/rwb/lecture_mid_civ.htm",
+   "desc": "The Coronation of Charlemagne (AD 800).",
+   "pagina": "https://commons.wikimedia.org/wiki/File:Charlemagne_coronation.jpg"
+  },
+  "Codex Buranus-89v-dettaglio.jpg": {
+   "lic": "Public domain",
+   "url": "",
+   "autore": "Unknown authorUnknown author",
+   "desc": "Codex Buranus - miniature on folio 89v - Drinkers",
+   "pagina": "https://commons.wikimedia.org/wiki/File:Codex_Buranus-89v-dettaglio.jpg"
+  },
+  "Codex Manesse Heinrich von Meißen (Frauenlob).jpg": {
+   "lic": "Public domain",
+   "url": "",
+   "autore": "Master of the Codex Manesse (Additional Painter II)",
+   "desc": "Codex Manesse, UB Heidelberg, Cod. Pal. germ. 848, fol. 399r, Meister Heinrich Frauenlob",
+   "pagina": "https://commons.wikimedia.org/wiki/File:Codex_Manesse_Heinrich_von_Mei%C3%9Fen_(Frauenlob).jpg"
+  },
+  "Codex Manesse Walther von der Vogelweide.jpg": {
+   "lic": "Public domain",
+   "url": "",
+   "autore": "Master of the Codex Manesse",
+   "desc": "Codex Manesse, UB Heidelberg, Cod. Pal. germ. 848, fol. 124r, Herr Walther von der Vogelweide",
+   "pagina": "https://commons.wikimedia.org/wiki/File:Codex_Manesse_Walther_von_der_Vogelweide.jpg"
+  },
+  "Guido of Arezzo and Bishop Tedald Working on Monochord, 11th Century Miniature (21954743795).jpg": {
+   "lic": "Public domain",
+   "url": "",
+   "autore": "Levan Ramishvili from Tbilisi, Georgia",
+   "desc": "Guido of Arezzo and Bishop Tedald Working on Monochord, 11th Century Miniature",
+   "pagina": "https://commons.wikimedia.org/wiki/File:Guido_of_Arezzo_and_Bishop_Tedald_Working_on_Monochord,_11th_Century_Miniature_(21954743795).jpg"
+  },
+  "Guillaume de Machaut, Le remède de fortune (dance), Paris, Ms. fr. 1586.jpg": {
+   "lic": "Public domain",
+   "url": "",
+   "autore": "Guillaume de Machaut",
+   "desc": "An illumination in a manuscript of Guillaume de Machaut’s verse novel Le remède de fortune showing an outdoors dancing scene. Paris, Bibliothèque Nationale, Ms. fr. 1586, fol. 51r.",
+   "pagina": "https://commons.wikimedia.org/wiki/File:Guillaume_de_Machaut,_Le_rem%C3%A8de_de_fortune_(dance),_Paris,_Ms._fr._1586.jpg"
+  },
+  "Kloster Disibodenberg 01.jpg": {
+   "lic": "CC BY-SA 3.0",
+   "url": "http://creativecommons.org/licenses/by-sa/3.0/",
+   "autore": "Saharadesertfox",
+   "desc": "Kloster Disibodenberg: Giebel des Hospitals, Gästehaus, erbaut nach 1400.",
+   "pagina": "https://commons.wikimedia.org/wiki/File:Kloster_Disibodenberg_01.jpg"
+  },
+  "Les Très Riches Heures du duc de Berry mars.jpg": {
+   "lic": "Public domain",
+   "url": "",
+   "autore": "Limbourg brothers / Barthélemy d'Eyck",
+   "desc": "In the foreground, a peasant ploughs a field with a plough pulled by two oxen, the man steering them with a long goatee. Winegrowers prune the vine in an enclosure on the left and plough the soil with",
+   "pagina": "https://commons.wikimedia.org/wiki/File:Les_Tr%C3%A8s_Riches_Heures_du_duc_de_Berry_mars.jpg"
+  },
+  "Manuscript Leaf, from a Gradual MET sf31-134-7bs1.jpg": {
+   "lic": "CC0",
+   "url": "http://creativecommons.org/publicdomain/zero/1.0/deed.en",
+   "autore": "",
+   "desc": "Italian; Gradual; Manuscript leaf; Manuscripts and Illuminations",
+   "pagina": "https://commons.wikimedia.org/wiki/File:Manuscript_Leaf,_from_a_Gradual_MET_sf31-134-7bs1.jpg"
+  },
+  "Meister der Carmina Burana 001.jpg": {
+   "lic": "Public domain",
+   "url": "",
+   "autore": "Meister der Carmina Burana",
+   "desc": "",
+   "pagina": "https://commons.wikimedia.org/wiki/File:Meister_der_Carmina_Burana_001.jpg"
+  },
+  "Meister des Hildegardis-Codex 001 cropped.jpg": {
+   "lic": "Public domain",
+   "url": "",
+   "autore": "Meister des Hildegardis-Codex",
+   "desc": "Cropped from :Image:Meister des Hildegardis-Codex 001.jpg.",
+   "pagina": "https://commons.wikimedia.org/wiki/File:Meister_des_Hildegardis-Codex_001_cropped.jpg"
+  },
+  "Perotin - Alleluia nativitas.jpg": {
+   "lic": "Public domain",
+   "url": "",
+   "autore": "Unknown authorUnknown author",
+   "desc": "Perotin: Alleluia nativitas from Codex Guelf.1099",
+   "pagina": "https://commons.wikimedia.org/wiki/File:Perotin_-_Alleluia_nativitas.jpg"
+  },
+  "Riesencodex - fl.0466r.jpg": {
+   "lic": "Public domain",
+   "url": "",
+   "autore": "Unknown authorUnknown author",
+   "desc": "Folium 466 recto do Riesencodex",
+   "pagina": "https://commons.wikimedia.org/wiki/File:Riesencodex_-_fl.0466r.jpg"
+  },
+  "Roman de Fauvel - BNF Ms. fr. 146, folio 11r.jpg": {
+   "lic": "Public domain",
+   "url": "",
+   "autore": "Master of the Roman de Fauvel",
+   "desc": "Le cheval (ou l'âne) Fauvel sur le trône. Détail d'une enluminure ornant le Roman de Fauvel, manuscrit de Gervais du Bus et Raoul Chaillou de Pesstain, vers  1318-1320, BnF, Manuscrit Français 146, en",
+   "pagina": "https://commons.wikimedia.org/wiki/File:Roman_de_Fauvel_-_BNF_Ms._fr._146,_folio_11r.jpg"
+  },
+  "St. Gallen Stiftsbibliothek, Cod. Sang. 359, S. 25.jpg": {
+   "lic": "CC BY-SA 4.0",
+   "url": "https://creativecommons.org/licenses/by-sa/4.0",
+   "autore": "Stiftsbibliothek St. Gallen",
+   "desc": "St. Gallen Stiftsbibliothek, Cod. Sang. 359, S. 25. Das so genannte „St. Galler Cantatorium‟, die älteste vollständig erhaltene Musikhandschrift der Welt mit der mittelalterlichen Notation der Neumen.",
+   "pagina": "https://commons.wikimedia.org/wiki/File:St._Gallen_Stiftsbibliothek,_Cod._Sang._359,_S._25.jpg"
+  },
+  "The Hand of Guido.jpg": {
+   "lic": "Public domain",
+   "url": "",
+   "autore": "Unknown authorUnknown author",
+   "desc": "One example of a Guidonian hand drawing, including a human whose magnified fingers provides the \"diagram\". Note how the solmization sequence ut-re-mi-fa-sol-la appears both on the enclosing circle and",
+   "pagina": "https://commons.wikimedia.org/wiki/File:The_Hand_of_Guido.jpg"
+  },
+  "Unknown-artist-eadwine-the-scribe-at-work-eadwine-psalter-christ-church-canterbury-england-uk-circa-1160-70.jpg": {
+   "lic": "Public domain",
+   "url": "",
+   "autore": "anonymous",
+   "desc": "",
+   "pagina": "https://commons.wikimedia.org/wiki/File:Unknown-artist-eadwine-the-scribe-at-work-eadwine-psalter-christ-church-canterbury-england-uk-circa-1160-70.jpg"
+  },
+  "BnF ms. 12473 fol. 126v - La comtesse de Die (1).jpg": {
+   "lic": "Public domain",
+   "url": "",
+   "autore": "Unknown authorUnknown author",
+   "desc": "La comtesse de Die.",
+   "pagina": "https://commons.wikimedia.org/wiki/File:BnF_ms._12473_fol._126v_-_La_comtesse_de_Die_(1).jpg"
+  },
+  "BnF ms. 12473 fol. 15v - Bernart de Ventadour (1).jpg": {
+   "lic": "Public domain",
+   "url": "",
+   "autore": "Unknown authorUnknown author",
+   "desc": "\"Bernautz de Ventadorn\"",
+   "pagina": "https://commons.wikimedia.org/wiki/File:BnF_ms._12473_fol._15v_-_Bernart_de_Ventadour_(1).jpg"
+  },
+  "Burying Plague Victims of Tournai.jpg": {
+   "lic": "Public domain",
+   "url": "",
+   "autore": "Unknown authorUnknown author",
+   "desc": "The burial of the victims of the plague in Tournai. Detail of a miniature from \"The Chronicles of Gilles Li Muisis\" (1272-1352), abbot of the monastery of St. Martin of the Righteous. Bibliothèque roy",
+   "pagina": "https://commons.wikimedia.org/wiki/File:Burying_Plague_Victims_of_Tournai.jpg"
+  },
+  "Cantigas de Santa Maria, Musician's Codex, page 209R.jpg": {
+   "lic": "Public domain",
+   "url": "",
+   "autore": "Original from The court of Alfonso X (1251-1284)\n\nFrom the Patrimonio Nacional website:\" we can affirm that it is a coll",
+   "desc": "Bladder pipes from the Cantigas de Sanata Maria, Musician's Codex, page 209R.",
+   "pagina": "https://commons.wikimedia.org/wiki/File:Cantigas_de_Santa_Maria,_Musician%27s_Codex,_page_209R.jpg"
+  },
+  "Cleric, Knight, and Workman representing the Three Classes.jpg": {
+   "lic": "Public domain",
+   "url": "",
+   "autore": "Unknown authorUnknown author.",
+   "desc": "An inhabited initial from a 13th-century French text representing the tripartite social order of the Middle Ages: the ōrātōrēs (those who pray – clerics), bellātōrēs (those who fight – knights, that i",
+   "pagina": "https://commons.wikimedia.org/wiki/File:Cleric,_Knight,_and_Workman_representing_the_Three_Classes.jpg"
+  },
+  "Dante Domenico di Michelino.jpg": {
+   "lic": "Public domain",
+   "url": "",
+   "autore": "Domenico di Michelino / After Alesso Baldovinetti",
+   "desc": "Dante and His Poem by Domenico di Michelino",
+   "pagina": "https://commons.wikimedia.org/wiki/File:Dante_Domenico_di_Michelino.jpg"
+  },
+  "Decameron - BNF Ms 239 - Départ des conteurs du Decameron de Florence - détail.jpg": {
+   "lic": "Public domain",
+   "url": "",
+   "autore": "Giovanni Boccaccio",
+   "desc": "",
+   "pagina": "https://commons.wikimedia.org/wiki/File:Decameron_-_BNF_Ms_239_-_D%C3%A9part_des_conteurs_du_Decameron_de_Florence_-_d%C3%A9tail.jpg"
+  },
+  "Guillaume de Machaut et Bon Espoir - Le Remede de Fortune.jpg": {
+   "lic": "Public domain",
+   "url": "",
+   "autore": "manuscrito sob a supervisão do autor",
+   "desc": "Iluminura Guillaume de Machaut et Bon Espoir de Le Remède de Fortune nas obras completas de Guillaume de Machaut",
+   "pagina": "https://commons.wikimedia.org/wiki/File:Guillaume_de_Machaut_et_Bon_Espoir_-_Le_Remede_de_Fortune.jpg"
+  },
+  "Laurentius de Voltolina 001.jpg": {
+   "lic": "Public domain",
+   "url": "",
+   "autore": "Laurentius de Voltolina",
+   "desc": "",
+   "pagina": "https://commons.wikimedia.org/wiki/File:Laurentius_de_Voltolina_001.jpg"
+  },
+  "Les Très Riches Heures du duc de Berry juin.jpg": {
+   "lic": "Public domain",
+   "url": "",
+   "autore": "Limbourg brothers / Barthélemy d'Eyck / Jean Colombe",
+   "desc": "C'est une illustration des travaux paysans avec une scène de fenaison. Tandis qu'au premier plan une femme râtelle du foin et qu'une autre le met en meule à l'aide d'une fourche, trois faucheurs forme",
+   "pagina": "https://commons.wikimedia.org/wiki/File:Les_Tr%C3%A8s_Riches_Heures_du_duc_de_Berry_juin.jpg"
+  },
+  "Nave of Notre-Dame de Paris towards the portal, 2024 (1).jpg": {
+   "lic": "CC BY 4.0",
+   "url": "https://creativecommons.org/licenses/by/4.0",
+   "autore": "Ibex73",
+   "desc": "Nef de la cathédrale Notre-Dame de Paris en direction du portail après la restauration de 2024",
+   "pagina": "https://commons.wikimedia.org/wiki/File:Nave_of_Notre-Dame_de_Paris_towards_the_portal,_2024_(1).jpg"
+  },
+  "Paris Notre-Dame Vaults 01.JPG": {
+   "lic": "CC BY-SA 4.0",
+   "url": "https://creativecommons.org/licenses/by-sa/4.0",
+   "autore": "Uoaei1",
+   "desc": "Vaults in the nave of cathedral Notre-Dame de Paris, France. The pillars are slightly offset, so that the vaults are a bit skewed.",
+   "pagina": "https://commons.wikimedia.org/wiki/File:Paris_Notre-Dame_Vaults_01.JPG"
+  },
+  "Pluteous 29.1, folio 1v.jpg": {
+   "lic": "Public domain",
+   "url": "",
+   "autore": "unknown artist, circa 1245-1255 A.D., Paris, possibly in the workshop of Johannes Grusch in Paris,",
+   "desc": "Pluteus 29.1, folio 1v",
+   "pagina": "https://commons.wikimedia.org/wiki/File:Pluteous_29.1,_folio_1v.jpg"
+  },
+  "Sumer is icumen in - Summer Canon (Reading Rota) (mid 13th C), f.11v - BL Harley MS 978.jpg": {
+   "lic": "CC0",
+   "url": "http://creativecommons.org/publicdomain/zero/1.0/deed.en",
+   "autore": "",
+   "desc": "'Sumer is icumen in'\n\n[Whole folio] 'Sumer is icumen in', a vocal composition for several voices; it is probably the most celebrated piece of English medieval music. The melody is one of the earliest ",
+   "pagina": "https://commons.wikimedia.org/wiki/File:Sumer_is_icumen_in_-_Summer_Canon_(Reading_Rota)_(mid_13th_C),_f.11v_-_BL_Harley_MS_978.jpg"
+  }
+ }
+}
