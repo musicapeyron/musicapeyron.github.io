@@ -184,7 +184,7 @@ h1 { margin: 0; font-family: "Sora", "Inter", Arial, sans-serif; font-size: 2rem
     box-shadow: 0 4px 10px rgba(0,0,0,0.25);
 }
 .signature-btn svg { display: block; width: 100%; height: auto; }
-.signature-btn:hover { transform: translateY(-2px); border-color: rgba(165,180,252,0.6); }
+.signature-btn:hover { border-color: rgba(165,180,252,0.6); }
 .signature-btn.correct-flash { border-color: #22c55e !important; box-shadow: 0 0 0 3px rgba(34,197,94,0.5) !important; }
 .signature-btn.wrong-flash { border-color: #ef4444 !important; box-shadow: 0 0 0 3px rgba(239,68,68,0.5) !important; animation: buttonShake 0.4s ease-in-out; }
 @media (max-width: 480px) {
@@ -202,7 +202,9 @@ h1 { margin: 0; font-family: "Sora", "Inter", Arial, sans-serif; font-size: 2rem
     box-shadow: 0 1px 0 rgba(255,255,255,0.10) inset, 0 4px 10px rgba(0,0,0,0.2);
     transition: transform 0.12s var(--ease-out-soft), background 0.15s, box-shadow 0.12s;
 }
-.choice-btn:hover { background: rgba(255,255,255,0.13); transform: translateY(-2px); }
+/* i pulsanti NON si spostano al passaggio del mouse: un clic sul bordo usciva dal pulsante e non contava */
+.choice-btn:hover { background: rgba(255,255,255,0.13); }
+.choice-btn:active { filter: brightness(0.9); }
 .choice-btn.selected { background: linear-gradient(135deg, #6366f1, #4338ca); border-color: rgba(255,255,255,0.35); box-shadow: 0 4px 12px rgba(79,70,229,0.45), inset 0 0 0 2px rgba(255,255,255,0.18); }
 .choice-btn.done { background: rgba(34,197,94,0.18); border-color: rgba(134,239,172,0.4); color: #86efac; cursor: not-allowed; opacity: 0.75; }
 .choice-btn:disabled { cursor: not-allowed; }
@@ -221,7 +223,7 @@ h1 { margin: 0; font-family: "Sora", "Inter", Arial, sans-serif; font-size: 2rem
     font-size: 0.95rem; font-weight: 800; cursor: pointer; box-shadow: 0 1px 0 rgba(255,255,255,0.25) inset, 0 8px 18px rgba(21,128,61,0.4);
     transition: transform 0.15s var(--ease-out-soft), filter 0.15s, opacity 0.15s;
 }
-.submit-button:hover:not(:disabled) { transform: translateY(-2px); filter: brightness(1.08); }
+.submit-button:hover:not(:disabled) { filter: brightness(1.08); }
 .submit-button:disabled { background: rgba(255,255,255,0.08); color: rgba(226,232,240,0.4); box-shadow: none; cursor: not-allowed; }
 
 .game-buttons { display: flex; justify-content: center; align-items: center; gap: 10px; margin-top: 6px; flex-wrap: wrap; }
@@ -530,6 +532,110 @@ h1 { margin: 0; font-family: "Sora", "Inter", Arial, sans-serif; font-size: 2rem
     .tut-msg.con-barra { flex-direction: column; text-align: center; }
 }
   .hero-badge { animation-iteration-count: 3; }   /* il badge galleggia per qualche secondo, poi sta fermo */
+
+/* colonne: sul telefono non esistono (contenuto come prima) */
+.home-col, .game-col { display: contents; }
+
+/* =========================================================
+   SCHERMI LARGHI (PC e LIM): ogni schermata ha misure fisse e una
+   disposizione in orizzontale; poi tutta la schermata si ingrandisce
+   fino a riempire lo schermo (adatta-schermo.js). Il telefono non cambia.
+   ========================================================= */
+@media (min-width: 900px) and (min-height: 560px) {
+    body { padding: 16px 24px; min-height: 0; }
+    /* con lo zoom anche i vh crescono: le finestre restano dentro lo schermo */
+    .schema-card { max-height: calc(92vh / var(--zoom, 1)); }
+    .ripasso-card { max-height: calc(94vh / var(--zoom, 1)); }
+
+    /* schermata iniziale: titolo sopra, impostazioni su due colonne */
+    .menu-screen { width: 980px; max-width: none; }
+    .hero-badge { width: 60px; height: 60px; font-size: 1.7rem; margin-bottom: 10px; }
+    #homeScreen .home-col.home-cols { display: grid; grid-template-columns: 1fr 1fr; gap: 0 28px; align-items: start; }
+    #homeScreen .home-col { display: block; }
+    #homeScreen .home-col > .mode-button.tutorial { width: 100%; margin-top: 14px; }
+
+    /* gioco: in alto statistiche e livello; sotto, a sinistra il pentagramma, a destra le risposte */
+    .game { width: 1200px; max-width: none; }
+    .menu-screen h1, .game h1 { font-size: 2.1rem; }
+    .menu-screen .subtitle, .game .subtitle { margin: 4px 0 16px; font-size: 1rem; }
+    #gameContainer:not([style*="none"]) {
+        display: grid !important; grid-template-columns: 480px 680px; column-gap: 40px; align-items: center;
+        grid-template-areas:
+            "titolo  titolo"
+            "sotto   sotto"
+            "stats   level"
+            "staff   answers"
+            "staff   message"
+            "buttons toolbar";
+    }
+    #gameContainer > h1 { grid-area: titolo; }
+    #gameContainer > .subtitle { grid-area: sotto; }
+    #gameContainer .game-col { display: contents; }
+    #gameContainer .stats { grid-area: stats; margin: 0; }
+    #gameContainer .level-box { grid-area: level; margin: 0; align-self: stretch; }
+    #gameContainer .stat-value { font-size: 1.4rem; }
+    #gameContainer #nameModeSection { display: block; grid-area: staff; margin-top: 20px; align-self: start; }
+    #nameModeSection .staff-wrap { margin: 0; padding: 10px; height: 370px; }
+    #staffContainer svg { width: 440px !important; height: auto !important; }
+    #gameContainer #nameAnswerSection { grid-area: answers; display: block; margin-top: 20px; }
+    #gameContainer #nameModeSection[style*="none"], #gameContainer #nameAnswerSection[style*="none"] { display: none; }
+    #gameContainer .answer-section-title { font-size: 0.8rem; }
+    #gameContainer .choice-row { gap: 10px; margin-bottom: 16px; }
+    #gameContainer .choice-btn { font-size: 1.1rem; padding: 16px 20px; border-radius: 14px; }
+    #letterRow .choice-btn { min-width: 76px; padding-left: 8px; padding-right: 8px; }
+    #gameContainer .submit-button { font-size: 1.15rem; padding: 16px 48px; }
+    #gameContainer .message { grid-area: message; min-height: 34px; font-size: 1.2rem; align-self: start; }
+    #gameContainer .game-buttons { grid-area: buttons; margin-top: 16px; }
+    #gameContainer .toolbar { grid-area: toolbar; margin: 16px 0 0; }
+    /* modalità "Identifica le alterazioni": la tonalità e le armature occupano tutta la larghezza */
+    #gameContainer.modo-armature:not([style*="none"]) {
+        grid-template-columns: 1fr 1fr;
+        grid-template-areas: "titolo titolo" "sotto sotto" "stats level" "sig sig" "message message" "buttons toolbar";
+    }
+    #signatureModeSection { grid-area: sig; margin-top: 22px; }
+    #gameContainer .question-box { max-width: 560px; padding: 18px 20px; }
+    #gameContainer .question-text { font-size: 1.8rem; }
+    #gameContainer .signature-grid { max-width: none; }
+    #gameContainer .signature-btn { zoom: 1.3; }
+
+    /* aiuto "?": largo, il testo va su tre colonne */
+    .help-card { max-width: none; width: 1300px; max-height: calc((100vh - 40px) / var(--zoom, 1)); }
+    .help-content { column-count: 3; column-gap: 32px; }
+    .help-content h3 { column-span: all; }
+    .help-content .example, .help-content p { break-inside: avoid; }
+
+    /* tutorial: larghezza e altezza minima fisse (spazio anche per lo schema accanto),
+       così fra un passo e l'altro l'ingrandimento non cambia */
+    .tut-screen { width: 1060px; max-width: none; }
+    .tut-layout { min-height: 590px; }
+
+    /* statistiche del tutorial: più larghe, altezza fissa; "Da ripassare" su più colonne */
+    .tut-screen:has(#tutStats:not([hidden])) { width: 1150px; }
+    .tut-stats { width: 1150px; min-height: 0; height: auto; }
+    .st-liste .st-box ul { max-height: none; overflow: visible; }
+    .st-liste { grid-template-columns: minmax(180px, 0.6fr) minmax(0, 3.4fr); }
+    /* titolo, numeri e pulsanti sulla stessa riga */
+    #tutStats:not([hidden]) { display: grid; grid-template-columns: auto minmax(0, 1fr) auto; grid-template-rows: auto auto auto 1fr; column-gap: 14px; align-items: center; }
+    #tutStats .st-head { display: contents; }
+    #tutStats .st-head > h2 { padding-left: 56px; } /* lascia posto al pulsante 🏠 */
+    #tutStats .st-numeri { grid-column: 2; grid-row: 1; margin: 0; }
+    #tutStats .st-bottoni { grid-column: 3; grid-row: 1; }
+    #tutStats .st-esito, #tutStats .st-liste, #tutStats .st-dettaglio { grid-column: 1 / -1; margin-top: 6px; }
+    #tutStats .st-dettaglio { align-self: stretch; }
+    #tutStats .st-num strong { font-size: 1.15rem; }
+    #tutStats .st-num span { font-size: 0.7rem; }
+    #tutStats .st-dettaglio .st-box h3 { margin-bottom: 3px; }
+    #tutStats .st-barra { margin-bottom: 1px; }
+    .st-liste .st-box:last-child ul { column-count: 3; column-gap: 18px; }
+    .st-dettaglio .st-box { min-height: 0; }
+    .st-head { margin-bottom: 6px; }
+    .st-num { padding: 4px 10px; }
+    .st-num strong { font-size: 1.25rem; }
+    .st-numeri, .st-liste { margin-bottom: 6px; }
+    .st-box li { padding: 1px 0; }
+    .st-liste .st-box li { break-inside: avoid; }
+    .st-dettaglio .st-box { overflow: visible; }
+}
 </style>
 </head>
 <body>
@@ -542,6 +648,8 @@ h1 { margin: 0; font-family: "Sora", "Inter", Arial, sans-serif; font-size: 2rem
     <h1>Identifica la tonalità</h1>
     <p class="subtitle" id="homeSubtitle">Identifica la tonalità maggiore e minore dall'armatura di chiave.</p>
 
+    <div class="home-col home-cols">
+    <div class="home-col">
     <button class="mode-button tutorial" id="tutorialButton">
         <span class="mode-button-title">🎓 Tutorial</span>
         <span class="mode-button-desc">Impara passo passo a riconoscere la tonalità dall'armatura</span>
@@ -558,6 +666,8 @@ h1 { margin: 0; font-family: "Sora", "Inter", Arial, sans-serif; font-size: 2rem
             <span><strong>Identifica le alterazioni in chiave</strong><br><span class="toggle-desc">Identifica le alterazioni in chiave di una tonalità</span></span>
         </button>
     </div>
+    </div>
+    <div class="home-col">
 
     <div class="answer-mode-title">Alterazioni massime in chiave</div>
     <div class="options-row-7" id="maxAlterationsGroup">
@@ -583,6 +693,8 @@ h1 { margin: 0; font-family: "Sora", "Inter", Arial, sans-serif; font-size: 2rem
             <span class="mode-button-desc">100 tonalità, un livello ogni 10 risposte corrette</span>
         </button>
     </div>
+    </div>
+    </div>
 </div>
 
 <!-- SCHERMATA DI GIOCO -->
@@ -593,6 +705,8 @@ h1 { margin: 0; font-family: "Sora", "Inter", Arial, sans-serif; font-size: 2rem
     <h1>🔑 Identifica la tonalità</h1>
     <p class="subtitle" id="gameSubtitle">Osserva l'armatura e indica la tonalità maggiore e la relativa minore.</p>
 
+    <div class="game-col game-cols">
+    <div class="game-col">
     <div class="stats">
         <div class="stat total"><span class="stat-label">Risposte</span><span class="stat-value" id="total">0</span></div>
         <div class="stat correct" id="correctBox"><span class="stat-label">Corrette</span><span class="stat-value" id="correct">0</span></div>
@@ -613,11 +727,15 @@ h1 { margin: 0; font-family: "Sora", "Inter", Arial, sans-serif; font-size: 2rem
         </div>
     </div>
 
-    <div id="nameModeSection">
+    <div id="nameModeSection" class="game-col">
         <div class="staff-wrap">
             <div id="staffContainer"></div>
         </div>
+    </div>
+    </div>
 
+    <div class="game-col">
+    <div id="nameAnswerSection" class="game-col">
         <div class="answer-section">
             <div class="answer-section-title">Nota</div>
             <div class="choice-row" id="letterRow"></div>
@@ -651,6 +769,8 @@ h1 { margin: 0; font-family: "Sora", "Inter", Arial, sans-serif; font-size: 2rem
             <span class="volume-icon">🔊</span>
             <input type="range" class="volume-slider" id="volumeSlider" min="0" max="100" value="75">
         </div>
+    </div>
+    </div>
     </div>
 
 </div>
@@ -811,6 +931,7 @@ const homeSubtitle = document.getElementById("homeSubtitle");
 const gameModeGroup = document.getElementById("gameModeGroup");
 const nameModeSection = document.getElementById("nameModeSection");
 const signatureModeSection = document.getElementById("signatureModeSection");
+const nameAnswerSection = document.getElementById("nameAnswerSection"); // risposte della modalità "Nomina" (colonna destra su PC)
 const signatureQuestionText = document.getElementById("signatureQuestionText");
 const signatureGrid = document.getElementById("signatureGrid");
 const gameContainer = document.getElementById("gameContainer");
@@ -1469,12 +1590,16 @@ function startSession() {
     showGame();
     if (gameMode === "name") {
         nameModeSection.style.display = "block";
+        nameAnswerSection.style.display = "";
+        gameContainer.classList.remove("modo-armature");
         signatureModeSection.style.display = "none";
         gameSubtitle.textContent = "Osserva l'armatura e indica la tonalità maggiore e la relativa minore.";
         renderChoiceButtons();
         presentQuestion();
     } else {
         nameModeSection.style.display = "none";
+        nameAnswerSection.style.display = "none";
+        gameContainer.classList.add("modo-armature");
         signatureModeSection.style.display = "block";
         gameSubtitle.textContent = "Scegli l'armatura di chiave corretta per la tonalità indicata.";
         presentSignatureQuestion();
@@ -3019,5 +3144,6 @@ schemaOverlay.addEventListener("click", e => { if (e.target === schemaOverlay) s
 document.addEventListener("keydown", e => { if (e.key === "Escape") schemaOverlay.classList.remove("show"); });
 
 </script>
+<script src="adatta-schermo.js" data-schermate="#homeScreen, #gameContainer, #tutorialScreen"></script>
 </body>
 </html>

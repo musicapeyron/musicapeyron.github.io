@@ -241,3 +241,36 @@ Nel Bona l'opzione «𝄢 Chiave di basso» sceglie per ogni lezione lo spostame
   Fatte le lezioni 1–21 (pagine PDF 8–17; pagina stampata = pagina PDF − 2), ognuna verificata da un secondo lettore.
 - Il lettore suona la parte di pianoforte scritta se il MusicXML ne ha una (seconda parte), altrimenti gli accordi `<harmony>`.
 - Attenzione: la scansione ha segni a matita di un vecchio proprietario (lez. 13: chiave ripassata a matita, la stampa è in chiave di basso).
+
+## Pagine che si allargano su PC e LIM (ottobre 2026)
+Home e pagine-indice (`giochi`, `storia`, `spartiti`, `solfeggio`, `schemi`) usano l'unità di scala `--u`
+definita in `comune.css`: vale 1px fino a circa 1150px di larghezza, poi cresce con lo schermo
+(≈1.2px su un PC 1366, 1.7px sulla LIM 1920). Nelle loro regole le misure sono scritte come
+`calc(14 * var(--u))` invece di `14px`: sul telefono non cambia nulla, su PC e LIM tutto diventa
+proporzionalmente più grande e la pagina usa tutta la larghezza (home: 6 schede per riga).
+- Pagina nuova dello stesso tipo: scrivi le misure con `calc(N * var(--u))` (non nelle condizioni `@media`,
+  dove le variabili non funzionano; i bordi da 1px restano in px).
+- Sugli schermi touch (LIM) l'effetto di passaggio del mouse non resta attaccato dopo il tocco;
+  quando si preme, la scheda si abbassa appena.
+
+## Giochi in una sola schermata su LIM e PC (ottobre 2026)
+Tutti i giochi stanno senza scorrere in ogni schermata (menu, partita, risposte, finestre, riepilogo) a
+**1920×970** (LIM) e **1366×657** (PC): sono le misure reali della finestra del browser, tolte barre e
+barra di Windows. Le regole aggiunte stanno in media query `@media (min-width: 900px) ...` (spesso con
+condizioni sull'altezza): il telefono resta identico. Di solito: due colonne (pentagramma a sinistra,
+risposte a destra), statistiche e livello affiancati, pentagrammi e tastiere che seguono l'altezza.
+Per un gioco nuovo, provarlo a quelle due misure in tutte le schermate, compresi i riquadri interni che scorrono.
+
+### Come funziona ora: `adatta-schermo.js`
+- Ogni gioco ha, in `@media (min-width: 900px) and (min-height: 560px)`, una disposizione "larga" con
+  **misure fisse in px** (es. `.game { width: 1200px }`, pentagramma `width: 420px`), niente `vh`.
+  La condizione sull'altezza tiene fuori i telefoni girati in orizzontale.
+- In fondo alla pagina: `<script src="adatta-schermo.js" data-schermate="#homeScreen, #gameContainer"></script>`.
+  Lo script ingrandisce (zoom del body) la schermata visibile finché riempie la finestra senza scorrere.
+- Con lo zoom: finestre con `max-height` in vh vanno divise per `var(--zoom, 1)`; se il gioco sposta
+  elementi con differenze di `getBoundingClientRect`, dividerle per `window.fattoreSchermo()`.
+- Per non far "saltare" l'ingrandimento fra un passo e l'altro (tutorial, riquadro del pentagramma che
+  compare dopo la risposta) dare altezze fisse o minime ai riquadri.
+- Pulsanti delle risposte: **niente `transform` su `:hover`/`:active`** (il pulsante si spostava e il clic
+  sul bordo alto non contava); usare `filter: brightness(...)`.
+- Non usano lo script (per scelta): Imita il ritmo, Le note sul pianoforte, Note-UNO, i due Memory.

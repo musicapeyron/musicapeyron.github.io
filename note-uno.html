@@ -938,6 +938,14 @@
 
   /* ===== risparmio energetico (telefoni): vedi _sviluppo/risparmio_energetico.py ===== */
   .menu .menu-logo { animation-iteration-count: 3; }   /* il badge galleggia per qualche secondo, poi sta fermo */
+
+  /* LIM e PC: il tutorial si legge tutto senza scorrere, riquadri affiancati */
+  @media (min-width:900px) and (min-height:561px){
+    .tut{
+      width:min(1180px, 94vw); max-height:none; overflow:visible;
+      display:grid; grid-template-columns:repeat(3, minmax(0, 1fr)); align-items:start;
+    }
+  }
 </style>
 </head>
 <body>

@@ -307,8 +307,10 @@ h1 {
         0 2px 5px rgba(0,0,0,0.4);
 }
 .answer::after { content: ""; position: absolute; inset: 0; background: linear-gradient(180deg, rgba(255,255,255,0.22), rgba(255,255,255,0) 55%); pointer-events: none; }
-.answer:hover { filter: brightness(1.1); transform: translateY(-3px); }
-.answer:active { transform: translateY(3px); }
+/* il pulsante NON si sposta quando lo si preme: prima saliva al passaggio del mouse e
+   scendeva alla pressione, così un clic sul bordo alto "usciva" dal pulsante e non contava */
+.answer:hover { filter: brightness(1.1); }
+.answer:active { filter: brightness(0.9); box-shadow: 0 1px 0 rgba(255,255,255,0.28) inset, 0 2px 0 rgba(0,0,0,0.25), 0 3px 8px rgba(0,0,0,0.28); }
 .answer.locked { display: none; }
 
 .answer.wrong-flash { animation: buttonShake 0.4s ease-in-out; }
@@ -330,6 +332,14 @@ h1 {
 .answer.sol { background: #009C95; }
 .answer.la { background: #5E50A1; }
 .answer.si { background: #CF3E96; }
+/* opzione "Colori" spenta: pulsanti delle note in bianco e nero */
+body.senza-colori .answer.do, body.senza-colori .answer.re, body.senza-colori .answer.mi,
+body.senza-colori .answer.fa, body.senza-colori .answer.sol, body.senza-colori .answer.la,
+body.senza-colori .answer.si {
+    background: #ffffff; color: #111827; text-shadow: none;
+    box-shadow: inset 0 0 0 2px #111827, 0 5px 0 rgba(0,0,0,0.35), 0 8px 16px rgba(0,0,0,0.28);
+}
+body.senza-colori .answer::after { display: none; }
 
 .message { min-height: 34px; font-size: 1.1rem; font-weight: 700; letter-spacing: 0.1px; }
 .correct-message { color: #86efac; }
@@ -774,6 +784,55 @@ body.mode-tutorial #trophyButton {
 }
   .level-box { -webkit-backdrop-filter: none; backdrop-filter: none; }
   .hero-badge { animation-iteration-count: 3; }   /* il badge galleggia per qualche secondo, poi sta fermo */
+
+/* =========================================================
+   SCHERMI LARGHI (PC e LIM): in alto statistiche e livello;
+   sotto, il pentagramma a sinistra e i pulsanti delle note a destra;
+   lo schema (se attivo) occupa tutta la riga sotto; in fondo comandi
+   e volume sulla stessa riga. Poi tutta la schermata si ingrandisce
+   fino a riempire lo schermo (adatta-schermo.js). Il telefono non cambia.
+   ========================================================= */
+@media (min-width: 900px) and (min-height: 560px) {
+    body { padding: 14px 24px; min-height: 0; }
+    .game, .game.wide {
+        width: 1160px; max-width: none;
+        display: grid;
+        grid-template-columns: 560px 1fr;
+        grid-template-areas:
+            "titolo  titolo"
+            "sotto   sotto"
+            "stats   level"
+            "prog    prog"
+            "staff   answers"
+            "staff   message"
+            "ref     ref"
+            "buttons toolbar";
+        column-gap: 22px;
+        align-items: center;
+        transition: none;
+    }
+    .game > h1 { grid-area: titolo; font-size: 2.1rem; }
+    .game > .subtitle { grid-area: sotto; margin: 4px 0 12px; }
+    .game > .stats { grid-area: stats; margin: 0; gap: 8px; }
+    .stat { padding: 10px 6px 9px; }
+    .game > .level-box { grid-area: level; margin: 0; padding: 12px 18px; }
+    .game > .tutorial-progress { grid-area: prog; margin: 10px auto 0; }
+    .staff-row { display: contents; }
+    .staff-card { grid-area: staff; margin: 14px 0 0; min-height: 270px; padding: 10px 14px; }
+    /* il pentagramma riempie il cartoncino */
+    .staff-inner > svg { width: 100% !important; height: auto !important; }
+    /* con lo schema sotto, il cartoncino del gioco è più basso */
+    .game.wide .staff-card { min-height: 0; }
+    .game.wide .staff-inner > svg { width: 100% !important; height: auto !important; margin: -4% 0 -12%; }
+    .reference-card { grid-area: ref; margin: 14px 0 0; min-height: 0; padding: 8px 14px; }
+    .reference-inner { width: 100%; justify-content: center; }
+    .reference-inner > svg { width: 100% !important; height: auto !important; margin: -10px 0 -30px; }
+    .game > .answers { grid-area: answers; align-self: end; max-width: none; margin: 14px 0 0; gap: 12px; }
+    .answer { width: 150px; padding: 18px 6px; font-size: 1.45rem; }
+    .game > .message { grid-area: message; align-self: start; min-height: 34px; margin-top: 10px; font-size: 1.25rem; }
+    .game > .game-buttons { grid-area: buttons; justify-content: flex-start; margin: 16px 0 0; flex-wrap: nowrap; }
+    .game > .toolbar { grid-area: toolbar; justify-content: flex-end; margin: 16px 0 0; }
+}
 </style>
 </head>
 <body>
@@ -935,6 +994,10 @@ body.mode-tutorial #trophyButton {
     <label class="options-toggle-row">
         <span>Mostra schema</span>
         <input type="checkbox" id="showSchemaToggle">
+    </label>
+    <label class="options-toggle-row">
+        <span>🎨 Colori</span>
+        <input type="checkbox" id="coloriToggle" checked>
     </label>
 </div>
 
@@ -2149,6 +2212,18 @@ document.addEventListener("click", e => {
    automaticamente più a sinistra perché lo schema fa
    parte della stessa riga centrata.
 */
+/* opzione "Colori": accesa di base; la scelta si ricorda su questo dispositivo */
+const coloriToggle = document.getElementById("coloriToggle");
+function applicaColori(acceso) {
+    document.body.classList.toggle("senza-colori", !acceso);
+    coloriToggle.checked = acceso;
+}
+try { applicaColori(localStorage.getItem("leggiNota.colori") !== "0"); } catch (e) { applicaColori(true); }
+coloriToggle.addEventListener("change", () => {
+    applicaColori(coloriToggle.checked);
+    try { localStorage.setItem("leggiNota.colori", coloriToggle.checked ? "1" : "0"); } catch (e) {}
+});
+
 showSchemaToggle.addEventListener("change", () => {
     if (showSchemaToggle.checked) {
         referenceCard.classList.add("show");
@@ -2669,5 +2744,6 @@ siteHomeButton.addEventListener("click", () => { window.location.href = "index.h
 showScreen("home");
 
 </script>
+<script src="adatta-schermo.js" data-schermate="#homeScreen, #tutorialMenuScreen, #verificaMenuScreen, #gameContainer"></script>
 </body>
 </html>

@@ -138,8 +138,8 @@ h1 { margin: 0; font-family: "Sora", "Inter", Arial, sans-serif; font-size: 2rem
     box-shadow: 0 1px 0 rgba(255,255,255,0.2) inset, 0 8px 18px rgba(0,0,0,0.3);
     transition: transform 0.12s var(--ease-spring), background 0.15s;
 }
-.listen-button:hover { background: linear-gradient(180deg, rgba(255,255,255,0.22), rgba(255,255,255,0.08)); transform: translateY(-2px); }
-.listen-button:active { transform: scale(0.95); }
+.listen-button:hover { background: linear-gradient(180deg, rgba(255,255,255,0.22), rgba(255,255,255,0.08)); }
+.listen-button:active { filter: brightness(0.9); }
 
 .next-button {
     display: block; margin: 4px auto 14px; border: none; padding: 13px 34px; border-radius: 12px;
@@ -150,7 +150,7 @@ h1 { margin: 0; font-family: "Sora", "Inter", Arial, sans-serif; font-size: 2rem
     background: linear-gradient(135deg, #22c55e, #15803d); color: white; cursor: pointer;
     box-shadow: 0 1px 0 rgba(255,255,255,0.25) inset, 0 8px 18px rgba(21,128,61,0.4);
 }
-.next-button.ready:hover { transform: translateY(-2px); filter: brightness(1.08); }
+.next-button.ready:hover { filter: brightness(1.08); }
 #staffContainer svg { display: block; }
 
 /* RISPOSTE */
@@ -163,7 +163,9 @@ h1 { margin: 0; font-family: "Sora", "Inter", Arial, sans-serif; font-size: 2rem
     box-shadow: 0 1px 0 rgba(255,255,255,0.10) inset, 0 4px 10px rgba(0,0,0,0.2);
     transition: transform 0.12s var(--ease-out-soft), background 0.15s, box-shadow 0.12s;
 }
-.choice-btn:hover { background: rgba(255,255,255,0.13); transform: translateY(-2px); }
+/* i pulsanti NON si spostano al passaggio del mouse: un clic sul bordo usciva dal pulsante e non contava */
+.choice-btn:hover { background: rgba(255,255,255,0.13); }
+.choice-btn:active { filter: brightness(0.9); }
 .choice-btn.selected { background: linear-gradient(135deg, #6366f1, #4338ca); border-color: rgba(255,255,255,0.35); box-shadow: 0 4px 12px rgba(79,70,229,0.45), inset 0 0 0 2px rgba(255,255,255,0.18); }
 .position-row .choice-btn.selected { background: linear-gradient(135deg, #0ea5e9, #0369a1); box-shadow: 0 4px 12px rgba(3,105,161,0.45), inset 0 0 0 2px rgba(255,255,255,0.18); }
 .choice-btn.correct-flash { background: linear-gradient(135deg, #22c55e, #15803d) !important; animation: correctPulse 0.5s var(--ease-spring); }
@@ -180,7 +182,7 @@ h1 { margin: 0; font-family: "Sora", "Inter", Arial, sans-serif; font-size: 2rem
     font-size: 0.95rem; font-weight: 800; cursor: pointer; box-shadow: 0 1px 0 rgba(255,255,255,0.25) inset, 0 8px 18px rgba(21,128,61,0.4);
     transition: transform 0.15s var(--ease-out-soft), filter 0.15s, opacity 0.15s;
 }
-.submit-button:hover:not(:disabled) { transform: translateY(-2px); filter: brightness(1.08); }
+.submit-button:hover:not(:disabled) { filter: brightness(1.08); }
 .submit-button:disabled { background: rgba(255,255,255,0.08); color: rgba(226,232,240,0.4); box-shadow: none; cursor: not-allowed; }
 
 .game-buttons { display: flex; justify-content: center; align-items: center; gap: 10px; margin-top: 6px; flex-wrap: wrap; }
@@ -215,6 +217,59 @@ h1 { margin: 0; font-family: "Sora", "Inter", Arial, sans-serif; font-size: 2rem
     .message { min-height: 20px; }
 }
   .hero-badge { animation-iteration-count: 3; }   /* il badge galleggia per qualche secondo, poi sta fermo */
+
+/* Gruppi per il layout a due colonne: sul telefono non esistono */
+.zona-destra, .zona-rigo, .zona-comandi { display: contents; }
+
+/* =========================================================
+   SCHERMI LARGHI (PC e LIM): misure fisse e disposizione in orizzontale;
+   poi tutta la schermata si ingrandisce fino a riempire lo schermo
+   (adatta-schermo.js). Il telefono non cambia.
+   ========================================================= */
+@media (min-width: 900px) and (min-height: 560px) {
+    body { padding: 16px 24px; min-height: 0; }
+    #homeScreen { width: 560px; max-width: none; }
+    /* scelta delle qualità: elenco su due colonne */
+    #selectScreen { width: 860px; max-width: none; }
+    #selectScreen .hero-badge { width: 56px; height: 56px; font-size: 1.6rem; margin-bottom: 8px; }
+    .toggle-list { display: grid; grid-template-columns: 1fr 1fr; }
+    .options-triple { width: 600px; margin: 0 auto; }
+    #selectScreen .answer-mode-title { text-align: center; }
+    #selectScreen .mode-grid { width: 600px; margin-left: auto; margin-right: auto; }
+    /* gioco: pentagramma a sinistra, statistiche e risposte a destra */
+    #gameContainer:not([style*="none"]) { display: grid !important; }
+    .game {
+        width: 1180px; max-width: none; column-gap: 40px; align-items: start;
+        grid-template-columns: 460px 680px;
+        grid-template-areas: "titolo titolo" "sottotitolo sottotitolo" "rigo destra" "rigo comandi";
+        grid-template-rows: auto auto auto 1fr;
+    }
+    .game > h1 { grid-area: titolo; font-size: 2.1rem; }
+    .game > .subtitle { grid-area: sottotitolo; margin: 4px 0 16px; font-size: 1rem; }
+    .zona-destra { display: block; grid-area: destra; }
+    .zona-rigo { display: block; grid-area: rigo; }
+    .zona-comandi { display: block; grid-area: comandi; align-self: center; padding-top: 12px; }
+    .stats { margin-bottom: 10px; }
+    .stat-value { font-size: 1.4rem; }
+    .level-box { margin-bottom: 0; }
+    /* riquadro del pentagramma sempre della stessa misura: non salta quando compare l'accordo */
+    .staff-wrap { margin-bottom: 0; height: 400px; padding: 10px; }
+    #staffContainer { display: flex; justify-content: center; }
+    #staffContainer svg { width: 420px !important; height: auto !important; max-width: none; }
+    .staff-placeholder { font-size: 1.2rem; }
+    .staff-placeholder .staff-placeholder-emoji { font-size: 3rem; }
+    .listen-controls { margin: 14px 0 0; }
+    .listen-button { font-size: 1.05rem; padding: 13px 22px; }
+    .answer-section-title { font-size: 0.78rem; }
+    .choice-row { gap: 10px; margin-bottom: 14px; }
+    .choice-btn { flex: 0 0 158px; min-width: 0; font-size: 1rem; padding: 15px 6px; border-radius: 14px; }
+    .submit-button, .next-button { font-size: 1.1rem; padding: 15px 42px; }
+    .message { min-height: 30px; font-size: 1.15rem; }
+    /* Invia, Avanti, Termina e volume sulla stessa riga */
+    .zona-comandi .submit-button, .zona-comandi .next-button { display: inline-block; vertical-align: middle; margin: 0 6px 10px; }
+    .zona-comandi .game-buttons, .zona-comandi .toolbar { display: inline-flex; vertical-align: middle; margin: 0 6px 10px; }
+    .overlay-card { max-height: calc((100vh - 40px) / var(--zoom, 1)); overflow-y: auto; }
+}
 </style>
 </head>
 <body>
@@ -264,6 +319,7 @@ h1 { margin: 0; font-family: "Sora", "Inter", Arial, sans-serif; font-size: 2rem
     <h1>🎧 Ascolta l'accordo</h1>
     <p class="subtitle" id="gameSubtitle">Ascolta e rispondi.</p>
 
+    <div class="zona-destra">
     <div class="stats">
         <div class="stat total"><span class="stat-label">Risposte</span><span class="stat-value" id="total">0</span></div>
         <div class="stat correct" id="correctBox"><span class="stat-label">Corrette</span><span class="stat-value" id="correct">0</span></div>
@@ -284,6 +340,8 @@ h1 { margin: 0; font-family: "Sora", "Inter", Arial, sans-serif; font-size: 2rem
         </div>
     </div>
 
+    </div>
+    <div class="zona-rigo">
     <div class="staff-wrap">
         <div class="staff-placeholder" id="staffPlaceholder"><span class="staff-placeholder-emoji">🎧</span>Ascolta e indovina</div>
         <div id="staffContainer" style="display: none;"></div>
@@ -293,6 +351,8 @@ h1 { margin: 0; font-family: "Sora", "Inter", Arial, sans-serif; font-size: 2rem
         <button class="listen-button" id="replayButton" title="Riascolta">🔊 Riascolta</button>
         <button class="listen-button" id="replayArpeggioButton" title="Riascolta arpeggio">🎹 Riascolta arpeggio</button>
     </div>
+    </div>
+    <div class="zona-comandi">
 
     <div class="answer-section">
         <div class="answer-section-title">Qualità</div>
@@ -319,6 +379,7 @@ h1 { margin: 0; font-family: "Sora", "Inter", Arial, sans-serif; font-size: 2rem
             <span class="volume-icon">🔊</span>
             <input type="range" class="volume-slider" id="volumeSlider" min="0" max="100" value="75">
         </div>
+    </div>
     </div>
 
 </div>
@@ -668,7 +729,18 @@ function renderChord() {
     voice.addTickables([chord]);
     new Formatter().joinVoices([voice]).format([voice], SVG_W - 90);
     voice.draw(context, stave);
+    // LIM e PC: il pentagramma si ingrandisce con lo spazio disponibile
+    if (window.matchMedia("(min-width: 900px) and (min-height: 560px)").matches) {
+        const svg = staffContainer.querySelector("svg");
+        if (svg) svg.setAttribute("viewBox", "0 0 " + SVG_W + " " + SVG_H);
+    }
 }
+let lastStaffWidth = window.innerWidth;
+window.addEventListener("resize", () => {
+    if (window.innerWidth === lastStaffWidth) return;
+    lastStaffWidth = window.innerWidth;
+    if (currentQuestion && staffContainer.innerHTML) renderChord();
+});
 
 /* =========================================================
    STATO DI GIOCO
@@ -994,5 +1066,6 @@ volumeSlider.addEventListener("input", () => {
 goHome();
 
 </script>
+<script src="adatta-schermo.js" data-schermate="#homeScreen, #selectScreen, #gameContainer"></script>
 </body>
 </html>

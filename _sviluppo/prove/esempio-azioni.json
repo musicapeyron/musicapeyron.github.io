@@ -1,0 +1,6 @@
+[["1menu",      [["wait", 600]]],
+ ["2gioco",     [["click", "[data-number='all']"], ["wait", 1200]]],
+ ["3risposta",  [["js", "document.querySelectorAll('.choice-btn')[2].click()"], ["wait", 300], ["js", "document.getElementById('submitButton').click()"], ["wait", 700]]],
+ ["4fine",      [["click", "#finishButton"], ["wait", 400], ["js", "[...document.querySelectorAll('.overlay.show button')].pop()?.click()"], ["wait", 900]]],
+ ["5scegli",    [["js", "location.reload()"], ["wait", 900], ["click", "#customButton"], ["wait", 600]]],
+ ["6tutorial",  [["js", "location.reload()"], ["wait", 900], ["click", "#tutorialOpenButton"], ["wait", 600], ["js", "document.querySelector('.tutorial-tile').click()"], ["wait", 900]]]]

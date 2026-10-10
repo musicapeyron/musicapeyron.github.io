@@ -215,8 +215,10 @@ h1 {
         0 2px 5px rgba(0,0,0,0.4);
 }
 .answer::after { content: ""; position: absolute; inset: 0; background: linear-gradient(180deg, rgba(255,255,255,0.22), rgba(255,255,255,0) 55%); pointer-events: none; }
-.answer:hover { transform: translateY(-3px); }
-.answer:active { transform: translateY(3px); }
+/* i pulsanti NON si spostano quando li si preme: prima salivano al passaggio del mouse e
+   scendevano alla pressione, così un clic sul bordo alto usciva dal pulsante e non contava */
+.answer:hover { filter: brightness(1.08); }
+.answer:active { filter: brightness(0.92); }
 
 /* Colori delle note (do re mi fa sol la si): tavolozza ufficiale del sito */
 .answer.do  { background: #E21C48; --glow: rgba(226,28,72,0.9); }
@@ -1215,11 +1217,38 @@ h1 {
     .mode-divider { margin: 8px 0 0; }
 }
 
-@media (prefers-reduced-motion: reduce) {
-    .card-anim[class*="enter-"],
-    .card-anim[class*="exit-"] { animation-duration: 0.01ms !important; }
-    .hero-chip, .hero-badge, .card-slot.current::before, .card-slot.current .card-back { animation: none; }
-    .card-flip { transition-duration: 0.2s; }
+/* =========================================================
+   SCHERMI LARGHI (PC e LIM): statistiche e livello su una riga,
+   sotto i pulsanti delle note e le carte, in fondo comandi e volume
+   sulla stessa riga. Poi tutta la schermata si ingrandisce fino a
+   riempire lo schermo (adatta-schermo.js). Il telefono non cambia.
+   ========================================================= */
+@media (min-width: 900px) and (min-height: 560px) {
+    /* con lo zoom anche i vh crescono: finestre e pannelli restano dentro lo schermo */
+    .trophy-panel { max-height: calc((100vh - 120px) / var(--zoom, 1)); }
+    .overlay-card { max-height: calc((100vh - 40px) / var(--zoom, 1)); }
+    body { padding: 16px 24px; min-height: 0; }
+    .game {
+        width: 1180px; max-width: none;
+        display: grid;
+        grid-template-columns: 560px 1fr;
+        column-gap: 18px;
+        align-items: center;
+    }
+    .game > h1, .game > .subtitle, .game > .play-area { grid-column: 1 / -1; }
+    h1 { font-size: 2.2rem; }
+    .subtitle { margin: 4px 0 14px; }
+    .stats { margin: 0; gap: 8px; }
+    .stat { padding: 10px 6px 9px; }
+    .level-box { margin: 0; padding: 12px 18px; }
+    .play-area { margin: 14px 0 12px; gap: 18px; }
+    .note-column { gap: 9px; }
+    .answer { width: 132px; padding: 13px 6px; font-size: 1.45rem; }
+    .stage { min-height: 400px; }
+    .game-buttons { grid-column: 1; justify-content: flex-start; margin: 0; flex-wrap: nowrap; }
+    .toolbar { grid-column: 2; justify-content: flex-end; margin: 0; }
+    /* menu: un po' più largo, poi si ingrandisce anche lui */
+    .menu-screen { width: 560px; }
 }
 </style>
 </head>
@@ -1942,10 +1971,11 @@ function animateCard(i, className) {
 function cardGeometry(i) {
     const r = flipEl(i).getBoundingClientRect();
     const s = stage.getBoundingClientRect();
+    const z = window.fattoreSchermo ? window.fattoreSchermo() : 1;   // pagina ingrandita su PC e LIM
     return {
-        x: r.left - s.left + r.width / 2,
-        y: r.top - s.top + r.height / 2,
-        top: r.top - s.top
+        x: (r.left - s.left + r.width / 2) / z,
+        y: (r.top - s.top + r.height / 2) / z,
+        top: (r.top - s.top) / z
     };
 }
 
@@ -2180,8 +2210,9 @@ function exitCards(style, except) {
 async function moveCard(from, to, tok) {
     const a = slotEls[from].getBoundingClientRect();
     const b = slotEls[to].getBoundingClientRect();
-    const dx = b.left - a.left;
-    const dy = b.top - a.top;
+    const z = window.fattoreSchermo ? window.fattoreSchermo() : 1;   // pagina ingrandita su PC e LIM
+    const dx = (b.left - a.left) / z;
+    const dy = (b.top - a.top) / z;
     const anim = slotEls[from].firstElementChild;
     playSlideSound();
     anim.animate([
@@ -3077,5 +3108,6 @@ $("siteHomeButton").addEventListener("click", () => { window.location.href = "in
 
 showScreen("home");
 </script>
+<script src="adatta-schermo.js" data-schermate="#homeScreen, #gameContainer"></script>
 </body>
 </html>

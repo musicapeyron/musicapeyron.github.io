@@ -459,7 +459,82 @@ input[type="range"]::-moz-range-thumb {
     .harmonic-col input[type="range"] { height: 84px; }
 }
   .panel { -webkit-backdrop-filter: none; backdrop-filter: none; }
+
+/* LIM e PC: ogni schermata sta tutta nello schermo, senza scorrere */
+@media (min-width: 900px) and (min-height: 560px) {
+    body { padding: 22px 18px 18px; }
+    .app, .app.wide { width: min(1240px, calc(100% - 36px)); }
+    .subtitle { max-width: 980px; margin-top: 6px; }
+
+    /* menu: pulsanti su tre colonne */
+    .hero-badge { width: 64px; height: 64px; margin-bottom: 8px; font-size: 1.9rem; }
+    .mode-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin-top: 18px; }
+    .mode-divider { grid-column: 1 / -1; margin: 2px 0; }
+    .mode-button { padding: 16px 18px; min-height: 92px; }
+
+    /* lezioni: controlli a sinistra, grafico e pulsante a destra */
+    .back-button { margin-bottom: 6px; padding: 8px 18px; }
+    .lesson-screen .subtitle { max-width: 1100px; }
+    .panel {
+        margin-top: 14px;
+        padding: 18px 22px;
+        display: grid;
+        grid-template-columns: minmax(0, 5fr) minmax(0, 7fr);
+        gap: 26px;
+        align-items: center;
+    }
+    .panel .scope-card { margin: 0; }
+    .panel .scope-card canvas { height: clamp(150px, calc(100vh - 430px), 420px); }
+    .panel .actions-row { margin-top: 14px; }
+    .footnote { max-width: 1100px; margin-top: 10px; }
+
+    /* ricapitolando: grafici più bassi su schermi bassi */
+    .recap-layout { grid-template-columns: 340px 1fr; margin-top: 12px; }
+    .recap-scope-card canvas { height: clamp(110px, calc(50vh - 200px), 260px); }
+    .recap-particles-card canvas { height: clamp(120px, calc(50vh - 180px), 280px); }
+
+    /* doppler: la spiegazione su tre colonne sopra, cursori e disegno sotto */
+    #screen-doppler .panel-controls { display: contents; }
+    #screen-doppler .panel { grid-template-columns: minmax(0, 5fr) minmax(0, 7fr); grid-template-rows: auto auto 1fr; row-gap: 10px; align-items: start; }
+    #screen-doppler .footnote { max-width: none; }
+    #screen-doppler .panel-controls > .control-row:first-child {
+        grid-column: 1 / -1; display: grid; grid-template-columns: repeat(3, 1fr); column-gap: 22px; margin: 0;
+    }
+    #screen-doppler .panel-controls > .control-row:first-child .control-label { grid-column: 1 / -1; }
+    #screen-doppler .panel-controls > .control-row:nth-child(2) { grid-column: 1; grid-row: 2; }
+    #screen-doppler .panel-controls > .control-row:nth-child(3) { grid-column: 1; grid-row: 3; }
+    #screen-doppler .panel-side { grid-column: 2; grid-row: 2 / span 2; }
+    #screen-doppler .scope-card canvas { height: clamp(120px, calc(100vh - 575px), 420px); }
+    /* scritta della frequenza e pulsante Avvia sulla stessa riga, sotto il disegno */
+    #screen-doppler .panel-side { display: grid; grid-template-columns: 1fr auto; column-gap: 16px; align-items: center; }
+    #screen-doppler .panel-side .scope-card { grid-column: 1 / -1; }
+    #screen-doppler .panel-side .actions-row { margin-top: 10px; }
+}
+/* PC (schermo basso): menu e ricapitolando più compatti */
+@media (min-width: 900px) and (min-height: 560px) and (max-height: 800px) {
+    .hero-badge { width: 52px; height: 52px; font-size: 1.6rem; margin-bottom: 4px; }
+    .mode-grid { margin-top: 12px; gap: 10px; }
+    .mode-button { min-height: 76px; padding: 12px 16px; }
+    .recap-layout { grid-template-columns: 560px 1fr; }
+    .recap-controls { display: grid; grid-template-columns: 1fr 1fr; align-items: start; }
+    .recap-controls > .recap-panel:nth-child(3) { grid-column: 2; grid-row: 1 / span 2; }
+    .recap-controls .recap-panel:nth-child(1), .recap-controls .recap-panel:nth-child(2) { grid-column: 1; }
+}
   .hero-badge { animation-iteration-count: 3; }   /* il badge galleggia per qualche secondo, poi sta fermo */
+
+/* =========================================================
+   SCHERMI LARGHI (PC e LIM): ogni schermata ha la stessa larghezza e
+   grafici di altezza fissa; poi tutta la schermata si ingrandisce fino
+   a riempire lo schermo (adatta-schermo.js). Il telefono non cambia.
+   ========================================================= */
+@media (min-width: 900px) and (min-height: 560px) {
+    body { padding: 16px 24px 12px; min-height: 0; }
+    .app, .app.wide { width: 1240px; max-width: none; }
+    .panel .scope-card canvas { height: 300px; }
+    .recap-scope-card canvas { height: 190px; }
+    .recap-particles-card canvas { height: 210px; }
+    #screen-doppler .scope-card canvas { height: 230px; }
+}
 </style>
 </head>
 <body>
@@ -567,6 +642,7 @@ input[type="range"]::-moz-range-thumb {
         <p class="subtitle">L'altezza distingue un suono grave da uno acuto. Dipende dalla <strong>frequenza</strong> della vibrazione: più le oscillazioni sono veloci, più il suono sembra acuto. Si misura in Hertz (Hz), cioè vibrazioni al secondo.</p>
 
         <div class="panel">
+            <div class="panel-controls">
             <div class="control-row">
                 <div class="control-label">
                     <span>Frequenza</span>
@@ -575,11 +651,13 @@ input[type="range"]::-moz-range-thumb {
                 <input type="range" id="pitchSlider" min="110" max="1568" value="440" step="1">
                 <div class="control-hint">Nota più vicina: <span id="pitchNote">La4</span> — trascina verso destra per un suono più acuto</div>
             </div>
-
+            </div>
+            <div class="panel-side">
             <div class="scope-card"><canvas id="pitchCanvas"></canvas></div>
 
             <div class="actions-row">
                 <button class="play-button" id="pitchPlay">▶ <span>Ascolta</span></button>
+            </div>
             </div>
         </div>
         <p class="footnote">Nota: qui la <strong>quantità</strong> del suono (il volume) resta fissa. Solo la frequenza cambia: è l'altezza, non l'intensità, ad aumentare.</p>
@@ -592,6 +670,7 @@ input[type="range"]::-moz-range-thumb {
         <p class="subtitle">L'intensità distingue un suono forte da uno debole. Dipende dall'<strong>ampiezza</strong> della vibrazione: un'oscillazione più ampia produce più energia e un suono più intenso — anche se l'altezza resta esattamente la stessa.</p>
 
         <div class="panel">
+            <div class="panel-controls">
             <div class="speaker-visual"><span class="icon" id="speakerIcon">🔈</span></div>
             <div class="control-row">
                 <div class="control-label">
@@ -601,11 +680,13 @@ input[type="range"]::-moz-range-thumb {
                 <input type="range" id="loudnessSlider" min="0" max="100" value="60" step="1">
                 <div class="control-hint">La frequenza resta fissa: 440 Hz, la nota La</div>
             </div>
-
+            </div>
+            <div class="panel-side">
             <div class="scope-card"><canvas id="loudnessCanvas"></canvas></div>
 
             <div class="actions-row">
                 <button class="play-button" id="loudnessPlay">▶ <span>Ascolta</span></button>
+            </div>
             </div>
         </div>
         <p class="footnote">Guarda l'onda: quando alzi il volume, la sua <strong>altezza grafica</strong> (l'ampiezza) cresce, ma il numero di oscillazioni al secondo non cambia.</p>
@@ -618,6 +699,7 @@ input[type="range"]::-moz-range-thumb {
         <p class="subtitle">Un violino e un flauto possono suonare la stessa nota, alla stessa intensità, eppure li riconosci subito: quello che cambia è il <strong>timbro</strong>. Dipende dalla forma dell'onda, cioè da quali armoniche si sovrappongono al suono fondamentale.</p>
 
         <div class="panel">
+            <div class="panel-controls">
             <div class="control-row">
                 <div class="control-label"><span>Forma d'onda</span></div>
                 <div class="choice-row">
@@ -628,11 +710,13 @@ input[type="range"]::-moz-range-thumb {
                 </div>
                 <div class="control-hint" id="timbreHint">Onda pura: nessuna armonica, solo la frequenza fondamentale.</div>
             </div>
-
+            </div>
+            <div class="panel-side">
             <div class="scope-card"><canvas id="timbreCanvas"></canvas></div>
 
             <div class="actions-row">
                 <button class="play-button" id="timbrePlay">▶ <span>Ascolta</span></button>
+            </div>
             </div>
         </div>
         <p class="footnote">Tutte e quattro le onde vibrano a <strong>440 Hz</strong> con lo stesso volume: la nota percepita è sempre "La", ma il colore del suono cambia completamente.</p>
@@ -645,6 +729,7 @@ input[type="range"]::-moz-range-thumb {
         <p class="subtitle">Un suono musicale (un tono) e un rumore (uno scroscio, un fruscio, un "tst" di un applauso) sono entrambi vibrazioni dell'aria — ma con una differenza fondamentale: la <strong>regolarità</strong>. Un tono ripete sempre lo stesso identico schema, ciclo dopo ciclo: per questo l'orecchio gli riconosce un'altezza precisa. Il rumore invece non si ripete mai: la sua forma cambia in modo imprevedibile istante per istante, e per questo non ha una nota definita.</p>
 
         <div class="panel">
+            <div class="panel-controls">
             <div class="control-row">
                 <div class="control-label">
                     <span>Regolarità dell'onda</span>
@@ -659,11 +744,13 @@ input[type="range"]::-moz-range-thumb {
                 <button class="preset-btn" data-noise-preset="50">Metà e metà</button>
                 <button class="preset-btn" data-noise-preset="100">Tono puro</button>
             </div>
-
+            </div>
+            <div class="panel-side">
             <div class="scope-card"><canvas id="noiseCanvas"></canvas></div>
 
             <div class="actions-row">
                 <button class="play-button" id="noisePlay">▶ <span>Ascolta</span></button>
+            </div>
             </div>
         </div>
         <p class="footnote">Guarda il grafico mentre ascolti: la parte "tono" disegna sempre la stessa onda liscia e ripetuta, mentre la parte "rumore" viene ridisegnata in modo diverso a ogni fotogramma — non si stabilizza mai, proprio perché non si ripete mai.</p>
@@ -676,8 +763,10 @@ input[type="range"]::-moz-range-thumb {
         <p class="subtitle">Quasi nessun suono reale è puro: è la somma di una <strong>fondamentale</strong> (che dà l'altezza percepita) e di <strong>armoniche</strong>, vibrazioni più veloci a multipli interi di quella frequenza (2×, 3×, 4×...). Quanto ciascuna armonica è presente decide il timbro del suono.</p>
 
         <div class="panel">
+            <div class="panel-controls">
             <div class="harmonics-grid" id="harmonicsGrid"><!-- generato via JS --></div>
-
+            </div>
+            <div class="panel-side">
             <div class="scope-card"><canvas id="harmonicsCanvas"></canvas></div>
 
             <div class="preset-row">
@@ -690,6 +779,7 @@ input[type="range"]::-moz-range-thumb {
             <div class="actions-row">
                 <button class="play-button" id="harmonicsPlay">▶ <span>Ascolta</span></button>
             </div>
+            </div>
         </div>
         <p class="footnote">Ogni cursore controlla quanto è presente l'armonica corrispondente (1ª = fondamentale). Sommale in proporzioni diverse per creare timbri nuovi.</p>
     </section>
@@ -701,6 +791,7 @@ input[type="range"]::-moz-range-thumb {
         <p class="subtitle">Il suono si propaga nell'aria come un'<strong>onda di pressione</strong>: le molecole d'aria non viaggiano lontano, ma vibrano avanti e indietro, creando zone di compressione e di rarefazione che si spostano nello spazio.</p>
 
         <div class="panel">
+            <div class="panel-controls">
             <div class="view-toggle">
                 <button class="active" data-view="transverse">Onda nel tempo</button>
                 <button data-view="particles">Particelle d'aria</button>
@@ -720,11 +811,13 @@ input[type="range"]::-moz-range-thumb {
                 </div>
                 <input type="range" id="waveAmpSlider" min="10" max="100" value="60" step="1">
             </div>
-
+            </div>
+            <div class="panel-side">
             <div class="scope-card"><canvas id="wavesCanvas"></canvas></div>
 
             <div class="actions-row">
                 <button class="play-button" id="wavesPlay">🔊 <span>Ascolta la frequenza reale</span></button>
+            </div>
             </div>
         </div>
         <p class="footnote">Per poterla vedere a occhio nudo, qui l'onda è rallentata moltissimo: un vero suono vibra da decine a migliaia di volte al secondo. Il pulsante "ascolta" riproduce comunque una nota vera, proporzionale alla frequenza scelta.</p>
@@ -798,6 +891,7 @@ input[type="range"]::-moz-range-thumb {
         <p class="subtitle">Due suoni quasi identici, suonati insieme, non restano fermi: il volume <strong>pulsa</strong> — sono i <strong>battimenti</strong>. Se allontani le due frequenze abbastanza, i battimenti diventano troppo veloci per essere sentiti come pulsazioni e il suono diventa "ruvido": è la <strong>dissonanza</strong>. Quando invece le due frequenze formano un rapporto semplice (come 3:2 o 2:1), il suono torna pulito: è la <strong>consonanza</strong>.</p>
 
         <div class="panel">
+            <div class="panel-controls">
             <div class="control-row">
                 <div class="control-label">
                     <span>Seconda frequenza (la prima è fissa a 220 Hz)</span>
@@ -820,11 +914,13 @@ input[type="range"]::-moz-range-thumb {
                     <button class="preset-btn" data-beats-ratio="2">Ottava</button>
                 </div>
             </div>
-
+            </div>
+            <div class="panel-side">
             <div class="scope-card"><canvas id="beatsCanvas"></canvas></div>
 
             <div class="actions-row">
                 <button class="play-button" id="beatsPlay">▶ <span>Ascolta</span></button>
+            </div>
             </div>
         </div>
         <p class="footnote">Il grafico mostra la <strong>somma</strong> delle due onde: vicino ai rapporti semplici la somma è quasi regolare (consonanza), vicino all'unisono ondeggia lentamente (battimento), altrove diventa complessa e irregolare (dissonanza).</p>
@@ -837,6 +933,7 @@ input[type="range"]::-moz-range-thumb {
         <p class="subtitle">Due strumenti possono avere lo stesso timbro "statico" ed essere comunque riconoscibili, perché il loro volume nasce, si stabilizza e si spegne in modo diverso nel tempo. Questa evoluzione si chiama <strong>inviluppo</strong> ed è descritta da quattro fasi: <strong>Attacco</strong>, <strong>Decadimento</strong>, <strong>Sostegno</strong>, <strong>Rilascio</strong> (ADSR).</p>
 
         <div class="panel">
+            <div class="panel-controls">
             <div class="control-row">
                 <div class="control-label"><span>Attacco</span><span class="readout" id="adsrAttackReadout">10 ms</span></div>
                 <input type="range" id="adsrAttack" min="5" max="800" value="10" step="5">
@@ -861,12 +958,14 @@ input[type="range"]::-moz-range-thumb {
                 <button class="preset-btn" data-adsr-preset="archi">Archi</button>
             </div>
             <div class="control-hint">Ogni preset cambia anche il timbro (non solo l'inviluppo) per imitare meglio lo strumento. Organo e archi hanno un vero sostegno: tienili premuti. Pizzicato e percussione bastano un clic.</div>
-
+            </div>
+            <div class="panel-side">
             <div class="scope-card adsr-scope"><canvas id="adsrCanvas"></canvas></div>
             <div class="phase-label" id="adsrPhaseLabel">Fase: inattivo — tieni premuto il pulsante</div>
 
             <div class="actions-row">
                 <button class="play-button hold-button" id="adsrTrigger">▶ <span>Tieni premuto per suonare</span></button>
+            </div>
             </div>
         </div>
         <p class="footnote">Tieni premuto il pulsante per attivare attacco, decadimento e sostegno; rilascialo per far partire il rilascio. Il pallino sul grafico segue la fase in corso.</p>
@@ -879,6 +978,7 @@ input[type="range"]::-moz-range-thumb {
         <p class="subtitle">Un suono che si propaga in uno spazio incontra ostacoli — pareti, montagne — e torna indietro riflesso. Se le riflessioni sono poche e distanti nel tempo, le senti separate: è l'<strong>eco</strong> (come in una valle). Se sono moltissime e ravvicinate, si fondono in una coda continua: è il <strong>riverbero</strong> (come in una chiesa o in una stanza).</p>
 
         <div class="panel">
+            <div class="panel-controls">
             <div class="view-toggle">
                 <button class="active" data-reverb-mode="echo">Eco</button>
                 <button data-reverb-mode="hall">Riverbero</button>
@@ -907,11 +1007,13 @@ input[type="range"]::-moz-range-thumb {
                     <div class="control-hint">Stanza piccola → coda breve. Cattedrale → coda lunga.</div>
                 </div>
             </div>
-
+            </div>
+            <div class="panel-side">
             <div class="scope-card"><canvas id="reverbCanvas"></canvas></div>
 
             <div class="actions-row">
                 <button class="play-button" id="reverbTrigger">🔔 <span>Suona una nota di prova</span></button>
+            </div>
             </div>
         </div>
         <p class="footnote">Il grafico mostra come si spegne nel tempo l'energia delle riflessioni: a scatti e separate per l'eco, come una coda continua e liscia per il riverbero.</p>
@@ -924,6 +1026,7 @@ input[type="range"]::-moz-range-thumb {
         <p class="subtitle">Quando un'ambulanza si avvicina, la sirena sembra più acuta; quando si allontana, più grave — anche se la sirena emette sempre la stessa nota, senza mai cambiarla. Il motivo non è la sirena: è il <strong>movimento</strong>.</p>
 
         <div class="panel">
+            <div class="panel-controls">
             <div class="control-row">
                 <div class="control-label"><span>Perché succede</span></div>
                 <div class="control-hint">Immagina che la sirena emetta una "cresta" dell'onda a intervalli regolarissimi, come un cuore che batte. Se la sorgente è ferma, ogni cresta parte dallo stesso punto: le creste formano cerchi concentrici, tutti equidistanti tra loro — un'onda regolare, una nota costante.</div>
@@ -941,7 +1044,8 @@ input[type="range"]::-moz-range-thumb {
                 <input type="range" id="dopplerFreqSlider" min="200" max="700" value="450" step="10">
                 <div class="control-hint">È la nota che l'ambulanza "crede" di emettere sempre uguale — quella che sentirebbe chi le sta seduto sopra.</div>
             </div>
-
+            </div>
+            <div class="panel-side">
             <div class="scope-card doppler-scope"><canvas id="dopplerCanvas"></canvas></div>
 
             <div class="doppler-readouts">
@@ -951,6 +1055,7 @@ input[type="range"]::-moz-range-thumb {
 
             <div class="actions-row">
                 <button class="play-button" id="dopplerPlay">▶ <span>Avvia</span></button>
+            </div>
             </div>
         </div>
         <p class="footnote">Il valore a destra è la frequenza che sentiresti tu, fermo nel punto indicato dall'omino: sale mentre la sorgente si avvicina, scende non appena inizia ad allontanarsi, ed è più marcato quanto più la sorgente è veloce. Per motivi di visibilità i cerchi rappresentano impulsi periodici stilizzati, non le vere migliaia di oscillazioni al secondo di un suono reale.</p>
@@ -2547,5 +2652,6 @@ updateDopplerSliderUI();
 ========================================================= */
 showScreen("home");
 </script>
+<script src="adatta-schermo.js" data-schermate=".app"></script>
 </body>
 </html>

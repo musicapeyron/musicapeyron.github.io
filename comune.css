@@ -10,6 +10,10 @@
 :root {
   --do: #E21C48; --re: #F99D1C; --mi: #FFF428; --fa: #BED958;
   --sol: #009C95; --la: #5E50A1; --si: #CF3E96;
+  /* unità di scala per le pagine che la usano (home e pagine-indice): 1px fino a ~1150px di larghezza,
+     poi cresce con lo schermo (circa 1.2px su un PC 1366, 1.7px sulla LIM 1920): tutto diventa
+     proporzionalmente più grande e la pagina usa tutto lo spazio. Il telefono resta com'è. */
+  --u: clamp(1px, 0.0875vw, 1.7px);
 }
 
 /* sfondo sfumato: uno strato fisso a parte, che il telefono disegna una volta sola

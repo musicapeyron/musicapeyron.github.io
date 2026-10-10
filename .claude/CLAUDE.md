@@ -45,6 +45,8 @@ Playwright (Chromium già installato) a 1920x1080 (LIM), 1366x768 e 390x844 (tel
 nessun errore JavaScript, nessuna richiesta esterna prima del play, schermate guardate davvero.
 
 ## Dove sono le cose
+- **Giochi e app (aspetto, impaginazione su LIM/PC/telefono): leggi prima `_sviluppo/GUIDA-INTERFACCE-GIOCHI.md`**;
+  strumenti di prova in `_sviluppo/prove/`.
 - `_sviluppo/LEGGIMI.md`: appunti generali; `_sviluppo/omr/PROCEDURA.md`: trascrizione degli spartiti (Bona).
 - Raccolte di spartiti: il modello è `brani-propedeutici.html`; le altre si rigenerano con
   `python3 _sviluppo/genera_raccolte.py` (dopo modifiche a mano: `--salva`).

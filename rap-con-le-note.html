@@ -279,6 +279,10 @@ h1 {
     box-shadow: inset 0 -2px 0 rgba(0,0,0,0.18);
 }
 
+/* opzione "Colori" spenta: carte in bianco e nero (striscia, nome, pallino e nota sul pentagramma) */
+body.senza-colori .face { --note-color: #1F2430 !important; --note-ink: #1F2430 !important; }
+body.senza-colori .staff g.vf-stavenote { fill: #111827; stroke: #111827; }
+
 /* retro da carta da gioco: copre le note centrali nella verifica */
 .card-back {
     position: absolute; inset: 0;
@@ -750,6 +754,79 @@ h1 {
     .final-stats { grid-template-columns: repeat(3, 1fr); }
 }
 
+/* =========================================================
+   SCHERMI LARGHI (PC e LIM): menu su due colonne; nel gioco
+   statistiche e livello su una riga, carte grandi, comandi e volume
+   sulla stessa riga. Poi tutta la schermata si ingrandisce fino a
+   riempire lo schermo (adatta-schermo.js). Il telefono non cambia.
+   ========================================================= */
+@media (min-width: 900px) and (min-height: 560px) {
+    /* con lo zoom anche i vh crescono: finestre e pannelli restano dentro lo schermo */
+    .overlay-card { max-height: calc((100vh - 40px) / var(--zoom, 1)); }
+    /* schermata iniziale su due colonne: opzioni a sinistra, livelli a destra */
+    .menu-screen {
+        width: min(1000px, 100%);
+        display: grid;
+        grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+        column-gap: 28px;
+        align-items: start;
+    }
+    .menu-screen > * { grid-column: 1; }
+    .menu-screen > .hero-badge { grid-row: 1; grid-column: 1 / -1; }
+    .menu-screen > h1 { grid-row: 2; grid-column: 1 / -1; }
+    .menu-screen > .subtitle { grid-row: 3; grid-column: 1 / -1; }
+    .menu-screen > .mode-switch { grid-row: 4; }
+    .menu-screen > #modeNote { grid-row: 5; }
+    .menu-screen > label.opt-row:nth-of-type(1) { grid-row: 6; }
+    .menu-screen > #staffSub { grid-row: 7; }
+    .menu-screen > label.opt-row:nth-of-type(2) { grid-row: 8; }
+    .menu-screen > .type-pick { grid-row: 9; }
+    .menu-screen > .levels { grid-row: 4 / 10; grid-column: 2; align-self: start; margin-top: 4px; }
+    .menu-screen > .toolbar { grid-row: 4 / 10; grid-column: 2; align-self: end; }
+    .menu-screen > .home-note:not(#modeNote) { grid-row: 10; grid-column: 1 / -1; }
+    /* opzioni del pentagramma a coppie, una accanto all'altra */
+    /* lo spazio delle scelte del pentagramma resta sempre riservato: così la
+       schermata iniziale non cambia dimensione quando si spunta "Note sul pentagramma" */
+    .opt-sub, .opt-sub.show { display: grid; grid-template-columns: 1fr 1fr; column-gap: 8px; visibility: hidden; }
+    .opt-sub.show { visibility: visible; }
+    .opt-gap { display: none; }
+}
+@media (min-width: 900px) and (min-height: 560px) {
+    body { padding: 12px 24px; min-height: 0; }
+    .game { width: 1100px; max-width: none; }
+    .game > .controls { margin: 0; }
+    .game > .stage { min-height: 330px; }
+    .hero-badge { width: 56px; height: 56px; font-size: 1.6rem; margin-bottom: 8px; }
+    .subtitle { margin: 4px 0 12px; }
+    .type-pick { margin-top: 12px; }
+    .levels { gap: 10px; }
+
+    /* gioco: statistiche e livello affiancati, pulsanti e volume sulla stessa riga */
+    .game {
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: center;
+        align-items: center;
+        column-gap: 14px;
+    }
+    .game > h1, .game > .subtitle, .game > .rotate-hint, .game > .stage { flex: 0 0 100%; }
+    .game > .stats, .game > .level-box { flex: 1 1 0; margin: 0; }
+    .stats { gap: 8px; }
+    .stat { padding: 10px 6px 9px; }
+    .stat-label { margin-bottom: 2px; }
+    .level-box { padding: 12px 18px 12px; }
+    .game > .stage { margin: 12px 0 10px; }
+    .game > .toolbar { margin: 0 0 0 auto; }
+    .game > .controls { flex: 0 1 auto; margin: 0 auto 0 0; }
+
+    /* finestra "Che cosa vuoi recitare?": più larga, così sta tutta */
+    .type-card { width: min(780px, 100%); }
+    .type-group-title { margin: 8px 0 5px; }
+    .type-grid { grid-template-columns: repeat(6, 1fr); }
+    .type-grid.two { grid-template-columns: repeat(4, 1fr); }
+    .type-card .overlay-buttons { margin-top: 8px !important; }
+}
+
 @media (prefers-reduced-motion: reduce) {
     .hero-badge { animation: none; }
     .strip { transition-duration: 0.05s; }
@@ -907,6 +984,12 @@ h1 {
         <button class="options-choice active" data-rate="1">normale</button>
         <button class="options-choice" data-rate="1.12">🐇 veloce</button>
     </div>
+
+    <div class="options-group-title">Carte</div>
+    <label class="options-toggle-row">
+        <span>🎨 Colori</span>
+        <input type="checkbox" id="coloriToggle" checked>
+    </label>
 
 </div>
 
@@ -1213,6 +1296,17 @@ const progressFill = $("progressFill");
 const timerDisplay = $("timerDisplay");
 const pauseButton = $("pauseButton");
 const optionsPanel = $("optionsPanel");
+/* opzione "Colori": accesa di base; la scelta si ricorda su questo dispositivo */
+const coloriToggle = $("coloriToggle");
+function applicaColori(acceso) {
+    document.body.classList.toggle("senza-colori", !acceso);
+    coloriToggle.checked = acceso;
+}
+try { applicaColori(localStorage.getItem("rap.colori") !== "0"); } catch (e) { applicaColori(true); }
+coloriToggle.addEventListener("change", () => {
+    applicaColori(coloriToggle.checked);
+    try { localStorage.setItem("rap.colori", coloriToggle.checked ? "1" : "0"); } catch (e) {}
+});
 const bpmButtons = Array.from(optionsPanel.querySelectorAll("[data-rate]"));
 const finalOverlay = $("finalOverlay");
 
@@ -2194,5 +2288,6 @@ document.addEventListener("click", e => {
 showScreen("home");
 
 </script>
+<script src="adatta-schermo.js" data-schermate="#homeScreen, #gameContainer"></script>
 </body>
 </html>
