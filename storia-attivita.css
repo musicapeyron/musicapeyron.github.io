@@ -104,6 +104,9 @@ button.mc-n:hover { filter: brightness(1.18); }
 .strum1 figure { margin: 0; border-radius: 16px; overflow: hidden; background: #0b1226; border: 1px solid rgba(255,255,255,0.14); aspect-ratio: 16 / 10; }
 .strum1 img { width: 100%; height: 100%; object-fit: contain; display: block; }
 .strum1 figure { position: relative; }
+.vista-sw { margin-bottom: 8px; }
+.vista-sw button { font-size: 14px; padding: 6px 14px; }
+.nota-sw { font-size: 13px; color: #9FB3CE; margin-top: 6px; font-style: italic; }
 .strum1 .ovale { position: absolute; inset: 0; width: 100%; height: 100%; }
 .strum1 .ovale ellipse { fill: none; stroke: #FF2A2A; stroke-width: 3.5; }
 .strum1 .dom { font: 600 28px 'Fredoka', 'Manrope', sans-serif; margin-bottom: 12px; }

@@ -171,12 +171,18 @@
     nav.lastElementChild.addEventListener("click", giro);
   }
 
-  /* ---------- CHE STRUMENTO È? Uno alla volta, grande ---------- */
+  /* ---------- CHE STRUMENTO È? Uno alla volta, grande; immagine d'epoca oppure foto ---------- */
   function esStrumenti() {
     apri("Esercizio", "Che strumento è?", "#5EC8D8");
     const nomi = C.strumenti.map(s => s.titolo).sort((a, b) => a.localeCompare(b, "it"));
-    let lista, k, primoColpo, sbagliato;
+    let lista, k, primoColpo, sbagliato, vista = "epoca";
     const inizio = () => { lista = mescola(C.strumenti); k = 0; primoColpo = 0; mostra(); };
+    const figura = s => {
+      const o = s.cerchio;   // ovale rosso sullo strumento giusto, se nell'immagine d'epoca ce ne sono due
+      const ovale = vista === "epoca" && o ? `<svg class="ovale" viewBox="0 0 640 400" aria-hidden="true"><ellipse cx="${o[0]}" cy="${o[1]}" rx="${o[2]}" ry="${o[3]}" transform="rotate(${o[4]} ${o[0]} ${o[1]})"/></svg>` : "";
+      const f = vista === "foto" && s.foto ? s.foto : (s.epoca || s.img);
+      return `<img src="${C.img + f}" alt="Uno strumento medievale: quale?">${ovale}`;
+    };
     const mostra = () => {
       if (k >= lista.length) {
         $("aNum").textContent = "";
@@ -185,11 +191,18 @@
       }
       const s = lista[k]; sbagliato = false;
       $("aNum").textContent = `Strumento ${k + 1} di ${lista.length}`;
-      const o = s.cerchio;   // ovale rosso sullo strumento giusto, se nell'immagine ce ne sono due
-      const ovale = o ? `<svg class="ovale" viewBox="0 0 640 400" aria-hidden="true"><ellipse cx="${o[0]}" cy="${o[1]}" rx="${o[2]}" ry="${o[3]}" transform="rotate(${o[4]} ${o[0]} ${o[1]})"/></svg>` : "";
-      corpo.innerHTML = `<div class="strum1"><figure><img src="${C.img + s.img}" alt="Uno strumento medievale: quale?">${ovale}</figure>
+      corpo.innerHTML = `<div class="strum1"><div><div class="a-scelta vista-sw"><button type="button" data-v="epoca"${vista === "epoca" ? ' class="si"' : ""}>Iconografia dell'epoca</button><button type="button" data-v="foto"${vista === "foto" ? ' class="si"' : ""}>Foto</button></div>
+          <figure>${figura(s)}</figure>
+          <div class="nota-sw">${vista === "epoca" ? "Iconografia dell'epoca: lo strumento come lo dipingevano allora, in miniature e quadri." : "Foto: lo strumento ricostruito oggi o conservato in un museo."}</div></div>
         <div><div class="dom">Che strumento è?</div><div class="nomi">${nomi.map(n => `<button type="button" class="cl" data-n="${n}"><span class="pal"></span><b>${n}</b></button>`).join("")}</div>
         <div class="a-msg"></div></div></div>`;
+      corpo.querySelector(".vista-sw").addEventListener("click", e => {
+        const b = e.target.closest("button"); if (!b || b.dataset.v === vista) return;
+        vista = b.dataset.v;
+        corpo.querySelectorAll(".vista-sw button").forEach(x => x.classList.toggle("si", x === b));
+        corpo.querySelector(".strum1 figure").innerHTML = figura(s);
+        corpo.querySelector(".nota-sw").textContent = vista === "epoca" ? "Iconografia dell'epoca: lo strumento come lo dipingevano allora, in miniature e quadri." : "Foto: lo strumento ricostruito oggi o conservato in un museo.";
+      });
       barra("", "", bottone("Avanti ▶", "avanti")); const av = nav.lastElementChild; av.disabled = true;
       av.addEventListener("click", () => { k++; mostra(); });
       corpo.querySelector(".nomi").addEventListener("click", e => {
