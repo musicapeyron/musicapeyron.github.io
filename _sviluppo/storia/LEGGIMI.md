@@ -24,7 +24,9 @@ Per le altre epoche si copia il Medioevo e si cambiano solo i dati.
 - **Versione breve** solo per scheda riassuntiva e racconto completo: davvero breve e a caratteri grandi.
 - **Scheda d'ascolto**: se non si può sapere dal video com'è l'esecuzione (voci sole o con strumenti...), accettare
   più risposte e dirlo a Cristiano, che può ascoltare e decidere.
-- Lavoro grosso (un'epoca nuova): ramo di prova, schermate a Cristiano, poi su `main`. Ritocchi: subito su `main`.
+- Lavoro grosso (un'epoca nuova): ramo di prova e prove complete. Dall'11 ottobre 2026 Cristiano ha detto di non aspettare
+  il suo OK: finita e provata un'epoca, si pubblica su `main` e si passa alla successiva, poi gli si manda un riepilogo
+  (canali non ufficiali, dubbi). Ritocchi: subito su `main`.
 
 ## Come si comincia un'epoca nuova
 1. Leggere la pagina attuale dell'epoca (`storia-<epoca>.html`): ascolti, video, strumenti, crediti già scelti
@@ -45,7 +47,7 @@ Per le altre epoche si copia il Medioevo e si cambiano solo i dati.
 - In alto il banner da bordo a bordo; sotto le schede (Il percorso, Strumenti, Da suonare, ...).
 - `CAPITOLI`: un capitolo per ogni ascolto, in ordine. Ogni capitolo ha `pagine` (una diapositiva per
   1–2 paragrafi: `{ img, did, t: [paragrafi] }`), poi l'ascolto (`brano`, `yt`, `punti`, `sapevi`,
-  `altri` per il pulsante «Ascolta anche»), poi `parole` e `strumenti` (pagina «Da ricordare»).
+  `altri` per il pulsante «Ascolta anche»; con due o più ascolti in più i pulsanti mostrano solo il titolo, quindi titoli brevi), poi `parole` e `strumenti` (pagina «Da ricordare»).
   L'ultimo capitolo ha `riepilogo: true` (linea del tempo + tutte le parole).
 - PC e LIM: blocco `@media (min-width: 900px) and (min-height: 560px)` + `adatta-schermo.js`
   (`data-schermate="#cTelaio, #contenuto"`). La diapositiva è 1280x650, l'indice 1400 di larghezza.

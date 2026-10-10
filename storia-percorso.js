@@ -166,7 +166,7 @@
         <div class="d-testo">${p.t.map(x => `<p>${x}</p>`).join("")}</div>`;
     } else if (d.tipo === "ascolto") {
       cDiapo.innerHTML = `<div class="d-sx"><div class="schermo c-schermo" id="cSchermo"></div><div class="c-fonte" id="cFonte"></div>
-          <div class="c-altri" id="cAltri">${(c.altri || []).map((a, k) => `<button type="button" class="altro" data-k="${k}">Ascolta anche: <b>${a.brano}</b> · ${a.chi}</button>`).join("")}</div></div>
+          <div class="c-altri" id="cAltri">${(c.altri || []).map((a, k) => `<button type="button" class="altro" data-k="${k}">${etichettaAltro(c, a, false)}</button>`).join("")}</div></div>
         <div class="d-dx"><span class="d-tag">Ascoltiamo</span><h3 class="d-brano" id="cBrano">${c.brano}</h3><div class="c-chi" id="cChi">${c.chi}</div>
           <div class="c-gancio">${c.gancio}</div><ul class="c-punti">${c.punti.map(p => `<li>${p}</li>`).join("")}</ul>
           <div class="c-sapevi"><b>Lo sapevi?</b> ${c.sapevi}</div></div>`;
@@ -198,6 +198,11 @@
     if (pag > 0) mostraPagina(pag - 1);
     else if (attuale > 0) apriCapitolo(attuale - 1, false, true);
   }
+  /* pulsante «Ascolta anche»: con un solo ascolto in più c'è anche l'autore; con due o più, solo il titolo (stanno su una riga) */
+  function etichettaAltro(c, a, torna) {
+    const corto = (c.altri || []).length > 1;
+    return torna ? `Torna a: <b>${c.brano}</b>${corto ? "" : " · " + c.chi}` : `Ascolta anche: <b>${a.brano}</b>${corto ? "" : " · " + a.chi}`;
+  }
   function mostraAscolto(v) {
     preparaSchermo($("cSchermo"), v);
     $("cFonte").innerHTML = `Video: ${v.canale} · <a href="https://www.youtube.com/watch?v=${v.yt}" target="_blank" rel="noopener">Apri su YouTube ↗</a>`;
@@ -206,10 +211,11 @@
     const b = e.target.closest(".altro");
     if (b) {
       const c = CAPITOLI[attuale], a = c.altri[+b.dataset.k];
+      b.parentNode.querySelectorAll(".altro.attivo").forEach(x => { if (x !== b) { x.classList.remove("attivo"); x.innerHTML = etichettaAltro(c, c.altri[+x.dataset.k], false); } });
       const torna = b.classList.toggle("attivo");
       mostraAscolto(torna ? a : c);
       $("cBrano").textContent = torna ? a.brano : c.brano; $("cChi").textContent = torna ? a.chi : c.chi;
-      b.innerHTML = torna ? `Torna a: <b>${c.brano}</b> · ${c.chi}` : `Ascolta anche: <b>${a.brano}</b> · ${a.chi}`;
+      b.innerHTML = etichettaAltro(c, a, torna);
       return;
     }
     const st = e.target.closest(".c-strum");

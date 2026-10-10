@@ -13,6 +13,9 @@ async def main():
             await pg.click("#inizia"); await pg.wait_for_timeout(200)
             prob=[]; zooms=set(); n=0
             for _ in range(80):
+                # aspetta (al massimo 2 s) che le immagini della pagina siano caricate: se il computer è lento non è un errore
+                try: await pg.wait_for_function("[...document.querySelectorAll('#cDiapo img')].every(i=>i.complete)", timeout=2000)
+                except Exception: pass
                 r=await pg.evaluate("""()=>{const d=document.getElementById('cDiapo'),c=document.getElementById('capitolo');
                   const imgs=[...d.querySelectorAll('img')].map(i=>i.complete&&i.naturalWidth>0);
                   return {o:d.scrollHeight-d.clientHeight, s:document.documentElement.scrollHeight-innerHeight, z:document.body.style.zoom, t:document.getElementById('cTitolo').textContent, img:imgs.every(x=>x), h:location.hash}}""")

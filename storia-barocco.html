@@ -4,158 +4,22 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Il Barocco — Storia della musica — musicascuole.it</title>
-<meta name="description" content="La musica del Barocco raccontata attraverso gli ascolti: l'opera e la musica vocale, il concerto e la musica strumentale, gli strumenti di Cremona e la fuga di Bach.">
+<meta name="description" content="Il Barocco in musica, un capitolo alla volta: il basso continuo, i teatri d'opera di Venezia e Barbara Strozzi, il lamento di Didone, Corelli e i violini di Cremona, Bach e la fuga, Händel a Londra, le cantate di Lipsia, Vivaldi e le Quattro stagioni, l'opera buffa di Pergolesi e il Messia.">
 <link rel="icon" href="favicon.svg" type="image/svg+xml">
 <link rel="icon" href="favicon-32.png" type="image/png" sizes="32x32">
 <link rel="apple-touch-icon" href="apple-touch-icon.png">
 <link rel="stylesheet" href="fonts/caratteri.css">
 <link rel="stylesheet" href="comune.css">
-<style>
-  * { box-sizing: border-box; }
-  html, body { margin: 0; min-height: 100%; }
-  body { min-height: 100vh; font-family: 'Inter', 'Segoe UI', Arial, sans-serif; color: #EAF2FF; -webkit-font-smoothing: antialiased;
-    background: #0f172a; overflow-x: hidden; position: relative; }
-
-  .casetta { position: fixed; top: 12px; left: 12px; z-index: 40; width: 44px; height: 44px; border-radius: 50%; display: grid; place-items: center;
-    background: rgba(15,23,42,0.75); border: 1px solid rgba(255,255,255,0.18); text-decoration: none; font-size: 20px; color: #EAF2FF; font-weight: 700; }
-
-  main { position: relative; z-index: 1; max-width: 1400px; margin: 0 auto; padding: 12px 20px 24px; }
-
-  /* ---------- doppio banner ---------- */
-  .banner { position: relative; height: clamp(170px, 30vh, 320px); border-radius: 18px; overflow: hidden; background: #111827;
-    border: 1px solid rgba(255,255,255,0.1); user-select: none; -webkit-user-select: none; }
-  .meta { position: absolute; inset: 0; cursor: pointer; transition: filter .35s ease, opacity .35s ease; -webkit-tap-highlight-color: transparent; }
-  .meta img { width: 100%; height: 100%; object-fit: cover; display: block; }
-  .meta.sx { clip-path: polygon(0 0, 56% 0, 44% 100%, 0 100%); }
-  .meta.dx { clip-path: polygon(56% 0, 100% 0, 100% 100%, 44% 100%); }
-  .meta.sx img { width: 58%; object-position: 50% 55%; }
-  .meta.dx img { width: 58%; margin-left: 42%; object-position: 50% 40%; }
-  .banner.f-sx .meta.dx, .banner.f-dx .meta.sx { filter: grayscale(.85) brightness(.45); }
-  .banner::after { content: ""; position: absolute; inset: 0; pointer-events: none;
-    background: radial-gradient(ellipse at 50% 55%, rgba(15,23,42,0.55) 0%, rgba(15,23,42,0) 60%), linear-gradient(0deg, rgba(15,23,42,0.75), rgba(15,23,42,0) 45%); }
-  .titolo-epoca { position: absolute; left: 50%; top: 50%; transform: translate(-50%, -58%); text-align: center; z-index: 2; pointer-events: none; }
-  .titolo-epoca .sopra { font-family: 'Manrope', sans-serif; font-weight: 800; font-size: 11.5px; letter-spacing: .16em; text-transform: uppercase; color: #FDE7C7; text-shadow: 0 1px 6px rgba(0,0,0,.8); }
-  .titolo-epoca h1 { font-family: 'Fredoka', 'Manrope', sans-serif; font-weight: 600; margin: 0; font-size: clamp(32px, 6vw, 62px); line-height: 1.05; text-shadow: 0 2px 18px rgba(0,0,0,.85); }
-  .titolo-epoca .date { font-family: 'Manrope', sans-serif; font-weight: 800; color: #FFE58A; font-size: clamp(13px, 1.6vw, 17px); text-shadow: 0 1px 8px rgba(0,0,0,.9); }
-  .etich-meta { position: absolute; bottom: 12px; z-index: 3; font-family: 'Manrope', sans-serif; font-weight: 800; font-size: 12.5px;
-    padding: 6px 12px; border-radius: 999px; background: rgba(15,23,42,0.72); border: 1px solid rgba(255,255,255,0.22); cursor: pointer; white-space: nowrap; }
-  .etich-meta.sx { left: 12px; color: #FBC877; } .etich-meta.dx { right: 12px; color: #C4B5FD; }
-  .etich-meta.attiva { background: #EAF2FF; color: #0f172a; }
-  @media (max-width: 560px) { .etich-meta { font-size: 11px; padding: 5px 9px; bottom: 8px; } .etich-meta .lungo { display: none; } }
-
-  .atmosfera { text-align: center; color: #9FB3CE; font-size: 13px; font-style: italic; margin: 10px auto 12px; max-width: 760px; line-height: 1.45; }
-
-  /* ---------- schede ---------- */
-  .schede { display: flex; justify-content: center; gap: 8px; flex-wrap: wrap; margin-bottom: 12px; }
-  .scheda { font: 700 13.5px 'Manrope', sans-serif; color: #EAF2FF; cursor: pointer; padding: 8px 16px; border-radius: 999px;
-    background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.14); display: inline-flex; align-items: center; gap: 7px; }
-  .scheda:hover { background: rgba(255,255,255,0.12); }
-  .scheda.attiva { background: #EAF2FF; color: #0f172a; border-color: #EAF2FF; }
-  .scheda .n { font-size: 11px; opacity: .65; }
-  @media (max-width: 560px) { main { padding-top: 64px !important; } .schede { flex-wrap: nowrap; gap: 6px; } .scheda { font-size: 12.5px; padding: 7px 11px; gap: 5px; } .scheda .n { display: none; } }
-
-  /* ---------- griglia di card (come in home) ---------- */
-  .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 12px; }
-  @media (min-width: 1200px) { .grid { grid-template-columns: repeat(5, 1fr); } }
-  @media (max-width: 520px) { .grid { grid-template-columns: repeat(2, 1fr); gap: 9px; } main { padding: 10px 12px 20px; } }
-  .card { --accent: #5EC8D8; position: relative; background: rgba(255,255,255,0.035); border: 1px solid rgba(255,255,255,0.09); border-top: 2px solid var(--accent);
-    border-radius: 12px; overflow: hidden; display: flex; flex-direction: column; text-align: left; font: inherit; color: inherit; padding: 0; cursor: pointer;
-    transition: border-color .2s ease, transform .2s ease, background .2s ease; }
-  .card:hover { transform: translateY(-2px); background: rgba(255,255,255,0.06); border-color: color-mix(in srgb, var(--accent) 55%, transparent); border-top-color: var(--accent); }
-  .card:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
-  .card .foto { aspect-ratio: 16 / 10; background: #1e293b center / cover no-repeat; position: relative; }
-  .card .foto::after { content: "▶"; position: absolute; right: 8px; bottom: 8px; width: 30px; height: 30px; border-radius: 50%; display: grid; place-items: center;
-    font-size: 12px; background: rgba(15,23,42,0.8); color: #fff; border: 1px solid rgba(255,255,255,0.3); }
-  .card .testo { padding: 9px 11px 11px; display: flex; flex-direction: column; gap: 3px; flex: 1; }
-  .card .label { align-self: flex-start; font-size: 9px; font-weight: 700; letter-spacing: .05em; text-transform: uppercase; color: var(--accent);
-    background: color-mix(in srgb, var(--accent) 14%, transparent); padding: 2px 7px; border-radius: 999px; }
-  .card h2 { font-family: 'Manrope', sans-serif; font-weight: 700; font-size: 14px; margin: 2px 0 0; letter-spacing: -0.01em; line-height: 1.25; }
-  .card .chi { font-size: 11px; color: #9FB3CE; font-weight: 600; }
-  .card p { font-size: 11.5px; line-height: 1.4; color: #B8C7DD; margin: 2px 0 0; }
-  .card.dx { --accent: #a78bfa; } .card.sx { --accent: #F99D1C; } .card.strum { --accent: #5EC8D8; } .card.suona { --accent: #BED958; }
-  .card.empty { cursor: default; border-style: dashed; background: transparent; }
-  .card.empty:hover { transform: none; }
-  .card.empty .foto::after { content: "presto"; width: auto; height: auto; padding: 3px 9px; border-radius: 999px; font: 700 10.5px 'Manrope', sans-serif; letter-spacing: .04em; }
-  .card.nascosta { display: none; }
-
-  /* ---------- finestra dell'ascolto ---------- */
-  .velo { position: fixed; inset: 0; z-index: 60; background: rgba(2,6,23,0.82); display: none; align-items: center; justify-content: center; padding: 16px; }
-  .velo.aperto { display: flex; }
-  .finestra { position: relative; width: min(1180px, 100%); max-height: calc(100vh - 32px); overflow: auto; background: #131c33; border: 1px solid rgba(255,255,255,0.14);
-    border-top: 3px solid var(--accent, #5EC8D8); border-radius: 18px; display: grid; grid-template-columns: 1.55fr 1fr; gap: 0; box-shadow: 0 20px 60px rgba(0,0,0,.5); }
-  @media (max-width: 860px) { .finestra { grid-template-columns: 1fr; } }
-  .schermo { position: relative; aspect-ratio: 16 / 9; background: #000 center / cover no-repeat; }
-  .schermo iframe { position: absolute; inset: 0; width: 100%; height: 100%; border: 0; }
-  .avvio { position: absolute; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 10px; cursor: pointer;
-    background: rgba(2,6,23,0.55); border: 0; color: #fff; font: inherit; width: 100%; }
-  .avvio .tondo { width: 76px; height: 76px; border-radius: 50%; background: #FFE58A; color: #0f172a; display: grid; place-items: center; font-size: 30px; padding-left: 6px; box-shadow: 0 6px 24px rgba(0,0,0,.45); }
-  .avvio:hover .tondo { transform: scale(1.06); }
-  .avvio .nota { font-size: 12px; color: #DCE6F5; background: rgba(15,23,42,0.7); padding: 4px 10px; border-radius: 999px; }
-  .info { padding: 16px 18px 14px; display: flex; flex-direction: column; gap: 8px; }
-  .info .label { align-self: flex-start; font-size: 10px; font-weight: 800; letter-spacing: .06em; text-transform: uppercase; color: var(--accent); background: color-mix(in srgb, var(--accent) 16%, transparent); padding: 3px 9px; border-radius: 999px; }
-  .info h3 { font-family: 'Manrope', sans-serif; font-weight: 800; font-size: 22px; margin: 0; line-height: 1.2; }
-  .info .chi { font-size: 13px; color: #9FB3CE; font-weight: 600; margin-top: -4px; }
-  .info .gancio { font-family: 'Manrope', sans-serif; font-weight: 700; font-size: 16px; color: #FFE58A; margin: 2px 0 0; }
-  .info ul { margin: 0; padding-left: 0; list-style: none; display: flex; flex-direction: column; gap: 6px; }
-  .info li { font-size: 14.5px; color: #DCE6F5; line-height: 1.45; padding-left: 24px; position: relative; }
-  .info li::before { content: "🎧"; position: absolute; left: 0; top: 0; font-size: 13px; }
-  .info .sapevi { font-size: 13.5px; color: #DCE6F5; background: rgba(255,255,255,0.05); border-left: 3px solid var(--accent); border-radius: 8px; padding: 8px 10px; line-height: 1.45; }
-  .info .sapevi b { color: var(--accent); }
-  .info .piede { margin-top: auto; display: flex; justify-content: space-between; align-items: flex-end; gap: 10px; flex-wrap: wrap; font-size: 11px; color: #7F93B2; }
-  .info .piede a { color: #7DD3FC; }
-  .chiudi { position: absolute; top: 8px; right: 8px; z-index: 3; width: 40px; height: 40px; border-radius: 50%; border: 1px solid rgba(255,255,255,0.25);
-    background: rgba(15,23,42,0.85); color: #fff; font-size: 18px; cursor: pointer; }
-  .frecce { display: flex; gap: 8px; }
-  .freccia { font: 700 13px 'Manrope', sans-serif; color: #EAF2FF; background: rgba(255,255,255,0.08); border: 1px solid rgba(255,255,255,0.18); border-radius: 999px; padding: 7px 14px; cursor: pointer; }
-  .freccia:hover { background: rgba(255,255,255,0.15); }
-
-  /* ---------- La Fuga (pulsante speciale) ---------- */
-  .scheda.speciale { background: linear-gradient(135deg, rgba(180,83,9,0.55), rgba(124,45,18,0.55)); border-color: #FBBF24; color: #FFE58A; }
-  .scheda.speciale:hover { background: linear-gradient(135deg, rgba(180,83,9,0.8), rgba(124,45,18,0.8)); }
-  .scheda.speciale.attiva { background: #FFE58A; color: #0f172a; border-color: #FFE58A; }
-  .fuga { --accent: #FBBF24; display: grid; grid-template-columns: 1.55fr 1fr; background: #131c33; border: 1px solid rgba(255,255,255,0.14);
-    border-top: 3px solid var(--accent); border-radius: 18px; overflow: hidden; }
-  .fuga[hidden], .grid[hidden] { display: none; }
-  @media (max-width: 860px) { .fuga { grid-template-columns: 1fr; } }
-  .o-video { display: flex; flex-direction: column; background: #000; }
-  .o-sotto { font-size: 11.5px; color: #9FB3CE; padding: 8px 12px; background: #0b1224; }
-  .o-sotto a { color: #7DD3FC; }
-  .o-info { padding: 14px 16px 14px; display: flex; flex-direction: column; gap: 6px; min-height: 0; }
-  .o-info .label { align-self: flex-start; font-size: 10px; font-weight: 800; letter-spacing: .06em; text-transform: uppercase; color: var(--accent); background: color-mix(in srgb, var(--accent) 16%, transparent); padding: 3px 9px; border-radius: 999px; }
-  .o-info h3 { font-family: 'Fredoka', 'Manrope', sans-serif; font-weight: 600; font-size: 28px; margin: 0; line-height: 1.1; }
-  .o-info .chi { font-size: 13px; color: #9FB3CE; font-weight: 600; }
-  .o-info .gancio { font-family: 'Manrope', sans-serif; font-weight: 700; font-size: 15px; color: #FFE58A; }
-  .o-tab { display: flex; gap: 6px; margin-top: 4px; flex-wrap: wrap; }
-  .o-t { font: 700 12.5px 'Manrope', sans-serif; color: #EAF2FF; cursor: pointer; padding: 6px 12px; border-radius: 999px; background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.16); }
-  .o-t:hover { background: rgba(255,255,255,0.12); }
-  .o-t.attiva { background: var(--accent); color: #0f172a; border-color: var(--accent); }
-  .o-corpo { flex: 1; min-height: 0; overflow: auto; padding-right: 4px; }
-  @media (min-width: 861px) { .o-info { contain: size; } }   /* la colonna dei testi si adatta all'altezza del video e scorre */
-  .o-corpo ul { margin: 4px 0 0; padding: 0; list-style: none; display: flex; flex-direction: column; gap: 7px; }
-  .o-corpo li { font-size: 14px; color: #DCE6F5; line-height: 1.45; padding-left: 24px; position: relative; }
-  .o-corpo li::before { content: attr(data-i); position: absolute; left: 0; top: 0; font-size: 13px; }
-  .o-corpo .atto { display: grid; grid-template-columns: 62px 1fr; gap: 8px; align-items: baseline; padding: 6px 8px; border-radius: 8px; background: rgba(255,255,255,0.04); font-size: 13.5px; color: #DCE6F5; line-height: 1.4; }
-  .o-corpo .atto b { font: 800 11px 'Manrope', sans-serif; color: var(--accent); text-transform: uppercase; letter-spacing: .05em; }
-  .o-corpo .atto + .atto { margin-top: 5px; }
-  .o-corpo .cur { font-size: 13.5px; color: #DCE6F5; background: rgba(255,255,255,0.05); border-left: 3px solid var(--accent); border-radius: 8px; padding: 7px 10px; line-height: 1.45; }
-  .o-corpo .cur + .cur { margin-top: 6px; }
-  .o-corpo .cur b { color: var(--accent); }
-  .o-corpo .cur img { float: right; height: 150px; margin: 0 0 4px 10px; border-radius: 6px; background: #fff; cursor: zoom-in; }
-  .o-corpo .cur::after { content: ""; display: block; clear: both; }
-
-  .crediti-img { margin-top: 18px; font-size: 11.5px; color: #7F93B2; }
-  .crediti-img summary { cursor: pointer; color: #9FB3CE; }
-  .crediti-img li { margin: 3px 0; } .crediti-img a { color: #7DD3FC; }
-  footer.piede { position: relative; z-index: 1; text-align: center; font-size: 13px; color: #9FB3CE; padding: 12px 12px 24px; }
-  @media (prefers-reduced-motion: reduce) { .card, .meta { transition: none; } }
-</style><!-- per i motori di ricerca e la condivisione -->
+<link rel="stylesheet" href="storia-attivita.css">
+<link rel="stylesheet" href="storia-percorso.css">
+<!-- per i motori di ricerca e la condivisione -->
 <link rel="canonical" href="https://musicascuole.it/storia-barocco.html">
 <meta property="og:type" content="website">
 <meta property="og:site_name" content="musicascuole.it">
 <meta property="og:locale" content="it_IT">
 <meta property="og:url" content="https://musicascuole.it/storia-barocco.html">
 <meta property="og:title" content="Il Barocco — Storia della musica — musicascuole.it">
-<meta property="og:description" content="La musica del Barocco raccontata attraverso gli ascolti: l'opera e la musica vocale, il concerto e la musica strumentale, gli strumenti di Cremona e la fuga di Bach.">
+<meta property="og:description" content="Il Barocco in musica, un capitolo alla volta: il basso continuo, i teatri d'opera di Venezia e Barbara Strozzi, il lamento di Didone, Corelli e i violini di Cremona, Bach e la fuga, Händel a Londra, le cantate di Lipsia, Vivaldi e le Quattro stagioni, l'opera buffa di Pergolesi e il Messia.">
 <meta property="og:image" content="https://musicascuole.it/media/condivisione.jpg">
 <meta property="og:image:width" content="1200">
 <meta property="og:image:height" content="630">
@@ -168,215 +32,346 @@
 <main>
 
   <div class="banner" id="banner">
-    <div class="meta sx" data-mondo="sx" title="Musica vocale"><img src="media/storia/barocco/banner-teatro.jpg" alt="L'interno del Teatro Farnese di Parma"></div>
-    <div class="meta dx" data-mondo="dx" title="Musica strumentale"><img src="media/storia/barocco/banner-cremona.jpg" alt="Il Torrazzo e il Duomo di Cremona"></div>
+    <div class="meta sx" title="Musica vocale"><img src="media/storia/barocco/banner-teatro.jpg" alt="L'interno del Teatro Farnese di Parma"></div>
+    <div class="meta dx" title="Musica strumentale"><img src="media/storia/barocco/banner-cremona.jpg" alt="Il Torrazzo e il Duomo di Cremona"></div>
     <div class="titolo-epoca">
       <div class="sopra">Storia della musica</div>
       <h1>Il Barocco</h1>
       <div class="date">1600 – 1750</div>
     </div>
-    <button class="etich-meta sx" data-mondo="sx">🎤 Musica vocale<span class="lungo"> · opera, oratorio, cantata</span></button>
-    <button class="etich-meta dx" data-mondo="dx">🎻 Musica strumentale<span class="lungo"> · concerto, suite, fuga</span></button>
+    <span class="etich-meta sx">🎤 Musica vocale<span class="lungo"> · opera, cantata, oratorio</span></span>
+    <span class="etich-meta dx">🎻 Musica strumentale<span class="lungo"> · concerto, suite, fuga</span></span>
   </div>
 
+  <div class="contenuto" id="contenuto">
   <p class="atmosfera">Un'epoca che ama stupire. Da una parte la voce, che nei nuovi teatri racconta storie e fa piangere il pubblico. Dall'altra gli strumenti, costruiti a Cremona dai liutai più famosi del mondo, che imparano a «parlare» da soli, senza parole.</p>
 
   <nav class="schede" aria-label="Sezioni">
-    <button class="scheda attiva" data-scheda="ascolti">🎧 Ascolti <span class="n" id="nAscolti"></span></button>
+    <button class="scheda attiva" data-scheda="percorso">📖 Il percorso <span class="n" id="nCapitoli"></span></button>
     <button class="scheda" data-scheda="strumenti">🎻 Strumenti <span class="n" id="nStrumenti"></span></button>
-    <button class="scheda speciale" data-scheda="fuga">🎹 La Fuga</button>
+    <button class="scheda" data-scheda="fuga">🎹 La Fuga</button>
     <button class="scheda" data-scheda="suonare">🎼 Da suonare <span class="n" id="nSuonare"></span></button>
+    <button class="scheda" data-scheda="mappa">🗺️ Mappa<span class="lungo"> concettuale</span></button>
+    <button class="scheda" data-scheda="esercizi">✏️ Esercizi</button>
+    <button class="scheda" data-scheda="schede">🖨️ Schede</button>
   </nav>
 
-  <div class="grid" id="griglia"></div>
-
-  <!-- ===== LA FUGA: sezione speciale (testi qui sotto, nell'oggetto FUGA dello script) ===== -->
-  <section class="fuga" id="fuga" hidden aria-label="La Piccola fuga in sol minore di Bach">
-    <div class="o-video">
-      <div class="schermo" id="oSchermo"></div>
-      <div class="o-sotto">Le note scorrono sullo schermo: ogni voce ha la sua riga · animazione di Stephen Malinowski · <a id="oLink" target="_blank" rel="noopener">Apri su YouTube ↗</a></div>
-    </div>
-    <div class="o-info">
-      <span class="label">Arnstadt, 1705 circa · per organo</span>
-      <h3>La Piccola fuga in sol minore</h3>
-      <div class="chi">Johann Sebastian Bach · BWV 578</div>
-      <div class="gancio">Una sola melodia che si rincorre tra quattro voci.</div>
-      <div class="o-tab" role="tablist">
-        <button class="o-t attiva" data-o="cosa">❓ Cos'è una fuga</button>
-        <button class="o-t" data-o="ascolto">👂 Come ascoltarla</button>
-        <button class="o-t" data-o="curiosita">💡 Curiosità</button>
-      </div>
-      <div class="o-corpo" id="oCorpo"></div>
-    </div>
+  <section id="vistaPercorso">
+    <ol class="indice" id="indice"></ol>
   </section>
+  <div class="grid" id="griglia" hidden></div>
+  <section class="vista vista-alta" id="vistaMappa" hidden></section>
+  <section class="vista vista-alta" id="vistaEsercizi" hidden></section>
+  <section class="vista vista-alta" id="vistaSchede" hidden></section>
 
   <details class="crediti-img">
     <summary>Crediti delle immagini e dei video</summary>
     <ul id="listaCrediti"></ul>
     <p>I video sono incorporati da YouTube e restano dei rispettivi titolari: non fanno parte della licenza del sito.</p>
   </details>
+  </div>
 </main>
 
-<div class="velo" id="velo" role="dialog" aria-modal="true" aria-labelledby="fTitolo">
-  <div class="finestra" id="finestra">
-    <button class="chiudi" id="chiudi" aria-label="Chiudi">✕</button>
-    <div class="schermo" id="schermo"></div>
-    <div class="info">
-      <span class="label" id="fLabel"></span>
-      <h3 id="fTitolo"></h3>
-      <div class="chi" id="fChi"></div>
-      <div class="gancio" id="fGancio"></div>
-      <ul id="fPunti"></ul>
-      <div class="sapevi" id="fSapevi"></div>
-      <div class="piede">
-        <div class="frecce"><button class="freccia" id="prec">◀</button><button class="freccia" id="succ">▶</button></div>
-        <div id="fFonte"></div>
-      </div>
-    </div>
-  </div>
-</div>
-
+<script src="storia-attivita.js"></script>
+<script src="storia-percorso.js"></script>
 <script>
 (function () {
   "use strict";
   const IMG = "media/storia/barocco/";
 
   /* =========================================================
-     CONTENUTI — per cambiare un video basta cambiare "yt"
-     mondo: "sx" = Musica vocale (metà sinistra del banner), "dx" = Musica strumentale (metà destra)
+     IL PERCORSO — un capitolo per ogni ascolto, in ordine di tempo (dopo l'introduzione).
+     mondo: "sx" = Musica vocale (metà sinistra del banner, arancio), "dx" = Musica strumentale (metà destra, viola).
+     pagine: { img, did (didascalia), t: [paragrafi] }. Per cambiare un video basta cambiare "yt".
      ========================================================= */
-  const ASCOLTI = [
-    { id: "didone", mondo: "sx", label: "Opera · lamento", titolo: "When I am laid in earth", chi: "Henry Purcell · Didone ed Enea, Londra, 1689", img: "didone.jpg", yt: "-H_rH4feQbo", canale: "Alpha Classics (canale ufficiale)",
-      gancio: "«Ricordati di me»: l'addio della regina Didone.",
-      punti: ["Enea parte e abbandona Didone, regina di Cartagine. Lei canta il suo ultimo <b>lamento</b>.",
-              "Sotto la voce, il basso ripete sempre la stessa melodia che scende piano piano: è un <b>basso ostinato</b>.",
-              "Ascolta le parole <b>«Remember me»</b>: tornano più volte, sempre più disperate."],
-      sapevi: "Purcell scrisse Didone ed Enea per una scuola femminile di Chelsea, vicino a Londra: a cantarla furono, almeno in parte, le allieve." },
-    { id: "lascia", mondo: "sx", label: "Opera · aria", titolo: "Lascia ch'io pianga", chi: "Georg Friedrich Händel · Rinaldo, Londra, 1711", img: "haendel-rinaldo.jpg", yt: "EKo_EmfEPWs", canale: "Voices of Music (canale ufficiale)",
-      gancio: "Un'aria in italiano che conquistò Londra.",
-      punti: ["La principessa Almirena è prigioniera di una maga e chiede soltanto di poter piangere la sua libertà perduta.",
-              "È un'<b>aria col da capo</b>: una parte A, una parte B diversa e poi di nuovo A.",
-              "Quando torna la parte A, la cantante aggiunge abbellimenti suoi: ascolta come cambia la melodia."],
-      sapevi: "Händel era tedesco, studiò in Italia e visse a Londra. Questa melodia l'aveva già usata anni prima, come danza strumentale: i compositori barocchi riciclavano spesso le loro idee migliori." },
-    { id: "hallelujah", mondo: "sx", label: "Oratorio · coro", titolo: "Hallelujah", chi: "Georg Friedrich Händel · Il Messia, Dublino, 1742", img: "hallelujah.jpg", yt: "Pel7uQbhv88", canale: "Tafelmusik (canale ufficiale)",
-      gancio: "Il coro più famoso della storia della musica.",
-      punti: ["Il Messia è un <b>oratorio</b>: una storia sacra cantata da solisti, coro e orchestra, ma senza scene né costumi.",
-              "La parola «Hallelujah» rimbalza tra le voci del coro, sostenuta da trombe e timpani.",
-              "Ascolta i momenti in cui tutte le voci cantano lo stesso ritmo e quelli in cui si inseguono."],
-      sapevi: "Händel scrisse tutto il Messia in poco più di tre settimane. Nell'immagine c'è la sua partitura scritta a mano: si vedono anche le correzioni." },
-    { id: "serva", mondo: "sx", label: "Opera buffa", titolo: "Stizzoso, mio stizzoso", chi: "Giovanni Battista Pergolesi · La serva padrona, Napoli, 1733", img: "serva-padrona.jpg", yt: "CR-FdaSwpxw", canale: "Opera Tracks",
-      gancio: "Una serva furba mette a posto il suo padrone.",
-      punti: ["È un'<b>opera buffa</b>, cioè comica: due cantanti e un personaggio muto.",
-              "La serva Serpina sgrida il padrone brontolone Uberto e gli dice che d'ora in poi comanderà lei.",
-              "Ascolta le parole ripetute veloci e le pause improvvise: la musica fa ridere quanto il testo."],
-      sapevi: "Nacque come «intermezzo», una scenetta da recitare tra un atto e l'altro di un'opera seria. Ebbe così successo che a Parigi, vent'anni dopo, scatenò una vera «guerra» tra gli amanti della musica italiana e di quella francese." },
-    { id: "jesus", mondo: "sx", label: "Cantata · corale", titolo: "Jesus bleibet meine Freude", chi: "Johann Sebastian Bach · Cantata BWV 147, Lipsia, 1723", img: "bach-corale.jpg", yt: "GWtoeYznx8E", canale: "Netherlands Bach Society (canale ufficiale)",
-      gancio: "Due melodie insieme: una danza e una preghiera.",
-      punti: ["Gli strumenti suonano una melodia scorrevole, in tre, che non si ferma mai.",
-              "A tratti entra il coro con un <b>corale</b>: una melodia lenta e semplice, che in chiesa cantavano tutti i fedeli.",
-              "Prova a seguire solo il coro, poi solo gli strumenti: sono due musiche diverse che stanno benissimo insieme."],
-      sapevi: "A Lipsia Bach doveva preparare una nuova <b>cantata</b> quasi ogni domenica. Ne sono rimaste più di duecento." },
-    { id: "strozzi", mondo: "sx", label: "Venezia · aria", titolo: "Che si può fare", chi: "Barbara Strozzi · Venezia, 1664", img: "strozzi.jpg", yt: "cL17k49ORCI", canale: "Cappella Mediterranea (canale ufficiale)",
-      gancio: "Una cantante che scriveva e stampava la sua musica.",
-      punti: ["Una sola voce, accompagnata da pochi strumenti: è la musica da camera del Seicento.",
-              "Anche qui il basso ripete sempre lo stesso giro che scende: un <b>basso ostinato</b>, come nel lamento di Didone.",
-              "La voce chiede «che si può fare?» e le frasi sembrano sospiri."],
-      sapevi: "Barbara Strozzi pubblicò otto libri di musica: più di quasi tutti i compositori del suo tempo. Nell'immagine c'è il frontespizio di una sua raccolta, stampata a Venezia nel 1659." },
-
-    { id: "primavera", mondo: "dx", label: "Concerto · musica descrittiva", titolo: "La Primavera", chi: "Antonio Vivaldi · Le quattro stagioni, 1725", img: "primavera.jpg", yt: "V8wL1AR7iqo", canale: "Red Priest (canale ufficiale)",
-      gancio: "Uccellini, ruscelli e un temporale… senza parole.",
-      punti: ["È il primo movimento di un <b>concerto</b>: un solista che dialoga con l'orchestra.",
-              "Vivaldi scrisse sulla partitura una poesia: ascolta il canto degli uccelli, le fonti che mormorano, i tuoni e i lampi.",
-              "Questa è una versione libera e scatenata del gruppo Red Priest: il flauto dolce si alterna al violino nella parte del solista."],
-      sapevi: "Vivaldi era un prete con i capelli rossi: lo chiamavano «il prete rosso», in inglese proprio <b>Red Priest</b>." },
-    { id: "rv558", mondo: "dx", label: "Concerto", titolo: "Concerto con molti istromenti", chi: "Antonio Vivaldi · RV 558, Venezia, 1740 · primo movimento", img: "rv558.jpg", yt: "Bwfq-51b_Jw", canale: "Il Giardino Armonico (caricato da Gabi Cebrián)",
-      gancio: "Mandolini, tiorbe, flauti, salmoè: tutti sul palco!",
-      punti: ["Vivaldi mette insieme strumenti insoliti: due flauti, due salmoè, due mandolini, due tiorbe, due violini «in tromba marina», un violoncello e gli archi.",
-              "Ascolta come la melodia passa da una coppia di strumenti all'altra, come in una sfilata.",
-              "Prova a riconoscere il suono pizzicato dei mandolini."],
-      sapevi: "Lo suonarono le ragazze dell'Ospedale della Pietà di Venezia, un orfanotrofio dove Vivaldi insegnava, per la visita di un principe tedesco. La loro orchestra era famosa in tutta Europa." },
-    { id: "corelli", mondo: "dx", label: "Concerto grosso", titolo: "Pastorale «per la notte di Natale»", chi: "Arcangelo Corelli · Concerto grosso op. 6 n. 8, Roma", img: "corelli.jpg", yt: "hUq7LeZgLOQ", canale: "Concerto Classics (canale ufficiale)",
-      gancio: "Un piccolo gruppo e una grande orchestra a confronto.",
-      punti: ["Nel <b>concerto grosso</b> due violini e un violoncello (il <b>concertino</b>) dialogano con tutta l'orchestra (il <b>grosso</b>).",
-              "Questa è la <b>Pastorale</b>, l'ultimo movimento: un ritmo cullante come una ninna nanna.",
-              "Le note lunghe e tenute del basso imitano le zampogne dei pastori a Natale."],
-      sapevi: "Corelli lavorava a Roma ed era uno dei violinisti più famosi d'Europa. I suoi concerti grossi furono stampati nel 1714, l'anno dopo la sua morte." },
-    { id: "preludio", mondo: "dx", label: "Tastiera · preludio", titolo: "Preludio in do maggiore", chi: "Johann Sebastian Bach · Il clavicembalo ben temperato, 1722", img: "bach-preludio.jpg", yt: "IZ2pNhh6D1w", canale: "Netherlands Bach Society (canale ufficiale)",
-      gancio: "Un accordo alla volta, sgranato nota per nota.",
-      punti: ["Ogni battuta è un accordo suonato una nota dopo l'altra, sempre con lo stesso disegno.",
-              "Ascolta come gli accordi cambiano e creano tensione, fino a tornare tranquilli alla fine.",
-              "Qui lo suona un <b>clavicembalo</b>, la tastiera più diffusa nel Barocco."],
-      sapevi: "Il libro contiene 24 coppie di preludio e fuga, una per ogni tonalità maggiore e minore. «Ben temperato» vuol dire che lo strumento è accordato in modo da poter suonare bene in tutte." },
-    { id: "water", mondo: "dx", label: "Suite · danza", titolo: "Musica sull'acqua: Alla Hornpipe", chi: "Georg Friedrich Händel · Londra, 1717", img: "water-music.jpg", yt: "0Hs3fEFlrcQ", canale: "Academy of Ancient Music (canale ufficiale)",
-      gancio: "Un concerto su una barca, in mezzo al Tamigi.",
-      punti: ["È una <b>suite</b>: una serie di danze. La <b>hornpipe</b> è una danza inglese vivace.",
-              "Corni e trombe squillano all'aperto, archi e oboi rispondono.",
-              "Ascolta la parte centrale, più calma, prima che torni la melodia iniziale."],
-      sapevi: "Il re Giorgio I risaliva il Tamigi in barca e una cinquantina di musicisti lo seguivano su un'altra barca. Gli piacque così tanto che fece ripetere la musica tre volte." },
-    { id: "canone", mondo: "dx", label: "Canone · basso ostinato", titolo: "Canone in re", chi: "Johann Pachelbel · Norimberga, fine Seicento", img: "pachelbel.jpg", yt: "JvNQLJ1_HQ0", canale: "Voices of Music (canale ufficiale)",
+  const CAPITOLI = [
+    { id: "stupire", mondo: "dx", label: "Introduzione", titolo: "Un'epoca che ama stupire", data: "1600 – 1750",
+      pagine: [
+        { img: "p-stupire-1.jpg", did: "La reggia di Versailles nel 1668, voluta dal re di Francia Luigi XIV (dipinto di Pierre Patel).",
+          t: ["Dopo il Rinascimento arriva il <b>Barocco</b>. Va più o meno dal <b>1600</b> al <b>1750</b>.",
+          "«Barocco» viene da una parola portoghese che indica una perla dalla forma strana, irregolare. È un'epoca che ama <b>stupire</b>: palazzi enormi, giardini infiniti, chiese piene d'oro."] },
+        { img: "p-stupire-2.jpg", did: "Una festa del re a Versailles nel 1664: uno spettacolo all'aperto, con musica e scene (incisione di Israël Silvestre).",
+          t: ["Re, principi e cardinali mostrano la loro potenza con feste e spettacoli. Ogni corte ha i suoi musicisti.",
+          "La musica si fa nelle <b>corti</b>, nelle <b>chiese</b> e in un posto nuovo: il <b>teatro d'opera</b>."] },
+        { img: "p-stupire-3.jpg", did: "La prova di un'opera a Londra: al centro il clavicembalo e il contrabbasso suonano il basso continuo (Marco Ricci, 1709 circa).",
+          t: ["Sotto quasi ogni brano barocco c'è il <b>basso continuo</b>: note gravi che accompagnano sempre, suonate da violoncello e clavicembalo (o organo, o tiorba).",
+          "Sopra il basso, voci e strumenti cantano libere melodie. Cominciamo con un brano che forse conosci già."] }
+      ],
+      brano: "Canone in re", chi: "Johann Pachelbel · Norimberga, fine Seicento", img: "pachelbel.jpg", yt: "JvNQLJ1_HQ0", canale: "Voices of Music (canale ufficiale)",
       gancio: "Otto note di basso, ripetute per tutto il brano.",
       punti: ["Il basso ripete sempre lo stesso giro di otto note: è un <b>basso ostinato</b>.",
               "Sopra, tre violini suonano la stessa melodia a <b>canone</b>: il secondo copia il primo, il terzo copia il secondo.",
               "Ascolta come la melodia diventa sempre più veloce e ricca, mentre il basso non cambia mai."],
-      sapevi: "Per quasi trecento anni questo Canone fu dimenticato. Riscoperto nel Novecento, oggi si sente ai matrimoni, nei film e in tante canzoni pop che usano lo stesso giro di accordi." },
-    { id: "poule", mondo: "dx", label: "Clavicembalo · musica descrittiva", titolo: "La Poule (La gallina)", chi: "Jean-Philippe Rameau · Parigi, 1728", img: "rameau.jpg", yt: "-vj3ewnVlGY", canale: "Luc Beauséjour",
-      gancio: "Una gallina che chioccia… al clavicembalo.",
-      punti: ["Le note ripetute e a scatti imitano il «co-co-co-co-dè» della gallina.",
-              "Sulla partitura Rameau scrisse proprio le sillabe del verso sotto le note.",
-              "Ascolta come la gallina si agita sempre di più."],
-      sapevi: "Rameau era anche un grande studioso: nel 1722 scrisse un trattato sull'armonia che si studiava ancora secoli dopo." }
+      sapevi: "Per quasi trecento anni questo Canone fu dimenticato. Riscoperto nel Novecento, oggi si sente ai matrimoni, nei film e in tante canzoni pop che usano lo stesso giro di accordi.",
+      strumenti: ["violoncello"],
+      parole: [["Barocco", "l'epoca tra il 1600 e il 1750, che ama stupire."], ["Basso continuo", "note gravi che accompagnano sempre (violoncello e clavicembalo)."],
+               ["Basso ostinato", "un giro di basso che si ripete sempre uguale."], ["Canone", "le voci ripetono la stessa melodia, una dopo l'altra."]] },
+
+    { id: "strozzi", mondo: "sx", label: "Musica vocale", titolo: "Venezia apre i teatri", data: "1637 – 1664",
+      pagine: [
+        { img: "p-strozzi-1.jpg", did: "Un teatro d'opera del Settecento: sul palco i cantanti, davanti l'orchestra, in platea e nei palchi il pubblico (Teatro Regio di Torino, dipinto di Pietro Domenico Olivero).",
+          t: ["Nel <b>1637</b> a Venezia apre il primo <b>teatro d'opera pubblico</b>: per entrare basta comprare il biglietto.",
+          "Prima l'opera era uno spettacolo per pochi invitati, nei palazzi dei principi. Ora la vedono anche mercanti e cittadini."] },
+        { img: "p-strozzi-2.jpg", did: "Una scena di Giacomo Torelli, lo scenografo dei teatri veneziani, per l'opera «La finta pazza» (incisione del 1645).",
+          t: ["Nell'opera si canta in due modi. Il <b>recitativo</b> è quasi parlato e fa andare avanti la storia.",
+          "L'<b>aria</b> è una melodia bella e piena di emozioni: il personaggio si ferma e dice che cosa prova."] },
+        { img: "p-strozzi-3.jpg", did: "Il frontespizio di un libro di cantate e ariette di Barbara Strozzi, stampato a Venezia nel 1659.",
+          t: ["Nella Venezia dell'opera vive <b>Barbara Strozzi</b>, cantante e compositrice.",
+          "Pubblica otto libri di musica sua, più di quasi tutti i compositori del suo tempo: arie e cantate per una voce e basso continuo."] }
+      ],
+      brano: "Che si può fare", chi: "Barbara Strozzi · Venezia, 1664", img: "strozzi.jpg", yt: "cL17k49ORCI", canale: "Cappella Mediterranea (canale ufficiale)",
+      gancio: "Una cantante che scriveva e stampava la sua musica.",
+      punti: ["Una sola voce, accompagnata da pochi strumenti: è la musica da camera del Seicento.",
+              "Il basso ripete sempre lo stesso giro che scende: un <b>basso ostinato</b>.",
+              "La voce chiede «che si può fare?» e le frasi sembrano sospiri."],
+      sapevi: "Barbara Strozzi era figlia adottiva di un poeta, che a casa sua riuniva un'accademia di letterati: lei cantava per loro le sue musiche.",
+      strumenti: ["tiorba"],
+      parole: [["Teatro d'opera pubblico", "teatro dove si entra con il biglietto (Venezia, 1637)."], ["Recitativo", "canto quasi parlato, che fa andare avanti la storia."], ["Aria", "melodia piena di emozioni: il personaggio dice che cosa prova."]] },
+
+    { id: "didone", mondo: "sx", label: "Musica vocale", titolo: "Il lamento di Didone", data: "1689",
+      pagine: [
+        { img: "p-didone-1.jpg", did: "Henry Purcell in un ritratto della fine del Seicento (National Portrait Gallery, Londra).",
+          t: ["Anche Londra si appassiona al teatro musicale. Il più grande compositore inglese del Seicento è <b>Henry Purcell</b>.",
+          "Lavora per i re d'Inghilterra e per l'abbazia di Westminster, dove suona l'organo."] },
+        { img: "p-didone-2.jpg", did: "L'incontro di Didone ed Enea, dipinto di Nathaniel Dance-Holland (1766).",
+          t: ["Nel 1689 scrive <b>Didone ed Enea</b>: la storia della regina di Cartagine abbandonata dall'eroe Enea.",
+          "Prima di morire Didone canta un <b>lamento</b>: un'aria triste, il suo ultimo addio."] }
+      ],
+      brano: "When I am laid in earth", chi: "Henry Purcell · Didone ed Enea, Londra, 1689", img: "didone.jpg", yt: "-H_rH4feQbo", canale: "Alpha Classics (canale ufficiale)",
+      gancio: "«Ricordati di me»: l'addio della regina Didone.",
+      punti: ["Enea parte e abbandona Didone. Lei canta il suo ultimo <b>lamento</b>.",
+              "Sotto la voce, il basso ripete sempre la stessa melodia che scende piano piano: è un <b>basso ostinato</b>.",
+              "Ascolta le parole <b>«Remember me»</b>: tornano più volte, sempre più disperate."],
+      sapevi: "Purcell scrisse Didone ed Enea per una scuola femminile di Chelsea, vicino a Londra: a cantarla furono, almeno in parte, le allieve.",
+      strumenti: ["clavicembalo"],
+      parole: [["Lamento", "aria triste, spesso su un basso ostinato che scende."]] },
+
+    { id: "corelli", mondo: "dx", label: "Musica strumentale", titolo: "Il violino conquista l'Europa", data: "fine Seicento",
+      pagine: [
+        { img: "p-corelli-1.jpg", did: "Strumenti musicali dipinti da Evaristo Baschenis, pittore di Bergamo del Seicento: c'è anche un violino.",
+          t: ["A <b>Cremona</b> lavorano i liutai più famosi del mondo: prima la famiglia <b>Amati</b>, poi <b>Antonio Stradivari</b> e i <b>Guarneri</b>.",
+          "Il <b>liutaio</b> è l'artigiano che costruisce gli strumenti ad arco. I violini di Stradivari si suonano ancora oggi."] },
+        { img: "p-corelli-2.jpg", did: "Arcangelo Corelli in un ritratto di Hugh Howard (1697).",
+          t: ["Gli strumenti imparano a «parlare» da soli, senza parole.",
+          "A <b>Roma</b> il violinista più famoso è <b>Arcangelo Corelli</b>: suona per cardinali e regine e dirige orchestre grandissime."] },
+        { img: "p-corelli-3.jpg", did: "Un piccolo gruppo di violini e violoncello che suona in casa (Pietro Longhi, 1741).",
+          t: ["Corelli scrive <b>concerti grossi</b>: un piccolo gruppo di solisti, il <b>concertino</b>, dialoga con tutta l'orchestra, il <b>grosso</b>.",
+          "Il concertino è fatto di due violini e un violoncello."] }
+      ],
+      brano: "Pastorale «per la notte di Natale»", chi: "Arcangelo Corelli · Concerto grosso op. 6 n. 8, Roma", img: "corelli.jpg", yt: "hUq7LeZgLOQ", canale: "Concerto Classics (canale ufficiale)",
+      gancio: "Un piccolo gruppo e una grande orchestra a confronto.",
+      punti: ["Questa è la <b>Pastorale</b>, l'ultimo movimento del concerto: un ritmo cullante come una ninna nanna.",
+              "Ascolta quando suonano solo i tre del concertino e quando entra tutta l'orchestra.",
+              "Le note lunghe e tenute del basso imitano le zampogne dei pastori a Natale."],
+      sapevi: "I concerti grossi di Corelli furono stampati nel 1714, l'anno dopo la sua morte, e si suonarono in tutta Europa per decenni.",
+      strumenti: ["violino"],
+      parole: [["Liutaio", "artigiano che costruisce violini e altri strumenti ad arco."], ["Concerto grosso", "pochi solisti (concertino) dialogano con l'orchestra (grosso)."]] },
+
+    { id: "fuga", mondo: "dx", label: "Musica strumentale", titolo: "Bach e la fuga", data: "1705",
+      pagine: [
+        { img: "p-fuga-1.jpg", did: "L'organo della chiesa di Arnstadt, quello che suonava il giovane Bach (la cassa è del 1703).",
+          t: ["<b>Johann Sebastian Bach</b> nasce in Germania nel <b>1685</b>, in una famiglia piena di musicisti.",
+          "A 18 anni diventa organista nella chiesa di <b>Arnstadt</b>. Ai suoi tempi è famoso soprattutto come organista."] },
+        { img: "p-fuga-2.jpg", did: "Il frontespizio dell'«Arte della fuga», l'ultima grande raccolta di fughe di Bach, stampata nel 1751.",
+          t: ["«Fuga» vuol dire <b>fuggire</b>: le voci sembrano rincorrersi.",
+          "Tutto nasce da una melodia breve, il <b>soggetto</b>. Una voce lo presenta da sola, poi entrano le altre, una dopo l'altra, ognuna con lo stesso soggetto."] },
+        { img: "p-fuga-3.jpg", did: "Un grande organo barocco, nella chiesa di San Martino a Groningen (Paesi Bassi).",
+          t: ["Fuga o canone? Nel canone, come «Fra Martino», le voci ripetono tutta la melodia uguale.",
+          "Nella fuga ripetono solo il soggetto, poi ognuna va per la sua strada. Il soggetto torna più volte, in voci diverse."] },
+        { img: "p-fuga-4.jpg", did: "Un musicista suona la viola da gamba: forse è proprio Buxtehude (particolare di un dipinto di Johannes Voorhout, 1674).",
+          t: ["Nel 1705 il giovane Bach va a piedi da Arnstadt a Lubecca, circa 400 km, per ascoltare il grande organista <b>Buxtehude</b>.",
+          "Doveva stare via un mese: torna dopo quasi quattro!"] }
+      ],
+      brano: "Piccola fuga in sol minore", chi: "Johann Sebastian Bach · BWV 578, Arnstadt, 1705 circa", img: "fuga-banner.jpg", yt: "ddbxFi3-UO4", canale: "smalin (Stephen Malinowski, canale ufficiale)",
+      gancio: "Una sola melodia che si rincorre tra quattro voci.",
+      punti: ["Il soggetto parte da solo, in alto. Ascoltalo bene: dovrai riconoscerlo.",
+              "Entrano la seconda e la terza voce, ognuna un po' più in basso. Nel video ogni voce ha il suo colore.",
+              "La quarta voce arriva al basso, suonata con i piedi sulla <b>pedaliera</b>. Da lì il soggetto torna ancora: alza la mano ogni volta che lo riconosci!"],
+      sapevi: "Si chiama «Piccola» per distinguerla da un'altra fuga in sol minore di Bach, più lunga, che tutti chiamano «Grande fuga».",
+      altri: [{ brano: "Preludio in do maggiore", chi: "Bach · Il clavicembalo ben temperato, 1722", img: "bach-preludio.jpg", yt: "IZ2pNhh6D1w", canale: "Netherlands Bach Society (canale ufficiale)" }],
+      strumenti: ["organo"],
+      parole: [["Fuga", "le voci entrano una dopo l'altra con lo stesso tema e si rincorrono."], ["Soggetto", "il tema breve da cui nasce tutta la fuga."]] },
+
+    { id: "haendel", mondo: "sx", label: "Musica vocale", titolo: "Händel, un tedesco a Londra", data: "1711 – 1717",
+      pagine: [
+        { img: "p-haendel-1.jpg", did: "Georg Friedrich Händel in un ritratto di Balthasar Denner (1727 circa).",
+          t: ["<b>Georg Friedrich Händel</b> è tedesco e nasce nel 1685, lo stesso anno di Bach.",
+          "Da giovane studia in Italia, poi si trasferisce a <b>Londra</b>, dove resterà per tutta la vita."] },
+        { img: "p-haendel-2.jpg", did: "Anastasia Robinson, una cantante delle opere di Händel a Londra, al clavicembalo (incisione del 1727).",
+          t: ["A Londra porta l'<b>opera italiana</b>: i cantanti cantano in italiano davanti al pubblico inglese.",
+          "Le arie sono spesso <b>col da capo</b>: una parte A, una parte B diversa, poi di nuovo A, con gli abbellimenti aggiunti dal cantante."] },
+        { img: "p-haendel-3.jpg", did: "Barche sul Tamigi davanti al ponte di Westminster (Canaletto, 1746 – 1747, particolare).",
+          t: ["Nel 1717 il re Giorgio I risale il Tamigi in barca e una cinquantina di musicisti lo seguono su un'altra barca.",
+          "Händel scrive per lui la <b>Musica sull'acqua</b>: una <b>suite</b>, cioè una serie di danze."] }
+      ],
+      brano: "Lascia ch'io pianga", chi: "Georg Friedrich Händel · Rinaldo, Londra, 1711", img: "haendel-rinaldo.jpg", yt: "EKo_EmfEPWs", canale: "Voices of Music (canale ufficiale)",
+      gancio: "Un'aria in italiano che conquistò Londra.",
+      punti: ["La principessa Almirena è prigioniera di una maga e chiede soltanto di poter piangere la sua libertà perduta.",
+              "È un'<b>aria col da capo</b>: una parte A, una parte B diversa e poi di nuovo A.",
+              "Quando torna la parte A, la cantante aggiunge abbellimenti suoi: ascolta come cambia la melodia."],
+      sapevi: "Questa melodia Händel l'aveva già usata anni prima, come danza strumentale: i compositori barocchi riciclavano spesso le loro idee migliori. Al re la Musica sull'acqua piacque tanto che la fece ripetere tre volte.",
+      altri: [{ brano: "Musica sull'acqua: Alla Hornpipe", chi: "Händel · Londra, 1717", img: "water-music.jpg", yt: "0Hs3fEFlrcQ", canale: "Academy of Ancient Music (canale ufficiale)" }],
+      strumenti: ["tromba", "oboe"],
+      parole: [["Aria col da capo", "aria in tre parti: A, B e di nuovo A, con abbellimenti."], ["Suite", "una serie di danze strumentali."]] },
+
+    { id: "bach", mondo: "sx", label: "Musica vocale", titolo: "Bach a Lipsia: una cantata ogni domenica", data: "1723",
+      pagine: [
+        { img: "p-bach-1.jpg", did: "La chiesa e la scuola di San Tommaso a Lipsia nel 1723, l'anno in cui arrivò Bach.",
+          t: ["Nel <b>1723</b> Bach si trasferisce a <b>Lipsia</b>. Dirige la musica delle chiese principali della città.",
+          "Insegna anche ai ragazzi del coro della scuola di San Tommaso, dove abita con la sua famiglia."] },
+        { img: "p-bach-2.jpg", did: "Musica in chiesa: organo, orchestra e coro in un'incisione stampata a Lipsia nel 1732.",
+          t: ["Quasi ogni domenica deve preparare una <b>cantata</b>: un brano sacro in tedesco per coro, solisti e orchestra.",
+          "Dentro le cantate ci sono i <b>corali</b>: melodie semplici che in chiesa cantavano tutti i fedeli."] },
+        { img: "p-bach-3.jpg", did: "Johann Sebastian Bach in un ritratto di Elias Gottlob Haussmann (1748).",
+          t: ["Bach ebbe venti figli: alcuni diventarono musicisti famosi.",
+          "Dopo la sua morte fu quasi dimenticato. Fu riscoperto ottant'anni dopo, e oggi è uno dei compositori più suonati al mondo."] }
+      ],
+      brano: "Jesus bleibet meine Freude", chi: "Johann Sebastian Bach · Cantata BWV 147, Lipsia, 1723", img: "bach-corale.jpg", yt: "GWtoeYznx8E", canale: "Netherlands Bach Society (canale ufficiale)",
+      gancio: "Due melodie insieme: una danza e una preghiera.",
+      punti: ["Gli strumenti suonano una melodia scorrevole, in tre, che non si ferma mai.",
+              "A tratti entra il coro con un <b>corale</b>: una melodia lenta e semplice.",
+              "Prova a seguire solo il coro, poi solo gli strumenti: sono due musiche diverse che stanno benissimo insieme."],
+      sapevi: "A Lipsia ne scrisse così tante che ne sono rimaste più di duecento. Altre sono andate perdute.",
+      strumenti: ["traverso"],
+      parole: [["Cantata", "brano per voci e strumenti, spesso per la chiesa."], ["Corale", "melodia semplice cantata in chiesa da tutti i fedeli."]] },
+
+    { id: "vivaldi", mondo: "dx", label: "Musica strumentale", titolo: "Vivaldi, il prete rosso", data: "1725",
+      pagine: [
+        { img: "p-vivaldi-1.jpg", did: "Vivaldi disegnato per scherzo da Pier Leone Ghezzi, a Roma nel 1723.",
+          t: ["<b>Antonio Vivaldi</b> è veneziano, prete e violinista. Per i capelli rossi lo chiamano «il prete rosso».",
+          "Scrive centinaia di <b>concerti</b>: un solista dialoga con l'orchestra, in tre movimenti, veloce, lento, veloce."] },
+        { img: "p-vivaldi-2.jpg", did: "Un concerto di ragazze orfane di Venezia, come quelle della Pietà (Francesco Guardi, 1782).",
+          t: ["Insegna all'<b>Ospedale della Pietà</b>, un orfanotrofio per ragazze.",
+          "Le sue allieve formano un'orchestra famosa in tutta Europa: suonano violini, violoncelli, flauti, oboi, perfino mandolini e tiorbe."] },
+        { img: "p-vivaldi-3.jpg", did: "Il frontespizio del «Cimento dell'armonia e dell'inventione», la raccolta di concerti di Vivaldi che contiene Le quattro stagioni (Amsterdam, 1725).",
+          t: ["Nel 1725 pubblica <b>Le quattro stagioni</b>: quattro concerti per violino, uno per ogni stagione.",
+          "Sulla partitura scrive delle poesie, e la musica le racconta: è <b>musica descrittiva</b>."] }
+      ],
+      brano: "La Primavera", chi: "Antonio Vivaldi · Le quattro stagioni, 1725 · primo movimento", img: "primavera.jpg", yt: "V8wL1AR7iqo", canale: "Red Priest (canale ufficiale)",
+      gancio: "Uccellini, ruscelli e un temporale… senza parole.",
+      punti: ["È il primo movimento di un <b>concerto</b>: il solista dialoga con l'orchestra.",
+              "Ascolta il canto degli uccelli, le fonti che mormorano, i tuoni e i lampi.",
+              "Questa è una versione libera e scatenata del gruppo Red Priest: il flauto dolce si alterna al violino nella parte del solista."],
+      sapevi: "Il gruppo di questo video si chiama Red Priest, cioè «prete rosso» in inglese: proprio il soprannome di Vivaldi. Anche in Francia piaceva la musica che imita la natura: ascolta la gallina di Rameau!",
+      altri: [{ brano: "Concerto RV 558", chi: "Vivaldi · «con molti istromenti», per le ragazze della Pietà, 1740", img: "rv558.jpg", yt: "Bwfq-51b_Jw", canale: "Il Giardino Armonico (caricato da Gabi Cebrián)" },
+              { brano: "La gallina", chi: "Jean-Philippe Rameau · «La Poule», per clavicembalo, Parigi, 1728", img: "rameau.jpg", yt: "-vj3ewnVlGY", canale: "Luc Beauséjour" }],
+      strumenti: ["mandolino"],
+      parole: [["Concerto solista", "un solista dialoga con l'orchestra (veloce, lento, veloce)."], ["Musica descrittiva", "musica che racconta o imita cose: uccelli, temporali, una gallina…"]] },
+
+    { id: "pergolesi", mondo: "sx", label: "Musica vocale", titolo: "Napoli e l'opera buffa", data: "1733",
+      pagine: [
+        { img: "p-pergolesi-1.jpg", did: "Napoli all'inizio del Settecento, con il Palazzo Reale (Gaspar van Wittel).",
+          t: ["<b>Napoli</b> è una delle capitali della musica. Ha quattro <b>conservatori</b>, dove studiano ragazzi da tutta Italia.",
+          "Erano nati come orfanotrofi: i ragazzi imparavano un mestiere, la musica."] },
+        { img: "p-pergolesi-2.jpg", did: "Giovanni Battista Pergolesi in un ritratto del Settecento.",
+          t: ["Qui nasce l'<b>opera buffa</b>, cioè comica, con personaggi di tutti i giorni: servi, padroni, mercanti.",
+          "<b>Giovanni Battista Pergolesi</b> scrive La serva padrona come <b>intermezzo</b>: una scenetta da recitare tra un atto e l'altro di un'opera seria."] }
+      ],
+      brano: "Stizzoso, mio stizzoso", chi: "Giovanni Battista Pergolesi · La serva padrona, Napoli, 1733", img: "serva-padrona.jpg", yt: "CR-FdaSwpxw", canale: "Opera Tracks",
+      gancio: "Una serva furba mette a posto il suo padrone.",
+      punti: ["Due cantanti e un personaggio muto: è un'opera piccola e comica.",
+              "La serva Serpina sgrida il padrone brontolone Uberto e gli dice che d'ora in poi comanderà lei.",
+              "Ascolta le parole ripetute veloci e le pause improvvise: la musica fa ridere quanto il testo."],
+      sapevi: "Ebbe così successo che a Parigi, vent'anni dopo, scatenò una vera «guerra» tra gli amanti della musica italiana e di quella francese. Pergolesi però non lo seppe mai: morì a 26 anni.",
+      parole: [["Opera buffa", "opera comica, con personaggi di tutti i giorni."]] },
+
+    { id: "messia", mondo: "sx", label: "Musica vocale", titolo: "Il Messia e la fine del Barocco", data: "1742 – 1750",
+      pagine: [
+        { img: "p-messia-1.jpg", did: "L'Hallelujah scritto a mano da Händel nel 1741: si vedono anche le correzioni.",
+          t: ["Negli ultimi anni Händel scrive soprattutto <b>oratori</b>: storie sacre cantate da solisti, coro e orchestra, ma senza scene né costumi.",
+          "Il più famoso è il <b>Messia</b>, presentato a Dublino nel 1742."] },
+        { img: "p-messia-2.jpg", did: "Händel da anziano, in un ritratto di Thomas Hudson (1756): sul tavolo c'è la partitura del Messia.",
+          t: ["Nel <b>1750</b> muore Bach: di solito si dice che lì finisce il Barocco.",
+          "La musica sta già cambiando: arriva uno stile più semplice ed elegante, il <b>Classicismo</b>."] }
+      ],
+      brano: "Hallelujah", chi: "Georg Friedrich Händel · Il Messia, Dublino, 1742", img: "hallelujah.jpg", yt: "Pel7uQbhv88", canale: "Tafelmusik (canale ufficiale)",
+      gancio: "Il coro più famoso della storia della musica.",
+      punti: ["La parola «Hallelujah» rimbalza tra le voci del coro, sostenuta da trombe e timpani.",
+              "Ascolta i momenti in cui tutte le voci cantano lo stesso ritmo e quelli in cui si inseguono.",
+              "Il finale si allarga sempre di più, fino all'ultimo, solenne «Hallelujah»."],
+      sapevi: "Händel scrisse tutto il Messia in poco più di tre settimane. Ancora oggi, in Inghilterra, durante l'Hallelujah il pubblico spesso si alza in piedi.",
+      parole: [["Oratorio", "storia sacra cantata, senza scene né costumi."]] },
+
+    { id: "riepilogo", mondo: "sx", label: "Ricapitoliamo", titolo: "Che cosa abbiamo scoperto", data: "1600 – 1750", riepilogo: true, img: "p-stupire-2.jpg",
+      pagine: [
+        { img: "p-stupire-1.jpg", did: "La reggia di Versailles nel 1668 (Pierre Patel).",
+          t: ["Il Barocco ama stupire. Sotto la musica c'è quasi sempre il <b>basso continuo</b>.",
+          "Nascono i <b>teatri d'opera</b> aperti a tutti, e a Cremona i liutai costruiscono i violini più belli del mondo."] },
+        { img: "p-strozzi-1.jpg", did: "Un teatro d'opera del Settecento (Pietro Domenico Olivero).",
+          t: ["<b>Musica vocale</b>: l'opera con recitativi e arie, il lamento, l'opera buffa; in chiesa la cantata e l'oratorio.",
+          "Barbara Strozzi, Purcell, Händel, Bach, Pergolesi."] },
+        { img: "p-vivaldi-2.jpg", did: "Un concerto di ragazze orfane a Venezia (Francesco Guardi, 1782).",
+          t: ["<b>Musica strumentale</b>: gli strumenti imparano a «parlare» da soli. Concerto grosso, concerto solista, suite, fuga.",
+          "Corelli, Vivaldi, Bach. Nel 1750 muore Bach: arriva il Classicismo."] }
+      ] }
+  ];
+
+  const LINEA = [
+    ["1600 circa", "Comincia il Barocco."],
+    ["1637", "A Venezia apre il primo teatro d'opera pubblico."],
+    ["1664", "Barbara Strozzi pubblica «Che si può fare»."],
+    ["1685", "Nascono Bach e Händel."],
+    ["1689", "Didone ed Enea di Purcell."],
+    ["1705", "Bach va a piedi a Lubecca per ascoltare Buxtehude."],
+    ["1714", "Si stampano i concerti grossi di Corelli."],
+    ["1717", "La Musica sull'acqua di Händel."],
+    ["1723", "Bach a Lipsia: una cantata quasi ogni domenica."],
+    ["1725", "Le quattro stagioni di Vivaldi."],
+    ["1733", "La serva padrona di Pergolesi."],
+    ["1742", "Il Messia di Händel."],
+    ["1750", "Muore Bach: finisce il Barocco."]
   ];
 
   const STRUMENTI = [
-    { id: "violino", label: "Archi", titolo: "Violino barocco", chi: "Nato a Cremona", img: "violino.jpg", yt: "aRLrqIjy9qA", canale: "Voices of Music (canale ufficiale)",
+    { id: "violino", label: "Archi", titolo: "Violino barocco", chi: "Nato a Cremona", img: "violino.jpg", epoca: "violino-epoca.jpg", foto: "violino.jpg", cerchio: [395, 252, 58, 30, -15], yt: "aRLrqIjy9qA", canale: "Voices of Music (canale ufficiale)",
       gancio: "Il re del Barocco.",
       punti: ["Ha le corde di <b>budello</b> (fatte di intestino di pecora), non di metallo: il suono è più caldo e morbido.",
               "L'arco è più corto e leggero di quello moderno, con la curva verso l'esterno.",
               "Qui suona da solo, senza accompagnamento, una fantasia di Telemann."],
       sapevi: "A Cremona Antonio Stradivari costruì più di mille strumenti. Il violino della foto è suo, del 1711: i suoi violini valgono oggi milioni di euro." },
-    { id: "violoncello", label: "Archi", titolo: "Violoncello", chi: "Il basso degli archi", img: "violoncello.jpg", yt: "poCw2CCrfzA", canale: "Aparté Music (canale ufficiale)",
+    { id: "violoncello", label: "Archi", titolo: "Violoncello", chi: "Il basso degli archi", img: "violoncello.jpg", epoca: "violoncello-epoca.jpg", foto: "violoncello.jpg", yt: "poCw2CCrfzA", canale: "Aparté Music (canale ufficiale)",
       gancio: "Da accompagnatore a solista.",
       punti: ["All'inizio del Barocco suonava soprattutto le note gravi, il <b>basso continuo</b>.",
               "Poi i compositori cominciarono a scrivere brani tutti per lui, come le sei Suites di Bach.",
               "Qui ascolti il Preludio della prima Suite: un solo strumento che sembra suonare accordi e melodia insieme."],
       sapevi: "La famiglia del violino nacque proprio a Cremona, nella bottega di Andrea Amati. Il violoncello della foto lo costruirono i suoi figli, intorno al 1615." },
-    { id: "clavicembalo", label: "Tastiera", titolo: "Clavicembalo", chi: "Corde pizzicate", img: "clavicembalo.jpg", yt: "M33mfhQUJnM", canale: "Het Concertgebouw (canale ufficiale)",
+    { id: "clavicembalo", label: "Tastiera", titolo: "Clavicembalo", chi: "Corde pizzicate", img: "clavicembalo.jpg", epoca: "clavicembalo-epoca.jpg", foto: "clavicembalo.jpg", cerchio: [275, 298, 108, 58, 0], yt: "M33mfhQUJnM", canale: "Het Concertgebouw (canale ufficiale)",
       gancio: "Premi un tasto e una piccola punta pizzica la corda.",
       punti: ["Non si può suonare piano o forte premendo i tasti più o meno forte: il suono è sempre lo stesso.",
               "Per cambiare colore e volume ha spesso <b>due tastiere</b>, una sopra l'altra.",
               "Nel Barocco era dappertutto: da solo, nell'orchestra, ad accompagnare i cantanti."],
       sapevi: "Il brano del video è di François Couperin e si chiama «Le barricate misteriose». Che cosa siano queste barricate… nessuno l'ha mai capito." },
-    { id: "organo", label: "Tastiera", titolo: "Organo a canne", chi: "Il re degli strumenti", img: "organo.jpg", yt: "Pi0IuyTS_ic", canale: "Netherlands Bach Society (canale ufficiale)",
+    { id: "organo", label: "Tastiera", titolo: "Organo a canne", chi: "Il re degli strumenti", img: "organo.jpg", epoca: "organo-epoca.jpg", foto: "organo.jpg", yt: "Pi0IuyTS_ic", canale: "Netherlands Bach Society (canale ufficiale)",
       gancio: "Centinaia di canne, mantici e una tastiera per i piedi.",
       punti: ["L'aria soffiata dai <b>mantici</b> passa nelle canne: più la canna è lunga, più la nota è grave.",
               "Con i <b>registri</b> l'organista sceglie il colore del suono: flauto, tromba, voce…",
               "Ascolti la celebre <b>Toccata e fuga in re minore</b>, attribuita a Bach."],
       sapevi: "L'organo della foto è quello di Arnstadt: Bach lo collaudò e ne diventò l'organista nel 1703, a 18 anni. La Toccata e fuga in re minore è diventata famosa anche grazie a un film di Disney, «Fantasia»." },
-    { id: "tromba", label: "Ottoni", titolo: "Tromba naturale", chi: "Senza pistoni", img: "tromba.jpg", yt: "x1E-slCi3jQ", canale: "Voices of Music (canale ufficiale)",
+    { id: "tromba", label: "Ottoni", titolo: "Tromba naturale", chi: "Senza pistoni", img: "tromba.jpg", epoca: "tromba-epoca.jpg", foto: "tromba.jpg", yt: "x1E-slCi3jQ", canale: "Voices of Music (canale ufficiale)",
       gancio: "Tutte le note… solo con le labbra.",
       punti: ["Non ha pistoni né fori: per cambiare nota il trombettista stringe o rilassa le labbra.",
               "Nel registro acuto le note sono vicine e si possono suonare melodie: è l'arte del <b>clarino</b>.",
               "Ascolti un concerto di Giuseppe Torelli, che lavorava nella basilica di San Petronio a Bologna."],
       sapevi: "Nel Barocco la tromba era lo strumento dei re e delle feste: i trombettisti di corte erano tra i musicisti più pagati." },
-    { id: "traverso", label: "Fiati", titolo: "Flauto traverso barocco", chi: "Di legno, con una chiave", img: "traverso.jpg", yt: "-qbmp2ZiILQ", canale: "Les Musiciens de Saint-Julien (canale ufficiale)",
+    { id: "traverso", label: "Fiati", titolo: "Flauto traverso barocco", chi: "Di legno, con una chiave", img: "traverso.jpg", epoca: "traverso-epoca.jpg", foto: "traverso.jpg", yt: "-qbmp2ZiILQ", canale: "Les Musiciens de Saint-Julien (canale ufficiale)",
       gancio: "Il nonno del flauto traverso moderno.",
       punti: ["È di legno, in più pezzi, con i fori chiusi dalle dita e una sola chiave.",
               "Si tiene di lato, come il flauto di oggi: il suono è dolce e un po' velato.",
               "Ascolti un brano di Carl Philipp Emanuel Bach, figlio di Johann Sebastian."],
       sapevi: "Il re Federico II di Prussia era un appassionato flautista: ogni sera suonava a corte, e al clavicembalo lo accompagnava proprio Carl Philipp Emanuel Bach." },
-    { id: "oboe", label: "Fiati", titolo: "Oboe barocco", chi: "Ancia doppia", img: "oboe.jpg", yt: "26TdDD9LudI", canale: "Voices of Music (canale ufficiale)",
+    { id: "oboe", label: "Fiati", titolo: "Oboe barocco", chi: "Ancia doppia", img: "oboe.jpg", epoca: "oboe-epoca.jpg", foto: "oboe.jpg", yt: "26TdDD9LudI", canale: "Voices of Music (canale ufficiale)",
       gancio: "Due lamelle di canna che vibrano insieme.",
       punti: ["Si suona soffiando in un'<b>ancia doppia</b>: due sottili lamelle di canna legate insieme.",
               "Nacque in Francia nel Seicento ed entrò presto in tutte le orchestre.",
               "Ascolti una sonata di Telemann, con il clavicembalo e il violoncello che accompagnano."],
       sapevi: "Georg Philipp Telemann è considerato uno dei compositori più prolifici della storia: scrisse migliaia di brani." },
-    { id: "mandolino", label: "Corde pizzicate", titolo: "Mandolino", chi: "Da Napoli", img: "mandolino.jpg", yt: "fcAU-89721A", canale: "Outhere Music (canale ufficiale)",
+    { id: "mandolino", label: "Corde pizzicate", titolo: "Mandolino", chi: "Da Napoli", img: "mandolino.jpg", epoca: "mandolino-epoca.jpg", foto: "mandolino.jpg", yt: "fcAU-89721A", canale: "Outhere Music (canale ufficiale)",
       gancio: "Piccolo, a mezza pera, con le corde doppie.",
       punti: ["Ha quattro coppie di corde di metallo che si pizzicano con un plettro.",
               "Il suono è breve e brillante: per tenere una nota lunga si fa il <b>tremolo</b>, pizzicando velocissimo.",
               "Ascolti l'ultimo movimento del Concerto per mandolino di Vivaldi."],
       sapevi: "Il mandolino della foto fu costruito a Napoli dalla famiglia Vinaccia, che per generazioni produsse i mandolini più famosi." },
-    { id: "tiorba", label: "Corde pizzicate", titolo: "Tiorba", chi: "Il liuto gigante", img: "tiorba.jpg", yt: "ILcNTQM_O88", canale: "Lorenzo Micheli & SoloDuo",
+    { id: "tiorba", label: "Corde pizzicate", titolo: "Tiorba", chi: "Il liuto gigante", img: "tiorba.jpg", epoca: "tiorba-epoca.jpg", foto: "tiorba.jpg", cerchio: [352, 168, 62, 184, 35], yt: "ILcNTQM_O88", canale: "Lorenzo Micheli & SoloDuo",
       gancio: "Un manico lunghissimo per le note più gravi.",
       punti: ["È un liuto con un secondo manico molto lungo, dove ci sono corde gravi che si suonano «a vuoto».",
               "Accompagnava i cantanti e suonava il basso continuo, ma aveva anche brani tutti per sé.",
@@ -389,34 +384,6 @@
     { titolo: "La Primavera (tema)", chi: "Antonio Vivaldi", img: "primavera.jpg" },
     { titolo: "Canone in re (basso)", chi: "Johann Pachelbel", img: "pachelbel.jpg" }
   ];
-
-  /* ---------- La Fuga (pulsante speciale) ---------- */
-  const FUGA = {
-    yt: "ddbxFi3-UO4", canale: "smalin (Stephen Malinowski)", img: "fuga-banner.jpg",
-    cosa: [
-      ["🏃", "«Fuga» viene dal latino e vuol dire <b>fuggire</b>: le voci sembrano rincorrersi."],
-      ["🎵", "Tutto nasce da una melodia breve, il <b>soggetto</b> (o tema)."],
-      ["🔁", "Una voce lo presenta da sola. Poi entra la seconda voce e lo ripete più in basso, mentre la prima continua con una melodia nuova."],
-      ["➕", "Entrano una dopo l'altra tutte le voci, qui quattro: è l'<b>esposizione</b>."],
-      ["🔀", "Poi il soggetto ritorna più volte, in voci e tonalità diverse, alternato a passaggi liberi chiamati <b>divertimenti</b>."],
-      ["🆚", "Fuga o canone? Nel canone, come «Fra Martino», le voci ripetono tutta la melodia uguale. Nella fuga ripetono solo il soggetto, poi ognuna va per la sua strada."]
-    ],
-    ascolto: [
-      ["1ª voce", "Il soggetto parte da solo, in alto. Ascoltalo bene: dovrai riconoscerlo."],
-      ["2ª voce", "Entra la seconda voce, un po' più in basso, con lo stesso soggetto. La prima non si ferma."],
-      ["3ª voce", "Terza entrata, ancora più in basso: ora le voci sono tre."],
-      ["4ª voce", "Il soggetto arriva al basso, suonato con i piedi sulla <b>pedaliera</b>: è la voce più grave e profonda."],
-      ["Sfida", "Da qui alla fine il soggetto torna ancora più volte. Alza la mano ogni volta che lo riconosci!"],
-      ["Occhi", "Nel video ogni voce ha la sua riga di note: quando il soggetto entra, cerca la forma che hai già visto all'inizio."]
-    ],
-    curiosita: [
-      "<b>Piccola o grande?</b> Si chiama «Piccola» per distinguerla da un'altra fuga in sol minore di Bach, più lunga, che tutti chiamano «Grande fuga».",
-      `<a href="${IMG}fuga.jpg" target="_blank" rel="noopener"><img src="${IMG}fuga.jpg" alt="Un grande organo barocco, con la cassa decorata e le canne"></a><b>Si suona anche coi piedi.</b> L'organo ha una tastiera per i piedi, la <b>pedaliera</b>: l'organista ci suona le note più gravi, mentre le mani suonano sulle tastiere.`,
-      "<b>Bach organista.</b> Ai suoi tempi Bach era famoso soprattutto come organista, più che come compositore. Questa fuga la scrisse da giovane, quando lavorava ad Arnstadt.",
-      "<b>400 km a piedi.</b> Nel 1705 il giovane Bach andò a piedi da Arnstadt a Lubecca, circa 400 km, per ascoltare il grande organista Buxtehude. Doveva stare via un mese: tornò dopo quasi quattro!",
-      "<b>Un maestro della fuga.</b> Bach scrisse fughe per tutta la vita: 24 solo nel Clavicembalo ben temperato. La sua ultima opera, «L'arte della fuga», rimase incompiuta."
-    ]
-  };
 
   /* crediti delle immagini (tutte ospitate nel sito) */
   const CREDITI_IMG = [
@@ -435,7 +402,6 @@
     "Canaletto, Il Tamigi e il ponte di Westminster nel giorno del Lord Mayor, 1746–47 (dettaglio) — <a href=\"https://commons.wikimedia.org/wiki/File:Canaletto,_Westminster_Bridge_from_the_North_on_Lord_Mayor's_Day,_1746-47,_detail.jpg\" target=\"_blank\" rel=\"noopener\">fonte</a>, pubblico dominio.",
     "Norimberga, piazza del Municipio, incisione del 1712 — <a href=\"https://commons.wikimedia.org/wiki/File:Kupferstich_-_Nürnberg_-_Rathaus_-_Kaiser_Karl_VI_-_1712.jpg\" target=\"_blank\" rel=\"noopener\">fonte</a>, pubblico dominio.",
     "Joseph Aved (attr.), ritratto di Jean-Philippe Rameau, 1728 ca. (Digione) — <a href=\"https://commons.wikimedia.org/wiki/File:Attribué_à_Joseph_Aved,_Portrait_de_Jean-Philippe_Rameau_(vers_1728)_-_001.jpg\" target=\"_blank\" rel=\"noopener\">fonte</a>, pubblico dominio.",
-    "Organo barocco della Martinikerk di Groningen (Arp Schnitger e altri, 1692–1740), foto di Gouwenaar — <a href=\"https://commons.wikimedia.org/wiki/File:Orgel_Martinikerk_Groningen.jpg\" target=\"_blank\" rel=\"noopener\">fonte</a>, pubblico dominio.",
     "Organo di Arp Schnitger (1693), chiesa di St. Jacobi, Amburgo, foto di Kliojünger — <a href=\"https://commons.wikimedia.org/wiki/File:Arp_Schnitger_organ_St._Jacobi_Hamburg.jpg\" target=\"_blank\" rel=\"noopener\">fonte</a>, <a href=\"https://creativecommons.org/licenses/by-sa/3.0/deed.it\" target=\"_blank\" rel=\"noopener\">CC BY-SA 3.0</a>, ritagliata.",
     "Organo Wender (1703) della Bachkirche di Arnstadt, suonato da J. S. Bach, foto di Mtag — <a href=\"https://commons.wikimedia.org/wiki/File:Arnstadt_Bachkirche_Wender-Orgel.jpg\" target=\"_blank\" rel=\"noopener\">fonte</a>, CC0 (pubblico dominio).",
     "Antonio Stradivari, violino «Antonius», Cremona 1711 (Metropolitan Museum) — <a href=\"https://www.metmuseum.org/art/collection/search/503008\" target=\"_blank\" rel=\"noopener\">fonte</a>, pubblico dominio (Open Access).",
@@ -448,132 +414,236 @@
     "Tiorba: David Tecchler, arciliuto (stretto parente della tiorba), Roma 1725 ca. (Metropolitan Museum) — <a href=\"https://www.metmuseum.org/art/collection/search/503613\" target=\"_blank\" rel=\"noopener\">fonte</a>, pubblico dominio (Open Access)."
   ];
 
-  /* ---------- costruzione della griglia ---------- */
-  const griglia = document.getElementById("griglia");
-  document.getElementById("nAscolti").textContent = ASCOLTI.length;
-  document.getElementById("nStrumenti").textContent = STRUMENTI.length;
-  document.getElementById("nSuonare").textContent = SUONARE.length;
+  const CREDITI_PAGINE = [
+    "La reggia di Versailles nel 1668, voluta dal re di Francia Luigi XIV (dipinto di Pierre Patel) — <a href=\"https://commons.wikimedia.org/wiki/File:View_of_the_Ch%C3%A2teau_de_Versailles_and_the_gardens_from_the_Avenue_de_Paris_in_1668.jpg\" target=\"_blank\" rel=\"noopener\">fonte</a>, foto di Neoclassicism Enthusiast, <a href=\"https://creativecommons.org/licenses/by-sa/4.0/deed.it\" target=\"_blank\" rel=\"noopener\">CC BY-SA 4.0</a>.",
+    "Una festa del re a Versailles nel 1664: uno spettacolo all'aperto, con musica e scene (incisione di Israël Silvestre) — <a href=\"https://commons.wikimedia.org/wiki/File:La_F%C3%AAte-Les_Plaisirs_de_l%27Ile_Enchant%C3%A9e-donn%C3%A9e_par_Louis_XIV_%C3%A0_Versailles-Th%C3%A9%C3%A2tre.jpg\" target=\"_blank\" rel=\"noopener\">fonte</a>, pubblico dominio.",
+    "La prova di un'opera a Londra: al centro il clavicembalo e il contrabbasso suonano il basso continuo (Marco Ricci, 1709 circa) — <a href=\"https://commons.wikimedia.org/wiki/File:Marco_Ricci_-_Rehearsal_of_an_opera_-_Google_Art_Project.jpg\" target=\"_blank\" rel=\"noopener\">fonte</a>, pubblico dominio.",
+    "Un teatro d'opera del Settecento: sul palco i cantanti, davanti l'orchestra, in platea e nei palchi il pubblico (Teatro Regio di Torino, dipinto di Pietro Domenico Olivero) — <a href=\"https://commons.wikimedia.org/wiki/File:Pietro_Domenico_Oliviero_-_The_Royal_Theater_in_Turin.jpg\" target=\"_blank\" rel=\"noopener\">fonte</a>, pubblico dominio, ritagliata.",
+    "Una scena di Giacomo Torelli, lo scenografo dei teatri veneziani, per l'opera «La finta pazza» (incisione del 1645) — <a href=\"https://commons.wikimedia.org/wiki/File:Feste_teatrali_per_la_Finta_pazza_%E2%80%93_Gallica_bpt6k15118548_f17_(set_design_for_act_1,_scenes_1_and_2)_cropped.jpg\" target=\"_blank\" rel=\"noopener\">fonte</a>, pubblico dominio.",
+    "Il frontespizio di un libro di cantate e ariette di Barbara Strozzi, stampato a Venezia nel 1659 — <a href=\"https://commons.wikimedia.org/wiki/File:Pleasures_of_Euterpe_title_page.jpeg\" target=\"_blank\" rel=\"noopener\">fonte</a>, pubblico dominio.",
+    "Henry Purcell in un ritratto della fine del Seicento (National Portrait Gallery, Londra) — <a href=\"https://commons.wikimedia.org/wiki/File:Henry_Purcell_by_John_Closterman.jpg\" target=\"_blank\" rel=\"noopener\">fonte</a>, pubblico dominio.",
+    "L'incontro di Didone ed Enea, dipinto di Nathaniel Dance-Holland (1766) — <a href=\"https://commons.wikimedia.org/wiki/File:Sir_Nathaniel_Dance-Holland_-_The_Meeting_of_Dido_and_Aeneas_-_Google_Art_Project.jpg\" target=\"_blank\" rel=\"noopener\">fonte</a>, pubblico dominio.",
+    "Strumenti musicali dipinti da Evaristo Baschenis, pittore di Bergamo del Seicento: c'è anche un violino — <a href=\"https://commons.wikimedia.org/wiki/File:Evaristo_Baschenis_-_Musical_Instruments_-_WGA01406.jpg\" target=\"_blank\" rel=\"noopener\">fonte</a>, pubblico dominio.",
+    "Arcangelo Corelli in un ritratto di Hugh Howard (1697) — <a href=\"https://commons.wikimedia.org/wiki/File:Arcangelo_Corelli,_portrait_by_Hugh_Howard_(1697).jpg\" target=\"_blank\" rel=\"noopener\">fonte</a>, pubblico dominio, ritagliata.",
+    "Un piccolo gruppo di violini e violoncello che suona in casa (Pietro Longhi, 1741) — <a href=\"https://commons.wikimedia.org/wiki/File:Accademia_-_Il_concertino_-_Pietro_Longhi.jpg\" target=\"_blank\" rel=\"noopener\">fonte</a>, foto di Didier Descouens, <a href=\"https://creativecommons.org/licenses/by-sa/4.0/deed.it\" target=\"_blank\" rel=\"noopener\">CC BY-SA 4.0</a>.",
+    "L'organo della chiesa di Arnstadt, quello che suonava il giovane Bach (la cassa è del 1703) — <a href=\"https://commons.wikimedia.org/wiki/File:Arnstadt_Bachkirche_Wender-Orgel.jpg\" target=\"_blank\" rel=\"noopener\">fonte</a>, CC0 (pubblico dominio).",
+    "Il frontespizio dell'«Arte della fuga», l'ultima grande raccolta di fughe di Bach, stampata nel 1751 — <a href=\"https://commons.wikimedia.org/wiki/File:Title_page_of_The_Art_of_Fugue.jpg\" target=\"_blank\" rel=\"noopener\">fonte</a>, pubblico dominio.",
+    "Un grande organo barocco, nella chiesa di San Martino a Groningen (Paesi Bassi) — <a href=\"https://commons.wikimedia.org/wiki/File:Orgel_Martinikerk_Groningen.jpg\" target=\"_blank\" rel=\"noopener\">fonte</a>, pubblico dominio.",
+    "Un musicista suona la viola da gamba: forse è proprio Buxtehude (particolare di un dipinto di Johannes Voorhout, 1674) — <a href=\"https://commons.wikimedia.org/wiki/File:Imagebuxtehude.jpg\" target=\"_blank\" rel=\"noopener\">fonte</a>, pubblico dominio.",
+    "Georg Friedrich Händel in un ritratto di Balthasar Denner (1727 circa) — <a href=\"https://commons.wikimedia.org/wiki/File:George_Frideric_Handel_by_Balthasar_Denner.jpg\" target=\"_blank\" rel=\"noopener\">fonte</a>, pubblico dominio.",
+    "Anastasia Robinson, una cantante delle opere di Händel a Londra, al clavicembalo (incisione del 1727) — <a href=\"https://commons.wikimedia.org/wiki/File:Anastasia_Robinson_seated_at_harpsichord_Mezzotint_1727_John_Faber_the_Younger_after_John_Vanderbank.jpg\" target=\"_blank\" rel=\"noopener\">fonte</a>, pubblico dominio, ritagliata.",
+    "Barche sul Tamigi davanti al ponte di Westminster (Canaletto, 1746 – 1747, particolare) — <a href=\"https://commons.wikimedia.org/wiki/File:Canaletto,_Westminster_Bridge_from_the_North_on_Lord_Mayor%27s_Day,_1746-47,_detail.jpg\" target=\"_blank\" rel=\"noopener\">fonte</a>, pubblico dominio.",
+    "La chiesa e la scuola di San Tommaso a Lipsia nel 1723, l'anno in cui arrivò Bach — <a href=\"https://commons.wikimedia.org/wiki/File:Thomaskirche_und_-schule_1723.jpg\" target=\"_blank\" rel=\"noopener\">fonte</a>, pubblico dominio.",
+    "Musica in chiesa: organo, orchestra e coro in un'incisione stampata a Lipsia nel 1732 — <a href=\"https://commons.wikimedia.org/wiki/File:Walther_frontispiece_Musicalisches_Lexicon_1732.jpeg\" target=\"_blank\" rel=\"noopener\">fonte</a>, pubblico dominio.",
+    "Johann Sebastian Bach in un ritratto di Elias Gottlob Haussmann (1748) — <a href=\"https://commons.wikimedia.org/wiki/File:Johann_Sebastian_Bach.jpg\" target=\"_blank\" rel=\"noopener\">fonte</a>, pubblico dominio.",
+    "Vivaldi disegnato per scherzo da Pier Leone Ghezzi, a Roma nel 1723 — <a href=\"https://commons.wikimedia.org/wiki/File:Pier_Leone_Ghezzi_-_Caricature_of_Vivaldi_with_text.jpg\" target=\"_blank\" rel=\"noopener\">fonte</a>, pubblico dominio.",
+    "Un concerto di ragazze orfane di Venezia, come quelle della Pietà (Francesco Guardi, 1782) — <a href=\"https://commons.wikimedia.org/wiki/File:Francesco_Guardi_-_Ladies_Concert_at_the_Philharmonic_Hall_-_WGA10877.jpg\" target=\"_blank\" rel=\"noopener\">fonte</a>, pubblico dominio.",
+    "Il frontespizio del «Cimento dell'armonia e dell'inventione», la raccolta di concerti di Vivaldi che contiene Le quattro stagioni (Amsterdam, 1725) — <a href=\"https://commons.wikimedia.org/wiki/File:Cimento_dell%27_Armonia_e_dell%27_Inventione-v2-title_page.jpg\" target=\"_blank\" rel=\"noopener\">fonte</a>, pubblico dominio.",
+    "Napoli all'inizio del Settecento, con il Palazzo Reale (Gaspar van Wittel) — <a href=\"https://commons.wikimedia.org/wiki/File:Gaspar_van_wittel,_veduta_di_napoli_con_largo_di_palazzo,_1700-25_ca.JPG\" target=\"_blank\" rel=\"noopener\">fonte</a>, foto di Sailko, <a href=\"https://creativecommons.org/licenses/by/3.0/deed.it\" target=\"_blank\" rel=\"noopener\">CC BY 3.0</a>, ritagliata.",
+    "Giovanni Battista Pergolesi in un ritratto del Settecento — <a href=\"https://commons.wikimedia.org/wiki/File:Giovanni_Battista_Pergolesi.jpg\" target=\"_blank\" rel=\"noopener\">fonte</a>, pubblico dominio.",
+    "L'Hallelujah scritto a mano da Händel nel 1741: si vedono anche le correzioni — <a href=\"https://commons.wikimedia.org/wiki/File:Hallelujah_score_1741.jpg\" target=\"_blank\" rel=\"noopener\">fonte</a>, pubblico dominio.",
+    "Händel da anziano, in un ritratto di Thomas Hudson (1756): sul tavolo c'è la partitura del Messia — <a href=\"https://commons.wikimedia.org/wiki/File:George_Frideric_Handel_by_Thomas_Hudson_-_1756.jpg\" target=\"_blank\" rel=\"noopener\">fonte</a>, pubblico dominio.",
+    "Violino: «Il concerto» di Pietro Longhi (1741) — <a href=\"https://commons.wikimedia.org/wiki/File:Longhi_-_Il_concerto,_1741,_461.jpg\" target=\"_blank\" rel=\"noopener\">fonte</a>, pubblico dominio, ritagliata.",
+    "Violoncello: «Ritratto di un violoncellista» di Giacomo Ceruti (Settecento) — <a href=\"https://commons.wikimedia.org/wiki/File:Giacomo_Ceruti_-_Portrait_of_a_Cellist.jpg\" target=\"_blank\" rel=\"noopener\">fonte</a>, pubblico dominio.",
+    "Clavicembalo: «La prova di un'opera» di Marco Ricci (1709 circa) — <a href=\"https://commons.wikimedia.org/wiki/File:Marco_Ricci_-_Rehearsal_of_an_opera_-_Google_Art_Project.jpg\" target=\"_blank\" rel=\"noopener\">fonte</a>, pubblico dominio, ritagliata.",
+    "Organo: «L'organista», incisione di Johann Christoph Weigel (Norimberga, 1720 circa) — <a href=\"https://commons.wikimedia.org/wiki/File:Weigel_Organist.jpg\" target=\"_blank\" rel=\"noopener\">fonte</a>, pubblico dominio, ritagliata.",
+    "Tromba: «Il trombettiere dell'imperatore», incisione di Christoph Weigel e Caspar Luyken (Norimberga, 1703) — <a href=\"https://commons.wikimedia.org/wiki/File:Welt-Galleria_T026.jpg\" target=\"_blank\" rel=\"noopener\">fonte</a>, pubblico dominio, ritagliata.",
+    "Flauto traverso: ritratto di Johann Joachim Quantz, flautista del re di Prussia (Johann Friedrich Gerhard) — <a href=\"https://commons.wikimedia.org/wiki/File:Quantz_by_Gerhard.jpg\" target=\"_blank\" rel=\"noopener\">fonte</a>, pubblico dominio.",
+    "Oboe: «L'oboista», incisione colorata dal «Musicalisches Theatrum» di Johann Christoph Weigel (1720 circa) — <a href=\"https://commons.wikimedia.org/wiki/File:Pd654841.jpg\" target=\"_blank\" rel=\"noopener\">fonte</a>, caricata da OboeCrack, <a href=\"https://creativecommons.org/licenses/by-sa/4.0/deed.it\" target=\"_blank\" rel=\"noopener\">CC BY-SA 4.0</a>.",
+    "Mandolino: «Suonatrice di mandolino», attribuito a Gaspare Traversi (Settecento) — <a href=\"https://commons.wikimedia.org/wiki/File:Gaspare_Traversi_-_Joueuse_de_mandoline_01.jpg\" target=\"_blank\" rel=\"noopener\">fonte</a>, pubblico dominio, ritagliata.",
+    "Tiorba: «Il suonatore di tiorba» di Antiveduto Gramatica (1615 circa) — <a href=\"https://commons.wikimedia.org/wiki/File:Antiveduto_Gramatica_-_The_Theorbo_Player_-_WGA10353.jpg\" target=\"_blank\" rel=\"noopener\">fonte</a>, pubblico dominio."
+  ];
 
-  let scheda = "ascolti", mondo = null, elenco = [];
-  function disegna() {
-    griglia.innerHTML = "";
-    const conFuga = scheda === "fuga";
-    document.getElementById("fuga").hidden = !conFuga;
-    griglia.hidden = conFuga;
-    if (conFuga) { preparaFuga(); return; }
-    oSchermo.innerHTML = "";   // si esce dalla Fuga: il video si ferma
-    if (scheda === "suonare") {
-      SUONARE.forEach(s => {
-        const c = document.createElement("div"); c.className = "card suona empty";
-        c.innerHTML = `<div class="foto" style="background-image:url('${IMG + s.img}')"></div>
-          <div class="testo"><span class="label">Da suonare</span><h2>${s.titolo}</h2><span class="chi">${s.chi}</span></div>`;
-        griglia.appendChild(c);
-      });
-      return;
-    }
-    const dati = scheda === "ascolti" ? ASCOLTI : STRUMENTI;
-    elenco = dati.filter(d => !mondo || !d.mondo || d.mondo === mondo);
-    elenco.forEach((d, i) => {
-      const c = document.createElement("button"); c.type = "button";
-      c.className = "card " + (scheda === "ascolti" ? d.mondo : "strum");
-      c.innerHTML = `<div class="foto" style="background-image:url('${IMG + d.img}')"></div>
-        <div class="testo"><span class="label">${d.label}</span><h2>${d.titolo}</h2><span class="chi">${d.chi}</span><p>${d.gancio}</p></div>`;
-      c.addEventListener("click", () => apri(i));
-      griglia.appendChild(c);
-    });
-  }
+  /* =========================================================
+     MAPPA, ESERCIZI E SCHEDE (motore comune: storia-attivita.js; formato in _sviluppo/storia/LEGGIMI.md)
+     ========================================================= */
+  const ATTIVITA = {
+    mappa: { W: 1280, H: 520,
+      nodi: [
+        { id: "rad", x: 520, y: 0, w: 240, h: 60, t: "IL BAROCCO", s: "1600 – 1750", tipo: "radice" },
+        { id: "nasc", x: 10, y: 0, w: 330, h: 64, t: "«perla irregolare»", s: "un'epoca che ama stupire", tipo: "quadro", cap: "stupire" },
+        { id: "crem", x: 940, y: 0, w: 330, h: 64, t: "i liutai di [[Cremona]]", s: "i violini di Amati, Stradivari, Guarneri", tipo: "quadro", cap: "corelli" },
+        { id: "teatri", x: 10, y: 98, w: 330, h: 52, t: "i [[teatri]] d'opera", s: "Venezia, 1637: si entra con il biglietto", tipo: "quadro", cap: "strozzi" },
+        { id: "mem", x: 470, y: 98, w: 340, h: 52, t: "il [[basso continuo]]", s: "note gravi che accompagnano sempre", tipo: "quadro", cap: "stupire" },
+        { id: "fine", x: 940, y: 98, w: 330, h: 52, t: "nel 1750 muore Bach", s: "finisce il Barocco, arriva il Classicismo", tipo: "quadro", cap: "messia" },
+        { id: "sx", x: 110, y: 204, w: 400, h: 58, t: "MUSICA VOCALE", s: "opera, cantata, oratorio", tipo: "sx" },
+        { id: "dx", x: 770, y: 204, w: 400, h: 58, t: "MUSICA STRUMENTALE", s: "concerto, suite, fuga", tipo: "dx" },
+        { id: "v1", x: 0, y: 318, w: 118, h: 50, t: "Strozzi", tipo: "c-sx", cap: "strozzi" },
+        { id: "v2", x: 128, y: 318, w: 118, h: 50, t: "Purcell", tipo: "c-sx", cap: "didone" },
+        { id: "v3", x: 256, y: 318, w: 118, h: 50, t: "Händel", tipo: "c-sx", cap: "haendel" },
+        { id: "v4", x: 384, y: 318, w: 118, h: 50, t: "Bach", tipo: "c-sx", cap: "bach" },
+        { id: "v5", x: 512, y: 318, w: 118, h: 50, t: "Pergolesi", tipo: "c-sx", cap: "pergolesi" },
+        { id: "s1", x: 650, y: 318, w: 118, h: 50, t: "Pachelbel", tipo: "c-dx", cap: "stupire" },
+        { id: "s2", x: 778, y: 318, w: 118, h: 50, t: "Corelli", tipo: "c-dx", cap: "corelli" },
+        { id: "s3", x: 906, y: 318, w: 118, h: 50, t: "Bach", tipo: "c-dx", cap: "fuga" },
+        { id: "s4", x: 1034, y: 318, w: 118, h: 50, t: "Vivaldi", tipo: "c-dx", cap: "vivaldi" },
+        { id: "s5", x: 1162, y: 318, w: 118, h: 50, t: "Händel", tipo: "c-dx", cap: "haendel" },
+        { id: "dv1", x: 0, y: 410, w: 118, h: 100, t: "arie e cantate per voce e basso continuo", tipo: "dettaglio", cap: "strozzi" },
+        { id: "dv2", x: 128, y: 410, w: 118, h: 100, t: "Didone canta un [[lamento]]", tipo: "dettaglio", cap: "didone" },
+        { id: "dv3", x: 256, y: 410, w: 118, h: 100, t: "arie col da capo; il Messia è un [[oratorio]]", tipo: "dettaglio", cap: "haendel" },
+        { id: "dv4", x: 384, y: 410, w: 118, h: 100, t: "una [[cantata]] ogni domenica, con i corali", tipo: "dettaglio", cap: "bach" },
+        { id: "dv5", x: 512, y: 410, w: 118, h: 100, t: "l'opera [[buffa]]: «La serva padrona»", tipo: "dettaglio", cap: "pergolesi" },
+        { id: "ds1", x: 650, y: 410, w: 118, h: 100, t: "un canone sul [[basso ostinato]]", tipo: "dettaglio", cap: "stupire" },
+        { id: "ds2", x: 778, y: 410, w: 118, h: 100, t: "il concerto [[grosso]]", tipo: "dettaglio", cap: "corelli" },
+        { id: "ds3", x: 906, y: 410, w: 118, h: 100, t: "la [[fuga]]: le voci si rincorrono", tipo: "dettaglio", cap: "fuga" },
+        { id: "ds4", x: 1034, y: 410, w: 118, h: 100, t: "concerti solisti: «Le quattro [[stagioni]]»", tipo: "dettaglio", cap: "vivaldi" },
+        { id: "ds5", x: 1162, y: 410, w: 118, h: 100, t: "la Musica sull'acqua, una [[suite]]", tipo: "dettaglio", cap: "haendel" }
+      ],
+      archi: [
+        { da: "rad", a: "nasc", l: "vuol dire", forma: "orizz" }, { da: "rad", a: "crem", l: "ha", forma: "orizz" },
+        { da: "rad", a: "mem", l: "la musica poggia su", lato: "padre" },
+        { da: "mem", a: "teatri", l: "nascono", forma: "orizz" }, { da: "mem", a: "fine", l: "e alla fine", forma: "orizz" },
+        { da: "mem", a: "sx", l: "accompagna la", lato: "padre" }, { da: "mem", a: "dx" },
+        { da: "sx", a: "v1", l: "a Venezia:" }, { da: "sx", a: "v2", l: "a Londra:" }, { da: "sx", a: "v3", l: "a Londra:" },
+        { da: "sx", a: "v4", l: "a Lipsia:" }, { da: "sx", a: "v5", l: "a Napoli:" },
+        { da: "dx", a: "s1", l: "il canone:" }, { da: "dx", a: "s2", l: "a Roma:" }, { da: "dx", a: "s3", l: "all'organo:" },
+        { da: "dx", a: "s4", l: "a Venezia:" }, { da: "dx", a: "s5", l: "sul Tamigi:" },
+        { da: "v1", a: "dv1", l: "scrive" }, { da: "v2", a: "dv2", l: "scrive" }, { da: "v3", a: "dv3", l: "scrive" }, { da: "v4", a: "dv4", l: "scrive" }, { da: "v5", a: "dv5", l: "scrive" },
+        { da: "s1", a: "ds1", l: "scrive" }, { da: "s2", a: "ds2", l: "scrive" }, { da: "s3", a: "ds3", l: "scrive" }, { da: "s4", a: "ds4", l: "scrive" }, { da: "s5", a: "ds5", l: "scrive" }
+      ] },
+    mappaBuchi: ["Cremona", "teatri", "basso continuo", "lamento", "oratorio", "cantata", "buffa", "basso ostinato", "grosso", "fuga", "stagioni", "suite"],
+    mappaDistrattori: ["madrigale", "a cappella", "trovatori"],
+    vf: [
+      ["Il Barocco va più o meno dal 1600 al 1750.", true, ""],
+      ["«Barocco» viene da una parola che indica una perla dalla forma irregolare.", true, ""],
+      ["Il basso continuo è una melodia acuta suonata dal violino.", false, "Sono le note gravi che accompagnano sempre, suonate da violoncello e clavicembalo (o organo, o tiorba)."],
+      ["Nel basso ostinato il basso ripete sempre lo stesso giro.", true, "Come nel Canone di Pachelbel o nel lamento di Didone."],
+      ["Il primo teatro d'opera pubblico aprì a Venezia nel 1637.", true, ""],
+      ["Il recitativo è la parte dell'opera più piena di melodia.", false, "Il recitativo è quasi parlato e fa andare avanti la storia; la melodia piena di emozioni è l'aria."],
+      ["Barbara Strozzi pubblicò otto libri di musica sua.", true, ""],
+      ["Henry Purcell era un compositore italiano.", false, "Era inglese e lavorava a Londra."],
+      ["A Cremona lavoravano liutai famosi come Amati e Stradivari.", true, ""],
+      ["Nel concerto grosso un piccolo gruppo di solisti dialoga con tutta l'orchestra.", true, "Il piccolo gruppo si chiama concertino, l'orchestra grosso."],
+      ["Bach e Händel nacquero lo stesso anno, il 1685.", true, ""],
+      ["Nella fuga tutte le voci partono insieme.", false, "Entrano una dopo l'altra, ognuna con il soggetto."],
+      ["La pedaliera dell'organo si suona con i piedi.", true, ""],
+      ["Händel visse quasi tutta la vita a Parigi.", false, "Visse a Londra."],
+      ["Un'aria col da capo ha tre parti: A, B e di nuovo A.", true, ""],
+      ["A Lipsia Bach scriveva una cantata quasi ogni domenica.", true, ""],
+      ["Vivaldi era chiamato «il prete rosso» per i suoi capelli.", true, ""],
+      ["Le quattro stagioni sono quattro opere liriche.", false, "Sono quattro concerti per violino e orchestra."],
+      ["L'opera buffa è un'opera comica.", true, "Come La serva padrona di Pergolesi."],
+      ["L'oratorio si recita con scene e costumi, come un'opera.", false, "È una storia sacra cantata senza scene né costumi."]
+    ],
+    personaggi: [
+      ["Johann Pachelbel", "Organista di Norimberga: scrisse il famoso Canone in re."],
+      ["Barbara Strozzi", "Cantante e compositrice veneziana: pubblicò otto libri di musica sua."],
+      ["Henry Purcell", "Il più grande compositore inglese del Seicento: Didone ed Enea."],
+      ["Antonio Stradivari", "Liutaio di Cremona: i suoi violini si suonano ancora oggi."],
+      ["Arcangelo Corelli", "Violinista a Roma: scrisse concerti grossi."],
+      ["Johann Sebastian Bach", "Organista e Kantor a Lipsia: fughe e cantate."],
+      ["Georg Friedrich Händel", "Tedesco a Londra: opere italiane, la Musica sull'acqua e il Messia."],
+      ["Antonio Vivaldi", "Il «prete rosso» di Venezia: Le quattro stagioni."],
+      ["Giovanni Battista Pergolesi", "Napoletano: La serva padrona, un'opera buffa."],
+      ["Dietrich Buxtehude", "Grande organista di Lubecca: Bach andò a piedi ad ascoltarlo."]
+    ],
+    cruciverba: [
+      ["FUGA", "Le voci entrano una dopo l'altra e si rincorrono"],
+      ["CANONE", "Le voci ripetono la stessa melodia, come in «Fra Martino»"],
+      ["ARIA", "Nell'opera, la melodia piena di emozioni"],
+      ["RECITATIVO", "Nell'opera, il canto quasi parlato"],
+      ["CANTATA", "Bach ne scriveva una quasi ogni domenica"],
+      ["ORATORIO", "Storia sacra cantata senza scene né costumi"],
+      ["CORALE", "Melodia semplice cantata in chiesa da tutti"],
+      ["SUITE", "Una serie di danze"],
+      ["LAMENTO", "L'aria triste di Didone"],
+      ["CREMONA", "La città dei liutai"],
+      ["VIVALDI", "Il prete rosso"],
+      ["ORGANO", "Lo strumento di Bach, con la pedaliera"],
+      ["CLAVICEMBALO", "Tastiera che pizzica le corde"],
+      ["VIOLINO", "Il re degli strumenti barocchi"]
+    ],
+    ascolto: {
+      descr: "Ascolta ogni brano e rispondi: sacro o profano? Voci o strumenti? Chi è il protagonista?",
+      criteri: [
+        { id: "amb", nome: "Che musica è?", opz: ["Sacra", "Profana"] },
+        { id: "chi", nome: "Chi suona o canta?", opz: ["Solo voci", "Solo strumenti", "Voci e strumenti"] },
+        { id: "prot", nome: "Chi è il protagonista?", opz: ["Una voce solista", "Un coro", "Un solista con l'orchestra", "Un gruppo o un'orchestra", "Uno strumento da solo"] },
+        { id: "ling", nome: "In che lingua?", opz: ["Italiano", "Inglese", "Tedesco", "Nessuna: solo strumenti"] },
+        { id: "ritmo", nome: "Che carattere ha?", opz: ["Calmo, lento", "Vivace, energico"] }
+      ],
+      brani: [
+        { cap: "stupire", r: { amb: [1], chi: [1], prot: [3], ling: [3], ritmo: [0] } },
+        { cap: "strozzi", r: { amb: [1], chi: [2], prot: [0], ling: [0], ritmo: [0] } },
+        { cap: "didone", r: { amb: [1], chi: [2], prot: [0], ling: [1], ritmo: [0] } },
+        { cap: "corelli", r: { amb: [0, 1], chi: [1], prot: [2, 3], ling: [3], ritmo: [0] }, nota: "È un concerto per la notte di Natale: si poteva suonare in chiesa o in un palazzo." },
+        { cap: "fuga", r: { amb: [0, 1], chi: [1], prot: [4], ling: [3], ritmo: [0, 1] }, nota: "L'organo è lo strumento della chiesa, ma la fuga non accompagna una preghiera." },
+        { cap: "haendel", r: { amb: [1], chi: [2], prot: [0], ling: [0], ritmo: [0] } },
+        { cap: "bach", r: { amb: [0], chi: [2], prot: [1, 3], ling: [2], ritmo: [0, 1] }, nota: "Il coro canta il corale lento, gli strumenti una melodia scorrevole." },
+        { cap: "vivaldi", r: { amb: [1], chi: [1], prot: [2, 3], ling: [3], ritmo: [1] } },
+        { cap: "pergolesi", r: { amb: [1], chi: [2], prot: [0], ling: [0], ritmo: [1] } },
+        { cap: "messia", r: { amb: [0], chi: [2], prot: [1], ling: [1], ritmo: [1] } }
+      ] },
+    riassunto: {
+      testo: "Il <b>Barocco</b> (1600 – 1750) è un'epoca che ama stupire. Sotto quasi ogni brano c'è il <b>basso continuo</b>. Nascono i <b>teatri d'opera</b> aperti a tutti; a Cremona i liutai costruiscono violini meravigliosi. La <b>musica vocale</b> racconta storie ed emozioni (opera, cantata, oratorio); la <b>musica strumentale</b> impara a «parlare» da sola (concerto, suite, fuga).",
+      immagini: [["p-stupire-1.jpg", "Versailles"], ["p-strozzi-1.jpg", "Un teatro d'opera"], ["p-corelli-1.jpg", "Strumenti barocchi"], ["p-bach-1.jpg", "Lipsia"]],
+      punti: [
+        ["Musica vocale", ["<b>Barbara Strozzi</b> (Venezia): arie e cantate.", "<b>Purcell</b> (Londra): il lamento di Didone.", "<b>Händel</b>: opere italiane a Londra e l'oratorio Il Messia.", "<b>Bach</b> (Lipsia): cantate con i corali.", "<b>Pergolesi</b> (Napoli): l'opera buffa."]],
+        ["Musica strumentale", ["<b>Pachelbel</b>: il Canone sul basso ostinato.", "<b>Corelli</b> (Roma): il concerto grosso.", "<b>Bach</b>: la fuga all'organo.", "<b>Vivaldi</b> (Venezia): concerti solisti, Le quattro stagioni.", "<b>Händel</b>: la Musica sull'acqua, una suite."]]
+      ] },
+    riassuntoBreve: {
+      testo: "Il <b>Barocco</b> ama stupire. Sotto la musica c'è il <b>basso continuo</b>. Nascono i <b>teatri d'opera</b>. Le voci raccontano storie, gli strumenti suonano da soli.",
+      date: [["1600", "comincia il Barocco"], ["1637", "il primo teatro d'opera pubblico, a Venezia"], ["1685", "nascono Bach e Händel"], ["1725", "Le quattro stagioni di Vivaldi"], ["1750", "muore Bach: finisce il Barocco"]],
+      parole: [["Basso continuo", "le note gravi che accompagnano sempre."], ["Aria", "la melodia delle emozioni."], ["Recitativo", "canto quasi parlato."], ["Concerto grosso", "pochi solisti e l'orchestra."], ["Fuga", "le voci si rincorrono."], ["Cantata", "voci e strumenti, in chiesa."], ["Oratorio", "storia sacra cantata, senza scene."], ["Opera buffa", "opera comica."]] },
+    raccontoBreve: {
+      stupire: "Il Barocco va dal 1600 al 1750 e ama stupire. Sotto la musica c'è quasi sempre il basso continuo.",
+      strozzi: "Nel 1637 a Venezia apre il primo teatro d'opera pubblico. Barbara Strozzi, cantante, pubblica otto libri di musica sua.",
+      didone: "A Londra Purcell scrive Didone ed Enea. La regina Didone canta un lamento triste prima di morire.",
+      corelli: "A Cremona i liutai costruiscono violini meravigliosi. A Roma Corelli scrive concerti grossi.",
+      fuga: "Il giovane Bach è organista. Nella fuga le voci entrano una dopo l'altra con lo stesso tema e si rincorrono.",
+      haendel: "Händel, tedesco, porta a Londra l'opera italiana. Per il re scrive la Musica sull'acqua.",
+      bach: "A Lipsia Bach scrive una cantata quasi ogni domenica, con i corali cantati da tutti.",
+      vivaldi: "Vivaldi, il prete rosso, insegna alle ragazze della Pietà. Nelle Quattro stagioni la musica racconta la natura.",
+      pergolesi: "A Napoli nasce l'opera buffa: Pergolesi scrive La serva padrona.",
+      messia: "Händel scrive il Messia, un oratorio. Nel 1750 muore Bach: finisce il Barocco." },
+    verifica: {
+      quanti: { vf: 14, collega: 6, personaggi: 5, scelte: 10, frasi: 7, aperte: 2 },
+      scelte: [
+        ["Quando c'è il Barocco?", ["Dal 1600 al 1750 circa", "Dal 1450 al 1600 circa", "Dal 1750 al 1820 circa"], 0],
+        ["Che cos'è il basso continuo?", ["Note gravi che accompagnano sempre", "Una danza veloce", "Un coro di voci gravi"], 0],
+        ["Dove aprì il primo teatro d'opera pubblico?", ["A Venezia", "A Londra", "A Napoli"], 0],
+        ["Che differenza c'è tra recitativo e aria?", ["Il recitativo è quasi parlato, l'aria è una melodia piena di emozioni", "Il recitativo è per coro, l'aria per orchestra", "Non c'è nessuna differenza"], 0],
+        ["Chi scrisse Didone ed Enea?", ["Henry Purcell", "Antonio Vivaldi", "Barbara Strozzi"], 0],
+        ["In quale città lavoravano Amati e Stradivari?", ["Cremona", "Venezia", "Roma"], 0],
+        ["Che cos'è il concertino nel concerto grosso?", ["Il piccolo gruppo di solisti", "Un concerto corto", "Il direttore d'orchestra"], 0],
+        ["Che cos'è il soggetto in una fuga?", ["Il tema breve da cui nasce tutta la fuga", "Il titolo del brano", "L'ultima nota"], 0],
+        ["Dove visse Händel per quasi tutta la vita?", ["A Londra", "A Lipsia", "A Venezia"], 0],
+        ["Che cosa scriveva Bach a Lipsia quasi ogni domenica?", ["Una cantata", "Un'opera buffa", "Una suite"], 0],
+        ["Perché Vivaldi era chiamato «il prete rosso»?", ["Aveva i capelli rossi", "Si vestiva di rosso", "Suonava un violino rosso"], 0],
+        ["Che cos'è un oratorio?", ["Una storia sacra cantata, senza scene né costumi", "Una danza di corte", "Un brano per organo solo"], 0],
+        ["Che cos'è l'opera buffa?", ["Un'opera comica", "Un'opera triste", "Un'opera senza musica"], 0],
+        ["In che anno muore Bach e finisce il Barocco?", ["1750", "1685", "1637"], 0]
+      ],
+      frasi: [
+        "Il Barocco va più o meno dal 1600 al [[1750]].",
+        "Le note gravi che accompagnano sempre si chiamano basso [[continuo]].",
+        "Nell'opera il canto quasi parlato si chiama [[recitativo]].",
+        "Barbara [[Strozzi]] pubblicò otto libri di musica sua.",
+        "Didone canta un [[lamento]] prima di morire.",
+        "Antonio Stradivari era un [[liutaio]] di Cremona.",
+        "Nella [[fuga]] le voci entrano una dopo l'altra e si rincorrono.",
+        "L'aria col da [[capo]] ha tre parti: A, B e di nuovo A.",
+        "A Lipsia Bach scrive le [[cantate]] per la chiesa.",
+        "Le quattro [[stagioni]] di Vivaldi sono musica descrittiva.",
+        "La serva padrona di Pergolesi è un'opera [[buffa]].",
+        "Il Messia di Händel è un [[oratorio]]."
+      ],
+      frasiDistrattori: ["madrigale", "polifonia"],
+      aperte: [
+        ["Che cos'è il basso continuo e quali strumenti lo suonano?", 3, "le note gravi che accompagnano quasi ogni brano barocco; violoncello e clavicembalo (o organo, o tiorba)."],
+        ["Che differenza c'è tra un'opera e un oratorio?", 3, "l'opera è recitata in teatro con scene e costumi; l'oratorio è una storia sacra cantata da solisti, coro e orchestra, senza scene né costumi (es. il Messia)."],
+        ["Spiega come è fatta una fuga.", 3, "nasce da un tema breve, il soggetto; le voci entrano una dopo l'altra con il soggetto e si rincorrono; il soggetto torna più volte."],
+        ["Che cosa si intende per musica descrittiva? Fai un esempio.", 3, "musica che racconta o imita cose della natura o della vita: Le quattro stagioni di Vivaldi (uccelli, temporale), La gallina di Rameau."]
+      ] }
+  };
 
-  document.querySelectorAll(".scheda").forEach(b => b.addEventListener("click", () => {
-    scheda = b.dataset.scheda;
-    document.querySelectorAll(".scheda").forEach(x => x.classList.toggle("attiva", x === b));
-    disegna();
-  }));
-
-  /* ---------- banner: musica vocale / musica strumentale ---------- */
-  const banner = document.getElementById("banner");
-  function impostaMondo(m, senzaDisegno) {
-    mondo = m;
-    banner.classList.toggle("f-sx", m === "sx");
-    banner.classList.toggle("f-dx", m === "dx");
-    document.querySelectorAll(".etich-meta").forEach(e => e.classList.toggle("attiva", e.dataset.mondo === m));
-    if (!senzaDisegno) {
-      if (scheda !== "ascolti") { scheda = "ascolti"; document.querySelectorAll(".scheda").forEach(x => x.classList.toggle("attiva", x.dataset.scheda === "ascolti")); }
-      disegna();
-    }
-  }
-  banner.querySelectorAll("[data-mondo]").forEach(el => el.addEventListener("click", () => impostaMondo(mondo === el.dataset.mondo ? null : el.dataset.mondo)));
-
-  /* ---------- finestra con il video ---------- */
-  const velo = document.getElementById("velo"), schermo = document.getElementById("schermo"), finestra = document.getElementById("finestra");
-  let attuale = 0;
-  function apri(i) {
-    attuale = (i + elenco.length) % elenco.length;
-    const d = elenco[attuale];
-    finestra.style.setProperty("--accent", scheda === "ascolti" ? (d.mondo === "dx" ? "#a78bfa" : "#F99D1C") : "#5EC8D8");
-    document.getElementById("fLabel").textContent = d.label;
-    document.getElementById("fTitolo").textContent = d.titolo;
-    document.getElementById("fChi").textContent = d.chi;
-    document.getElementById("fGancio").textContent = d.gancio;
-    document.getElementById("fPunti").innerHTML = d.punti.map(p => `<li>${p}</li>`).join("");
-    document.getElementById("fSapevi").innerHTML = `<b>Lo sapevi?</b> ${d.sapevi}`;
-    document.getElementById("fFonte").innerHTML = `<a href="https://www.youtube.com/watch?v=${d.yt}" target="_blank" rel="noopener">Apri su YouTube ↗</a>`;
-    // anteprima: nessuna richiesta a YouTube finché non si preme play
-    schermo.innerHTML = "";
-    schermo.style.backgroundImage = `url('${IMG + d.img}')`;
-    const b = document.createElement("button"); b.className = "avvio"; b.type = "button";
-    b.innerHTML = `<span class="tondo">▶</span><span class="nota">Il video si carica da YouTube quando premi play</span>`;
-    b.addEventListener("click", () => {
-      schermo.innerHTML = `<iframe src="https://www.youtube-nocookie.com/embed/${d.yt}?autoplay=1&rel=0&playsinline=1" title="${d.titolo}"
-        allow="autoplay; encrypted-media; picture-in-picture; fullscreen" allowfullscreen referrerpolicy="strict-origin-when-cross-origin"></iframe>`;
-    });
-    schermo.appendChild(b);
-    velo.classList.add("aperto");
-    document.body.style.overflow = "hidden";
-    b.focus({ preventScroll: true });
-  }
-  function chiudi() { velo.classList.remove("aperto"); schermo.innerHTML = ""; document.body.style.overflow = ""; }
-  document.getElementById("chiudi").addEventListener("click", chiudi);
-  velo.addEventListener("click", e => { if (e.target === velo) chiudi(); });
-  document.getElementById("prec").addEventListener("click", () => apri(attuale - 1));
-  document.getElementById("succ").addEventListener("click", () => apri(attuale + 1));
-  document.addEventListener("keydown", e => {
-    if (!velo.classList.contains("aperto")) return;
-    if (e.key === "Escape") chiudi();
-    if (e.key === "ArrowRight") apri(attuale + 1);
-    if (e.key === "ArrowLeft") apri(attuale - 1);
-  });
-
-  /* ---------- La Fuga ---------- */
-  const oSchermo = document.getElementById("oSchermo"), oCorpo = document.getElementById("oCorpo");
-  document.getElementById("oLink").href = "https://www.youtube.com/watch?v=" + FUGA.yt;
-  function preparaFuga() {
-    oSchermo.innerHTML = "";
-    oSchermo.style.backgroundImage = `url('${IMG + FUGA.img}')`;
-    const b = document.createElement("button"); b.className = "avvio"; b.type = "button";
-    b.innerHTML = `<span class="tondo">▶</span><span class="nota">Il video si carica da YouTube quando premi play</span>`;
-    b.addEventListener("click", () => {
-      oSchermo.innerHTML = `<iframe src="https://www.youtube-nocookie.com/embed/${FUGA.yt}?autoplay=1&rel=0&playsinline=1" title="Bach, Piccola fuga in sol minore"
-        allow="autoplay; encrypted-media; picture-in-picture; fullscreen" allowfullscreen referrerpolicy="strict-origin-when-cross-origin"></iframe>`;
-    });
-    oSchermo.appendChild(b);
-  }
-  function mostraFuga(parte) {
-    document.querySelectorAll(".o-t").forEach(t => t.classList.toggle("attiva", t.dataset.o === parte));
-    if (parte === "cosa") oCorpo.innerHTML = "<ul>" + FUGA.cosa.map(([i, t]) => `<li data-i="${i}">${t}</li>`).join("") + "</ul>";
-    if (parte === "ascolto") oCorpo.innerHTML = FUGA.ascolto.map(([a, t]) => `<div class="atto"><b>${a}</b><span>${t}</span></div>`).join("");
-    if (parte === "curiosita") oCorpo.innerHTML = FUGA.curiosita.map(t => `<div class="cur">${t}</div>`).join("");
-    oCorpo.scrollTop = 0;
-  }
-  document.querySelectorAll(".o-t").forEach(t => t.addEventListener("click", () => mostraFuga(t.dataset.o)));
-  mostraFuga("cosa");
-
-  /* ---------- crediti ---------- */
-  document.getElementById("listaCrediti").innerHTML = CREDITI_IMG.map(c => `<li>${c}</li>`).join("") +
-    [...ASCOLTI, ...STRUMENTI].map(d => `<li>${d.titolo} (${d.chi}): video di <a href="https://www.youtube.com/watch?v=${d.yt}" target="_blank" rel="noopener">${d.canale}</a> su YouTube</li>`).join("") +
-    `<li>Piccola fuga in sol minore (J. S. Bach): video di <a href="https://www.youtube.com/watch?v=${FUGA.yt}" target="_blank" rel="noopener">${FUGA.canale}</a> su YouTube</li>`;
-
-  disegna();
+  /* tutto il resto (indice, capitoli, strumenti, mappa, esercizi, schede) lo fanno storia-percorso.js e storia-attivita.js */
+  StoriaPercorso.avvia({ epoca: "Il Barocco", date: "1600 – 1750", img: IMG, capitoli: CAPITOLI, linea: LINEA,
+    strumenti: STRUMENTI, suonare: SUONARE, crediti: [...CREDITI_IMG, ...CREDITI_PAGINE], attivita: ATTIVITA,
+    schedeCapitolo: { fuga: "fuga" },
+    prossima: { nome: "Classicismo", articolo: "il", url: "storia-classicismo.html" } });
 })();
 </script>
+<script src="adatta-schermo.js" data-schermate="#cTelaio, #aTelaio, #contenuto"></script>
 </body>
 </html>
