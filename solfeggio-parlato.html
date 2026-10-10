@@ -36,7 +36,11 @@
   .arg:hover { background: rgba(255,255,255,0.12); }
   .arg.attivo { background: #E21C48; border-color: #E21C48; color: #fff; }
   .arg .n { opacity: .6; font-size: 11px; margin-left: 3px; }
-  .numeri { display: flex; gap: 5px; flex-wrap: wrap; justify-content: center; }
+  /* numeri delle lezioni: una sola riga che scorre di lato (come l'indice dei brani propedeutici) */
+  .numeri { position: relative; display: flex; gap: 5px; flex-wrap: nowrap; justify-content: safe center; overflow-x: auto;
+    scrollbar-width: none; scroll-behavior: smooth; padding: 2px 4px 4px; }
+  .numeri::-webkit-scrollbar { display: none; }
+  .num { flex: none; }
   .num { font: 800 13px 'Manrope', sans-serif; width: 34px; height: 34px; border-radius: 50%; cursor: pointer; color: #EAF2FF;
     background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.16); }
   .num:hover { background: rgba(255,255,255,0.14); }
@@ -81,8 +85,7 @@
   @media (max-width: 640px) {
     main { padding: 64px 10px 12px; }
     .testa { padding: 0; }
-    .numeri { flex-wrap: nowrap; overflow-x: auto; justify-content: flex-start; padding-bottom: 4px; }
-    .num { flex: none; }
+    .numeri { justify-content: flex-start; }
     .argomenti { flex-wrap: nowrap; overflow-x: auto; justify-content: flex-start; padding-bottom: 4px; }
     .via { min-width: 0; width: 100%; }
     .lettore { min-height: 300px; }
@@ -246,7 +249,9 @@
     elArg.innerHTML = `<button type="button" class="arg${argomento === null ? " attivo" : ""}" data-a="">Tutte<span class="n">${TUTTE.length}</span></button>` +
       ARGOMENTI.map((a, i) => `<button type="button" class="arg${argomento === i ? " attivo" : ""}" data-a="${i}">${a.nome}<span class="n">${a.lezioni.length}</span></button>`).join("");
     const elenco = argomento === null ? TUTTE : ARGOMENTI[argomento].lezioni;
+    const x = elNum.scrollLeft;   // ridisegnando i numeri la riga resta dov'era (senza ripartire da capo)
     elNum.innerHTML = elenco.map(n => `<button type="button" class="num${n === attuale ? " attivo" : ""}" data-n="${n}" title="${titoloDi(n)}">${n}</button>`).join("");
+    elNum.style.scrollBehavior = "auto"; elNum.scrollLeft = x; elNum.style.scrollBehavior = "";
   }
   elArg.addEventListener("click", e => {
     const b = e.target.closest(".arg"); if (!b) return;
@@ -265,7 +270,7 @@
     document.getElementById("lNum").textContent = n;
     document.getElementById("lTitolo").innerHTML = `Lezione ${n}<small>${titoloDi(n)}</small>`;
     disegnaArgomenti();
-    const a = elNum.querySelector(".num.attivo"); if (a && elNum.scrollWidth > elNum.clientWidth) elNum.scrollLeft = a.offsetLeft - elNum.clientWidth / 2;
+    const a = elNum.querySelector(".num.attivo"); if (a && elNum.scrollWidth > elNum.clientWidth) elNum.scrollLeft = a.offsetLeft - elNum.clientWidth / 2 + a.offsetWidth / 2;
     try { branoAttuale = await carica(n); } catch (e) { div.textContent = "Lezione non trovata."; return; }
     if (n !== attuale) return;
     aggiornaBpm(); disegna();
