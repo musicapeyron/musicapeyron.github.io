@@ -219,19 +219,22 @@ Le voci descrivono i giochi come sono nel codice (ottobre 2026).
 #### Punti di forza
 - **Eco continuo, come nei video "rhythm play-along":** il ritmo suona e subito dopo tocca alla classe,
   senza fermarsi. La pulsazione non si interrompe mai, quindi si impara a *restare a tempo*, non solo a leggere.
-- **Gradualità vera:** 14 tappe, ognuna con tre gradini (Facile, Medio, Difficile). Una novità alla volta,
+- **Gradualità vera:** 18 tappe, ognuna con tre gradini (Facile, Medio, Difficile). Una novità alla volta,
   sempre mescolata alle figure già note (es. le crome arrivano *insieme* alle semiminime, non da sole).
   Dentro ogni serie i ritmi salgono piano piano di difficoltà.
 - **Ritmi sempre nuovi:** non c'è un elenco fisso da imparare a memoria; il programma prepara tutti i ritmi
-  possibili di quel gradino e ne sceglie una serie diversa ogni volta. Si può ripetere la stessa tappa all'infinito.
+  possibili di quel gradino e ne sceglie una serie diversa ogni volta, senza mai ripetere un ritmo nella stessa serie.
+  Si può ripetere la stessa tappa all'infinito.
 - **Prima il suono, poi il simbolo (a scelta):** di base il ritmo scritto si vede anche mentre suona (lettura guidata
   dall'ascolto); spegnendo l'interruttore compare solo quando tocca alla classe (ascolto → imitazione → simbolo).
-- **Si segue con gli occhi:** la figura che sta suonando si illumina (rossa nell'ascolto, verde nella ripetizione)
-  e i numeri dei movimenti si accendono uno dopo l'altro: aiuta a contare e a ritrovare il punto.
-- **Le durate si sentono:** con «Suono lungo» ogni nota dura quanto la sua figura (minima, semibreve, note legate):
+- **Si segue con gli occhi il movimento:** sullo spartito si illumina il movimento in cui ci si trova (rosso nell'ascolto,
+  verde nella ripetizione) e i numeri dei movimenti si accendono uno dopo l'altro. Si vede quante figure stanno in un
+  movimento e, nelle note lunghe, i movimenti che passano mentre la nota continua: aiuta a contare e a ritrovare il punto.
+- **Anche il silenzio si sente:** sul rullante si sentono le note, un colpetto leggero di maracas segna ogni pausa.
+- **Le durate si sentono:** con il pianoforte ogni nota dura quanto la sua figura (minima, semibreve, note legate):
   utile quando la classe dice i ritmi (ta-a) invece di battere le mani.
-- **Il metronomo si può togliere:** movimenti, suddivisioni (utili per crome, sincopi, 6/8) o solo il conteggio
-  iniziale, per interiorizzare la pulsazione.
+- **La pulsazione si interiorizza:** di base il clic dà solo il via (conteggio iniziale) e poi tace; si accende con un
+  tocco quando serve, anche con le suddivisioni (utili per crome, sincopi, 6/8).
 - Pensato per la LIM: tutto in una schermata, grande e leggibile da lontano. Nessun microfono, nessun dato raccolto.
 
 #### Le tappe
@@ -239,18 +242,22 @@ Le voci descrivono i giochi come sono nel codice (ottobre 2026).
 |---|---|---|
 | 1 | Semiminima e pausa | pausa di semiminima (prima in fondo, poi in mezzo, infine in battere) |
 | 2 | Crome e semiminime | due crome in un movimento, senza pause |
-| 3 | Semiminime, crome e pause | le tre figure insieme |
-| 4 | Minima e pausa di minima | durate di due movimenti |
-| 5 | Semibreve e pausa di semibreve | una battuta intera di suono o di silenzio (frasi di 2–4 battute) |
-| 6 | 3/4, 2/4 e minima puntata | cambiano i metri, non le figure |
-| 7 | La croma in levare | pausa di croma, controtempo |
-| 8 | Legatura e semiminima puntata | prima la legatura (♩‿♪), poi il punto che la sostituisce |
-| 9 | La sincope | prima scritta con la legatura, poi croma–semiminima–croma |
-| 10 | Le semicrome | quattro semicrome, poi croma + due semicrome e il contrario |
-| 11 | Croma puntata e pause di semicroma | le figure più fitte |
-| 12 | La terzina | tre suoni in un movimento, poi con la pausa |
-| 13 | Il 6/8 | tempo composto |
-| 14 | Ripasso | tutte le figure insieme, metri diversi |
+| 3 | Semiminime, crome e pause di semiminima | le tre figure insieme |
+| 4 | Semiminime, crome e pause di croma | croma e pausa di croma nello stesso movimento |
+| 5 | Minima e pausa di minima | durate di due movimenti |
+| 6 | Le semicrome | quattro semicrome (Facile: solo con semiminime, pause di semiminima e crome), poi croma + due semicrome e il contrario |
+| 7 | Semibreve e pausa di semibreve | una battuta intera di suono o di silenzio (frasi di 2–4 battute) |
+| 8 | Ripasso | tutte le figure fin qui |
+| 9 | Minima puntata | tre movimenti: la minima e il punto |
+| 10 | Semiminima puntata | semiminima puntata e croma |
+| 11 | 3/4 e 2/4 | cambiano i metri, non le figure |
+| 12 | Contrattempo | pausa di croma e croma in levare |
+| 13 | Legatura e semiminima puntata | la legatura (♩‿♪) e il punto che la sostituisce |
+| 14 | La sincope | prima scritta con la legatura, poi croma–semiminima–croma |
+| 15 | Croma puntata e pause di semicroma | le figure più fitte |
+| 16 | La terzina | tre suoni in un movimento; la pausa dentro la terzina solo in Difficile |
+| 17 | Il 6/8 | tempo composto |
+| 18 | Ripasso finale | tutte le figure insieme, metri diversi |
 
 #### Come usarlo in classe
 - Il docente sceglie se far **battere le mani** o far **dire i ritmi** (ta, ti-ti, ta-a…): il gioco non giudica la risposta.
