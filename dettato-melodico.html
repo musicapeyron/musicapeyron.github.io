@@ -302,8 +302,8 @@ h1 {
         0 2px 5px rgba(0,0,0,0.4);
 }
 .answer::after { content: ""; position: absolute; inset: 0; background: linear-gradient(180deg, rgba(255,255,255,0.22), rgba(255,255,255,0) 55%); pointer-events: none; }
-.answer:hover { filter: brightness(1.1); transform: translateY(-3px); }
-.answer:active { transform: translateY(3px); }
+.answer:hover { filter: brightness(1.1); }
+.answer:active { filter: brightness(0.92); }
 .answer.locked { display: none; }
 
 .answer.wrong-flash { animation: buttonShake 0.4s ease-in-out; }
@@ -711,7 +711,7 @@ h1 {
 /* La schermata iniziale qui contiene anche le impostazioni:
    un po' più larga di quella di "Leggi la nota" */
 #homeScreen { width: min(600px, 100%); }
-html { background: #0f172a; }
+/* (tolto lo sfondo fisso su html: copriva lo sfondo sfumato comune a tutti i giochi) */
 
 .home-intro { margin: 10px 0 0; color: #cbd5e1; font-size: 0.98rem; opacity: 0.85; }
 
@@ -825,8 +825,8 @@ html { background: #0f172a; }
     box-shadow: 0 1px 0 rgba(255,255,255,0.3) inset, 0 14px 30px rgba(34,197,94,0.4);
     transition: transform 0.12s var(--ease-out-soft), filter 0.15s, box-shadow 0.15s;
 }
-.listen-button:hover { filter: brightness(1.1); transform: translateY(-2px); }
-.listen-button:active { transform: translateY(1px); }
+.listen-button:hover { filter: brightness(1.1); }
+.listen-button:active { filter: brightness(0.92); }
 .listen-button.playing { background: linear-gradient(145deg, #ec4899, #a21caf); box-shadow: 0 1px 0 rgba(255,255,255,0.3) inset, 0 14px 30px rgba(236,72,153,0.45); }
 .listen-button.beat { transform: scale(1.08); }
 .listen-button.beat-strong { transform: scale(1.14); }
@@ -958,8 +958,10 @@ html { background: #0f172a; }
     transition: transform 0.12s var(--ease-out-soft), filter 0.15s, box-shadow 0.12s;
 }
 .tool::after { content: ""; position: absolute; inset: 0; background: linear-gradient(180deg, rgba(255,255,255,0.3), rgba(255,255,255,0) 55%); pointer-events: none; }
-.tool:hover { filter: brightness(1.04); transform: translateY(-3px); }
-.tool:active { transform: translateY(3px); }
+/* i pulsanti NON si spostano quando li si preme: prima salivano al passaggio del mouse e
+   scendevano alla pressione, così un clic sul bordo alto "usciva" dal pulsante e non contava */
+.tool:hover { filter: brightness(1.04); }
+.tool:active { filter: brightness(0.94); }
 .tool .vex-figure { width: 50px; height: 60px; }
 .tool-symbol { height: 58px; display: flex; align-items: center; justify-content: center; font-family: "Georgia", serif; font-size: 2.2rem; font-weight: 700; line-height: 1; }
 .tool-label { font-size: 0.66rem; font-weight: 700; white-space: nowrap; }
@@ -1235,8 +1237,8 @@ button:focus-visible { outline: 3px solid #fde047; outline-offset: 2px; }
     text-shadow: -1px -1px 0 rgba(0,0,0,0.65), 1px -1px 0 rgba(0,0,0,0.65), -1px 1px 0 rgba(0,0,0,0.65), 1px 1px 0 rgba(0,0,0,0.65), 0 2px 5px rgba(0,0,0,0.4);
 }
 .note-btn::after { content: ""; position: absolute; inset: 0; background: linear-gradient(180deg, rgba(255,255,255,0.22), rgba(255,255,255,0) 55%); pointer-events: none; }
-.note-btn:hover { filter: brightness(1.08); transform: translateY(-3px); }
-.note-btn:active { transform: translateY(3px); }
+.note-btn:hover { filter: brightness(1.08); }
+.note-btn:active { filter: brightness(0.92); }
 .note-btn .tool-key { color: rgba(255,255,255,0.9); text-shadow: 0 1px 2px rgba(0,0,0,0.6); }
 .note-btn.wrong-flash { animation: buttonShake 0.4s ease-in-out; }
 
@@ -1273,6 +1275,19 @@ button:focus-visible { outline: 3px solid #fde047; outline-offset: 2px; }
 .key-sig .vex-figure { height: 52px; }
   .level-box, .setup-card, .listen-panel { -webkit-backdrop-filter: none; backdrop-filter: none; }
   .hero-badge { animation-iteration-count: 3; }   /* il badge galleggia per qualche secondo, poi sta fermo */
+
+/* =========================================================
+   SCHERMI LARGHI (PC e LIM): il gioco ha larghezza e altezza minima
+   fisse (così non cambia ingrandimento fra un dettato e l'altro) e tutta
+   la schermata si ingrandisce fino a riempire lo schermo
+   (adatta-schermo.js). Il telefono non cambia.
+   ========================================================= */
+@media (min-width: 900px) and (min-height: 560px) {
+    body { padding: 10px 24px; min-height: 0; }
+    .game { width: 1000px; max-width: none; min-height: 600px; }
+    .menu-screen { max-width: none; }
+    .help-card { max-height: calc(82vh / var(--zoom, 1)); }
+}
 </style>
 </head>
 <body>
@@ -3262,5 +3277,6 @@ window.addEventListener("resize", () => {
 refreshSetup();
 showScreen("home");
 </script>
+<script src="adatta-schermo.js" data-schermate="#homeScreen, #gameContainer"></script>
 </body>
 </html>

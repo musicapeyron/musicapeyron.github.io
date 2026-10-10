@@ -245,8 +245,10 @@ h1 {
     box-shadow: 0 1px 0 rgba(255,255,255,0.10) inset, 0 4px 10px rgba(0,0,0,0.2);
     transition: transform 0.12s var(--ease-out-soft), filter 0.15s, background 0.15s, box-shadow 0.12s;
 }
-.choice-btn:hover { background: rgba(255,255,255,0.13); transform: translateY(-2px); }
-.choice-btn:active { transform: translateY(1px); }
+/* i pulsanti NON si spostano quando li si preme: prima salivano al passaggio del mouse e
+   scendevano alla pressione, così un clic sul bordo alto "usciva" dal pulsante e non contava */
+.choice-btn:hover { background: rgba(255,255,255,0.13); }
+.choice-btn:active { filter: brightness(0.9); }
 .choice-btn.locked { display: none; }
 
 .choice-btn.selected {
@@ -292,8 +294,8 @@ h1 {
     box-shadow: 0 1px 0 rgba(255,255,255,0.25) inset, 0 8px 18px rgba(21,128,61,0.4);
     transition: transform 0.15s var(--ease-out-soft), filter 0.15s, box-shadow 0.15s, opacity 0.15s;
 }
-.submit-button:hover:not(:disabled) { transform: translateY(-2px); filter: brightness(1.08); }
-.submit-button:active:not(:disabled) { transform: translateY(1px); }
+.submit-button:hover:not(:disabled) { filter: brightness(1.08); }
+.submit-button:active:not(:disabled) { filter: brightness(0.92); }
 .submit-button:disabled {
     background: rgba(255,255,255,0.08);
     color: rgba(226,232,240,0.4);
@@ -613,7 +615,7 @@ h1 {
     background: rgba(255,255,255,0.07); color: #e2e8f0; font-family: "Sora", Arial, sans-serif; font-weight: 700; font-size: 0.88rem; cursor: pointer;
     transition: transform 0.12s var(--ease-out-soft), background 0.15s;
 }
-.tutorial-opt-btn:hover:not(:disabled) { background: rgba(255,255,255,0.14); transform: translateY(-2px); }
+.tutorial-opt-btn:hover:not(:disabled) { background: rgba(255,255,255,0.14); }
 .tutorial-opt-btn.opt-correct { background: linear-gradient(135deg, #22c55e, #15803d) !important; border-color: rgba(255,255,255,0.35); }
 .tutorial-opt-btn.opt-wrong { background: linear-gradient(135deg, #ef4444, #b91c1c) !important; border-color: rgba(255,255,255,0.35); animation: buttonShake 0.4s ease-in-out; }
 .tutorial-opt-btn:disabled { cursor: not-allowed; }
@@ -823,14 +825,21 @@ h1 {
 /* colonne del gioco e del tutorial: sul telefono non esistono (contenuto come prima) */
 .game-col, .tut-col-testo, .tut-col-figure { display: contents; }
 
-/* PC e LIM: tutto in una schermata, senza scorrere */
-@media (min-width: 900px) {
-    body { padding: 16px 24px 16px; }
+/* =========================================================
+   SCHERMI LARGHI (PC e LIM): ogni schermata ha misure fisse e una
+   disposizione in orizzontale; poi tutta la schermata si ingrandisce
+   fino a riempire lo schermo (adatta-schermo.js). Il telefono non cambia.
+   ========================================================= */
+@media (min-width: 900px) and (min-height: 560px) {
+    body { padding: 16px 24px; min-height: 0; }
+    /* con lo zoom anche i vh crescono: le finestre restano dentro lo schermo */
+    .help-card { max-height: calc(82vh / var(--zoom, 1)); }
+    #gameOver .overlay-card { width: 780px; max-height: calc((100vh - 40px) / var(--zoom, 1)); }
 
     /* menu iniziale: titolo sopra, poi due colonne (opzioni a sinistra, temi a destra) */
-    .menu-screen { width: min(1100px, 100%); }
+    .menu-screen { width: 980px; max-width: none; }
     .hero-badge { width: 60px; height: 60px; font-size: 1.7rem; margin-bottom: 10px; }
-    .menu-screen .subtitle { margin: 6px 0 18px; }
+    .menu-screen .subtitle { margin: 6px 0 22px; }
     #homeScreen:not([style*="none"]) {
         display: grid !important; grid-template-columns: 1fr 1fr; column-gap: 28px; align-items: start;
         grid-template-areas: "badge badge" "titolo titolo" "sotto sotto" "cta temi" "domanda temi" "coppia temi" "modi temi";
@@ -839,67 +848,84 @@ h1 {
     #homeScreen .hero-badge { grid-area: badge; }
     #homeScreen h1 { grid-area: titolo; }
     #homeScreen .subtitle { grid-area: sotto; }
-    #homeScreen .tutorial-cta { grid-area: cta; margin-bottom: 18px; }
+    #homeScreen .tutorial-cta { grid-area: cta; margin-bottom: 20px; }
     #homeScreen .answer-mode-title { grid-area: domanda; }
     #homeScreen .answer-mode-pair { grid-area: coppia; margin-bottom: 0; }
-    #homeScreen .theme-grid { grid-area: temi; margin-top: 0; }
+    #homeScreen .theme-grid { grid-area: temi; margin-top: 0; gap: 12px; }
     #homeScreen .mode-divider { display: none; }
-    #homeScreen .mode-grid { grid-area: modi; margin-top: 18px; }
-    .theme-tile { padding: clamp(18px, 3.2vh, 34px) 8px; font-size: 1rem; }
-    .theme-tile.wide { padding: clamp(16px, 3vh, 30px); }
+    #homeScreen .mode-grid { grid-area: modi; margin-top: 20px; }
+    .theme-tile { padding: 30px 8px; font-size: 1.05rem; }
+    .theme-tile.wide { padding: 24px; }
 
     /* scelta tutorial e scelta intervalli: più colonne */
-    .tutorial-select-grid { grid-template-columns: repeat(4, 1fr); }
-    .check-grid { grid-template-columns: repeat(4, 1fr); margin-top: 18px; }
-    #selectScreen .mode-grid { flex-direction: row; justify-content: center; margin-top: 22px !important; }
+    .tutorial-select-grid { grid-template-columns: repeat(4, 1fr); gap: 12px; }
+    .tutorial-tile { padding-top: 22px; padding-bottom: 22px; }
+    .check-grid { grid-template-columns: repeat(4, 1fr); margin-top: 18px; gap: 12px; }
+    .check-tile { padding-top: 18px; padding-bottom: 18px; font-size: 1rem; }
+    #selectScreen .mode-grid { flex-direction: row; justify-content: center; margin-top: 26px !important; }
     #selectScreen .mode-grid > * { flex: 0 1 260px; justify-content: center; align-items: center; }
     #tutorialSelectScreen .mode-grid { align-items: center; }
     .verifica-preset-btn { max-width: 560px; margin: 0 auto; }
 
-    /* gioco: titolo sopra, a sinistra statistiche + pentagramma, a destra le risposte */
-    .game { width: min(1500px, 100%); }
-    .game h1 { font-size: 2rem; }
-    .game .subtitle { margin: 4px 0 14px; }
+    /* gioco: in alto statistiche e livello; sotto, a sinistra il pentagramma, a destra le risposte */
+    .game { width: 1200px; max-width: none; }
+    .game h1 { font-size: 2.1rem; }
+    .game .subtitle { margin: 4px 0 16px; }
     #gameContainer:not([style*="none"]) {
-        display: grid !important; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); column-gap: 32px; align-items: center;
+        display: grid !important; grid-template-columns: 500px 660px; column-gap: 40px; align-items: center;
+        grid-template-areas:
+            "titolo  titolo"
+            "sotto   sotto"
+            "stats   level"
+            "staff   answers"
+            "staff   submit"
+            "staff   message"
+            "buttons toolbar";
+        grid-template-rows: auto auto auto auto auto auto auto;
     }
-    #gameContainer > h1, #gameContainer > .subtitle { grid-column: 1 / -1; }
-    .game-col { display: block; min-width: 0; }
-    .stats { margin-bottom: 14px; }
-    .level-box { margin-bottom: 14px; padding: 12px 18px 14px; }
-    .staff-row { margin-bottom: 0; }
-    .staff-card { min-height: 0; }
-    /* il pentagramma cresce con l'altezza dello schermo (più grande sulla LIM) */
-    #staffInner svg { width: auto !important; height: clamp(200px, calc(100vh - 400px), 520px) !important; }
-    .answer-section { max-width: none; }
-    .choice-btn { font-size: 1rem; padding: 14px 18px; }
-    .submit-button { font-size: 1.05rem; padding: 14px 40px; }
-    .toolbar { margin-top: 14px; }
+    #gameContainer > h1 { grid-area: titolo; }
+    #gameContainer > .subtitle { grid-area: sotto; }
+    .game-col { display: contents; }
+    .stats { grid-area: stats; margin: 0; }
+    .level-box { grid-area: level; margin: 0; align-self: stretch; }
+    .staff-row { grid-area: staff; margin: 20px 0 0; align-self: start; }
+    .staff-card { min-height: 0; padding: 18px; }
+    #staffInner svg { width: 420px !important; height: auto !important; }
+    .answer-section { grid-area: answers; max-width: none; margin: 20px 0 6px; align-self: end; }
+    .answer-section-title { font-size: 0.8rem; margin-bottom: 10px; }
+    .choice-row { display: grid; gap: 10px; margin-bottom: 20px; }
+    .number-row { grid-template-columns: repeat(4, 1fr); }
+    .quality-row { grid-template-columns: repeat(5, 1fr); }
+    .choice-btn { min-width: 0; font-size: 1.1rem; padding: 17px 6px; border-radius: 14px; }
+    .submit-button { grid-area: submit; font-size: 1.15rem; padding: 16px 48px; margin: 0 auto 8px; }
+    .message { grid-area: message; align-self: start; font-size: 1.2rem; }
+    .game-buttons { grid-area: buttons; margin-top: 18px; }
+    .toolbar { grid-area: toolbar; margin: 18px 0 0; }
 
     /* finestra finale: statistiche in riga, risultati per intervallo su due colonne */
-    #gameOver .overlay-card { width: min(780px, 100%); max-height: calc(100vh - 40px); }
     #gameOver .final-stats { grid-template-columns: repeat(auto-fit, minmax(120px, 1fr)); }
     #gameOver .final-per-interval { display: grid; grid-template-columns: 1fr 1fr; gap: 0 8px; }
     #gameOver .final-per-interval[style*="none"] { display: none; }
     #gameOver .fpi-title { grid-column: 1 / -1; }
 
-    /* tutorial: testo a sinistra, figure a destra */
-    .tutorial-screen { width: min(1500px, 100%); }
+    /* tutorial: testo a sinistra, figure a destra; la scheda ha un'altezza minima
+       così fra un passo e l'altro l'ingrandimento non cambia */
+    .tutorial-screen { width: 1100px; max-width: none; }
     .tutorial-top { margin-bottom: 8px; padding-left: 56px; } /* lascia posto al pulsante 🏠 */
-    .tutorial-topic-dots { margin-bottom: 12px; }
-    .tutorial-card { padding: 16px 24px 16px; }
-    .tutorial-step-title { margin-bottom: 8px; }
+    .tutorial-card { padding: 22px 28px; min-height: 500px; font-size: 1.05rem; }
+    .tutorial-step-title { margin-bottom: 10px; }
     .tutorial-card.con-figure { display: grid; grid-template-columns: minmax(0, 1fr) auto; column-gap: 32px; align-items: start; }
+    .tutorial-card.con-figure .tut-col-figure { max-width: 560px; }
     .tutorial-card .tut-col-testo { display: flex; flex-direction: column; min-width: 0; }
-    .tutorial-card .tut-col-testo > .tutorial-nav { margin-top: 12px; }
+    .tutorial-card .tut-col-testo > .tutorial-nav { margin-top: 14px; }
     .tutorial-card.con-figure .tut-col-figure { display: flex; flex-direction: column; align-items: center; min-width: 0; }
     .tutorial-card.con-figure .tutorial-diagram-wrap { margin: 0 0 12px; }
     .tutorial-card.con-figure .tutorial-diagram-caption { margin: -4px 0 12px; }
-    .tutorial-step-body { line-height: 1.5; }
+    .tutorial-step-body { line-height: 1.55; }
     .tutorial-step-body p { margin-bottom: 10px; }
-    /* pentagrammi del tutorial ritagliati (via JS) e scalati con l'altezza */
-    .tutorial-card svg.tut-ritaglio { width: auto !important; height: clamp(92px, calc(28vh - 90px), 190px) !important; max-width: none; }
-    .tutorial-card .tutorial-diagram-wrap svg[viewBox^="0 0 3"] { max-width: min(440px, 30vw) !important; }
+    /* pentagrammi del tutorial ritagliati (via JS) */
+    .tutorial-card svg.tut-ritaglio { width: auto !important; height: 170px !important; max-width: none; }
+    .tutorial-card .tutorial-diagram-wrap svg[viewBox^="0 0 3"] { max-width: 360px !important; }
     .shift-demo { margin: 0; gap: 2px; }
     .shift-stage { gap: 4px; }
     .shift-diagram svg { max-width: none; }
@@ -907,13 +933,12 @@ h1 {
     .shift-arrow-block { margin: 2px 0; }
     .shift-arrow-glyph { font-size: 1.6rem; }
     /* più esempi affiancati, ciascuno col suo titolo */
-    #tutorialShiftDemoWrap.piu-esempi { display: grid; grid-auto-flow: column; grid-template-rows: auto auto; column-gap: 22px; }
+    #tutorialShiftDemoWrap.piu-esempi { display: grid; grid-auto-flow: column; grid-template-rows: auto auto; column-gap: 14px; }
     #tutorialShiftDemoWrap.piu-esempi .shift-demo-heading { margin-top: 0; }
     .esempi-larghi .shift-quality { font-size: 0.95rem; padding: 4px 12px; }
-    .esempi-larghi .shift-arrow-label { font-size: 0.74rem; max-width: 190px; }
+    .esempi-larghi .shift-arrow-label { font-size: 0.74rem; max-width: 160px; }
     .esempi-larghi .shift-demo-heading { font-size: 0.9rem; }
-    .esempi-larghi .shift-arrow-label { max-width: 160px; }
-    #tutorialShiftDemoWrap.piu-esempi { column-gap: 14px; }
+    .esempi-larghi svg.tut-ritaglio, .shift-demo svg.tut-ritaglio { height: 130px !important; }
     /* puntini di avanzamento sulla stessa riga del pulsante "Esci" */
     .tutorial-topic-dots { position: absolute; top: 12px; left: 50%; transform: translateX(-50%); margin: 0; }
     .tutorial-stats-list { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); }
@@ -4151,7 +4176,7 @@ goHome();
    vengono ritagliati e, se serve, rimpiccioliti finché tutto sta nello
    schermo. Sul telefono non fa nulla.
    ========================================================= */
-const schermoLargo = window.matchMedia("(min-width: 900px)");
+const schermoLargo = window.matchMedia("(min-width: 900px) and (min-height: 560px)");
 function ritagliaPentagramma(svg) {
     if (svg.classList.contains("tut-ritaglio")) return;
     if (svg.getAttribute("viewBox") !== "0 0 220 200") return;
@@ -4193,16 +4218,6 @@ function adattaFigureTutorial() {
         const visibili = [...figure.children].some(el => el.style.display !== "none" && el.offsetHeight > 0);
         card.classList.toggle("con-figure", visibili);
     }
-    // altezza dei pentagrammi: si parte dal massimo e si scende finché la pagina sta nello schermo
-    const svgs = [...card.querySelectorAll("svg.tut-ritaglio")];
-    if (!svgs.length) return;
-    let h = Math.min(240, Math.max(110, window.innerHeight * 0.3));
-    const prova = () => svgs.forEach(v => { v.style.setProperty("height", h + "px", "important"); });
-    prova();
-    while (h > 60 && document.documentElement.scrollHeight > window.innerHeight) {
-        h -= 8;
-        prova();
-    }
 }
 const osservaTutorial = new MutationObserver(() => {
     osservaTutorial.disconnect();
@@ -4215,5 +4230,6 @@ if (schermoLargo.matches) {
 }
 
 </script>
+<script src="adatta-schermo.js" data-schermate="#homeScreen, #tutorialSelectScreen, #tutorialScreen, #selectScreen, #gameContainer"></script>
 </body>
 </html>
