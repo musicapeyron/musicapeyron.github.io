@@ -302,3 +302,8 @@ Per un gioco nuovo, provarlo a quelle due misure in tutte le schermate, compresi
 - Sta in cima a OGNI pagina grazie a `info-sito.js`, caricato subito dopo `<body>` (`<script src="info-sito.js"></script>`;
   nella cartella programma `../info-sito.js`). Lo script inserisce la riga, aggiunge 26 px al margine alto del body e la nasconde
   nello schermo intero (body.lim) e in stampa. Le pagine nuove devono caricarlo.
+
+## Google (ottobre 2026)
+- `google801644cff1ab0be4.html` nella cartella principale è il file di verifica della Google Search Console: NON cancellarlo.
+- `sitemap.xml` e `robots.txt`: se si aggiungono pagine, aggiungerle anche alla mappa. Ogni pagina ha in fondo all'intestazione il blocco
+  «per i motori di ricerca e la condivisione» (canonical, anteprima con media/condivisione.jpg).
