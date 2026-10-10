@@ -51,12 +51,20 @@ def lezioni_da_testo(testo):
         if m:
             opz = dict(p.split("=", 1) for p in re.split(r"\s+(?=\w+=)", m.group(3).strip()) if "=" in p)
             opz = {k: v.strip() for k, v in opz.items()}
-            cur = {"numero": int(m.group(1)), "titolo": m.group(2).strip(), "opz": opz, "V": [], "D": [], "S": [], "ritornelli": []}
+            cur = {"numero": int(m.group(1)), "titolo": m.group(2).strip(), "opz": opz, "V": [], "D": [], "S": [], "ritornelli": [], "volte": [], "fine": None, "dc": None}
             out.append(cur)
             continue
         m = re.match(r"#\s*nota:\s*ritornello dalla battuta (\d+) alla (\d+)", riga)
         if m and cur is not None:   # ritornello: si disegna e si esegue (il lettore permette di toglierlo)
             cur["ritornelli"].append((int(m.group(1)), int(m.group(2))))
+            continue
+        m = re.match(r"#\s*volta:\s*(\d+)\s+dalla battuta (\d+) alla (\d+)", riga)
+        if m and cur is not None:   # prima / seconda volta
+            cur["volte"].append((int(m.group(1)), int(m.group(2)), int(m.group(3))))
+            continue
+        m = re.match(r"#\s*(fine|dc):\s*battuta (\d+)", riga)
+        if m and cur is not None:   # Fine e D.C. (al Fine): alla fine della battuta indicata
+            cur[m.group(1)] = int(m.group(2))
             continue
         m = re.match(r"([VDS]):\s*(.*)", riga)
         if m and cur is not None:
@@ -165,7 +173,7 @@ def musicxml(lez):
         ab = {"_arm": ARM}
         for j, t in enumerate(toks):
             ev = analizza(t, f"V battuta {i}")
-            righe, aperte = xml_nota(ev, 1, None, aperte, ultima_canto=(i == n and j == len(toks) - 1), alt_battuta=ab)
+            righe, aperte = xml_nota(ev, 1, None, aperte, ultima_canto=(i == (lez.get("fine") or n) and j == len(toks) - 1), alt_battuta=ab)
             x += ['      ' + r for r in righe]
         if i == n:
             x.append('      <barline location="right"><bar-style>light-heavy</bar-style></barline>')
@@ -205,25 +213,42 @@ def musicxml(lez):
 
 
 def segna_ritornelli(righe, lez):
-    """Aggiunge le stanghette di ritornello (inizio a sinistra della battuta X se X > 1, fine a destra della Y)
-    nella parte appena scritta (l'ultima <part> ancora senza ritornelli)."""
-    if not lez.get("ritornelli"):
-        return righe
+    """Segni di struttura nella parte appena scritta (l'ultima <part>): ritornelli (inizio a sinistra della battuta X
+    se X > 1, fine a destra della Y), prima/seconda volta, Fine e D.C. (scritti e con l'istruzione <sound>)."""
     inizio = max(i for i, r in enumerate(righe) if r.startswith('  <part id='))
+    canto = 'id="P1"' in righe[inizio]
+    FINALE = '      <barline location="right"><bar-style>light-heavy</bar-style></barline>'
     out = righe[:inizio]
+    num, finale = 0, False
     for r in righe[inizio:]:
         m = re.match(r'    <measure number="(\d+)">', r)
         if m:
-            num = int(m.group(1))
+            num, finale = int(m.group(1)), False
+        if r == FINALE:
+            finale = True
+            continue
         if r == '    </measure>':
-            for x0, y0 in lez["ritornelli"]:
-                if num == y0:
-                    out.append('      <barline location="right"><bar-style>light-heavy</bar-style><repeat direction="backward"/></barline>')
+            if lez.get("fine") == num:
+                out.append('      <direction placement="above"><direction-type><words>Fine</words></direction-type><sound fine="yes"/></direction>'
+                           if canto else '      <sound fine="yes"/>')
+            if lez.get("dc") == num:
+                out.append('      <direction placement="below"><direction-type><words>D.C.</words></direction-type><sound dacapo="yes"/></direction>'
+                           if canto else '      <sound dacapo="yes"/>')
+            ripeti = any(num == y0 for x0, y0 in lez.get("ritornelli", []))
+            chiudi = [v for v, x0, y0 in lez.get("volte", []) if y0 == num]
+            stile = "light-heavy" if (ripeti or finale or lez.get("dc") == num) else "light-light" if lez.get("fine") == num else None
+            if stile or chiudi:
+                out.append('      <barline location="right">' + (f'<bar-style>{stile}</bar-style>' if stile else '')
+                           + ''.join(f'<ending number="{v}" type="{"stop" if ripeti else "discontinue"}"/>' for v in chiudi)
+                           + ('<repeat direction="backward"/>' if ripeti else '') + '</barline>')
         out.append(r)
         if m:
-            for x0, y0 in lez["ritornelli"]:
-                if num == x0 and x0 > 1:
-                    out.append('      <barline location="left"><bar-style>heavy-light</bar-style><repeat direction="forward"/></barline>')
+            sx = [v for v, x0, y0 in lez.get("volte", []) if x0 == num]
+            rip = any(num == x0 and x0 > 1 for x0, y0 in lez.get("ritornelli", []))
+            if sx or rip:
+                out.append('      <barline location="left">' + ('<bar-style>heavy-light</bar-style>' if rip else '')
+                           + ''.join(f'<ending number="{v}" type="start">{v}.</ending>' for v in sx)
+                           + ('<repeat direction="forward"/>' if rip else '') + '</barline>')
     return out
 
 

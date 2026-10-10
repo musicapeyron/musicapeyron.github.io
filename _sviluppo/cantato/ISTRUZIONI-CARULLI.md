@@ -44,8 +44,19 @@ S: c2q e2q g2q c3q | f2q a2q c3q f3q | ...
 - **Due voci nella stessa mano** (gambi in su e in giù con ritmi diversi): separale con ` & ` dentro la battuta; ogni voce deve
   riempire la battuta. Nella voce che tace usa le pause stampate, oppure `s` + durata (spazio invisibile, es. `sh`) se la pausa non
   è stampata. Se le due voci hanno lo stesso ritmo scrivile come accordo.
-- Ritornelli (`:||`): trascrivi la musica una sola volta, come stampata, e aggiungi una riga `# nota: ritornello dalla battuta X alla Y`.
-- Corona finale: non si scrive (la mette il programma sull'ultima nota del canto).
+- Ritornelli (`:||` e `||:`): trascrivi la musica una sola volta, come stampata, e aggiungi una riga
+  `# nota: ritornello dalla battuta X alla Y` (X = prima battuta ripetuta, 1 se si torna all'inizio; Y = battuta col segno `:||`).
+- Prima e seconda volta (parentesi «1.» / «2.» sopra le battute): `# volta: 1 dalla battuta X alla Y` e `# volta: 2 dalla battuta X alla Y`
+  (oltre alla riga del ritornello, che finisce sull'ultima battuta della prima volta).
+- «FIN» (Fine) e «D.C.» (Da capo al Fine): `# fine: battuta N` (la battuta dove è scritto FIN, alla sua fine) e `# dc: battuta N`
+  (l'ultima battuta, dove è scritto D.C.). Trascrivi tutte le battute come stampate, una volta sola.
+- Anacrusi (la lezione comincia a battuta incompleta): scrivi la prima battuta corta, uguale in tutte e tre le parti; l'ultima battuta
+  di solito la completa ed è corta anch'essa.
+- Corona finale: non si scrive (la mette il programma sull'ultima nota del canto, o della battuta del Fine).
+- Ignora anche: indicazioni metronomiche (Moderato 88 = ♩: scrivi solo andamento=Moderato), «1re Reprise / 2e Reprise», il segno ⊕ e
+  le note a piè di pagina («Après la leçon N° … travailler …»), le legature di portamento, staccati, accenti, dinamiche.
+- Abbellimenti (appoggiature, acciaccature, gruppetti, trilli): non si scrivono; aggiungi `# nota: battuta B, parte V/D/S: …`.
+- Più di due voci nella stessa mano: riducile a due (accorpando in accordi le note con lo stesso ritmo) senza cambiare i suoni.
 
 ## Consegna
 Per ogni lezione: `lNNN.txt` senza ATTENZIONE e controllata col disegno. Nel messaggio finale: lezioni fatte, battute di ciascuna,

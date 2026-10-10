@@ -189,3 +189,558 @@ S: g2q d2q g1q rq | b2q g3q g2q g3q | c3q g3q g2q g3q | b2q g3q g2q g3q | c3q g3
 V: d4h rh | g4h c5h | b4w | d4h a4h | g4w | g4h e5h | d5w | c5h b4h | c5h rh |
 D: [b3d4]h rh | [e4g4]h [e4c5]h | [f4b4]w | [b3d4]h [b3f4a4]h | [c4e4g4]w | [e4g4]h [e4g4e5]h | [f4a4d5]w | [e4g4c5]h [d4g4b4]h | [e4g4c5]h rh |
 S: g2q f3q e3q d3q | c3q g3q g2q g3q | d3q g3q g2q g3q | rq g2q g3q g2q | c3q e3q g3q e3q | c3q e3q g3q c4q | f3q a3q d3q f3q | g3q g2q g3q f3q | [c3e3]q c3q c2q rq |
+
+# Lezione 22 | Le semiminime e le pause di semiminima | armatura=0 tempo=4/4 andamento=Moderato autore=Henry Lemoine
+V: c5q b4q c5q b4q | c5q d5q b4q rq | c5q e5q d5q c5q | b4q a4q g4q rq | d5q c5q b4q d5q | c5q b4q a4q rq
+D: [e4c5]q [f4b4]q [e4c5]q [f4b4]q | [e4c5]q [f4d5]q [f4b4]q rq | [e4c5]q [e4g4e5]q [d4g4d5]q [e4a4c5]q | [d4g4b4]q [c4f#4a4]q [b3g4]q rq | [d4g4d5]q [d4a4c5]q [d4g4b4]q [d4g4d5]q | [d4a4c5]q [d4g4b4]q [d4f#4a4]q rq
+S: [c3g3]q [d3g3]q [c3g3]q [d3g3]q | [c3g3]q [b2g3]q [d3g3]q g2q | c3q c3q b2q c3q | d3q d3q g2q g3q | b3q f#3q g3q b3q | f#3q g3q d3q d4q
+V: d5q c5q b4q a4q | b4q a4q g4q rq | c5q b4q c5q b4q | c5q d5q b4q rq | c5q g4q a4q c5q | c5q b4q c5q rq
+D: [d4g4d5]q [d4f#4c5]q [d4g4b4]q [e4a4]q | [d4g4b4]q [c4f#4a4]q [b3g4]q rq | [e4c5]q [f4b4]q [e4c5]q [f4b4]q | [e4c5]q [f4d5]q [f4b4]q rq | [e4c5]q [c4g4]q [c4a4]q [g4c5]q | [f4c5]q [f4b4]q [e4c5]q rq
+S: b3q a3q g3q c3q | d3q d3q g38 f38 e38 d38 | [c3g3]q [d3g3]q [c3g3]q [d3g3]q | [c3g3]q [b2g3]q [d3g3]q g2q | c3q e3q f3q e3q | d3q g3q c3q rq
+
+# Lezione 23 | Semiminime con la pausa sul primo tempo | armatura=0 tempo=4/4 andamento=Moderato autore=Henry Lemoine
+V: rq g4q e4q f4q | rq g4q e5q g4q | rq f4q d4q e4q | rq f4q d5q f4q | rq e4q g4q c5q | rq e5q d5q c5q | rq c5q b4q a4q
+D: rq [e4g4]q [c4e4]q [d4f4]q | rq [e4g4]q e5q [e4g4]q | rq [d4f4]q [b3d4]q [c4e4]q | rq [d4f4]q d5q [d4f4]q | rq [c4e4]q [e4g4]q [e4c5]q | rq [c5e5]q [b4d5]q [a4c5]q | rq [a4c5]q [g4b4]q [f#4a4]q
+S: c4q c3q rq c3q | c4q c3q rq c3q | g3q g2q rq g2q | g3q g2q rq g2q | c3q c2q rq c3q | c4q c3q rq a2q | d3q d2q rq [d3c4]q
+V: rq g4q a4q g4q | rq g4q e4q f4q | rq g4q e5q g4q | rq f4q d4q e4q | rq f4q d5q f4q | rq e4q g4q c5q | rq c5q b4q a4q | rq g4q f4q d4q | rq c4q c5q rq
+D: rq [f4g4]q [f4a4]q [f4g4]q | rq [e4g4]q [c4e4]q [d4f4]q | rq [e4g4]q e5q [e4g4]q | rq [d4f4]q [b3d4]q [c4e4]q | rq [d4f4]q d5q [d4f4]q | rq [c4e4]q [e4g4]q [e4c5]q | rq [a4c5]q [g4b4]q [f4a4]q | rq [e4g4]q [d4f4]q [b3d4]q | rq c4q [e4c5]q rq
+S: [g3b3]q [g3b3]q [g3c4]q [g3b3]q | c4q c3q rq c3q | c4q c3q rq c3q | g3q g2q rq g2q | g3q g2q rq g2q | c3q c2q rq c3q | f3q f2q rq f3q | g3q g2q rq [g2f3]q | [c3e3]q rq [c3g3]q rq
+
+# Lezione 24 | Semiminime con la pausa sul secondo tempo | armatura=0 tempo=4/4 andamento=Moderato autore=Henry Lemoine
+V: g4q rq e4q g4q | a4q rq c5q a4q | g4q rq e4q g4q | a4q rq c5q a4q | g4q rq e4q g4q | f4q rq d4q f4q | e4q rq c4q e4q
+D: [e4g4]q rq [c4e4]q [e4g4]q | [f4a4]q rq [a4c5]q [f4a4]q | [e4g4]q rq [c4e4]q [e4g4]q | [f4a4]q rq [a4c5]q [f4a4]q | [e4g4]q rq [c4e4]q [e4g4]q | [d4f4]q rq [b3d4]q [d4f4]q | [c4e4]q rq [g3c4]q [g3e4]q
+S: c2q c3q rh | c3q c4q rh | c2q c3q rh | c3q c4q rh | c2q c3q rh | g2q g3q rh | c2q c3q e3q c3q
+V: d4q rq a4q g4q | g4q rq e4q g4q | a4q rq c5q a4q | g4q rq e4q g4q | a4q rq c5q a4q | g4q rq e4q g4q | f4q rq e4q d4q | c4q rq d4q g4q | c4q rq c5q rq
+D: [b3d4]q rq a4q g4q & sh [b3d4]h | [e4g4]q rq [c4e4]q [e4g4]q | [f4a4]q rq [a4c5]q [f4a4]q | [e4g4]q rq [c4e4]q [e4g4]q | [f4a4]q rq [a4c5]q [f4a4]q | [e4g4]q rq [c4e4]q [e4g4]q | [d4f4]q rq [c4e4]q [b3d4]q | c4q rq [b3d4]q [b3g4]q | c4q rq [e4c5]q rq
+S: g2q g3h. | c2q c3q rh | c3q c4q rh | c2q c3q rh | c3q c4q rh | c2q c3q rh | rq f3q g3q [g2f3]q | [c3e3]q g3q [g2f3]q [g2f3]q | [c3e3]q rq [c3g3]q rq
+
+# Lezione 25 | Semiminime con la pausa sul terzo tempo | armatura=0 tempo=4/4 andamento=Moderato autore=Henry Lemoine
+V: g4q e4q rq g4q | a4q c5q rq a4q | g4q e4q rq g4q | a4q c5q rq a4q | g4q e4q rq g4q | g4q f4q rq f4q | f4q e4q rq e4q
+D: [e4g4]q [c4e4]q rq [e4g4]q | [f4a4]q [a4c5]q rq [f4a4]q | [e4g4]q [c4e4]q rq [e4g4]q | [f4a4]q [a4c5]q rq [f4a4]q | [e4g4]q [c4e4]q rq [e4g4]q | [e4g4]q [d4f4]q rq [d4f4]q | [d4f4]q [c4e4]q rq [c4e4]q
+S: rq c2q c3q c2q | rq c3q c4q c3q | rq c2q c3q c2q | rq c3q c4q c3q | rq c2q c3q c2q | rq g2q g3q g2q | rq c2q c3q c2q
+V: e4q d4q rq g4q | g4q e4q rq g4q | a4q c5q rq a4q | g4q e4q rq g4q | a4q c5q rq a4q | g4q e4q rq g4q | g4q f4q rq f4q | f4q e4q rq d4q | c4q e4q c4q rq
+D: [c4e4]q [b3d4]q rq g4q | [e4g4]q [c4e4]q rq [e4g4]q | [f4a4]q [a4c5]q rq [f4a4]q | [e4g4]q [c4e4]q rq [e4g4]q | [f4a4]q [a4c5]q rq [f4a4]q | [e4g4]q [c4e4]q rq [e4g4]q | [e4g4]q [d4f4]q rq [d4f4]q | [d4f4]q [c4e4]q rq [b3d4]q | c4q e4q c4q rq
+S: rq g2q g3q g2q | rq c2q c3q c2q | rq c3q c4q c3q | rq c2q c3q c2q | rq c3q c4q c3q | rq c2q c3q c2q | rq f2q f3q f2q | rq g2q g3q [g2f3]q | [c3e3]q [c3g3]q [c3e3]q rq
+
+# Lezione 26 | Semiminime e pausa sul quarto tempo | armatura=0 tempo=4/4 andamento=Moderato
+V: g4q c5q b4q rq | g4q d5q c5q rq | g4q e5q d5q rq | c5q a4q g4q rq | g4q c5q b4q rq | g4q d5q c5q rq | g4q e5q d5q rq
+D: g4q [e4c5]q [d4b4]q rq | g4q [f4d5]q [e4c5]q rq | g4q [g4e5]q [g4d5]q rq | [e4c5]q [c4f#4a4]q [b3g4]q rq | g4q [e4c5]q [d4b4]q rq | g4q [f4d5]q [e4c5]q rq | g4q [g4e5]q [g4d5]q rq
+S: rq c3q g3q g2q | rq [g3b3]q c4q c3q | rq c4q b3q b2q | c3q d3q g3q g2q | rq c3q g3q g2q | rq [g3b3]q c4q c3q | rq c4q b3q b2q
+V: c5q a4q g4q rq | d5q c5q b4q rq | b4q a4q g4q rq | d5q c5q b4q rq | b4q a4q g4q rq | g4q c5q b4q rq | g4q d5q c5q rq | g4q c5q a4q rq | f4q d4q c4q rq
+D: [e4c5]q [c4f#4a4]q [b3g4]q rq | [f4d5]q [f4c5]q [f4b4]q rq | [f4b4]q [f4a4]q [f4g4]q rq | [f4d5]q [f4c5]q [f4b4]q rq | [f4b4]q [f4a4]q [f4g4]q rq | g4q [e4c5]q [d4b4]q rq | g4q [f4d5]q [e4c5]q rq | g4q [e4c5]q [f4a4]q rq | [d4f4]q [b3d4]q c4q rq
+S: c3q d3q g3q g2q | [g3b3]q [g3c4]q [g3d4]q g2q | [g3d4]q [g3c4]q [g3b3]q g2q | [g3b3]q [g3c4]q [g3d4]q g2q | [g3d4]q [g3c4]q [g3b3]q g2q | rq c3q g3q g2q | rq [g3b3]q c4q c3q | rq [c3bb3]q [f3a3]q f2q | rq [g2f3]q [c3e3]q c2q
+
+# Lezione 27 | Semiminime e pause alternate | armatura=0 tempo=4/4 andamento=Moderato
+V: c5q rq b4q rq | c5q rq d5q rq | c5q rq a4q rq | g4q rq rh | f4q rq e4q rq | f4q rq e4q rq | a4q rq d4q rq
+D: [e4g4c5]q rq [f4g4b4]q rq | [e4g4c5]q rq [f4g4d5]q rq | [e4g4c5]q rq [c4f4a4]q rq | [e4g4]q rq rh | [d4f4]q rq [c4e4]q rq | [d4f4]q rq [c4e4]q rq | [c4a4]q rq [c4d4]q rq
+S: c3q g3q d3q g3q | c3q g3q b2q g3q | c3q e3q f3q a3q | c4q c3q c4h | b2q g3q c3q g3q | b2q g3q c3q g3q | f2q f3q f#2q f#3q
+V: d4q g4q a4q b4q | c5q rq b4q rq | c5q rq d5q rq | c5q rq a4q rq | g4q rq rh | f4q rq e4q rq | a4q rq c5q rq | c5q rq b4q rq | c5q rq rh
+D: [b3d4]q g4q a4q b4q | [e4g4c5]q rq [f4g4b4]q rq | [e4g4c5]q rq [f4g4d5]q rq | [e4g4c5]q rq [c4f4a4]q rq | [e4g4]q rq rh | [d4f4]q rq [c4e4]q rq | [c4f4a4]q rq [e4g4c5]q rq | [d4a4c5]q rq [d4g4b4]q rq | [e4g4c5]q rq rh
+S: [g2g3]q rq rh | c3q g3q d3q g3q | c3q g3q b2q g3q | c3q e3q f3q a3q | c4q c3q c4h | b2q g3q c3q g3q | f2q f3q e3q c3q | f3q d3q g3q g2q | c3q g2q c2q rq
+
+# Lezione 28 | Semiminime e pause sul primo e sul terzo tempo | armatura=0 tempo=4/4 andamento=Moderato
+V: rq g4q rq c5q | rq a4q rq c5q | rq g4q rq c5q | rq a4q rq c5q | rq g4q rq c5q | rq a4q rq g4q | rq f4q rq e4q
+D: rq [e4g4]q rq [e4c5]q | rq [f4a4]q rq [f4ab4c5]q | rq [e4g4]q rq [e4c5]q | rq [f4a4]q rq [f4ab4c5]q | rq [e4g4]q rq [e4c5]q | rq [f4a4]q rq [e4g4]q | rq [d4f4]q rq [c4e4]q
+S: c3q rq c4q rq | c3q rq c4q rq | c3q rq c4q rq | c3q rq c4q rq | c3q rq c4q rq | b3q rq c4q rq | f3q rq f#3q rq
+V: rq d4q rq g4q | rq g4q rq c5q | rq a4q rq c5q | rq g4q rq c5q | rq a4q rq c5q | rq g4q rq c5q | rq a4q rq f4q | rq e4q rq d4q | rq c4q rh
+D: rq [b3d4]q rq [b3g4]q | rq [e4g4]q rq [e4c5]q | rq [f4a4]q rq [f4ab4c5]q | rq [e4g4]q rq [e4c5]q | rq [f4a4]q rq [f4ab4c5]q | rq [e4g4]q rq [e4c5]q | rq [f4a4]q rq [d4f4]q | rq [c4e4]q rq [b3d4]q | rq [g3c4]q rh
+S: g3q rq g2q rq | c3q rq c4q rq | c3q rq c4q rq | c3q rq c4q rq | c3q rq c4q rq | c3q rq c4q rq | f3q rq f3q rq | g3q rq [g2f3]q rq | [c3e3]h c2q rq
+
+# Lezione 29 | Semiminime e pause sul secondo e sul terzo tempo | armatura=0 tempo=4/4 andamento=Moderato
+V: e4q rq rq g4q | f4q rq rq e4q | d4q rq rq f4q | e4q rq rq g4q | c5q rq rq b4q | a4q rq rq f4q | e4q rq rq d4q
+D: [c4e4]q rq rq [e4g4]q | [d4f4]q rq rq [c4e4]q | [b3d4]q rq rq [d4f4]q | [c4e4]q rq rq g4q | [e4c5]q rq rq [g4b4]q | [f4a4]q rq rq [d4f4]q | [c4e4]q rq rq [b3d4]q
+S: rq c2q c3q rq | rq g2q g3q rq | rq g2q g3q rq | rq c2q c3q rq | rq c3q c4q rq | rq f2q f3q rq | rh g3q f3q & rq g2h.
+V: c4q rq rq c5q | a4q rq rq c5q | g4q rq rq c5q | a4q rq rq c5q | g4q rq rq g4q | c5q rq rq b4q | a4q rq rq f4q | e4q rq rq d4q | c4q rq rh
+D: c4q rq rq c5q | [f4a4]q rq rq c5q | [e4g4]q rq rq c5q | [f4a4]q rq rq c5q | [e4g4]q rq rq g4q | [e4c5]q rq rq [g4b4]q | [f4a4]q rq rq [d4f4]q | [c4e4]q rq rq [b3d4]q | c4q rq rh
+S: [c3e3]q c3q c2q rq | rq c3q c4q rq | rq c2q c3q rq | rq c3q c4q rq | rq c2q c3q rq | rq c3q c4q rq | rq f2q f3q rq | rh g3q f3q & rq g2h. | [c3e3]q c3q c2q rq
+
+# Lezione 30 | Semiminime e pause sul primo e sul quarto tempo | armatura=0 tempo=4/4 andamento=Moderato
+V: rq g4q a4q rq | rq a4q c5q rq | rq g4q a4q rq | rq a4q c5q rq | rq c5q d5q rq | rq c5q b4q rq | rq a4q g4q rq | rq a4q g4q rq
+D: rq [e4g4]q [f4a4]q rq | rq [f4a4]q [e4c5]q rq | rq [e4g4]q [f4a4]q rq | rq [f4a4]q [e4c5]q rq | rq [e4c5]q [f4d5]q rq | rq [e4c5]q [d4b4]q rq | rq [c4a4]q [b3g4]q rq | rq [b3f4a4]q [b3f4g4]q rq
+S: c3q rq rq c4q | c3q rq rq c4q | c3q rq rq c4q | c3q rq rq c4q | c3q rq rq b2q | c3q rq rq d3q | f#3q rq rq g3q | g2q rq rq g3q
+V: rq g4q a4q rq | rq a4q c5q rq | rq g4q a4q rq | rq a4q c5q rq | rq c5q d5q rq | rq c5q a4q rq | rq f4q e4q rq | rq d4q c4q rq | rw | rw
+D: rq [e4g4]q [f4a4]q rq | rq [f4a4]q [e4c5]q rq | rq [e4g4]q [f4a4]q rq | rq [f4a4]q [e4c5]q rq | rq [e4c5]q [f4d5]q rq | rq [e4c5]q [f4a4]q rq | rq [d4f4]q [c4e4]q rq | rq [b3d4]q c4q rq | [e4c5]h [e4c5]h | [e4c5]w
+S: c3q rq rq c4q | c3q rq rq c4q | c3q rq rq c4q | c3q rq rq c4q | c3q rq rq b2q | c3q rq rq f3q | d3q f3q g3q g2q~ | [g2f3]h [c3e3]q rq | [c3g3]h [c3g3]h | [c3g3]w
+
+# Lezione 31 | Semiminime e pause al primo e al quarto tempo | armatura=0 tempo=4/4 andamento=Moderato autore=Rodolphe
+# nota: ritornello dalla battuta 1 alla 8
+# nota: ritornello dalla battuta 9 alla 16
+V: rq c5q e5q rq | rq d5q f5q rq | rq e5q d5q rq | rq c5q b4q rq | rq a4q c5q rq | rq b4q d5q rq | rq c5q b4q a4q | g4q a4q g4q rq
+D: [e4g4c5]q rq rq [e4g4c5]q | [d4g4d5]q rq rq [g4d5f5]q | [g4c5e5]q rq rq [d4g4d5]q | [d4f#4c5]q rq rq [d4g4b4]q | [d4a4]q rq rq [d4f#4c5]q | [d4g4b4]q rq rq [d4g4d5]q | rq c5q [d4g4b4]q [c4f#4a4]q & [e4a4]h sh | [b3g4]q [c4f#4a4]q [b3g4]q rq
+S: c3q rq rq c4q | b3q rq rq b3q | c4q rq rq b3q | a3q rq rq g3q | f#3q rq rq d3q | g3q rq rq b2q | c3h d3h | g3q d3q g2q rq
+V: rq b4q d5q rq | rq c5q e5q rq | rq d5q f5q rq | rq e5q d5q rq | rq c5q g4q rq | rq e5q d5q rq | rq c5q d5q b4q | c5h rh
+D: [d4g4b4]q rq rq [d4g4b4]q | [e4g4c5]q rq rq [g4c5e5]q | [g4b4d5]q rq rq [g4d5f5]q | [g4c5e5]q rq rq [d4g4b4]q | [e4g4c5]q rq rq [f4g4d5]q | [e4g4e5]q rq rq [f4b4d5]q | [e4c5]q [e4g4c5]q [d4a4d5]q [d4g4b4]q | [e4g4c5]h~ [e4g4c5]q rq
+S: g3q rq rq f3q | e3q rq rq c3q | g3q rq rq b2q | c3q rq rq f3q | e3q rq rq b3q | c4q rq rq g3q | a3q e3q f3q g3q | c3q c4q c3q rq
+
+# Lezione 32 | Minime e semiminime | armatura=0 tempo=4/4 andamento=Moderato autore=Henry Lemoine
+# nota: ritornello dalla battuta 1 alla 8
+# nota: ritornello dalla battuta 9 alla 20
+V: g4h g4q c5q | c5h a4q c5q | c5h g4q c5q | b4q a4q g4q rq | g4h g4q c5q | c5h a4q c5q
+D: [c4e4g4]h [c4e4g4]q [c4e4c5]q | [c4f4c5]h a4q [c4f4c5]q | [c4e4c5]h g4q [c4e4c5]q | [d4b4]q [c4a4]q g4h & sh b3q c48 d48 | [c4e4g4]h [c4e4g4]q [c4e4c5]q | [c4f4c5]h a4q [c4f4c5]q
+S: [c3g3]h [c3g3]q [c3g3]q | [c3a3]h f3q [c3a3]q | [c3g3]h e3q [c3g3]q | [d3g3]q [d3f#3]q g38 f38 e38 d38 | [c3g3]h [c3g3]q [c3g3]q | [c3a3]h f3q [c3a3]q
+V: c5h e4q d4q | d4h c4q rq | d4h d4q e4q | f4h f4q g4q | a4h a4q b4q | c5h d5q e5q | d5h c5q rq
+D: [c4e4c5]h [c4e4]q [b3d4]q | [b3d4]h c4q rq | [b3d4]h [b3d4]q [c4e4]q | [d4f4]h [d4f4]q [e4g4]q | [f4a4]h [f4a4]q [d4b4]q | [e4c5]h [f4d5]q [g4e5]q | [f4d5]h [e4c5]q rq
+S: [c3g3]q. e38 g3q [g2f3]q | [g2f3]h [c3e3]q rq | g2q g3h. | g2q g3h. | g2q g3h. | g2q g3h. | g2q b2q c3q e3q
+V: d5h c5q rq | b4h a4h | a4h g4h | g4h g4q c5q | c5h a4q c5q | c5h e4q d4q | d4h c4q rq
+D: [f4d5]h [e4c5]q rq | [d4g4b4]h [c4f#4a4]h | a4h g4h & [b3d4f4]w | [c4e4g4]h [c4e4g4]q [c4e4c5]q | [c4f4c5]h a4q [c4f4c5]q | [c4e4c5]h [c4e4]q [b3d4]q | [b3d4]h c4q rq
+S: g3q b3q c4q c3q | d3q d2h d3q | g2q g3h g2q | [c3g3]h [c3g3]q [c3g3]q | [c3a3]h f3q [c3a3]q | [c3g3]q. e38 g3q [g2f3]q | [g2f3]h [c3e3]q rq
+
+# Lezione 33 | Minime e semiminime | armatura=0 tempo=4/4 andamento=Moderato autore=G. Carulli
+# fine: battuta 8
+# dc: battuta 20
+# nota: sopra l'ultima battuta c'è «Renvoi» col segno 𝄋 (rimando, probabilmente alla nota a piè di pagina): non trascritto
+# nota: battuta 12, parte D: appoggiatura re5 prima del do5 (terza croma)
+V: c4h e4q g4q | c5q rq rh | d4h f4q b4q | d5q rq rh | e4h e5q d5q
+D: c4h e4q g4q | c5q. b48 a48 g48 f48 e48 | d4h f4q b4q | d5q. c58 b48 a48 g48 f48 | e4h e5q d5q & sh e4h
+S: [c3e3g3]q [c3e3g3]q [c3e3g3]q [c3e3g3]q | [c3e3g3]q [c3e3g3]q [c3e3g3]q [c3e3g3]q | [b2f3g3]q [b2f3g3]q [b2f3g3]q [b2f3g3]q | [b2f3g3]q [b2f3g3]q [b2f3g3]q [b2f3g3]q | [c3e3g3]q [c3e3g3]q [b2e3g#3]q [b2e3g#3]q
+V: c5h a4q d5q | c5h e5q d5q | c5h rh | g4h b4q d5q | d5h c5q rq | a4h d5q c5q | c5h b4q rq
+D: [e4c5]h [d4a4]q [f4d5]q | [e4c5]h [g4e5]q [f4d5]q | [e4c5]h. rq | g4h b4q d5q | [a4d5]h [a4c5]q rq | a4h [a4d5]q c5q | [a4c5]h [g4b4]8 b48 c58 b48
+S: [a2a3]q g3q f3q d3q | g3q g2q g3q g2q | c3q g2q c2q rq | [g3b3d4]q [g3b3d4]q [g3b3d4]q [g3b3d4]q | [f#3a3d4]q [f#3a3d4]q [f#3a3d4]q [f#3a3d4]q | [f#3a3d4]q [f#3a3d4]q [f#3a3d4]q [f#3a3d4]q | [g3d4]q [g3d4]q [g3d4]q rq
+V: b4h c5q b4q | b4q e5q e5q rq | a4h b4q a4q | a4q d5q d5q rq | c5h d5q c5q | b4q d5q e4q a4q | g4h b4q a4q | g4h rh
+D: [a4b4]h [a4c5]q b4q | [g4b4]q [g4e5]q [g4e5]q rq | [g4a4]h [g4b4]q a4q | [f#4a4]q [f#4d5]q [f#4d5]q rq | [d4a4c5]h d5q c5q & sh [d4a4]h | b4q d5q e4q a4q & [d4g4]h c4h | [b3g4]h [d4b4]q [c4a4]q | [b3g4]h rh
+S: [d#3f#3b3]q [d#3f#3b3]q [d#3f#3b3]q [d#3f#3b3]q | [e3b3]q [e3b3]q [e3b3]q d3q | [c#3e3a3]q [c#3e3a3]q [c#3e3a3]q [c#3e3a3]q | [d3a3]q [d3a3]q [d3a3]q d3q | rq f#3q f#3q f#3q & f#2w | [g2g3]q b2q c3q a2q | d3q d2q d3q d3q | g3q f3q e3q d3q
+
+# Lezione 34 | Minime e semiminime | armatura=0 tempo=4/4 andamento=Moderato autore=Henry Lemoine
+# nota: ritornello dalla battuta 1 alla 8
+# nota: ritornello dalla battuta 9 alla 25
+V: e4q g4q c5h | e4q g4q c5h | b4q a4q g4h | b4q a4q g4h | e4q g4q c5h | e4q g4q c5h | a4q g4q f4h | e4q d4q c4q rq
+D: [c4e4]q [e4g4]q [e4c5]h | [c4e4]q [e4g4]q [e4c5]h | [f4b4]q [f4a4]q [f4g4]h | b4q a4q g4h & f4q f4q f4q d4q | [c4e4]q [e4g4]q [e4c5]h | [c4e4]q [e4g4]q [e4c5]h | [f4a4]q [e4g4]q [d4f4]h | [c4e4]q [b3d4]q c4q rq
+S: [c3g3]q [c3g3]q [c3g3]h | [c3g3]q [c3g3]q [c3g3]h | [d3g3]q [c3g3]q [b2g3]h | [d3g3]q [c3g3]q [b2g3]h | [c3g3]q [c3g3]q [c3g3]h | g3q g3q g3q bb3q & c3q c3q c3h | a3q bb3q a3q ab3q & f3q c#3q d3h | g3q f3q [c3e3]q rq & rq g2q c3q rq
+V: rh d4q d5q | c5h d4q c5q | b4h d4q d5q | c5h b4q a4q | g4h d4q d5q | c5h d4q c5q | b4h d4q d5q | c5h b4q a4q | g4h f4q d4q
+D: rh d4q [b4d5]q | [a4c5]h d4q [a4c5]q | [g4b4]h d4q [b4d5]q | [e4a4c5]h [d4g4b4]q [c4f#4a4]q | [b3g4]h d4q [b4d5]q | [a4c5]h d4q [a4c5]q | [g4b4]h d4q [f4d5]q | c5h b4q a4q & f4q eb4q d4q c4q | g4h f4q d4q & b3w
+S: g2q g3q rh | d2q d3q rh | g2q g3q rh | rq a2q d3h | g2q g3q rh | d2q e3q f#3q d3q | g2q g3q b3q g#3q | a3q a2q d3q f#3q | g3q g2h.
+V: e4q g4q c5h | e4q g4q c5h | b4q a4q g4h | b4q a4q g4h | e4q g4q c5h | e4q g4q c5h | a4q g4q f4h | e4q d4q c4q rq
+D: [c4e4]q [e4g4]q [e4c5]h | [c4e4]q [e4g4]q [e4c5]h | [f4b4]q [f4a4]q [f4g4]h | b4q a4q g4h & f4q f4q f4q d4q | [c4e4]q [e4g4]q [e4c5]h | [c4e4]q [e4g4]q [e4c5]h | [f4a4]q [e4g4]q [d4f4]h | [c4e4]q [b3d4]q c4q rq
+S: [c3g3]q [c3g3]q [c3g3]h | [c3g3]q [c3g3]q [c3g3]h | [d3g3]q [c3g3]q [b2g3]h | [d3g3]q [c3g3]q [b2g3]h | [c3g3]q [c3g3]q [c3g3]h | g3q g3q g3q bb3q & c3q c3q c3h | a3q bb3q a3q ab3q & f3q c#3q d3h | g3q f3q [c3e3]q rq & rq g2q c3q rq
+
+# Lezione 35 | Semibrevi, minime e semiminime | armatura=0 tempo=4/4 andamento=Moderato autore=Henry Lemoine
+V: g4w | a4h c5q a4q | g4w | a4h c5q a4q | g4h a4q g4q | f4h e4q g4q | e4w | d4h rh
+D: [e4g4]w | [f4a4]h c5q a4q | [e4g4]w | [f4a4]h c5q a4q | g4h a4q g4q & e4h e4h | f4h e4q g4q & d4h c4h | [c4e4]w | [b3d4]h rh
+S: rq c4q c4q c4q & c3w | rq c4q c4q c4q & c3w | rq c4q c4q c4q & c3w | rq c4q c4q c4q & c3w | c3q c4q c4h | b2q g3q c3q e3q | g3q g2q g3q f#3q | g3q f3q e3q d3q
+V: g4w | a4h c5q a4q | g4w | a4h c5q a4q | g4h c5q b4q | a4h g4q f4q | e4h f4q d4q | c4q e4q c4q rq
+D: [e4g4]w | [f4a4]h c5q a4q | [e4g4]w | [f4a4]h c5q a4q | g4h c5q b4q & e4h g4h | a4h g4q f4q & f4h d4h | e4h f4q d4q & c4h a3q b3q | c4q e4q c4q rq
+S: rq c4q c4q c4q & c3w | rq c4q c4q c4q & c3w | rq c4q c4q c4q & c3w | rq c4q c4q c4q & c3w | c3q c4q c3h | f3q d3q b2h | c3q a2q f2q [g2f3]q | [c3e3]q [c3g3]q [c3e3]q rq
+V: d4w | e4h a4h | f4w | d4h g4h | e4h a4q g4q | f4h e4h | e4w | d4q rq e4q f4q
+D: [b3d4]w | [c4e4]h [c#4a4]h | [d4f4]w | [b3d4]h g4h | [c4e4]h a4q g4q | [d4f4]h [c4e4]h | [c4e4]w | [b3d4]q rq [c4e4]q [d4f4]q
+S: rq g3q g3q g3q & g2w~ | g3q g3q g3q g3q & g2w | rq g3q g3q g3q & g2w~ | g3q g3q g3q g3q & g2w | c3q g3q rh | b2q g3q c3q g3q | g2q g3q a3q f#3q | g3q f3q e3q d3q
+V: g4w | a4h c5q a4q | g4w | a4h c5q a4q | g4h c5q b4q | a4h g4q f4q | e4h f4q d4q | c4q e4q c4q rq
+D: [e4g4]w | [f4a4]h c5q a4q | [e4g4]w | [f4a4]h c5q a4q | g4h c5q b4q & e4h g4h | a4h g4q f4q & f4h d4h | e4h f4q d4q & c4h a3q b3q | c4q e4q c4q rq
+S: rq c4q c4q c4q & c3w | rq c4q c4q c4q & c3w | rq c4q c4q c4q & c3w | rq c4q c4q c4q & c3w | c3q c4q c3h | f3q d3q b2h | c3q a2q f2q [g2f3]q | [c3e3]q [c3g3]q [c3e3]q rq
+
+# Lezione 36 | Semibrevi, minime e semiminime | armatura=0 tempo=4/4 andamento=Moderato autore=Rodolphe
+# nota: ritornello dalla battuta 1 alla 12
+# nota: ritornello dalla battuta 13 alla 28
+V: c5w | e5h c5h | b4q c5q d5q b4q | c5h rh | e5w | d5h b4h
+D: [e4g4c5]w | [g4c5e5]h [e4g4c5]h | b4q c5q d5q b4q & [d4g4]w | [e4g4c5]h rh | [g4c5e5]w | [g4b4d5]h [d4g4b4]h
+S: c3q d3q e3q d3q | c3q d3q e3q c3q | f3q e3q f3q g3q | e3q f3q e3q d3q | c3q d3q e3q f#3q | g3q f#3q g3q g2q
+V: a4q b4q c5q a4q | b4h rh | c5w | b4h d5h | e5q c5q b4q a4q | g4h rh | g4w
+D: a4q b4q c5q [d4f#4a4]q & [e4g4]h. sq | [d4g4b4]h rh | c5w & a4q f#4q g4q a4q | b4h d5h & d4h [d4g4]h | a4q c5q b4q a4q & [e4g4]h [d4g4]q [c4f#4]q | [b3g4]h rh | [b3d4g4]w
+S: c3q b2q a2q d3q | g2q b2q d3q g3q | f#3q d3q e3q f#3q | g3q a3q b3q b2q | c3q a2q d3q d2q | g2q g3q g2q rq | g2q g3q b3q g3q
+V: a4h c5h | b4q d5q g4q f4q | e4h rh | c5w | e5h c5h | b4q c5q d5q e5q | d5h rh
+D: a4q f#4q c5h & d4h f#4q a4q | b4q d5q g4q f4q & g4h d4q b3q | [c4e4]h rh | [e4g4c5]w | [g4e5]h [g4c5]h | b4q c5q [b4d5]q [c5e5]q & g4w~ | [b4d5]h rh & g4h sh
+S: c4h d4h & f#3q a3q d3q f#3q | d4q rq rh & g3q g2q b2q g2q | c3q e3q g3q f3q | e3q f3q e3q d3q | c3q d3q e3q c3q | f3q e3q d3q c3q | g3q f#3q g3q a3q
+V: d5w | e5h c5h | b4q c5q d5q b4q | c5h rh | g4w | f4h e4h | d4q d5q c5q b4q | c5h rh
+D: [g4b4d5]w | [g4c5e5]h [e4g4c5]h | b4q c5q d5q b4q & [d4g4]w | [e4g4c5]h rh | [c4e4g4]w | f4h e4h & c4q d4q c4h | [d4a4]q [f4a4d5]q [e4g4c5]q [f4g4b4]q | [e4c5]h rh
+S: g3q f3q e3q d3q | c3q d3q e3q c3q | f3q e3q f3q g3q | e3q f3q e3q d3q | c3q e3q g3q e3q | a3q b3q c4q c3q | f3q d3q g3q g2q | c3q c4q c3q rq
+
+# Lezione 37 | Crome e pause di croma | armatura=0 tempo=4/4 andamento=Adagio autore=Henry Lemoine
+# fine: battuta 8
+# dc: battuta 16
+V: c48 d48 e48 f48 g48 a48 b48 c58 | b48 a48 g48 r8 b48 a48 g48 r8 | c48 d48 e48 f48 g48 a48 b48 c58 | b48 a48 g48 r8 b48 a48 g48 r8 | e48 f48 g48 a48 g48 a48 b48 c58
+D: c48 d48 e48 f48 g48 a48 b48 c58 | b48 a48 g48 r8 b48 a48 g48 r8 & [d4f4]q. r8 [d4f4]q. r8 | c48 d48 e48 f48 g48 a48 b48 c58 | b48 a48 g48 r8 b48 a48 g48 r8 & [d4f4]q. r8 [d4f4]q. r8 | e48 f48 g48 a48 g48 a48 b48 c58 & c4h e4h
+S: [c3e3g3]w | g2q. g38 g2q. g38 | [c3e3g3]w | g2q. g38 g2q. g38 | [c3g3]h [c3g3]h
+V: a48 g48 f48 r8 a48 g48 f48 r8 | g48 f48 e48 r8 f48 e48 d48 r8 | e48 g48 d48 g48 c4q rq | g48 a48 b48 c58 d58 b48 a48 g48 | c58 g48 a48 g48 c58 b48 a48 g48
+D: [f4a4]8 [e4g4]8 [d4f4]8 r8 [f4a4]8 [e4g4]8 [d4f4]8 r8 | [e4g4]8 [d4f4]8 [c4e4]8 r8 [d4f4]8 [c4e4]8 [b3d4]8 r8 | [c4e4]8 g48 [b3d4]8 g48 c4q [e4g4c5]q | g48 a48 b48 c58 d58 b48 a48 g48 | c58 g48 a48 g48 c58 b48 a48 g48
+S: f2q. f38 f2q. f38 | g2q. g38 g2q. g38 | [c3g3]q [g2f3]q [c3e3]q [c2c3]q | [f3g3b3d4]w | [e3g3c4]w
+V: g48 a48 b48 c58 d58 b48 a48 g48 | c58 g48 a48 g48 c58 b48 a48 g48 | f48 g48 f48 r8 e48 f48 e48 r8 | f48 g48 f48 r8 e48 f48 e48 r8 | d48 g48 e48 g48 f48 g48 e48 g48 | d48 r8 rq rh
+D: g48 a48 b48 c58 d58 b48 a48 g48 | c58 g48 a48 g48 c58 b48 a48 g48 | f48 g48 f48 r8 e48 f48 e48 r8 & d4q. r8 c4q. r8 | f48 g48 f48 r8 e48 f48 e48 r8 & d4q. r8 c4q. s8 | [b3d4]8 g48 [c4e4]8 g48 [d4f4]8 g48 [c4e4]8 g48 | [b3d4]8 r8 rq rh
+S: [f3g3b3d4]w | [e3g3c4]w | [b2g3]q. [b2g3]8 [c3g3]q. [c3g3]8 | [b2g3]q. [b2g3]8 [c3g3]q. [c3g3]8 | [g2f3g3]q [c3g3]q [b2g3]q [c3g3]q | [g2g3]8 f#38 g38 f#38 g38 f38 e38 d38
+
+# Lezione 38 | Crome e pause di croma | armatura=0 tempo=4/4 andamento=Adagio autore=Henry Lemoine
+# fine: battuta 8
+# dc: battuta 16
+V: r8 g48 a48 g48 r8 c58 d58 c58 | r8 a48 b48 a48 r8 g48 a48 g48 | r8 f48 g48 f48 r8 e48 f48 e48 | r8 d48 e48 d48 r8 g48 a48 g48 | r8 g48 a48 g48 r8 c58 d58 c58
+D: r8 g48 a48 g48 r8 c58 d58 c58 & r8 e4q. r8 e4q. | r8 a48 b48 a48 r8 g48 a48 g48 & r8 f4q. r8 e4q. | r8 f48 g48 f48 r8 e48 f48 e48 & r8 d4q. r8 c4q. | r8 d48 e48 d48 r8 g48 a48 g48 & r8 b3q. r8 f4q. | r8 g48 a48 g48 r8 c58 d58 c58 & r8 e4q. r8 e4q.
+S: c3h c4h | c3h c4h | [b2g3]h [d3g3]h | g2q rq [g3b3]h | c3h c4h
+V: r8 b48 c58 b48 r8 a48 b48 a48 | r8 g48 f48 e48 r8 f48 e48 d48 | r8 c48 e48 g48 c5q rq
+D: r8 b48 c58 b48 r8 a48 b48 a48 & r8 d4q. r8 c4q. | r8 g48 f48 e48 r8 f48 e48 d48 & r8 e48 d48 c48 r8 b3q. | r8 c48 e48 g48 c5q rq
+S: [e3g#3]h [f3a3]h | g3h g2q g38 f38 | [c3e3]h r8 c38 c28 r8
+V: r8 d58 c58 b48 r8 b48 a48 g48 | r8 c58 b48 a48 r8 c58 b48 a48 | r8 d58 c58 b48 r8 b48 a48 g48 | r8 c58 b48 a48 r8 c58 b48 a48
+D: r8 [b4d5]8 [a4c5]8 [g4b4]8 r8 b48 a48 g48 | r8 [a4c5]8 [g4b4]8 [f#4a4]8 r8 [a4c5]8 [g4b4]8 [f#4a4]8 | r8 [b4d5]8 [a4c5]8 [g4b4]8 r8 b48 a48 g48 | r8 [a4c5]8 [g4b4]8 [f#4a4]8 r8 [a4c5]8 [g4b4]8 [f#4a4]8
+S: g2q rq g3h & sh r8 d48 c48 b38 | d3h d4h | g2q rq g3h & sh r8 d48 c48 b38 | d3h d4h
+V: r8 d58 c58 b48 r8 e58 d58 c58 | r8 d58 c58 b48 r8 c58 b48 a48 | r8 g48 a48 g48 r8 g48 a48 g48 | r8 g48 a48 g48 r8 g48 a48 g48
+D: r8 [b4d5]8 [a4c5]8 [g4b4]8 r8 [c5e5]8 [b4d5]8 [a4c5]8 | r8 [b4d5]8 [a4c5]8 [g4b4]8 r8 [a4c5]8 [g4b4]8 [f#4a4]8 | r8 g48 a48 g48 r8 g48 a48 g48 & r8 d4q. r8 f4q. | r8 g48 a48 g48 r8 g48 a48 g48 & r8 e4q. r8 [d4f4]q.
+S: g2q g3q c3q c4q | d3q d4q d3q d4q | [g3b3]h [g3d4]h | [g3c4]h [g3b3]h
+
+# Lezione 39 | Crome e pause di croma | armatura=0 tempo=4/4 andamento=Andante autore=Rodolphe
+V: r8 g48 c58 b48 c58 d58 e58 r8 | r8 d58 b48 c58 d58 b48 g48 r8 | r8 b48 d58 c58 d58 e58 f58 r8 | r8 f58 e58 d58 e58 d58 c58 r8 | r8 c58 e58 d58 c58 d58 e58 r8 |
+D: [e4g4c5]q rq rq r8 [g4c5e5]8 | [g4b4d5]q rq rq r8 [d4g4b4]8 | [g4b4d5]q rq rq r8 [g4d5f5]8 | [g4c5e5]q rq rq r8 [e4g4c5]8 | [g4c5e5]q rq rq r8 [e4g4c5]8 |
+S: c3q rq rq r8 c38 | g3q rq rq r8 g38 | g2q rq rq r8 g38 | c3q rq rq r8 c48 | c3q rq rq r8 c48 |
+V: r8 d58 b48 c58 d58 c58 b48 r8 | r8 c58 a48 b48 c58 b48 a48 r8 | r8 b48 d58 c58 b48 a48 g48 r8 | r8 g48 g48 a48 g48 e48 f48 r8 | r8 f48 f48 g48 f48 d48 e48 r8 |
+D: [d4g4d5]q rq rq r8 [d4g4b4]8 | [d4f#4c5]q rq rq r8 [c4d4a4]8 | [b3d4g4]q rq rq r8 [b3d4g4]8 | [d4g4b4]q rq rq r8 [f4g4b4]8 | [f4g4d5]q rq rq r8 [e4g4c5]8 |
+S: b3q rq rq r8 g38 | d3q rq rq r8 d38 | g3q rq rq r8 g38 | g2q rq rq r8 d38 | b2q rq rq r8 c48 |
+V: r8 e48 f48 g48 a48 b48 c58 r8 | r8 b48 c58 d58 e58 f58 d58 r8 | r8 g48 e48 g48 f48 d48 d58 r8 | r8 f48 d48 f48 e48 c48 c58 r8 | r8 g48 c58 b48 c58 d58 e58 r8 | r8 d58 c58 b48 c5q rq |
+D: [g4c5e5]q rq rq r8 [e4g4c5]8 | [d4g4b4]q rq rq r8 [d4g4b4]8 | [e4g4c5]q rq rq r8 [d4g4b4]8 | [f4g4d5]q rq rq r8 [e4g4c5]8 | [e4g4e5]q rq rq r8 [e4g4c5]8 | [d4a4d5]8 r8 [d4g4b4]8 r8 [e4g4c5]q rq |
+S: c3q rq rq r8 c38 | g3q rq rq r8 f38 | e3q rq rq r8 g38 | g2q rq rq r8 c48 | c3q rq rq r8 e38 | f38 r8 g38 r8 c3q rq |
+
+# Lezione 40 | Minime e crome | armatura=0 tempo=4/4 andamento=Andante autore=Rodolphe
+# nota: ritornello dalla battuta 1 alla 8
+# volta: 1 dalla battuta 8 alla 8
+# volta: 2 dalla battuta 9 alla 9
+# nota: ritornello dalla battuta 10 alla 17
+# volta: 1 dalla battuta 17 alla 17
+# volta: 2 dalla battuta 18 alla 18
+V: c5h b48 c58 d58 b48 | c5h d58 b48 c58 d58 | c5h d58 c58 d58 b48 | c5h rh | c5h e58 d58 c58 e58 | d5h c58 d58 c58 a48 |
+D: rq c5q b48 c58 d58 b48 & [e4g4]h [d4g4]h | c5h d58 b48 c58 d58 & [e4g4]h [f4g4]h | [e4g4c5]h [d4a4d5]q [d4g4b4]q | [e4g4c5]q rq r8 c58 b48 a48 | c5h~ c5h & g48 a48 g48 f48 e4h | d5h c5q. a48 & [d4g4]h [d4f#4]h |
+S: c38 d38 e38 f38 g3h | e38 d38 e38 c38 g2h | c38 d38 e38 c38 f3h | e38 c48 b38 a38 g38 a38 g38 f38 | e38 f38 e38 d38 c3h | b28 a28 b28 g28 a2h |
+V: b4h a48 b48 c58 a48 | g4h rh | g4h rh | d5h b48 a48 b48 c58 | d5h b48 a48 b48 d58 | e5h c58 d58 e58 c58 |
+D: b4h a4q c5q & [d4g4]h [d4f#4]h | [d4g4b4]q rq rh | [d4g4b4]q rq r8 f#48 g48 a48 | [g4b4]h~ [g4b4]8 [f#4a4]8 [g4b4]8 [a4c5]8 | d5h b4q d5q & g4h g4h | e5h c5q e5q & g4h g4h |
+S: g28 a28 b28 c38 d3h | g28 a28 b28 c38 b28 c38 d38 b28 | g28 b28 c38 d38 e38 d38 e38 f#38 | g38 a38 b38 c48 d4h | b38 c48 b38 a38 g3h | c38 b28 c38 d38 e3q c3q |
+V: d5h rh | c5h e58 d58 c58 b48 | a4h f48 g48 a48 b48 | c5h b48 c58 d58 b48 | c5h rh | c5h rh |
+D: [g4b4d5]h r8 c58 b48 a48 | c5h. c58 b48 & g48 a48 g48 f48 e4h | [f4a4]h d5q a48 b48 & c4h f4h | c5h b4q d58 b48 & g48 f48 g48 e48 [d4g4]h | [e4g4c5]h r8 f#48 g48 a48 | [e4g4c5]h~ [e4g4c5]8 r8 rq |
+S: g38 a38 b38 c48 b38 a38 g38 f38 | e38 f38 e38 d38 c3h | f38 g38 f38 e38 d3h | e38 d38 e38 c38 g3h | c38 d38 e38 f38 e38 d38 e38 f#38 | c38 c48 g38 e38 c38 r8 rq |
+
+# Lezione 41 | Semiminime e crome | armatura=0 tempo=4/4 andamento=Moderato assai autore=Henry Lemoine
+# fine: battuta 8
+# dc: battuta 24
+V: c5q b48 a48 g4q g4q | g4q e4q rh | c5q b48 a48 g4q g4q | g4q e4q rh | a4q c58 a48 g4q rq | a4q c58 a48 g4q rq |
+D: [e4c5]q [g4b4]8 [f4a4]8 [e4g4]q [e4g4]q | [e4g4]q [c4e4]q rh | [e4c5]q [g4b4]8 [f4a4]8 [e4g4]q [e4g4]q | [e4g4]q [c4e4]q rh | a4q c58 a48 g4q rq & f4h e4q sq | a4q c58 a48 g4q rq & f4h e4q sq |
+S: c3q c4h rq | rh c38 e38 g38 c48 | c3q c4h rq | rh c38 e38 g38 c48 | f3q a3q c48 c38 e38 c38 | f3q a3q c48 c38 e38 c38 |
+V: a4q g48 f48 e4q f48 d48 | c4q e4q c4q rq | d5q d58 c58 b4q d5q | c5q c58 b48 a4q rq | d5q d58 c58 b4q d5q | c5q a4q g4q rq |
+D: [f4a4]q [e4g4]8 [d4f4]8 [c4e4]q [b3f4]8 d48 | c4q e4q c4q rq | [b4d5]q [b4d5]8 [a4c5]8 [g4b4]q [b4d5]q | [a4c5]q [a4c5]8 [g4b4]8 [f#4a4]q rq | [b4d5]q [b4d5]8 [a4c5]8 [g4b4]q [b4d5]q | [a4c5]q [c4a4]q [b3g4]q rq |
+S: f3h g3q g2q | [c3e3]q [c3g3]q [c3e3]q rq | g28 d38 g38 d38 g28 d38 g38 d38 | g28 d38 f#38 d38 g28 d38 f#38 d38 | g28 d38 g38 d38 g28 d38 g38 d38 | g28 d38 f#38 d38 g28 d38 g38 d38 |
+V: d5q d58 c58 b4q d5q | c5q c58 b48 a4q rq | d5q d58 c58 b4q d5q | c5q a4q g4q rq | a4q e48 d48 a4q e48 d48 | b4q e48 d48 b4q e48 d48 |
+D: [b4d5]q [b4d5]8 [a4c5]8 [g4b4]q [b4d5]q | [a4c5]q [a4c5]8 [g4b4]8 [f#4a4]q rq | [b4d5]q [b4d5]8 [a4c5]8 [g4b4]q [b4d5]q | [a4c5]q [c4a4]q [b3g4]q rq | a4q e48 d48 a4q e48 d48 & c4h c4h | b4q e48 d48 b4q e48 d48 & b3h b3h |
+S: g28 d38 g38 d38 g28 d38 g38 d38 | g28 d38 f#38 d38 g28 d38 f#38 d38 | g28 d38 g38 d38 g28 d38 g38 d38 | g28 d38 f#38 d38 g28 d38 g38 d38 | g28 d38 f#38 d38 g28 d38 f#38 d38 | g28 d38 g38 d38 g28 d38 g38 d38 |
+V: a4q e48 d48 a4q e48 d48 | g4q d4q d5q rq | a4q e48 d48 a4q e48 d48 | b4q e48 d48 b4q e48 d48 | a4q e48 d48 a4q d48 b48 | g4q rq rh |
+D: a4q e48 d48 a4q e48 d48 & c4h c4h | [b3g4]q d4q [b4d5]q rq | a4q e48 d48 a4q e48 d48 & rq c4q rq c4q | b4q e48 d48 b4q e48 d48 & rq b3q rq b3q | a4q e48 d48 a4q d48 b48 & rq c4q rq c4q | [b3g4]q [b3g4]q [c4g4]q [f4b4]q |
+S: g28 d38 f#38 d38 g28 d38 f#38 d38 | g28 d38 g38 d38 g28 d38 g38 d38 | g28 d38 f#38 d38 g28 d38 f#38 d38 | g28 d38 g38 d38 g28 d38 g38 d38 | g28 d38 f#38 d38 g28 d38 f#38 d38 | g28 g38 f38 g38 e38 g38 d38 g38 |
+
+# Lezione 42 | Minime, semiminime e crome | armatura=0 tempo=4/4 andamento=Andante autore=G. Carulli
+# nota: battuta 2, parte D: appoggiatura (si4) prima del la4 del quarto tempo
+# nota: battuta 5, parte D: appoggiatura (do5) prima del si4 del quarto tempo
+# nota: battuta 6, parte S: appoggiatura (si3) prima del la3
+V: c5h b4q c5q | d58 c58 b48 a48 g4q rq | e58 d58 c58 b48 a4q d5q | c5h b4q rq |
+D: [e4c5]h b4q c5q | d58 c58 b48 a48 g4q a48 g48 | e58 d58 c58 b48 a4q [d4d5]q | [e4c5]h [d4b4]q rq |
+S: [c3e3g3]q [c3e3g3]q [c3e3g3]q [c3e3g3]q | [b2f3g3]q [b2f3g3]q [b2f3g3]q [b2f3g3]q | [c3e3g3]q [e3g3]q [f3a3]q [f#3a3]q | g38 g28 g38 f#38 g38 f38 e38 d38 |
+V: d58 c58 b48 a48 a4q rq | d5q c5q b4q a4q | a4h g4q rq | d5h c58 b48 a48 g48 | c5q rq rh | r8 d58 e58 d58 c58 b48 a48 g48 |
+D: d58 c58 b48 a48 a4q b48 a48 | [d4d5]q [e4a4c5]q [d4g4b4]q [c4f#4a4]q | [c4f#4a4]h [b3g4]q rq | d5h c58 b48 a48 g48 | c5q. g48 f#48 g48 a48 g48 | r8 d58 e58 d58 c58 b48 a48 g48 |
+S: [c3d3f#3a3]q [c3d3f#3a3]q [c3d3f#3a3]q [c3d3f#3a3]q | [b2g3]q c3q d3q d3q | g2q d3q g38 g38 a38 g38 | [f3g3b3d4]q [f3g3b3d4]q [f3g3b3d4]q [f3g3b3d4]q | [e3g3c4]q [e3g3c4]q [e3g3c4]q [e3g3c4]q | [f3g3b3d4]q [f3g3b3d4]q [f3g3b3d4]q [f3g3b3d4]q |
+V: c5q rq rh | e5h e58 d58 c58 b48 | d58 c58 b48 c58 a4q rq | d5h d58 c58 b48 a48 | c58 b48 a48 b48 g4q rq |
+D: c58 g48 a48 b48 c58 b48 c58 d58 | e5h e58 d58 c58 b48 | d58 c58 b48 c58 a4q rq | d5h d58 c58 b48 a48 | c58 b48 a48 b48 g4q rq |
+S: [e3g3c4]q rq rh | rq [b3e4]q [b3e4]q [b3e4]q & g#3w | [a3e4]h r8 c48 a38 g38 | rq [a3d4]q [a3d4]q [a3d4]q & f#3w | d4h r8 d48 b38 g38 & g3h rh |
+V: g4h a4q b4q | c5q d58 e58 g4q rq | g4h a4q b4q | c5q e58 c58 g4q rq | a4q d5q b4q e5q | c5q a4q rq d5q |
+D: g4h a4q b4q | c5q d58 e58 g4q rq | g4h a4q b4q | c5q e58 c58 g4q rq | a4q [d4d5]q b4q [e4e5]q | [a4c5]q a4q rq d5q |
+S: rq [g3b3d4]q [g3b3d4]q [g3b3d4]q & f3w | rq [g3c4]q [g3c4]q [g3c4]q & e3w | rq [g3b3d4]q [g3b3d4]q [g3b3d4]q & f3w | rq [g3c4]q [g3c4]q [g3c4]q & e3w | [f3a3]q [f#3a3]q [g3b3]q [g3b3]q | [a3c4]q [f3c4]q rq [f3a3d4]q |
+V: c5h b48 c58 d58 b48 | c5q rq rh | g48 a48 b48 c58 d5q e58 d58 | c5q rq rh | g4h a4q b4q | b4h c5q rq |
+D: c5h b48 c58 d58 b48 | c5q rq rh | g48 a48 b48 c58 d5q e58 d58 | c5q rq rh | [b3g4]h [c4f#4a4]q [d4f4b4]q | [d4f4b4]h [c4e4c5]q rq |
+S: [g3c4e4]q [g3c4e4]q [g3d4f4]q [g3d4f4]q | [c4e4]q g3q e3q c3q | g2q rq [g3b3f4]q [g3b3f4]q | [c4e4]q g3q e3q c3q | g2q g3h g2q | c3q g2q c2q rq |
+
+# Lezione 43 | Semibrevi, minime, semiminime e crome | armatura=0 tempo=4/4 andamento=Moderato autore=Rodolphe
+# nota: ritornello dalla battuta 1 alla 10
+V: c5w | b4h d5h | e5q d5q e5q c5q | d58 a48 d58 c58 b48 a48 b48 d58 | c5h rh | e5h c5h | d5w |
+D: c5w & e4q f4q g4q e4q | b4q c5q d5q b4q & d4h g4q f4q | c5h e5q c5q & e4h g4h | d5q d58 c58 b4h & a4h d4h | [e4c5]h rh | e5h c5h & g4h. e4q | d5h. b4q & [d4g4]w |
+S: c3q d3q e3q c3q | g2q a2q b2q g2q | c3h. e3q | f3h g3h | c3q c4q g3q e3q | c3q d3q e3q c3q | b2q a2q b2q g2q |
+V: c5q b4q c5q a4q | b48 c58 d58 b48 c58 b48 c58 a48 | g4h rh | g48 a48 b48 c58 b48 c58 d58 e58 | d5q c5q b4q a4q | b4h c5h | d5w | c5h g4h |
+D: c5q b4q c5h & [d4~f#4]h. [d4a4]q | [d4g4b4]h [c4f#4a4]h | [b3g4]h rh | [b3g4]h [d4b4]h | [b4d5]q [a4c5]q [g4b4]q [d4a4]q | b4h c5h & g4h g4q e4q | d5h. b4q & [d4g4]w | [e4g4c5]h [c4g4]h |
+S: d3h. f#3q | g3h d3h | g3q d3q g2h | g3h rh | g3h g3h | rq g3q e3q c3q | b2q d3q g3q g2q | c3q d3q e3q c3q |
+V: a4q c5q b4q d5q | c58 e58 d58 c58 b48 a48 g48 f48 | e4h rh | d58 a48 b48 c58 d58 c58 b48 a48 | g4q b4q c5q d5q | e5h d5h | c5h rh |
+D: [c4a4]q [g4c5]q [g4b4]q [d4g4b4]q | c58 e58 d58 c58 b48 a48 g48 f48 & [e4g4]q rq rq d4q | [c4e4]q rq c5h & sh g4q e4q | d5h a48 c58 b48 a48 & [d4a4]h [d4a4]h | [d4g4b4]h [e4g4c5]q [g4b4d5]q | [g4c5e5]h [d4a4d5]q [f4g4b4]q | [e4g4c5]h rh |
+S: f3q e3q d3q f3q | e3h rq b2q | c3q d3q e3q c3q | f3h f#3h | g3q f3q e3q d3q | c3q e3q f3q g3q | c3q c4q c3h |
+
+# Lezione 44 | Il tre quarti: la minima puntata | armatura=0 tempo=3/4 andamento=Moderato autore=Rodolphe
+# nota: ritornello dalla battuta 1 alla 8
+# volta: 1 dalla battuta 8 alla 8
+# volta: 2 dalla battuta 9 alla 9
+# fine: battuta 9
+# dc: battuta 17
+V: c5h. | b4h. | c5h. | d5h. | f5h. | e5h. | d5h. | c5h. |
+D: c5h. & e4q g4q e4q | b4h. & d4h g4q | c5h. & g4q f4q e4q | [f4d5]h. | f5h. & b4q c5q d5q | e5q d5q c5q & g4h. | d5q b4h & f4q d4q f4q | [e4c5]h. |
+S: c3q e3q c3q | g3q g2q f3q | e3q d3q c3q | b2q a2q b2q | g2q a2q b2q | c3q d3q e3q | f3q g3q g2q | c3q g3q e3q |
+V: c5h. | e5h. | d5h. | c5h. | b4h. | c5h. | b4h. | a4h. | g4h. |
+D: [e4c5]h. | e5q c5q e5q & g4h. | d5h. & b4q g4q b4q | c5h. & f#4q a4q f#4q | [d4b4]h. | c5h. & f#4q g4q a4q | b4q a4q g4q & d4h. | a4h. & d4q f#4q [d4f#4]q | [b3g4]h. |
+S: c3h. | c3q e3q c3q | g3q b3q g3q | a3q f#3q d3q | g3q b3q g3q | d3q e3q f#3q | g3q a3q b3q | c4q d4q d3q | g3q. f38 e38 d38 |
+
+# Lezione 45 | Minime e semiminime in tre quarti | armatura=0 tempo=3/4 andamento=Moderato autore=Henry Lemoine
+# fine: battuta 24
+# dc: battuta 40
+V: g4h a4q | g4h c5q | g4h a4q | g4h g4q | g4h f4q | f4h e4q | d4h e4q | d4q rq g4q | g4h a4q | g4h c5q |
+D: [e4g4]h [f4a4]q | [e4g4]h c5q | [e4g4]h [f4a4]q | [e4g4]h g4q | g4h f4q & d4h. | [d4f4]h [c4e4]q | [b3d4]h [c4e4]q | [b3d4]q rq g4q | [e4g4]h [f4a4]q | [e4g4]h c5q |
+S: c3q c4h | c3q c4h | c3q c4h | c3q c4h | rq g3h & b2h. | rq g3h & c3h. | g2q g3q f#3q | g3q f3q d3q | c3q c4h | c3q c4h |
+V: g4h a4q | g4h e5q | e5h d5q | d5q c5q a4q | g4q f4q d4q | c4q rq g4q | b4h g4q | c5h g4q | b4h g4q | c5h g4q |
+D: [e4g4]h [f4a4]q | [e4g4]h e5q | e5h [b4d5]q & g#4q a4q sq | d5q c5q a4q & a4h rq | [e4g4]q [d4f4]q [b3d4]q | c4q rq g4q | b4h g4q & f4h. | c5h g4q & e4h. | b4h g4q & f4h. | c5h g4q & e4h. |
+S: c3q c4h | c3q c4q rq | e4h e4q & e3q f#3q g#3q | e4h rq & a3h f3q | g3h [g2f3]q | e3q g3h & c3h. | g3q d4h & c3h. | g3q c4h & c3h. | g3q d4h & c3h. | g3q c4h & c3h. |
+V: c5h g4q | c5h rq | c5q c5q c5q | c5h rq | g4h b4q | d5h b4q | d5h c5q | a4q b4q a4q | g4h b4q | d5h b4q |
+D: c5h g4q & e4h. | [e4c5]h rq | [e4g4c5]q [e4g4c5]q [e4g4c5]q | [e4g4c5]h rq | g4h b4q | d5h b4q | d5h c5q | a4q b4q a4q | g4h b4q | d5h b4q |
+S: g3q c4h & c3h. | [c3g3]h rq | c3q g2q e2q | c2h rq | g2q [d3g3b3]q rq | g2q [d3g3b3]q rq | d2q [d3f#3c4]q rq | d2q [d3f#3c4]q rq | g2q [d3g3b3]q rq | g2q [d3g3b3]q rq |
+V: d5h c5q | a4q b4q a4q | g4q b4q d5q | c5q b4q a4q | g4q b4q d5q | c5q b4q a4q | g4q a4q g4q | rq a4q g4q | rq a4q g4q | rq a4q g4q |
+D: d5h c5q | a4q b4q a4q | g4q b4q d5q & g4h.~ | c5q b4q a4q & g4h f#4q | g4q b4q d5q & g4h.~ | c5q b4q a4q & g4h f#4q | g4q a4q g4q | rq a4q g4q & sq f4h | rq a4q g4q & sq e4h | rq a4q g4q & sq [d4f4]h |
+S: d2q [d3f#3c4]q rq | d2q [d3f#3c4]q rq | b3q d4q f4q & g3h.~ | e4q d4q c4q & g3h. | b3q d4q f4q & g3h.~ | e4q d4q c4q & g3h. | [g3b3]h. | [g3d4]h. | [g3c4]h. | [g3b3]h. |
+
+# Lezione 46 | Minime e semiminime in tre quarti | armatura=0 tempo=3/4 andamento=Moderato autore=Rodolphe
+# nota: ritornello dalla battuta 1 alla 8
+# nota: ritornello dalla battuta 9 alla 16
+V: c5q e5h | d5q f5h | e5q c5h | d5h. | e5q c5h | d5q b4h | c5q a4h | g4h rq |
+D: c5q e5h & rq g4h | d5q f5h & rq b4h | e5q c5h & rq g4q e4q | [g4d5]h. | e5q c5h & rq g4q e4q | d5q b4h & rq d4h | c5q a4q f#4q & rq e4q c4q | [b3g4]h rq |
+S: rq c4q c3q | rq g3q g2q | rq e3q c3q | b2q a2q g2q | c3q e3q c3q | b2q g2q g3q | e3q c3q d3q | g3q d3q g2q |
+V: g4q b4h | d5q b4h | c5q e5h | d5h. | g4q e5h | f5q d5h | c5q d5h | c5h rq |
+D: g4q b4h & rq d4h | d5q b4h & rq d4h | c5q e5h & rq e4q g4q | [b4d5]h. | g4q e5h & rq g4q a4q | f5q d5h & a4q g4q f4q | c5q d5q b4q & e4q a4q f4q | [e4c5]h rq |
+S: rq g3q g2q | rq g3q g2q | rq c4q c3q | g3q g2q f3q | e3q c3q c#3q | d3q b2q g2q | a2q f2q g2q | c3q g2q c2q |
+
+# Lezione 47 | Minime e semiminime in tre quarti | armatura=0 tempo=3/4 andamento=Moderato autore=Rodolphe
+# nota: ritornello dalla battuta 1 alla 8
+# nota: ritornello dalla battuta 9 alla 16
+V: c5h e5q | d5q f5h | e5h c5q | d5h. | e5q c5h | d5h b4q | c5q a4h | g4h.
+D: c5h e5q & e4q g4h | d5q f5h & g4q b4q d5q | e5h c5q & g4h e4q | [g4d5]h. | e5q c5h & g4q e4q a4q | d5h b4q & g4q a4q d4q | c5q a4q f#4q & e4q e4q c4q | [b3g4]h.
+S: c3q e3q c3q | b2q g2q b2q | c3q c4h | b3q a3q g3q | c4h a3q | b3q f#3q g3q | rq c3q d3q | g3q d3q g2q
+V: g4h b4q | d5q b4h | c5h e5q | d5h. | g4q e5h | f5h d5q | c5q d5h | c5h.
+D: [b3g4]h [g4b4]q | [b4d5]q [g4b4]h | c5h e5q & g4q e4q g4q | d5h. & g4q b4q a4q | rq e5h & g4q g4h | f5h d5q & c5q a4q f4q | c5q d5q b4q & e4q a4q f4q | [e4c5]h.
+S: rq g3q g2q | rq g3q f3q | e3q c3q c4q | b3q g3q f3q | e3q c4q bb3q | a3q d4q b3q | c4q f3q g3q | c4q g3q c3q
+
+# Lezione 48 | Minime e semiminime in tre quarti | armatura=0 tempo=3/4 andamento=Moderato autore=Henry Lemoine
+# fine: battuta 16
+# dc: battuta 28
+V: e4q f4q a4q | g4q c5h | e4q f4q a4q | g4q c5h | a4h g4q | a4h g4q | g4q f4q e4q | d4h rq
+D: [c4e4]q [d4f4]q [f4a4]q | g4q c5h & e4h. | [c4e4]q [d4f4]q [f4a4]q | g4q c5h & e4h. | [f4a4]h [e4g4]q | [f4a4]h [e4g4]q | [e4g4]q [d4f4]q [c4e4]q | [b3d4]h rq
+S: c3h.~ | c3q c3q c2q | c3h.~ | c3q c3q c2q | rq b3q c4q | rq b3q c4q | rq f3q f#3q | g3q. f38 e38 d38
+V: e4q f4q a4q | g4q c5h | e4q f4q a4q | g4q c5h | a4h g4q | a4h g4q | f4q e4q d4q | c4h rq
+D: [c4e4]q [d4f4]q [f4a4]q | g4q c5h & e4h. | [c4e4]q [d4f4]q [f4a4]q | g4q c5h & e4h. | [f4a4]h [e4g4]q | [f4a4]h [e4g4]q | [d4f4]q [c4e4]q [b3d4]q | c4h rq
+S: c3h.~ | c3q c3q c2q | c3h.~ | c3q c3q c2q | rq b3q c4q | rq b3q c4q | f3q g3q g2q | c3q c2q rq
+V: f4q g4h | f4q g4h | e4q g4q c5q | b4q a4q g4q | f4q g4h | f4q g4h | e4q g4q f4q | d4q rq g4q | e4q rq g4q | d4q rq g4q | e4q rq g4q | d4q g4q f4q
+D: [d4f4]q [b3g4]h | [d4f4]q [b3g4]h | e4q g4q [e4c5]q & c4h. | [g4b4]q [f4a4]q [e4g4]q | [d4f4]q [b3g4]h | [d4f4]q [b3g4]h | [c4e4]q [e4g4]q [d4f4]q | [b3d4]q rq g4q | [c4e4]q rq g4q | [b3d4]q rq g4q | [c4e4]q rq g4q | [b3d4]q g4q f4q
+S: g2h g3q | g2h g3q | g2h g3q | g2h g3q | g2h g3q | g2h g3q | g2h g3q | g2q g3q rq | c3q g3q rq | g2q g3q rq | c3q g3q rq | g2q rq rq
+
+# Lezione 49 | Due crome per un tempo | armatura=0 tempo=3/4 andamento=Andante autore=G. Carulli
+# nota: battuta 24, parte D: due acciaccature (piccole note) prima del sol del terzo tempo, non trascritte
+V: c4h e4q | g4h c5q | b4q a48 g48 a48 b48 | c5q rq g4q | a4h c58 a48 | g4h c58 g48 | f4q e48 d48 e48 g48
+D: c4h e4q | g4h c5q | b4q a48 g48 a48 b48 | c5q rq g4q | a4h c58 a48 | g4h c58 g48 | [d4f4]q e48 d48 e48 g48 & sq c4h
+S: [c3e3g3]q [c3e3g3]q [c3e3g3]q | [c3e3g3]q [c3e3g3]q [c3e3g3]q | [c3f3g3]q [c3f3g3]q [c3f3g3]q | [c3e3g3]q [c3e3g3]q [e3c4]q | [f3c4]q [f3c4]h | [e3c4]q [e3c4]h | [b2g3]q [c3g3]h
+V: d4q rq rq | c4h e4q | g4h c58 b48 | a4h b48 c58 | d5q rq g4q | g4h g4q | a4h a4q | b4h b4q | c5h c5q
+D: [b3d4]q rq rq | c4h e4q | g4h c58 b48 | a4h b48 c58 | d5q rq g4q | g4h g4q | [g4a4]h [g4a4]q | [g4b4]h [g4b4]q | [g4c5]h [g4c5]q
+S: g28 g38 f#38 g38 f38 d38 | [c3e3g3]q [c3e3g3]q [c3e3g3]q | [c3e3g3]q [c3e3g3]q [c3e3g3]q | [c3d3f#3]q [c3d3f#3]q [c3d3f#3]q | [b2d3g3]q [b2d3g3]q rq | b2q g3q b2q | c3q g3q c3q | d3q g3q d3q | e3q g3q e3q
+V: e5h e5q | d5h b48 g48 | d5h c58 a48 | g4h rq | b4h a48 g48 | c5h d58 e58 | d58 b48 g4q f4q | e4q rq rq
+D: [g4c5e5]h e5q | d5h b48 g48 | d5h c58 a48 | g4h rq | b4h a48 g48 | c5h d58 e58 | d58 b48 g4q f4q | e4q r8 g48 a48 g48
+S: c3q c4q [c#3g3bb3]q | [d3g3b3]q [d3g3b3]h | [d3f#3c4]q [d3f#3c4]h | [g3b3]q g2q g3q | rq [d4f4]q [d4f4]q & g3h. | rq [c4e4]q [c4e4]q & g3h. | rq [b3d4]q [b3d4]q & g3h. | rq c4q e4q & g3h.
+V: b4q a48 g48 a48 b48 | c5q b48 c58 d58 e58 | d58 c58 b48 a48 g48 f48 | e4q rq rq | c5h c5q | c5q a4q rq | d5h d5q | d5q b4q rq
+D: b4q a48 g48 a48 b48 | c5q b48 c58 d58 e58 | d58 c58 b48 a48 g48 f48 | e4q rq rq | c5h c5q & e4q f4q g4q | [a4c5]q [f4a4]q rq | d5h d5q & f#4q g4q a4q | [b4d5]q [g4b4]q rq
+S: rq [d4f4]h & g3h. | rq [c4e4]h & g3h. | rq [b3d4]h & g3h. | r8 c48 g38 e38 c3q | c4h c4q & c3q d3q e3q | [f3c4]q r8 f38 a38 c48 | d4h d4q & d3q e3q f#3q | [g3d4]q r8 g28 b28 d38
+V: g4q a4q b4q | c5q d5q e5q | g4q f4q e4q | d4q rq rq | c4h e4q | g4h c5q | b4q a48 g48 a48 b48 | c5q rq g4q
+D: g4q a4q [g4b4]q | [g4c5]q [g4d5]q [g4e5]q | g4q f4q e4q & d4h c4q | [b3d4]8 g48 f#48 g48 f48 d48 | c4h e4q | g4h c5q | b4q a48 g48 a48 b48 | c5q rq g4q
+S: g3h f3q | e3q d3q c3q | b2h c3q | g3q rq rq | [c3e3g3]q [c3e3g3]q [c3e3g3]q | [c3e3g3]q [c3e3g3]q [c3e3g3]q | [c3f3g3]q [c3f3g3]q [c3f3g3]q | [c3e3g3]q [c3e3g3]q [e3c4]q
+V: a4h c58 a48 | g4h e5q | e58 d58 c5q b4q | c5q rq e5q | e58 d58 c5q b4q | c5q rq e5q | a48 d58 c58 e58 d58 b48 | c5h rq
+D: a4h c58 a48 | g4h [g4e5]q | [a4e5]8 d58 [g4c5]q [f4b4]q | [e4c5]h [c5e5]q | [a4e5]8 d58 [g4c5]q [f4b4]q | [e4c5]h [c5e5]q | a48 d58 [e4c5]8 e58 [f4d5]8 b48 | [e4c5]h rq
+S: [f3c4]q [f3c4]h | [e3c4]q [e3c4]q c3q | f3q [g3e4]q [g3d4]q | c4q g#3q a3q | f3q [g3e4]q [g3d4]q | c4q g#3q a3q | f3q g3q g2q | c3q g2q c2q
+
+# Lezione 50 | La semibreve nel tempo tagliato | armatura=0 tempo=C| andamento=Allegro autore=Rodolphe
+V: c5w | e5w | d5w | b4w | c5w | rw | c5w | b4w | c5w
+D: [e4~g4~c5~]w | [e4g4c5]w | [d4g4d5]w | [d4g4b4]w | [c4~g4c5~]h [c4~a4c5~]h | [c4g4~c5]h [f4g4b4]h | [e4g4c5]w | [d4g4b4]w | [e4g4c5]h [c4e4c5]h
+S: c3h e3h | g3h c4h | b3h a3h | g3h f3h | e3h f3h | e3h d3h | c3h e3h | g3h f3h | e3h a3h
+V: a4w | g4w | rw | g4w | b4w | a4w | c5w | b4w | rw
+D: [c4~d4~a4]h [c4d4f#4]h | [b3d4g4~]w | [a3e4g4]h [c4d4f#4]h | [b3~d4~g4~]w | [b3d4g4]w | [c4d4a4]w | [d4~a4c5~]h [d4f#4c5]h | [d4~g4~b4~]w | [d4g4b4]w
+S: f#3h d3h | g3h b2h | c3h d3h | g2h b2h | d3h g3h~ | g3h f#3h~ | f#3h a3h | g3h g2h | g3h f3h
+V: c5w | e5w | d5w | b4w | c5w | rw | e5w | d5w | d5w | c5w
+D: [e4g4c5]w | [g4c5e5]w | [d4~g4d5~]h [d4a4d5]h | [d4g4b4]w | [e4g4c5]h [c4f4a4]h | [c4g4]h [g4b4f5]h | [g4c5e5]w | [a4c5~d5~]w | [g4c5d5~]h [f4b4d5]h | [e4c5]w
+S: e3h g3h | c3h c4h | b3h f#3h | g3h f3h | e3h f3h | e3h d3h | c3h e3h | f3h f#3h | g3h g2h | c3w
+
+# Lezione 51 | Il tempo tagliato | armatura=0 tempo=C| andamento=Allegro autore=Rodolphe
+# nota: ritornello dalla battuta 1 alla 10
+# nota: ritornello dalla battuta 11 alla 20
+V: rw | g4h c5h | b4h d5h | c5h e5h | d5w | rw | d5h b4h | a4h c5h | b4h a4h | g4w
+D: rw | g4h c5h & rw | b4h d5h & [d4g4]w | c5w~ & [e4g4]w | c5h b4q a4q & [d4g4]w | b4h c5h & [d4g4]w~ | d5h b4h & [d4g4]w | a4h [a4c5]h & e4w | [d4g4b4]h [c4f#4a4]h | [b3g4]w
+S: c3h d3h | e3w | f3w | e3h c3h | g3w | g2h a2h | b2w | c3h a2h | d3w | g3h g2h
+V: rw | g4h b4h | a4h c5h | b4h d5h | c5w | rw | c5h e5h | a4h d5h | c5h b4h | c5w
+D: rw | g4h b4h & rw | a4h c5h & d4w | b4h d5h & [d4g4]w | [e4g4c5]h rh | rw | c5h e5h & g4w | a4h d5h & d4w | [e4g4c5]h [d4g4b4]h | [e4g4c5]w
+S: b2h d3h | g3w | f#3w | f3w | e3h g3h | c3h d3h | e3h c3h | f3w | g3h g2h | c3w
+
+# Lezione 52 | Il tempo tagliato | armatura=0 tempo=C| andamento=Moderato autore=Rodolphe
+V: rw | rw | c5q d5q e5q c5q | b4q c5q d5q b4q | c5q d5q e5q c5q | d5q c5q b4q d5q | e5q d5q e5q c5q | d5q c5q d5q b4q
+D: [e4g4c5]w~ | [e4g4c5]w~ | [e4g4c5]h [e4g4c5]h | [d4g4b4]w | [e4g4c5]h [e4g4c5]h | d5h b4h & [f4g4]w | [e4g4c5]h [e4g4c5]h | d5h b4h & [d4g4]w
+S: c4h c3h | e3h g3h | c4q rq c3q rq | g3q rq f3q rq | e3q rq c3q rq | b2q rq g2q rq | c3q rq c4q rq | b3q rq g3q rq
+V: c5q b4q c5q a4q | g4h rh | g4q a4q b4q g4q | c5q d5q e5q c5q | a4q g4q f4q a4q | d5q a4q d5q c5q | b4q c5q d5q b4q | c5q d5q e5q c5q | a4q c5q b4q d5q | c5h rh
+D: [d4f#4c5]h [d4f#4c5]h | [d4g4b4]h rh | [d4g4b4]w | [e4g4c5]w | [c4f4a4]w | d5h. c5q & [d4a4]w | [d4g4b4]w | [e4g4c5]w | [d4a4d5]h [d4g4b4]h | [e4g4c5]h rh
+S: a3q rq d3q rq | g3h g2h | g3q rq f3q rq | e3q rq c3q rq | f3q rq a3q rq | f3q rq d3q rq | g3q rq f3q rq | e3q rq c3q rq | f3q rq g3q rq | c3h rh
+
+# Lezione 53 | Il tempo tagliato | armatura=0 tempo=C| andamento=Allegro deciso autore=Henry Lemoine
+# fine: battuta 16
+# dc: battuta 32
+V: c4h e4h | g4h rh | a4h c5h | g4h rh | f4q g4q e4h | f4q g4q e4h | d4h e4h
+D: [e3g3c4]h [g3c4e4]h | [c4e4g4]h rh | [c4a4]h [c4f4c5]h | [c4e4g4]h rh | f4q g4q e4h & d4h c4h | f4q g4q e4h & d4h c4h | [b3d4]h [c4e4]h
+S: rw | [c2c3]h [e2e3]h | [f2f3]h [a2a3]h | c3h c4q rq | [b2g3]h c3h | [b2g3]h c3h | g2q g3q c3q g3q
+V: d4h rh | c4h e4h | g4h rh | a4h c5h | g4h rh | f4q g4q e4h | f4q g4q e4h | f4h d4h | c4h rh
+D: [b3d4]h rh | [e3g3c4]h [g3c4e4]h | [c4e4g4]h rh | [c4a4]h [c4f4c5]h | [c4e4g4]h rh | f4q g4q e4h & d4h c4h | f4q g4q e4h & d4h c4h | [a3f4]h [b3d4]h | c4h rh
+S: g2q g3q g2q rq | rw | [c2c3]h [e2e3]h | [f2f3]h [a2a3]h | c3h c4q rq | [b2g3]h c3h | [b2g3]h c3h | [f2f3]h [g2f3]h | [c3e3]h c2h
+V: d4h e4h | f4h rh | e4h f4h | g4h rh | g4h a4h | f4h g4h | e4h f4h | d4h rh
+D: [b3d4]h [c4e4]h | [d4f4]h rh | [c4e4]h [d4f4]h | [e4g4]h rh | [e4g4]h [c4a4]h | [d4f4]h [b3g4]h | [c4e4]h [a3f4]h | [b3d4]h rh
+S: g2q g3q g2q g3q | g2q g3q g2q g3q | g2q g3q g2q g3q | g2q g3q g2q g3q | g2q g3q g2q g3q | g2q g3q g2q g3q | g2q g3q g2q g3q | g2q g3q f#3q g3q
+V: d4h e4h | f4h rh | e4h f4h | g4h rh | g4h a4q g4q | f4h a4q g4q | e4h g4q f4q | d4h rh
+D: [b3d4]h [c4e4]h | [d4f4]h rh | [c4e4]h [d4f4]h | [e4g4]h rh | g4h a4q g4q & e4h c#4h | f4h a4q g4q & d4h b3h | e4h g4q f4q & c4h a3h | [b3d4]h rh
+S: g2q g3q g2q g3q | g2q g3q f#3q g3q | g2q g3q g2q g3q | g2q g3q f#3q g3q | g2q g3q g2q g3q | g2q g3q g2q g3q | g2q g3q g2q g3q | g2q g3q g2q rq
+
+# Lezione 54 | Il tempo tagliato | armatura=0 tempo=C| andamento=Allegro autore=Rodolphe
+V: rh g4h | c5h e5h | rh d5h | c5h b4h | rh d5h | b4h g4h | rh e5h | d5h c5h | rh c5h
+D: [e4g4c5]w | rw | [d4g4b4]w | rw | [g4b4d5]w | rw | [g4c5e5]w | rw | [e4g4c5]w
+S: c3w | rw | g3w | rw | g2w | rw | c3w | rw | c4w
+V: d5h e5h | rh d5h | b4h d5h | rh c5h | b4h a4h | g4w | rw | rh g4h | e4h f4h | rh g4h | a4h g4h
+D: rw | [d4g4d5]w | rw | [e4g4c5]w | [d4g4b4]h [c4f#4a4]h | [b3g4]h rh | rw | [g3c4g4]w | rw | [a3e4g4]w | rw
+S: rw | b3w | rw | a3w | d3w | g3h g2h | g3h f3h | e3w | rw | c#3w | rw
+V: rh f4h | d4h e4h | rh f4h | g4h f4h | rh e4h | g4h c5h | rh a4h | d5h c5h | rh b4h | d5h g4h
+D: [a3d4f4]w | rw | [g3d4f4]w | rw | [g3c4e4]w | g4h c5h & c4w | [c4f4a4]w | d5h c5h & [d4a4]w | [d4g4b4]w | [f4g4d5]w
+S: d3w | rw | b2w | rw | c3w | e3w | f3w | f#3w | g3w | g2w
+V: rh e5h | d5h c5h | rh g4h | c5h e5h | rh d5h | f4h a4h | rh d5h | c5h b4h | c5w
+D: [e4g4c5]w | rw | [e4g4c5]w | rw | [d4a4d5]w | rw | [g4b4]w & d4h f4h | c5h b4h & [e4g4]h [f4g4]h | [e4g4c5]w
+S: c3w | rw | e3w | rw | f3w | rw | g3w | g2w | c3w
+
+# Lezione 55 | La lezione precedente in semiminime | armatura=0 tempo=C| andamento=Allegro moderato autore=Rodolphe
+V: rq g4q c5q e5q | rq d5q c5q b4q | rq d5q b4q g4q | rq e5q d5q c5q | rq c5q d5q e5q | rq d5q b4q d5q | rq c5q b4q a4q | g4h rh | rq g4q e4q f4q | rq g4q a4q g4q |
+D: [e4g4c5]h rh | [d4g4b4]h rh | [f4g4b4]h rh | [e4g4c5]h rh | [e4g4]h rh | [d4g4]h rh | [c4d4f#4]w | [b3d4g4]h rh | [g3c4g4]h rh | [a3e4g4]h rh |
+S: c3h rh | g3h rh | g2h rh | c3h rh | c4h rh | b3h rh | a3h d3h | g3q g2q g3q f3q | e3h rh | c#3h rh |
+V: rq f4q d4q e4q | rq f4q g4q f4q | rq e4q g4q c5q | rq a4q d5q c5q | rq b4q d5q g4q | rq e5q d5q c5q | rq g4q c5q e5q | rq d5q f4q a4q | rq d5q c5q b4q | c5h rh |
+D: [a3d4f4]h rh | [g3d4f4]h rh | [g3c4e4]h g4q c5q & sh c4h | a4h d5q c5q & [c4f4]h [d4a4]h | [g4b4]w & d4h f4h | [e4g4c5]h rh | [e4g4c5]h rh | [d4a4d5]h rh | [g4b4]w & d4h f4h | [e4g4c5]h rh |
+S: d3h rh | b2h rh | c3h e3h | f3h f#3h | g3h g2h | c3h rh | e3h rh | f3h rh | g3h g2h | c3h rh |
+
+# Lezione 56 | La lezione precedente in crome | armatura=0 tempo=C| andamento=Moderato autore=Rodolphe
+V: r8 g48 c58 e58 r8 d58 c58 b48 | r8 d58 b48 g48 r8 e58 d58 c58 | r8 c58 d58 e58 r8 d58 b48 d58 | r8 c58 b48 a48 g4q rq | r8 g48 e48 f48 r8 g48 a48 g48 |
+D: [e4g4]q rq [d4g4b4]q rq | [f4g4b4]q rq [e4g4c5]q rq | [e4g4]q rq [d4g4]q rq | [c4d4f#4]h [b3d4g4]q rq | [g3c4g4]q rq [a3e4g4]q rq |
+S: c3q rq g3q rq | g2q rq c3q rq | c4q rq b3q rq | a3q d3q g38 g28 g38 f38 | e3q rq c#3q rq |
+V: r8 f48 d48 e48 r8 f48 g48 f48 | r8 e48 g48 c58 r8 a48 d58 c58 | r8 b48 d58 g48 r8 e58 d58 c58 | r8 g48 c58 e58 r8 d58 f48 a48 | r8 d58 c58 b48 c5q rq |
+D: [a3d4f4]q rq [g3d4f4]q rq | [g3c4e4]q [c4g4]q [c4f4a4]q [d4a4d5]q | [g4b4]h [e4g4c5]q rq & d4q f4q sh | [e4g4c5]q rq [d4a4d5]q rq | [g4b4]h [e4g4c5]q rq & d4q f4q sh |
+S: d3q rq b2q rq | c3q e3q f3q f#3q | g3q g2q c3q rq | c3q rq f3q rq | g3q g2q c3q rq |
+
+# Lezione 57 | Le crome in tempo tagliato | armatura=0 tempo=C| andamento=Moderato autore=Rodolphe
+# nota: ritornello dalla battuta 1 alla 8
+# nota: ritornello dalla battuta 9 alla 16
+V: c58 b48 c58 d58 e58 d58 c58 e58 | d58 c58 b48 c58 d58 b48 c58 d58 | e58 c58 e58 d58 c58 d58 e58 c58 | d5h rh | b48 a48 g48 a48 b48 g48 a48 b48 |
+D: [e4g4c5]w | d5h b4h & [d4g4]w | [e4g4c5]w | [d4g4b4]h rh | [d4g4b4]w |
+S: c3h c4h | b3h g3h | c4h c3h | g28 g38 f#38 e38 d38 c38 b28 a28 | g2h g3h~ |
+V: c58 b48 c58 d58 c58 a48 b48 c58 | b48 c58 d58 b48 c58 b48 c58 a48 | g4h rh | d58 e58 d58 c58 b48 c58 b48 a48 | g48 a48 g48 f48 e4q rq |
+D: [a4c5]w & e4h d4h | b4q d5q c5h & [d4g4]h [e4g4]q [d4f#4]q | [d4g4b4]h~ [d4g4b4]q rq | [g4b4d5]h [d4g4b4]h | [b3d4g4]h [g3c4e4]q rq |
+S: g3h f#3h | g3q b2q a2q d3q | g28 b28 d38 g38 g2q rq | g2h rh | b2h c38 b28 c38 d38 |
+V: c58 d58 e58 c58 a48 b48 c58 d58 | b4h rh | c58 b48 c58 d58 e58 d58 c58 e58 | d58 c58 b48 c58 d58 b48 c58 d58 | e58 c58 e58 d58 c58 a48 d58 b48 | c5h rh |
+D: [g4c5]h [f4a4]h & e4h c4q d4q | [d4g4b4]h rh | [e4g4c5]w | d5h b4h & [d4g4]w | [g4c5]h [a4c5]q [a4d5]8 [g4b4]8 & e4h e4q d4q | [e4g4c5]h rh |
+S: e3q c3q f3q d3q | g38 f#38 g38 a38 g38 f38 e38 d38 | c3h c4h | b3h g3h | c4h a3q f38 g38 | c38 c48 g38 e38 c3q rq |
+
+# Lezione 58 | Minime e semiminime in tempo tagliato | armatura=0 tempo=C| andamento=Allegro moderato autore=G. Carulli
+V: g4h c5h | e4h rh | e4h g4h | c4h rh | d5q b4q c5q rq | d5q b4q c5q rq | a4q g4q f4q e4q | e4h d4q rq |
+D: g4h c5h | e4h rh | e4h g4h | c4h rh | d5q b4q c5q rq & f4h e4q rq | d5q b4q c5q rq & f4h e4q rq | [f4a4]q [e4g4]q [d4f4]q [c4e4]q | [c4e4]h [b3d4]q rq |
+S: rq [e3g3]q [e3g3]q [e3g3]q & c3w | rq [e3g3]q [e3g3]q [e3g3]q & c3w | rq [e3g3]q [e3g3]q [e3g3]q & c3w | rq [e3g3]q [e3g3]q [e3g3]q & c3w | [c3ab3]h [c3g3]q rq | [c3ab3]h [a2g3]q rq | b2q c3q f3q f#3q | g3q f#38 g38 g2q rq |
+V: b4h d5h | g4h rh | a4h c5h | d4h rh | e5h d5q rq | c5h b4q rq | e5q c5q b4q a4q | g4q rq g4q g4q |
+D: b4h d5h | g4h rh | a4h c5h | d4h rh | [c5e5]h [b4d5]q rq | [a4c5]h [g4b4]q rq | e5q [a4c5]q [g4b4]q [f#4a4]q | g4q rq g4q g4q |
+S: rq [b3d4]q [b3d4]q [b3d4]q & g3w | rq d4q b3q g3q | rq [f#3a3c4]q [f#3a3c4]q [f#3a3c4]q & d3w | rq a3q f#3q d3q | rq f#3q g3q b3q | rq d#3q e3q g3q | rq c4q rq c4q & c3h d3h | [g3b3]8 r8 [d4f4]q [c4e4]q [b3d#4]q |
+V: g4q e58 c58 b4q a4q | g4q rq g4q g4q | g48 e58 d58 c58 b4q a4q | g4q rq rh | g4h c5h | e4h rh |
+D: g4q e58 c58 [g4b4]q [f#4a4]q | g4q rq g4q g4q | g48 [c5e5]8 [b4d5]8 [a4c5]8 [g4b4]q [f#4a4]q | g4q g48 f#48 g48 f#48 g48 f#48 | g4h c5h | e4h rh |
+S: [c4e4]h d4q [d3c4]q | [g3b3]8 r8 [d4f4]q [c4e4]q [b3d#4]q | [c4e4]h d4q [d3c4]q | [g3b3]q rq rh | rq [e3g3]q [e3g3]q [e3g3]q & c3w | rq [e3g3]q [e3g3]q [e3g3]q & c3w |
+V: e4h g4h | c4h rh | d5q b4q c5q rq | d5q b4q c5q rq | a4q f4q e4q d4q | c4q rq c4q c4q | c4q a48 f48 e4q d4q |
+D: e4h g4h | c4h rh | d5q b4q c5q rq & f4h e4q rq | d5q b4q c5q rq & f4h e4q rq | a4q [d4f4]q [c4e4]q [b3d4]q | c4q rq c4q c4q | c4q a48 f48 [c4e4]q [b3d4]q |
+S: rq [e3g3]q [e3g3]q [e3g3]q & c3w | rq [e3g3]q [e3g3]q [e3g3]q & c3w | [c3ab3]h [c3g3]q rq | [c3ab3]h [c3g3]q rq | f3h g3q g2q | c38 r8 [g3bb3]q [f3a3]q [e3g#3]q | [f3a3]h g3q g2q |
+V: c4q rq c4q c4q | c48 a48 g48 f48 e4q d4q | c4q rq b4q c58 d58 | c5q rq b4q c58 d58 | c5q rq rh | c4h c4h | c4w |
+D: c4q rq c4q c4q | c48 [f4a4]8 [e4g4]8 [d4f4]8 [c4e4]q [b3d4]q | c4q rq b4q c58 d58 & sh f4h | c5q rq b4q c58 d58 & e4q sq f4h | c5q rq rh & e4q sq sh | c4h c4h | c4w |
+S: c38 r8 [g3bb3]q [f3a3]q [e3g#3]q | [f3a3]h g3q g2q | c3q rq [c3ab3]h | [c3g3]q rq [c3ab3]h | [c3g3]q rq rh | [c2c3]h [c2c3]h | [c2c3]w |
+
+# Lezione 59 | La misura in due quarti | armatura=0 tempo=2/4 andamento=Allegretto autore=Henry Lemoine
+# fine: battuta 16
+# dc: battuta 40
+V: g4h | a4q c5q | d5h | c5q rq | g4h | a4q f4q | e4h | d4q rq | g4h
+D: [e4g4]h | a4q c5q & f4h | [f4d5]h | [e4c5]q rq | [e4g4]h | [c4a4]q [d4f4]q | [c4e4]h | [b3d4]q rq | [e4g4]h
+S: rq c3q | f3q a3q | b3q g3q | c4q c3q | rq c3q | f3q d3q | rq g3q | g2q g3q | rq c3q
+V: a4q c5q | d5h | c5q rq | a4h | f4q d4q | d4h | c4q rq | g4h | b4q d5q | d5h
+D: [f4a4]q [e4c5]q | d5h & f4q d4q | [e4c5]q rq | [f4a4]h | [f4a4]q [b3d4]q | [b3d4]h | c4q rq | g4h | b4q d5q | d5h
+S: f3q a3q | g#3q b3q | a3q c4q | rq d3q | g3q [g2f3]q | [g2f3]h | [c3e3]q rq | rq [g3b3d4]q | [g3b3d4]q [g3b3d4]q | rq [f#3c4d4]q
+V: a4q rq | c5h | b4q a4q | g4h | d4q rq | g4h | b4q d5q | d5h | c5q rq | c5h
+D: a4q rq | c5h | b4q a4q | g4h | d4q rq | g4h | b4q d5q | [f4d5]h | [e4c5]q rq | [eb4a4c5]h
+S: [f#3c4d4]q [f#3c4d4]q | rq [d3f#3a3]q | [d3g3b3]q [d3f#3c4]q | rq [g3b3]q | [g3b3]q [g3b3]q | rq [g3b3]q | d4q f4q & g3h | rq [g#3b3]q | [a3c4]q a2q | rq c3q
+V: b4q a4q | g4h | a4h | b4h | a4h | g4h | a4h | b4h | a4h | g4q rq | g4q rq
+D: [d4g4b4]q [c4f#4a4]q | [b3f4g4]h | [c4f4a4]h | [d4f4b4]h | [c4f4a4]h | [b3f4g4]h | [c4f4a4]h | [d4f4b4]h | [c4f4a4]h | [b3f4g4]q rq | [b3f4g4]q rq
+S: d3q d2q | rq g2q | rq g3q | rq g2q | rq g3q | rq g2q | rq g3q | rq g2q | rq g3q | rq g2q | rq g3q
+
+# Lezione 60 | Una semiminima o due crome per tempo | armatura=0 tempo=2/4 andamento=Andantino autore=Henry Lemoine
+# fine: battuta 20
+# dc: battuta 32
+V: g4q a4q | b4q c5q | b4q a4q | g4q rq | f4q e48 r8
+D: [e4g4]q [f4a4]q | [g4b4]q [a4c5]q | [g4b4]q [f4a4]q | [e4g4]q rq | [d4f4]q [c4e4]8 r8
+S: c38 c48 c38 c48 | c38 c48 c38 c48 | f38 g38 a38 b38 | c48 c38 c48 r8 | b28 g38 c38 g38
+V: f4q e48 r8 | a48 g48 f48 e48 | d4q rq | g4q a4q | b4q c5q | b4q a4q | g4q rq
+D: [d4f4]q [c4e4]8 r8 | [f4a4]8 [e4g4]8 [d4f4]8 [c4e4]8 | [b3d4]q rq | [e4g4]q [f4a4]q | [g4b4]q [a4c5]q | [g4b4]q [f4a4]q | [e4g4]q rq
+S: b28 g38 c38 g38 | f3q. f#38 | g38 g28 g38 r8 | c38 c48 c38 c48 | c38 c48 c38 c48 | f38 g38 a38 b38 | c48 c38 c48 r8
+V: f4q e48 r8 | f4q e48 r8 | a48 f48 e48 d48 | c48 r8 g48 c58 | b4q g48 d58 | c5q g48 c58 | b4q g48 d58 | c5q rq
+D: [d4f4]q [c4e4]8 r8 | [d4f4]q [c4e4]8 r8 | a48 [d4f4]8 [c4e4]8 [b3d4]8 | c48 r8 g48 c58 & sq e4q | b4q g48 d58 & f4h | c5q g48 c58 & e4h | b4q g48 d58 & f4h | [e4c5]q rq
+S: b28 g38 c38 g38 | b28 g38 c38 g38 | f38 d38 g38 r8 | c38 g38 c4q & c3h | c38 g38 b3q & c3h | c38 g38 c4q & c3h | c38 g38 b3q & c3h | c38 g38 c4q & c3h
+V: b4q d5q | c58 b48 a48 r8 | a4q c5q | b48 a48 g48 a48 | b4q d5q | c58 b48 a48 r8
+D: g4q b4q & d4h | c58 b48 a4q & d4h | a4q c5q & d4h | b48 a48 g48 a48 & d4h | g4q b4q & d4h | c58 b48 a4q & d4h
+S: g28 d38 g38 b38 | [d3a3]8 g38 f#38 d38 | d28 d38 f#38 d38 | g28 d38 g38 d38 | g28 d38 g38 b38 | [d3a3]8 g38 f#38 d38
+V: a4q c5q | b48 a48 g48 c58 | b48 a48 g48 c58 | b48 a48 g48 c58 | b48 c58 a48 b48 | g48 a48 g48 a48
+D: a4q c5q & d4h | b48 a48 g48 c58 & d4q. d48 | b48 a48 g48 c58 & d4q. d48 | b48 a48 g48 c58 & d4q. d48 | b48 c58 a48 b48 & d4q f4q | g48 a48 g48 a48 & e4q [d4f4]q
+S: d28 d38 f#38 d38 | g28 d38 g38 [d3f#3]8 | g38 a38 b38 f#38 & d3q. d38 | g38 a38 b38 f#38 & d3q. d38 | g3q g2q~ | g2q g3q
+
+# Lezione 61 | Il n. 31 ridotto in crome | armatura=0 tempo=2/4 andamento=Moderato autore=G. Carulli
+# nota: ritornello dalla battuta 1 alla 8
+# nota: ritornello dalla battuta 9 alla 16
+V: r8 c58 e58 r8 | r8 d58 f58 r8 | r8 e58 d58 r8 | r8 c58 b48 r8 | r8 a48 c58 r8 | r8 b48 d58 r8 | r8 c58 b48 a48 | g48 a48 g48 r8
+D: [e4g4c5]8 r8 r8 [e4g4c5]8 | [d4g4d5]8 r8 r8 [g4d5f5]8 | [g4c5e5]8 r8 r8 [d4g4d5]8 | [d4f#4c5]8 r8 r8 [d4g4b4]8 | [d4a4]8 r8 r8 [d4f#4c5]8 | [d4g4b4]8 r8 r8 [d4g4d5]8 | r8 c58 b48 a48 & [e4a4]q [d4g4]8 [c4f#4]8 | [b3g4]8 [c4f#4a4]8 [b3g4]8 r8
+S: c38 r8 r8 c48 | b38 r8 r8 b38 | c48 r8 r8 b38 | a38 r8 r8 g38 | f#38 r8 r8 d38 | g38 r8 r8 b28 | c3q d3q | g38 d38 g28 r8
+V: r8 b48 d58 r8 | r8 c58 e58 r8 | r8 d58 f58 r8 | r8 e58 d58 r8 | r8 c58 g48 r8 | r8 e58 d58 r8 | r8 c58 d58 b48 | c5q rq
+D: [d4g4b4]8 r8 r8 [d4g4b4]8 | [e4g4c5]8 r8 r8 [g4c5e5]8 | [g4b4d5]8 r8 r8 [g4d5f5]8 | [g4c5e5]8 r8 r8 [d4g4b4]8 | [e4g4c5]8 r8 r8 [f4g4d5]8 | [e4g4e5]8 r8 r8 [f4b4d5]8 | [e4c5]8 [e4g4c5]8 [d4a4d5]8 [f4g4b4]8 | [e4g4c5]q~ [e4g4c5]8 r8
+S: g38 r8 r8 f38 | e38 r8 r8 c38 | g38 r8 r8 b28 | c38 r8 r8 f38 | e38 r8 r8 b38 | c48 r8 r8 g38 | a38 e38 f38 g38 | c38 c48 c38 r8
+
+# Lezione 62 | Le note puntate nel tempo C e ¢ | armatura=0 tempo=4/4 andamento=Andantino autore=G. Carulli
+V: c5h. b4q | c5h g4q rq | d5h. e5q | d5h a4q rq | d5h c58 b48 a48 g48
+D: [e4g4c5]h. [d4f4b4]q | [e4c5]h [e4g4]q rq | [f4a4d5]h. [g4e5]q | [f4d5]h [f4a4]q rq | d5h c58 b48 a48 g48
+S: r8 c38 e38 g38 c4q [c3ab3]q | r8 c48 g38 e38 c3q c48 r8 | r8 d38 f38 a38 d4q [d3bb3c#4]q | r8 d48 a38 f38 d3q d48 r8 | rq [f3g3b3d4]q [f3g3b3d4]q [f3g3b3d4]q
+V: c5h. b48 c58 | a4q g4q f4q e4q | d4q rq rh | c5h. b4q | c5h g4q rq | c58 d58 c58 b48 a4q rq
+D: c5h. b48 c58 | [f4a4]q [e4g4]q [d4f4]q [c4e4]q | [b3d4]q d48 e48 f48 g48 a48 b48 | [e4g4c5]h. [d4f4b4]q | [e4c5]h [e4g4]q rq | c58 d58 c58 b48 a4q rq
+S: rq [e3g3c4]q [e3g3c4]q [e3g3c4]q | b3q c4q f3q f#3q | g3q rq rh | r8 c38 e38 g38 c4q [c3ab3]q | r8 c48 g38 e38 c3q c48 r8 | d3w & rq [f#3c4]q [f#3c4]q [f#3c4]q
+V: d58 e58 d58 c58 b4q rq | g4h. b4q | a4h. e5q | d5h. c5q | d58 c58 b48 c58 b4q rq | g4h. b4q | a4h. e5q
+D: d58 e58 d58 c58 b4q rq | g4h. b4q | a4h. e5q | d5h. c5q | d58 c58 b48 c58 b4q rq | g4h. b4q | a4h. [g4bb4e5]q
+S: g28 r8 [d3g3b3]q [d3g3b3]q [d3g3b3]q | rq [b3d4]q [b3d4]q [b3d4]q | rq [c4e4]q [c4e4]q [c4e4]q | rq [d4f#4]q [d4f#4]q [d4f#4]q | rq [e4g4]q~ [e4g4]8 e48 d48 c48 | b3q [b3d4]q [b3d4]q [b3d4]q | [c4e4]q [c4e4]q [c4e4]q c#4q
+V: b4h d58 c58 a48 b48 | g4q rq rh | c5h. b4q | c5h g4q rq | d5h. e5q | d5h a4q rq | d5h c58 b48 a48 g48
+D: [g4b4]h d58 c58 a48 b48 | g4q g4q [f#4a4]q [f4b4]q | [e4g4c5]h. [d4f4b4]q | [e4c5]h [e4g4]q rq | [f4a4d5]h. [g4e5]q | [f4d5]h [f4a4]q rq | d5h c58 b48 a48 g48
+S: d4q d3h. & sq rq [f#3c4]q [f#3c4]q | [g3b3]q [g3b3]q [g3c4]q [g3d4]q | r8 c38 e38 g38 c4q [c3ab3]q | r8 c48 g38 e38 c3q c48 r8 | r8 d38 f38 a38 d4q [d3bb3c#4]q | r8 d48 a38 f38 d3q d48 r8 | rq [f3g3b3d4]q [f3g3b3d4]q [f3g3b3d4]q
+V: c5h. a48 f48 | e4h d4h | c4h. f4q | e4h. a4q | g4h. c5q | b4h. d5q | c5h rh | rw
+D: c5h. a48 f48 | [c4e4]h [b3d4]h | [g3c4]h. [a3f4]q | [g3e4]h. [f4a4]q | [e4g4]h. [e4c5]q | [f4b4]h. [f4d5]q | [e4c5]h [e3g3c4]q. [e3g3c4]8 | [e3g3c4]w
+S: rq [e3g3c4]q [f3a3c4]q [f3a3c4]q | rq f#38 g38 rq f3q & sh g2h | [c3e3]q c2q c3h | rq c2q c3h | rq c3q c4h | r8 c38 f38 ab38 d4q [c3a3b3]q | [c3g3c4]h [c2c3]q. [c2c3]8 | [c2c3]w
+
+# Lezione 63 | Le note puntate nel tempo C e ¢ | armatura=0 tempo=C| andamento=Moderato autore=Rodolphe
+# fine: battuta 8
+# dc: battuta 24
+V: c5h. d5q | e5h. c5q | d5h. e5q | d5h. b4q | c5h. e5q | a4h. d5q | c5h. b4q | c5h rh | e4h. f4q | g4h. c5q | e4h. f4q
+D: [e4g4c5]w | [g4c5e5]h [e4g4c5]h | d5h. b4q & d4h f4h | [d4g4b4]h rh | [e4g4c5]w | [c4f4a4]h [d4f4a4]h | c5h. b4q & [c4e4]h [d4g4]h | [e4g4c5]h rh | [c4e4]h. [d4f4]q | [e4g4]w | [c4e4]h. [d4f4]q
+S: rh c4h | c3h e3h | f3h d3h | g3h f3h | e3h c3h | f3h d3h | g3h g2h | c3h c2h | c3h c4h | c3h c4h | c3h c4h
+V: g4h rh | e5h. d5q | c5h. e5q | a4h. d5q | b4h rh | d5h. c5q | b4h. d5q | c5h. b4q | a4h rh | b4h. d5q | g4h. c5q | b4h. a4q | g4h rh
+D: [e4g4]h rh | [g4e5]h. [f4d5]q | [e4c5]w | a4h. d5q & [d4a4]w | [d4g4b4]h rh | d5h. c5q & [d4a4]w | [d4g4b4]w | c5h~ c5q b4q & [d4~a4]h [d4g4]h | [d4f#4a4]h rh | [d4g4b4]h. d5q | g4w~ & d4h [c4e4]h | g4h f#4h & [b3d4]h [c4d4]h | [b3d4g4]h rh
+S: c3h c4h | c3h c4h | c3h c4h | f3h f#3h | g3h g2h | rh f#3h | g3h g2h | f#2h g2h | d3h d2h | rh g3h | b2h c3h | d3h d2h | g2h g3h
+
+# Lezione 64 | Le note puntate nel tempo C e ¢ | armatura=0 tempo=C| andamento=Andante autore=Rodolphe
+# fine: battuta 4
+# dc: battuta 12
+V: c5q. d58 e5q. c58 | d5q. e58 d5q. b48 | c5q. e58 a4q. d58 | c5q. b48 c5q rq | e4q. f48 g4q. d58 | e4q. f48 g4q rq
+D: [e4g4c5]w | [a4d5]h [d4g4b4]q rq & d4q f4q sh | [f4a4c5]h [f4a4]h & d4h c4q d4q | c5q. b48 c5q rq & [c4e4]q [d4g4]q [e4g4]q sq | [c4e4]q. [d4f4]8 [e4g4]h | [c4e4]q. [d4f4]8 [e4g4]q rq
+S: rq c4q c3q e3q | f3q d3q g3q f3q | e3q c3q f3q d3q | g3q g2q c3q c2q | c3q c4q c3q c4q | c3q c4q c3q c4q
+V: e5q. d58 c5q. e58 | a4q. d58 b4q rq | d5q. c58 b4q. d58 | c5q. b48 a4q rq | b4q. d58 g4q. c58 | b4q. a48 g4q rq
+D: [g4e5]q. [f4d5]8 [e4c5]h | a4q. d58 [g4b4]q rq & [d4a4]h d4q sq | d5q. c58 b4h & [d4a4]h [d4g4]h | c5q. b48 [d4f#4a4]q rq & [d4~a4]q [d4g4]q sh | b4q. d58 g4h~ & [d4g4]h d4q e4q | g4q [c4d4f#4]q g4q rq & [b3d4]q sq [b3d4]q sq
+S: c3q c4q c3q c4q | f3q f#3q g3q g2q | rq f#3q g3q g2q | f#2q g2q d3q d2q | rq g3q b2q c3q | d3q d2q g2q g3q
+
+# Lezione 65 | La semiminima puntata | armatura=0 tempo=4/4 andamento=Maestoso autore=G. Carulli
+V: c5q. b48 c5q. a48 | g4q. f48 e4q rq | b4q. c58 d5q. e58 | c5q b48 a48 g4q rq | c5q. b48 c5q. a48 | d5q. c58 b4q rq
+D: [e4c5]q. [d4b4]8 [e4c5]q. [f4a4]8 | [e4g4]q. [d4f4]8 [c4e4]q rq | [d4b4]q. [e4c5]8 [f4d5]q. [g4e5]8 | [e4c5]q [g4b4]8 [f4a4]8 [e4g4]q rq | [a4c5]q. [g#4b4]8 [a4c5]q. [f#4a4]8 | [b4d5]q. [a4c5]8 [g4b4]q rq
+S: rq c3q c3q c3q & c2w | c2q c3q~ c38 g38 e38 c38 | rq g3q g3q g3q & g2w | c3h~ c38 e38 g38 c48 | r8 d38 d4q~ d48 d38 d4q~ | d48 d38 e38 f#38 g38 d38 b28 g28
+V: e5q d58 c58 b4q a4q | g4h rh | b4q. g48 a4q. b48 | c5q. g48 e4q. g48 | f4q. a48 g4q. f48 | e4q. f48 g4q rq | b4q. g48 a4q. b48
+D: [c5e5]q [b4d5]8 [a4c5]8 [g4b4]q [f#4a4]q | [b3g4]h. rq | b4q. g48 a4q. b48 & f4h f4h | c5q. b48 [c4e4]q. [e4g4]8 & e4h sh | [d4f4]q. [f4a4]8 [e4g4]q. [d4f4]8 | [c4e4]q. [d4f4]8 [e4g4]q rq | b4q. g48 a4q. b48 & f4h f4h
+S: c38 a28 b28 c38 d3q d2q | g28 g28 b28 d38 g3q g3q & s8 g2q.~ g2h | rq g3q g3q g3q & g2w | rq g3q g3q g3q & g2w | rq g3q g3q g3q & g2w | rq g3q g3q g3q & g2w | r8 g28 g3q~ g38 g28 g3q~
+V: c5q. g48 e4q. g48 | f4q. d48 e4q. f48 | d4h r8 g48 a48 b48 | c5q. g48 c5q b4q | a4h rh | d5q. a48 d5q c5q
+D: c5q. g48 [c4e4]q. [e4g4]8 & e4h sh | [d4f4]q. [b3d4]8 [c4e4]q. [d4f4]8 | sh r8 g48 a48 b48 & [b3d4]h sq f4q | [e4c5]q. g48 [e4c5]q [g4b4]q | [f4a4]h rh | [f#4d5]q. a48 [f#4d5]q [a4c5]q
+S: g38 g28 g3q~ g38 g28 g3q~ | g38 g28 g3q~ g38 g28 g3q | g28 g38 f38 g38 e38 g38 d38 g38 | c3q c4q~ c48 c38 d38 e38 | f38 f28 a28 c38 f38 f28 f38 e38 | d3q d2q~ d28 d38 e38 f#38
+V: b4h rh | e5q. b48 e5q d5q | c5h rh | a4q. d58 c5q b4q | c5h rh | a4q. f48 e4q d4q | c4h rh
+D: [g4b4]h rh | [g#4e5]q. b48 [g#4e5]q [b4d5]q | [a4c5]h rh | [f4a4]q. [f4d5]8 [e4c5]q [d4b4]q | [e4c5]h rh | [f4a4]q. [d4f4]8 [c4e4]q [b3d4]q | c4h rh
+S: g38 g28 b28 d38 g38 g28 g38 f38 | e3q e2q~ e28 e38 f#38 g#38 | a38 a28 c38 e38 a38 a28 a38 g38 | f38 d38 e38 f38 g3q g2q | c38 c28 e28 g28 c38 e38 g38 c48 | f38 d38 e38 f38 g3q [g2f3]q | [c3e3]h rh
+
+# Lezione 66 | La semiminima puntata | armatura=0 tempo=C| andamento=Moderato autore=Rodolphe
+# fine: battuta 8
+# dc: battuta 20
+V: c5q. b48 c5q. d58 | e5h c5h | d5q. e58 d5q. c58 | b4h rh | c5q. b48 c5q. d58 | e5q. d58 e5q. c58 | b4q. c58 d5q. b48
+D: [e4g4c5]h rh | [g4c5e5]h [e4g4c5]h | [g4b4d5]h rh | [d4g4b4]w | [e4g4c5]h rh | [g4c5e5]h [e4a4c5]h | [f4a4~c5~]h [f4a4c5]h & d4h f4h
+S: c3h rh | c3q. d38 e3q. c38 | g2h rh | g3q. a38 g3q. f38 | e3h rh | c3h rh | g3h g2h
+V: c5h rh | g4q. a48 g4q. f48 | e4h f4h | g4q. a48 g4q. f48 | e4h rh | g4q. e48 f4q. g48 | a4q. b48 c5q. a48
+D: [e4g4c5]h rh | g4q. a48 g4q. f48 & sh d4h | [g3e4]h rh | g4q. a48 g4q. f48 & sh d4h | [c4e4]q rq rh | [c4e4g4]h rh | [c4f4a4]h rh
+S: c3h rh | rh b2h | c3q. e38 d3q. f38 | e3h b2h | c3q. c48 g3q. e38 | c3h rh | f3h rh
+V: d5q. e58 d5q. c58 | b4h rh | d5q. c58 b4q. d58 | c5q. a48 c5q. a48 | b4q. c58 b4q. a48 | g4h rh
+D: [d4a4d5]h rh | [d4g4b4]h rh | d5h b4h & [d4g4]w | c5w & [d4~f#4]h [d4a4]h | [g4b4~]h b4q. a48 & d4h [c4f#4]h | [b3g4]h rh
+S: f#3h rh | g3q. f#38 g3q. a38 | b3h g3h | a3h f#3h | g3h d3h | g3q. f38 e3q. d38
