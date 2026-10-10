@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Il Medioevo — Storia della musica — musicascuole.it</title>
-<meta name="description" content="La musica del Medioevo raccontata attraverso gli ascolti: canto gregoriano, Leonino e Perotino, trovatori, Carmina Burana, danze e strumenti dell'epoca.">
+<meta name="description" content="Il Medioevo in musica, un capitolo alla volta: monasteri e canto gregoriano, Guido d'Arezzo, Ildegarda di Bingen, la polifonia di Notre-Dame, trovatori, goliardi, Machaut e Landini, con ascolti e strumenti.">
 <link rel="icon" href="favicon.svg" type="image/svg+xml">
 <link rel="icon" href="favicon-32.png" type="image/png" sizes="32x32">
 <link rel="apple-touch-icon" href="apple-touch-icon.png">
@@ -114,6 +114,107 @@
   .crediti-img li { margin: 3px 0; } .crediti-img a { color: #7DD3FC; }
   footer.piede { position: relative; z-index: 1; text-align: center; font-size: 13px; color: #9FB3CE; padding: 12px 12px 24px; }
   @media (prefers-reduced-motion: reduce) { .card, .meta { transition: none; } }
+
+  /* ---------- il percorso: indice del capitolo ---------- */
+  .meta { cursor: default; }
+  .etich-meta { cursor: default; }
+  #vistaPercorso { max-width: 920px; margin: 0 auto; }
+  .inizia { display: block; margin: 4px auto 14px; font: 800 17px 'Manrope', sans-serif; color: #0f172a; background: #FFE58A; border: 0; border-radius: 999px;
+    padding: 12px 28px; cursor: pointer; box-shadow: 0 4px 0 #C9A93A; }
+  .inizia:hover { filter: brightness(1.05); }
+  .indice { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 8px; counter-reset: none; }
+  .voce { --accent: #F99D1C; width: 100%; display: grid; grid-template-columns: 40px 120px 1fr 24px; align-items: center; gap: 14px; text-align: left; cursor: pointer;
+    background: rgba(255,255,255,0.035); border: 1px solid rgba(255,255,255,0.09); border-left: 4px solid var(--accent); border-radius: 14px; padding: 8px 12px 8px 10px;
+    color: inherit; font: inherit; transition: background .2s ease, transform .2s ease; }
+  .voce:hover { background: rgba(255,255,255,0.07); transform: translateX(3px); }
+  .voce:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+  .v-num { width: 36px; height: 36px; border-radius: 50%; display: grid; place-items: center; font: 700 16px 'Fredoka', 'Manrope', sans-serif;
+    background: color-mix(in srgb, var(--accent) 22%, transparent); color: var(--accent); border: 1.5px solid var(--accent); }
+  .v-foto { width: 120px; aspect-ratio: 16 / 10; border-radius: 9px; background: #1e293b center / cover no-repeat; display: grid; place-items: center; font-size: 28px; }
+  .v-testo { display: flex; flex-direction: column; gap: 2px; min-width: 0; }
+  .v-data { font: 800 11px 'Manrope', sans-serif; letter-spacing: .06em; text-transform: uppercase; color: var(--accent); }
+  .v-titolo { font: 700 17px 'Manrope', sans-serif; line-height: 1.25; }
+  .v-brano { font-size: 12.5px; color: #9FB3CE; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .v-vai { font-size: 26px; color: #7F93B2; }
+  .voce.fine { --accent: #FFE58A !important; }
+  @media (max-width: 560px) {
+    .voce { grid-template-columns: 32px 76px 1fr; gap: 10px; padding: 7px 9px; }
+    .v-num { width: 30px; height: 30px; font-size: 14px; }
+    .v-foto { width: 76px; }
+    .v-titolo { font-size: 15px; }
+    .v-brano { white-space: normal; font-size: 11.5px; }
+    .v-vai { display: none; }
+  }
+
+  /* ---------- un capitolo: schermata intera, si legge come una pagina ---------- */
+  body.in-capitolo { overflow: hidden; }
+  .capitolo { --accent: #F99D1C; position: fixed; inset: 0; z-index: 50; overflow-y: auto; background: #0f172a;
+    background-image: radial-gradient(ellipse at 50% 0%, color-mix(in srgb, var(--accent) 16%, transparent), transparent 60%); }
+  .capitolo[hidden] { display: none; }
+  .c-barra { position: sticky; top: 0; z-index: 2; display: flex; align-items: center; gap: 12px; padding: 30px 18px 10px; background: rgba(15,23,42,0.96);
+    border-bottom: 1px solid rgba(255,255,255,0.08); }
+  .c-indice { font: 800 14px 'Manrope', sans-serif; color: #EAF2FF; background: rgba(255,255,255,0.08); border: 1px solid rgba(255,255,255,0.2); border-radius: 999px;
+    padding: 8px 14px; cursor: pointer; flex: none; }
+  .c-indice:hover { background: rgba(255,255,255,0.15); }
+  .c-avanz { flex: 1; display: flex; gap: 4px; }
+  .c-avanz span { flex: 1; height: 6px; border-radius: 3px; background: rgba(255,255,255,0.12); }
+  .c-avanz span.fatto { background: color-mix(in srgb, var(--accent) 55%, transparent); }
+  .c-avanz span.qui { background: var(--accent); }
+  .c-num { font: 700 12.5px 'Manrope', sans-serif; color: #9FB3CE; flex: none; }
+  .c-pagina { max-width: 860px; margin: 0 auto; padding: 22px 20px 40px; }
+  .c-label { display: inline-block; font: 800 11px 'Manrope', sans-serif; letter-spacing: .08em; text-transform: uppercase; color: var(--accent);
+    background: color-mix(in srgb, var(--accent) 15%, transparent); padding: 4px 10px; border-radius: 999px; }
+  .c-pagina h2 { font-family: 'Fredoka', 'Manrope', sans-serif; font-weight: 600; font-size: clamp(30px, 4.4vw, 46px); line-height: 1.1; margin: 10px 0 4px; }
+  .c-data { font: 800 15px 'Manrope', sans-serif; color: #FFE58A; margin-bottom: 14px; }
+  .c-racconto p { font-size: clamp(17px, 1.6vw, 19.5px); line-height: 1.6; color: #E2E8F0; margin: 0 0 12px; }
+  .c-racconto b { color: #fff; }
+  .c-sez { font: 800 19px 'Manrope', sans-serif; margin: 26px 0 6px; }
+  .c-sez span { color: var(--accent); }
+  .c-chi { font-size: 14px; color: #9FB3CE; font-weight: 600; margin: -2px 0 10px; }
+  .c-schermo { border-radius: 14px; overflow: hidden; border: 1px solid rgba(255,255,255,0.12); }
+  .c-fonte { font-size: 12px; color: #7F93B2; margin: 6px 2px 0; }
+  .c-fonte a { color: #7DD3FC; }
+  .c-altri { margin-top: 10px; }
+  .altro { font: 600 14px 'Manrope', sans-serif; color: #EAF2FF; background: rgba(255,255,255,0.06); border: 1px dashed rgba(255,255,255,0.3); border-radius: 12px;
+    padding: 9px 14px; cursor: pointer; text-align: left; }
+  .altro:hover, .altro.attivo { background: rgba(255,255,255,0.12); }
+  .c-gancio { font: 700 18px 'Manrope', sans-serif; color: #FFE58A; margin: 16px 0 8px; }
+  .c-punti { margin: 0; padding: 0; list-style: none; display: flex; flex-direction: column; gap: 8px; }
+  .c-punti li { font-size: 16.5px; line-height: 1.5; color: #DCE6F5; padding-left: 28px; position: relative; }
+  .c-punti li::before { content: "🎧"; position: absolute; left: 0; top: 1px; font-size: 15px; }
+  .c-sapevi { font-size: 15.5px; line-height: 1.5; color: #DCE6F5; background: rgba(255,255,255,0.05); border-left: 4px solid var(--accent); border-radius: 10px;
+    padding: 10px 14px; margin-top: 14px; }
+  .c-sapevi b { color: var(--accent); }
+  .c-strumenti { display: grid; grid-template-columns: repeat(auto-fill, minmax(190px, 1fr)); gap: 10px; }
+  .c-strum { display: flex; align-items: center; gap: 10px; text-align: left; cursor: pointer; color: inherit; font: inherit; padding: 7px; border-radius: 12px;
+    background: rgba(94,200,216,0.07); border: 1px solid rgba(94,200,216,0.35); }
+  .c-strum:hover { background: rgba(94,200,216,0.15); }
+  .c-strum .foto { width: 64px; aspect-ratio: 16 / 10; border-radius: 7px; background: #1e293b center / cover no-repeat; flex: none; }
+  .c-strum b { display: block; font: 700 14.5px 'Manrope', sans-serif; }
+  .c-strum small { color: #9FB3CE; font-size: 12px; }
+  .c-parole { margin: 0; display: grid; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); gap: 8px; }
+  .c-parole div { background: rgba(255,255,255,0.045); border: 1px solid rgba(255,255,255,0.1); border-radius: 10px; padding: 9px 12px; }
+  .c-parole dt { font: 800 15px 'Manrope', sans-serif; color: var(--accent); }
+  .c-parole dd { margin: 2px 0 0; font-size: 14.5px; line-height: 1.45; color: #DCE6F5; }
+  .linea { list-style: none; margin: 0; padding: 0 0 0 14px; border-left: 3px solid var(--accent); display: flex; flex-direction: column; gap: 9px; }
+  .linea li { display: grid; grid-template-columns: 76px 1fr; gap: 10px; font-size: 15.5px; line-height: 1.45; color: #DCE6F5; }
+  .linea b { font-family: 'Manrope', sans-serif; color: #FFE58A; }
+  .prossima { display: inline-block; margin-top: 22px; font: 700 16px 'Manrope', sans-serif; color: #0f172a; background: #FFE58A; padding: 11px 20px; border-radius: 999px; text-decoration: none; }
+  .c-nav { display: flex; justify-content: space-between; gap: 12px; margin-top: 34px; padding-top: 18px; border-top: 1px solid rgba(255,255,255,0.1); }
+  .c-vai { font: 700 15px 'Manrope', sans-serif; color: #EAF2FF; background: rgba(255,255,255,0.07); border: 1px solid rgba(255,255,255,0.2); border-radius: 14px;
+    padding: 12px 16px; cursor: pointer; max-width: 48%; text-align: left; }
+  .c-vai.avanti { margin-left: auto; text-align: right; background: var(--accent); color: #0f172a; border-color: var(--accent); }
+  .c-vai:hover { filter: brightness(1.1); }
+  .c-vai[hidden] { display: none; }
+  @media (max-width: 560px) {
+    .c-barra { padding: 30px 10px 8px; gap: 8px; }
+    .c-num { display: none; }
+    .c-pagina { padding: 16px 14px 32px; }
+    .c-racconto p { font-size: 16.5px; }
+    .c-vai { font-size: 13.5px; padding: 10px 12px; }
+    .linea li { grid-template-columns: 58px 1fr; font-size: 14.5px; }
+  }
+  @media (prefers-reduced-motion: reduce) { .voce { transition: none; } }
 </style>
 <!-- per i motori di ricerca e la condivisione -->
 <link rel="canonical" href="https://musicascuole.it/storia-medioevo.html">
@@ -122,7 +223,7 @@
 <meta property="og:locale" content="it_IT">
 <meta property="og:url" content="https://musicascuole.it/storia-medioevo.html">
 <meta property="og:title" content="Il Medioevo — Storia della musica — musicascuole.it">
-<meta property="og:description" content="La musica del Medioevo raccontata attraverso gli ascolti: canto gregoriano, Leonino e Perotino, trovatori, Carmina Burana, danze e strumenti dell'epoca.">
+<meta property="og:description" content="Il Medioevo in musica, un capitolo alla volta: monasteri e canto gregoriano, Guido d'Arezzo, Ildegarda di Bingen, la polifonia di Notre-Dame, trovatori, goliardi, Machaut e Landini, con ascolti e strumenti.">
 <meta property="og:image" content="https://musicascuole.it/media/condivisione.jpg">
 <meta property="og:image:width" content="1200">
 <meta property="og:image:height" content="630">
@@ -135,26 +236,30 @@
 <main>
 
   <div class="banner" id="banner">
-    <div class="meta sx" data-mondo="profano" title="Musica profana"><img src="media/storia/medioevo/banner-castello.jpg" alt="La città fortificata di Carcassonne, di notte"></div>
-    <div class="meta dx" data-mondo="sacro" title="Musica sacra"><img src="media/storia/medioevo/banner-notredame.jpg" alt="La cattedrale di Notre-Dame di Parigi, di notte"></div>
+    <div class="meta sx" title="Musica profana"><img src="media/storia/medioevo/banner-castello.jpg" alt="La città fortificata di Carcassonne, di notte"></div>
+    <div class="meta dx" title="Musica sacra"><img src="media/storia/medioevo/banner-notredame.jpg" alt="La cattedrale di Notre-Dame di Parigi, di notte"></div>
     <div class="titolo-epoca">
       <div class="sopra">Storia della musica</div>
       <h1>Il Medioevo</h1>
       <div class="date">476 – 1492</div>
     </div>
-    <button class="etich-meta sx" data-mondo="profano">🏰 Profana<span class="lungo"> · castelli e piazze</span></button>
-    <button class="etich-meta dx" data-mondo="sacro">⛪ Sacra<span class="lungo"> · chiese e cattedrali</span></button>
+    <span class="etich-meta sx">🏰 Profana<span class="lungo"> · castelli e piazze</span></span>
+    <span class="etich-meta dx">⛪ Sacra<span class="lungo"> · chiese e cattedrali</span></span>
   </div>
 
-  <p class="atmosfera">Mille anni senza registrazioni: la musica vive nella memoria di chi la canta. Nelle cattedrali si prega con la voce, nei castelli e nelle piazze si balla e si canta l'amore.</p>
+  <p class="atmosfera">Mille anni senza registrazioni: la musica vive nella memoria di chi la canta. Un ascolto alla volta, scopriamo come si cantava e si suonava nei monasteri, nelle cattedrali, nei castelli e nelle piazze.</p>
 
   <nav class="schede" aria-label="Sezioni">
-    <button class="scheda attiva" data-scheda="ascolti">🎧 Ascolti <span class="n" id="nAscolti"></span></button>
+    <button class="scheda attiva" data-scheda="percorso">📖 Il percorso <span class="n" id="nCapitoli"></span></button>
     <button class="scheda" data-scheda="strumenti">🪕 Strumenti <span class="n" id="nStrumenti"></span></button>
     <button class="scheda" data-scheda="suonare">🎼 Da suonare <span class="n" id="nSuonare"></span></button>
   </nav>
 
-  <div class="grid" id="griglia"></div>
+  <section id="vistaPercorso">
+    <button type="button" class="inizia" id="inizia">▶ Comincia il viaggio</button>
+    <ol class="indice" id="indice"></ol>
+  </section>
+  <div class="grid" id="griglia" hidden></div>
 
   <details class="crediti-img">
     <summary>Crediti delle immagini e dei video</summary>
@@ -163,6 +268,48 @@
   </details>
 </main>
 
+<!-- ======== un capitolo del percorso: schermata intera ======== -->
+<section class="capitolo" id="capitolo" aria-labelledby="cTitolo" hidden>
+  <div class="c-barra">
+    <button type="button" class="c-indice" id="cIndice">☰ Indice</button>
+    <div class="c-avanz" id="cAvanz" aria-hidden="true"></div>
+    <span class="c-num" id="cNum"></span>
+  </div>
+  <article class="c-pagina">
+    <span class="c-label" id="cLabel"></span>
+    <h2 id="cTitolo"></h2>
+    <div class="c-data" id="cData"></div>
+    <div class="c-racconto" id="cRacconto"></div>
+
+    <div class="c-ascolto" id="cAscolto">
+      <h3 class="c-sez">🎧 Ascoltiamo: <span id="cBrano"></span></h3>
+      <div class="c-chi" id="cChi"></div>
+      <div class="schermo c-schermo" id="cSchermo"></div>
+      <div class="c-fonte" id="cFonte"></div>
+      <div class="c-altri" id="cAltri"></div>
+      <div class="c-gancio" id="cGancio"></div>
+      <ul class="c-punti" id="cPunti"></ul>
+      <div class="c-sapevi" id="cSapevi"></div>
+    </div>
+
+    <div class="c-extra" id="cStrumentiBox">
+      <h3 class="c-sez">🪕 Gli strumenti di questo capitolo</h3>
+      <div class="c-strumenti" id="cStrumenti"></div>
+    </div>
+    <div class="c-extra" id="cParoleBox">
+      <h3 class="c-sez">📝 Parole da ricordare</h3>
+      <dl class="c-parole" id="cParole"></dl>
+    </div>
+    <div class="c-extra" id="cRiepilogo"></div>
+
+    <nav class="c-nav" aria-label="Capitoli">
+      <button type="button" class="c-vai" id="cPrec"></button>
+      <button type="button" class="c-vai avanti" id="cSucc"></button>
+    </nav>
+  </article>
+</section>
+
+<!-- ======== finestra piccola: gli strumenti ======== -->
 <div class="velo" id="velo" role="dialog" aria-modal="true" aria-labelledby="fTitolo">
   <div class="finestra" id="finestra">
     <button class="chiudi" id="chiudi" aria-label="Chiudi">✕</button>
@@ -188,72 +335,195 @@
   const IMG = "media/storia/medioevo/";
 
   /* =========================================================
-     CONTENUTI — per cambiare un video basta cambiare "yt"
+     IL PERCORSO — un capitolo per ogni ascolto, in ordine.
+     Per cambiare un video basta cambiare "yt"; i testi del racconto sono in "racconto".
      ========================================================= */
-  const ASCOLTI = [
-    { id: "kyrie", mondo: "sacro", label: "Sacra · canto gregoriano", titolo: "Kyrie eleison", chi: "Canto gregoriano", img: "kyrie.jpg", yt: "r4vFnFHf8Us", canale: "Ensemble Organum (canale ufficiale)",
+  const CAPITOLI = [
+    { id: "viaggio", mondo: "profano", label: "Introduzione", titolo: "Un viaggio di mille anni", data: "476 – 1492",
+      racconto: [
+        "Il <b>Medioevo</b> dura circa mille anni. Comincia nel <b>476</b>, quando cade l'Impero romano d'Occidente, e finisce nel <b>1492</b>, quando Cristoforo Colombo arriva in America.",
+        "È un mondo molto diverso dal nostro. Quasi tutti vivono in campagna e lavorano la terra; pochissimi sanno leggere e scrivere.",
+        "La società è divisa in tre gruppi: <b>chi prega</b> (monaci e sacerdoti), <b>chi combatte</b> (cavalieri e signori, nei loro castelli) e <b>chi lavora</b> (contadini e artigiani).",
+        "Non esistono registrazioni: la musica vive solo quando qualcuno la canta o la suona, e si impara a memoria, ascoltando.",
+        "Per questo la conosciamo in due grandi mondi: la musica <b>sacra</b>, cantata nelle chiese e nei monasteri, e la musica <b>profana</b>, per le feste, le corti e le piazze. Cominciamo dalla piazza, con una danza."
+      ],
+      brano: "Saltarello", chi: "Anonimo italiano · XIV secolo", img: "saltarello.jpg", yt: "RU8QFeDZyvg", canale: "Grupo Artefactum",
+      gancio: "Il nome dice tutto: si balla saltando.",
+      punti: ["Solo strumenti: è musica per danzare.",
+              "Il ritmo è veloce e saltellante.",
+              "Ascolta le sezioni che si ripetono, ogni volta con un finale diverso."],
+      sapevi: "Viene da un manoscritto toscano del Trecento che oggi si trova a Londra, alla British Library. È una delle poche danze medievali arrivate fino a noi.",
+      strumenti: ["ciaramella", "cornamusa"],
+      parole: [["Musica sacra", "la musica per la preghiera e le celebrazioni religiose."], ["Musica profana", "la musica per le feste, il ballo, l'amore e la vita di tutti i giorni."]] },
+
+    { id: "gregoriano", mondo: "sacro", label: "Musica sacra", titolo: "Il canto dei monasteri", data: "VI – IX secolo",
+      racconto: [
+        "Dopo la caduta di Roma i <b>monasteri</b> diventano i centri della cultura: lì si copiano i libri, si studia e si conserva il sapere antico.",
+        "I monaci seguono la regola di San Benedetto, <i>«ora et labora»</i>: prega e lavora. Più volte al giorno, e anche di notte, si riuniscono per pregare cantando.",
+        "Nasce così il <b>canto gregoriano</b>: melodie in latino, a una sola voce e senza strumenti.",
+        "Intorno all'anno <b>800</b> l'imperatore <b>Carlo Magno</b> vuole che in tutto il suo impero si canti allo stesso modo: i cantori imparano a memoria centinaia di melodie.",
+        "Per aiutarsi, nel IX secolo i monaci cominciano a scrivere sopra le parole dei piccoli segni, i <b>neumi</b>, che ricordano se la melodia sale o scende."
+      ],
+      brano: "Kyrie eleison", chi: "Canto gregoriano", img: "kyrie.jpg", yt: "r4vFnFHf8Us", canale: "Ensemble Organum (canale ufficiale)",
       gancio: "Una sola melodia, nessuno strumento: per secoli la Chiesa ha pregato così.",
       punti: ["Tutte le voci cantano la stessa melodia: è la <b>monodia</b>.",
               "Solo voci, senza strumenti: si dice <b>a cappella</b>.",
               "Il ritmo è libero, segue le parole: niente battito da tenere con il piede.",
               "A volte una sillaba si allunga su tante note, come un'onda: è un <b>melisma</b>."],
-      sapevi: "Si chiama «gregoriano» per papa Gregorio Magno (VI secolo), ma è una leggenda: questi canti si sono formati lentamente, in secoli di preghiera." },
-    { id: "ut", mondo: "sacro", label: "Sacra · inno", titolo: "Ut queant laxis", chi: "Inno a San Giovanni Battista", img: "ut.jpg", yt: "iMSRLWsAWHI", canale: "Chants of a Lifetime",
+      sapevi: "Si chiama «gregoriano» per papa Gregorio Magno (VI secolo), ma è una leggenda: questi canti si sono formati lentamente, in secoli di preghiera.",
+      parole: [["Monodia", "una sola melodia, cantata da una o più voci all'unisono."], ["A cappella", "solo voci, senza strumenti."], ["Neumi", "i primi segni per scrivere la musica, sopra le parole."]] },
+
+    { id: "guido", mondo: "sacro", label: "Musica sacra", titolo: "Le note hanno un nome", data: "1025 circa",
+      racconto: [
+        "Con i neumi si capiva se la melodia saliva o scendeva, ma non di quanto. Per imparare tutti i canti servivano anche <b>dieci anni</b>!",
+        "Intorno al 1025 un monaco toscano, <b>Guido d'Arezzo</b>, trova una soluzione geniale.",
+        "Scrive le note su <b>righe parallele</b>, così ogni nota ha un posto preciso. È l'antenato del nostro pentagramma: lui usava quattro righe, il <b>tetragramma</b>.",
+        "Poi dà un <b>nome alle note</b>, prendendo le prime sillabe dei versi di un inno a San Giovanni: <b>Ut, Re, Mi, Fa, Sol, La</b>.",
+        "Insegnava anche con la mano: ogni punto delle dita era una nota. Con il suo metodo, diceva, un ragazzo imparava a cantare un canto nuovo in pochi mesi."
+      ],
+      brano: "Ut queant laxis", chi: "Inno a San Giovanni Battista", img: "ut.jpg", yt: "iMSRLWsAWHI", canale: "Chants of a Lifetime",
       gancio: "Perché le note si chiamano DO, RE, MI?",
       punti: ["Ogni verso comincia <b>una nota più in alto</b> del precedente.",
               "Le sillabe iniziali dei versi sono <b>Ut – Re – Mi – Fa – Sol – La</b>.",
-              "Intorno al 1025 il monaco <b>Guido d'Arezzo</b> le usò per insegnare a leggere le note."],
-      sapevi: "Il SI arriva solo nel Cinquecento, dalle iniziali di <i>Sancte Iohannes</i>. Nel Seicento l'UT, scomodo da cantare, diventa DO." },
-    { id: "leonino", mondo: "sacro", label: "Sacra · polifonia", titolo: "Viderunt omnes", chi: "Leonino · Parigi, XII secolo", img: "leonino.jpg", yt: "0DPNf72qg60", canale: "James Bowman (canale ufficiale)",
-      gancio: "Una voce tiene, l'altra vola.",
-      punti: ["In basso il canto gregoriano rallenta in note lunghissime: è il <b>tenor</b>, da <i>tenere</i>.",
-              "Sopra, una seconda voce si muove libera, piena di note.",
-              "Due melodie diverse nello stesso momento: è la <b>polifonia</b>."],
-      sapevi: "Leonino lavorava a Notre-Dame di Parigi mentre la cattedrale era in costruzione: i lavori erano cominciati nel 1163." },
-    { id: "perotino", mondo: "sacro", label: "Sacra · polifonia", titolo: "Viderunt omnes", chi: "Perotino · Parigi, 1198 circa", img: "perotino.jpg", yt: "Q2JvIyStzNA", canale: "The Hilliard Ensemble (canale ufficiale)",
+              "Prova a cantare insieme le prime sillabe: è la scala che usi ancora oggi."],
+      sapevi: "Il SI arriva solo nel Cinquecento, dalle iniziali di <i>Sancte Iohannes</i>. Nel Seicento l'UT, scomodo da cantare, diventa DO.",
+      parole: [["Tetragramma", "le quattro righe di Guido d'Arezzo, antenate del pentagramma."], ["Mano guidoniana", "la mano usata come promemoria delle note."]] },
+
+    { id: "ildegarda", mondo: "sacro", label: "Musica sacra", titolo: "Ildegarda, la badessa compositrice", data: "1098 – 1179",
+      racconto: [
+        "Nel XII secolo, in Germania, vive una donna straordinaria: <b>Ildegarda di Bingen</b>.",
+        "Entra in monastero da bambina e diventa <b>badessa</b>, cioè la guida della sua comunità di monache.",
+        "Scrive libri di religione, di medicina e di scienze naturali, scambia lettere con papi e imperatori e racconta le sue visioni.",
+        "Compone anche musica: più di settanta canti per le sue monache. Sono melodie a una voce, come il gregoriano, ma molto più ampie: salgono in alto e scendono in basso, come un volo.",
+        "È una delle prime <b>compositrici</b> di cui conosciamo il nome e la musica."
+      ],
+      brano: "Ave, generosa", chi: "Ildegarda di Bingen · XII secolo", img: "ildegarda.jpg", yt: "vwDWXltH7KU", canale: "The Sixteen (canale ufficiale)",
+      gancio: "Una melodia che sale fino al cielo.",
+      punti: ["La melodia sale e scende molto più del gregoriano: Ildegarda ama le note acute e i salti ampi.",
+              "Il testo è una lode a Maria, piena di immagini: fiori, luce, rugiada.",
+              "Non c'è un battito regolare: il canto segue le parole."],
+      sapevi: "Ildegarda scrisse anche un dramma musicale, l'<i>Ordo virtutum</i>: le Virtù cantano, mentre il diavolo… può solo parlare, perché per lei il male non sapeva cantare.",
+      parole: [["Badessa", "la monaca che guida un monastero."]] },
+
+    { id: "notredame", mondo: "sacro", label: "Musica sacra", titolo: "Le cattedrali e la polifonia", data: "XII secolo",
+      racconto: [
+        "Dopo l'anno Mille le città crescono, si commercia di più e si costruiscono enormi <b>cattedrali gotiche</b>, alte e piene di luce.",
+        "A Parigi, mentre si costruisce <b>Notre-Dame</b> (i lavori cominciano nel 1163), i cantori provano una novità: far cantare insieme melodie diverse.",
+        "È la <b>polifonia</b>, «tante voci». Una voce tiene lunghissime le note del canto gregoriano: è il <b>tenor</b>, da «tenere». Sopra, le altre voci si muovono veloci.",
+        "I primi maestri di cui conosciamo il nome sono <b>Leonino</b>, che scrive a due voci, e <b>Perotino</b>, che arriva fino a quattro.",
+        "Per far cantare insieme tante voci bisogna anche sapere quanto dura ogni nota: comincia così la scrittura del <b>ritmo</b>."
+      ],
+      brano: "Viderunt omnes", chi: "Perotino · Parigi, 1198 circa", img: "perotino.jpg", yt: "Q2JvIyStzNA", canale: "The Hilliard Ensemble (canale ufficiale)",
       gancio: "Quattro voci in una cattedrale: per l'epoca era fantascienza.",
-      punti: ["Le voci diventano <b>quattro</b>: sotto il tenor, tre voci si intrecciano.",
-              "Le voci ripetono piccoli motivi ritmici: l'effetto è quasi ipnotico.",
+      punti: ["In basso il tenor tiene note lunghissime, come un pavimento.",
+              "Sopra, tre voci si intrecciano ripetendo piccoli motivi ritmici: l'effetto è quasi ipnotico.",
               "È musica pensata per l'eco enorme di una cattedrale gotica."],
-      sapevi: "Nel 1198 il vescovo di Parigi ordinò che a Capodanno si cantasse «a tre o quattro voci»: forse proprio questo brano di Perotino, che a Notre-Dame proseguì il lavoro di Leonino." },
-    { id: "kalenda", mondo: "profano", label: "Profana · trovatori", titolo: "Kalenda maya", chi: "Raimbaut de Vaqueiras · 1200 circa", img: "kalenda.jpg", yt: "CxcfSG-O_mE", canale: "Martin Best Mediaeval Ensemble (canale ufficiale)",
+      sapevi: "Nel 1198 il vescovo di Parigi ordinò che a Capodanno si cantasse «a tre o quattro voci»: forse proprio questo brano di Perotino.",
+      altri: [{ brano: "Viderunt omnes", chi: "Leonino · a due voci", yt: "0DPNf72qg60", canale: "James Bowman (canale ufficiale)", img: "leonino.jpg" }],
+      parole: [["Polifonia", "più melodie diverse cantate nello stesso momento."], ["Tenor", "la voce che «tiene» le note lunghe del canto gregoriano."]] },
+
+    { id: "trovatori", mondo: "profano", label: "Musica profana", titolo: "Cavalieri, dame e trovatori", data: "XII – XIII secolo",
+      racconto: [
+        "Nei castelli i signori amano le feste, la poesia e la musica. Qui nascono i <b>trovatori</b>: poeti e musicisti che «trovano», cioè inventano, parole e melodie.",
+        "Vengono dal sud della Francia e cantano nella loro lingua, la <b>lingua d'oc</b>. Tra loro ci sono anche alcune donne, le <b>trobairitz</b>, come la Contessa di Dia.",
+        "Il loro tema preferito è l'<b>amor cortese</b>: il cavaliere ama una dama nobile e lontana e la serve con rispetto, come un vassallo serve il suo signore.",
+        "A portare in giro le canzoni sono i <b>giullari</b>: musicisti, acrobati e cantastorie che viaggiano di corte in corte e di piazza in piazza.",
+        "Nel nord della Francia gli stessi poeti si chiamano <b>trovieri</b>, in Germania <b>Minnesänger</b>, «cantori d'amore»."
+      ],
+      brano: "Kalenda maya", chi: "Raimbaut de Vaqueiras · 1200 circa", img: "kalenda.jpg", yt: "CxcfSG-O_mE", canale: "Martin Best Mediaeval Ensemble (canale ufficiale)",
       gancio: "Un trovatore scrive le parole su una danza appena ascoltata.",
-      punti: ["È in <b>lingua d'oc</b>, la lingua dei trovatori del sud della Francia.",
+      punti: ["È in <b>lingua d'oc</b>, la lingua dei trovatori.",
               "Canta l'amore per una dama: è l'<b>amor cortese</b>.",
               "Il ritmo è quello di una danza: l'<b>estampida</b>."],
-      sapevi: "Si racconta che Raimbaut la scrisse alla corte del marchese di Monferrato, in Piemonte, dopo aver sentito due giullari francesi suonare questa danza." },
-    { id: "taberna", mondo: "profano", label: "Profana · goliardi", titolo: "In taberna quando sumus", chi: "Carmina Burana · 1230 circa", img: "taberna.jpg", yt: "Zs-uItDlEhE", canale: "Clemencic Consort (canale ufficiale)",
+      sapevi: "Si racconta che Raimbaut la scrisse alla corte del marchese di Monferrato, in Piemonte, dopo aver sentito due giullari francesi suonare questa danza.",
+      strumenti: ["viella", "arpa", "liuto", "ghironda"],
+      parole: [["Trovatori", "poeti-musicisti delle corti del sud della Francia."], ["Amor cortese", "l'amore rispettoso del cavaliere per una dama nobile."], ["Giullari", "musicisti e artisti di strada che viaggiavano di corte in corte."]] },
+
+    { id: "goliardi", mondo: "profano", label: "Musica profana", titolo: "Studenti in viaggio: i goliardi", data: "XIII secolo",
+      racconto: [
+        "Nascono le prime <b>università</b>: Bologna, la più antica, poi Parigi, Oxford, Padova…",
+        "Gli studenti viaggiano da una città all'altra per seguire i maestri migliori, e parlano tutti la stessa lingua: il <b>latino</b>.",
+        "Alcuni di loro, i <b>goliardi</b>, scrivono canzoni allegre e irriverenti: sulla fortuna, sulla primavera, sull'amore, sulle osterie… e prendono in giro anche i potenti.",
+        "Molte di queste canzoni sono raccolte in un grande libro, il codice dei <b>Carmina Burana</b>, cioè «canti di Beuern», dal monastero dove è stato ritrovato."
+      ],
+      brano: "In taberna quando sumus", chi: "Carmina Burana · 1230 circa", img: "taberna.jpg", yt: "Zs-uItDlEhE", canale: "Clemencic Consort (canale ufficiale)",
       gancio: "Una canzone da osteria… in latino.",
-      punti: ["La scrissero i <b>goliardi</b>, studenti e chierici che giravano tra le università.",
-              "Il testo elenca chi beve all'osteria: tutti, dal servo al vescovo!",
-              "Il ritmo è marcato e ripetitivo: si canta in coro, battendo il tempo."],
-      sapevi: "Il codice dei Carmina Burana fu ritrovato nel 1803 nell'abbazia di Benediktbeuern, in Baviera. Nel 1937 Carl Orff ha rimusicato alcuni di questi testi: il suo <i>O Fortuna</i> è famosissimo." },
-    { id: "sumer", mondo: "profano", label: "Profana · canone", titolo: "Sumer is icumen in", chi: "Anonimo inglese · XIII secolo", img: "sumer.jpg", yt: "Fxx7ZIfJqr4", canale: "Early Music Muse",
+      punti: ["Il testo elenca chi va all'osteria: tutti, dal servo al vescovo!",
+              "Il ritmo è marcato e ripetitivo: si canta in coro, battendo il tempo.",
+              "Senti il tamburo e i fiati: è musica da festa."],
+      sapevi: "Il codice dei Carmina Burana fu ritrovato nel 1803 nell'abbazia di Benediktbeuern, in Baviera. Nel 1937 Carl Orff ha rimusicato alcuni di questi testi: il suo <i>O Fortuna</i> è famosissimo.",
+      parole: [["Goliardi", "studenti e chierici vaganti che scrivevano canzoni in latino."]] },
+
+    { id: "canone", mondo: "profano", label: "Musica profana", titolo: "Un canone per l'estate", data: "XIII secolo",
+      racconto: [
+        "In Inghilterra, verso la metà del Duecento, un monaco copia su una pagina un brano sorprendente: <i>Sumer is icumen in</i>, «è arrivata l'estate».",
+        "È scritto in <b>inglese antico</b>, la lingua di tutti i giorni, e non in latino.",
+        "È un <b>canone</b>: le voci cantano la stessa melodia, ma entrano una dopo l'altra, rincorrendosi. Sotto, altre due voci ripetono sempre lo stesso motivo.",
+        "In tutto sei voci: un'idea modernissima per l'epoca. È uno dei canoni più antichi che conosciamo."
+      ],
+      brano: "Sumer is icumen in", chi: "Anonimo inglese · XIII secolo", img: "sumer.jpg", yt: "Fxx7ZIfJqr4", canale: "Early Music Muse",
       gancio: "Uno dei più antichi canoni che conosciamo, a sei voci.",
-      punti: ["Le voci entrano una dopo l'altra con la stessa melodia: è un <b>canone</b>.",
+      punti: ["Le voci entrano una dopo l'altra con la stessa melodia.",
               "Sotto, due voci ripetono sempre lo stesso motivo, come un tappeto.",
               "Canta l'arrivo dell'estate e il verso del cuculo: <i>cuccu!</i>"],
-      sapevi: "Lo copiò un monaco dell'abbazia di Reading, in Inghilterra. Sotto le parole inglesi ne scrisse altre in latino, religiose, sulla stessa musica." },
-    { id: "saltarello", mondo: "profano", label: "Profana · danza", titolo: "Saltarello", chi: "Anonimo italiano · XIV secolo", img: "saltarello.jpg", yt: "RU8QFeDZyvg", canale: "Grupo Artefactum",
-      gancio: "Il nome dice tutto: si balla saltando.",
-      punti: ["Solo strumenti: è musica per danzare.",
-              "Il ritmo è veloce e saltellante.",
-              "Ascolta le sezioni che si ripetono, ogni volta con un finale diverso."],
-      sapevi: "Viene da un manoscritto toscano del Trecento che oggi si trova a Londra, alla British Library. È una delle poche danze medievali arrivate fino a noi." },
-    { id: "machaut", mondo: "profano", label: "Profana · virelai", titolo: "Douce dame jolie", chi: "Guillaume de Machaut · XIV secolo", img: "machaut.jpg", yt: "vO1C_nQNls4", canale: "Emilio Villalba",
+      sapevi: "Sotto le parole inglesi il monaco ne scrisse altre in latino, religiose, sulla stessa musica: così il brano si poteva cantare anche in chiesa.",
+      parole: [["Canone", "la stessa melodia cantata da più voci che entrano una dopo l'altra."]] },
+
+    { id: "arsnova", mondo: "profano", label: "Musica profana", titolo: "Il Trecento e l'Ars nova", data: "XIV secolo",
+      racconto: [
+        "Nel Trecento i musicisti francesi parlano di un'<b>Ars nova</b>, un'«arte nuova»: nuovi modi di scrivere il ritmo permettono musiche più varie e raffinate.",
+        "È anche un secolo difficile: nel <b>1348</b> la <b>peste nera</b> uccide circa un europeo su tre.",
+        "Il musicista più famoso è <b>Guillaume de Machaut</b>, poeta e compositore, che lavora per re e principi ed è canonico della cattedrale di Reims.",
+        "Scrive canzoni d'amore in francese, con forme in cui un ritornello torna sempre uguale (ballate, rondò, virelai), e anche la prima Messa polifonica completa scritta da un solo autore."
+      ],
+      brano: "Douce dame jolie", chi: "Guillaume de Machaut · XIV secolo", img: "machaut.jpg", yt: "vO1C_nQNls4", canale: "Emilio Villalba",
       gancio: "Il poeta-musicista più famoso del Trecento.",
       punti: ["Una sola voce racconta un amore non ricambiato.",
               "Il ritornello torna dopo ogni strofa: è la forma del <b>virelai</b>.",
               "La melodia è semplice: dopo un ascolto la canticchi già."],
-      sapevi: "Machaut era anche canonico della cattedrale di Reims e scrisse la prima Messa polifonica completa composta da un solo autore." },
-    { id: "landini", mondo: "profano", label: "Profana · ballata", titolo: "Ecco la primavera", chi: "Francesco Landini · Firenze, XIV secolo", img: "landini.jpg", yt: "cgnCBPOLyBs", canale: "Ensemble Ars Serena",
+      sapevi: "Machaut fece copiare tutte le sue opere in grandi libri decorati, controllando lui stesso il lavoro: è uno dei primi musicisti a preoccuparsi di far arrivare la sua musica fino a noi.",
+      parole: [["Ars nova", "la «nuova arte» musicale del Trecento, con un modo nuovo di scrivere il ritmo."], ["Ritornello", "la parte di una canzone che torna sempre uguale."]] },
+
+    { id: "landini", mondo: "profano", label: "Musica profana", titolo: "Firenze e il Trecento italiano", data: "XIV secolo",
+      racconto: [
+        "Anche in Italia il Trecento è un secolo d'oro: è l'epoca di <b>Dante</b>, <b>Petrarca</b> e <b>Boccaccio</b>.",
+        "Nel <i>Decameron</i> di Boccaccio dieci giovani, fuggiti da Firenze per la peste, ogni sera cantano e danzano una <b>ballata</b>.",
+        "A Firenze il musicista più famoso è <b>Francesco Landini</b>: cieco fin da bambino, suona benissimo l'organo e scrive tante ballate a due e tre voci, in <b>italiano</b>.",
+        "Le sue musiche sono raccolte, insieme a quelle di altri autori, in un libro bellissimo, il <b>Codice Squarcialupi</b>.",
+        "Dopo di lui la musica entrerà in una nuova epoca: il <b>Rinascimento</b>."
+      ],
+      brano: "Ecco la primavera", chi: "Francesco Landini · Firenze, XIV secolo", img: "landini.jpg", yt: "cgnCBPOLyBs", canale: "Ensemble Ars Serena",
       gancio: "Firenze, Trecento: un organista cieco canta la primavera.",
       punti: ["È in <b>italiano</b>, la lingua del popolo.",
               "Due voci cantano insieme: polifonia, ma leggera e danzante.",
               "La prima parte, la <b>ripresa</b>, torna come un ritornello."],
-      sapevi: "Landini era cieco fin da bambino, ma era famosissimo per come suonava l'organetto: nel Codice Squarcialupi è ritratto proprio con il suo strumento." }
+      sapevi: "Nel Codice Squarcialupi Landini è ritratto proprio con il suo organetto, lo strumento che lo aveva reso famoso.",
+      strumenti: ["organetto", "salterio"],
+      parole: [["Ballata", "canzone italiana del Trecento con una ripresa che torna."]] },
+
+    { id: "riepilogo", mondo: "sacro", label: "Ricapitoliamo", titolo: "Che cosa abbiamo scoperto", data: "476 – 1492", riepilogo: true,
+      racconto: [
+        "Mille anni di musica in pochi passi: dal canto dei monaci alle ballate di Firenze.",
+        "La musica <b>sacra</b> passa dalla <b>monodia</b> del canto gregoriano alla <b>polifonia</b> delle cattedrali.",
+        "La musica <b>profana</b> vive nelle corti, nelle università e nelle piazze, con trovatori, giullari e goliardi, e usa sempre di più le lingue di tutti i giorni.",
+        "Intanto nasce il modo di <b>scrivere la musica</b>: neumi, righe, nomi delle note, ritmo. È la base della musica che leggiamo ancora oggi."
+      ] }
   ];
 
+  const LINEA = [
+    ["476", "Cade l'Impero romano d'Occidente: inizia il Medioevo."],
+    ["800", "Carlo Magno imperatore: il canto gregoriano si diffonde in tutto l'impero."],
+    ["IX sec.", "Compaiono i neumi, i primi segni per scrivere la musica."],
+    ["1025", "Guido d'Arezzo: le righe e i nomi delle note."],
+    ["1150", "Ildegarda di Bingen compone i suoi canti."],
+    ["1163", "Comincia la costruzione di Notre-Dame: Leonino e Perotino inventano la polifonia."],
+    ["1200", "Trovatori e giullari nelle corti."],
+    ["1230", "Il codice dei Carmina Burana."],
+    ["1348", "La peste nera. È il secolo dell'Ars nova, di Machaut e di Landini."],
+    ["1492", "Colombo arriva in America: finisce il Medioevo."]
+  ];
+
+  /* ---------- strumenti, da suonare, crediti: come prima ---------- */
   const STRUMENTI = [
     { id: "viella", label: "Corde strofinate", titolo: "Viella", chi: "Antenata del violino", img: "viella.jpg", yt: "7-Yd1lryGKs", canale: "Kathryn Wheeler",
       gancio: "Lo strumento preferito dei giullari.",
@@ -310,6 +580,7 @@
   'Banner: Notre-Dame di Parigi di notte, foto di Sanchezn — <a href="https://commons.wikimedia.org/wiki/File:NotreDameDeParis.jpg" target="_blank" rel="noopener">fonte</a>, <a href="https://creativecommons.org/licenses/by-sa/3.0/deed.it" target="_blank" rel="noopener">CC BY-SA 3.0</a>, ritagliata.',
   'Kyrie: Antifonario di Hartker, San Gallo (X secolo) — <a href="https://commons.wikimedia.org/wiki/File:Csg-0391_009.jpg" target="_blank" rel="noopener">fonte</a>, pubblico dominio.',
   'Ut queant laxis: mano guidoniana — <a href="https://commons.wikimedia.org/wiki/File:Guidonian_hand.jpg" target="_blank" rel="noopener">fonte</a>, pubblico dominio.',
+  'Ildegarda di Bingen: miniatura del Liber Scivias (Codice di Rupertsberg, XII secolo, facsimile) — <a href="https://commons.wikimedia.org/wiki/File:Hildegard_von_Bingen.jpg" target="_blank" rel="noopener">fonte</a>, pubblico dominio.',
   'Leonino: portali di Notre-Dame, foto di Benh LIEU SONG — <a href="https://commons.wikimedia.org/wiki/File:Notre_Dame_Paris_front_facade_lower.jpg" target="_blank" rel="noopener">fonte</a>, <a href="https://creativecommons.org/licenses/by-sa/3.0/deed.it" target="_blank" rel="noopener">CC BY-SA 3.0</a>, ritagliata.',
   'Perotino: Viderunt omnes, manoscritto — <a href="https://commons.wikimedia.org/wiki/File:P%C3%A9rotin_-_Viderunt_omnes.jpg" target="_blank" rel="noopener">fonte</a>, pubblico dominio.',
   'Kalenda maya: musicisti dalle Cantigas de Santa Maria (XIII secolo) — <a href="https://commons.wikimedia.org/wiki/File:Cantigas_de_Santa_Mar%C3%ADa,_Codex_of_the_musicians,_B-I-2_162R_lute_rebab.jpg" target="_blank" rel="noopener">fonte</a>, pubblico dominio.',
@@ -324,14 +595,26 @@
   'Cornamusa: ricostruzione da una cantiga, foto di Viascos — <a href="https://commons.wikimedia.org/wiki/File:Gaita_Cantiga_350.jpg" target="_blank" rel="noopener">fonte</a>, <a href="https://creativecommons.org/licenses/by-sa/4.0/deed.it" target="_blank" rel="noopener">CC BY-SA 4.0</a>, ritagliata.'
   ];
 
-  /* ---------- costruzione della griglia ---------- */
-  const griglia = document.getElementById("griglia");
-  document.getElementById("nAscolti").textContent = ASCOLTI.length;
+
+  /* ---------- schede ---------- */
+  const vistaPercorso = document.getElementById("vistaPercorso"), griglia = document.getElementById("griglia");
+  document.getElementById("nCapitoli").textContent = CAPITOLI.length - 1;
   document.getElementById("nStrumenti").textContent = STRUMENTI.length;
   document.getElementById("nSuonare").textContent = SUONARE.length;
+  const accento = c => c.mondo === "sacro" ? "#a78bfa" : "#F99D1C";
 
-  let scheda = "ascolti", mondo = null, elenco = [];
-  function disegna() {
+  /* indice del percorso */
+  document.getElementById("indice").innerHTML = CAPITOLI.map((c, i) => `
+    <li><button type="button" class="voce ${c.mondo}${c.riepilogo ? " fine" : ""}" data-i="${i}" style="--accent:${accento(c)}">
+      <span class="v-num">${c.riepilogo ? "★" : i + 1}</span>
+      ${c.img ? `<span class="v-foto" style="background-image:url('${IMG + c.img}')"></span>` : `<span class="v-foto v-vuota">📜</span>`}
+      <span class="v-testo"><span class="v-data">${c.data}</span><span class="v-titolo">${c.titolo}</span>
+        <span class="v-brano">${c.brano ? "🎧 " + c.brano + " · " + c.chi : "Le date e le parole da ricordare"}</span></span>
+      <span class="v-vai" aria-hidden="true">›</span></button></li>`).join("");
+  document.getElementById("indice").addEventListener("click", e => { const b = e.target.closest(".voce"); if (b) apriCapitolo(+b.dataset.i); });
+  document.getElementById("inizia").addEventListener("click", () => apriCapitolo(0));
+
+  function disegnaGriglia(scheda) {
     griglia.innerHTML = "";
     if (scheda === "suonare") {
       SUONARE.forEach(s => {
@@ -342,84 +625,152 @@
       });
       return;
     }
-    const dati = scheda === "ascolti" ? ASCOLTI : STRUMENTI;
-    elenco = dati.filter(d => scheda !== "ascolti" || !mondo || d.mondo === mondo);
-    elenco.forEach((d, i) => {
-      const c = document.createElement("button"); c.type = "button";
-      c.className = "card " + (scheda === "ascolti" ? d.mondo : "strum");
+    STRUMENTI.forEach((d, i) => {
+      const c = document.createElement("button"); c.type = "button"; c.className = "card strum";
       c.innerHTML = `<div class="foto" style="background-image:url('${IMG + d.img}')"></div>
         <div class="testo"><span class="label">${d.label}</span><h2>${d.titolo}</h2><span class="chi">${d.chi}</span><p>${d.gancio}</p></div>`;
-      c.addEventListener("click", () => apri(i));
+      c.addEventListener("click", () => apriStrumento(STRUMENTI, i));
       griglia.appendChild(c);
     });
   }
-
   document.querySelectorAll(".scheda").forEach(b => b.addEventListener("click", () => {
-    scheda = b.dataset.scheda;
+    const s = b.dataset.scheda;
     document.querySelectorAll(".scheda").forEach(x => x.classList.toggle("attiva", x === b));
-    if (scheda !== "ascolti") impostaMondo(null, true);
-    disegna();
+    vistaPercorso.hidden = s !== "percorso"; griglia.hidden = s === "percorso";
+    if (s !== "percorso") disegnaGriglia(s);
   }));
 
-  /* ---------- banner: sacro / profano ---------- */
-  const banner = document.getElementById("banner");
-  function impostaMondo(m, senzaDisegno) {
-    mondo = m;
-    banner.classList.toggle("f-profano", m === "profano");
-    banner.classList.toggle("f-sacro", m === "sacro");
-    document.querySelectorAll(".etich-meta").forEach(e => e.classList.toggle("attiva", e.dataset.mondo === m));
-    if (!senzaDisegno) {
-      if (scheda !== "ascolti") { scheda = "ascolti"; document.querySelectorAll(".scheda").forEach(x => x.classList.toggle("attiva", x.dataset.scheda === "ascolti")); }
-      disegna();
-    }
-  }
-  banner.querySelectorAll("[data-mondo]").forEach(el => el.addEventListener("click", () => impostaMondo(mondo === el.dataset.mondo ? null : el.dataset.mondo)));
-
-  /* ---------- finestra con il video ---------- */
-  const velo = document.getElementById("velo"), schermo = document.getElementById("schermo"), finestra = document.getElementById("finestra");
-  let attuale = 0;
-  function apri(i) {
-    attuale = (i + elenco.length) % elenco.length;
-    const d = elenco[attuale];
-    finestra.style.setProperty("--accent", scheda === "ascolti" ? (d.mondo === "sacro" ? "#a78bfa" : "#F99D1C") : "#5EC8D8");
-    document.getElementById("fLabel").textContent = d.label;
-    document.getElementById("fTitolo").textContent = d.titolo;
-    document.getElementById("fChi").textContent = d.chi;
-    document.getElementById("fGancio").textContent = d.gancio;
-    document.getElementById("fPunti").innerHTML = d.punti.map(p => `<li>${p}</li>`).join("");
-    document.getElementById("fSapevi").innerHTML = `<b>Lo sapevi?</b> ${d.sapevi}`;
-    document.getElementById("fFonte").innerHTML = `<a href="https://www.youtube.com/watch?v=${d.yt}" target="_blank" rel="noopener">Apri su YouTube ↗</a>`;
-    // anteprima: nessuna richiesta a YouTube finché non si preme play
-    schermo.innerHTML = "";
-    schermo.style.backgroundImage = `url('${IMG + d.img}')`;
+  /* ---------- anteprima del video: nessuna richiesta a YouTube finché non si preme play ---------- */
+  function preparaSchermo(el, v) {
+    el.innerHTML = "";
+    el.style.backgroundImage = `url('${IMG + v.img}')`;
     const b = document.createElement("button"); b.className = "avvio"; b.type = "button";
     b.innerHTML = `<span class="tondo">▶</span><span class="nota">Il video si carica da YouTube quando premi play</span>`;
     b.addEventListener("click", () => {
-      schermo.innerHTML = `<iframe src="https://www.youtube-nocookie.com/embed/${d.yt}?autoplay=1&rel=0&playsinline=1" title="${d.titolo}"
+      el.innerHTML = `<iframe src="https://www.youtube-nocookie.com/embed/${v.yt}?autoplay=1&rel=0&playsinline=1" title="${v.brano || v.titolo}"
         allow="autoplay; encrypted-media; picture-in-picture; fullscreen" allowfullscreen referrerpolicy="strict-origin-when-cross-origin"></iframe>`;
     });
-    schermo.appendChild(b);
-    velo.classList.add("aperto");
-    document.body.style.overflow = "hidden";
-    b.focus({ preventScroll: true });
+    el.appendChild(b);
+    return b;
   }
-  function chiudi() { velo.classList.remove("aperto"); schermo.innerHTML = ""; document.body.style.overflow = ""; }
-  document.getElementById("chiudi").addEventListener("click", chiudi);
-  velo.addEventListener("click", e => { if (e.target === velo) chiudi(); });
-  document.getElementById("prec").addEventListener("click", () => apri(attuale - 1));
-  document.getElementById("succ").addEventListener("click", () => apri(attuale + 1));
+
+  /* ---------- un capitolo ---------- */
+  const cap = document.getElementById("capitolo"), cSchermo = document.getElementById("cSchermo");
+  let attuale = -1;
+  const $ = id => document.getElementById(id);
+  function apriCapitolo(i, daStoria) {
+    attuale = Math.max(0, Math.min(CAPITOLI.length - 1, i));
+    const c = CAPITOLI[attuale];
+    cap.style.setProperty("--accent", accento(c));
+    $("cNum").textContent = c.riepilogo ? "Fine del percorso" : `Capitolo ${attuale + 1} di ${CAPITOLI.length - 1}`;
+    $("cAvanz").innerHTML = CAPITOLI.map((_, k) => `<span class="${k < attuale ? "fatto" : k === attuale ? "qui" : ""}"></span>`).join("");
+    $("cLabel").textContent = c.label;
+    $("cTitolo").textContent = c.titolo;
+    $("cData").textContent = c.data;
+    $("cRacconto").innerHTML = c.racconto.map(p => `<p>${p}</p>`).join("");
+    // ascolto
+    $("cAscolto").hidden = !c.brano;
+    if (c.brano) {
+      $("cBrano").textContent = c.brano; $("cChi").textContent = c.chi;
+      mostraAscolto(c);
+      $("cAltri").innerHTML = (c.altri || []).map((a, k) => `<button type="button" class="altro" data-k="${k}">🎧 Ascolta anche: <b>${a.brano}</b> · ${a.chi}</button>`).join("");
+      $("cGancio").textContent = c.gancio;
+      $("cPunti").innerHTML = c.punti.map(p => `<li>${p}</li>`).join("");
+      $("cSapevi").innerHTML = `<b>Lo sapevi?</b> ${c.sapevi}`;
+    } else cSchermo.innerHTML = "";
+    // strumenti
+    const strum = (c.strumenti || []).map(id => STRUMENTI.findIndex(s => s.id === id)).filter(k => k >= 0);
+    $("cStrumentiBox").hidden = !strum.length;
+    $("cStrumenti").innerHTML = strum.map(k => `<button type="button" class="c-strum" data-k="${k}"><span class="foto" style="background-image:url('${IMG + STRUMENTI[k].img}')"></span>
+      <span><b>${STRUMENTI[k].titolo}</b><small>${STRUMENTI[k].chi}</small></span></button>`).join("");
+    // parole
+    const parole = c.riepilogo ? CAPITOLI.flatMap(x => x.parole || []) : (c.parole || []);
+    $("cParoleBox").hidden = !parole.length;
+    $("cParole").innerHTML = parole.map(([t, d]) => `<div><dt>${t}</dt><dd>${d}</dd></div>`).join("");
+    // riepilogo: la linea del tempo e il passo successivo
+    $("cRiepilogo").hidden = !c.riepilogo;
+    $("cRiepilogo").innerHTML = c.riepilogo ? `<h3 class="c-sez">🕰️ La linea del tempo</h3>
+      <ol class="linea">${LINEA.map(([d, t]) => `<li><b>${d}</b><span>${t}</span></li>`).join("")}</ol>
+      <a class="prossima" href="storia-rinascimento.html">Il prossimo capitolo della storia: <b>il Rinascimento</b> ▶</a>` : "";
+    // navigazione
+    const p = CAPITOLI[attuale - 1], s = CAPITOLI[attuale + 1];
+    $("cPrec").hidden = !p; $("cSucc").hidden = !s;
+    if (p) $("cPrec").innerHTML = `◀ <span>${p.titolo}</span>`;
+    if (s) $("cSucc").innerHTML = `<span>${s.riepilogo ? "Ricapitoliamo" : s.titolo}</span> ▶`;
+    cap.hidden = false; document.body.classList.add("in-capitolo");
+    cap.scrollTop = 0;
+    if (!daStoria) history.pushState({ c: attuale }, "", "#capitolo-" + (attuale + 1));
+    $("cIndice").focus({ preventScroll: true });
+  }
+  function mostraAscolto(v) {
+    preparaSchermo(cSchermo, v);
+    $("cFonte").innerHTML = `Video: ${v.canale} · <a href="https://www.youtube.com/watch?v=${v.yt}" target="_blank" rel="noopener">Apri su YouTube ↗</a>`;
+  }
+  $("cAltri").addEventListener("click", e => {
+    const b = e.target.closest(".altro"); if (!b) return;
+    const c = CAPITOLI[attuale], a = c.altri[+b.dataset.k];
+    const torna = b.classList.toggle("attivo");
+    mostraAscolto(torna ? a : c);
+    $("cBrano").textContent = torna ? a.brano : c.brano; $("cChi").textContent = torna ? a.chi : c.chi;
+    b.innerHTML = torna ? `↩ Torna a: <b>${c.brano}</b> · ${c.chi}` : `🎧 Ascolta anche: <b>${a.brano}</b> · ${a.chi}`;
+  });
+  $("cStrumenti").addEventListener("click", e => {
+    const b = e.target.closest(".c-strum"); if (!b) return;
+    cSchermo.querySelector("iframe") && preparaSchermo(cSchermo, CAPITOLI[attuale]);   // un video alla volta
+    apriStrumento(STRUMENTI, +b.dataset.k);
+  });
+  function chiudiCapitolo(daStoria) {
+    if (cap.hidden) return;
+    cap.hidden = true; cSchermo.innerHTML = ""; document.body.classList.remove("in-capitolo");
+    if (!daStoria && location.hash) history.pushState({}, "", location.pathname);
+    const v = document.querySelector(`.voce[data-i="${attuale}"]`); if (v) v.focus({ preventScroll: false });
+  }
+  $("cIndice").addEventListener("click", () => chiudiCapitolo());
+  $("cPrec").addEventListener("click", () => apriCapitolo(attuale - 1));
+  $("cSucc").addEventListener("click", () => apriCapitolo(attuale + 1));
+  window.addEventListener("popstate", () => {
+    const m = location.hash.match(/^#capitolo-(\d+)$/);
+    if (m) apriCapitolo(+m[1] - 1, true); else chiudiCapitolo(true);
+  });
+  { const m = location.hash.match(/^#capitolo-(\d+)$/); if (m) apriCapitolo(+m[1] - 1, true); }
+
+  /* ---------- finestra piccola: uno strumento ---------- */
+  const velo = $("velo"), schermo = $("schermo"), finestra = $("finestra");
+  let elencoS = STRUMENTI, iS = 0;
+  function apriStrumento(lista, i) {
+    elencoS = lista; iS = (i + lista.length) % lista.length;
+    const d = lista[iS];
+    finestra.style.setProperty("--accent", "#5EC8D8");
+    $("fLabel").textContent = d.label; $("fTitolo").textContent = d.titolo; $("fChi").textContent = d.chi; $("fGancio").textContent = d.gancio;
+    $("fPunti").innerHTML = d.punti.map(p => `<li>${p}</li>`).join("");
+    $("fSapevi").innerHTML = `<b>Lo sapevi?</b> ${d.sapevi}`;
+    $("fFonte").innerHTML = `<a href="https://www.youtube.com/watch?v=${d.yt}" target="_blank" rel="noopener">Apri su YouTube ↗</a>`;
+    preparaSchermo(schermo, d).focus({ preventScroll: true });
+    velo.classList.add("aperto"); document.body.style.overflow = "hidden";
+  }
+  function chiudiStrumento() { velo.classList.remove("aperto"); schermo.innerHTML = ""; document.body.style.overflow = ""; }
+  $("chiudi").addEventListener("click", chiudiStrumento);
+  velo.addEventListener("click", e => { if (e.target === velo) chiudiStrumento(); });
+  $("prec").addEventListener("click", () => apriStrumento(elencoS, iS - 1));
+  $("succ").addEventListener("click", () => apriStrumento(elencoS, iS + 1));
   document.addEventListener("keydown", e => {
-    if (!velo.classList.contains("aperto")) return;
-    if (e.key === "Escape") chiudi();
-    if (e.key === "ArrowRight") apri(attuale + 1);
-    if (e.key === "ArrowLeft") apri(attuale - 1);
+    if (velo.classList.contains("aperto")) {
+      if (e.key === "Escape") chiudiStrumento();
+      if (e.key === "ArrowRight") apriStrumento(elencoS, iS + 1);
+      if (e.key === "ArrowLeft") apriStrumento(elencoS, iS - 1);
+      return;
+    }
+    if (cap.hidden || /INPUT|TEXTAREA/.test(e.target.tagName)) return;
+    if (e.key === "Escape") chiudiCapitolo();
+    if (e.key === "ArrowRight" && attuale < CAPITOLI.length - 1) apriCapitolo(attuale + 1);
+    if (e.key === "ArrowLeft" && attuale > 0) apriCapitolo(attuale - 1);
   });
 
   /* ---------- crediti ---------- */
-  document.getElementById("listaCrediti").innerHTML = CREDITI_IMG.map(c => `<li>${c}</li>`).join("") +
-    [...ASCOLTI, ...STRUMENTI].map(d => `<li>${d.titolo} (${d.chi}): video di <a href="https://www.youtube.com/watch?v=${d.yt}" target="_blank" rel="noopener">${d.canale}</a> su YouTube</li>`).join("");
-
-  disegna();
+  const videoCapitoli = CAPITOLI.filter(c => c.brano).flatMap(c => [c, ...(c.altri || [])]);
+  $("listaCrediti").innerHTML = CREDITI_IMG.map(c => `<li>${c}</li>`).join("") +
+    [...videoCapitoli.map(c => ({ titolo: c.brano, chi: c.chi, yt: c.yt, canale: c.canale })), ...STRUMENTI]
+      .map(d => `<li>${d.titolo} (${d.chi}): video di <a href="https://www.youtube.com/watch?v=${d.yt}" target="_blank" rel="noopener">${d.canale}</a> su YouTube</li>`).join("");
 })();
 </script>
 </body>
