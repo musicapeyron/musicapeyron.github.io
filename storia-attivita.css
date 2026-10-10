@@ -165,7 +165,7 @@ button.mc-n:hover { filter: brightness(1.18); }
   .a-carte.es .ic { width: 40px; height: 40px; }
   .a-carte.es b { font-size: 20px; } .a-carte.es small { font-size: 14px; }
   .a-carte.sc { gap: 10px; }
-  .a-carte.sc .a-carta { min-height: 162px; padding: 10px 12px; align-items: flex-start; }
+  .a-carte.sc .a-carta { min-height: 156px; padding: 10px 12px; align-items: flex-start; }
   .a-carte.sc b { font-size: 17px; } .a-carte.sc small { font-size: 13px; }
   .a-corpo { height: 480px; flex: none; overflow: hidden; padding: 12px 6px 6px; }
   .attivita[data-tipo="mappa"] .a-corpo { height: 546px; padding-top: 6px; }

@@ -29,14 +29,19 @@ Per le altre epoche si copia il Medioevo e si cambiano solo i dati.
 ## Come si comincia un'epoca nuova
 1. Leggere la pagina attuale dell'epoca (`storia-<epoca>.html`): ascolti, video, strumenti, crediti già scelti
    (sono buoni punti di partenza; si possono riordinare o cambiare).
-2. Copiare `storia-medioevo.html` come base e sostituire: banner, testi e dati di `CAPITOLI`, `LINEA`, `STRUMENTI`,
-   `SUONARE`, `CREDITI_IMG`, `ATTIVITA`, cartella `IMG`. Il codice del percorso (diapositive, indice, banner) è
-   dentro la pagina; mappa, esercizi e schede sono in `storia-attivita.js/css` (comuni).
+2. Copiare `storia-medioevo.html` come base e sostituire: banner, frase d'atmosfera, testi e dati di `CAPITOLI`, `LINEA`,
+   `STRUMENTI`, `SUONARE`, `CREDITI_IMG`, `CREDITI_PAGINE`, `ATTIVITA`, cartella `IMG`, e nella chiamata
+   `StoriaPercorso.avvia` epoca, date e `prossima` (l'epoca successiva). La pagina contiene **solo dati e testi**:
+   tutto il codice è nei file comuni `storia-percorso.js/css` (indice, capitoli, strumenti, banner) e
+   `storia-attivita.js/css` (mappa, esercizi, schede). Una modifica lì vale per tutte le epoche.
 3. Far partire subito in sottofondo la ricerca e lo scaricamento delle immagini (è la parte più lenta), e intanto
    scrivere i testi delle pagine e i dati degli esercizi.
 4. Prove (sotto) e schermate a Cristiano.
 
 ## Com'è fatta la pagina
+- File comuni: `storia-percorso.css` + `storia-percorso.js` (percorso) e `storia-attivita.css` + `storia-attivita.js`
+  (mappa, esercizi, schede). La pagina li carica e chiama `StoriaPercorso.avvia({...})` (vedi il commento in cima a
+  `storia-percorso.js`); il capitolo e la finestra degli strumenti li crea lo script.
 - In alto il banner da bordo a bordo; sotto le schede (Il percorso, Strumenti, Da suonare, ...).
 - `CAPITOLI`: un capitolo per ogni ascolto, in ordine. Ogni capitolo ha `pagine` (una diapositiva per
   1–2 paragrafi: `{ img, did, t: [paragrafi] }`), poi l'ascolto (`brano`, `yt`, `punti`, `sapevi`,
