@@ -170,8 +170,8 @@ h1 { margin: 0; font-family: "Sora", "Inter", Arial, sans-serif; font-size: 2rem
     box-shadow: 0 1px 0 rgba(255,255,255,0.2) inset, 0 8px 18px rgba(0,0,0,0.3);
     transition: transform 0.12s var(--ease-spring), background 0.15s, opacity 0.15s;
 }
-.arrow-button:hover:not(:disabled) { background: linear-gradient(180deg, rgba(255,255,255,0.22), rgba(255,255,255,0.08)); transform: translateY(-2px); }
-.arrow-button:active:not(:disabled) { transform: scale(0.9); }
+.arrow-button:hover:not(:disabled) { background: linear-gradient(180deg, rgba(255,255,255,0.22), rgba(255,255,255,0.08)); }
+.arrow-button:active:not(:disabled) { filter: brightness(0.9); }
 .arrow-button:disabled { opacity: 0.35; cursor: not-allowed; }
 .note-tabs { display: flex; justify-content: center; gap: 10px; margin: 0 auto 8px; flex-wrap: wrap; }
 
@@ -183,7 +183,7 @@ h1 { margin: 0; font-family: "Sora", "Inter", Arial, sans-serif; font-size: 2rem
     box-shadow: 0 1px 0 rgba(255,255,255,0.10) inset, 0 4px 10px rgba(0,0,0,0.2);
     transition: transform 0.12s var(--ease-out-soft), background 0.15s;
 }
-.quality-guess-btn:hover { background: rgba(255,255,255,0.14); transform: translateY(-2px); }
+.quality-guess-btn:hover { background: rgba(255,255,255,0.14); }
 .quality-guess-btn.correct-flash { background: linear-gradient(135deg, #22c55e, #15803d) !important; }
 .quality-guess-btn.wrong-flash { background: linear-gradient(135deg, #ef4444, #b91c1c) !important; animation: buttonShake 0.4s ease-in-out; }
 @keyframes buttonShake { 0% { transform: translateX(0); } 20% { transform: translateX(-6px); } 40% { transform: translateX(6px); } 60% { transform: translateX(-4px); } 80% { transform: translateX(3px); } 100% { transform: translateX(0); } }
@@ -192,7 +192,7 @@ h1 { margin: 0; font-family: "Sora", "Inter", Arial, sans-serif; font-size: 2rem
     background: rgba(255,255,255,0.06); color: #e2e8f0; font-family: "Sora", "Inter", Arial, sans-serif;
     font-weight: 700; font-size: 0.88rem; cursor: pointer; transition: transform 0.12s var(--ease-out-soft), background 0.15s, box-shadow 0.15s;
 }
-.note-tab:hover { background: rgba(255,255,255,0.12); transform: translateY(-2px); }
+.note-tab:hover { background: rgba(255,255,255,0.12); }
 .note-tab.active { background: linear-gradient(135deg, #6366f1, #4338ca); border-color: rgba(255,255,255,0.35); box-shadow: 0 4px 12px rgba(79,70,229,0.45), inset 0 0 0 2px rgba(255,255,255,0.18); }
 
 .accidental-controls { display: flex; justify-content: center; gap: 10px; margin-bottom: 16px; flex-wrap: wrap; }
@@ -201,7 +201,7 @@ h1 { margin: 0; font-family: "Sora", "Inter", Arial, sans-serif; font-size: 2rem
     background: rgba(255,255,255,0.06); color: #e2e8f0; font-family: "Sora", "Inter", Arial, sans-serif;
     font-weight: 700; font-size: 0.86rem; cursor: pointer; transition: background 0.15s, box-shadow 0.15s, transform 0.12s var(--ease-out-soft);
 }
-.accidental-button:hover { background: rgba(255,255,255,0.12); transform: translateY(-2px); }
+.accidental-button:hover { background: rgba(255,255,255,0.12); }
 .accidental-button.active { background: linear-gradient(135deg, #f59e0b, #b45309); border-color: rgba(255,255,255,0.35); box-shadow: 0 4px 12px rgba(180,83,9,0.45), inset 0 0 0 2px rgba(255,255,255,0.18); }
 
 .message { min-height: 30px; font-size: 1.05rem; font-weight: 700; }
@@ -220,7 +220,7 @@ h1 { margin: 0; font-family: "Sora", "Inter", Arial, sans-serif; font-size: 2rem
 .finish-button { border-color: rgba(248,113,113,0.35); background: rgba(127,29,29,0.25); color: #fca5a5; }
 .finish-button:hover { background: rgba(127,29,29,0.4); }
 .submit-button { border: none; background: linear-gradient(135deg, #22c55e, #15803d); color: white; box-shadow: 0 1px 0 rgba(255,255,255,0.25) inset, 0 8px 18px rgba(21,128,61,0.4); }
-.submit-button:hover:not(:disabled) { transform: translateY(-2px); filter: brightness(1.08); }
+.submit-button:hover:not(:disabled) { filter: brightness(1.08); }
 .submit-button:disabled { background: rgba(255,255,255,0.08); color: rgba(226,232,240,0.4); box-shadow: none; cursor: not-allowed; }
 .cancel-button:disabled { opacity: 0.35; cursor: not-allowed; }
 
@@ -286,53 +286,52 @@ h1 { margin: 0; font-family: "Sora", "Inter", Arial, sans-serif; font-size: 2rem
 /* colonne del gioco: sul telefono non esistono (contenuto come prima) */
 .game-col { display: contents; }
 
-/* PC e LIM: tutto in una schermata, senza scorrere */
-@media (min-width: 900px) {
-    /* gioco: titolo sopra, a sinistra statistiche e pentagramma, a destra i comandi per costruire */
-    .game { width: min(1500px, 100%); }
-    .game h1 { font-size: 1.9rem; margin-bottom: 10px; }
+/* =========================================================
+   SCHERMI LARGHI (PC e LIM): misure fisse e disposizione in orizzontale;
+   poi tutta la schermata si ingrandisce fino a riempire lo schermo
+   (adatta-schermo.js). Il telefono non cambia.
+   ========================================================= */
+@media (min-width: 900px) and (min-height: 560px) {
+    body { padding: 16px 24px; min-height: 0; align-items: flex-start; }
+    .menu-screen { width: 540px; max-width: none; }
+    .menu-screen h1 { font-size: 2rem; }
+    .menu-screen .subtitle { font-size: 0.95rem; margin: 6px 0 16px; }
+    .menu-screen .options-pair { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 14px; }
+    /* gioco: a sinistra statistiche e pentagramma, a destra la consegna e i comandi per costruire */
+    .game { width: 1220px; max-width: none; }
+    .game h1 { font-size: 2.1rem; margin-bottom: 12px; }
     #gameContainer:not([style*="none"]) {
-        display: grid !important; grid-template-columns: minmax(0, 1.35fr) minmax(0, 1fr); column-gap: 28px; align-items: center;
+        display: grid !important; grid-template-columns: 680px 500px; column-gap: 40px; align-items: center;
     }
     #gameContainer > h1 { grid-column: 1 / -1; }
     .game-col { display: block; min-width: 0; }
-    .stats { margin-bottom: 8px; }
-    .stat { padding: 7px 4px 6px; }
-    .stat-label { font-size: 0.6rem; }
-    .stat-value { font-size: 1.25rem; }
-    .level-box { margin-bottom: 8px; }
+    .stats { margin-bottom: 10px; gap: 8px; }
+    .stat { padding: 9px 4px 8px; }
+    .stat-label { font-size: 0.64rem; }
+    .stat-value { font-size: 1.4rem; }
+    .level-box { margin-bottom: 0; padding: 10px 16px; }
     .level-title { font-size: 0.74rem; }
     .level-info, .level-name { font-size: 0.7rem; }
-    .staff-wrap { margin-bottom: 0; }
-    /* il pentagramma doppio cresce con l'altezza dello schermo (più grande sulla LIM) */
-    #staffContainer svg { width: auto !important; max-width: 100%; height: clamp(240px, calc(100vh - 270px), 680px) !important; }
+    .staff-wrap { margin: 14px 0 0; padding: 8px; }
+    #staffContainer svg { width: 640px !important; height: auto !important; max-width: none; }
     /* comandi: più grandi, la colonna ha spazio */
-    .question-box { margin-bottom: 18px; padding: 12px 16px; }
-    .question-label { font-size: 0.68rem; }
-    .question-text { font-size: 1.5rem; }
-    .question-inversion { font-size: 0.95rem; }
-    .note-tabs { margin-bottom: 8px; }
-    .note-tab { padding: 11px 22px; font-size: 1rem; }
-    .staff-hint { font-size: 0.8rem; margin-bottom: 12px; }
-    .build-controls { margin-bottom: 12px; }
-    .arrow-button { width: 56px; height: 56px; font-size: 1.5rem; }
-    .accidental-controls { margin-bottom: 12px; }
-    .accidental-button { padding: 11px 18px; font-size: 0.95rem; }
-    .quality-guess-row { margin-bottom: 10px; }
-    .quality-guess-btn { padding: 12px 18px; font-size: 0.98rem; }
-    .message { min-height: 26px; font-size: 1.05rem; margin-bottom: 6px; }
-    .cancel-button, .submit-button, .menu-button, .new-game { padding: 12px 22px; font-size: 0.92rem; }
-    .toolbar { margin-top: 12px; }
-}
-/* PC con schermo basso: comandi un po' più compatti */
-@media (min-width: 900px) and (max-height: 800px) {
-    .question-box { margin-bottom: 10px; padding: 9px 16px; }
-    .note-tab { padding: 9px 20px; }
-    .staff-hint { margin-bottom: 8px; }
-    .build-controls, .accidental-controls { margin-bottom: 8px; }
-    .arrow-button { width: 48px; height: 48px; font-size: 1.3rem; }
-    .quality-guess-row { margin-bottom: 6px; }
-    .toolbar { margin-top: 8px; }
+    .question-box { margin: 0; padding: 14px 18px; align-self: stretch; display: flex; flex-direction: column; justify-content: center; }
+    .question-label { font-size: 0.72rem; }
+    .question-text { font-size: 1.7rem; }
+    .question-inversion { font-size: 1rem; }
+    .note-tabs { margin-bottom: 10px; }
+    .note-tab { padding: 13px 24px; font-size: 1.05rem; }
+    .staff-hint { font-size: 0.86rem; margin-bottom: 14px; }
+    .build-controls { margin-bottom: 14px; gap: 14px; }
+    .arrow-button { width: 64px; height: 64px; font-size: 1.7rem; }
+    .accidental-controls { margin-bottom: 14px; }
+    .accidental-button { padding: 13px 20px; font-size: 1rem; }
+    .quality-guess-row { margin-bottom: 12px; }
+    .quality-guess-btn { padding: 13px 18px; font-size: 1rem; }
+    .message { min-height: 28px; font-size: 1.1rem; margin-bottom: 8px; }
+    .cancel-button, .submit-button, .menu-button, .new-game { padding: 13px 24px; font-size: 0.98rem; }
+    .toolbar { margin-top: 14px; }
+    .overlay-card { max-height: calc((100vh - 40px) / var(--zoom, 1)); overflow-y: auto; }
 }
 </style>
 </head>
@@ -1229,5 +1228,6 @@ identifyToggle.addEventListener("click", () => {
 goHome();
 
 </script>
+<script src="adatta-schermo.js" data-schermate="#homeScreen, #gameContainer"></script>
 </body>
 </html>
