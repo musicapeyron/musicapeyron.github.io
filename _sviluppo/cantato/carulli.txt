@@ -222,7 +222,7 @@ V: e4q d4q rq g4q | g4q e4q rq g4q | a4q c5q rq a4q | g4q e4q rq g4q | a4q c5q r
 D: [c4e4]q [b3d4]q rq g4q | [e4g4]q [c4e4]q rq [e4g4]q | [f4a4]q [a4c5]q rq [f4a4]q | [e4g4]q [c4e4]q rq [e4g4]q | [f4a4]q [a4c5]q rq [f4a4]q | [e4g4]q [c4e4]q rq [e4g4]q | [e4g4]q [d4f4]q rq [d4f4]q | [d4f4]q [c4e4]q rq [b3d4]q | c4q e4q c4q rq
 S: rq g2q g3q g2q | rq c2q c3q c2q | rq c3q c4q c3q | rq c2q c3q c2q | rq c3q c4q c3q | rq c2q c3q c2q | rq f2q f3q f2q | rq g2q g3q [g2f3]q | [c3e3]q [c3g3]q [c3e3]q rq
 
-# Lezione 26 | Semiminime e pausa sul quarto tempo | armatura=0 tempo=4/4 andamento=Moderato
+# Lezione 26 | Semiminime e pausa sul quarto tempo | armatura=0 tempo=4/4 andamento=Moderato autore=Henry Lemoine
 V: g4q c5q b4q rq | g4q d5q c5q rq | g4q e5q d5q rq | c5q a4q g4q rq | g4q c5q b4q rq | g4q d5q c5q rq | g4q e5q d5q rq
 D: g4q [e4c5]q [d4b4]q rq | g4q [f4d5]q [e4c5]q rq | g4q [g4e5]q [g4d5]q rq | [e4c5]q [c4f#4a4]q [b3g4]q rq | g4q [e4c5]q [d4b4]q rq | g4q [f4d5]q [e4c5]q rq | g4q [g4e5]q [g4d5]q rq
 S: rq c3q g3q g2q | rq [g3b3]q c4q c3q | rq c4q b3q b2q | c3q d3q g3q g2q | rq c3q g3q g2q | rq [g3b3]q c4q c3q | rq c4q b3q b2q
@@ -230,7 +230,7 @@ V: c5q a4q g4q rq | d5q c5q b4q rq | b4q a4q g4q rq | d5q c5q b4q rq | b4q a4q g
 D: [e4c5]q [c4f#4a4]q [b3g4]q rq | [f4d5]q [f4c5]q [f4b4]q rq | [f4b4]q [f4a4]q [f4g4]q rq | [f4d5]q [f4c5]q [f4b4]q rq | [f4b4]q [f4a4]q [f4g4]q rq | g4q [e4c5]q [d4b4]q rq | g4q [f4d5]q [e4c5]q rq | g4q [e4c5]q [f4a4]q rq | [d4f4]q [b3d4]q c4q rq
 S: c3q d3q g3q g2q | [g3b3]q [g3c4]q [g3d4]q g2q | [g3d4]q [g3c4]q [g3b3]q g2q | [g3b3]q [g3c4]q [g3d4]q g2q | [g3d4]q [g3c4]q [g3b3]q g2q | rq c3q g3q g2q | rq [g3b3]q c4q c3q | rq [c3bb3]q [f3a3]q f2q | rq [g2f3]q [c3e3]q c2q
 
-# Lezione 27 | Semiminime e pause alternate | armatura=0 tempo=4/4 andamento=Moderato
+# Lezione 27 | Semiminime e pause alternate | armatura=0 tempo=4/4 andamento=Moderato autore=Henry Lemoine
 V: c5q rq b4q rq | c5q rq d5q rq | c5q rq a4q rq | g4q rq rh | f4q rq e4q rq | f4q rq e4q rq | a4q rq d4q rq
 D: [e4g4c5]q rq [f4g4b4]q rq | [e4g4c5]q rq [f4g4d5]q rq | [e4g4c5]q rq [c4f4a4]q rq | [e4g4]q rq rh | [d4f4]q rq [c4e4]q rq | [d4f4]q rq [c4e4]q rq | [c4a4]q rq [c4d4]q rq
 S: c3q g3q d3q g3q | c3q g3q b2q g3q | c3q e3q f3q a3q | c4q c3q c4h | b2q g3q c3q g3q | b2q g3q c3q g3q | f2q f3q f#2q f#3q
@@ -238,7 +238,7 @@ V: d4q g4q a4q b4q | c5q rq b4q rq | c5q rq d5q rq | c5q rq a4q rq | g4q rq rh |
 D: [b3d4]q g4q a4q b4q | [e4g4c5]q rq [f4g4b4]q rq | [e4g4c5]q rq [f4g4d5]q rq | [e4g4c5]q rq [c4f4a4]q rq | [e4g4]q rq rh | [d4f4]q rq [c4e4]q rq | [c4f4a4]q rq [e4g4c5]q rq | [d4a4c5]q rq [d4g4b4]q rq | [e4g4c5]q rq rh
 S: [g2g3]q rq rh | c3q g3q d3q g3q | c3q g3q b2q g3q | c3q e3q f3q a3q | c4q c3q c4h | b2q g3q c3q g3q | f2q f3q e3q c3q | f3q d3q g3q g2q | c3q g2q c2q rq
 
-# Lezione 28 | Semiminime e pause sul primo e sul terzo tempo | armatura=0 tempo=4/4 andamento=Moderato
+# Lezione 28 | Semiminime e pause sul primo e sul terzo tempo | armatura=0 tempo=4/4 andamento=Moderato autore=Henry Lemoine
 V: rq g4q rq c5q | rq a4q rq c5q | rq g4q rq c5q | rq a4q rq c5q | rq g4q rq c5q | rq a4q rq g4q | rq f4q rq e4q
 D: rq [e4g4]q rq [e4c5]q | rq [f4a4]q rq [f4ab4c5]q | rq [e4g4]q rq [e4c5]q | rq [f4a4]q rq [f4ab4c5]q | rq [e4g4]q rq [e4c5]q | rq [f4a4]q rq [e4g4]q | rq [d4f4]q rq [c4e4]q
 S: c3q rq c4q rq | c3q rq c4q rq | c3q rq c4q rq | c3q rq c4q rq | c3q rq c4q rq | b3q rq c4q rq | f3q rq f#3q rq
@@ -246,7 +246,7 @@ V: rq d4q rq g4q | rq g4q rq c5q | rq a4q rq c5q | rq g4q rq c5q | rq a4q rq c5q
 D: rq [b3d4]q rq [b3g4]q | rq [e4g4]q rq [e4c5]q | rq [f4a4]q rq [f4ab4c5]q | rq [e4g4]q rq [e4c5]q | rq [f4a4]q rq [f4ab4c5]q | rq [e4g4]q rq [e4c5]q | rq [f4a4]q rq [d4f4]q | rq [c4e4]q rq [b3d4]q | rq [g3c4]q rh
 S: g3q rq g2q rq | c3q rq c4q rq | c3q rq c4q rq | c3q rq c4q rq | c3q rq c4q rq | c3q rq c4q rq | f3q rq f3q rq | g3q rq [g2f3]q rq | [c3e3]h c2q rq
 
-# Lezione 29 | Semiminime e pause sul secondo e sul terzo tempo | armatura=0 tempo=4/4 andamento=Moderato
+# Lezione 29 | Semiminime e pause sul secondo e sul terzo tempo | armatura=0 tempo=4/4 andamento=Moderato autore=Henry Lemoine
 V: e4q rq rq g4q | f4q rq rq e4q | d4q rq rq f4q | e4q rq rq g4q | c5q rq rq b4q | a4q rq rq f4q | e4q rq rq d4q
 D: [c4e4]q rq rq [e4g4]q | [d4f4]q rq rq [c4e4]q | [b3d4]q rq rq [d4f4]q | [c4e4]q rq rq g4q | [e4c5]q rq rq [g4b4]q | [f4a4]q rq rq [d4f4]q | [c4e4]q rq rq [b3d4]q
 S: rq c2q c3q rq | rq g2q g3q rq | rq g2q g3q rq | rq c2q c3q rq | rq c3q c4q rq | rq f2q f3q rq | rh g3q f3q & rq g2h.
@@ -254,7 +254,7 @@ V: c4q rq rq c5q | a4q rq rq c5q | g4q rq rq c5q | a4q rq rq c5q | g4q rq rq g4q
 D: c4q rq rq c5q | [f4a4]q rq rq c5q | [e4g4]q rq rq c5q | [f4a4]q rq rq c5q | [e4g4]q rq rq g4q | [e4c5]q rq rq [g4b4]q | [f4a4]q rq rq [d4f4]q | [c4e4]q rq rq [b3d4]q | c4q rq rh
 S: [c3e3]q c3q c2q rq | rq c3q c4q rq | rq c2q c3q rq | rq c3q c4q rq | rq c2q c3q rq | rq c3q c4q rq | rq f2q f3q rq | rh g3q f3q & rq g2h. | [c3e3]q c3q c2q rq
 
-# Lezione 30 | Semiminime e pause sul primo e sul quarto tempo | armatura=0 tempo=4/4 andamento=Moderato
+# Lezione 30 | Semiminime e pause sul primo e sul quarto tempo | armatura=0 tempo=4/4 andamento=Moderato autore=Henry Lemoine
 V: rq g4q a4q rq | rq a4q c5q rq | rq g4q a4q rq | rq a4q c5q rq | rq c5q d5q rq | rq c5q b4q rq | rq a4q g4q rq | rq a4q g4q rq
 D: rq [e4g4]q [f4a4]q rq | rq [f4a4]q [e4c5]q rq | rq [e4g4]q [f4a4]q rq | rq [f4a4]q [e4c5]q rq | rq [e4c5]q [f4d5]q rq | rq [e4c5]q [d4b4]q rq | rq [c4a4]q [b3g4]q rq | rq [b3f4a4]q [b3f4g4]q rq
 S: c3q rq rq c4q | c3q rq rq c4q | c3q rq rq c4q | c3q rq rq c4q | c3q rq rq b2q | c3q rq rq d3q | f#3q rq rq g3q | g2q rq rq g3q
@@ -308,7 +308,7 @@ D: [c4e4]q [e4g4]q [e4c5]h | [c4e4]q [e4g4]q [e4c5]h | [f4b4]q [f4a4]q [f4g4]h |
 S: [c3g3]q [c3g3]q [c3g3]h | [c3g3]q [c3g3]q [c3g3]h | [d3g3]q [c3g3]q [b2g3]h | [d3g3]q [c3g3]q [b2g3]h | [c3g3]q [c3g3]q [c3g3]h | g3q g3q g3q bb3q & c3q c3q c3h | a3q bb3q a3q ab3q & f3q c#3q d3h | g3q f3q [c3e3]q rq & rq g2q c3q rq
 V: rh d4q d5q | c5h d4q c5q | b4h d4q d5q | c5h b4q a4q | g4h d4q d5q | c5h d4q c5q | b4h d4q d5q | c5h b4q a4q | g4h f4q d4q
 D: rh d4q [b4d5]q | [a4c5]h d4q [a4c5]q | [g4b4]h d4q [b4d5]q | [e4a4c5]h [d4g4b4]q [c4f#4a4]q | [b3g4]h d4q [b4d5]q | [a4c5]h d4q [a4c5]q | [g4b4]h d4q [f4d5]q | c5h b4q a4q & f4q eb4q d4q c4q | g4h f4q d4q & b3w
-S: g2q g3q rh | d2q d3q rh | g2q g3q rh | rq a2q d3h | g2q g3q rh | d2q e3q f#3q d3q | g2q g3q b3q g#3q | a3q a2q d3q f#3q | g3q g2h.
+S: g2q g3q rh | d2q d3q rh | g2q g3q rh | rq a2q d3h | g2q g3q rh | d2q d3q f#3q d3q | g2q g3q b3q g#3q | a3q a2q d3q f#3q | g3q g2h. |
 V: e4q g4q c5h | e4q g4q c5h | b4q a4q g4h | b4q a4q g4h | e4q g4q c5h | e4q g4q c5h | a4q g4q f4h | e4q d4q c4q rq
 D: [c4e4]q [e4g4]q [e4c5]h | [c4e4]q [e4g4]q [e4c5]h | [f4b4]q [f4a4]q [f4g4]h | b4q a4q g4h & f4q f4q f4q d4q | [c4e4]q [e4g4]q [e4c5]h | [c4e4]q [e4g4]q [e4c5]h | [f4a4]q [e4g4]q [d4f4]h | [c4e4]q [b3d4]q c4q rq
 S: [c3g3]q [c3g3]q [c3g3]h | [c3g3]q [c3g3]q [c3g3]h | [d3g3]q [c3g3]q [b2g3]h | [d3g3]q [c3g3]q [b2g3]h | [c3g3]q [c3g3]q [c3g3]h | g3q g3q g3q bb3q & c3q c3q c3h | a3q bb3q a3q ab3q & f3q c#3q d3h | g3q f3q [c3e3]q rq & rq g2q c3q rq
@@ -361,7 +361,7 @@ S: [f3g3b3d4]w | [e3g3c4]w | [b2g3]q. [b2g3]8 [c3g3]q. [c3g3]8 | [b2g3]q. [b2g3]
 # dc: battuta 16
 V: r8 g48 a48 g48 r8 c58 d58 c58 | r8 a48 b48 a48 r8 g48 a48 g48 | r8 f48 g48 f48 r8 e48 f48 e48 | r8 d48 e48 d48 r8 g48 a48 g48 | r8 g48 a48 g48 r8 c58 d58 c58
 D: r8 g48 a48 g48 r8 c58 d58 c58 & r8 e4q. r8 e4q. | r8 a48 b48 a48 r8 g48 a48 g48 & r8 f4q. r8 e4q. | r8 f48 g48 f48 r8 e48 f48 e48 & r8 d4q. r8 c4q. | r8 d48 e48 d48 r8 g48 a48 g48 & r8 b3q. r8 f4q. | r8 g48 a48 g48 r8 c58 d58 c58 & r8 e4q. r8 e4q.
-S: c3h c4h | c3h c4h | [b2g3]h [d3g3]h | g2q rq [g3b3]h | c3h c4h
+S: c3h c4h | c3h c4h | [b2g3]h [c3g3]h | g2q rq [g3b3]h | c3h c4h |
 V: r8 b48 c58 b48 r8 a48 b48 a48 | r8 g48 f48 e48 r8 f48 e48 d48 | r8 c48 e48 g48 c5q rq
 D: r8 b48 c58 b48 r8 a48 b48 a48 & r8 d4q. r8 c4q. | r8 g48 f48 e48 r8 f48 e48 d48 & r8 e48 d48 c48 r8 b3q. | r8 c48 e48 g48 c5q rq
 S: [e3g#3]h [f3a3]h | g3h g2q g38 f38 | [c3e3]h r8 c38 c28 r8
@@ -418,11 +418,11 @@ S: g28 d38 f#38 d38 g28 d38 f#38 d38 | g28 d38 g38 d38 g28 d38 g38 d38 | g28 d38
 
 # Lezione 42 | Minime, semiminime e crome | armatura=0 tempo=4/4 andamento=Andante autore=G. Carulli
 # nota: battuta 2, parte D: appoggiatura (si4) prima del la4 del quarto tempo
-# nota: battuta 5, parte D: appoggiatura (do5) prima del si4 del quarto tempo
-# nota: battuta 6, parte S: appoggiatura (si3) prima del la3
-V: c5h b4q c5q | d58 c58 b48 a48 g4q rq | e58 d58 c58 b48 a4q d5q | c5h b4q rq |
-D: [e4c5]h b4q c5q | d58 c58 b48 a48 g4q a48 g48 | e58 d58 c58 b48 a4q [d4d5]q | [e4c5]h [d4b4]q rq |
-S: [c3e3g3]q [c3e3g3]q [c3e3g3]q [c3e3g3]q | [b2f3g3]q [b2f3g3]q [b2f3g3]q [b2f3g3]q | [c3e3g3]q [e3g3]q [f3a3]q [f#3a3]q | g38 g28 g38 f#38 g38 f38 e38 d38 |
+# nota: battuta 6, parte D: appoggiatura (do5) prima del si4 del quarto tempo
+# nota: battuta 7, parte S: appoggiatura (si3) prima del la3
+V: c5h b4q c5q | d58 c58 b48 a48 g4q rq | e58 d58 c58 b48 a4q d5q | c5h b4q rq | c5h b4q c5q |
+D: [e4c5]h b4q c5q | d58 c58 b48 a48 g4q a48 g48 | e58 d58 c58 b48 a4q [d4d5]q | [e4c5]h [d4b4]q rq | [e4c5]h b4q c5q |
+S: [c3e3g3]q [c3e3g3]q [c3e3g3]q [c3e3g3]q | [b2f3g3]q [b2f3g3]q [b2f3g3]q [b2f3g3]q | [c3e3g3]q [e3g3]q [f3a3]q [f#3a3]q | g38 g28 g38 f#38 g38 f38 e38 d38 | [c3e3g3]q [c3e3g3]q [c3e3g3]q [c3e3g3]q |
 V: d58 c58 b48 a48 a4q rq | d5q c5q b4q a4q | a4h g4q rq | d5h c58 b48 a48 g48 | c5q rq rh | r8 d58 e58 d58 c58 b48 a48 g48 |
 D: d58 c58 b48 a48 a4q b48 a48 | [d4d5]q [e4a4c5]q [d4g4b4]q [c4f#4a4]q | [c4f#4a4]h [b3g4]q rq | d5h c58 b48 a48 g48 | c5q. g48 f#48 g48 a48 g48 | r8 d58 e58 d58 c58 b48 a48 g48 |
 S: [c3d3f#3a3]q [c3d3f#3a3]q [c3d3f#3a3]q [c3d3f#3a3]q | [b2g3]q c3q d3q d3q | g2q d3q g38 g38 a38 g38 | [f3g3b3d4]q [f3g3b3d4]q [f3g3b3d4]q [f3g3b3d4]q | [e3g3c4]q [e3g3c4]q [e3g3c4]q [e3g3c4]q | [f3g3b3d4]q [f3g3b3d4]q [f3g3b3d4]q [f3g3b3d4]q |
@@ -665,7 +665,7 @@ V: f4q e48 r8 | f4q e48 r8 | a48 f48 e48 d48 | c48 r8 g48 c58 | b4q g48 d58 | c5
 D: [d4f4]q [c4e4]8 r8 | [d4f4]q [c4e4]8 r8 | a48 [d4f4]8 [c4e4]8 [b3d4]8 | c48 r8 g48 c58 & sq e4q | b4q g48 d58 & f4h | c5q g48 c58 & e4h | b4q g48 d58 & f4h | [e4c5]q rq
 S: b28 g38 c38 g38 | b28 g38 c38 g38 | f38 d38 g38 r8 | c38 g38 c4q & c3h | c38 g38 b3q & c3h | c38 g38 c4q & c3h | c38 g38 b3q & c3h | c38 g38 c4q & c3h
 V: b4q d5q | c58 b48 a48 r8 | a4q c5q | b48 a48 g48 a48 | b4q d5q | c58 b48 a48 r8
-D: g4q b4q & d4h | c58 b48 a4q & d4h | a4q c5q & d4h | b48 a48 g48 a48 & d4h | g4q b4q & d4h | c58 b48 a4q & d4h
+D: b4q d5q & d4h | c58 b48 a4q & d4h | a4q c5q & d4h | b48 a48 g48 a48 & d4h | b4q d5q & d4h | c58 b48 a4q & d4h |
 S: g28 d38 g38 b38 | [d3a3]8 g38 f#38 d38 | d28 d38 f#38 d38 | g28 d38 g38 d38 | g28 d38 g38 b38 | [d3a3]8 g38 f#38 d38
 V: a4q c5q | b48 a48 g48 c58 | b48 a48 g48 c58 | b48 a48 g48 c58 | b48 c58 a48 b48 | g48 a48 g48 a48
 D: a4q c5q & d4h | b48 a48 g48 c58 & d4q. d48 | b48 a48 g48 c58 & d4q. d48 | b48 a48 g48 c58 & d4q. d48 | b48 c58 a48 b48 & d4q f4q | g48 a48 g48 a48 & e4q [d4f4]q
@@ -702,7 +702,7 @@ S: rq [e3g3c4]q [f3a3c4]q [f3a3c4]q | rq f#38 g38 rq f3q & sh g2h | [c3e3]q c2q 
 # fine: battuta 8
 # dc: battuta 24
 V: c5h. d5q | e5h. c5q | d5h. e5q | d5h. b4q | c5h. e5q | a4h. d5q | c5h. b4q | c5h rh | e4h. f4q | g4h. c5q | e4h. f4q
-D: [e4g4c5]w | [g4c5e5]h [e4g4c5]h | d5h. b4q & d4h f4h | [d4g4b4]h rh | [e4g4c5]w | [c4f4a4]h [d4f4a4]h | c5h. b4q & [c4e4]h [d4g4]h | [e4g4c5]h rh | [c4e4]h. [d4f4]q | [e4g4]w | [c4e4]h. [d4f4]q
+D: [e4g4c5]w | [g4c5e5]h [e4g4c5]h | d5h. c5q & d4h f4h | [d4g4b4]h rh | [e4g4c5]w | [c4f4a4]h [d4f4a4]h | c5h. b4q & [c4e4]h [d4g4]h | [e4g4c5]h rh | [c4e4]h. [d4f4]q | [e4g4]w | [c4e4]h. [d4f4]q |
 S: rh c4h | c3h e3h | f3h d3h | g3h f3h | e3h c3h | f3h d3h | g3h g2h | c3h c2h | c3h c4h | c3h c4h | c3h c4h
 V: g4h rh | e5h. d5q | c5h. e5q | a4h. d5q | b4h rh | d5h. c5q | b4h. d5q | c5h. b4q | a4h rh | b4h. d5q | g4h. c5q | b4h. a4q | g4h rh
 D: [e4g4]h rh | [g4e5]h. [f4d5]q | [e4c5]w | a4h. d5q & [d4a4]w | [d4g4b4]h rh | d5h. c5q & [d4a4]w | [d4g4b4]w | c5h~ c5q b4q & [d4~a4]h [d4g4]h | [d4f#4a4]h rh | [d4g4b4]h. d5q | g4w~ & d4h [c4e4]h | g4h f#4h & [b3d4]h [c4d4]h | [b3d4g4]h rh
@@ -711,7 +711,7 @@ S: c3h c4h | c3h c4h | c3h c4h | f3h f#3h | g3h g2h | rh f#3h | g3h g2h | f#2h g
 # Lezione 64 | Le note puntate nel tempo C e ¢ | armatura=0 tempo=C| andamento=Andante autore=Rodolphe
 # fine: battuta 4
 # dc: battuta 12
-V: c5q. d58 e5q. c58 | d5q. e58 d5q. b48 | c5q. e58 a4q. d58 | c5q. b48 c5q rq | e4q. f48 g4q. d58 | e4q. f48 g4q rq
+V: c5q. d58 e5q. c58 | d5q. e58 d5q. b48 | c5q. e58 a4q. d58 | c5q. b48 c5q rq | e4q. f48 g4q. c58 | e4q. f48 g4q rq |
 D: [e4g4c5]w | [a4d5]h [d4g4b4]q rq & d4q f4q sh | [f4a4c5]h [f4a4]h & d4h c4q d4q | c5q. b48 c5q rq & [c4e4]q [d4g4]q [e4g4]q sq | [c4e4]q. [d4f4]8 [e4g4]h | [c4e4]q. [d4f4]8 [e4g4]q rq
 S: rq c4q c3q e3q | f3q d3q g3q f3q | e3q c3q f3q d3q | g3q g2q c3q c2q | c3q c4q c3q c4q | c3q c4q c3q c4q
 V: e5q. d58 c5q. e58 | a4q. d58 b4q rq | d5q. c58 b4q. d58 | c5q. b48 a4q rq | b4q. d58 g4q. c58 | b4q. a48 g4q rq
@@ -736,7 +736,7 @@ S: g38 g28 b28 d38 g38 g28 g38 f38 | e3q e2q~ e28 e38 f#38 g#38 | a38 a28 c38 e3
 # fine: battuta 8
 # dc: battuta 20
 V: c5q. b48 c5q. d58 | e5h c5h | d5q. e58 d5q. c58 | b4h rh | c5q. b48 c5q. d58 | e5q. d58 e5q. c58 | b4q. c58 d5q. b48
-D: [e4g4c5]h rh | [g4c5e5]h [e4g4c5]h | [g4b4d5]h rh | [d4g4b4]w | [e4g4c5]h rh | [g4c5e5]h [e4a4c5]h | [f4a4~c5~]h [f4a4c5]h & d4h f4h
+D: [e4g4c5]h rh | [g4c5e5]h [e4g4c5]h | [g4b4d5]h rh | [d4g4b4]w | [e4g4c5]h rh | [g4c5e5]h [e4g4c5]h | [f4a4~c5~]h [f4a4c5]h & d4h f4h |
 S: c3h rh | c3q. d38 e3q. c38 | g2h rh | g3q. a38 g3q. f38 | e3h rh | c3h rh | g3h g2h
 V: c5h rh | g4q. a48 g4q. f48 | e4h f4h | g4q. a48 g4q. f48 | e4h rh | g4q. e48 f4q. g48 | a4q. b48 c5q. a48
 D: [e4g4c5]h rh | g4q. a48 g4q. f48 & sh d4h | [g3e4]h rh | g4q. a48 g4q. f48 & sh d4h | [c4e4]q rq rh | [c4e4g4]h rh | [c4f4a4]h rh

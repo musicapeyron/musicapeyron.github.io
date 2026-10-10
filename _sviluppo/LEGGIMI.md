@@ -238,7 +238,10 @@ Nel Bona l'opzione «𝄢 Chiave di basso» sceglie per ogni lezione lo spostame
 - Lemoine-Carulli: testo in `_sviluppo/cantato/carulli.txt` (canto V:, mano destra D:, sinistra S:), MusicXML a due parti con
   `python3 _sviluppo/cantato/carulli.py scrivi _sviluppo/cantato/carulli.txt media/solfeggio/cantato/`; controllo visivo con
   `carulli.py disegna` (pip: verovio, cairosvg). Istruzioni per i trascrittori: `_sviluppo/cantato/ISTRUZIONI-CARULLI.md`.
-  Fatte le lezioni 1–21 (pagine PDF 8–17; pagina stampata = pagina PDF − 2), ognuna verificata da un secondo lettore.
+  Fatte le lezioni 1–66 (pagine PDF 8–44; pagina stampata = pagina PDF − 2), ognuna verificata da un secondo lettore.
+  Ci fermiamo alla 66 (note puntate): dalla 67 (semicrome, 3/8, 6/8, sincopi…) il libro diventa da conservatorio.
+  Segni di struttura nel testo: «# nota: ritornello dalla battuta X alla Y», «# volta: N dalla battuta X alla Y», «# fine: battuta N», «# dc: battuta N»;
+  il lettore li esegue (D.C. al Fine senza ritornelli; senza ritornelli si salta la prima volta).
 - Il lettore suona la parte di pianoforte scritta se il MusicXML ne ha una (seconda parte), altrimenti gli accordi `<harmony>`.
 - Attenzione: la scansione ha segni a matita di un vecchio proprietario (lez. 13: chiave ripassata a matita, la stampa è in chiave di basso).
 
