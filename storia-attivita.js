@@ -456,7 +456,7 @@
     const soglie = [[10, .95], [9, .85], [8, .75], [7, .65], [6, .55], [5, .45], [4, 0]];
     let alto = tot;
     const righe = soglie.map(([voto, p]) => { const basso = Math.ceil(tot * p); const r = `<td>${basso === alto ? basso : basso + "–" + alto}</td>`; alto = basso - 1; return [voto, r]; });
-    return `<table class="voto" style="width:auto;margin-top:2mm"><tr><th>Punti</th>${righe.map(r => r[1]).join("")}</tr><tr><th>Voto</th>${righe.map(r => `<td>${r[0]}</td>`).join("")}</tr></table>
+    return `<table class="voto" style="width:auto;margin-top:2mm"><tr><th>Punti ottenuti</th>${righe.map(r => r[1]).join("")}</tr><tr><th>Punteggio in decimi</th>${righe.map(r => `<td>${r[0]}</td>`).join("")}</tr></table>
       <div style="font-size:8.5pt">Griglia indicativa: ognuno può adattarla ai propri criteri.</div>`;
   }
   function stVerifica(vers) {
@@ -469,7 +469,7 @@
       `<div class="collega-s">${D.coll.map((c, i) => `<div>${i + 1}. <b>${c[0]}</b> → ____</div><div>${L[i]}. ${D.collDx[i].d}</div>`).join("")}</div>` +
       sez("Scegli la risposta giusta", D.scelte.length) + `<ol class="scelte">${D.scelte.map(s => `<li>${s.d}<div class="op">${s.o.map(o => `<span>${quad()}${o.t}</span>`).join("")}</div></li>`).join("")}</ol>` +
       D.aperte.map(([d, p]) => sez("Rispondi con parole tue", p) + `<p>${d}</p>${'<div class="linee"></div>'.repeat(p + 2)}`).join("") +
-      `<div class="punteggio" style="font-size:12pt">Punteggio: ______ / ${D.punti}     Voto: ______</div>` + piede();
+      `<div class="punteggio" style="font-size:12pt">Punteggio: ______ / ${D.punti}</div>` + piede();
     const sol = !conSol ? "" : tit(`verifica${breve ? " (versione breve)" : ""} — versione ${vers}: soluzioni`, "Per l'insegnante") + `<div class="sol">
       <h3>1. Vero o falso</h3><p>${D.vf.map((v, i) => `${i + 1}. ${v[1] ? "V" : "F"}`).join(" · ")}</p>
       <h3>2. Collega</h3><p>${D.coll.map((c, i) => `${i + 1}. ${c[0]} → ${L[D.collDx.findIndex(x => x.i === i)]}`).join(" · ")}</p>
