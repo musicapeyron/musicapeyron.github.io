@@ -230,7 +230,8 @@ Le voci descrivono i giochi come sono nel codice (ottobre 2026).
 - **Si segue con gli occhi il movimento:** sullo spartito si illumina il movimento in cui ci si trova (rosso nell'ascolto,
   verde nella ripetizione) e i numeri dei movimenti si accendono uno dopo l'altro. Si vede quante figure stanno in un
   movimento e, nelle note lunghe, i movimenti che passano mentre la nota continua: aiuta a contare e a ritrovare il punto.
-- **Anche il silenzio si sente:** sul rullante si sentono le note, un colpetto leggero di maracas segna ogni pausa.
+- **Anche il silenzio si sente:** le note suonano sul rullante, ogni pausa è segnata da un colpo leggero di charleston
+  (o di legnetto; si può anche lasciare il silenzio).
 - **Le durate si sentono:** con il pianoforte ogni nota dura quanto la sua figura (minima, semibreve, note legate):
   utile quando la classe dice i ritmi (ta-a) invece di battere le mani.
 - **La pulsazione si interiorizza:** di base il clic dà solo il via (conteggio iniziale) e poi tace; si accende con un
