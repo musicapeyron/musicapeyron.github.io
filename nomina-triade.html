@@ -172,8 +172,10 @@ h1 {
     box-shadow: 0 1px 0 rgba(255,255,255,0.10) inset, 0 4px 10px rgba(0,0,0,0.2);
     transition: transform 0.12s var(--ease-out-soft), filter 0.15s, background 0.15s, box-shadow 0.12s;
 }
-.choice-btn:hover { background: rgba(255,255,255,0.13); transform: translateY(-2px); }
-.choice-btn:active { transform: translateY(1px); }
+/* i pulsanti NON si spostano quando li si preme: prima salivano al passaggio del mouse e
+   scendevano alla pressione, così un clic sul bordo alto usciva dal pulsante e non contava */
+.choice-btn:hover { background: rgba(255,255,255,0.13); }
+.choice-btn:active { filter: brightness(0.9); }
 .choice-btn.selected {
     background: linear-gradient(135deg, #6366f1, #4338ca); border-color: rgba(255,255,255,0.35);
     box-shadow: 0 4px 12px rgba(79,70,229,0.45), inset 0 0 0 2px rgba(255,255,255,0.18);
@@ -312,29 +314,44 @@ h1 {
 /* colonne del gioco: sul telefono non esistono (contenuto come prima) */
 .game-col { display: contents; }
 
-/* PC e LIM: tutto in una schermata, senza scorrere */
-@media (min-width: 900px) {
-    body { padding: 16px 24px 16px; }
-    /* gioco: titolo sopra, a sinistra statistiche + pentagramma, a destra le risposte */
-    .game { width: min(1500px, 100%); }
-    .game h1 { font-size: 2rem; }
-    .game .subtitle { margin: 4px 0 14px; }
+/* =========================================================
+   SCHERMI LARGHI (PC e LIM): misure fisse e disposizione in orizzontale;
+   poi tutta la schermata si ingrandisce fino a riempire lo schermo
+   (adatta-schermo.js). Il telefono non cambia.
+   ========================================================= */
+@media (min-width: 900px) and (min-height: 560px) {
+    body { padding: 16px 24px; min-height: 0; }
+    .menu-screen { width: 560px; max-width: none; }
+    /* gioco: in alto statistiche e livello; sotto, a sinistra il pentagramma, a destra le risposte */
+    .game { width: 1200px; max-width: none; }
+    .game h1 { font-size: 2.1rem; }
+    .game .subtitle { margin: 4px 0 16px; }
     #gameContainer:not([style*="none"]) {
-        display: grid !important; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); column-gap: 32px; align-items: center;
+        display: grid !important; grid-template-columns: 480px 680px; column-gap: 40px; align-items: center;
+        grid-template-areas:
+            "titolo  titolo"
+            "sotto   sotto"
+            "stats   level"
+            "staff   answers"
+            "staff   message"
+            "buttons toolbar";
     }
-    #gameContainer > h1, #gameContainer > .subtitle { grid-column: 1 / -1; }
-    .game-col { display: block; min-width: 0; }
-    .stats { margin-bottom: 14px; }
-    .level-box { margin-bottom: 14px; padding: 12px 18px 14px; }
-    .staff-row { margin-bottom: 0; }
-    .staff-card { min-height: 0; width: auto; max-width: 100%; }   /* la scheda segue la larghezza del pentagramma */
-    /* il pentagramma cresce con l'altezza dello schermo (più grande sulla LIM) */
-    #staffInner svg { width: auto !important; height: clamp(200px, calc(100vh - 400px), 520px) !important; }
-    .answer-section { max-width: none; }
-    .choice-btn { font-size: 1rem; padding: 14px 18px; }
-    .toolbar { margin-top: 14px; }
+    #gameContainer > h1 { grid-area: titolo; }
+    #gameContainer > .subtitle { grid-area: sotto; }
+    .game-col { display: contents; }
+    .stats { grid-area: stats; margin: 0; }
+    .level-box { grid-area: level; margin: 0; align-self: stretch; }
+    .staff-row { grid-area: staff; margin: 20px 0 0; align-self: start; }
+    .staff-card { width: 440px; height: 390px; min-height: 0; }
+    #staffInner svg { width: 400px !important; height: auto !important; }
+    .answer-section { grid-area: answers; max-width: none; margin: 20px 0 0; align-self: end; }
+    .answer-section .choice-row { display: grid; grid-template-columns: 260px 260px; justify-content: center; gap: 16px; }
+    .answer-section .choice-btn { min-width: 0; font-size: 1.3rem; padding: 28px 10px; border-radius: 18px; }
+    .message { grid-area: message; align-self: start; font-size: 1.2rem; margin-top: 16px; }
+    .game-buttons { grid-area: buttons; margin-top: 18px; }
+    .toolbar { grid-area: toolbar; margin: 18px 0 0; }
     /* finestra finale: statistiche in riga */
-    #gameOver .overlay-card { width: min(780px, 100%); }
+    #gameOver .overlay-card { width: 780px; max-height: calc((100vh - 40px) / var(--zoom, 1)); }
     #gameOver .final-stats { grid-template-columns: repeat(auto-fit, minmax(120px, 1fr)); }
 }
 </style>
@@ -1057,5 +1074,6 @@ invertedButton.addEventListener("click", () => { bumpButton(invertedButton); set
 goHome();
 
 </script>
+<script src="adatta-schermo.js" data-schermate="#homeScreen, #gameContainer"></script>
 </body>
 </html>
