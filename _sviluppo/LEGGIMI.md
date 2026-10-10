@@ -242,7 +242,7 @@ sfondo sfumato, trama di puntini, link del piè di pagina). Ogni pagina lo caric
 quindi può sempre ridefinire una regola. Una correzione fatta lì vale per tutto il sito.
 - Pagina nuova: aggiungi `<link rel="stylesheet" href="comune.css">` prima del suo `<style>` e non ricopiare quelle regole.
 - `_sviluppo/comune.py` toglie dalle pagine le regole identiche a quelle di comune.css (si può rilanciare).
-- Non lo usano le pagine con una grafica tutta loro: crediti, privacy, note-uno, rap-con-le-note, rappa_le_note,
+- Non lo usano le pagine con una grafica tutta loro: crediti, privacy, scarta-la-nota, rap-con-le-note, rappa_le_note,
   recita-le-note, registro-musica-app.
 - Il pulsante casetta non è comune: esiste in 14 versioni diverse (posizione, dimensioni, sfondo); unificarlo
   vorrebbe dire scegliere un aspetto unico.
@@ -296,4 +296,4 @@ Per un gioco nuovo, provarlo a quelle due misure in tutte le schermate, compresi
   compare dopo la risposta) dare altezze fisse o minime ai riquadri.
 - Pulsanti delle risposte: **niente `transform` su `:hover`/`:active`** (il pulsante si spostava e il clic
   sul bordo alto non contava); usare `filter: brightness(...)`.
-- Non usano lo script (per scelta): Imita il ritmo, Le note sul pianoforte, Note-UNO, i due Memory.
+- Non usano lo script (per scelta): Imita il ritmo, Le note sul pianoforte, Scarta la nota, i due Memory.

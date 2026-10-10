@@ -13,7 +13,7 @@ import glob, os, re
 SITO = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 LINK = '<link rel="stylesheet" href="comune.css">'
 # pagine con una grafica tutta loro: non usano lo sfondo comune
-ESCLUSE = {"costruttore-di-battute-originale.html", "crediti.html", "note-uno.html", "privacy.html", "rap-con-le-note.html",
+ESCLUSE = {"costruttore-di-battute-originale.html", "crediti.html", "scarta-la-nota.html", "privacy.html", "rap-con-le-note.html",
            "rappa_le_note.html", "recita-le-note.html", "registro-musica-app.html"}
 
 

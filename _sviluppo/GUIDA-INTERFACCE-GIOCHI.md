@@ -20,7 +20,7 @@ Raccoglie il metodo messo a punto con Cristiano nell'ottobre 2026 (branch `migli
 - **Si lavora a piccoli passi**: vedi il punto 7.
 
 Giochi che restano come sono, per scelta di Cristiano: **Imita il ritmo**, **Le note sul pianoforte**
-(versione originale), **Note-UNO**, **Memory note**, **Memory strumenti**.
+(versione originale), **Scarta la nota**, **Memory note**, **Memory strumenti**.
 
 ---
 

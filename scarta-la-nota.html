@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1, user-scalable=no">
-<title>Note-UNO — prototipo</title>
+<title>Scarta la nota — musicascuole.it</title>
 <link rel="stylesheet" href="fonts/caratteri.css">
 
 <link rel="icon" href="favicon.svg" type="image/svg+xml">
@@ -955,13 +955,13 @@
 <div id="rotateOverlay">
   <div class="icon">📱</div>
   <div style="font-family:'Sora','Inter',sans-serif;font-weight:700;font-size:18px;">Ruota il dispositivo per giocare</div>
-  <div style="opacity:.75;font-size:13px;">Note-UNO si gioca in orizzontale</div>
+  <div style="opacity:.75;font-size:13px;">Scarta la nota si gioca in orizzontale</div>
 </div>
 
 <div id="app">
   <div class="board" id="board">
     <div class="topbar">
-      <div class="brand">🎵 Note-UNO</div>
+      <div class="brand">🎵 Scarta la nota</div>
 
       <!-- Ordine dei riquadri = ordine dei turni: Tu, Mozart, Bach, Beethoven -->
       <div class="bots-row">
@@ -1089,7 +1089,7 @@
 
   <div class="overlay menu" id="startOverlay">
     <div class="menu-logo">🎵</div>
-    <h2 class="menu-title">Note-UNO</h2>
+    <h2 class="menu-title">Scarta la nota</h2>
     <p class="menu-sub">Riconosci le note e batti Bach, Mozart e Beethoven</p>
     <div class="menu-actions">
       <button class="btn-main" id="startBtn">Nuovo Gioco</button>
@@ -21057,7 +21057,7 @@ global.VexFlow = VexflowNS.default || VexflowNS;
       return;
     }
     if(hand.length === 1){
-      showBubble(playerKey, "UNO!");
+      showBubble(playerKey, "Sto per vincere!");
     }
 
     let nextIdx = nextTurnIndex(state.turn, state.direction, 1);
@@ -21176,7 +21176,7 @@ global.VexFlow = VexflowNS.default || VexflowNS;
       playEndJingle(false);
       return;
     }
-    if(hand.length === 1) showBubble(p, "UNO!");
+    if(hand.length === 1) showBubble(p, "Sto per vincere!");
 
     state.turn = nextTurnIndex(state.turn, state.direction, 1);
     state.hasDrawnThisTurn = false;
@@ -21258,7 +21258,7 @@ global.VexFlow = VexflowNS.default || VexflowNS;
       playEndJingle(false);
       return;
     }
-    if(hand.length === 1) showBubble(p, "UNO!");
+    if(hand.length === 1) showBubble(p, "Sto per vincere!");
 
     state.turn = nextTurnIndex(state.turn, state.direction, 1);
     state.hasDrawnThisTurn = false;
@@ -21653,7 +21653,7 @@ global.VexFlow = VexflowNS.default || VexflowNS;
           playEndJingle(true);
           return;
         }
-        if(state.hands.you.length === 1) showBubble("you", "UNO!");
+        if(state.hands.you.length === 1) showBubble("you", "Sto per vincere!");
 
         state.turn = nextTurnIndex(state.turn, state.direction, 1);
         state.hasDrawnThisTurn = false;
@@ -22423,7 +22423,7 @@ global.VexFlow = VexflowNS.default || VexflowNS;
       playEndJingle(true);
       return;
     }
-    if(state.hands.you.length === 1) showBubble("you", "UNO!");
+    if(state.hands.you.length === 1) showBubble("you", "Sto per vincere!");
 
     state.turn = nextTurnIndex(state.turn, state.direction, 1);
     state.hasDrawnThisTurn = false;
