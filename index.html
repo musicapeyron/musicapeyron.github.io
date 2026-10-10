@@ -442,6 +442,8 @@
   .card:active, .featured-card:active, .site-home-button:active, .casetta:active { transform: scale(0.98); transition-duration: 0.1s; }
   .card.empty:active, .card.presto:active { transform: none; }
   @media (prefers-reduced-motion: reduce) { .card:active, .featured-card:active { transform: none; } }
+  footer.presentazione { max-width: calc(760 * var(--u)); margin: 0 auto; line-height: 1.55; }
+  footer.presentazione a { color: #7DD3FC; }
 </style>
 <!-- per i motori di ricerca e la condivisione -->
 <link rel="canonical" href="https://musicascuole.it/">
@@ -455,6 +457,7 @@
 <meta property="og:image:width" content="1200">
 <meta property="og:image:height" content="630">
 <meta name="twitter:card" content="summary_large_image">
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"WebSite","name":"musicascuole.it","url":"https://musicascuole.it/","inLanguage":"it","description":"Strumenti digitali gratuiti per l'educazione musicale a scuola: giochi ed esercizi interattivi, spartiti con le basi, solfeggio e storia della musica.","isAccessibleForFree":true}</script>
 <!-- fine -->
 </head>
 <body>
@@ -533,6 +536,7 @@
     <div class="grid" id="grid-avanzati"></div>
   </section>
 </main>
+<footer class="piede presentazione">musicascuole.it è una raccolta gratuita di <b>strumenti digitali per l'educazione musicale</b>: giochi ed esercizi interattivi per leggere le note e allenare l'orecchio e il ritmo, spartiti con le basi, solfeggio e storia della musica con gli ascolti. È pensato per la LIM, l'aula informatica e il telefono, senza pubblicità né registrazione, ed è realizzato da un insegnante anche con l'aiuto dell'intelligenza artificiale. <a href="crediti.html#progetto">Il progetto</a></footer>
 
 
 <script>
