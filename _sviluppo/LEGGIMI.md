@@ -159,14 +159,18 @@ quella modifica si perde.
 - Pagina `lettura-ritmica.html`. Il ritmo suona, poi la classe lo ripete; la pulsazione non si ferma mai
   (conteggio → ascolta → ripeti → ascolta il ritmo dopo → ripeti…). Niente microfono, niente punteggio:
   se battere le mani o dire i ritmi (ta-a) lo decide l'insegnante in classe.
-- 14 tappe (array `TAPPE`), ognuna con 3 gradini Facile/Medio/Difficile. Le figure sono "celle" da un movimento
+- 18 tappe (array `TAPPE`), ognuna con 3 gradini Facile/Medio/Difficile. Le figure sono "celle" da un movimento
   (o più) nell'oggetto `CELLE`, con le posizioni ammesse (`dove`) e una difficoltà (`diff`).
 - I ritmi **non sono scritti a mano**: per ogni gradino si preparano tutte le battute possibili con le figure ammesse
   (con regole di scrittura: niente due pause di semiminima su metà battuta del 4/4 quando c'è la pausa di minima,
   al massimo due movimenti muti di fila, ecc.), si ordinano dalla più facile alla più difficile e la serie sale piano.
+  In una serie non ci sono mai due ritmi uguali: se i ritmi possibili sono meno di quelli chiesti, la serie è più corta.
+- Durante l'esercizio si illumina il **movimento** in cui ci si trova (non la singola nota).
+- Suoni: rullante e maracas (sulle pause) dalla libreria VCSL (CC0), in `media/suoni/ritmo/`; in alternativa il pianoforte
+  Salamander (il campione Fa#4 un semitono sopra = Sol4). Il clic si accende dalla barra (spento di base: solo conteggio).
 - Di base il ritmo scritto si vede anche mentre suona; spegnendo l'interruttore si vede solo quando tocca a voi
-  (prima il suono, poi il simbolo). Opzioni: battito di mani o suono lungo, metronomo (movimenti / suddivisioni /
-  solo conteggio), ogni ritmo 1 o 2 volte, battute per ritmo, ritmi per serie. Chiavi `lettura.*` in localStorage.
+  (prima il suono, poi il simbolo). Opzioni: rullante o pianoforte, maracas sulle pause sì/no, clic sui movimenti o
+  anche sulle suddivisioni, ogni ritmo 1 o 2 volte, battute per ritmo, ritmi per serie. Chiavi `lettura.*` in localStorage.
 - Spartito disegnato direttamente con VexFlow su una sola linea (non con `motore-schemi.js`).
 - Prove: `window.LetturaRitmica.ritmiPossibili(gradino, battute)` restituisce tutti i ritmi di un gradino.
 - Idee e scelte didattiche: `_sviluppo/PUNTI-DIDATTICI.md`.

@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Lettura ritmica — musicascuole.it</title>
-<meta name="description" content="Lettura ritmica: ascolta un ritmo e ripetilo a tempo, in 14 tappe graduali dalla semiminima al 6/8.">
+<meta name="description" content="Lettura ritmica: ascolta un ritmo e ripetilo a tempo, in 18 tappe graduali dalla semiminima al 6/8.">
 <link rel="icon" href="favicon.svg" type="image/svg+xml">
 <link rel="icon" href="favicon-32.png" type="image/png" sizes="32x32">
 <link rel="apple-touch-icon" href="apple-touch-icon.png">
@@ -144,8 +144,11 @@
     main { height: 100vh; height: 100dvh; min-height: 0; }
     body.lim main { height: 100vh; height: 100dvh; }
     .corpo { flex-direction: row; }
-    .tappe { flex: none; width: 290px; flex-direction: column; overflow-x: hidden; overflow-y: auto; gap: 4px; padding: 0 2px 0 0; }
-    .tappa { width: 100%; padding: 5px 10px 5px 6px; border-radius: 11px; }
+    .tappe { flex: none; width: 290px; flex-direction: column; overflow-x: hidden; overflow-y: auto; gap: 3px; padding: 0 2px 0 0; }
+    /* le 18 tappe si dividono l'altezza disponibile: tutte visibili, senza scorrere */
+    .tappa { width: 100%; padding: 2px 10px 2px 6px; border-radius: 10px; flex: 1 1 0; min-height: 0; overflow: hidden; }
+    .tappa .n { width: 24px; height: 24px; font-size: 12.5px; }
+    .tappa .d { display: none; }
     .tappa > span:last-child { min-width: 0; }
     .tappa .t, .tappa .d { display: block; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
     .tappa .t { font-size: 13.5px; }
@@ -155,9 +158,10 @@
   }
   /* PC con poco spazio in altezza: tappe su una riga sola, comandi più stretti */
   @media (min-width: 900px) and (min-height: 560px) and (max-height: 820px) {
-    .tappe { gap: 3px; width: 270px; }
-    .tappa { padding: 3px 8px 3px 4px; gap: 7px; }
-    .tappa .n { width: 26px; height: 26px; font-size: 13px; }
+    .tappe { gap: 2px; width: 270px; }
+    .tappa { padding: 1px 8px 1px 4px; gap: 7px; }
+    .tappa .t { font-size: 12.5px; }
+    .tappa .n { width: 22px; height: 22px; font-size: 12px; }
     .tappa .d { display: none; }
     .testa { padding-top: 0; }
     .comandi { gap: 6px; padding: 8px 10px; }
@@ -169,11 +173,15 @@
   }
   /* LIM: tutto un po' più grande */
   @media (min-width: 1600px) and (min-height: 800px) {
-    .tappe { width: 340px; gap: 4px; }
-    .tappa { padding: 5px 12px 5px 7px; }
-    .tappa .n { width: 32px; height: 32px; font-size: 16px; }
+    .tappe { width: 360px; gap: 4px; }
+    .tappa { padding: 2px 12px 2px 7px; }
+    .tappa .n { width: 30px; height: 30px; font-size: 15px; }
     .tappa .t { font-size: 15.5px; }
-    .tappa .d { font-size: 13px; }
+    .tappa .d { font-size: 12.5px; }
+  }
+  /* LIM alta: c'è spazio anche per la descrizione */
+  @media (min-width: 1600px) and (min-height: 1000px) {
+    .tappa .d { display: block; }
     .fase { font-size: 32px; min-width: 300px; padding: 10px 24px; }
     .l-titolo small { font-size: 15px; }
     .battiti span { width: 58px; height: 58px; font-size: 26px; }
@@ -211,7 +219,8 @@
         <span class="gruppo" title="Ritmo della serie"><button type="button" class="tondo" id="prec" aria-label="Ritmo precedente">◀</button><span class="quale" id="quale">1/8</span><button type="button" class="tondo" id="succ" aria-label="Ritmo successivo">▶</button></span>
         <span class="gradini" id="gradini" role="group" aria-label="Difficoltà"><button type="button" data-g="0">Facile</button><button type="button" data-g="1">Medio</button><button type="button" data-g="2">Difficile</button></span>
         <span class="gruppo" title="Velocità (battiti al minuto)"><button type="button" class="tondo" id="meno" aria-label="Più lento">−</button><span class="bpm" id="bpm"></span><button type="button" class="tondo" id="piu" aria-label="Più veloce">+</button></span>
-        <label class="interr" title="Se è spento, il ritmo si vede solo quando tocca a voi ripeterlo (prima il suono, poi il simbolo)"><input type="checkbox" id="simbolo"> Ritmo scritto anche mentre suona</label>
+        <label class="interr" title="Metronomo durante l'esercizio. Spento: si sente solo il conteggio iniziale"><input type="checkbox" id="clic"> Clic</label>
+        <label class="interr" title="Acceso: il ritmo scritto si vede anche mentre suona. Spento: si vede solo quando tocca a voi ripeterlo (prima il suono, poi il simbolo)"><input type="checkbox" id="simbolo"> 👁 Ritmo scritto</label>
         <button type="button" class="azione" id="apriOpz">⚙️ Opzioni</button>
         <button type="button" class="azione" id="intero" title="Schermo intero, per la LIM">⛶<span class="et-intero"> Schermo intero</span></button>
       </div>
@@ -226,7 +235,7 @@
     <h3 id="oTitolo">Opzioni</h3>
     <div class="opz" id="opz"></div>
     <p class="nota">Il ritmo suona e subito dopo tocca a voi, senza fermarsi: la pulsazione non si interrompe mai.
-      Con «Suono lungo» le note durano quanto la loro figura: utile se la classe dice i ritmi (ta-a) invece di battere le mani.</p>
+      Con il pianoforte le note durano quanto la loro figura: utile se la classe dice i ritmi (ta-a) invece di battere le mani.</p>
   </div>
 </div>
 
@@ -298,38 +307,54 @@
       { celle: ["Q", "EE"], nuove: ["EE"], max: { EE: 1 } },
       { celle: ["Q", "EE"], nuove: ["EE"] },
       { celle: ["Q", "EE"], nuove: ["EE"], battute: 2 } ] },
-    { nome: "Semiminime, crome e pause", desc: "Le tre figure insieme", gradini: [
+    { nome: "Semiminime, crome e pause di semiminima", desc: "Le tre figure insieme", gradini: [
       { celle: ["Q", "EE", "QR"], tutte: ["EE", "QR"], maxPause: 1, suono: true },
       { celle: ["Q", "EE", "QR"], tutte: ["EE", "QR"], maxPause: 2 },
       { celle: ["Q", "EE", "QR"], nuove: ["QR"], maxPause: 2, battute: 2 } ] },
+    { nome: "Semiminime, crome e pause di croma", desc: "Croma e pausa di croma in un movimento", gradini: [
+      { celle: ["Q", "EE", "E_ER"], nuove: ["E_ER"], max: { E_ER: 1 }, suono: true },
+      { celle: ["Q", "EE", "QR", "E_ER"], nuove: ["E_ER"], suono: true },
+      { celle: ["Q", "EE", "QR", "E_ER"], nuove: ["E_ER"], battute: 2 } ] },
     { nome: "Minima e pausa di minima", desc: "Durate di due movimenti", gradini: [
-      { celle: ["Q", "H"], nuove: ["H"], suono: true },
+      { celle: ["Q", "EE", "H"], nuove: ["H"], suono: true },
       { celle: ["Q", "EE", "QR", "H", "HR"], nuove: ["HR"] },
-      { celle: ["Q", "EE", "QR", "H", "HR"], nuove: ["H", "HR"], battute: 2 } ] },
+      { celle: ["Q", "EE", "QR", "E_ER", "H", "HR"], nuove: ["H", "HR"], battute: 2 } ] },
+    { nome: "Le semicrome", desc: "Quattro suoni in un movimento", gradini: [
+      { celle: ["Q", "QR", "EE", "SSSS"], nuove: ["SSSS"], max: { SSSS: 2 } },
+      { celle: ["Q", "QR", "EE", "SSSS", "ESS", "SSE"], nuove: ["ESS", "SSE"] },
+      { celle: ["Q", "QR", "EE", "E_ER", "H", "HR", "SSSS", "ESS", "SSE"], nuove: ["SSSS", "ESS", "SSE"], battute: 2 } ] },
     { nome: "Semibreve e pausa di semibreve", desc: "Una battuta intera di suono o di silenzio", gradini: [
       { celle: ["Q", "H", "W"], nuove: ["W"], battute: 2, suono: true },
       { celle: ["Q", "EE", "QR", "H", "W", "WR"], nuove: ["WR"], battute: 2, suono: true },
       { celle: ["Q", "EE", "QR", "H", "HR", "W", "WR"], tutte: ["W", "WR"], battute: 4 } ] },
-    { nome: "3/4, 2/4 e minima puntata", desc: "Battute da tre e da due movimenti", gradini: [
-      { celle: ["Q", "EE", "QR", "H", "HD"], metri: ["3/4"], nuove: ["HD", "H"], suono: true },
+    { nome: "Ripasso", desc: "Tutte le figure fin qui", gradini: [
+      { celle: ["Q", "QR", "EE", "H", "HR", "W", "WR"], battute: 2 },
+      { celle: ["Q", "QR", "EE", "E_ER", "H", "HR", "W", "WR", "SSSS"], nuove: ["E_ER", "SSSS"], battute: 2 },
+      { celle: ["Q", "QR", "EE", "E_ER", "H", "HR", "W", "WR", "SSSS", "ESS", "SSE"], nuove: ["SSSS", "ESS", "SSE"], battute: 4 } ] },
+    { nome: "Minima puntata", desc: "Tre movimenti: la minima e il punto", gradini: [
+      { celle: ["Q", "EE", "HD"], nuove: ["HD"], battute: 2, suono: true },
+      { celle: ["Q", "EE", "QR", "H", "HD"], nuove: ["HD"], battute: 2 },
+      { celle: ["Q", "EE", "QR", "E_ER", "H", "HR", "HD", "W", "SSSS"], nuove: ["HD"], battute: 2 } ] },
+    { nome: "Semiminima puntata", desc: "Semiminima puntata e croma", gradini: [
+      { celle: ["Q", "EE", "QD_E"], nuove: ["QD_E"], max: { QD_E: 1 }, suono: true },
+      { celle: ["Q", "EE", "QR", "QD_E"], nuove: ["QD_E"] },
+      { celle: ["Q", "EE", "QR", "E_ER", "H", "HD", "QD_E", "SSSS"], nuove: ["QD_E"], battute: 2 } ] },
+    { nome: "3/4 e 2/4", desc: "Battute da tre e da due movimenti", gradini: [
+      { celle: ["Q", "EE", "QR", "H", "HD"], metri: ["3/4"], nuove: ["HD", "H"], battute: 2, suono: true },
       { celle: ["Q", "EE", "QR", "H"], metri: ["2/4"], battute: 2 },
-      { celle: ["Q", "EE", "QR", "H", "HR", "HD", "W"], metri: ["2/4", "3/4", "4/4"], battute: 2 } ] },
-    { nome: "La croma in levare", desc: "Pausa di croma e controtempo", gradini: [
+      { celle: ["Q", "EE", "QR", "H", "HR", "HD", "W", "QD_E"], metri: ["2/4", "3/4", "4/4"], battute: 2 } ] },
+    { nome: "Contrattempo", desc: "Pausa di croma e croma in levare", gradini: [
       { celle: ["Q", "EE", "QR", "ER_E"], nuove: ["ER_E"], max: { ER_E: 1 }, suono: true },
-      { celle: ["Q", "EE", "QR", "ER_E", "E_ER"], nuove: ["ER_E", "E_ER"], suono: true },
+      { celle: ["Q", "EE", "QR", "ER_E", "E_ER"], nuove: ["ER_E"], suono: true },
       { celle: ["Q", "EE", "QR", "H", "ER_E", "E_ER"], nuove: ["ER_E"], metri: ["4/4", "3/4"], battute: 2 } ] },
     { nome: "Legatura e semiminima puntata", desc: "Dalla legatura al punto", gradini: [
       { celle: ["Q", "EE", "QT_E"], nuove: ["QT_E"], max: { QT_E: 1 } },
-      { celle: ["Q", "EE", "QR", "QD_E"], nuove: ["QD_E"] },
+      { celle: ["Q", "EE", "QR", "QT_E", "QD_E"], nuove: ["QT_E", "QD_E"], battute: 2 },
       { celle: ["Q", "EE", "QR", "H", "HD", "QT_E", "QD_E"], nuove: ["QD_E", "QT_E"], metri: ["4/4", "3/4"], battute: 2 } ] },
     { nome: "La sincope", desc: "Croma, semiminima, croma", gradini: [
       { celle: ["Q", "EE", "SYNT"], nuove: ["SYNT"], max: { SYNT: 1 } },
       { celle: ["Q", "EE", "SYN"], nuove: ["SYN"] },
       { celle: ["Q", "EE", "QR", "H", "SYN", "QD_E", "ER_E"], nuove: ["SYN"], battute: 2 } ] },
-    { nome: "Le semicrome", desc: "Quattro suoni in un movimento", gradini: [
-      { celle: ["Q", "EE", "SSSS"], nuove: ["SSSS"], max: { SSSS: 2 } },
-      { celle: ["Q", "EE", "SSSS", "ESS", "SSE"], nuove: ["ESS", "SSE"] },
-      { celle: ["Q", "EE", "QR", "H", "SSSS", "ESS", "SSE"], nuove: ["SSSS", "ESS", "SSE"], metri: ["4/4", "2/4"], battute: 2 } ] },
     { nome: "Croma puntata e pause di semicroma", desc: "Le figure più fitte", gradini: [
       { celle: ["Q", "EE", "EDS"], nuove: ["EDS"], max: { EDS: 2 } },
       { celle: ["Q", "EE", "SSSS", "ESS", "SSE", "EDS"], nuove: ["EDS"] },
@@ -342,8 +367,8 @@
       { celle: ["C_QD", "C_EEE"], metri: ["6/8"], battute: 2, suono: true },
       { celle: ["C_QD", "C_QDR", "C_EEE", "C_QE"], metri: ["6/8"], nuove: ["C_QE"], battute: 2, suono: true },
       { celle: ["C_QD", "C_QDR", "C_EEE", "C_QE", "C_EQ", "C_HD", "C_ERE"], metri: ["6/8"], nuove: ["C_EQ", "C_ERE"], battute: 2 } ] },
-    { nome: "Ripasso", desc: "Tutte le figure insieme", gradini: [
-      { celle: ["Q", "EE", "QR", "H", "HR", "HD", "W"], metri: ["4/4", "3/4", "2/4"], battute: 2 },
+    { nome: "Ripasso finale", desc: "Tutte le figure insieme", gradini: [
+      { celle: ["Q", "EE", "QR", "E_ER", "H", "HR", "HD", "W", "SSSS"], metri: ["4/4", "3/4", "2/4"], battute: 2 },
       { celle: ["Q", "EE", "QR", "H", "HD", "ER_E", "E_ER", "QD_E", "SYN"], nuove: ["ER_E", "E_ER", "QD_E", "SYN"], metri: ["4/4", "3/4"], battute: 2 },
       { celle: ["Q", "EE", "QR", "H", "ER_E", "QD_E", "SYN", "SSSS", "ESS", "SSE", "EDS", "TRI"], nuove: ["SSSS", "ESS", "SSE", "EDS", "TRI"], metri: ["4/4", "3/4"], battute: 2 } ] }
   ];
@@ -445,16 +470,20 @@
   function generaSerie(g, quanti, quanteBattute) {
     const lista = ritmiPossibili(g, quanteBattute);
     if (!lista.length) return [];
-    // con più metri, la serie li alterna senza ripetere lo stesso troppe volte
+    // mai due ritmi uguali nella stessa serie: se i ritmi possibili sono meno di quelli chiesti, la serie è più corta
+    const n = Math.min(quanti, lista.length);
     const serie = [], usati = new Set();
-    for (let i = 0; i < quanti; i++) {
-      const q = quanti === 1 ? 0.5 : i / (quanti - 1);
+    for (let i = 0; i < n; i++) {
+      const q = n === 1 ? 0.5 : i / (n - 1);
       const larg = Math.max(2, Math.round(lista.length * 0.22));
       const centro = Math.round(q * (lista.length - 1));
       const da = Math.max(0, Math.min(lista.length - larg, centro - Math.floor(larg / 2)));
-      let candidati = lista.slice(da, da + larg).filter(r => !usati.has(r) && r !== serie[serie.length - 1]);
-      if (!candidati.length) candidati = lista.filter(r => r !== serie[serie.length - 1]);
-      if (!candidati.length) candidati = lista;
+      let candidati = lista.slice(da, da + larg).filter(r => !usati.has(r));
+      if (!candidati.length) {   // finestra esaurita: il ritmo non usato più vicino per difficoltà
+        let migliore = null, dist = Infinity;
+        lista.forEach((r, j) => { if (!usati.has(r) && Math.abs(j - centro) < dist) { dist = Math.abs(j - centro); migliore = r; } });
+        candidati = [migliore];
+      }
       const r = scegli(candidati); usati.add(r); serie.push(r);
     }
     return serie;
@@ -520,7 +549,7 @@
     rend.resize(W, H);
     const ctx = rend.getContext();
     const svg = elSp.querySelector("svg");
-    const note = [], righeY = [];
+    const note = [], righeY = [], movimenti = [];
     const eventi = eventiDi(r);
     let k = 0;
     for (let riga = 0; riga < righe; riga++) {
@@ -563,32 +592,48 @@
         beams.forEach(b => b.setContext(ctx).draw());
         tupl.forEach(t => t.setContext(ctx).draw());
         leg.forEach(([a, b]) => new VF.StaveTie({ first_note: a, last_note: b, first_indices: [0], last_indices: [0] }).setContext(ctx).draw());
+        // punti di riferimento tempo → posizione: l'inizio di ogni figura e la stanghetta finale
+        const punti = [];
         sn.forEach(nota => {
           let bx = nota.getAbsoluteX(), bw = 22;
           try { const bb = nota.getBoundingBox(); if (bb) { bx = bb.getX(); bw = bb.getW(); } } catch (e) {}
-          note.push({ x: bx, w: bw, riga, ev: eventi[k++] });
+          const ev = eventi[k++];
+          note.push({ x: bx, w: bw, riga, ev });
+          if (!ev.e.intera && !punti.some(p => Math.abs(p.u - ev.inB) < 1e-6)) punti.push({ u: ev.inB, x: bx - 7 });
         });
+        if (!punti.length || punti[0].u > 1e-6) punti.unshift({ u: 0, x: st.getNoteStartX() + 4 });
+        punti.push({ u: r.metro.lung, x: x + w - 3 });
+        const xDi = u => {
+          for (let i = 0; i + 1 < punti.length; i++) {
+            const a = punti[i], b = punti[i + 1];
+            if (u <= b.u + 1e-6) return a.x + (b.x - a.x) * (u - a.u) / Math.max(1e-6, b.u - a.u);
+          }
+          return punti[punti.length - 1].x;
+        };
+        // un riquadro per ogni movimento della battuta
+        for (let mv = 0; mv < r.metro.battiti; mv++) movimenti.push({ riga, x0: xDi(mv * r.metro.bu), x1: xDi((mv + 1) * r.metro.bu) });
         x += w;
       });
     }
     svg.setAttribute("viewBox", `0 0 ${W} ${H}`);
     svg.style.width = W * scala + "px"; svg.style.height = H * scala + "px";
-    // il riquadro che evidenzia la figura che sta suonando (dietro alle note)
+    // il riquadro che evidenzia il movimento in cui ci troviamo (dietro alle note)
     const NS = "http://www.w3.org/2000/svg";
     const evid = document.createElementNS(NS, "rect");
     evid.setAttribute("class", "evid"); evid.setAttribute("rx", 10); evid.setAttribute("height", 78); evid.setAttribute("opacity", 0);
     svg.insertBefore(evid, svg.firstChild);
-    disegno = { svg, note, righeY, evid, ritmo: r };
+    disegno = { svg, note, righeY, movimenti, evid, ritmo: r };
   }
-  function evidenzia(i, colore) {   // i = indice dell'evento (o -1 per spegnere)
+  function evidenzia(i, colore) {   // i = indice del movimento nel ritmo (o -1 per spegnere)
     if (!disegno) return;
-    const { evid, note, righeY } = disegno;
-    if (i < 0 || !note[i]) { evid.setAttribute("opacity", 0); return; }
-    const nt = note[i], w = Math.max(30, nt.w + 14);
-    evid.setAttribute("x", nt.x + nt.w / 2 - w / 2); evid.setAttribute("width", w);
-    evid.setAttribute("y", righeY[nt.riga] + 18);
-    evid.setAttribute("fill", colore); evid.setAttribute("opacity", 0.22);
+    const { evid, movimenti, righeY } = disegno;
+    const mv = movimenti[i];
+    if (i < 0 || !mv) { evid.setAttribute("opacity", 0); return; }
+    evid.setAttribute("x", mv.x0); evid.setAttribute("width", Math.max(16, mv.x1 - mv.x0));
+    evid.setAttribute("y", righeY[mv.riga] + 18);
+    evid.setAttribute("fill", colore); evid.setAttribute("opacity", 0.2);
   }
+
 
   /* =====================================================================
      5. IMPOSTAZIONI (ricordate solo in questo browser)
@@ -600,15 +645,18 @@
     gradino: Math.min(2, Math.max(0, +leggi("gradino", "0") || 0)),
     bpm: Math.min(160, Math.max(40, +leggi("bpm", "80") || 80)),
     simbolo: leggi("simbolo", "1") === "1",       // di base il ritmo si vede anche durante l'ascolto
-    suono: leggi("suono", "mani"),                 // mani | lungo
-    metro: leggi("metro", "mov"),                  // mov | sudd | conta
+    suono: leggi("suono2", "rullante") === "piano" ? "piano" : "rullante",   // rullante | piano (suono lungo)
+    pause: leggi("pause", "1") === "1",            // colpetto di maracas sulle pause
+    clic: leggi("clic", "0") === "1",              // metronomo durante l'esercizio (spento: solo il conteggio iniziale)
+    sudd: leggi("sudd", "0") === "1" ? "1" : "0",  // il clic batte anche le suddivisioni
     ripeti: +leggi("ripeti", "1") === 2 ? 2 : 1,   // ogni ritmo 1 o 2 volte
     battute: leggi("battute", "tappa"),            // tappa | 1 | 2 | 4
     quanti: [4, 8, 12].includes(+leggi("quanti", "8")) ? +leggi("quanti", "8") : 8
   };
   const OPZIONI = [
-    { k: "suono", et: "Suono del ritmo", v: [["mani", "👏 Battito di mani"], ["lungo", "🎵 Suono lungo"]] },
-    { k: "metro", et: "Metronomo", v: [["mov", "Movimenti"], ["sudd", "Con le suddivisioni"], ["conta", "Solo il conteggio iniziale"]] },
+    { k: "suono", chiave: "suono2", et: "Suono del ritmo", v: [["rullante", "🥁 Rullante"], ["piano", "🎹 Pianoforte (suono lungo)"]] },
+    { k: "pause", et: "Sulle pause", v: [[true, "Colpetto di maracas"], [false, "Silenzio"]] },
+    { k: "sudd", et: "Il clic batte", v: [["0", "Solo i movimenti"], ["1", "Anche le suddivisioni"]] },
     { k: "ripeti", et: "Ogni ritmo", v: [[1, "Una volta"], [2, "Due volte"]] },
     { k: "battute", et: "Battute per ritmo", v: [["tappa", "Come la tappa"], ["1", "1"], ["2", "2"], ["4", "4"]] },
     { k: "quanti", et: "Ritmi per serie", v: [[4, "4"], [8, "8"], [12, "12"]] }
@@ -680,6 +728,8 @@
   $("succ").addEventListener("click", () => { ferma(); attuale = (attuale + 1) % serie.length; mostraRitmo(); impostaFase("pronto"); });
   $("meno").addEventListener("click", () => { S.bpm = Math.max(40, S.bpm - 4); scrivi("bpm", S.bpm); aggiornaTesta(); });
   $("piu").addEventListener("click", () => { S.bpm = Math.min(160, S.bpm + 4); scrivi("bpm", S.bpm); aggiornaTesta(); });
+  const cbClic = $("clic"); cbClic.checked = S.clic;
+  cbClic.addEventListener("change", () => { S.clic = cbClic.checked; scrivi("clic", S.clic ? "1" : "0"); });
   const cbSimb = $("simbolo"); cbSimb.checked = S.simbolo;
   cbSimb.addEventListener("change", () => { S.simbolo = cbSimb.checked; scrivi("simbolo", S.simbolo ? "1" : "0"); if (!play) copri(!S.simbolo && !giaSentito.has(attuale)); });
 
@@ -690,8 +740,9 @@
   $("opz").addEventListener("click", e => {
     const b = e.target.closest("button"); if (!b) return;
     const k = b.parentElement.dataset.k, o = OPZIONI.find(x => x.k === k);
-    const v = typeof o.v[0][0] === "number" ? +b.dataset.v : b.dataset.v;
-    S[k] = v; scrivi(k, v); disegnaOpzioni();
+    const tipo = typeof o.v[0][0];
+    const v = tipo === "number" ? +b.dataset.v : tipo === "boolean" ? b.dataset.v === "true" : b.dataset.v;
+    S[k] = v; scrivi(o.chiave || k, tipo === "boolean" ? (v ? "1" : "0") : v); disegnaOpzioni();
     if (k === "battute" || k === "quanti") { ferma(); nuovaSerie(); }
   });
   const velo = $("velo");
@@ -727,7 +778,7 @@
      conteggio → ascolta → ripeti → ascolta (ritmo dopo) → ripeti … senza pause.
      La velocità nuova vale dal segmento successivo.
      ===================================================================== */
-  let ctx = null, rumore = null, nodi = [], play = null, timer = null;
+  let ctx = null, nodi = [], avviando = false, play = null, timer = null;
   const audio = () => { try { ctx = ctx || new (window.AudioContext || window.webkitAudioContext)(); if (ctx.state === "suspended") ctx.resume(); } catch (e) { ctx = null; } return ctx; };
   const adesso = () => ctx ? ctx.currentTime : performance.now() / 1000;
   const tieni = nd => { nodi.push(nd); if (nodi.length > 400) nodi.splice(0, 200); };
@@ -740,32 +791,45 @@
       o.connect(g).connect(ctx.destination); o.start(t); o.stop(t + 0.09); tieni(o);
     } catch (e) {}
   }
-  function mani(t) {
+  /* suoni campionati, nel sito (nessun servizio esterno):
+     rullante e maracas dalla libreria VCSL (CC0); pianoforte Salamander Grand Piano (CC BY 3.0),
+     lo stesso del Dettato ritmico: il campione Fa#4 suonato un semitono sopra dà il Sol4. */
+  const CAMPIONI = { rullante: "media/suoni/ritmo/rullante.mp3", maracas1: "media/suoni/ritmo/maracas-1.mp3",
+    maracas2: "media/suoni/ritmo/maracas-2.mp3", piano: "media/suoni/pianoforte/Fs4.mp3" };
+  const buf = {}, inizio = {};
+  let caricamento = null;
+  function caricaSuoni() {
+    if (caricamento) return caricamento;
+    caricamento = Promise.all(Object.entries(CAMPIONI).map(([k, url]) => fetch(url).then(r => r.arrayBuffer())
+      .then(dati => new Promise((ok, no) => ctx.decodeAudioData(dati, ok, no))).then(b => {
+        // salta il silenzio iniziale, così l'attacco cade esattamente a tempo
+        const d = b.getChannelData(0); let picco = 0; for (let i = 0; i < d.length; i++) picco = Math.max(picco, Math.abs(d[i]));
+        let j = 0; while (j < d.length && Math.abs(d[j]) < picco * 0.03) j++;
+        buf[k] = b; inizio[k] = Math.max(0, j / b.sampleRate - 0.002);
+      }).catch(() => {})));
+    return caricamento;
+  }
+  function campione(k, t, volume, durata, velocita) {
+    if (!buf[k]) return false;
     try {
-      if (!rumore) {
-        const len = Math.floor(ctx.sampleRate * 0.18); rumore = ctx.createBuffer(1, len, ctx.sampleRate);
-        const d = rumore.getChannelData(0); for (let i = 0; i < len; i++) d[i] = (Math.random() * 2 - 1) * Math.exp(-i / (len * 0.12));
+      const s = ctx.createBufferSource(), g = ctx.createGain();
+      s.buffer = buf[k]; if (velocita) s.playbackRate.value = velocita;
+      g.gain.setValueAtTime(volume, t);
+      let fine = t + buf[k].duration;
+      if (durata) {   // il suono si smorza alla fine della figura, come quando si alza il dito dal tasto
+        fine = t + Math.max(0.08, durata - 0.035);
+        g.gain.setValueAtTime(volume, fine); g.gain.exponentialRampToValueAtTime(0.0001, fine + 0.12); fine += 0.15;
       }
-      const s = ctx.createBufferSource(); s.buffer = rumore;
-      const bp = ctx.createBiquadFilter(); bp.type = "bandpass"; bp.frequency.value = 1800; bp.Q.value = 0.9;
-      const hp = ctx.createBiquadFilter(); hp.type = "highpass"; hp.frequency.value = 700;
-      const g = ctx.createGain(); g.gain.setValueAtTime(1.2, t); g.gain.exponentialRampToValueAtTime(0.001, t + 0.16);
-      s.connect(bp).connect(hp).connect(g).connect(ctx.destination); s.start(t); s.stop(t + 0.2); tieni(s);
-    } catch (e) {}
+      s.connect(g).connect(ctx.destination); s.start(t, inizio[k] || 0); s.stop(fine); tieni(s);
+      return true;
+    } catch (e) { return false; }
   }
-  function lungo(t, dur) {   // suono tenuto per tutta la durata della figura (staccato appena prima della nota dopo)
-    try {
-      const fine = t + Math.max(0.08, dur * 0.88);
-      const o = ctx.createOscillator(), o2 = ctx.createOscillator(), g = ctx.createGain(), lp = ctx.createBiquadFilter();
-      o.type = "triangle"; o.frequency.value = 523.25; o2.type = "sine"; o2.frequency.value = 1046.5;
-      lp.type = "lowpass"; lp.frequency.value = 2400;
-      g.gain.setValueAtTime(0.0001, t); g.gain.exponentialRampToValueAtTime(0.32, t + 0.012);
-      g.gain.exponentialRampToValueAtTime(0.2, t + 0.12); g.gain.setValueAtTime(0.2, fine - 0.03); g.gain.exponentialRampToValueAtTime(0.0001, fine);
-      const g2 = ctx.createGain(); g2.gain.value = 0.25;
-      o.connect(lp); o2.connect(g2).connect(lp); lp.connect(g).connect(ctx.destination);
-      o.start(t); o2.start(t); o.stop(fine + 0.02); o2.stop(fine + 0.02); tieni(o); tieni(o2);
-    } catch (e) {}
+  let alterna = 0;
+  function suonoNota(t, dur) {
+    if (S.suono === "piano") { if (!campione("piano", t, 0.9, dur, Math.pow(2, 1 / 12))) clic(t, 1); }
+    else if (!campione("rullante", t, 0.75)) clic(t, 1);
   }
+  function suonoPausa(t) { campione((alterna++ % 2) ? "maracas2" : "maracas1", t, 0.3); }
 
   /* i segmenti in ordine: { tipo: conta|ascolta|eco, i (ritmo), t0, t1, spu (secondi per unità) } */
   function* scaletta(da) {
@@ -774,9 +838,11 @@
     for (let i = da; i < serie.length; i++)
       for (let v = 0; v < S.ripeti; v++) { yield { tipo: "ascolta", i, v }; yield { tipo: "eco", i, v }; }
   }
-  function avvia() {
-    if (!serie.length) return;
+  async function avvia() {
+    if (!serie.length || play || avviando) return;
     if (!audio()) return;
+    avviando = true; $("via").textContent = "…";
+    try { await caricaSuoni(); } finally { avviando = false; }
     if (statoFase.startsWith("fine")) { nuovaSerie(); }
     play = { gen: scaletta(attuale), segs: [], finito: false, ultimoIdx: -1, ultimoEv: -2 };
     play.prossimoT = adesso() + 0.15;
@@ -795,17 +861,18 @@
       seg.t0 = play.prossimoT; seg.t1 = seg.t0 + unita * seg.spu; seg.r = r;
       // metronomo
       const sud = m.comp ? 3 : 2, passo = m.bu / sud;
-      if (seg.tipo === "conta" || S.metro !== "conta") {
-        for (let u = 0; u < unita - 1e-6; u += (S.metro === "sudd" && seg.tipo !== "conta" ? passo : m.bu)) {
+      if (seg.tipo === "conta" || S.clic) {
+        for (let u = 0; u < unita - 1e-6; u += (S.sudd === "1" && seg.tipo !== "conta" ? passo : m.bu)) {
           const inB = u % m.lung, mov = Math.abs(inB % m.bu) < 1e-6;
           clic(seg.t0 + u * seg.spu, mov ? (inB < 1e-6 ? 2 : 1) : 0);
         }
       }
       // il ritmo da ascoltare
-      if (seg.tipo === "ascolta") attacchiDi(eventiDi(r)).forEach(a => {
-        const t = seg.t0 + a.inizio * seg.spu;
-        if (S.suono === "lungo") lungo(t, a.dur * seg.spu); else mani(t);
-      });
+      if (seg.tipo === "ascolta") {
+        const ev = eventiDi(r);
+        attacchiDi(ev).forEach(a => suonoNota(seg.t0 + a.inizio * seg.spu, a.dur * seg.spu));
+        if (S.pause) ev.forEach(x => { if (x.e.pausa) suonoPausa(seg.t0 + x.inizio * seg.spu); });
+      }
       play.segs.push(seg); if (play.segs.length > 8) play.segs.shift();
       play.prossimoT = seg.t1;
     }
@@ -834,8 +901,7 @@
       impostaFase(seg.tipo);
       accendiBattito(mov, seg.tipo);
       if (disegno) {
-        const note = disegno.note;
-        let i = 0; while (i + 1 < note.length && note[i + 1].ev.inizio <= u + 1e-6) i++;
+        const i = Math.floor(u / m.lung + 1e-6) * m.battiti + mov;   // il movimento in cui ci troviamo
         const chiave = i + (seg.tipo === "eco" ? 1000 : 0);
         if (chiave !== play.ultimoEv) { play.ultimoEv = chiave; evidenzia(i, seg.tipo === "eco" ? "#009C95" : "#E21C48"); }
       }
