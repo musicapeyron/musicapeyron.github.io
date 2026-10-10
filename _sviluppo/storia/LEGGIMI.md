@@ -13,6 +13,32 @@ Per le altre epoche si copia il Medioevo e si cambiano solo i dati.
   (`data-schermate="#cTelaio, #contenuto"`). La diapositiva è 1280x650, l'indice 1400 di larghezza.
 - Crediti: `CREDITI_IMG` (immagini «vecchie») e `CREDITI_PAGINE` (immagini delle pagine), generati.
 
+## Mappa concettuale, Esercizi, Schede (motore comune)
+`storia-attivita.js` + `storia-attivita.css` (nella radice del sito) sono **uguali per tutte le epoche**.
+La pagina dell'epoca:
+1. carica `storia-attivita.css` dopo `comune.css` e `<script src="storia-attivita.js"></script>` prima del suo script;
+2. ha le schede `data-scheda="mappa" | "esercizi" | "schede"` e i contenitori
+   `<section class="vista vista-alta" id="vistaMappa|vistaEsercizi|vistaSchede" hidden>`;
+3. definisce `ATTIVITA` (vedi il Medioevo: è commentato) e chiama
+   `StoriaAttivita.avvia({ epoca, date, img, capitoli, strumenti, linea, attivita, apriCapitolo, preparaSchermo })`;
+4. in `adatta-schermo.js` mette `data-schermate="#cTelaio, #aTelaio, #contenuto"`.
+
+Dentro `ATTIVITA`:
+- `mappa`: due rami (sacra/profana o quelli giusti per l'epoca), ogni nodo con `titolo`, `cap` (id del capitolo) e `parole`;
+  `mappaBuchi` / `mappaBuchiBreve` (parole da nascondere, scritte uguali a quelle della mappa), `mappaDistrattori`.
+- `vf`: `[frase, vera?, spiegazione, nella versione breve?]` (15–20 frasi).
+- `personaggi`: `[nome, cosa ha fatto]` (almeno 7). Le parole da collegare e gli strumenti vengono dai capitoli.
+- `cruciverba`: `[PAROLA, definizione, nella versione breve?]` (10–14 parole, senza spazi né accenti).
+- `ascolto`: `criteri` (domande con opzioni), `breve` (criteri della versione breve), `brani` (un elemento per
+  capitolo con le risposte giuste come indici; più indici = vanno bene tutte; `nota` facoltativa).
+- `riassunto`: testo, 4 immagini piccole, punti per la scheda riassuntiva.
+- `verifica`: indici delle frasi vero/falso, parole da collegare, domande a scelta multipla `[domanda, opzioni, indice giusta]`,
+  domande aperte `[domanda, punti, cosa dovrebbe esserci]`, e le liste per la versione breve.
+Le verifiche A e B hanno le stesse domande in ordine diverso (sempre lo stesso ordine a ogni stampa).
+
+Prove: `attivita_prove.py` (schermate e misure di mappa/esercizi/schede), `attivita_gioca.py` (risolve ogni esercizio),
+`attivita_stampe.py` (fa i PDF di tutte le schede; poi `pdftoppm -r 50 -png` per guardarli).
+
 ## Le immagini delle pagine (la parte lenta)
 Regole: pubblico dominio o licenze libere, **nessuna nudità** (attenzione a Purgatorio/Inferno,
 Adamo ed Eva, putti, bagni, morti avvolti nei sudari...), iconografia d'epoca.
