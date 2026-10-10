@@ -645,8 +645,10 @@
   ];
 
   /* ---------- strumenti, da suonare, crediti: come prima ---------- */
+  /* cerchio: [x, y, raggio x, raggio y, rotazione] dell'ovale rosso che, in «Che strumento è?», indica lo strumento
+     quando nell'immagine ce n'è più di uno (coordinate su un'immagine di 640 x 400) */
   const STRUMENTI = [
-    { id: "viella", label: "Corde strofinate", titolo: "Viella", chi: "Antenata del violino", img: "viella.jpg", yt: "7-Yd1lryGKs", canale: "Kathryn Wheeler",
+    { id: "viella", label: "Corde strofinate", titolo: "Viella", chi: "Antenata del violino", img: "viella.jpg", cerchio: [540, 262, 150, 112, -30], yt: "7-Yd1lryGKs", canale: "Kathryn Wheeler",
       gancio: "Lo strumento preferito dei giullari.",
       punti: ["Si suona con l'<b>archetto</b>, appoggiata alla spalla o sulle gambe.",
               "Accompagna canti e danze: qui suona il <i>Trotto</i>, una danza italiana del Trecento."],
@@ -657,12 +659,12 @@
               "Con i tasti si cambiano le note della melodia.",
               "Alcune corde suonano sempre la stessa nota: è il <b>bordone</b>."],
       sapevi: "Le prime ghironde erano così grandi che servivano due persone: una girava la ruota, l'altra suonava i tasti." },
-    { id: "liuto", label: "Corde pizzicate", titolo: "Liuto", chi: "Arrivato dal mondo arabo", img: "liuto.jpg", yt: "O_wM-Sk_Lvw", canale: "Peppe Frana",
+    { id: "liuto", label: "Corde pizzicate", titolo: "Liuto", chi: "Arrivato dal mondo arabo", img: "liuto.jpg", cerchio: [330, 265, 255, 115, 8], yt: "O_wM-Sk_Lvw", canale: "Peppe Frana",
       gancio: "Il suo nome viene dall'arabo.",
       punti: ["Ha la cassa a forma di <b>mezza pera</b> e la testa del manico piegata all'indietro.",
               "Nel Medioevo si pizzicava con una penna d'oca, come un plettro."],
       sapevi: "Il nome viene dall'arabo <i>al-ʿūd</i>, «il legno». Arriva in Europa attraverso la Spagna e la Sicilia." },
-    { id: "arpa", label: "Corde pizzicate", titolo: "Arpa", chi: "Piccola, da tenere in braccio", img: "arpa.jpg", yt: "H4FRkDhj_DU", canale: "Marie Nishiyama",
+    { id: "arpa", label: "Corde pizzicate", titolo: "Arpa", chi: "Piccola, da tenere in braccio", img: "arpa.jpg", cerchio: [290, 200, 255, 100, 55], yt: "H4FRkDhj_DU", canale: "Marie Nishiyama",
       gancio: "Accompagnava poeti e cantastorie.",
       punti: ["È molto più piccola dell'arpa moderna: si suona seduti, tenendola in grembo.",
               "Qui suona <i>Santa Maria, strela do dia</i>, dalle Cantigas di Alfonso X di Castiglia."],
@@ -677,7 +679,7 @@
       punti: ["Una mano suona i tasti, l'altra muove il <b>mantice</b> che soffia l'aria nelle canne.",
               "Qui suona <i>Lucente stella</i>, un brano italiano del Trecento."],
       sapevi: "Era lo strumento di Francesco Landini, il musicista più famoso della Firenze del Trecento." },
-    { id: "ciaramella", label: "Fiati", titolo: "Ciaramella", chi: "Antenata dell'oboe", img: "ciaramella.jpg", yt: "ULPkG78d6gc", canale: "David Griffith",
+    { id: "ciaramella", label: "Fiati", titolo: "Ciaramella", chi: "Antenata dell'oboe", img: "ciaramella.jpg", cerchio: [428, 240, 58, 185, 0], yt: "ULPkG78d6gc", canale: "David Griffith",
       gancio: "Il fiato più forte della piazza.",
       punti: ["Ha un'<b>ancia doppia</b>, come l'oboe di oggi.",
               "Il suono è potente: perfetto per feste, cortei e danze all'aperto."],

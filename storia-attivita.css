@@ -71,7 +71,12 @@ button.mc-n:hover { filter: brightness(1.18); }
 .m-buco.pieno { color: #0f172a; background: #BED958; border: 1.5px solid #BED958; cursor: default; }
 .m-buco.no { animation: a-scuoti .35s; border-color: #E21C48; }
 .m-buco.scelto { border-color: #FFE58A; background: rgba(255,229,138,0.25); }
-.completa { display: grid; grid-template-columns: auto 1fr; gap: 14px; align-items: start; }
+.completa { display: flex; flex-direction: column; gap: 8px; align-items: center; }
+.riga-banca { display: flex; align-items: center; gap: 12px; width: 100%; }
+.riga-banca .banca { flex: 1; justify-content: center; }
+.fatto-msg { font: 800 20px 'Manrope', sans-serif; color: #FFE58A; }
+.attivita[data-tipo="completa"] .c-nav { display: none; }
+.banca button.no { animation: a-scuoti .35s; }
 .banca { display: flex; flex-wrap: wrap; gap: 7px; align-content: flex-start; }
 .banca button { font: 700 15px 'Manrope', sans-serif; color: #0f172a; background: #EAF2FF; border: 2px solid #EAF2FF; border-radius: 999px; padding: 6px 12px; cursor: pointer; }
 .banca button.scelto { background: #FFE58A; border-color: #FFE58A; }
@@ -98,6 +103,9 @@ button.mc-n:hover { filter: brightness(1.18); }
 .strum1 { display: grid; grid-template-columns: 1fr 1fr; gap: 26px; align-items: center; }
 .strum1 figure { margin: 0; border-radius: 16px; overflow: hidden; background: #0b1226; border: 1px solid rgba(255,255,255,0.14); aspect-ratio: 16 / 10; }
 .strum1 img { width: 100%; height: 100%; object-fit: contain; display: block; }
+.strum1 figure { position: relative; }
+.strum1 .ovale { position: absolute; inset: 0; width: 100%; height: 100%; }
+.strum1 .ovale ellipse { fill: none; stroke: #FF2A2A; stroke-width: 3.5; }
 .strum1 .dom { font: 600 28px 'Fredoka', 'Manrope', sans-serif; margin-bottom: 12px; }
 .strum1 .nomi { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
 /* vero o falso */
@@ -159,6 +167,10 @@ button.mc-n:hover { filter: brightness(1.18); }
   .a-corpo { height: 480px; flex: none; overflow: hidden; padding: 12px 6px 6px; }
   .attivita[data-tipo="mappa"] .a-corpo { height: 546px; padding-top: 6px; }
   .attivita[data-tipo="mappa"] .c-nav { display: none; }
+  .attivita[data-tipo="completa"] .c-barra { display: none; }
+  .attivita[data-tipo="completa"] .a-corpo { height: 650px; padding: 30px 6px 4px; }
+  .attivita[data-tipo="completa"] .banca { gap: 6px; }
+  .attivita[data-tipo="completa"] .banca button { font-size: 15px; padding: 5px 11px; }
   .collega .col { gap: 7px; }
   .cl { font-size: 16.5px; min-height: 50px; padding: 6px 12px; }
   .strum1 .nomi .cl { min-height: 64px; font-size: 18px; } .strum1 .nomi .cl b { font-size: 19px; }
@@ -179,7 +191,7 @@ button.mc-n:hover { filter: brightness(1.18); }
   .strum1 .dom { font-size: 22px; }
   .vf .frase { font-size: 20px; }
   .vf .tasti button { min-width: 130px; padding: 12px 18px; font-size: 19px; }
-  .completa { grid-template-columns: 1fr; }
+  .riga-banca { flex-wrap: wrap; } .riga-banca .torna-b { display: none; }
   .cruci, .asc { grid-template-columns: 1fr; }
   .griglia-c .k { width: 22px; height: 22px; }
   .griglia-c .k.l { font-size: 13px; }

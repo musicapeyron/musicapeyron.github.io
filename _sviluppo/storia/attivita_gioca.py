@@ -45,8 +45,8 @@ async def main():
         await pg.click('.banca button[data-w="violino"]'); await pg.locator('.m-buco').first.click()
         for w in ws:
             await pg.click(f'.banca button[data-w="{w}"]'); await pg.locator(f'.m-buco[data-w="{w}"]:not(.pieno)').first.click()
-        print("mappa", await pg.inner_text("#aNav .c-pallini")); await pg.screenshot(path="g-mappa2.png")
-        await pg.screenshot(path="g-mappa.png"); await pg.click("#aChiudi")
+        print("mappa", await pg.inner_text(".banca")); await pg.screenshot(path="g-mappa2.png")
+        await pg.screenshot(path="g-mappa.png"); await pg.click(".torna-b")
         # cruciverba: scrivi una parola con la tastiera, poi soluzione
         await pg.click('[data-scheda="esercizi"]'); await pg.click('#vistaEsercizi .a-carta[data-i="5"]')
         await pg.locator(".definizioni p").first.click()

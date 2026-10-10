@@ -185,7 +185,9 @@
       }
       const s = lista[k]; sbagliato = false;
       $("aNum").textContent = `Strumento ${k + 1} di ${lista.length}`;
-      corpo.innerHTML = `<div class="strum1"><figure><img src="${C.img + s.img}" alt="Uno strumento medievale: quale?"></figure>
+      const o = s.cerchio;   // ovale rosso sullo strumento giusto, se nell'immagine ce ne sono due
+      const ovale = o ? `<svg class="ovale" viewBox="0 0 640 400" aria-hidden="true"><ellipse cx="${o[0]}" cy="${o[1]}" rx="${o[2]}" ry="${o[3]}" transform="rotate(${o[4]} ${o[0]} ${o[1]})"/></svg>` : "";
+      corpo.innerHTML = `<div class="strum1"><figure><img src="${C.img + s.img}" alt="Uno strumento medievale: quale?">${ovale}</figure>
         <div><div class="dom">Che strumento è?</div><div class="nomi">${nomi.map(n => `<button type="button" class="cl" data-n="${n}"><span class="pal"></span><b>${n}</b></button>`).join("")}</div>
         <div class="a-msg"></div></div></div>`;
       barra("", "", bottone("Avanti ▶", "avanti")); const av = nav.lastElementChild; av.disabled = true;
@@ -235,24 +237,35 @@
   }
 
   /* ---------- COMPLETA LA MAPPA: tocca una parola, poi il suo posto ---------- */
+  // sulla LIM la mappa occupa tutta la finestra: niente barra in alto, le parole in una riga sotto
   function esMappa() {
     apri("Esercizio", "Completa la mappa", "#a78bfa", "completa");
     const giro = () => {
       const buchi = new Set(A.mappaBuchi);
       const banca = mescola([...buchi, ...(A.mappaDistrattori || [])]);
-      const s = largo.matches ? 0.76 : 0.62;
+      let s = largo.matches ? Math.min(1268 / A.mappa.W, 560 / A.mappa.H) : 0.62;
       corpo.innerHTML = `<div class="completa"><div class="mc-scorri">${mappaHTML(buchi, "esercizio", s)}</div>
-        <div class="banca">${banca.map(w => `<button type="button" data-w="${w}">${w}</button>`).join("")}</div></div>`;
+        <div class="riga-banca"><button type="button" class="c-indice torna-b">◀ Torna</button>
+          <div class="banca">${banca.map(w => `<button type="button" data-w="${w}">${w}</button>`).join("")}</div>
+          <button type="button" class="c-indice ancora-b">Ricomincia</button></div></div>`;
+      // se le parole vanno su tre righe, la mappa si rimpicciolisce quel tanto che basta
+      if (largo.matches) {
+        const box = corpo.querySelector(".mc-box"), mc = corpo.querySelector(".mc");
+        while (corpo.scrollHeight > corpo.clientHeight && s > 0.6) {
+          s -= 0.02; box.style.width = A.mappa.W * s + "px"; box.style.height = A.mappa.H * s + "px"; mc.style.transform = `scale(${s})`;
+        }
+      }
+      corpo.querySelector(".torna-b").addEventListener("click", chiudi);
+      corpo.querySelector(".ancora-b").addEventListener("click", giro);
       let parola = null, posto = null, messi = 0;
       const prova = () => {
         if (!parola || !posto) return;
         if (parola.dataset.w === posto.dataset.w) {
           posto.textContent = parola.dataset.w; posto.classList.add("pieno"); posto.classList.remove("scelto");
           parola.classList.add("usato"); messi++;
-          msg(messi === buchi.size ? "Mappa completa! Bravissimi!" : `Parole al posto giusto: ${messi} su ${buchi.size}`);
+          if (messi === buchi.size) corpo.querySelector(".banca").innerHTML = `<span class="fatto-msg">Mappa completa! Bravissimi!</span>`;
         } else {
-          posto.classList.remove("scelto"); scuoti(posto);
-          msg("Non va lì: prova un altro posto!");
+          posto.classList.remove("scelto"); scuoti(posto); scuoti(parola);
         }
         parola.classList.remove("scelto"); parola = null; posto = null;
       };
@@ -268,10 +281,6 @@
       });
     };
     giro();
-    barra("", "", bottone("Ricomincia", "avanti"));
-    const ricomincia = () => { giro(); msg("Tocca una parola a destra, poi il riquadro dove va."); };
-    nav.lastElementChild.addEventListener("click", ricomincia);
-    msg("Tocca una parola a destra, poi il riquadro dove va.");
   }
 
   /* ---------- CRUCIVERBA ---------- */
