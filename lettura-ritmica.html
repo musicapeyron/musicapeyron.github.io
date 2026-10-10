@@ -1,0 +1,874 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Lettura ritmica — musicascuole.it</title>
+<meta name="description" content="Lettura ritmica: ascolta un ritmo e ripetilo a tempo, in 14 tappe graduali dalla semiminima al 6/8.">
+<link rel="icon" href="favicon.svg" type="image/svg+xml">
+<link rel="icon" href="favicon-32.png" type="image/png" sizes="32x32">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
+<!--
+  LETTURA RITMICA (eco ritmico) — il ritmo suona, poi la classe lo ripete, senza fermarsi: la pulsazione non si interrompe.
+  Le tappe e i loro gradini (Facile / Medio / Difficile) sono nell'elenco TAPPE qui sotto; le figure in CELLE.
+  I ritmi non sono scritti a mano: per ogni gradino il programma prepara tutte le battute possibili con le figure
+  ammesse, le ordina dalla più facile alla più difficile e ne sceglie una serie che sale piano piano.
+  Nessun microfono, nessun dato: le preferenze restano solo in questo browser (localStorage).
+-->
+<link rel="stylesheet" href="fonts/caratteri.css">
+<link rel="stylesheet" href="comune.css">
+<style>
+  * { box-sizing: border-box; }
+  html, body { margin: 0; min-height: 100%; }
+  body { min-height: 100vh; font-family: 'Inter', 'Segoe UI', Arial, sans-serif; color: #EAF2FF; -webkit-font-smoothing: antialiased;
+    background: #0f172a; overflow-x: hidden; position: relative; }
+  .casetta { position: fixed; top: 12px; left: 12px; z-index: 40; width: 44px; height: 44px; border-radius: 50%; display: grid; place-items: center;
+    background: rgba(15,23,42,0.75); border: 1px solid rgba(255,255,255,0.18); text-decoration: none; font-size: 20px; color: #EAF2FF; font-weight: 700; }
+  main { position: relative; z-index: 1; margin: 0 auto; padding: 10px 16px 12px; display: flex; flex-direction: column; gap: 10px; min-height: 100vh; min-height: 100dvh; }
+
+  /* ---------- testa ---------- */
+  .testa { display: flex; align-items: baseline; justify-content: center; gap: 14px; flex-wrap: wrap; padding: 2px 50px 0; }
+  h1 { font-family: 'Fredoka', 'Manrope', sans-serif; font-weight: 600; font-size: clamp(24px, 2.4vw, 34px); margin: 0; }
+  .testa p { margin: 0; color: #9FB3CE; font-size: 13px; }
+
+  .corpo { flex: 1; min-height: 0; display: flex; flex-direction: column; gap: 10px; }
+
+  /* ---------- tappe ---------- */
+  .tappe { display: flex; gap: 6px; overflow-x: auto; scrollbar-width: none; padding: 2px 2px 4px; }
+  .tappe::-webkit-scrollbar { display: none; }
+  .tappa { flex: none; display: flex; align-items: center; gap: 8px; text-align: left; cursor: pointer; color: #EAF2FF;
+    background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.13); border-radius: 12px; padding: 6px 10px 6px 6px; font: inherit; }
+  .tappa:hover { background: rgba(255,255,255,0.10); }
+  .tappa .n { flex: none; width: 28px; height: 28px; border-radius: 50%; display: grid; place-items: center; font: 700 14px 'Fredoka', sans-serif;
+    background: rgba(255,255,255,0.10); }
+  .tappa .t { font: 700 13px 'Manrope', sans-serif; white-space: nowrap; }
+  .tappa .d { display: none; font-size: 11.5px; color: #9FB3CE; margin-top: 1px; }
+  .tappa.attiva { background: #E21C48; border-color: #E21C48; }
+  .tappa.attiva .n { background: #fff; color: #E21C48; }
+  .tappa.attiva .d { color: #FFE4EA; }
+
+  /* ---------- lettore ---------- */
+  .lettore { flex: 1; min-height: 380px; display: flex; flex-direction: column; background: #fff; color: #1F2430; border-radius: 18px; overflow: hidden;
+    border-top: 4px solid #E21C48; box-shadow: 0 10px 40px rgba(0,0,0,.35); }
+  .l-testa { display: flex; align-items: center; gap: 12px; padding: 10px 14px 4px; }
+  .l-num { width: 42px; height: 42px; border-radius: 50%; background: #5E50A1; color: #fff; display: grid; place-items: center; font: 700 20px 'Fredoka', sans-serif; flex: none; }
+  .l-titolo { font-family: 'Fredoka', sans-serif; font-weight: 600; font-size: clamp(18px, 1.9vw, 27px); line-height: 1.1; min-width: 0; }
+  .l-titolo small { display: block; font: 600 12.5px 'Manrope', sans-serif; color: #64748B; margin-top: 2px; }
+  /* la fase (Pronti / Ascolta / Ripeti): grande, si legge da lontano */
+  .fase { margin-left: auto; flex: none; min-width: 210px; text-align: center; font: 700 22px 'Fredoka', sans-serif; padding: 8px 18px; border-radius: 999px;
+    background: #F1F5F9; color: #475569; border: 2px solid #E2E8F0; transition: background .25s ease, color .25s ease, border-color .25s ease; }
+  .fase.conta { background: #FEF3C7; color: #92400E; border-color: #FCD34D; }
+  .fase.ascolta { background: #E21C48; color: #fff; border-color: #E21C48; }
+  .fase.eco { background: #009C95; color: #fff; border-color: #009C95; }
+  .fase.fine { background: #5E50A1; color: #fff; border-color: #5E50A1; }
+
+  .l-spartito { position: relative; flex: 1; min-height: 0; display: flex; align-items: center; justify-content: center; padding: 4px 18px; overflow: hidden; }
+  #spartito { display: flex; align-items: center; justify-content: center; width: 100%; height: 100%; }
+  #spartito svg { display: block; }
+  .evid { transition: x .12s ease; }
+  /* simbolo nascosto durante l'ascolto: lo spartito resta al suo posto (niente salti), coperto */
+  .copri { position: absolute; inset: 6px 18px; display: none; flex-direction: column; align-items: center; justify-content: center; gap: 8px; cursor: pointer;
+    background: #F8FAFC; border: 2px dashed #CBD5E1; border-radius: 16px; color: #64748B; font: 600 18px 'Manrope', sans-serif; text-align: center; padding: 10px; }
+  .copri b { font: 600 clamp(40px, 6vw, 84px) 'Fredoka', sans-serif; line-height: 1; }
+  .l-spartito.nascosto .copri { display: flex; }
+  .l-spartito.nascosto #spartito { visibility: hidden; }
+
+  /* battiti della battuta: 1 2 3 4, quello attuale si accende */
+  .battiti { display: flex; justify-content: center; gap: 14px; padding: 2px 0 10px; min-height: 52px; }
+  .battiti span { width: 40px; height: 40px; border-radius: 50%; display: grid; place-items: center; font: 700 18px 'Fredoka', sans-serif;
+    color: #94A3B8; background: #F1F5F9; border: 2px solid #E2E8F0; }
+  .battiti span.on { color: #fff; background: #475569; border-color: #475569; }
+  .battiti.conta span.on { background: #F59E0B; border-color: #F59E0B; }
+  .battiti.ascolta span.on { background: #E21C48; border-color: #E21C48; }
+  .battiti.eco span.on { background: #009C95; border-color: #009C95; }
+
+  /* ---------- comandi ---------- */
+  .comandi { display: flex; align-items: center; justify-content: center; gap: 8px; flex-wrap: wrap; padding: 10px 12px; background: #F8FAFC; border-top: 1px solid #E2E8F0; }
+  .via { font: 800 16px 'Manrope', sans-serif; color: #fff; background: #E21C48; border: 0; border-radius: 999px; padding: 10px 22px; cursor: pointer; box-shadow: 0 3px 0 #A3122F; min-width: 150px; }
+  .via:hover { filter: brightness(1.08); }
+  .via.in-corso { background: #334155; box-shadow: 0 3px 0 #1E293B; }
+  .gruppo { display: inline-flex; align-items: center; gap: 4px; background: #fff; border: 1px solid #E2E8F0; border-radius: 999px; padding: 4px 6px; }
+  .gruppo button.tondo { width: 32px; height: 32px; border-radius: 50%; border: 1px solid #CBD5E1; background: #F1F5F9; font-weight: 800; font-size: 16px; cursor: pointer; color: #1F2430; }
+  .gruppo button.tondo:hover { background: #E2E8F0; }
+  .bpm { font: 800 14px 'Manrope', sans-serif; min-width: 66px; text-align: center; }
+  .bpm .fig { font-family: 'Segoe UI Symbol', 'Noto Music', serif; font-size: 1.45em; line-height: 0; vertical-align: -0.1em; }
+  .quale { font: 800 13px 'Manrope', sans-serif; min-width: 46px; text-align: center; color: #475569; }
+  .gradini { display: inline-flex; background: #fff; border: 1px solid #E2E8F0; border-radius: 999px; padding: 3px; gap: 2px; }
+  .gradini button { font: 700 13px 'Manrope', sans-serif; border: 0; background: transparent; color: #475569; padding: 7px 12px; border-radius: 999px; cursor: pointer; }
+  .gradini button:hover { background: #F1F5F9; }
+  .gradini button.attivo { background: #5E50A1; color: #fff; }
+  .interr { display: inline-flex; align-items: center; gap: 6px; font: 700 13px 'Manrope', sans-serif; color: #1F2430; background: #fff; border: 1px solid #E2E8F0;
+    border-radius: 999px; padding: 7px 12px; cursor: pointer; user-select: none; }
+  .interr input { width: 16px; height: 16px; accent-color: #E21C48; margin: 0; }
+  .azione { font: 700 13px 'Manrope', sans-serif; color: #1F2430; background: #fff; border: 1px solid #CBD5E1; border-radius: 999px; padding: 8px 14px; cursor: pointer; }
+  .azione:hover { background: #F1F5F9; }
+
+  footer.piede { position: relative; z-index: 1; text-align: center; font-size: 12px; color: #9FB3CE; padding: 0 12px 2px; }
+
+  /* schermo intero (LIM): solo tappe e lettore */
+  body.lim main { padding: 8px; }
+  body.lim .testa, body.lim footer, body.lim .casetta { display: none; }
+
+  /* ---------- opzioni ---------- */
+  .velo { position: fixed; inset: 0; z-index: 60; background: rgba(2,6,23,0.82); display: none; align-items: center; justify-content: center; padding: 14px; }
+  .velo.aperto { display: flex; }
+  .finestra { width: min(640px, 100%); max-height: calc(100vh - 28px); overflow: auto; background: #131c33; border: 1px solid rgba(255,255,255,0.14); border-top: 3px solid #E21C48;
+    border-radius: 18px; padding: 18px 20px 20px; position: relative; }
+  .finestra h3 { margin: 0 0 12px; font-family: 'Fredoka', sans-serif; font-weight: 600; font-size: 24px; }
+  .opz { display: grid; grid-template-columns: 170px 1fr; gap: 10px 14px; align-items: center; }
+  .opz .et { font: 700 14px 'Manrope', sans-serif; color: #CBD5E1; }
+  .scelte { display: flex; flex-wrap: wrap; gap: 6px; }
+  .scelte button { font: 700 13.5px 'Manrope', sans-serif; color: #EAF2FF; background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.18);
+    border-radius: 999px; padding: 8px 14px; cursor: pointer; }
+  .scelte button:hover { background: rgba(255,255,255,0.12); }
+  .scelte button.attivo { background: #E21C48; border-color: #E21C48; }
+  .finestra .nota { margin: 14px 0 0; font-size: 13px; color: #9FB3CE; line-height: 1.45; }
+  .chiudi { position: absolute; top: 10px; right: 10px; width: 38px; height: 38px; border-radius: 50%; border: 1px solid rgba(255,255,255,0.25); background: rgba(15,23,42,0.85); color: #fff; font-size: 17px; cursor: pointer; }
+  @media (max-width: 560px) { .opz { grid-template-columns: 1fr; gap: 4px 0; } .opz .et { margin-top: 8px; } }
+
+  /* ---------- telefono ---------- */
+  @media (max-width: 640px) {
+    main { padding: 64px 10px 12px; }
+    .testa { padding: 0; }
+    .lettore { min-height: 420px; }
+    .l-testa { flex-wrap: wrap; }
+    .l-titolo { flex: 1 1 0; }
+    .l-spartito { flex: none; height: 240px; }
+    .fase { margin-left: 0; width: 100%; font-size: 19px; padding: 6px 12px; }
+    .via { min-width: 0; width: 100%; }
+    .battiti span { width: 32px; height: 32px; font-size: 15px; }
+  }
+
+  /* ---------- PC e LIM: tappe in colonna a sinistra, lettore grande a destra ---------- */
+  @media (min-width: 900px) and (min-height: 560px) {
+    main { height: 100vh; height: 100dvh; min-height: 0; }
+    body.lim main { height: 100vh; height: 100dvh; }
+    .corpo { flex-direction: row; }
+    .tappe { flex: none; width: 290px; flex-direction: column; overflow-x: hidden; overflow-y: auto; gap: 4px; padding: 0 2px 0 0; }
+    .tappa { width: 100%; padding: 5px 10px 5px 6px; border-radius: 11px; }
+    .tappa > span:last-child { min-width: 0; }
+    .tappa .t, .tappa .d { display: block; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .tappa .t { font-size: 13.5px; }
+    .lettore { min-height: 0; }
+    .battiti span { width: 46px; height: 46px; font-size: 20px; }
+    .fase { font-size: 26px; min-width: 250px; }
+  }
+  /* PC con poco spazio in altezza: tappe su una riga sola, comandi più stretti */
+  @media (min-width: 900px) and (min-height: 560px) and (max-height: 820px) {
+    .tappe { gap: 3px; width: 270px; }
+    .tappa { padding: 3px 8px 3px 4px; gap: 7px; }
+    .tappa .n { width: 26px; height: 26px; font-size: 13px; }
+    .tappa .d { display: none; }
+    .testa { padding-top: 0; }
+    .comandi { gap: 6px; padding: 8px 10px; }
+    .interr, .azione { padding: 7px 10px; }
+    .gradini button { padding: 7px 9px; }
+    .via { min-width: 112px; padding: 10px 16px; }
+    .et-intero { display: none; }
+    .gruppo button.tondo { width: 30px; height: 30px; }
+  }
+  /* LIM: tutto un po' più grande */
+  @media (min-width: 1600px) and (min-height: 800px) {
+    .tappe { width: 340px; gap: 4px; }
+    .tappa { padding: 5px 12px 5px 7px; }
+    .tappa .n { width: 32px; height: 32px; font-size: 16px; }
+    .tappa .t { font-size: 15.5px; }
+    .tappa .d { font-size: 13px; }
+    .fase { font-size: 32px; min-width: 300px; padding: 10px 24px; }
+    .l-titolo small { font-size: 15px; }
+    .battiti span { width: 58px; height: 58px; font-size: 26px; }
+    .battiti { gap: 20px; }
+    .via { font-size: 19px; padding: 12px 28px; min-width: 180px; }
+    .gradini button, .interr, .azione, .quale, .bpm { font-size: 15px; }
+    .gruppo button.tondo { width: 38px; height: 38px; }
+  }
+  @media (prefers-reduced-motion: reduce) { .evid, .fase { transition: none; } }
+</style>
+</head>
+<body>
+<a class="casetta" href="solfeggio.html" aria-label="Torna a Solfeggio" title="Torna a Solfeggio">←</a>
+<main>
+  <div class="testa">
+    <h1>Lettura ritmica</h1>
+    <p>Ascolta il ritmo, poi ripetilo a tempo</p>
+  </div>
+  <div class="corpo">
+    <nav class="tappe" id="tappe" aria-label="Tappe"></nav>
+
+    <section class="lettore" id="lettore">
+      <div class="l-testa">
+        <div class="l-num" id="lNum">1</div>
+        <div class="l-titolo" id="lTitolo"></div>
+        <div class="fase" id="fase" aria-live="polite">Premi ▶ Via</div>
+      </div>
+      <div class="l-spartito" id="lSpartito">
+        <div id="spartito"></div>
+        <div class="copri" id="copri" title="Tocca per vedere il ritmo"><b>🎧</b><span id="copriTesto">Prima ascolta: il ritmo comparirà quando tocca a voi</span></div>
+      </div>
+      <div class="battiti" id="battiti" aria-hidden="true"></div>
+      <div class="comandi">
+        <button type="button" class="via" id="via">▶ Via</button>
+        <span class="gruppo" title="Ritmo della serie"><button type="button" class="tondo" id="prec" aria-label="Ritmo precedente">◀</button><span class="quale" id="quale">1/8</span><button type="button" class="tondo" id="succ" aria-label="Ritmo successivo">▶</button></span>
+        <span class="gradini" id="gradini" role="group" aria-label="Difficoltà"><button type="button" data-g="0">Facile</button><button type="button" data-g="1">Medio</button><button type="button" data-g="2">Difficile</button></span>
+        <span class="gruppo" title="Velocità (battiti al minuto)"><button type="button" class="tondo" id="meno" aria-label="Più lento">−</button><span class="bpm" id="bpm"></span><button type="button" class="tondo" id="piu" aria-label="Più veloce">+</button></span>
+        <label class="interr" title="Se è spento, il ritmo si vede solo quando tocca a voi ripeterlo (prima il suono, poi il simbolo)"><input type="checkbox" id="simbolo"> Ritmo scritto anche mentre suona</label>
+        <button type="button" class="azione" id="apriOpz">⚙️ Opzioni</button>
+        <button type="button" class="azione" id="intero" title="Schermo intero, per la LIM">⛶<span class="et-intero"> Schermo intero</span></button>
+      </div>
+    </section>
+  </div>
+  <footer class="piede">Cristiano Arata · musicascuole.it — <a href="crediti.html">Crediti e licenza</a> · <a href="privacy.html">Privacy</a></footer>
+</main>
+
+<div class="velo" id="velo" role="dialog" aria-modal="true" aria-labelledby="oTitolo">
+  <div class="finestra">
+    <button type="button" class="chiudi" id="chiudi" aria-label="Chiudi">✕</button>
+    <h3 id="oTitolo">Opzioni</h3>
+    <div class="opz" id="opz"></div>
+    <p class="nota">Il ritmo suona e subito dopo tocca a voi, senza fermarsi: la pulsazione non si interrompe mai.
+      Con «Suono lungo» le note durano quanto la loro figura: utile se la classe dice i ritmi (ta-a) invece di battere le mani.</p>
+  </div>
+</div>
+
+<script src="vexflow.js"></script>
+<script>
+(function () {
+  "use strict";
+  const VF = Vex.Flow;
+
+  /* =====================================================================
+     1. LE FIGURE (celle)
+     Durate in "unità": la semiminima vale 12 (così anche la croma di terzina, 4, è un numero intero).
+     b = quanti movimenti occupa la cella (nel 6/8 il movimento è la semiminima puntata);
+     dove = in quali movimenti della battuta può cominciare (se manca: ovunque);
+     diff = quanto è difficile la figura in sé (serve a ordinare i ritmi dal più facile al più difficile).
+     ===================================================================== */
+  const U = { w: 48, h: 24, q: 12, "8": 6, "16": 3 };
+  const n = (d, x) => Object.assign({ d, u: U[d] }, x || {});
+  const p = (d, x) => n(d, Object.assign({ pausa: true }, x));
+  const pt = e => { e.punto = true; e.u = e.u * 1.5; return e; };       // nota puntata
+  const tr = e => { e.terz = true; e.u = e.u * 2 / 3; return e; };      // croma di terzina
+  const lega = e => { e.lega = true; return e; };                       // legata alla nota dopo
+  const DUE = { "4/4": [0, 1, 2], "3/4": [0, 1], "2/4": [0] };          // figure da due movimenti
+  const CELLE = {
+    Q:     { b: 1, ev: [n("q")], diff: 0 },
+    QR:    { b: 1, ev: [p("q")], diff: 0 },
+    EE:    { b: 1, ev: [n("8"), n("8")], trav: [[0, 1]], diff: 0.4 },
+    H:     { b: 2, ev: [n("h")], dove: DUE, diff: 0.3 },
+    HR:    { b: 2, ev: [p("h")], dove: { "4/4": [0, 2] }, diff: 0.3 },
+    W:     { b: 4, ev: [n("w")], dove: { "4/4": [0] }, diff: 0.3 },
+    WR:    { b: "battuta", ev: [p("w", { intera: true })], diff: 0.5 },
+    HD:    { b: 3, ev: [pt(n("h"))], dove: { "4/4": [0, 1], "3/4": [0] }, diff: 0.5 },
+    ER_E:  { b: 1, ev: [p("8"), n("8")], diff: 2 },
+    E_ER:  { b: 1, ev: [n("8"), p("8")], diff: 1.4 },
+    QT_E:  { b: 2, ev: [lega(n("q")), n("8"), n("8")], trav: [[1, 2]], dove: DUE, diff: 1.5 },
+    QD_E:  { b: 2, ev: [pt(n("q")), n("8")], dove: DUE, diff: 1.5 },
+    SYNT:  { b: 2, ev: [n("8"), lega(n("8")), n("8"), n("8")], trav: [[0, 1], [2, 3]], dove: DUE, diff: 2 },
+    SYN:   { b: 2, ev: [n("8"), n("q"), n("8")], dove: { "4/4": [0, 2], "2/4": [0], "3/4": [0, 1] }, diff: 2.4 },
+    SSSS:  { b: 1, ev: [n("16"), n("16"), n("16"), n("16")], trav: [[0, 1, 2, 3]], diff: 1 },
+    ESS:   { b: 1, ev: [n("8"), n("16"), n("16")], trav: [[0, 1, 2]], diff: 1.4 },
+    SSE:   { b: 1, ev: [n("16"), n("16"), n("8")], trav: [[0, 1, 2]], diff: 1.6 },
+    EDS:   { b: 1, ev: [pt(n("8")), n("16")], trav: [[0, 1]], diff: 2 },
+    SRSSS: { b: 1, ev: [p("16"), n("16"), n("16"), n("16")], trav: [[1, 2, 3]], diff: 2.5 },
+    ESRS:  { b: 1, ev: [n("8"), p("16"), n("16")], trav: [[0, 1, 2]], diff: 2.5 },
+    TRI:   { b: 1, ev: [tr(n("8")), tr(n("8")), tr(n("8"))], trav: [[0, 1, 2]], terz: true, diff: 1.4 },
+    TRIR:  { b: 1, ev: [tr(n("8")), tr(p("8")), tr(n("8"))], trav: [[0, 1, 2]], terz: true, diff: 2.5 },
+    // tempo composto (6/8): il movimento è la semiminima puntata (18 unità)
+    C_QD:  { b: 1, comp: true, ev: [pt(n("q"))], diff: 0 },
+    C_QDR: { b: 1, comp: true, ev: [pt(p("q"))], diff: 0.3 },
+    C_EEE: { b: 1, comp: true, ev: [n("8"), n("8"), n("8")], trav: [[0, 1, 2]], diff: 0.5 },
+    C_QE:  { b: 1, comp: true, ev: [n("q"), n("8")], diff: 0.8 },
+    C_EQ:  { b: 1, comp: true, ev: [n("8"), n("q")], diff: 1.8 },
+    C_ERE: { b: 1, comp: true, ev: [p("8"), n("8"), n("8")], trav: [[1, 2]], diff: 2 },
+    C_HD:  { b: 2, comp: true, ev: [pt(n("h"))], dove: { "6/8": [0] }, diff: 0.3 }
+  };
+
+  /* =====================================================================
+     2. LE TAPPE
+     Ogni tappa ha tre gradini (Facile, Medio, Difficile). Per ogni gradino:
+     celle = figure ammesse; metri; battute per ritmo; nuove = almeno una di queste deve esserci;
+     tutte = devono esserci tutte; maxPause = pause per battuta; suono = il ritmo comincia con un suono.
+     ===================================================================== */
+  const TAPPE = [
+    { nome: "Semiminima e pausa", desc: "Semiminima e pausa di semiminima", gradini: [
+      { celle: ["Q", "QR"], maxPause: 1, suono: true },
+      { celle: ["Q", "QR"], maxPause: 2, nuove: ["QR"] },
+      { celle: ["Q", "QR"], maxPause: 2, nuove: ["QR"], battute: 2 } ] },
+    { nome: "Crome e semiminime", desc: "Due crome dentro un movimento", gradini: [
+      { celle: ["Q", "EE"], nuove: ["EE"], max: { EE: 1 } },
+      { celle: ["Q", "EE"], nuove: ["EE"] },
+      { celle: ["Q", "EE"], nuove: ["EE"], battute: 2 } ] },
+    { nome: "Semiminime, crome e pause", desc: "Le tre figure insieme", gradini: [
+      { celle: ["Q", "EE", "QR"], tutte: ["EE", "QR"], maxPause: 1, suono: true },
+      { celle: ["Q", "EE", "QR"], tutte: ["EE", "QR"], maxPause: 2 },
+      { celle: ["Q", "EE", "QR"], nuove: ["QR"], maxPause: 2, battute: 2 } ] },
+    { nome: "Minima e pausa di minima", desc: "Durate di due movimenti", gradini: [
+      { celle: ["Q", "H"], nuove: ["H"], suono: true },
+      { celle: ["Q", "EE", "QR", "H", "HR"], nuove: ["HR"] },
+      { celle: ["Q", "EE", "QR", "H", "HR"], nuove: ["H", "HR"], battute: 2 } ] },
+    { nome: "Semibreve e pausa di semibreve", desc: "Una battuta intera di suono o di silenzio", gradini: [
+      { celle: ["Q", "H", "W"], nuove: ["W"], battute: 2, suono: true },
+      { celle: ["Q", "EE", "QR", "H", "W", "WR"], nuove: ["WR"], battute: 2, suono: true },
+      { celle: ["Q", "EE", "QR", "H", "HR", "W", "WR"], tutte: ["W", "WR"], battute: 4 } ] },
+    { nome: "3/4, 2/4 e minima puntata", desc: "Battute da tre e da due movimenti", gradini: [
+      { celle: ["Q", "EE", "QR", "H", "HD"], metri: ["3/4"], nuove: ["HD", "H"], suono: true },
+      { celle: ["Q", "EE", "QR", "H"], metri: ["2/4"], battute: 2 },
+      { celle: ["Q", "EE", "QR", "H", "HR", "HD", "W"], metri: ["2/4", "3/4", "4/4"], battute: 2 } ] },
+    { nome: "La croma in levare", desc: "Pausa di croma e controtempo", gradini: [
+      { celle: ["Q", "EE", "QR", "ER_E"], nuove: ["ER_E"], max: { ER_E: 1 }, suono: true },
+      { celle: ["Q", "EE", "QR", "ER_E", "E_ER"], nuove: ["ER_E", "E_ER"], suono: true },
+      { celle: ["Q", "EE", "QR", "H", "ER_E", "E_ER"], nuove: ["ER_E"], metri: ["4/4", "3/4"], battute: 2 } ] },
+    { nome: "Legatura e semiminima puntata", desc: "Dalla legatura al punto", gradini: [
+      { celle: ["Q", "EE", "QT_E"], nuove: ["QT_E"], max: { QT_E: 1 } },
+      { celle: ["Q", "EE", "QR", "QD_E"], nuove: ["QD_E"] },
+      { celle: ["Q", "EE", "QR", "H", "HD", "QT_E", "QD_E"], nuove: ["QD_E", "QT_E"], metri: ["4/4", "3/4"], battute: 2 } ] },
+    { nome: "La sincope", desc: "Croma, semiminima, croma", gradini: [
+      { celle: ["Q", "EE", "SYNT"], nuove: ["SYNT"], max: { SYNT: 1 } },
+      { celle: ["Q", "EE", "SYN"], nuove: ["SYN"] },
+      { celle: ["Q", "EE", "QR", "H", "SYN", "QD_E", "ER_E"], nuove: ["SYN"], battute: 2 } ] },
+    { nome: "Le semicrome", desc: "Quattro suoni in un movimento", gradini: [
+      { celle: ["Q", "EE", "SSSS"], nuove: ["SSSS"], max: { SSSS: 2 } },
+      { celle: ["Q", "EE", "SSSS", "ESS", "SSE"], nuove: ["ESS", "SSE"] },
+      { celle: ["Q", "EE", "QR", "H", "SSSS", "ESS", "SSE"], nuove: ["SSSS", "ESS", "SSE"], metri: ["4/4", "2/4"], battute: 2 } ] },
+    { nome: "Croma puntata e pause di semicroma", desc: "Le figure più fitte", gradini: [
+      { celle: ["Q", "EE", "EDS"], nuove: ["EDS"], max: { EDS: 2 } },
+      { celle: ["Q", "EE", "SSSS", "ESS", "SSE", "EDS"], nuove: ["EDS"] },
+      { celle: ["Q", "EE", "QR", "SSSS", "ESS", "SSE", "EDS", "SRSSS", "ESRS"], nuove: ["SRSSS", "ESRS"], battute: 2 } ] },
+    { nome: "La terzina", desc: "Tre suoni in un movimento", gradini: [
+      { celle: ["Q", "TRI"], nuove: ["TRI"], max: { TRI: 2 } },
+      { celle: ["Q", "EE", "QR", "TRI"], tutte: ["TRI", "EE"] },
+      { celle: ["Q", "EE", "QR", "H", "TRI", "TRIR"], nuove: ["TRI", "TRIR"], battute: 2 } ] },
+    { nome: "Il 6/8", desc: "Tempo composto: il movimento si divide in tre", gradini: [
+      { celle: ["C_QD", "C_EEE"], metri: ["6/8"], battute: 2, suono: true },
+      { celle: ["C_QD", "C_QDR", "C_EEE", "C_QE"], metri: ["6/8"], nuove: ["C_QE"], battute: 2, suono: true },
+      { celle: ["C_QD", "C_QDR", "C_EEE", "C_QE", "C_EQ", "C_HD", "C_ERE"], metri: ["6/8"], nuove: ["C_EQ", "C_ERE"], battute: 2 } ] },
+    { nome: "Ripasso", desc: "Tutte le figure insieme", gradini: [
+      { celle: ["Q", "EE", "QR", "H", "HR", "HD", "W"], metri: ["4/4", "3/4", "2/4"], battute: 2 },
+      { celle: ["Q", "EE", "QR", "H", "HD", "ER_E", "E_ER", "QD_E", "SYN"], nuove: ["ER_E", "E_ER", "QD_E", "SYN"], metri: ["4/4", "3/4"], battute: 2 },
+      { celle: ["Q", "EE", "QR", "H", "ER_E", "QD_E", "SYN", "SSSS", "ESS", "SSE", "EDS", "TRI"], nuove: ["SSSS", "ESS", "SSE", "EDS", "TRI"], metri: ["4/4", "3/4"], battute: 2 } ] }
+  ];
+  const NOMI_GRADINI = ["Facile", "Medio", "Difficile"];
+
+  /* =====================================================================
+     3. IL GENERATORE
+     ===================================================================== */
+  function metroDi(s) {
+    const [num, den] = s.split("/").map(Number);
+    const comp = den === 8 && num % 3 === 0;
+    const bu = comp ? 18 : 12 * 4 / den;               // unità di un movimento
+    return { s, num, den, comp, battiti: comp ? num / 3 : num, bu, lung: num * 48 / den };
+  }
+  const bDi = (c, m) => c.b === "battuta" ? m.battiti : c.b;
+  // tutte le battute possibili con le figure ammesse
+  function battutePossibili(g, m) {
+    const celle = g.celle.filter(k => !!CELLE[k].comp === m.comp);
+    const tutte = [];
+    (function riempi(pos, seq) {
+      if (pos === m.battiti) { tutte.push(seq); return; }
+      celle.forEach(k => {
+        const c = CELLE[k], b = bDi(c, m);
+        if (c.b === "battuta" && pos !== 0) return;
+        if (pos + b > m.battiti) return;
+        if (c.dove && !(c.dove[m.s] || []).includes(pos)) return;
+        riempi(pos + b, seq.concat(k));
+      });
+    })(0, []);
+    return tutte.filter(seq => battutaValida(seq, g, m));
+  }
+  const pauseDi = seq => seq.reduce((t, k) => t + CELLE[k].ev.filter(e => e.pausa).length, 0);
+  const suoniDi = seq => seq.reduce((t, k) => t + CELLE[k].ev.filter(e => !e.pausa).length, 0);
+  function battutaValida(seq, g, m) {
+    if (seq.includes("WR") && seq.length > 1) return false;
+    if (suoniDi(seq) === 0 && !(seq.length === 1 && seq[0] === "WR")) return false;      // battuta muta: solo con la pausa di semibreve
+    if (seq[0] !== "WR" && pauseDi(seq) > (g.maxPause != null ? g.maxPause : 2)) return false;
+    if (g.max) for (const k in g.max) if (seq.filter(x => x === k).length > g.max[k]) return false;
+    // scrittura corretta: due pause di semiminima su metà battuta del 4/4 si scrivono con la pausa di minima
+    if (g.celle.includes("HR") && m.s === "4/4") {
+      let pos = 0;
+      for (let i = 0; i < seq.length - 1; i++) { if (seq[i] === "QR" && seq[i + 1] === "QR" && pos % 2 === 0) return false; pos += bDi(CELLE[seq[i]], m); }
+    }
+    // in un movimento, due pause di semicroma di fila o tre movimenti muti consecutivi: troppo
+    let muti = 0;
+    for (const k of seq) { const c = CELLE[k]; if (c.ev.every(e => e.pausa) && k !== "WR") { muti += bDi(c, m); if (muti > 2) return false; } else muti = 0; }
+    return true;
+  }
+  function diffBattuta(seq) {
+    let d = 0, prima = null, cambi = 0;
+    seq.forEach((k, i) => { d += CELLE[k].diff; if (prima !== null && prima !== k) cambi++; prima = k; });
+    const ev = seq.flatMap(k => CELLE[k].ev);
+    ev.forEach((e, i) => { if (e.pausa) d += 0.8; });
+    if (ev[0] && ev[0].pausa) d += 1.5;                      // cominciare con una pausa è più difficile
+    if (ev.length && ev[ev.length - 1].pausa) d += 0.2;
+    return d + new Set(seq).size * 0.5 + cambi * 0.3;
+  }
+  const mescola = a => { for (let i = a.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [a[i], a[j]] = [a[j], a[i]]; } return a; };
+  const scegli = a => a[Math.floor(Math.random() * a.length)];
+
+  /* un "ritmo" = { metro, battute: [[celle], …], diff } */
+  function ritmiPossibili(g, quanteBattute) {
+    const metri = (g.metri || ["4/4"]).map(metroDi);
+    const banche = metri.map(m => ({ m, bb: battutePossibili(g, m) })).filter(x => x.bb.length);
+    const contiene = (bat, k) => bat.some(seq => seq.includes(k));
+    const valido = r => {
+      const tutte = r.battute.flat();
+      if (g.nuove && !g.nuove.some(k => tutte.includes(k))) return false;
+      if (g.tutte && !g.tutte.every(k => tutte.includes(k))) return false;
+      const primo = CELLE[r.battute[0][0]].ev[0];
+      if (g.suono && primo.pausa) return false;
+      if (r.battute.every(seq => suoniDi(seq) === 0)) return false;
+      if (r.battute.length > 1 && r.battute.every(seq => seq.join() === r.battute[0].join())) return false;   // tutte uguali: no
+      if (r.battute.some((seq, i) => i > 0 && seq[0] === "WR" && r.battute[i - 1][0] === "WR")) return false;   // due battute mute di fila: no
+      // silenzio: al massimo due movimenti di fila, anche a cavallo della stanghetta (la pausa di semibreve fa eccezione)
+      let muto = 0;
+      for (const x of eventiDi(r)) { if (x.e.pausa && !x.e.intera) { muto += x.dur; if (muto > 2 * r.metro.bu + 1e-6) return false; } else muto = 0; }
+      return true;
+    };
+    const visti = new Map();
+    const aggiungi = r => { const chiave = r.metro.s + "|" + r.battute.map(s => s.join(".")).join("|"); if (!visti.has(chiave) && valido(r)) visti.set(chiave, r); };
+    const richieste = (g.nuove || []).concat(g.tutte || []);
+    banche.forEach(({ m, bb }) => {
+      const totale = Math.pow(bb.length, quanteBattute);
+      if (totale <= 5000) {   // pochi: tutti
+        (function comb(i, acc) { if (i === quanteBattute) { aggiungi({ metro: m, battute: acc }); return; } bb.forEach(s => comb(i + 1, acc.concat([s]))); })(0, []);
+      } else {
+        // tanti: a caso, ma spesso con una battuta che contiene le figure nuove (altrimenti sarebbero rare)
+        const conNuove = bb.filter(seq => richieste.some(k => seq.includes(k)));
+        const pesca = () => conNuove.length && Math.random() < 0.4 ? scegli(conNuove) : scegli(bb);
+        for (let t = 0; t < 4000; t++) aggiungi({ metro: m, battute: Array.from({ length: quanteBattute }, pesca) });
+      }
+    });
+    const lista = [...visti.values()];
+    lista.forEach(r => r.diff = r.battute.reduce((d, s) => d + diffBattuta(s), 0) / Math.sqrt(r.battute.length) + (CELLE[r.battute[0][0]].ev[0].pausa ? 1 : 0));
+    return lista.sort((a, b) => a.diff - b.diff);
+  }
+  /* la serie: N ritmi che salgono piano piano di difficoltà (dal più facile al più difficile del gradino) */
+  function generaSerie(g, quanti, quanteBattute) {
+    const lista = ritmiPossibili(g, quanteBattute);
+    if (!lista.length) return [];
+    // con più metri, la serie li alterna senza ripetere lo stesso troppe volte
+    const serie = [], usati = new Set();
+    for (let i = 0; i < quanti; i++) {
+      const q = quanti === 1 ? 0.5 : i / (quanti - 1);
+      const larg = Math.max(2, Math.round(lista.length * 0.22));
+      const centro = Math.round(q * (lista.length - 1));
+      const da = Math.max(0, Math.min(lista.length - larg, centro - Math.floor(larg / 2)));
+      let candidati = lista.slice(da, da + larg).filter(r => !usati.has(r) && r !== serie[serie.length - 1]);
+      if (!candidati.length) candidati = lista.filter(r => r !== serie[serie.length - 1]);
+      if (!candidati.length) candidati = lista;
+      const r = scegli(candidati); usati.add(r); serie.push(r);
+    }
+    return serie;
+  }
+
+  /* gli eventi del ritmo in ordine, con il loro inizio (in unità) */
+  function eventiDi(r) {
+    const out = []; let u = 0;
+    r.battute.forEach((seq, bi) => {
+      let inB = 0;
+      seq.forEach((k, ci) => {
+        const c = CELLE[k];
+        c.ev.forEach((e, ei) => {
+          const dur = e.intera ? r.metro.lung : e.u;
+          out.push({ e, k, bi, ci, ei, inizio: u, dur, inB });
+          u += dur; inB += dur;
+        });
+      });
+    });
+    return out;
+  }
+  /* gli attacchi da suonare (le note legate diventano un suono solo) */
+  function attacchiDi(eventi) {
+    const out = [];
+    eventi.forEach((x, i) => {
+      if (x.e.pausa) return;
+      if (i > 0 && eventi[i - 1].e.lega && !eventi[i - 1].e.pausa) { out[out.length - 1].dur += x.dur; return; }
+      out.push({ inizio: x.inizio, dur: x.dur });
+    });
+    return out;
+  }
+
+  /* =====================================================================
+     4. LO SPARTITO (VexFlow, una sola linea)
+     ===================================================================== */
+  const elSp = document.getElementById("spartito"), area = document.getElementById("lSpartito");
+  let disegno = null;   // { svg, note: [{ x, w, riga }], righe: [{ y }] , evid }
+  const LARGH = { w: 74, h: 58, q: 46, "8": 38, "16": 31 };
+  const ALTO_RIGA = 150;
+  function larghBattuta(seq, conTempo) {
+    let w = 34 + (conTempo ? 46 : 0);
+    seq.forEach(k => CELLE[k].ev.forEach(e => w += (LARGH[e.d] || 40) * (e.punto ? 1.15 : 1)));
+    return w;
+  }
+  function disegna(r) {
+    elSp.innerHTML = ""; disegno = null;
+    if (!r) return;
+    const nb = r.battute.length;
+    const prove = nb >= 2 ? [1, 2] : [1];
+    const W0 = Math.max(200, area.clientWidth - 36), H0 = Math.max(120, area.clientHeight - 12);
+    let migliore = null;
+    prove.forEach(righe => {
+      const perRiga = Math.ceil(nb / righe);
+      const largh = [];
+      for (let i = 0; i < righe; i++) largh.push(r.battute.slice(i * perRiga, (i + 1) * perRiga).reduce((t, s, j) => t + larghBattuta(s, i === 0 && j === 0), 0));
+      const W = Math.max(...largh) + 20, H = ALTO_RIGA * righe + 10;
+      const scala = Math.min(W0 / W, H0 / H);
+      if (!migliore || scala > migliore.scala * 1.08) migliore = { righe, perRiga, W, H, scala };
+    });
+    const { righe, perRiga, W, H } = migliore;
+    const scala = Math.min(migliore.scala, 3.4);
+    const rend = new VF.Renderer(elSp, VF.Renderer.Backends.SVG);
+    rend.resize(W, H);
+    const ctx = rend.getContext();
+    const svg = elSp.querySelector("svg");
+    const note = [], righeY = [];
+    const eventi = eventiDi(r);
+    let k = 0;
+    for (let riga = 0; riga < righe; riga++) {
+      const battute = r.battute.slice(riga * perRiga, (riga + 1) * perRiga);
+      // le battute di una riga si allargano in proporzione fino a riempirla
+      const lb = battute.map((s, j) => larghBattuta(s, riga === 0 && j === 0));
+      const extra = (W - 20 - lb.reduce((a, b) => a + b, 0)) / battute.length;
+      let x = 10;
+      const y = riga * ALTO_RIGA + 10;
+      righeY.push(y);   // (la linea visibile è la terza del rigo)
+      battute.forEach((seq, j) => {
+        const bi = riga * perRiga + j;
+        const w = lb[j] + extra;
+        const st = new VF.Stave(x, y, w);
+        st.setConfigForLines([{ visible: false }, { visible: false }, { visible: true }, { visible: false }, { visible: false }]);
+        if (bi === 0) st.addTimeSignature(r.metro.s);
+        if (j === 0 && bi !== 0) st.setBegBarType(VF.Barline.type.NONE);
+        if (bi === nb - 1) st.setEndBarType(VF.Barline.type.END);
+        st.setContext(ctx).draw();
+        const sn = [], trav = [], terz = [], leg = [];
+        seq.forEach(kk => {
+          const c = CELLE[kk], prime = sn.length;
+          c.ev.forEach(e => {
+            const dur = e.d + (e.pausa ? "r" : "");
+            const chiave = "b/4";   // sulla linea: la pausa di semibreve ci resta appesa sotto, quella di minima ci sta sopra
+            const nota = new VF.StaveNote({ keys: [chiave], duration: dur, stem_direction: 1, align_center: !!e.intera });
+            if (e.punto) VF.Dot.buildAndAttach([nota], { all: true });
+            sn.push(nota);
+          });
+          (c.trav || []).forEach(gr => trav.push(gr.map(i => sn[prime + i])));
+          if (c.terz) terz.push(sn.slice(prime, prime + 3));
+          c.ev.forEach((e, i) => { if (e.lega) leg.push([sn[prime + i], sn[prime + i + 1]]); });
+        });
+        const tupl = terz.map(t => new VF.Tuplet(t, { num_notes: 3, notes_occupied: 2, location: 1, bracketed: false }));
+        const beams = trav.map(t => new VF.Beam(t));
+        const voce = new VF.Voice({ num_beats: r.metro.num, beat_value: r.metro.den }); voce.setStrict(false);
+        voce.addTickables(sn);
+        new VF.Formatter().joinVoices([voce]).formatToStave([voce], st);
+        voce.draw(ctx, st);
+        beams.forEach(b => b.setContext(ctx).draw());
+        tupl.forEach(t => t.setContext(ctx).draw());
+        leg.forEach(([a, b]) => new VF.StaveTie({ first_note: a, last_note: b, first_indices: [0], last_indices: [0] }).setContext(ctx).draw());
+        sn.forEach(nota => {
+          let bx = nota.getAbsoluteX(), bw = 22;
+          try { const bb = nota.getBoundingBox(); if (bb) { bx = bb.getX(); bw = bb.getW(); } } catch (e) {}
+          note.push({ x: bx, w: bw, riga, ev: eventi[k++] });
+        });
+        x += w;
+      });
+    }
+    svg.setAttribute("viewBox", `0 0 ${W} ${H}`);
+    svg.style.width = W * scala + "px"; svg.style.height = H * scala + "px";
+    // il riquadro che evidenzia la figura che sta suonando (dietro alle note)
+    const NS = "http://www.w3.org/2000/svg";
+    const evid = document.createElementNS(NS, "rect");
+    evid.setAttribute("class", "evid"); evid.setAttribute("rx", 10); evid.setAttribute("height", 78); evid.setAttribute("opacity", 0);
+    svg.insertBefore(evid, svg.firstChild);
+    disegno = { svg, note, righeY, evid, ritmo: r };
+  }
+  function evidenzia(i, colore) {   // i = indice dell'evento (o -1 per spegnere)
+    if (!disegno) return;
+    const { evid, note, righeY } = disegno;
+    if (i < 0 || !note[i]) { evid.setAttribute("opacity", 0); return; }
+    const nt = note[i], w = Math.max(30, nt.w + 14);
+    evid.setAttribute("x", nt.x + nt.w / 2 - w / 2); evid.setAttribute("width", w);
+    evid.setAttribute("y", righeY[nt.riga] + 18);
+    evid.setAttribute("fill", colore); evid.setAttribute("opacity", 0.22);
+  }
+
+  /* =====================================================================
+     5. IMPOSTAZIONI (ricordate solo in questo browser)
+     ===================================================================== */
+  const leggi = (k, d) => { try { const v = localStorage.getItem("lettura." + k); return v === null ? d : v; } catch (e) { return d; } };
+  const scrivi = (k, v) => { try { localStorage.setItem("lettura." + k, v); } catch (e) {} };
+  const S = {
+    tappa: Math.min(TAPPE.length - 1, Math.max(0, +leggi("tappa", "0") || 0)),
+    gradino: Math.min(2, Math.max(0, +leggi("gradino", "0") || 0)),
+    bpm: Math.min(160, Math.max(40, +leggi("bpm", "80") || 80)),
+    simbolo: leggi("simbolo", "1") === "1",       // di base il ritmo si vede anche durante l'ascolto
+    suono: leggi("suono", "mani"),                 // mani | lungo
+    metro: leggi("metro", "mov"),                  // mov | sudd | conta
+    ripeti: +leggi("ripeti", "1") === 2 ? 2 : 1,   // ogni ritmo 1 o 2 volte
+    battute: leggi("battute", "tappa"),            // tappa | 1 | 2 | 4
+    quanti: [4, 8, 12].includes(+leggi("quanti", "8")) ? +leggi("quanti", "8") : 8
+  };
+  const OPZIONI = [
+    { k: "suono", et: "Suono del ritmo", v: [["mani", "👏 Battito di mani"], ["lungo", "🎵 Suono lungo"]] },
+    { k: "metro", et: "Metronomo", v: [["mov", "Movimenti"], ["sudd", "Con le suddivisioni"], ["conta", "Solo il conteggio iniziale"]] },
+    { k: "ripeti", et: "Ogni ritmo", v: [[1, "Una volta"], [2, "Due volte"]] },
+    { k: "battute", et: "Battute per ritmo", v: [["tappa", "Come la tappa"], ["1", "1"], ["2", "2"], ["4", "4"]] },
+    { k: "quanti", et: "Ritmi per serie", v: [[4, "4"], [8, "8"], [12, "12"]] }
+  ];
+
+  /* =====================================================================
+     6. INTERFACCIA
+     ===================================================================== */
+  const $ = id => document.getElementById(id);
+  let serie = [], attuale = 0;
+  const gradinoAtt = () => TAPPE[S.tappa].gradini[S.gradino];
+  const battutePer = () => S.battute === "tappa" ? (gradinoAtt().battute || 1) : +S.battute;
+
+  function disegnaTappe() {
+    $("tappe").innerHTML = TAPPE.map((t, i) => `<button type="button" class="tappa${i === S.tappa ? " attiva" : ""}" data-t="${i}"><span class="n">${i + 1}</span><span><span class="t">${t.nome}</span><span class="d">${t.desc}</span></span></button>`).join("");
+    const a = $("tappe").querySelector(".attiva");
+    if (a) { const c = $("tappe"); if (c.scrollWidth > c.clientWidth + 2) c.scrollLeft = a.offsetLeft - c.clientWidth / 2 + a.offsetWidth / 2; }
+  }
+  $("tappe").addEventListener("click", e => {
+    const b = e.target.closest(".tappa"); if (!b) return;
+    ferma(); S.tappa = +b.dataset.t; scrivi("tappa", S.tappa); nuovaSerie();
+  });
+  $("gradini").addEventListener("click", e => {
+    const b = e.target.closest("button"); if (!b) return;
+    ferma(); S.gradino = +b.dataset.g; scrivi("gradino", S.gradino); nuovaSerie();
+  });
+  function aggiornaTesta() {
+    const t = TAPPE[S.tappa];
+    $("lNum").textContent = S.tappa + 1;
+    const r = serie[attuale];
+    $("lTitolo").innerHTML = `${t.nome}<small>${NOMI_GRADINI[S.gradino]} · ritmo ${attuale + 1} di ${serie.length}${r ? " · " + r.metro.s : ""}</small>`;
+    $("quale").textContent = `${attuale + 1}/${serie.length}`;
+    [...$("gradini").children].forEach((b, i) => b.classList.toggle("attivo", i === S.gradino));
+    $("bpm").innerHTML = `<span class="fig">${r && r.metro.comp ? "♩." : "♩"}</span> = ${S.bpm}`;
+  }
+  function nuovaSerie() {
+    serie = generaSerie(gradinoAtt(), S.quanti, battutePer());
+    attuale = 0; giaSentito.clear();
+    disegnaTappe(); mostraRitmo(); impostaFase("pronto");
+  }
+  function mostraRitmo() {
+    aggiornaTesta();
+    disegna(serie[attuale]);
+    battitiPer(serie[attuale]);
+    copri(!S.simbolo && !giaSentito.has(attuale));
+  }
+  const giaSentito = new Set();   // con il simbolo nascosto: i ritmi già ascoltati si possono rivedere da fermi
+  function copri(si) { area.classList.toggle("nascosto", si); }
+  $("copri").addEventListener("click", () => { if (!play) copri(false); });
+
+  function battitiPer(r) {
+    const nB = r ? r.metro.battiti : 4;
+    if ($("battiti").children.length !== nB) $("battiti").innerHTML = Array.from({ length: nB }, (_, i) => `<span>${i + 1}</span>`).join("");
+  }
+  let statoBattito = "";
+  function accendiBattito(i, fase) {
+    const chiave = i + "|" + fase; if (chiave === statoBattito) return; statoBattito = chiave;
+    $("battiti").className = "battiti " + fase;
+    [...$("battiti").children].forEach((s, j) => s.classList.toggle("on", j === i));
+  }
+  let statoFase = "";
+  function impostaFase(f, extra) {
+    const testo = { pronto: "Premi ▶ Via", conta: "Pronti… " + (extra || ""), ascolta: "🎧 Ascolta", eco: "👏 Ripeti!", fine: "Fine! 🎉" }[f];
+    const chiave = f + testo; if (chiave === statoFase) return; statoFase = chiave;
+    const el = $("fase"); el.className = "fase" + (f === "pronto" ? "" : " " + f); el.textContent = testo;
+  }
+
+  $("prec").addEventListener("click", () => { ferma(); attuale = (attuale - 1 + serie.length) % serie.length; mostraRitmo(); impostaFase("pronto"); });
+  $("succ").addEventListener("click", () => { ferma(); attuale = (attuale + 1) % serie.length; mostraRitmo(); impostaFase("pronto"); });
+  $("meno").addEventListener("click", () => { S.bpm = Math.max(40, S.bpm - 4); scrivi("bpm", S.bpm); aggiornaTesta(); });
+  $("piu").addEventListener("click", () => { S.bpm = Math.min(160, S.bpm + 4); scrivi("bpm", S.bpm); aggiornaTesta(); });
+  const cbSimb = $("simbolo"); cbSimb.checked = S.simbolo;
+  cbSimb.addEventListener("change", () => { S.simbolo = cbSimb.checked; scrivi("simbolo", S.simbolo ? "1" : "0"); if (!play) copri(!S.simbolo && !giaSentito.has(attuale)); });
+
+  // opzioni
+  function disegnaOpzioni() {
+    $("opz").innerHTML = OPZIONI.map(o => `<div class="et">${o.et}</div><div class="scelte" data-k="${o.k}">${o.v.map(([v, t]) => `<button type="button" data-v="${v}" class="${String(S[o.k]) === String(v) ? "attivo" : ""}">${t}</button>`).join("")}</div>`).join("");
+  }
+  $("opz").addEventListener("click", e => {
+    const b = e.target.closest("button"); if (!b) return;
+    const k = b.parentElement.dataset.k, o = OPZIONI.find(x => x.k === k);
+    const v = typeof o.v[0][0] === "number" ? +b.dataset.v : b.dataset.v;
+    S[k] = v; scrivi(k, v); disegnaOpzioni();
+    if (k === "battute" || k === "quanti") { ferma(); nuovaSerie(); }
+  });
+  const velo = $("velo");
+  $("apriOpz").addEventListener("click", () => { disegnaOpzioni(); velo.classList.add("aperto"); });
+  $("chiudi").addEventListener("click", () => velo.classList.remove("aperto"));
+  velo.addEventListener("click", e => { if (e.target === velo) velo.classList.remove("aperto"); });
+
+  $("intero").addEventListener("click", () => {
+    const on = !document.body.classList.contains("lim");
+    document.body.classList.toggle("lim", on);
+    try { if (on && document.documentElement.requestFullscreen) document.documentElement.requestFullscreen(); else if (!on && document.fullscreenElement) document.exitFullscreen(); } catch (e) {}
+    setTimeout(ridisegna, 200);
+  });
+  document.addEventListener("fullscreenchange", () => { if (!document.fullscreenElement && document.body.classList.contains("lim")) { document.body.classList.remove("lim"); setTimeout(ridisegna, 200); } });
+  function ridisegna() { const r = disegno ? disegno.ritmo : serie[attuale]; disegna(r); }
+  /* si ridisegna solo se cambia la larghezza (sul telefono l'altezza cambia di continuo con la barra dell'indirizzo) */
+  let attesa, larghezzaDisegno = window.innerWidth, altezzaDisegno = window.innerHeight;
+  window.addEventListener("resize", () => { clearTimeout(attesa); attesa = setTimeout(() => {
+    const largo = matchMedia("(min-width: 900px) and (min-height: 560px)").matches;
+    if (Math.abs(window.innerWidth - larghezzaDisegno) < 2 && (!largo || Math.abs(window.innerHeight - altezzaDisegno) < 2)) return;
+    larghezzaDisegno = window.innerWidth; altezzaDisegno = window.innerHeight; ridisegna(); }, 200); });
+  document.addEventListener("keydown", e => {
+    if (velo.classList.contains("aperto")) { if (e.key === "Escape") velo.classList.remove("aperto"); return; }
+    if (/INPUT|SELECT|TEXTAREA/.test(e.target.tagName)) return;
+    if (e.key === " " && e.target.tagName !== "BUTTON") { e.preventDefault(); play ? ferma() : avvia(); }
+    else if (e.key === "ArrowRight") $("succ").click();
+    else if (e.key === "ArrowLeft") $("prec").click();
+  });
+
+  /* =====================================================================
+     7. AUDIO E SVOLGIMENTO
+     Tutto è programmato sull'orologio dell'audio, un pezzo alla volta ("segmenti"):
+     conteggio → ascolta → ripeti → ascolta (ritmo dopo) → ripeti … senza pause.
+     La velocità nuova vale dal segmento successivo.
+     ===================================================================== */
+  let ctx = null, rumore = null, nodi = [], play = null, timer = null;
+  const audio = () => { try { ctx = ctx || new (window.AudioContext || window.webkitAudioContext)(); if (ctx.state === "suspended") ctx.resume(); } catch (e) { ctx = null; } return ctx; };
+  const adesso = () => ctx ? ctx.currentTime : performance.now() / 1000;
+  const tieni = nd => { nodi.push(nd); if (nodi.length > 400) nodi.splice(0, 200); };
+  function clic(t, tipo) {   // 2 = primo movimento, 1 = movimento, 0 = suddivisione
+    try {
+      const o = ctx.createOscillator(), g = ctx.createGain();
+      o.type = "triangle"; o.frequency.value = [520, 780, 1250][tipo];
+      const v = [0.07, 0.16, 0.24][tipo];
+      g.gain.setValueAtTime(0.0001, t); g.gain.exponentialRampToValueAtTime(v, t + 0.005); g.gain.exponentialRampToValueAtTime(0.0001, t + (tipo ? 0.07 : 0.045));
+      o.connect(g).connect(ctx.destination); o.start(t); o.stop(t + 0.09); tieni(o);
+    } catch (e) {}
+  }
+  function mani(t) {
+    try {
+      if (!rumore) {
+        const len = Math.floor(ctx.sampleRate * 0.18); rumore = ctx.createBuffer(1, len, ctx.sampleRate);
+        const d = rumore.getChannelData(0); for (let i = 0; i < len; i++) d[i] = (Math.random() * 2 - 1) * Math.exp(-i / (len * 0.12));
+      }
+      const s = ctx.createBufferSource(); s.buffer = rumore;
+      const bp = ctx.createBiquadFilter(); bp.type = "bandpass"; bp.frequency.value = 1800; bp.Q.value = 0.9;
+      const hp = ctx.createBiquadFilter(); hp.type = "highpass"; hp.frequency.value = 700;
+      const g = ctx.createGain(); g.gain.setValueAtTime(1.2, t); g.gain.exponentialRampToValueAtTime(0.001, t + 0.16);
+      s.connect(bp).connect(hp).connect(g).connect(ctx.destination); s.start(t); s.stop(t + 0.2); tieni(s);
+    } catch (e) {}
+  }
+  function lungo(t, dur) {   // suono tenuto per tutta la durata della figura (staccato appena prima della nota dopo)
+    try {
+      const fine = t + Math.max(0.08, dur * 0.88);
+      const o = ctx.createOscillator(), o2 = ctx.createOscillator(), g = ctx.createGain(), lp = ctx.createBiquadFilter();
+      o.type = "triangle"; o.frequency.value = 523.25; o2.type = "sine"; o2.frequency.value = 1046.5;
+      lp.type = "lowpass"; lp.frequency.value = 2400;
+      g.gain.setValueAtTime(0.0001, t); g.gain.exponentialRampToValueAtTime(0.32, t + 0.012);
+      g.gain.exponentialRampToValueAtTime(0.2, t + 0.12); g.gain.setValueAtTime(0.2, fine - 0.03); g.gain.exponentialRampToValueAtTime(0.0001, fine);
+      const g2 = ctx.createGain(); g2.gain.value = 0.25;
+      o.connect(lp); o2.connect(g2).connect(lp); lp.connect(g).connect(ctx.destination);
+      o.start(t); o2.start(t); o.stop(fine + 0.02); o2.stop(fine + 0.02); tieni(o); tieni(o2);
+    } catch (e) {}
+  }
+
+  /* i segmenti in ordine: { tipo: conta|ascolta|eco, i (ritmo), t0, t1, spu (secondi per unità) } */
+  function* scaletta(da) {
+    const r0 = serie[da];
+    yield { tipo: "conta", i: da, battute: r0.metro.battiti <= 2 ? 2 : 1 };
+    for (let i = da; i < serie.length; i++)
+      for (let v = 0; v < S.ripeti; v++) { yield { tipo: "ascolta", i, v }; yield { tipo: "eco", i, v }; }
+  }
+  function avvia() {
+    if (!serie.length) return;
+    if (!audio()) return;
+    if (statoFase.startsWith("fine")) { nuovaSerie(); }
+    play = { gen: scaletta(attuale), segs: [], finito: false, ultimoIdx: -1, ultimoEv: -2 };
+    play.prossimoT = adesso() + 0.15;
+    $("via").textContent = "■ Ferma"; $("via").classList.add("in-corso");
+    programma(); timer = setInterval(programma, 30);
+    requestAnimationFrame(avanti);
+  }
+  function programma() {
+    if (!play || play.finito) return;
+    while (play.prossimoT < adesso() + 0.35) {
+      const x = play.gen.next();
+      if (x.done) { play.finito = true; break; }
+      const seg = x.value, r = serie[seg.i], m = r.metro;
+      seg.spu = 60 / S.bpm / m.bu;
+      const unita = seg.tipo === "conta" ? seg.battute * m.lung : r.battute.length * m.lung;
+      seg.t0 = play.prossimoT; seg.t1 = seg.t0 + unita * seg.spu; seg.r = r;
+      // metronomo
+      const sud = m.comp ? 3 : 2, passo = m.bu / sud;
+      if (seg.tipo === "conta" || S.metro !== "conta") {
+        for (let u = 0; u < unita - 1e-6; u += (S.metro === "sudd" && seg.tipo !== "conta" ? passo : m.bu)) {
+          const inB = u % m.lung, mov = Math.abs(inB % m.bu) < 1e-6;
+          clic(seg.t0 + u * seg.spu, mov ? (inB < 1e-6 ? 2 : 1) : 0);
+        }
+      }
+      // il ritmo da ascoltare
+      if (seg.tipo === "ascolta") attacchiDi(eventiDi(r)).forEach(a => {
+        const t = seg.t0 + a.inizio * seg.spu;
+        if (S.suono === "lungo") lungo(t, a.dur * seg.spu); else mani(t);
+      });
+      play.segs.push(seg); if (play.segs.length > 8) play.segs.shift();
+      play.prossimoT = seg.t1;
+    }
+  }
+  function avanti() {
+    if (!play) return;
+    const t = adesso();
+    const seg = play.segs.find(s => t >= s.t0 && t < s.t1);
+    if (!seg) {
+      if (play.finito && t >= play.prossimoT) { fine(); return; }
+      requestAnimationFrame(avanti); return;
+    }
+    const r = seg.r, m = r.metro, u = (t - seg.t0) / seg.spu;
+    // cambio di ritmo: si ridisegna solo quando cambia
+    if (seg.i !== play.ultimoIdx) { play.ultimoIdx = seg.i; attuale = seg.i; mostraRitmo(); play.ultimoEv = -2; }
+    const nascondi = !S.simbolo && seg.tipo !== "eco";
+    if (area.classList.contains("nascosto") !== nascondi) copri(nascondi);
+    if (seg.tipo === "eco") giaSentito.add(seg.i);
+    const inB = u % m.lung, mov = Math.floor(inB / m.bu + 1e-6);
+    if (seg.tipo === "conta") {
+      const contati = Math.floor(u / m.bu + 1e-6);
+      impostaFase("conta", String(contati + 1));
+      accendiBattito(mov, "conta");
+      if (play.ultimoEv !== -1) { evidenzia(-1); play.ultimoEv = -1; }
+    } else {
+      impostaFase(seg.tipo);
+      accendiBattito(mov, seg.tipo);
+      if (disegno) {
+        const note = disegno.note;
+        let i = 0; while (i + 1 < note.length && note[i + 1].ev.inizio <= u + 1e-6) i++;
+        const chiave = i + (seg.tipo === "eco" ? 1000 : 0);
+        if (chiave !== play.ultimoEv) { play.ultimoEv = chiave; evidenzia(i, seg.tipo === "eco" ? "#009C95" : "#E21C48"); }
+      }
+    }
+    requestAnimationFrame(avanti);
+  }
+  function fermaAudio() {
+    clearInterval(timer); timer = null;
+    nodi.forEach(nd => { try { nd.stop(); } catch (e) {} }); nodi = [];
+    // risparmio energetico: l'audio va in pausa quando non suona
+    setTimeout(() => { if (!play && ctx && ctx.state === "running") ctx.suspend().catch(() => {}); }, 1500);
+  }
+  function ferma() {
+    if (!play) return;
+    play = null; fermaAudio();
+    $("via").textContent = "▶ Via"; $("via").classList.remove("in-corso");
+    evidenzia(-1); accendiBattito(-1, ""); impostaFase("pronto");
+    copri(!S.simbolo && !giaSentito.has(attuale));
+  }
+  function fine() {
+    play = null; fermaAudio();
+    $("via").textContent = "▶ Altri ritmi"; $("via").classList.remove("in-corso");
+    evidenzia(-1); accendiBattito(-1, ""); impostaFase("fine"); copri(false);
+  }
+  $("via").addEventListener("click", () => play ? ferma() : avvia());
+  document.addEventListener("visibilitychange", () => { if (document.hidden) ferma(); });
+
+  // per le prove automatiche (nessun effetto sul gioco)
+  window.LetturaRitmica = { TAPPE, CELLE, ritmiPossibili, generaSerie };
+  nuovaSerie();
+  // i caratteri arrivano dopo: si ridisegna una volta quando sono pronti
+  if (document.fonts && document.fonts.ready) document.fonts.ready.then(() => { if (!play) ridisegna(); });
+})();
+</script>
+</body>
+</html>

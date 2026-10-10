@@ -151,9 +151,25 @@ quella modifica si perde.
 
 ## 5. Solfeggio
 
-- `solfeggio.html` — pagina della quinta card in home (rossa, icona metronomo). Per ora: Lettura ritmica,
-  Solfeggio cantato segnati “presto” (Solfeggio parlato è attivo: vedi sotto), più i collegamenti ai giochi già esistenti
-  (Imita il ritmo, Dettato ritmico, Dettato melodico). Per attivare una voce: darle `url` nell'array `VOCI`.
+- `solfeggio.html` — pagina della quinta card in home (rossa, icona metronomo): Lettura ritmica, Solfeggio parlato,
+  Solfeggio cantato, più i collegamenti ai giochi già esistenti (Imita il ritmo, Dettato ritmico, Dettato melodico).
+  Per attivare una voce: darle `url` nell'array `VOCI`.
+
+### Lettura ritmica (eco ritmico) — ottobre 2026
+- Pagina `lettura-ritmica.html`. Il ritmo suona, poi la classe lo ripete; la pulsazione non si ferma mai
+  (conteggio → ascolta → ripeti → ascolta il ritmo dopo → ripeti…). Niente microfono, niente punteggio:
+  se battere le mani o dire i ritmi (ta-a) lo decide l'insegnante in classe.
+- 14 tappe (array `TAPPE`), ognuna con 3 gradini Facile/Medio/Difficile. Le figure sono "celle" da un movimento
+  (o più) nell'oggetto `CELLE`, con le posizioni ammesse (`dove`) e una difficoltà (`diff`).
+- I ritmi **non sono scritti a mano**: per ogni gradino si preparano tutte le battute possibili con le figure ammesse
+  (con regole di scrittura: niente due pause di semiminima su metà battuta del 4/4 quando c'è la pausa di minima,
+  al massimo due movimenti muti di fila, ecc.), si ordinano dalla più facile alla più difficile e la serie sale piano.
+- Di base il ritmo scritto si vede anche mentre suona; spegnendo l'interruttore si vede solo quando tocca a voi
+  (prima il suono, poi il simbolo). Opzioni: battito di mani o suono lungo, metronomo (movimenti / suddivisioni /
+  solo conteggio), ogni ritmo 1 o 2 volte, battute per ritmo, ritmi per serie. Chiavi `lettura.*` in localStorage.
+- Spartito disegnato direttamente con VexFlow su una sola linea (non con `motore-schemi.js`).
+- Prove: `window.LetturaRitmica.ritmiPossibili(gradino, battute)` restituisce tutti i ritmi di un gradino.
+- Idee e scelte didattiche: `_sviluppo/PUNTI-DIDATTICI.md`.
 
 ### Il Bona (solfeggio parlato) — trascrizione automatica
 
@@ -181,7 +197,7 @@ quella modifica si perde.
 ## 6. Da fare / in sospeso
 
 - Brani da suonare del Medioevo (In taberna, Sumer is icumen in, Ut queant laxis) e dell'antichità (Epitaffio di Seikilos): servono gli spartiti.
-- Solfeggio: Lettura ritmica e Solfeggio cantato ancora da fare. Bona: fatte 1–100. Dalla 86 la fonte è l'edizione Mangione (IMSLP 756392, pagine pulite a 300 dpi): trascrizione in parallelo con più assistenti, istruzioni in _sviluppo/omr/ISTRUZIONI.md.
+- Solfeggio: Lettura ritmica fatta (ottobre 2026). Bona: fatte 1–100. Dalla 86 la fonte è l'edizione Mangione (IMSLP 756392, pagine pulite a 300 dpi): trascrizione in parallelo con più assistenti, istruzioni in _sviluppo/omr/ISTRUZIONI.md.
 - Altre epoche di storia.
 - Dominio musicascuole.it (DNS su Aruba + dominio personalizzato in GitHub Pages, www → reindirizzo).
 - Anteprima dei link (Open Graph), pagina 404, sitemap.
