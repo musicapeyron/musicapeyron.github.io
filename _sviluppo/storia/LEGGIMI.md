@@ -3,6 +3,39 @@
 Metodo messo a punto con Cristiano nell'ottobre 2026 su `storia-medioevo.html`.
 Per le altre epoche si copia il Medioevo e si cambiano solo i dati.
 
+## Le scelte di Cristiano (ottobre 2026): da rispettare in ogni epoca
+- **Percorso guidato**: un capitolo per ogni ascolto. Il primo è un'introduzione all'epoca con un ascolto accattivante,
+  poi in ordine cronologico. L'introduzione dice che cosa c'è da sapere sull'epoca (date con «d.C.» se servono,
+  società, dove si fa musica); l'ultimo capitolo è «Ricapitoliamo» (linea del tempo + tutte le parole).
+- **Capitoli a pagine**: 1–2 paragrafi brevi per pagina, ognuno con un'immagine d'epoca pertinente e la sua didascalia;
+  si va avanti con la freccia; poi la pagina «Ascoltiamo» (video, cosa ascoltare, «Lo sapevi?», «Ascolta anche» per un
+  secondo ascolto, che gli piace molto), poi «Parole da ricordare» con gli strumenti del capitolo.
+- **Tutto in una schermata** su LIM e PC (zoom di adatta-schermo), il telefono scorre in verticale.
+- **Banner** come prima ma da bordo a bordo dello schermo.
+- **Colori**: capitoli e numeri viola = musica sacra, arancio = profana (se l'epoca ha un'altra divisione, due colori
+  con lo stesso senso). Capitoli con sfondo leggermente colorato; esercizi con lo sfondo del sito.
+- **Niente emoji**, tranne nei pulsanti delle schede in alto (Il percorso, Strumenti, Da suonare, Mappa concettuale,
+  Esercizi, Schede) e nelle etichette del banner, che vanno bene così. Altrove: piccole icone disegnate.
+- **Strumenti**: in «Che strumento è?» ogni strumento ha l'immagine d'epoca (`img`, o `epoca` se diversa) e una foto
+  (`foto`: ricostruzione o strumento da museo, licenza libera, oggetto intero). Se nell'immagine d'epoca ci sono più
+  strumenti, `cerchio` = ovale rosso sottile su quello giusto (coordinate su 640x400).
+- **Verifica**: fronte e retro, A e B diverse e nuove a ogni apertura della pagina, «punteggio» (mai «voto»),
+  soluzioni su un foglio a parte. Vero o falso stampabile in ordine sempre diverso.
+- **Versione breve** solo per scheda riassuntiva e racconto completo: davvero breve e a caratteri grandi.
+- **Scheda d'ascolto**: se non si può sapere dal video com'è l'esecuzione (voci sole o con strumenti...), accettare
+  più risposte e dirlo a Cristiano, che può ascoltare e decidere.
+- Lavoro grosso (un'epoca nuova): ramo di prova, schermate a Cristiano, poi su `main`. Ritocchi: subito su `main`.
+
+## Come si comincia un'epoca nuova
+1. Leggere la pagina attuale dell'epoca (`storia-<epoca>.html`): ascolti, video, strumenti, crediti già scelti
+   (sono buoni punti di partenza; si possono riordinare o cambiare).
+2. Copiare `storia-medioevo.html` come base e sostituire: banner, testi e dati di `CAPITOLI`, `LINEA`, `STRUMENTI`,
+   `SUONARE`, `CREDITI_IMG`, `ATTIVITA`, cartella `IMG`. Il codice del percorso (diapositive, indice, banner) è
+   dentro la pagina; mappa, esercizi e schede sono in `storia-attivita.js/css` (comuni).
+3. Far partire subito in sottofondo la ricerca e lo scaricamento delle immagini (è la parte più lenta), e intanto
+   scrivere i testi delle pagine e i dati degli esercizi.
+4. Prove (sotto) e schermate a Cristiano.
+
 ## Com'è fatta la pagina
 - In alto il banner da bordo a bordo; sotto le schede (Il percorso, Strumenti, Da suonare, ...).
 - `CAPITOLI`: un capitolo per ogni ascolto, in ordine. Ogni capitolo ha `pagine` (una diapositiva per
