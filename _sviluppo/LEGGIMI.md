@@ -297,3 +297,8 @@ Per un gioco nuovo, provarlo a quelle due misure in tutte le schermate, compresi
 - Pulsanti delle risposte: **niente `transform` su `:hover`/`:active`** (il pulsante si spostava e il clic
   sul bordo alto non contava); usare `filter: brightness(...)`.
 - Non usano lo script (per scelta): Imita il ritmo, Le note sul pianoforte, Scarta la nota, i due Memory.
+
+## Riga «Crediti e licenza · Privacy» (ottobre 2026)
+- Sta in cima a OGNI pagina grazie a `info-sito.js`, caricato subito dopo `<body>` (`<script src="info-sito.js"></script>`;
+  nella cartella programma `../info-sito.js`). Lo script inserisce la riga, aggiunge 26 px al margine alto del body e la nasconde
+  nello schermo intero (body.lim) e in stampa. Le pagine nuove devono caricarlo.
