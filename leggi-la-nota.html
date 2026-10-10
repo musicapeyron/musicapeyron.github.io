@@ -307,8 +307,10 @@ h1 {
         0 2px 5px rgba(0,0,0,0.4);
 }
 .answer::after { content: ""; position: absolute; inset: 0; background: linear-gradient(180deg, rgba(255,255,255,0.22), rgba(255,255,255,0) 55%); pointer-events: none; }
-.answer:hover { filter: brightness(1.1); transform: translateY(-3px); }
-.answer:active { transform: translateY(3px); }
+/* il pulsante NON si sposta quando lo si preme: prima saliva al passaggio del mouse e
+   scendeva alla pressione, così un clic sul bordo alto "usciva" dal pulsante e non contava */
+.answer:hover { filter: brightness(1.1); }
+.answer:active { filter: brightness(0.9); box-shadow: 0 1px 0 rgba(255,255,255,0.28) inset, 0 2px 0 rgba(0,0,0,0.25), 0 3px 8px rgba(0,0,0,0.28); }
 .answer.locked { display: none; }
 
 .answer.wrong-flash { animation: buttonShake 0.4s ease-in-out; }
