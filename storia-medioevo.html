@@ -482,21 +482,21 @@
       ["Il canto gregoriano è cantato con molti strumenti.", false, "È a cappella: solo voci, senza strumenti.", true],
       ["Nel canto gregoriano tutte le voci cantano la stessa melodia.", true, "È la monodia.", false],
       ["I neumi sono i primi segni usati per scrivere la musica.", true, "Si scrivevano sopra le parole e indicavano se la melodia sale o scende.", true],
-      ["Guido d'Arezzo scriveva le note su cinque righe, come noi.", false, "Usava quattro righe: il tetragramma.", true],
+      ["All'inizio le note si scrivevano già su cinque righe, come oggi.", false, "Si usavano quattro righe: il tetragramma.", true],
       ["I nomi delle note vengono dalle prime sillabe di un inno a San Giovanni.", true, "Ut, Re, Mi, Fa, Sol, La: l'Ut poi è diventato Do.", false],
-      ["Il SI è stato aggiunto da Guido d'Arezzo.", false, "Il SI arriva molto dopo, nel Cinquecento.", false],
-      ["Ildegarda di Bingen era una badessa che componeva musica.", true, "Scrisse più di settanta canti per le sue monache.", true],
+      ["Nel Medioevo i musicisti potevano riascoltare la musica registrata.", false, "Non esistevano le registrazioni: la musica si imparava a memoria.", false],
+      ["Nei monasteri anche alcune monache componevano musica.", true, "Come la badessa Ildegarda di Bingen, che scrisse canti per le sue monache.", true],
       ["Polifonia vuol dire «tante voci»: più melodie diverse cantate insieme.", true, "", true],
       ["Il tenor è la voce che canta le note più veloci.", false, "Il tenor «tiene» le note lunghe del canto gregoriano.", false],
-      ["Leonino e Perotino lavoravano nella cattedrale di Notre-Dame, a Parigi.", true, "", false],
+      ["La prima polifonia nasce nelle grandi cattedrali, come Notre-Dame di Parigi.", true, "", false],
       ["I trovatori cantavano in latino.", false, "Cantavano nella lingua di tutti i giorni del sud della Francia: la lingua d'oc.", true],
       ["L'amor cortese è l'amore rispettoso di un cavaliere per una dama nobile.", true, "", false],
       ["I giullari erano musicisti e artisti che viaggiavano di corte in corte.", true, "Erano anche acrobati e cantastorie.", false],
       ["I goliardi erano monaci che cantavano solo musica sacra.", false, "Erano studenti che scrivevano canzoni allegre in latino.", true],
       ["I Carmina Burana sono una raccolta di canzoni dei goliardi.", true, "", false],
       ["In un canone le voci cantano la stessa melodia, entrando una dopo l'altra.", true, "", true],
-      ["«Sumer is icumen in» è scritto in francese.", false, "È in inglese antico.", false],
-      ["Francesco Landini era un organista di Firenze, cieco fin da bambino.", true, "Scrisse tante ballate in italiano.", true]
+      ["La musica profana si cantava solo in latino.", false, "Si cantava anche nelle lingue di tutti i giorni: lingua d'oc, inglese, italiano…", false],
+      ["La ballata del Trecento è una canzone con una parte che torna sempre uguale.", true, "È la ripresa, come il ritornello delle canzoni di oggi.", true]
     ],
     personaggi: [
       ["Guido d'Arezzo", "Dà un nome alle note e le scrive su quattro righe."],
@@ -513,18 +513,18 @@
     cruciverba: [
       ["MONODIA", "Una sola melodia, cantata da una o più voci", true],
       ["NEUMI", "I primi segni per scrivere la musica, sopra le parole", true],
-      ["TETRAGRAMMA", "Le quattro righe di Guido d'Arezzo", false],
+      ["TETRAGRAMMA", "Le quattro righe su cui si scrivono le note", false],
       ["POLIFONIA", "Più melodie diverse cantate insieme", true],
       ["TENOR", "La voce che «tiene» le note lunghe", false],
       ["CANONE", "Le voci cantano la stessa melodia, una dopo l'altra", true],
       ["TROVATORI", "Poeti-musicisti delle corti del sud della Francia", true],
       ["GOLIARDI", "Studenti che scrivevano canzoni in latino", false],
       ["GIULLARI", "Artisti di strada che andavano di corte in corte", false],
-      ["BADESSA", "La monaca che guida un monastero, come Ildegarda", false],
-      ["BALLATA", "Canzone italiana del Trecento, come quelle di Landini", false],
+      ["BADESSA", "La monaca che guida un monastero", false],
+      ["BALLATA", "Canzone italiana del Trecento, con una parte che torna", false],
       ["VIELLA", "Strumento ad arco, antenato del violino", true],
       ["LIUTO", "Strumento a corde pizzicate arrivato dal mondo arabo", false],
-      ["GUIDO", "Il monaco di Arezzo che diede il nome alle note", true]
+      ["CAPPELLA", "«A …»: solo voci, senza strumenti", true]
     ],
     ascolto: {
       criteri: [
@@ -573,39 +573,39 @@
     verifica: {
       quanti: { vf: 14, collega: 6, personaggi: 5, scelte: 10, frasi: 7, aperte: 2 },
       scelte: [
-        ["Chi diede il nome alle note?", ["Guido d'Arezzo", "Ildegarda di Bingen", "Perotino"], 0],
+        ["Da dove vengono i nomi delle note (Ut, Re, Mi…)?", ["Dalle prime sillabe di un inno", "Dai nomi di sette santi", "Da sette città"], 0],
         ["Che cos'è la monodia?", ["Una sola melodia", "Tante melodie insieme", "Una danza veloce"], 0],
-        ["Dove nasce la polifonia di Leonino e Perotino?", ["A Parigi, a Notre-Dame", "A Firenze", "A Londra"], 0],
+        ["Dove nasce la prima polifonia?", ["Nelle grandi cattedrali", "Nelle piazze", "Nelle università"], 0],
         ["Chi erano i goliardi?", ["Studenti che scrivevano canzoni in latino", "Cavalieri al servizio di una dama", "Monaci che copiavano libri"], 0],
         ["In quale lingua cantavano i trovatori?", ["Lingua d'oc", "Latino", "Tedesco"], 0],
         ["Quale strumento è l'antenato del violino?", ["La viella", "La ciaramella", "Il salterio"], 0],
         ["Che cosa vuol dire «Ars nova»?", ["Arte nuova", "Canto nuovo", "Nuova cattedrale"], 0],
-        ["Chi era Francesco Landini?", ["Un organista e compositore di Firenze", "Un trovatore francese", "Un papa"], 0],
-        ["In che anno inizia il Medioevo?", ["476", "800", "1492"], 0],
+        ["Che cos'è la ballata del Trecento?", ["Una canzone con una parte che torna", "Una preghiera in latino", "Una danza senza musica"], 0],
+        ["Perché nel Medioevo la musica si imparava a memoria?", ["Pochi sapevano leggere e la scrittura musicale era agli inizi", "Era vietato scriverla", "Non esisteva la carta"], 0],
         ["Che cosa vuol dire «a cappella»?", ["Solo voci, senza strumenti", "Cantato in una cappella", "Con l'organo"], 0],
-        ["Chi era Ildegarda di Bingen?", ["Una badessa e compositrice", "Una regina", "Una cantante di corte"], 0],
+        ["Chi componeva la musica sacra nel Medioevo?", ["Monaci e monache", "I giullari", "I re"], 0],
         ["Che cosa sono i Carmina Burana?", ["Una raccolta di canzoni dei goliardi", "Un libro di canto gregoriano", "Una danza"], 0],
         ["Chi portava le canzoni di corte in corte e di piazza in piazza?", ["I giullari", "I monaci", "I vescovi"], 0],
-        ["Quante voci ha il canone «Sumer is icumen in»?", ["Sei", "Due", "Una"], 0]
+        ["Che cos'è un canone?", ["Le voci cantano la stessa melodia, entrando una dopo l'altra", "Una sola voce che canta", "Una danza veloce"], 0]
       ],
       frasi: [
         "Il canto gregoriano è cantato [[a cappella]], cioè senza strumenti.",
         "I primi segni per scrivere la musica si chiamano [[neumi]].",
-        "Guido d'Arezzo scrive le note su quattro righe: il [[tetragramma]].",
-        "Ildegarda di Bingen era una [[badessa]].",
-        "Nella polifonia di Notre-Dame il [[tenor]] tiene le note lunghe.",
+        "Le quattro righe su cui si scrivono le note si chiamano [[tetragramma]].",
+        "La monaca che guida un monastero si chiama [[badessa]].",
+        "Nella prima polifonia il [[tenor]] tiene le note lunghe.",
         "I trovatori cantano l'[[amor cortese]].",
         "Gli studenti che scrivono canzoni in latino si chiamano [[goliardi]].",
         "In un [[canone]] le voci entrano una dopo l'altra con la stessa melodia.",
         "Nel Trecento i musicisti francesi parlano di [[Ars nova]].",
-        "Francesco Landini scrive [[ballate]] in italiano.",
+        "Nel Trecento in Italia si cantano le [[ballate]], con una parte che torna.",
         "Il [[saltarello]] è una danza: si balla saltando.",
         "Più melodie diverse cantate insieme formano la [[polifonia]]."
       ],
       frasiDistrattori: ["pentagramma", "violino"],
       aperte: [
         ["Che differenza c'è tra musica sacra e musica profana? Fai un esempio per ciascuna.", 3, "la sacra è per la preghiera, in chiese e monasteri (es. canto gregoriano); la profana per feste, corti, piazze (es. trovatori, Saltarello)."],
-        ["Perché l'invenzione di Guido d'Arezzo è così importante?", 3, "le note su righe hanno un'altezza precisa e un nome: si può leggere e imparare un canto nuovo senza saperlo a memoria; è l'antenato del nostro pentagramma."],
+        ["Perché scrivere le note su righe fu un'invenzione così importante?", 3, "le note su righe hanno un'altezza precisa e un nome: si può leggere e imparare un canto nuovo senza saperlo a memoria; è l'antenato del nostro pentagramma."],
         ["Chi erano i trovatori e di che cosa cantavano?", 3, "poeti-musicisti delle corti del sud della Francia, cantavano in lingua d'oc l'amor cortese; i giullari portavano le canzoni in giro."],
         ["Che cos'è un canone? Fai un esempio.", 3, "più voci cantano la stessa melodia entrando una dopo l'altra; esempio: «Sumer is icumen in»."]
       ] }

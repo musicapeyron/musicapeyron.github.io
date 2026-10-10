@@ -20,6 +20,9 @@ Per le altre epoche si copia il Medioevo e si cambiano solo i dati.
   da ricordare: in alto il contesto dell'epoca (società, chi paga i musicisti, dove si suona, stampa, teatri…), al centro
   la caratteristica musicale principale, sotto le forme (messa, madrigale, concerto, fuga…) e le prassi (imitazione,
   a cappella, basso continuo, dinamica…) con una frase che spiega. Le parole da completare sono concetti.
+  **Lo stesso vale per vero o falso, scelte multiple, frasi da completare e cruciverba**: domande su concetti, forme,
+  prassi e contesto («Che cos'è un oratorio?»), non su nomi, date o città («Chi scrisse…?», «In che anno…?»).
+  I nomi restano solo nell'esercizio «Chi ha fatto cosa?», che Cristiano ha voluto apposta.
   Colori dei riquadri: viola = sacro (o metà destra del banner), arancio = profano (o metà sinistra).
 - **Strumenti**: in «Che strumento è?» ogni strumento ha l'immagine d'epoca (`img`, o `epoca` se diversa) e una foto
   (`foto`: ricostruzione o strumento da museo, licenza libera, oggetto intero). Se nell'immagine d'epoca ci sono più
