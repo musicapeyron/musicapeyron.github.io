@@ -51,7 +51,7 @@ nessun errore JavaScript, nessuna richiesta esterna prima del play, schermate gu
 - Raccolte di spartiti: il modello è `brani-propedeutici.html`; le altre si rigenerano con
   `python3 _sviluppo/genera_raccolte.py` (dopo modifiche a mano: `--salva`).
 - Storia della musica: `storia.html` (elenco epoche) e una pagina per epoca (`storia-barocco.html` ecc.),
-  cartella immagini `media/storia/<epoca>/`. Classicismo e Romanticismo si dividono Beethoven
+  cartella immagini `media/storia/<epoca>/`. **Per preparare un'epoca (immagini, didascalie, crediti, prove) leggi `_sviluppo/storia/LEGGIMI.md`.** Classicismo e Romanticismo si dividono Beethoven
   (il giovane nel Classicismo, Quinta e Inno alla gioia nel Romanticismo).
 - Stile comune: `comune.css` (sfondo, trama, colori delle note `var(--do)`…): le pagine nuove lo caricano e non ricopiano quelle regole.
 - Motore degli spartiti: `motore-schemi.js` (VexFlow); se cambia, aggiorna il `?v=` nelle pagine.
