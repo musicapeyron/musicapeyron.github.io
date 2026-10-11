@@ -1,17 +1,59 @@
 # Reel Instagram per musicascuole.it
 
 Strumenti per fare reel verticali (1080x1920) che mostrano i giochi del sito.
-Il primo reel è di ottobre 2026: 30 secondi, muto. Il secondo (test d'ingresso) è descritto più sotto.
+**Cosa funziona su Instagram e perché facciamo i reel così: `GUIDA-REEL.md`.**
+Reel pubblicati e risultati: `REGISTRO.md`.
 
-## In tre comandi (dalla cartella del sito)
+## Un comando solo (dalla cartella del sito)
 
 ```
-python3 _sviluppo/reel/registra.py   # registra le clip dei giochi -> lavoro/clip/
-python3 _sviluppo/reel/grafiche.py   # disegna le schermate        -> lavoro/grafiche/
-python3 _sviluppo/reel/monta.py      # monta il reel               -> lavoro/reel.mp4
+python3 _sviluppo/reel/reel.py test-ingresso          # fa tutto; le clip già registrate non si rifanno
+python3 _sviluppo/reel/reel.py test-ingresso --clip   # registra di nuovo tutte le clip
+python3 _sviluppo/reel/reel.py primo --clip=rap       # registra di nuovo solo una clip
+python3 _sviluppo/reel/esplora.py memory-strumenti.html   # studia un gioco prima di farne un reel
 ```
+
+Risultato in `lavoro/<reel>/`:
+
+| File | Cosa |
+|---|---|
+| `reel.mp4` | il reel da caricare (con la base del sito come audio, se indicata) |
+| `reel-B.mp4` | le varianti, se ci sono (per esempio un altro testo d'apertura) |
+| `copertina.jpg` | la copertina; il riquadro 3:4 centrale è quello che si vede nella griglia del profilo |
+| `anteprima.jpg` | un fotogramma al secondo con le zone coperte da Instagram (rosso: coperto sempre; arancione: coperto con didascalie lunghe o dai pulsanti a destra) e la copertina. **Si guarda questa prima di pubblicare.** |
+| `didascalia.txt` | didascalia pronta (al massimo 5 hashtag, controllato) e testo alternativo |
+
+Tempi: un reel nuovo di circa 30 s si fa in 4-6 minuti di calcolo. Quando si cambia solo un testo, si ridisegna solo quella schermata.
 
 Servono Playwright con Chromium, ffmpeg e Pillow. `lavoro/` non va nel repository (vedi `.gitignore`).
+
+## Il file del reel: `reels/<reel>.json`
+
+Ogni reel è un solo file. Per uno nuovo si copia **`reels/_modello.json`** (un gioco, circa 15 s, con audio) o
+`reels/test-ingresso.json` (più giochi, telefono + LIM, variante B). Le voci:
+
+- **`clip`**: le riprese. Normalmente descritte **a passi**: pagina, dispositivo (`telefono`, `telefono-orizzontale`,
+  `lim`, con `schermo` e `densita` facoltativi) e azioni: `attendi`, `tocca`, `clic`, `segna`, `scorri`,
+  `scorri_risposte`, `centra`, `js`, `rispondi` (spiegate in `esegui()` di `registra.py`).
+  `rispondi` gioca da solo, anche con errori voluti: serve la voce del gioco in `RISPOSTE` (`registra.py`);
+  oggi ci sono Leggi la nota, Figure ritmiche, Le note sul pianoforte e il Test d'ingresso.
+  Per i casi complicati una clip può essere una funzione Python (`{"funzione": "test"}`).
+- **`schermate`**: testi e grafiche (tipi `hook`, `card`, `label`, `bg`, `end`, descritti in `grafiche.py`).
+- **`scaletta`**: i pezzi in ordine (`apertura`, `schermata`, `intera`, `incorniciata`, descritti in `monta.py`).
+  I tempi si scrivono a partire dai **segni** registrati, ad esempio `"da": "acuto_0-0.55"`: se si registra di nuovo
+  (domande diverse), la scaletta resta giusta.
+- **`copertina`**: titolo, sottotitolo, colore, fotogramma di una clip (`clip`, `istante`, `ritaglio`).
+- **`audio`** (facoltativo): una base del sito (`media/...mp3`), da che secondo, volume e credito per la didascalia.
+- **`varianti`** (facoltativo): schermate diverse (di solito l'hook) per una seconda versione del reel.
+- **`didascalia`**: testo, hashtag (massimo 5), testo alternativo.
+
+## Come aggiungere un gioco nuovo (per `rispondi`)
+
+1. `python3 _sviluppo/reel/esplora.py <pagina>.html` dà pulsanti, variabili globali e schermi (telefono, PC, LIM).
+2. Si legge nella pagina la funzione che controlla la risposta (`check...`, `answer...`) e si capisce quale variabile
+   dice la risposta giusta.
+3. Si aggiunge in `RISPOSTE` un'espressione JS che restituisce **il pulsante giusto** (o `null` se ora non si può rispondere).
+   Il pulsante sbagliato (per gli errori voluti) lo sceglie da sé tra i vicini visibili.
 
 ## Le scelte di Cristiano
 
@@ -20,10 +62,12 @@ Servono Playwright con Chromium, ffmpeg e Pillow. `lavoro/` non va nel repositor
 - **Chiusura**: "Un progetto collaborativo" (= mandateci idee e segnalazioni), poi logo musicascuole.it con le note colorate e **info@musicascuole.it**.
 - **Logo**: ripreso dall'immagine di anteprima della home (`media/condivisione.jpg`): scritta bianca + pastiglie do re mi fa sol la si.
 - Riprese **come da un vero telefono** (non solo la misura dello schermo): il sito è fatto per PC, telefono e LIM. Formato **misto**: quasi tutto da telefono, più una scena sulla LIM incorniciata.
-- Giochi del primo reel: Leggi la nota, Rappa le note, Brani propedeutici, Le note sul pianoforte, Figure ritmiche, Storia della musica (Barocco).
-- Niente volti né voci di alunni. Musica: si aggiunge su Instagram al caricamento.
+- Niente volti né voci di alunni.
+- Vuole che resti tutto ciò che serve per rifare i reel e farne di nuovi.
 
-## Scaletta del primo reel (circa 30 s)
+## I reel fatti
+
+### `primo` (ottobre 2026, circa 30 s, muto)
 
 | # | Cosa | Durata |
 |---|------|--------|
@@ -38,13 +82,7 @@ Servono Playwright con Chromium, ffmpeg e Pillow. `lavoro/` non va nel repositor
 | 10 | la: "Un progetto collaborativo. Scrivici le tue idee!" | 1,9 s |
 | 11 | Chiusura con logo e mail | 4 s |
 
-## Secondo reel: il test d'ingresso (ottobre 2026, circa 30 s)
-
-```
-python3 _sviluppo/reel/registra.py test-ingresso   # clip "test" (telefono, tutto il test) e "test_lim"
-python3 _sviluppo/reel/grafiche.py test-ingresso   # schermate da grafiche/schermate-test-ingresso.json
-python3 _sviluppo/reel/monta.py test-ingresso      # -> lavoro/reel-test-ingresso.mp4
-```
+### `test-ingresso` (ottobre 2026, circa 30 s, muto, con variante B)
 
 | # | Cosa | Durata |
 |---|------|--------|
@@ -58,21 +96,24 @@ python3 _sviluppo/reel/monta.py test-ingresso      # -> lavoro/reel-test-ingress
 | 10 | sol: "Nessun dato raccolto. I risultati restano sullo schermo." | 1,9 s |
 | 11–12 | la: "Un progetto collaborativo", chiusura con logo e mail | 5,9 s |
 
-- Il test si fa **tutto** davvero (le domande sono a caso) con qualche errore voluto (`TEST_ERRORI`), così la tabella finale ha percentuali credibili (88% complessivo) e non tutti 100%.
-- Durante la registrazione si segnano i momenti notevoli (`lavoro/clip/test.json`: inizio di ogni gioco, ogni risposta, finale): `monta.py` taglia a partire da quelli, quindi se si registra di nuovo la scaletta resta giusta.
-- Etichette dei giochi con `fascia=1`: una fascia scura copre il titolo della pagina sotto l'etichetta, altrimenti i due testi si sovrappongono.
-- Ogni reel nuovo: funzioni delle clip in `registra.py` (e il nome in `REEL`), `grafiche/schermate-<reel>.json`, una funzione in `SCALETTE` di `monta.py`. I file di lavoro vanno in `lavoro/<reel>/`.
+- Il test si fa **tutto** davvero (le domande sono a caso) con qualche errore voluto (`TEST_ERRORI` in `registra.py`),
+  così la tabella finale ha percentuali credibili (88% complessivo) e non tutti 100%.
+- Variante B: hook "Primo giorno di musica? TEST PRONTO, gratis, senza login", da provare come Trial Reel.
+
+### `_modello` (circa 13 s, con audio)
+
+Leggi la nota con la base di "Su in alto" (Brani propedeutici): è il punto di partenza per i reel nuovi.
 
 ## Trucchi imparati
 
 - **Registrazione**: `Page.startScreencast` di Chrome via Playwright, non `record_video` (che esce sfocato). I fotogrammi arrivano solo quando la pagina cambia: i loro istanti finiscono in un file ffconcat, così i tempi restano veri.
 - **Telefono vero**: Pixel 7 emulato (`is_mobile`, `has_touch`, user agent Android, densità 2.625). Verticale 412x732 dà esattamente 1080x1920.
-- **Risposte giuste**: si leggono dalle variabili dei giochi (`currentNote.name`, `currentQuestion.key`, `expectedAnswerForKeyId(currentKey, gameMode)`). Se cambiano nome nel gioco, aggiornare `registra.py`.
 - **Tocchi visibili**: un cerchio bianco che si espande dove si tocca.
-- **Zone sicure di Instagram**: niente di importante sopra y=250 o sotto y=1500. Per questo i pulsanti di risposta vengono portati al 74% dello schermo.
+- **Zone sicure di Instagram**: niente di importante sopra y=250 o sotto y=1500; tra 1250 e 1500 e nella colonna di destra (pulsanti) solo cose secondarie. Per questo i pulsanti di risposta vengono portati al 74% dello schermo (`scorri_risposte`).
+- **Etichette** dei giochi con `fascia=1`: una fascia scura copre il titolo della pagina sotto l'etichetta, altrimenti i due testi si sovrappongono.
 - **Rappa le note**: su telefono va in orizzontale. Ci sono circa 10 secondi di conto alla rovescia prima che le carte si accendano. Nel montaggio un ritaglio di 5 carte segue la carta accesa.
 - **Schermate animate**: le animazioni CSS vengono fermate e portate a ogni fotogramma (`getAnimations().currentTime`), quindi il risultato è sempre identico.
-- Le schermate si cambiano in `grafiche/schermate.json` (testi, colori, durate); l'aspetto in `grafiche/grafiche.html`.
+- **Audio**: le basi del sito sono di Cristiano (CC BY-SA 3.0), quindi sono "audio originale" per Instagram; il credito va in didascalia (lo aggiunge `reel.py`).
 
 ## Problemi del sito trovati registrando (ottobre 2026)
 

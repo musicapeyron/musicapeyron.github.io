@@ -1,22 +1,21 @@
 """Monta il reel 1080x1920 dalle clip (registra.py) e dalle schermate (grafiche.py).
 
-Uso:  python3 _sviluppo/reel/monta.py                 (primo reel -> lavoro/reel.mp4)
-      python3 _sviluppo/reel/monta.py test-ingresso   (-> lavoro/reel-test-ingresso.mp4)
-Il reel è muto: la musica si aggiunge su Instagram, dalla sua libreria
-di brani già autorizzati.
+Di solito lo usa reel.py; da solo:  python3 _sviluppo/reel/monta.py <reel>
 
-Ogni reel ha la sua SCALETTA qui sotto (elenco SCALETTE): ordine, tagli
-(secondi dentro ogni clip) e posizione. Le clip registrate con dei "segni"
-(registra.py -> lavoro/clip/<clip>.json) si tagliano a partire da quelli,
-così la scaletta resta giusta anche se si registra di nuovo. Zone sicure di Instagram: tenere testi e cose importanti tra
+La scaletta sta nel file del reel (reels/<reel>.json, voce "scaletta"): un
+elenco di pezzi, ognuno con un "tipo" (vedi PEZZI qui sotto). I tempi dentro
+le clip si scrivono in secondi (2.8) oppure a partire da un segno registrato
+("acuto_0-0.55", "finale+3.1"): così la scaletta resta giusta anche quando
+si registra di nuovo e le domande escono diverse. Zone sicure di Instagram: tenere testi e cose importanti tra
 y=250 e y=1500 (sopra ci sono i nomi, sotto didascalia e pulsanti).
 """
-import json, subprocess, sys
+import json, re, subprocess, sys
 from pathlib import Path
 from PIL import Image, ImageDraw
 
 BASE = Path(__file__).resolve().parent
-L = BASE / "lavoro"; CLIP = L / "clip"; GR = L / "grafiche"; SEG = L / "segmenti"
+L = BASE / "lavoro"; CLIP = L / "clip"
+GR = SEG = None   # cartelle del reel in lavorazione: le imposta monta()
 ENC = "-c:v libx264 -crf 16 -preset medium -pix_fmt yuv420p -r 30"
 
 
@@ -72,52 +71,54 @@ def incorniciata(out, clip, a, b, sfondo, etichetta, x, y, w, h, angoli=0, vel=1
         f"-map [o] -t {(b-a)/vel:.3f} {ENC} {SEG}/{out}.mp4")
 
 
-def scaletta_primo():
-    apertura("01_leggi", "leggi", 2.8, 6.4, "hook")
-    schermata("02_card1", "card1")
-    # Rappa le note: ritaglio di 5 carte che scorre dietro alla carta accesa
-    incorniciata("03_rap", "rap", 10.6, 13.8, "bg_rap", "lab_rap", 40, 660, 1000, 583, angoli=30,
-                 filtro=",crop=1200:700:'min(720,225*t)':200")
-    schermata("04_card2", "card2")
-    intera("05_brani", "brani", 0.6, 6.04, "lab_brani", vel=1.6)
-    schermata("06_card3", "card3")
-    incorniciata("07_tast", "tastiera", 1.6, 4.2, "bg_lim", "lab_tast", 60, 690, 960, 540)
-    incorniciata("08_fig", "figure", 1.7, 4.1, "bg_lim", "lab_fig", 60, 690, 960, 540,
-                 filtro=",crop=1920:1080:0:60")
-    intera("09_storia", "storia", 0.4, 5.52, "lab_storia", vel=1.6)
-    schermata("10_card4", "card4")
-    schermata("11_end", "end")
+def tempo(v, clip):
+    """2.8 -> 2.8;  "acuto_0-0.55" -> istante del segno acuto_0 nella clip, meno 0,55 s."""
+    if isinstance(v, (int, float)): return float(v)
+    m = re.fullmatch(r"\s*([\w.-]+?)\s*(?:([+-])\s*([\d.]+))?\s*", v)
+    if not m: raise SystemExit(f"Tempo non valido: {v}")
+    t = segni(clip)[m[1]]
+    return t + (float(m[3]) if m[2] == "+" else -float(m[3])) if m[2] else t
 
 
-def scaletta_test_ingresso():
-    """Reel 2 (ottobre 2026): il test d'ingresso, i cinque mini-giochi e il riepilogo finale."""
-    s = segni("test")
-    apertura("01_home", "test", s["home"], s["home"] + 3.6, "hook")          # Comincia arriva a ~2 s
-    schermata("02_card1", "card1")
-    a = s["acuto_0"]; intera("03_acuto", "test", a - 0.55, a + 1.45, "lab_acuto")
-    a = s["tastiera_0"]; intera("04_tast", "test", a - 0.5, a + 2.36, "lab_tast", vel=1.3)
-    a = s["figure_1"]; intera("05_fig", "test", a - 0.35, a + 2.64, "lab_fig", vel=1.3)
-    a = segni("test_lim")["nota_0"]
-    incorniciata("06_lim", "test_lim", a - 0.4, a + 2.6, "bg_lim", "lab_violino", 60, 690, 960, 540)
-    a = s["leggiBasso_1"]; intera("07_basso", "test", a - 0.35, a + 1.93, "lab_basso", vel=1.2)
-    schermata("08_card2", "card2")
-    a = s["finale"]; intera("09_finale", "test", a - 0.1, a + 3.1, "lab_finale")
-    schermata("10_card3", "card3")
-    schermata("11_card4", "card4")
-    schermata("12_end", "end")
+def pezzo(n, p):
+    """Un pezzo della scaletta -> lavoro/<reel>/segmenti/NN_<tipo>.mp4
+    Tipi:
+      schermata     {"grafica": "card1"}
+      apertura      {"clip", "da", "a", "grafica": "hook", "scosta": 200}  clip a schermo intero spostata in basso, testo sopra
+      intera        {"clip", "da", "a", "grafica": etichetta, "vel": 1.3}  clip verticale a schermo intero
+      incorniciata  {"clip", "da", "a", "sfondo": "bg_lim", "grafica", "x", "y", "w", "h", "angoli", "vel", "filtro"}
+    "vel" accelera (1.3 = 30% più veloce); "filtro" sono filtri ffmpeg in più (ritagli, panoramiche)."""
+    out = f"{n:02d}_{p['tipo']}"
+    if p["tipo"] == "schermata":
+        return schermata(out, p["grafica"])
+    a, b = tempo(p["da"], p["clip"]), tempo(p["a"], p["clip"])
+    if p["tipo"] == "apertura":
+        apertura(out, p["clip"], a, b, p["grafica"], p.get("scosta", 200))
+    elif p["tipo"] == "intera":
+        intera(out, p["clip"], a, b, p["grafica"], p.get("vel", 1.0))
+    elif p["tipo"] == "incorniciata":
+        incorniciata(out, p["clip"], a, b, p["sfondo"], p["grafica"], p["x"], p["y"], p["w"], p["h"],
+                     p.get("angoli", 0), p.get("vel", 1.0), p.get("filtro", ""))
+    else:
+        raise SystemExit(f"Tipo di pezzo sconosciuto: {p['tipo']}")
 
 
-SCALETTE = {"primo": scaletta_primo, "test-ingresso": scaletta_test_ingresso}
-
-if __name__ == "__main__":
-    reel = sys.argv[1] if len(sys.argv) > 1 else "primo"
-    if reel != "primo":   # gli altri reel lavorano in lavoro/<reel>/; le clip restano in comune
-        GR, SEG = L / reel / "grafiche", L / reel / "segmenti"
-    finale = L / ("reel.mp4" if reel == "primo" else f"reel-{reel}.mp4")
+def monta(scaletta, grafiche, segmenti, finale):
+    """Monta tutti i pezzi e li unisce in `finale` (muto)."""
+    global GR, SEG
+    GR, SEG = Path(grafiche), Path(segmenti)
     SEG.mkdir(parents=True, exist_ok=True)
     for f in SEG.glob("*.mp4"): f.unlink()
-    SCALETTE[reel]()
+    for n, p in enumerate(scaletta, 1):
+        pezzo(n, p)
     segs = sorted(SEG.glob("*.mp4"))
     (SEG / "lista.txt").write_text("".join(f"file '{s}'\n" for s in segs))
     run(f"ffmpeg -y -loglevel error -f concat -safe 0 -i {SEG}/lista.txt -c copy {finale}")
-    print("Fatto:", finale)
+
+
+if __name__ == "__main__":
+    if len(sys.argv) < 2: raise SystemExit(__doc__)
+    reel = sys.argv[1]
+    d = json.loads((BASE / "reels" / f"{reel}.json").read_text())
+    monta(d["scaletta"], L / reel / "grafiche", L / reel / "segmenti", L / reel / "reel-muto.mp4")
+    print("Fatto:", L / reel / "reel-muto.mp4")

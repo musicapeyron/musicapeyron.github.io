@@ -43,6 +43,16 @@ html,body{width:1080px;height:1920px;overflow:hidden;background:transparent;font
 .frame{position:absolute;border-radius:36px;box-shadow:0 0 0 14px #0b0a1f,0 0 0 17px rgba(255,255,255,.14),0 30px 80px rgba(0,0,0,.6)}
 .lim{position:absolute;border-radius:14px;box-shadow:0 0 0 26px #2b2b33,0 0 0 30px #4a4a55,0 40px 90px rgba(0,0,0,.6)}
 .limfoot{position:absolute;height:22px;border-radius:0 0 12px 12px;background:#3a3a44}
+/* copertina: tutto dentro il riquadro 1080x1440 centrale (griglia del profilo, 3:4) */
+.cop{position:absolute;left:0;right:0;top:240px;height:1440px;display:flex;flex-direction:column;padding:56px 80px 50px}
+.cop .sito{font-family:Inter;font-weight:800;font-size:40px;color:#bdb8f5;letter-spacing:-.02em}
+.cop .bar{height:16px;width:220px;border-radius:8px;margin:34px 0 30px}
+.cop .t{font-weight:800;font-size:118px;line-height:1.02;letter-spacing:-.035em;color:#fff;white-space:nowrap}
+.cop .st{font-weight:700;font-size:46px;color:#d9d6ff;margin-top:26px}
+.cop .tel{flex:1;min-height:0;margin-top:44px;display:flex;justify-content:center}
+.cop .tel img{height:100%;aspect-ratio:9/16;object-fit:cover;object-position:top;border-radius:34px;
+ box-shadow:0 0 0 12px #0b0a1f,0 0 0 15px rgba(255,255,255,.16),0 30px 70px rgba(0,0,0,.55)}
+.cop .pills{margin-top:auto}
 </style></head><body><div id="root"></div>
 <script>
 const P=new URLSearchParams(location.hash.slice(1));const R=document.getElementById('root');const t=P.get('t');
@@ -71,6 +81,8 @@ if(t==='hook'){
    <div class="a pop" ${d(.36)}>${B}</div></div>`;
   R.querySelectorAll('.hook .a').forEach(e=>{let fs=84;e.style.whiteSpace='nowrap';
     while(e.scrollWidth>920&&fs>50){fs-=2;e.style.fontSize=fs+'px'}});
+  R.querySelectorAll('.hook .g').forEach(e=>{let fs=170;e.style.whiteSpace='nowrap';
+    while(e.offsetWidth>920&&fs>80){fs-=4;e.style.fontSize=fs+'px'}});
 }
 if(t==='label'){ // fascia=1 (altezza fh, di serie 500): fascia scura dietro l'etichetta, per le pagine che hanno già testo in alto
   R.innerHTML=(P.get('fascia')?`<div class="fascia fade" style="animation-duration:.15s;height:${P.get('fh')||500}px"></div>`:'')+`<div class="lwrap"><div class="label pop" ${d(.05)}><i style="background:${C[P.get('c')]}"></i>${P.get('l')}</div></div>`+
@@ -89,5 +101,18 @@ if(t==='end'){
    <div class="tagl fade" ${d(.95)}>Giochi, spartiti, solfeggio e storia<br>della musica per la scuola.</div>
    <div class="mail pop" ${d(1.25)}><span class="k">Idee, segnalazioni, collaborazioni:</span><span class="v">info@musicascuole.it</span></div>
   </div>`;
+}
+if(t==='copertina'){
+  const c=P.get('c')||'mi', notes=['do','re','mi','fa','sol','la','si'], img=P.get('img');
+  R.innerHTML=`<div class="navy"></div><div class="cop">
+   <div class="sito">musicascuole.it</div>
+   <div class="bar" style="background:${C[c]}"></div>
+   ${P.get('l').split('|').map(x=>`<div class="t">${x}</div>`).join('')}
+   ${P.get('s')?`<div class="st">${P.get('s')}</div>`:''}
+   ${img?`<div class="tel"><img src="${img}" style="aspect-ratio:9/${(16*(+P.get('r')||1)).toFixed(2)}"></div>`:
+     `<div class="pills">${notes.map(n=>`<div class="pill" style="background:${C[n]};color:${darkText[n]?'#17133f':'#fff'}">${n}</div>`).join('')}</div>`}
+  </div>`;
+  const ts=[...R.querySelectorAll('.cop .t')]; let fs=118;
+  while(ts.some(e=>e.scrollWidth>920)&&fs>60){fs-=4;ts.forEach(e=>e.style.fontSize=fs+'px')}
 }
 </script></body></html>

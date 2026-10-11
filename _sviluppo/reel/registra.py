@@ -1,8 +1,15 @@
 """Registra le clip dei giochi per i reel Instagram.
 
-Uso:  python3 _sviluppo/reel/registra.py                 (le clip del primo reel)
-      python3 _sviluppo/reel/registra.py leggi rap       (solo alcune)
-      python3 _sviluppo/reel/registra.py test-ingresso   (le clip di un altro reel, vedi REEL)
+Di solito non si lancia da solo: lo usa reel.py. Si può però usare per
+rifare solo alcune clip di un reel:
+      python3 _sviluppo/reel/registra.py test-ingresso            (tutte le clip del reel)
+      python3 _sviluppo/reel/registra.py primo leggi rap          (solo alcune)
+
+Le clip sono descritte nel file del reel (reels/<reel>.json, voce "clip"):
+  - a PASSI (il modo normale): pagina, dispositivo e una lista di azioni
+    (tocca, attendi, scorri, rispondi...) -> vedi esegui() qui sotto;
+  - oppure con una FUNZIONE scritta qui (per i casi complicati, come il test
+    d'ingresso, dove i giochi cambiano da soli).
 
 Avvia da solo un server locale sulla cartella del sito, apre i giochi in
 Chromium (Playwright) e registra lo schermo con lo screencast di Chrome:
@@ -118,90 +125,104 @@ SCROLL = ("(sel)=>{const a=document.querySelector(sel).getBoundingClientRect();"
           "window.scrollBy({top:a.bottom-0.74*innerHeight,behavior:'smooth'});}")
 
 
-# ---------------- clip ----------------
-# Le risposte giuste si leggono dalle variabili globali dei giochi
-# (currentNote, currentQuestion, currentKey...): se un gioco cambia nome
-# a queste variabili, aggiornare qui.
+# ---------------- clip descritte a passi ----------------
 
-async def leggi():
+# Risposta giusta di ogni gioco: espressione JS che restituisce il pulsante giusto
+# (o null se ora non si può rispondere). Si leggono le variabili globali dei giochi:
+# se un gioco cambia nome a queste variabili, aggiornare qui.
+# Per un gioco nuovo: python3 _sviluppo/reel/esplora.py <pagina>.html elenca variabili e pulsanti.
+RISPOSTE = {
+    "leggi-la-nota": "document.querySelector(`.answers button[data-note=\"${currentNote.name}\"]`)",
+    "figure-ritmiche": "document.querySelector(`.answers button[data-key=\"${currentQuestion.key}\"]`)",
+    "tastierapianoforte": "document.querySelector(`button.answer[data-note=\"${expectedAnswerForKeyId(currentKey, gameMode)}\"]`)",
+    "test-ingresso": """(() => { const k = GAME_ORDER[currentGameIndex];
+        if (k==='acuto') return acutoAnswering && document.querySelector('.answers .answer.'+acutoQuestion.correctChoice);
+        if (k==='tastiera') return tastieraAnswering && document.querySelector('.answers .answer.'+TASTIERA_CLASSES[tastieraCurrentKey]);
+        if (k==='figure') return figureAnswering && answersBox.children[FIGURES.findIndex(f=>f.key===figureCurrentQuestion.key)];
+        return leggiAnswering && document.querySelector('.answers .answer.'+LEGGI_NOTE_CLASSES[leggiCurrentNote.name]); })()""",
+}
+
+# segna il pulsante giusto (data-reel="giusta") e un vicino sbagliato (data-reel="sbagliata")
+SEGNA_RISPOSTA = """(espr) => {
+  document.querySelectorAll('[data-reel]').forEach(e => e.removeAttribute('data-reel'));
+  let ok = null; try { ok = eval(espr); } catch (e) { return false; }
+  if (!ok || ok.disabled) return false;
+  ok.setAttribute('data-reel', 'giusta');
+  const vicini = [...ok.parentElement.children].filter(e => e !== ok && e.tagName === ok.tagName && !e.disabled && e.getClientRects().length);
+  if (vicini.length) vicini[0].setAttribute('data-reel', 'sbagliata');
+  return true;
+}"""
+
+
+def bersaglio(pg, b):
+    """'testo:Allenamento' -> il primo elemento con quel testo; altrimenti un selettore
+    Playwright qualsiasi ('#startButton', 'a.ind[data-n=\"10\"]', '#brano-10 >> text=Colori e nomi')."""
+    return pg.get_by_text(b[6:]).first if b.startswith("testo:") else pg.locator(b).first
+
+
+async def esegui(pg, r, passi):
+    """Esegue i passi di una clip. Ogni passo è un oggetto con UNA di queste chiavi:
+      {"attendi": 1500}                        millisecondi
+      {"tocca": "testo:Allenamento"}           tocco (o clic sulla LIM) con il cerchio bianco
+      {"clic": "testo:Versione PC"}            clic senza cerchio (per i passi prima della registrazione)
+      {"segna": "via"}                         momento notevole, usabile nella scaletta ("via+0.5")
+      {"scorri": 300}                          scorre la pagina di tot pixel (anche negativi)
+      {"scorri_risposte": ".answers"}          porta quel blocco al 74% dello schermo (sopra i comandi di Instagram)
+      {"centra": "testo:Barocco"}              porta un elemento al centro dello schermo
+      {"js": "currentGameIndex = 3"}           JavaScript nella pagina
+      {"rispondi": "leggi-la-nota", "volte": 7, "pausa": 1150, "errori": [3], "segna": "nota"}
+          risponde da solo (vedi RISPOSTE); "errori": quali risposte sbagliare (0 = la prima);
+          "segna": prefisso per segnare ogni risposta (nota_0, nota_1...)
+    """
+    for passo in passi:
+        if "rispondi" in passo:
+            espr = RISPOSTE[passo["rispondi"]]
+            for i in range(passo.get("volte", 5)):
+                for _ in range(100):  # aspetta fino a 10 s che si possa rispondere
+                    if await pg.evaluate(SEGNA_RISPOSTA, espr): break
+                    await pg.wait_for_timeout(100)
+                else:
+                    print("  nessuna risposta possibile, mi fermo"); break
+                quale = "sbagliata" if i in passo.get("errori", []) else "giusta"
+                if r and passo.get("segna"): r.segna(f"{passo['segna']}_{i}")
+                await tap(pg, pg.locator(f'[data-reel="{quale}"]'))
+                await pg.wait_for_timeout(passo.get("pausa", 1200))
+        elif "attendi" in passo: await pg.wait_for_timeout(passo["attendi"])
+        elif "tocca" in passo: await tap(pg, bersaglio(pg, passo["tocca"]))
+        elif "clic" in passo: await bersaglio(pg, passo["clic"]).click()
+        elif "segna" in passo:
+            if r: r.segna(passo["segna"])
+        elif "scorri" in passo:
+            await pg.evaluate(f"window.scrollBy({{top:{passo['scorri']},behavior:'smooth'}})")
+        elif "scorri_risposte" in passo: await pg.evaluate(SCROLL, passo["scorri_risposte"])
+        elif "centra" in passo:
+            await bersaglio(pg, passo["centra"]).evaluate("e=>e.scrollIntoView({block:'center',behavior:'smooth'})")
+        elif "js" in passo: await pg.evaluate(passo["js"])
+        else:
+            raise SystemExit(f"Passo sconosciuto: {passo}")
+
+
+async def clip_a_passi(nome, d):
+    """d: {"pagina": "leggi-la-nota.html", "dispositivo": "telefono" | "telefono-orizzontale" | "lim",
+           "schermo": [1280, 800], "densita": 1.5   (solo per la LIM, facoltativi),
+           "prima": [passi prima di registrare], "passi": [passi registrati]}"""
     async with async_playwright() as p:
-        b, pg, (W, H) = await telefono(p, "leggi-la-nota.html")
-        r = Rec(pg, "leggi", W, H); await r.start(); await pg.wait_for_timeout(500)
-        await tap(pg, pg.get_by_text("Allenamento").first); await pg.wait_for_timeout(1500)
-        await pg.evaluate(SCROLL, ".answers"); await pg.wait_for_timeout(1000)
-        for _ in range(7):
-            nome = await pg.evaluate("currentNote.name")
-            await tap(pg, pg.locator(f'.answers button[data-note="{nome}"]').first)
-            await pg.wait_for_timeout(1150)
-        await r.stop(); await b.close()
-
-
-async def rap():
-    # su telefono il gioco chiede di girarlo in orizzontale: lì le carte sono grandi
-    async with async_playwright() as p:
-        b, pg, (W, H) = await telefono(p, "rap-con-le-note.html", orizzontale=True)
-        r = Rec(pg, "rap", W, H); await r.start(); await pg.wait_for_timeout(400)
-        loc = pg.get_by_text("Sequenze ascendenti").first
-        await loc.evaluate("e=>e.scrollIntoView({block:'center'})"); await pg.wait_for_timeout(300)
-        await tap(pg, loc); await pg.wait_for_timeout(20000)  # ~10 s di conto alla rovescia, poi le carte
-        await r.stop(); await b.close()
-
-
-async def brani():
-    async with async_playwright() as p:
-        b, pg, (W, H) = await telefono(p, "brani-propedeutici.html")
-        r = Rec(pg, "brani", W, H); await r.start(); await pg.wait_for_timeout(600)
-        await tap(pg, pg.locator('a.ind[data-n="10"]').first); await pg.wait_for_timeout(1400)
+        disp = d.get("dispositivo", "telefono")
+        if disp == "lim":
+            w, h = d.get("schermo", [1920, 1080])
+            b, pg, (W, H) = await lim(p, d["pagina"], w, h, d.get("densita", 1))
+        else:
+            b, pg, (W, H) = await telefono(p, d["pagina"], orizzontale=(disp == "telefono-orizzontale"))
+        await esegui(pg, None, d.get("prima", []))
         await pg.evaluate(TAP_JS)
-        await pg.evaluate("window.scrollBy({top:300,behavior:'smooth'})"); await pg.wait_for_timeout(1500)
-        cn = pg.locator("#brano-10").get_by_text("Colori e nomi").first
-        await cn.evaluate("e=>e.scrollIntoView({block:'center',behavior:'smooth'})"); await pg.wait_for_timeout(1000)
-        await tap(pg, cn); await pg.wait_for_timeout(1000)
-        await pg.evaluate("window.scrollBy({top:330,behavior:'smooth'})"); await pg.wait_for_timeout(2200)
+        r = Rec(pg, nome, W, H); await r.start(); await pg.wait_for_timeout(400)
+        await esegui(pg, r, d["passi"])
         await r.stop(); await b.close()
 
 
-async def storia():
-    async with async_playwright() as p:
-        b, pg, (W, H) = await telefono(p, "storia.html")
-        r = Rec(pg, "storia", W, H); await r.start(); await pg.wait_for_timeout(700)
-        await pg.evaluate("window.scrollBy({top:520,behavior:'smooth'})"); await pg.wait_for_timeout(1300)
-        card = pg.get_by_text("Barocco").first
-        await card.evaluate("e=>e.scrollIntoView({block:'center',behavior:'smooth'})"); await pg.wait_for_timeout(1000)
-        await tap(pg, card); await pg.wait_for_timeout(2300); await pg.evaluate(TAP_JS)
-        await pg.evaluate("window.scrollBy({top:420,behavior:'smooth'})"); await pg.wait_for_timeout(2000)
-        await r.stop(); await b.close()
-
-
-async def tastiera():
-    async with async_playwright() as p:
-        b, pg, (W, H) = await lim(p, "tastierapianoforte.html")
-        await pg.get_by_text("Versione PC").first.click(); await pg.wait_for_timeout(1000)
-        await pg.evaluate(TAP_JS)
-        r = Rec(pg, "tastiera", W, H); await r.start(); await pg.wait_for_timeout(500)
-        await tap(pg, pg.get_by_text("Note naturali").first); await pg.wait_for_timeout(1500)
-        for _ in range(7):
-            nota = await pg.evaluate("expectedAnswerForKeyId(currentKey, gameMode)")
-            await tap(pg, pg.locator(f'button.answer[data-note="{nota}"]').first)
-            await pg.wait_for_timeout(1300)
-        await r.stop(); await b.close()
-
-
-async def figure():
-    # registrata come schermo PC/LIM 1280x800 (16:10): nel montaggio si ritaglia a 16:9.
-    # Su telefono, a ottobre 2026, i pulsanti di risposta uscivano dallo schermo.
-    async with async_playwright() as p:
-        b, pg, (W, H) = await lim(p, "figure-ritmiche.html", 1280, 800, 1.5)
-        r = Rec(pg, "figure", W, H); await r.start(); await pg.wait_for_timeout(400)
-        await tap(pg, pg.get_by_text("Allenamento").first); await pg.wait_for_timeout(1500)
-        for _ in range(7):
-            k = await pg.evaluate("currentQuestion.key")
-            await tap(pg, pg.locator(f'.answers button[data-key="{k}"]').first)
-            await pg.wait_for_timeout(1300)
-        await r.stop(); await b.close()
-
-
-# ---------------- reel 2: test d'ingresso ----------------
+# ---------------- clip scritte come funzioni ----------------
+# Reel "test-ingresso": il test passa da solo da un gioco all'altro, con le schermate
+# di spiegazione in mezzo, quindi serve un ciclo che guardi cosa c'è sullo schermo.
 
 # Bottone giusto e uno sbagliato del mini-gioco in corso (null se non si può rispondere).
 TEST_RISPOSTA = """() => {
@@ -253,37 +274,29 @@ async def test():
         await r.stop(); await b.close()
 
 
-async def test_lim():
-    # LIM: si parte direttamente da "Leggi la nota (chiave di violino)", il quarto gioco
-    async with async_playwright() as p:
-        b, pg, (W, H) = await lim(p, "test-ingresso.html")
-        await pg.click("#startButton"); await pg.wait_for_timeout(500)
-        await pg.evaluate("currentGameIndex = 3; launchGame('leggiViolino')"); await pg.wait_for_timeout(800)
-        await pg.evaluate(TAP_JS)
-        r = Rec(pg, "test_lim", W, H); await r.start(); await pg.wait_for_timeout(500)
-        await tap(pg, pg.locator("#gameIntroStart")); r.segna("via"); await pg.wait_for_timeout(900)
-        for i in range(7):
-            q = await pg.evaluate(TEST_RISPOSTA)
-            if q:
-                r.segna(f"nota_{i}")
-                await tap(pg, pg.locator(f".answers > .answer:nth-child({q['giusto']})"))
-            await pg.wait_for_timeout(1250)
-        await r.stop(); await b.close()
-
-
-TUTTE = ["leggi", "rap", "brani", "storia", "tastiera", "figure"]
-REEL = {"primo": TUTTE, "test-ingresso": ["test", "test_lim"]}
-
-if __name__ == "__main__":
-    CLIP.mkdir(parents=True, exist_ok=True)
+def server():
+    """Server locale sulla cartella del sito (lo chiude chi lo ha aperto)."""
     srv = subprocess.Popen([sys.executable, "-m", "http.server", str(PORTA)], cwd=SITO,
                            stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
     time.sleep(1)
+    return srv
+
+
+def registra(nome, d):
+    """Registra una clip descritta nel file del reel."""
+    if "funzione" in d:
+        asyncio.run(globals()[d["funzione"]]())
+    else:
+        asyncio.run(clip_a_passi(nome, d))
+
+
+if __name__ == "__main__":
+    if len(sys.argv) < 2: raise SystemExit(__doc__)
+    reel = json.loads((BASE / "reels" / f"{sys.argv[1]}.json").read_text())
+    CLIP.mkdir(parents=True, exist_ok=True)
+    srv = server()
     try:
-        scelte = []
-        for a in sys.argv[1:]:   # nomi di clip o di reel interi
-            scelte += REEL.get(a, [a])
-        for nome in (scelte or TUTTE):
-            asyncio.run(globals()[nome]())
+        for nome in (sys.argv[2:] or reel["clip"]):
+            registra(nome, reel["clip"][nome])
     finally:
         srv.terminate()

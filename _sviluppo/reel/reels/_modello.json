@@ -1,0 +1,112 @@
+{
+ "titolo": "MODELLO: un gioco solo, circa 15 s, con una base del sito come audio. Copiare e cambiare.",
+ "clip": {
+  "modello_leggi": {
+   "pagina": "leggi-la-nota.html",
+   "dispositivo": "telefono",
+   "passi": [
+    {
+     "attendi": 400
+    },
+    {
+     "segna": "inizio"
+    },
+    {
+     "tocca": "testo:Allenamento"
+    },
+    {
+     "attendi": 1400
+    },
+    {
+     "scorri_risposte": ".answers"
+    },
+    {
+     "attendi": 800
+    },
+    {
+     "rispondi": "leggi-la-nota",
+     "volte": 8,
+     "pausa": 1000,
+     "errori": [
+      5
+     ],
+     "segna": "nota"
+    }
+   ]
+  }
+ },
+ "schermate": [
+  {
+   "name": "hook",
+   "hash": "t=hook&a=Leggi%20le%20note&g=GRATIS&b=sulla%20LIM%20o%20sul%20telefono",
+   "dur": 3.0,
+   "alpha": true
+  },
+  {
+   "name": "lab",
+   "hash": "t=label&c=sol&l=Leggi%20la%20nota&fascia=1",
+   "dur": 4.5,
+   "alpha": true
+  },
+  {
+   "name": "card1",
+   "hash": "t=card&c=do&l=Niente|registrazione.|Niente%20login.",
+   "dur": 1.8
+  },
+  {
+   "name": "end",
+   "hash": "t=end",
+   "dur": 3.5
+  }
+ ],
+ "scaletta": [
+  {
+   "tipo": "apertura",
+   "clip": "modello_leggi",
+   "da": "nota_0-1.2",
+   "a": "nota_0+1.8",
+   "grafica": "hook"
+  },
+  {
+   "tipo": "intera",
+   "clip": "modello_leggi",
+   "da": "nota_1-0.3",
+   "a": "nota_5+1.2",
+   "grafica": "lab",
+   "vel": 1.2
+  },
+  {
+   "tipo": "schermata",
+   "grafica": "card1"
+  },
+  {
+   "tipo": "schermata",
+   "grafica": "end"
+  }
+ ],
+ "copertina": {
+  "titolo": "Leggi le note|gratis",
+  "sottotitolo": "Allenamento sul pentagramma",
+  "colore": "sol",
+  "clip": "modello_leggi",
+  "istante": "nota_3+0.5",
+  "ritaglio": 0.7
+ },
+ "audio": {
+  "file": "media/brani-propedeutici/brano10-completo.mp3",
+  "da": 0,
+  "volume": 0.9,
+  "credito": "Musica: base di «Su in alto» (Brani propedeutici) – musicascuole.it, CC BY-SA 3.0"
+ },
+ "didascalia": {
+  "testo": "Leggere le note sul pentagramma, una alla volta: un gioco gratis per la LIM, il PC e il telefono.\nNiente registrazione, niente login, nessun dato raccolto.",
+  "hashtag": [
+   "educazionemusicale",
+   "musicaascuola",
+   "docenti",
+   "solfeggio",
+   "LIM"
+  ],
+  "alt": "Il gioco Leggi la nota di musicascuole.it su un telefono: una nota sul pentagramma e i pulsanti colorati con i nomi delle note."
+ }
+}

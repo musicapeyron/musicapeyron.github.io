@@ -1,0 +1,351 @@
+{
+ "titolo": "Primo reel: giochi musicali gratis per la classe (ottobre 2026)",
+ "clip": {
+  "leggi": {
+   "pagina": "leggi-la-nota.html",
+   "passi": [
+    {
+     "attendi": 500
+    },
+    {
+     "tocca": "testo:Allenamento"
+    },
+    {
+     "attendi": 1500
+    },
+    {
+     "scorri_risposte": ".answers"
+    },
+    {
+     "attendi": 1000
+    },
+    {
+     "rispondi": "leggi-la-nota",
+     "volte": 7,
+     "pausa": 1150
+    }
+   ]
+  },
+  "rap": {
+   "pagina": "rap-con-le-note.html",
+   "dispositivo": "telefono-orizzontale",
+   "nota": "circa 10 s di conto alla rovescia prima che le carte si accendano",
+   "passi": [
+    {
+     "attendi": 400
+    },
+    {
+     "centra": "testo:Sequenze ascendenti"
+    },
+    {
+     "attendi": 300
+    },
+    {
+     "tocca": "testo:Sequenze ascendenti"
+    },
+    {
+     "attendi": 20000
+    }
+   ]
+  },
+  "brani": {
+   "pagina": "brani-propedeutici.html",
+   "passi": [
+    {
+     "attendi": 600
+    },
+    {
+     "tocca": "a.ind[data-n=\"10\"]"
+    },
+    {
+     "attendi": 1400
+    },
+    {
+     "scorri": 300
+    },
+    {
+     "attendi": 1500
+    },
+    {
+     "centra": "#brano-10 >> text=Colori e nomi"
+    },
+    {
+     "attendi": 1000
+    },
+    {
+     "tocca": "#brano-10 >> text=Colori e nomi"
+    },
+    {
+     "attendi": 1000
+    },
+    {
+     "scorri": 330
+    },
+    {
+     "attendi": 2200
+    }
+   ]
+  },
+  "storia": {
+   "pagina": "storia.html",
+   "passi": [
+    {
+     "attendi": 700
+    },
+    {
+     "scorri": 520
+    },
+    {
+     "attendi": 1300
+    },
+    {
+     "centra": "testo:Barocco"
+    },
+    {
+     "attendi": 1000
+    },
+    {
+     "tocca": "testo:Barocco"
+    },
+    {
+     "attendi": 2300
+    },
+    {
+     "scorri": 420
+    },
+    {
+     "attendi": 2000
+    }
+   ]
+  },
+  "tastiera": {
+   "pagina": "tastierapianoforte.html",
+   "dispositivo": "lim",
+   "prima": [
+    {
+     "clic": "testo:Versione PC"
+    },
+    {
+     "attendi": 1000
+    }
+   ],
+   "passi": [
+    {
+     "attendi": 500
+    },
+    {
+     "tocca": "testo:Note naturali"
+    },
+    {
+     "attendi": 1500
+    },
+    {
+     "rispondi": "tastierapianoforte",
+     "volte": 7,
+     "pausa": 1300
+    }
+   ]
+  },
+  "figure": {
+   "pagina": "figure-ritmiche.html",
+   "dispositivo": "lim",
+   "schermo": [
+    1280,
+    800
+   ],
+   "densita": 1.5,
+   "nota": "registrata come PC 16:10 e ritagliata a 16:9; su telefono (ott 2026) i pulsanti uscivano dallo schermo",
+   "passi": [
+    {
+     "attendi": 400
+    },
+    {
+     "tocca": "testo:Allenamento"
+    },
+    {
+     "attendi": 1500
+    },
+    {
+     "rispondi": "figure-ritmiche",
+     "volte": 7,
+     "pausa": 1300
+    }
+   ]
+  }
+ },
+ "schermate": [
+  {
+   "name": "hook",
+   "hash": "t=hook",
+   "dur": 3.6,
+   "alpha": true
+  },
+  {
+   "name": "card1",
+   "hash": "t=card&c=do&l=Niente%7Cregistrazione.%7CNiente+login.",
+   "dur": 1.9
+  },
+  {
+   "name": "lab_rap",
+   "hash": "t=label&c=sol&l=Rappa+le+note&s=Sul+telefono%2C+in+orizzontale&sy=1320",
+   "dur": 3.2,
+   "alpha": true
+  },
+  {
+   "name": "bg_rap",
+   "hash": "t=bg&k=phone&x=40&y=660&w=1000&h=583",
+   "dur": 0.04
+  },
+  {
+   "name": "card2",
+   "hash": "t=card&c=sol&l=Nessun+dato%7Craccolto.&s=E+nessuna+pubblicit%C3%A0.",
+   "dur": 1.8
+  },
+  {
+   "name": "lab_brani",
+   "hash": "t=label&c=re&l=Brani+propedeutici",
+   "dur": 3.4,
+   "alpha": true
+  },
+  {
+   "name": "card3",
+   "hash": "t=card&c=re&l=Apri+e+usi.%7CAnche%7Csulla+LIM.",
+   "dur": 1.8
+  },
+  {
+   "name": "bg_lim",
+   "hash": "t=bg&k=lim&x=60&y=690&w=960&h=540",
+   "dur": 0.04
+  },
+  {
+   "name": "lab_tast",
+   "hash": "t=label&c=mi&l=Le+note+sul+pianoforte&s=Pensato+per+la+LIM&sy=1330",
+   "dur": 2.6,
+   "alpha": true
+  },
+  {
+   "name": "lab_fig",
+   "hash": "t=label&c=fa&l=Figure+ritmiche&s=Pensato+per+la+LIM&sy=1330",
+   "dur": 2.4,
+   "alpha": true
+  },
+  {
+   "name": "lab_storia",
+   "hash": "t=label&c=la&l=Storia+della+musica",
+   "dur": 3.2,
+   "alpha": true
+  },
+  {
+   "name": "card4",
+   "hash": "t=card&c=la&l=Un+progetto%7Ccollaborativo.&s=Scrivici+le+tue+idee%21",
+   "dur": 1.9
+  },
+  {
+   "name": "end",
+   "hash": "t=end",
+   "dur": 4.0
+  }
+ ],
+ "scaletta": [
+  {
+   "tipo": "apertura",
+   "clip": "leggi",
+   "da": 2.8,
+   "a": 6.4,
+   "grafica": "hook"
+  },
+  {
+   "tipo": "schermata",
+   "grafica": "card1"
+  },
+  {
+   "tipo": "incorniciata",
+   "clip": "rap",
+   "da": 10.6,
+   "a": 13.8,
+   "sfondo": "bg_rap",
+   "grafica": "lab_rap",
+   "x": 40,
+   "y": 660,
+   "w": 1000,
+   "h": 583,
+   "angoli": 30,
+   "filtro": ",crop=1200:700:'min(720,225*t)':200"
+  },
+  {
+   "tipo": "schermata",
+   "grafica": "card2"
+  },
+  {
+   "tipo": "intera",
+   "clip": "brani",
+   "da": 0.6,
+   "a": 6.04,
+   "grafica": "lab_brani",
+   "vel": 1.6
+  },
+  {
+   "tipo": "schermata",
+   "grafica": "card3"
+  },
+  {
+   "tipo": "incorniciata",
+   "clip": "tastiera",
+   "da": 1.6,
+   "a": 4.2,
+   "sfondo": "bg_lim",
+   "grafica": "lab_tast",
+   "x": 60,
+   "y": 690,
+   "w": 960,
+   "h": 540
+  },
+  {
+   "tipo": "incorniciata",
+   "clip": "figure",
+   "da": 1.7,
+   "a": 4.1,
+   "sfondo": "bg_lim",
+   "grafica": "lab_fig",
+   "x": 60,
+   "y": 690,
+   "w": 960,
+   "h": 540,
+   "filtro": ",crop=1920:1080:0:60"
+  },
+  {
+   "tipo": "intera",
+   "clip": "storia",
+   "da": 0.4,
+   "a": 5.52,
+   "grafica": "lab_storia",
+   "vel": 1.6
+  },
+  {
+   "tipo": "schermata",
+   "grafica": "card4"
+  },
+  {
+   "tipo": "schermata",
+   "grafica": "end"
+  }
+ ],
+ "copertina": {
+  "titolo": "Giochi musicali|gratis",
+  "sottotitolo": "Per la LIM, il PC e il telefono",
+  "colore": "mi",
+  "clip": "leggi",
+  "istante": 5.0
+ },
+ "didascalia": {
+  "testo": "Giochi musicali gratis per la scuola: leggere le note, rappare le note, i brani propedeutici con le basi, le figure ritmiche e la storia della musica raccontata con gli ascolti.\nNiente registrazione, niente login, nessun dato raccolto, nessuna pubblicità. Si apre e si usa, anche sulla LIM.",
+  "hashtag": [
+   "educazionemusicale",
+   "musicaascuola",
+   "docenti",
+   "LIM",
+   "scuolamedia"
+  ],
+  "alt": "Giochi del sito musicascuole.it ripresi da un telefono e da una LIM: lettura delle note sul pentagramma, carte colorate con i nomi delle note, tastiera del pianoforte, figure ritmiche e storia della musica."
+ }
+}
