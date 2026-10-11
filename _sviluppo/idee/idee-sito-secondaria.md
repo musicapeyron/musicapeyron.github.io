@@ -61,3 +61,30 @@ Raccolta di idee per nuovi giochi, app e sezioni. Ogni idea: concetto, come funz
 - La partitura può usare il motore degli spartiti (VexFlow, rigo percussioni).
 
 ---
+
+## 3. Scrittura musicale con il digitale (versione medie)
+
+**Destinatari:** secondaria di primo grado. Esiste una versione distinta per il liceo musicale, vedi `idee-sito-liceo-musicale.md`.
+
+**Concetto:** un piccolo editor di spartiti nel sito per scrivere musica al computer o alla LIM e sentirla subito suonare.
+
+**Come funziona:**
+- Un solo rigo in chiave di violino; si sceglie la figura (barra in basso) e si clicca sul rigo per posare la nota; pause, punto, legatura, alterazioni con pochi pulsanti grandi.
+- Riproduzione immediata di ciò che si è scritto (pianoforte), con la nota che si illumina mentre suona.
+- Controllo automatico delle battute: segnala se una battuta è troppo piena o incompleta.
+- Esercizi guidati: copia una melodia dal modello, completa la battuta, scrivi il ritmo che senti, inventa 4 battute che finiscono sul do.
+- Nomi delle note colorati facoltativi (colori del sito), da spegnere quando si è più sicuri.
+- Il lavoro si **scarica come file** o si stampa (PDF); nessun account, niente salvato online.
+
+**Punti di forza didattici:**
+- Scrivere e sentire subito: il ragazzo verifica a orecchio quello che ha scritto e corregge da solo.
+- Il controllo delle battute rende concreto il valore delle figure (prosegue il "Costruttore di battute").
+- Primo passo verso la composizione: anche chi non suona uno strumento può inventare e far ascoltare una melodia.
+- Competenza digitale concreta, legata alla musica.
+
+**Note di sviluppo:**
+- Una sola schermata su PC e LIM, senza scorrere.
+- Nessun microfono/fotocamera, nessuna raccolta dati; salvataggi solo come file scaricato o in `localStorage`.
+- Si può costruire sul motore degli spartiti (VexFlow).
+
+---
