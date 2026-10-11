@@ -4,117 +4,14 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Preistoria e antichità — Storia della musica — musicascuole.it</title>
-<meta name="description" content="La musica della preistoria e dell'antichità raccontata attraverso gli ascolti: flauti d'osso, pietre sonore, la melodia più antica del mondo, la musica greca e romana, gli strumenti antichi.">
+<meta name="description" content="Preistoria e antichità in musica, un capitolo alla volta: i flauti d'osso di Divje Babe e Hohle Fels, le grotte che suonano, i flauti di Jiahu, la musica scritta più antica, la mousiké greca e il teatro, l'epitaffio di Seikilos, la musica degli spettacoli a Roma.">
 <link rel="icon" href="favicon.svg" type="image/svg+xml">
 <link rel="icon" href="favicon-32.png" type="image/png" sizes="32x32">
 <link rel="apple-touch-icon" href="apple-touch-icon.png">
 <link rel="stylesheet" href="fonts/caratteri.css">
 <link rel="stylesheet" href="comune.css">
-<style>
-  * { box-sizing: border-box; }
-  html, body { margin: 0; min-height: 100%; }
-  body { min-height: 100vh; font-family: 'Inter', 'Segoe UI', Arial, sans-serif; color: #EAF2FF; -webkit-font-smoothing: antialiased;
-    background: #0f172a; overflow-x: hidden; position: relative; }
-
-  .casetta { position: fixed; top: 12px; left: 12px; z-index: 40; width: 44px; height: 44px; border-radius: 50%; display: grid; place-items: center;
-    background: rgba(15,23,42,0.75); border: 1px solid rgba(255,255,255,0.18); text-decoration: none; font-size: 20px; color: #EAF2FF; font-weight: 700; }
-
-  main { position: relative; z-index: 1; max-width: 1400px; margin: 0 auto; padding: 12px 20px 24px; }
-
-  /* ---------- doppio banner ---------- */
-  .banner { position: relative; height: clamp(170px, 30vh, 320px); border-radius: 18px; overflow: hidden; background: #111827;
-    border: 1px solid rgba(255,255,255,0.1); user-select: none; -webkit-user-select: none; }
-  .meta { position: absolute; inset: 0; cursor: pointer; transition: filter .35s ease, opacity .35s ease; -webkit-tap-highlight-color: transparent; }
-  .meta img { width: 100%; height: 100%; object-fit: cover; display: block; }
-  .meta.sx { clip-path: polygon(0 0, 56% 0, 44% 100%, 0 100%); }
-  .meta.dx { clip-path: polygon(56% 0, 100% 0, 100% 100%, 44% 100%); }
-  .meta.sx img { width: 58%; object-position: 50% 55%; }
-  .meta.dx img { width: 58%; margin-left: 42%; object-position: 50% 40%; }
-  .banner.f-sx .meta.dx, .banner.f-dx .meta.sx { filter: grayscale(.85) brightness(.45); }
-  .banner::after { content: ""; position: absolute; inset: 0; pointer-events: none;
-    background: radial-gradient(ellipse at 50% 55%, rgba(15,23,42,0.55) 0%, rgba(15,23,42,0) 60%), linear-gradient(0deg, rgba(15,23,42,0.75), rgba(15,23,42,0) 45%); }
-  .titolo-epoca { position: absolute; left: 50%; top: 50%; transform: translate(-50%, -58%); text-align: center; z-index: 2; pointer-events: none; }
-  .titolo-epoca .sopra { font-family: 'Manrope', sans-serif; font-weight: 800; font-size: 11.5px; letter-spacing: .16em; text-transform: uppercase; color: #FDE7C7; text-shadow: 0 1px 6px rgba(0,0,0,.8); }
-  .titolo-epoca h1 { font-family: 'Fredoka', 'Manrope', sans-serif; font-weight: 600; margin: 0; font-size: clamp(32px, 6vw, 62px); line-height: 1.05; text-shadow: 0 2px 18px rgba(0,0,0,.85); }
-  .titolo-epoca .date { font-family: 'Manrope', sans-serif; font-weight: 800; color: #FFE58A; font-size: clamp(13px, 1.6vw, 17px); text-shadow: 0 1px 8px rgba(0,0,0,.9); }
-  .etich-meta { position: absolute; bottom: 12px; z-index: 3; font-family: 'Manrope', sans-serif; font-weight: 800; font-size: 12.5px;
-    padding: 6px 12px; border-radius: 999px; background: rgba(15,23,42,0.72); border: 1px solid rgba(255,255,255,0.22); cursor: pointer; white-space: nowrap; }
-  .etich-meta.sx { left: 12px; color: #FBC877; } .etich-meta.dx { right: 12px; color: #C4B5FD; }
-  .etich-meta.attiva { background: #EAF2FF; color: #0f172a; }
-  @media (max-width: 560px) { .etich-meta { font-size: 11px; padding: 5px 9px; bottom: 8px; } .etich-meta .lungo { display: none; } }
-
-  .atmosfera { text-align: center; color: #9FB3CE; font-size: 13px; font-style: italic; margin: 10px auto 12px; max-width: 760px; line-height: 1.45; }
-
-  /* ---------- schede ---------- */
-  .schede { display: flex; justify-content: center; gap: 8px; flex-wrap: wrap; margin-bottom: 12px; }
-  .scheda { font: 700 13.5px 'Manrope', sans-serif; color: #EAF2FF; cursor: pointer; padding: 8px 16px; border-radius: 999px;
-    background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.14); display: inline-flex; align-items: center; gap: 7px; }
-  .scheda:hover { background: rgba(255,255,255,0.12); }
-  .scheda.attiva { background: #EAF2FF; color: #0f172a; border-color: #EAF2FF; }
-  .scheda .n { font-size: 11px; opacity: .65; }
-  @media (max-width: 560px) { main { padding-top: 64px !important; } .schede { flex-wrap: nowrap; gap: 6px; } .scheda { font-size: 12.5px; padding: 7px 11px; gap: 5px; } .scheda .n { display: none; } }
-
-  /* ---------- griglia di card (come in home) ---------- */
-  .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 12px; }
-  @media (min-width: 1200px) { .grid { grid-template-columns: repeat(5, 1fr); } }
-  @media (max-width: 520px) { .grid { grid-template-columns: repeat(2, 1fr); gap: 9px; } main { padding: 10px 12px 20px; } }
-  .card { --accent: #5EC8D8; position: relative; background: rgba(255,255,255,0.035); border: 1px solid rgba(255,255,255,0.09); border-top: 2px solid var(--accent);
-    border-radius: 12px; overflow: hidden; display: flex; flex-direction: column; text-align: left; font: inherit; color: inherit; padding: 0; cursor: pointer;
-    transition: border-color .2s ease, transform .2s ease, background .2s ease; }
-  .card:hover { transform: translateY(-2px); background: rgba(255,255,255,0.06); border-color: color-mix(in srgb, var(--accent) 55%, transparent); border-top-color: var(--accent); }
-  .card:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
-  .card .foto { aspect-ratio: 16 / 10; background: #1e293b center / cover no-repeat; position: relative; }
-  .card .foto::after { content: "▶"; position: absolute; right: 8px; bottom: 8px; width: 30px; height: 30px; border-radius: 50%; display: grid; place-items: center;
-    font-size: 12px; background: rgba(15,23,42,0.8); color: #fff; border: 1px solid rgba(255,255,255,0.3); }
-  .card .testo { padding: 9px 11px 11px; display: flex; flex-direction: column; gap: 3px; flex: 1; }
-  .card .label { align-self: flex-start; font-size: 9px; font-weight: 700; letter-spacing: .05em; text-transform: uppercase; color: var(--accent);
-    background: color-mix(in srgb, var(--accent) 14%, transparent); padding: 2px 7px; border-radius: 999px; }
-  .card h2 { font-family: 'Manrope', sans-serif; font-weight: 700; font-size: 14px; margin: 2px 0 0; letter-spacing: -0.01em; line-height: 1.25; }
-  .card .chi { font-size: 11px; color: #9FB3CE; font-weight: 600; }
-  .card p { font-size: 11.5px; line-height: 1.4; color: #B8C7DD; margin: 2px 0 0; }
-  .card.dx { --accent: #a78bfa; } .card.sx { --accent: #F99D1C; } .card.strum { --accent: #5EC8D8; } .card.suona { --accent: #BED958; }
-  .card.empty { cursor: default; border-style: dashed; background: transparent; }
-  .card.empty:hover { transform: none; }
-  .card.empty .foto::after { content: "presto"; width: auto; height: auto; padding: 3px 9px; border-radius: 999px; font: 700 10.5px 'Manrope', sans-serif; letter-spacing: .04em; }
-  .card.nascosta { display: none; }
-
-  /* ---------- finestra dell'ascolto ---------- */
-  .velo { position: fixed; inset: 0; z-index: 60; background: rgba(2,6,23,0.82); display: none; align-items: center; justify-content: center; padding: 16px; }
-  .velo.aperto { display: flex; }
-  .finestra { position: relative; width: min(1180px, 100%); max-height: calc(100vh - 32px); overflow: auto; background: #131c33; border: 1px solid rgba(255,255,255,0.14);
-    border-top: 3px solid var(--accent, #5EC8D8); border-radius: 18px; display: grid; grid-template-columns: 1.55fr 1fr; gap: 0; box-shadow: 0 20px 60px rgba(0,0,0,.5); }
-  @media (max-width: 860px) { .finestra { grid-template-columns: 1fr; } }
-  .schermo { position: relative; aspect-ratio: 16 / 9; background: #000 center / cover no-repeat; }
-  .schermo iframe { position: absolute; inset: 0; width: 100%; height: 100%; border: 0; }
-  .avvio { position: absolute; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 10px; cursor: pointer;
-    background: rgba(2,6,23,0.55); border: 0; color: #fff; font: inherit; width: 100%; }
-  .avvio .tondo { width: 76px; height: 76px; border-radius: 50%; background: #FFE58A; color: #0f172a; display: grid; place-items: center; font-size: 30px; padding-left: 6px; box-shadow: 0 6px 24px rgba(0,0,0,.45); }
-  .avvio:hover .tondo { transform: scale(1.06); }
-  .avvio .nota { font-size: 12px; color: #DCE6F5; background: rgba(15,23,42,0.7); padding: 4px 10px; border-radius: 999px; }
-  .info { padding: 16px 18px 14px; display: flex; flex-direction: column; gap: 8px; }
-  .info .label { align-self: flex-start; font-size: 10px; font-weight: 800; letter-spacing: .06em; text-transform: uppercase; color: var(--accent); background: color-mix(in srgb, var(--accent) 16%, transparent); padding: 3px 9px; border-radius: 999px; }
-  .info h3 { font-family: 'Manrope', sans-serif; font-weight: 800; font-size: 22px; margin: 0; line-height: 1.2; }
-  .info .chi { font-size: 13px; color: #9FB3CE; font-weight: 600; margin-top: -4px; }
-  .info .gancio { font-family: 'Manrope', sans-serif; font-weight: 700; font-size: 16px; color: #FFE58A; margin: 2px 0 0; }
-  .info ul { margin: 0; padding-left: 0; list-style: none; display: flex; flex-direction: column; gap: 6px; }
-  .info li { font-size: 14.5px; color: #DCE6F5; line-height: 1.45; padding-left: 24px; position: relative; }
-  .info li::before { content: "🎧"; position: absolute; left: 0; top: 0; font-size: 13px; }
-  .info .sapevi { font-size: 13.5px; color: #DCE6F5; background: rgba(255,255,255,0.05); border-left: 3px solid var(--accent); border-radius: 8px; padding: 8px 10px; line-height: 1.45; }
-  .info .sapevi b { color: var(--accent); }
-  .info .piede { margin-top: auto; display: flex; justify-content: space-between; align-items: flex-end; gap: 10px; flex-wrap: wrap; font-size: 11px; color: #7F93B2; }
-  .info .piede a { color: #7DD3FC; }
-  .chiudi { position: absolute; top: 8px; right: 8px; z-index: 3; width: 40px; height: 40px; border-radius: 50%; border: 1px solid rgba(255,255,255,0.25);
-    background: rgba(15,23,42,0.85); color: #fff; font-size: 18px; cursor: pointer; }
-  .frecce { display: flex; gap: 8px; }
-  .freccia { font: 700 13px 'Manrope', sans-serif; color: #EAF2FF; background: rgba(255,255,255,0.08); border: 1px solid rgba(255,255,255,0.18); border-radius: 999px; padding: 7px 14px; cursor: pointer; }
-  .freccia:hover { background: rgba(255,255,255,0.15); }
-
-  .crediti-img { margin-top: 18px; font-size: 11.5px; color: #7F93B2; }
-  .crediti-img summary { cursor: pointer; color: #9FB3CE; }
-  .crediti-img li { margin: 3px 0; } .crediti-img a { color: #7DD3FC; }
-  footer.piede { position: relative; z-index: 1; text-align: center; font-size: 13px; color: #9FB3CE; padding: 12px 12px 24px; }
-  @media (prefers-reduced-motion: reduce) { .card, .meta { transition: none; } }
-</style>
+<link rel="stylesheet" href="storia-attivita.css">
+<link rel="stylesheet" href="storia-percorso.css">
 <!-- per i motori di ricerca e la condivisione -->
 <link rel="canonical" href="https://musicascuole.it/storia-antichita.html">
 <meta property="og:type" content="website">
@@ -122,7 +19,7 @@
 <meta property="og:locale" content="it_IT">
 <meta property="og:url" content="https://musicascuole.it/storia-antichita.html">
 <meta property="og:title" content="Preistoria e antichità — Storia della musica — musicascuole.it">
-<meta property="og:description" content="La musica della preistoria e dell'antichità raccontata attraverso gli ascolti: flauti d'osso, pietre sonore, la melodia più antica del mondo, la musica greca e romana, gli strumenti antichi.">
+<meta property="og:description" content="Preistoria e antichità in musica, un capitolo alla volta: i flauti d'osso di Divje Babe e Hohle Fels, le grotte che suonano, i flauti di Jiahu, la musica scritta più antica, la mousiké greca e il teatro, l'epitaffio di Seikilos, la musica degli spettacoli a Roma.">
 <meta property="og:image" content="https://musicascuole.it/media/condivisione.jpg">
 <meta property="og:image:width" content="1200">
 <meta property="og:image:height" content="630">
@@ -135,114 +32,229 @@
 <main>
 
   <div class="banner" id="banner">
-    <div class="meta sx" data-mondo="sx" title="Preistoria"><img src="media/storia/antichita/banner-grotta.jpg" alt="Pitture rupestri nella grotta di Lascaux"></div>
-    <div class="meta dx" data-mondo="dx" title="Antichità"><img src="media/storia/antichita/banner-teatro.jpg" alt="Il teatro greco di Epidauro"></div>
+    <div class="meta sx" title="Preistoria"><img src="media/storia/antichita/banner-grotta.jpg" alt="Pitture rupestri nella grotta di Lascaux"></div>
+    <div class="meta dx" title="Antichità"><img src="media/storia/antichita/banner-teatro.jpg" alt="Il teatro greco di Epidauro"></div>
     <div class="titolo-epoca">
       <div class="sopra">Storia della musica</div>
       <h1>Preistoria e antichità</h1>
-      <div class="date">da 60.000 anni fa al 476 d.C.</div>
+      <div class="date">fino al 476 d.C.</div>
     </div>
-    <button class="etich-meta sx" data-mondo="sx">🦴 Preistoria<span class="lungo"> · grotte e ossa</span></button>
-    <button class="etich-meta dx" data-mondo="dx">🏛️ Antichità<span class="lungo"> · Egitto, Grecia, Roma</span></button>
+    <span class="etich-meta sx">🦴 Preistoria<span class="lungo"> · grotte e ossa</span></span>
+    <span class="etich-meta dx">🏛️ Antichità<span class="lungo"> · Mesopotamia, Egitto, Grecia, Roma</span></span>
   </div>
 
-  <p class="atmosfera">Prima della scrittura, prima delle città: qualcuno soffia in un osso forato e nasce una melodia. Poi arrivano le tavolette d'argilla, le lire degli dèi e i teatri di pietra.</p>
+  <div class="contenuto" id="contenuto">
+  <p class="atmosfera">Prima della scrittura qualcuno soffia in un osso forato e nasce una melodia. Poi arrivano le tavolette d'argilla, le lire degli dèi e i teatri di pietra.</p>
 
   <nav class="schede" aria-label="Sezioni">
-    <button class="scheda attiva" data-scheda="ascolti">🎧 Ascolti <span class="n" id="nAscolti"></span></button>
+    <button class="scheda attiva" data-scheda="percorso">📖 Il percorso <span class="n" id="nCapitoli"></span></button>
     <button class="scheda" data-scheda="strumenti">🪕 Strumenti <span class="n" id="nStrumenti"></span></button>
     <button class="scheda" data-scheda="suonare">🎼 Da suonare <span class="n" id="nSuonare"></span></button>
+    <button class="scheda" data-scheda="mappa">🗺️ Mappa<span class="lungo"> concettuale</span></button>
+    <button class="scheda" data-scheda="esercizi">✏️ Esercizi</button>
+    <button class="scheda" data-scheda="schede">🖨️ Schede</button>
   </nav>
 
-  <div class="grid" id="griglia"></div>
+  <section id="vistaPercorso">
+    <ol class="indice" id="indice"></ol>
+  </section>
+  <div class="grid" id="griglia" hidden></div>
+  <section class="vista vista-alta" id="vistaMappa" hidden></section>
+  <section class="vista vista-alta" id="vistaEsercizi" hidden></section>
+  <section class="vista vista-alta" id="vistaSchede" hidden></section>
 
   <details class="crediti-img">
     <summary>Crediti delle immagini e dei video</summary>
     <ul id="listaCrediti"></ul>
     <p>I video sono incorporati da YouTube e restano dei rispettivi titolari: non fanno parte della licenza del sito.</p>
   </details>
+  </div>
 </main>
 
-<div class="velo" id="velo" role="dialog" aria-modal="true" aria-labelledby="fTitolo">
-  <div class="finestra" id="finestra">
-    <button class="chiudi" id="chiudi" aria-label="Chiudi">✕</button>
-    <div class="schermo" id="schermo"></div>
-    <div class="info">
-      <span class="label" id="fLabel"></span>
-      <h3 id="fTitolo"></h3>
-      <div class="chi" id="fChi"></div>
-      <div class="gancio" id="fGancio"></div>
-      <ul id="fPunti"></ul>
-      <div class="sapevi" id="fSapevi"></div>
-      <div class="piede">
-        <div class="frecce"><button class="freccia" id="prec">◀</button><button class="freccia" id="succ">▶</button></div>
-        <div id="fFonte"></div>
-      </div>
-    </div>
-  </div>
-</div>
-
+<script src="storia-attivita.js"></script>
+<script src="storia-percorso.js"></script>
 <script>
 (function () {
   "use strict";
   const IMG = "media/storia/antichita/";
 
   /* =========================================================
-     CONTENUTI — per cambiare un video basta cambiare "yt"
+     IL PERCORSO — un capitolo per ogni ascolto, in ordine di tempo.
+     mondo: "sx" = Preistoria (metà sinistra del banner, arancio), "dx" = Antichità (metà destra, viola).
+     pagine: { img, did (didascalia), t: [paragrafi] }. Per cambiare un video basta cambiare "yt".
      ========================================================= */
-  /* =========================================================
-     CONTENUTI — per cambiare un video basta cambiare "yt"
-     mondo: "sx" = preistoria (metà sinistra del banner), "dx" = antichità (metà destra)
-     ========================================================= */
-  const ASCOLTI = [
-    { id: "divjebabe", mondo: "sx", label: "Preistoria · 60.000 anni fa", titolo: "Il flauto di Divje Babe", chi: "Slovenia · Neanderthal?", img: "divjebabe.jpg", yt: "eRUufCAFS50", canale: "Ljuben Dimkaroski (video di Gašper Uršič)",
+  const CAPITOLI = [
+    { id: "divjebabe", mondo: "sx", label: "Introduzione", titolo: "Il suono prima della scrittura", data: "60.000 anni fa",
+      pagine: [
+        { img: "p-divjebabe-1.jpg", did: "Uri, cavalli e cervi dipinti nella grotta di Lascaux, in Francia (circa 17.000 anni fa).",
+          t: ["Della preistoria non abbiamo né spartiti né registrazioni. Abbiamo ossa forate, pietre, grotte dipinte.",
+          "Gli studiosi le esaminano, ne costruiscono copie e provano a suonarle: è l'<b>archeologia musicale</b>."] },
+        { img: "p-divjebabe-2.jpg", did: "L'osso di Divje Babe, con i suoi fori, al Museo nazionale della Slovenia.",
+          t: ["In una grotta della Slovenia è stato trovato un osso di orso delle caverne con alcuni fori. Ha circa 60.000 anni.",
+          "È un flauto costruito dai <b>Neanderthal</b>? O sono i morsi di un animale? Gli studiosi discutono ancora."] }
+      ],
+      brano: "Il flauto di Divje Babe", chi: "Slovenia · forse dei Neanderthal", img: "divjebabe.jpg", yt: "eRUufCAFS50", canale: "Ljuben Dimkaroski (video di Gašper Uršič)",
       gancio: "Il flauto dei Neanderthal… o il morso di un animale?",
-      punti: ["È un pezzo di <b>femore di orso delle caverne</b> con alcuni fori, trovato in una grotta della Slovenia.",
-              "Il musicista Ljuben Dimkaroski ne ha costruito una copia e la suona: ascolta quante note riesce a ottenere.",
-              "Se fosse davvero un flauto, l'avrebbero costruito i <b>Neanderthal</b>."],
-      sapevi: "Gli studiosi discutono ancora: per alcuni i fori sono morsi di iena o di lupo, non opera umana. Oggi è esposto al Museo nazionale di Lubiana." },
-    { id: "hohlefels", mondo: "sx", label: "Preistoria · 40.000 anni fa", titolo: "Il flauto di Hohle Fels", chi: "Germania · Homo sapiens", img: "hohlefels.jpg", yt: "YKv-57HrUHo", canale: "ArchäoMusik Vienna",
+      punti: ["Il musicista Ljuben Dimkaroski ha costruito una copia dell'osso e la suona.",
+              "Ascolta quante note diverse riesce a ottenere.",
+              "Se fosse davvero un flauto, sarebbe lo strumento più antico del mondo."],
+      sapevi: "Il legno, le pelli e le fibre si decompongono: per questo dalla preistoria ci sono arrivati quasi solo strumenti d'osso e di pietra. Ma probabilmente si suonavano anche tamburi, bastoni e conchiglie.",
+      parole: [["Archeologia musicale", "studia gli strumenti e i suoni del passato."]] },
+
+    { id: "hohlefels", mondo: "sx", label: "Preistoria", titolo: "Il flauto d'avvoltoio", data: "40.000 anni fa",
+      pagine: [
+        { img: "p-hohlefels-1.jpg", did: "Il flauto d'osso di avvoltoio di Hohle Fels (Museo della preistoria di Blaubeuren, Germania).",
+          t: ["In una grotta della Germania gli archeologi hanno trovato un flauto ricavato dall'osso dell'ala di un grande avvoltoio, con cinque fori.",
+          "È il più antico <b>strumento musicale</b> sicuro del mondo."] },
+        { img: "p-hohlefels-2.jpg", did: "L'ingresso della grotta di Hohle Fels, in Germania.",
+          t: ["L'hanno costruito i primi <b>Homo sapiens</b> arrivati in Europa: uomini come noi.",
+          "Cacciavano, dipingevano, scolpivano piccole statuette… e facevano musica."] }
+      ],
+      brano: "Il flauto di Hohle Fels", chi: "Germania · Homo sapiens", img: "hohlefels.jpg", yt: "YKv-57HrUHo", canale: "ArchäoMusik Vienna",
       gancio: "Il più antico strumento musicale sicuro: un osso d'avvoltoio.",
-      punti: ["È ricavato dall'osso dell'ala di un <b>grifone</b>, un grande avvoltoio, con cinque fori.",
-              "L'hanno costruito uomini come noi, i primi <b>Homo sapiens</b> arrivati in Europa.",
-              "Qui una copia viene suonata con un'<b>ancia</b>, come un clarinetto: è una delle ipotesi degli studiosi."],
-      sapevi: "Nella stessa grotta è stata trovata anche una delle più antiche statuette umane del mondo, la «Venere di Hohle Fels»." },
-    { id: "litofoni", mondo: "sx", label: "Preistoria · pietre sonore", titolo: "I litofoni", chi: "Grotte d'Europa · 30.000–10.000 anni fa", img: "litofoni.jpg", yt: "1kFP7dJ6VZc", canale: "Jean-Loup Ringot",
+      punti: ["Ascolta: una copia del flauto suona note diverse aprendo e chiudendo i fori.",
+              "Qui viene suonata con un'<b>ancia</b>, come un clarinetto: è una delle ipotesi degli studiosi.",
+              "Nessuno sa che musica suonassero davvero: possiamo solo immaginarla."],
+      sapevi: "Non sappiamo nulla delle melodie della preistoria: la musica non lasciava tracce. Per questo ogni ricostruzione è un'ipotesi.",
+      parole: [["Ancia", "linguetta che vibra e fa suonare uno strumento a fiato."]] },
+
+    { id: "litofoni", mondo: "sx", label: "Preistoria", titolo: "Le grotte che suonano", data: "30.000 – 10.000 anni fa",
+      pagine: [
+        { img: "p-litofoni-1.jpg", did: "Stalattiti nella grotta di Nerja, in Spagna: alcune hanno segni di percussione.",
+          t: ["In alcune grotte ci sono stalattiti con <b>segni di percussione</b>: qualcuno le colpiva per farle suonare.",
+          "Sono <b>litofoni</b>, strumenti di pietra. Forse le prime percussioni."] },
+        { img: "p-litofoni-2.jpg", did: "Un cavallo dipinto nella grotta di Lascaux.",
+          t: ["Spesso le pitture sono proprio nei punti dove la grotta fa più eco: la <b>risonanza</b>.",
+          "Forse immagini, canti e suoni facevano parte degli stessi <b>riti</b>."] }
+      ],
+      brano: "I litofoni", chi: "Grotte d'Europa · pietre sonore", img: "litofoni.jpg", yt: "1kFP7dJ6VZc", canale: "Jean-Loup Ringot",
       gancio: "E se le prime percussioni fossero state… le grotte?",
-      punti: ["In alcune grotte ci sono stalattiti e colonne di pietra con <b>segni di percussione</b>.",
-              "Alcuni ricercatori pensano che fossero <b>litofoni</b>: strumenti di pietra che suonano se colpiti.",
-              "Nel video si suonano lame di pietra preistoriche trovate in Francia: ogni pietra ha la sua nota."],
-      sapevi: "Spesso i segni di percussione si trovano vicino alle pitture rupestri: forse immagini e suoni facevano parte degli stessi riti." },
-    { id: "jiahu", mondo: "sx", label: "Neolitico · 9.000 anni fa", titolo: "I flauti di Jiahu", chi: "Cina · 7000–5700 a.C.", img: "jiahu.jpg", yt: "LOpXaee2RbI", canale: "CGTN",
+      punti: ["Nel video si suonano lame di pietra preistoriche trovate in Francia.",
+              "Ogni pietra ha la sua nota: più è grande, più il suono è grave.",
+              "Prova a pensare: quali oggetti della natura possono diventare strumenti?"],
+      sapevi: "Per noi la musica è spesso divertimento. Per gli uomini della preistoria probabilmente era soprattutto un rito: per la caccia, per i morti, per chiedere aiuto alla natura.",
+      parole: [["Litofono", "strumento di pietra che suona se colpito."], ["Rito", "cerimonia per parlare con gli dèi o con la natura."]] },
+
+    { id: "jiahu", mondo: "sx", label: "Preistoria", titolo: "I flauti di Jiahu: la prima scala", data: "9.000 anni fa",
+      pagine: [
+        { img: "p-jiahu-1.jpg", did: "Un flauto d'osso di gru trovato a Jiahu, in Cina (circa 7000 a.C.).",
+          t: ["Nel <b>Neolitico</b> gli uomini coltivano i campi e vivono in villaggi.",
+          "A Jiahu, in Cina, sono stati trovati circa trenta flauti fatti con le ossa delle ali della gru."] },
+        { img: "p-jiahu-2.jpg", did: "Un altro flauto di Jiahu: si vedono bene i fori.",
+          t: ["Hanno da cinque a otto fori, a distanze studiate: permettono di suonare una vera <b>scala</b>.",
+          "Alcuni sono ancora suonabili, dopo 9.000 anni!"] }
+      ],
+      brano: "I flauti di Jiahu", chi: "Cina · 7000 a.C. circa", img: "jiahu.jpg", yt: "LOpXaee2RbI", canale: "CGTN (televisione cinese)",
       gancio: "Flauti di 9.000 anni che suonano ancora.",
-      punti: ["A Jiahu, in Cina, sono stati trovati circa <b>30 flauti</b> ricavati dalle ossa delle ali della gru.",
-              "Hanno da cinque a otto fori: permettono di suonare una vera scala.",
-              "Nel video una copia suona <i>Jasmine Flower</i>, una canzone tradizionale cinese."],
-      sapevi: "Alcuni di questi flauti sono ancora suonabili: sono tra gli strumenti più antichi del mondo che si possono ancora far suonare." },
-    { id: "hurrita", mondo: "dx", label: "Mesopotamia · 1400 a.C.", titolo: "Inno hurrita n. 6", chi: "Ugarit, Siria · 1400 a.C. circa", img: "hurrita.jpg", yt: "DBhB9gRnIHE", canale: "Michael Levy",
+      punti: ["Ascolta come le note salgono una dopo l'altra: è una scala.",
+              "Nel video una copia suona «Jasmine Flower», una canzone tradizionale cinese.",
+              "La canzone è di oggi: lo strumento è antichissimo."],
+      sapevi: "I flauti erano sepolti nelle tombe insieme ai loro proprietari: forse erano oggetti preziosi, usati nei riti.",
+      parole: [["Scala", "note in ordine, dalla più grave alla più acuta."]] },
+
+    { id: "hurrita", mondo: "dx", label: "Antichità", titolo: "Mesopotamia ed Egitto: la musica si scrive", data: "2500 – 1400 a.C.",
+      pagine: [
+        { img: "p-hurrita-1.jpg", did: "La testa di toro d'oro di una lira trovata nelle tombe reali di Ur (circa 2500 a.C.).",
+          t: ["In Mesopotamia nascono le prime città, i re e i templi. E la <b>scrittura</b>.",
+          "Nei palazzi e nei templi lavorano musicisti di professione: nelle tombe dei re di Ur c'erano lire d'oro."] },
+        { img: "p-hurrita-2.jpg", did: "Disegno della tavoletta con l'inno hurrita, in scrittura cuneiforme (Ugarit, circa 1400 a.C.).",
+          t: ["Su una tavoletta d'argilla, in scrittura <b>cuneiforme</b>, qualcuno ha scritto un inno con le indicazioni per suonarlo.",
+          "È la più antica musica scritta: la prima <b>notazione</b>."] },
+        { img: "p-hurrita-3.jpg", did: "Arpe dell'antico Egitto al Museo del Louvre, Parigi.",
+          t: ["Anche in Egitto la musica accompagna i riti nei templi e i banchetti.",
+          "Si suonano arpe, flauti e il sistro; tra i musicisti ci sono molte donne."] }
+      ],
+      brano: "Inno hurrita n. 6", chi: "Ugarit, Siria · 1400 a.C. circa", img: "hurrita.jpg", yt: "DBhB9gRnIHE", canale: "Michael Levy",
       gancio: "La melodia scritta più antica del mondo.",
-      punti: ["È incisa in <b>scrittura cuneiforme</b> su una tavoletta d'argilla.",
-              "È un inno alla dea <b>Nikkal</b>, protettrice dei frutteti.",
-              "Decifrare la notazione è difficilissimo: ogni studioso la ricostruisce in modo diverso. Ascolti una delle ipotesi."],
-      sapevi: "La tavoletta è stata trovata negli anni Cinquanta negli scavi dell'antica città di Ugarit, oggi Ras Shamra, in Siria." },
-    { id: "delfico", mondo: "dx", label: "Grecia · 138 a.C.", titolo: "Inno delfico ad Apollo", chi: "Delfi · 138 a.C.", img: "delfico.jpg", yt: "ws7xUHt_W4o", canale: "Michael Levy",
+      punti: ["È un inno alla dea Nikkal, protettrice dei frutteti.",
+              "Ascolta la lira che accompagna la melodia.",
+              "Leggere quei segni è difficilissimo: ogni studioso ricostruisce la musica in modo diverso. Ascolti una delle ipotesi."],
+      sapevi: "La tavoletta fu trovata negli anni Cinquanta tra le rovine dell'antica città di Ugarit, in Siria. Ha circa 3.400 anni.",
+      strumenti: ["liraur", "arpa", "sistro"],
+      parole: [["Notazione", "un modo per scrivere la musica con dei segni."], ["Cuneiforme", "scrittura a forma di cunei, su tavolette d'argilla."]] },
+
+    { id: "delfico", mondo: "dx", label: "Antichità", titolo: "La Grecia: musica, poesia e danza", data: "V – II secolo a.C.",
+      pagine: [
+        { img: "p-delfico-1.jpg", did: "Un citaredo, cantante con la cetra, dipinto su un vaso greco (V secolo a.C.).",
+          t: ["Per i Greci musica, poesia e danza sono una cosa sola: la <b>mousiké</b>, l'arte delle Muse.",
+          "I ragazzi imparano a scuola a cantare con la lira. La poetessa Saffo cantava le sue poesie accompagnandosi con la lira."] },
+        { img: "p-delfico-2.jpg", did: "Il teatro di Epidauro, in Grecia: ancora oggi vi si fanno spettacoli.",
+          t: ["Nei grandi teatri di pietra il <b>coro</b> canta e danza, e racconta la storia insieme agli attori.",
+          "La musica si suona anche nelle feste per gli dèi e nelle gare sportive."] },
+        { img: "p-delfico-3.jpg", did: "Le pietre di Delfi con gli inni ad Apollo: sopra il testo, le lettere delle note.",
+          t: ["I Greci scrivono le note con delle <b>lettere</b>, sopra le sillabe del testo.",
+          "Così, su una pietra del santuario di Delfi, è arrivato fino a noi un inno ad Apollo, il dio della musica."] }
+      ],
+      brano: "Inno delfico ad Apollo", chi: "Delfi · 138 a.C.", img: "delfico.jpg", yt: "ws7xUHt_W4o", canale: "Michael Levy",
       gancio: "Una canzone scolpita nel marmo, per il dio della musica.",
-      punti: ["È inciso sulle pietre del Tesoro degli Ateniesi, nel santuario di <b>Delfi</b>.",
-              "Sopra le sillabe del testo ci sono delle <b>lettere</b>: erano le note dei Greci.",
-              "È dedicato ad <b>Apollo</b>, il dio della musica e delle arti."],
-      sapevi: "È uno dei pochissimi brani dell'antica Grecia arrivati fino a noi quasi interi." },
-    { id: "seikilos", mondo: "dx", label: "Grecia · I secolo d.C.", titolo: "Epitaffio di Seikilos", chi: "Asia Minore · I secolo d.C.", img: "seikilos.jpg", yt: "zPTF28XyH4g", canale: "Farya Faraji",
+      punti: ["In questa versione la melodia è suonata dalla lira, lo strumento di Apollo.",
+              "Il testo racconta di Apollo che arriva a Delfi, tra canti e suoni di flauto.",
+              "È uno dei pochissimi brani greci arrivati quasi interi."],
+      sapevi: "Il filosofo Pitagora scoprì che le note dipendono dai numeri: se dimezzi una corda, la nota sale di un'ottava. Secondo i Greci la musica cambiava anche il carattere delle persone.",
+      strumenti: ["lira", "aulos", "siringa"],
+      parole: [["Mousiké", "per i Greci: musica, poesia e danza insieme."], ["Coro", "nel teatro greco, un gruppo che canta e danza."]] },
+
+    { id: "seikilos", mondo: "dx", label: "Antichità", titolo: "La canzone più antica", data: "I secolo d.C.",
+      pagine: [
+        { img: "p-seikilos-1.jpg", did: "La colonna di Seikilos (Museo nazionale di Danimarca, Copenaghen).",
+          t: ["Su una piccola colonna di pietra, un uomo di nome Seikilos ha fatto incidere una canzone: parole, note e ritmo.",
+          "È un <b>epitaffio</b>, una scritta per una tomba."] },
+        { img: "p-seikilos-2.jpg", did: "Particolare della colonna: alla terza riga si legge il nome ΣΕΙΚΙΛΟΣ.",
+          t: ["È la più antica canzone <b>completa</b> che conosciamo: dall'inizio alla fine.",
+          "Dice: «Finché vivi, splendi: non affliggerti per nulla. La vita dura poco»."] }
+      ],
+      brano: "Epitaffio di Seikilos", chi: "Asia Minore · I secolo d.C.", img: "seikilos.jpg", yt: "zPTF28XyH4g", canale: "Farya Faraji",
       gancio: "La canzone completa più antica: scritta su una tomba.",
-      punti: ["È incisa su una piccola colonna funeraria, con <b>parole, note e ritmo</b>.",
-              "Dice: «Finché vivi, splendi: non affliggerti per nulla. La vita dura poco, il tempo esige il suo tributo».",
-              "La melodia è breve e completa: dall'inizio alla fine, come una canzone."],
-      sapevi: "La colonna fu ritrovata nel 1883 in Turchia. Si racconta che per un periodo fu usata come base per un vaso di fiori, e per farla stare dritta ne tagliarono il fondo. Oggi è al Museo nazionale di Copenaghen." },
-    { id: "mesomede", mondo: "dx", label: "Roma · II secolo d.C.", titolo: "Inno al Sole", chi: "Mesomede di Creta · 130 d.C. circa", img: "mesomede.jpg", yt: "H4q9tmxetLg", canale: "Michael Levy",
+      punti: ["La melodia è breve: si può imparare a memoria.",
+              "Ascolta come sale e scende dolcemente.",
+              "La trovi anche nella scheda «Da suonare»."],
+      sapevi: "La colonna fu ritrovata nel 1883 in Turchia. Per un periodo fu usata come base per un vaso di fiori, e per farla stare dritta ne tagliarono il fondo. Oggi è al Museo nazionale di Copenaghen.",
+      parole: [["Epitaffio", "una scritta incisa su una tomba."]] },
+
+    { id: "mesomede", mondo: "dx", label: "Antichità", titolo: "Roma: musica per lo spettacolo", data: "I – IV secolo d.C.",
+      pagine: [
+        { img: "p-mesomede-1.jpg", did: "Musicisti romani in un mosaico di Zliten, in Libia: tromba, organo ad acqua e corni (circa 200 d.C.).",
+          t: ["I Romani amano gli <b>spettacoli</b>: negli anfiteatri, durante i giochi e i combattimenti, suonano l'organo ad acqua, i corni e le trombe.",
+          "Nell'esercito le trombe danno i comandi ai soldati."] },
+        { img: "p-mesomede-2.jpg", did: "L'imperatore Adriano (Musei Capitolini, Roma).",
+          t: ["Molti musicisti a Roma sono greci. Mesomede di Creta lavora alla corte dell'imperatore <b>Adriano</b>.",
+          "Nel 476 cade l'Impero romano d'Occidente: comincia il Medioevo."] }
+      ],
+      brano: "Inno al Sole", chi: "Mesomede di Creta · 130 d.C. circa", img: "mesomede.jpg", yt: "H4q9tmxetLg", canale: "Michael Levy",
       gancio: "Il musicista dell'imperatore.",
-      punti: ["Mesomede era un musicista greco alla corte dell'imperatore romano <b>Adriano</b>.",
-              "È un inno al <b>Sole</b>, che i Greci chiamavano Helios.",
-              "I suoi inni sono arrivati a noi copiati nei manoscritti, con i segni musicali."],
-      sapevi: "Nel 1581 Vincenzo Galilei, il padre di Galileo, pubblicò questi inni: la musica greca affascinava i musicisti fiorentini che, pochi anni dopo, inventarono l'opera." }
+      punti: ["È un inno al Sole, che i Greci chiamavano Helios.",
+              "I suoi inni sono arrivati a noi copiati nei manoscritti, con i segni musicali.",
+              "Ascolta il suono della lira, calmo e solenne."],
+      sapevi: "Nel 1581 Vincenzo Galilei, il padre di Galileo, pubblicò questi inni: la musica greca affascinava i musicisti fiorentini che, pochi anni dopo, inventarono l'opera.",
+      strumenti: ["hydraulis", "cornu"],
+      parole: [["Organo ad acqua", "l'hydraulis, antenato dell'organo delle chiese."]] },
+
+    { id: "riepilogo", mondo: "sx", label: "Ricapitoliamo", titolo: "Che cosa abbiamo scoperto", data: "fino al 476 d.C.", riepilogo: true, img: "p-divjebabe-1.jpg",
+      pagine: [
+        { img: "p-hohlefels-1.jpg", did: "Il flauto d'osso di avvoltoio di Hohle Fels (Museo della preistoria di Blaubeuren, Germania).",
+          t: ["<b>Preistoria</b>: flauti d'osso, pietre sonore, grotte. La musica è soprattutto rito.",
+          "Conosciamo gli strumenti, ma non le melodie."] },
+        { img: "p-hurrita-2.jpg", did: "Disegno della tavoletta con l'inno hurrita, in scrittura cuneiforme (Ugarit, circa 1400 a.C.).",
+          t: ["<b>Antichità</b>: con le città nascono i musicisti di professione e la scrittura.",
+          "Le prime notazioni: tavolette d'argilla, lettere greche sopra il testo."] },
+        { img: "p-delfico-1.jpg", did: "Un citaredo, cantante con la cetra, dipinto su un vaso greco (V secolo a.C.).",
+          t: ["Grecia: la mousiké, il coro del teatro. Roma: la musica degli spettacoli e dell'esercito.",
+          "Arrivano fino a noi pochi brani, da ricostruire con pazienza."] }
+      ] }
+  ];
+
+  const LINEA = [
+    ["58.000 a.C.", "Il flauto di Divje Babe (forse dei Neanderthal)."],
+    ["38.000 a.C.", "Il flauto di Hohle Fels."],
+    ["7000 a.C.", "I flauti di Jiahu, in Cina."],
+    ["3200 a.C.", "In Mesopotamia nasce la scrittura."],
+    ["2500 a.C.", "Le lire d'oro di Ur."],
+    ["1400 a.C.", "L'inno hurrita: la musica scritta più antica."],
+    ["450 a.C.", "Atene: il coro nei teatri."],
+    ["138 a.C.", "L'inno delfico ad Apollo."],
+    ["100 d.C.", "L'epitaffio di Seikilos (circa)."],
+    ["130 d.C.", "Mesomede alla corte di Adriano."],
+    ["476 d.C.", "Cade l'Impero romano d'Occidente."]
   ];
 
   const STRUMENTI = [
@@ -299,7 +311,7 @@
   ];
 
   /* crediti delle immagini (tutte ospitate nel sito) */
-const CREDITI_IMG = [
+  const CREDITI_IMG = [
     'Banner: pitture rupestri della grotta di Lascaux — <a href="https://commons.wikimedia.org/wiki/File:Lascaux_painting.jpg" target="_blank" rel="noopener">fonte</a>, pubblico dominio.',
     'Banner: teatro di Epidauro, foto di Sirabder87 — <a href="https://commons.wikimedia.org/wiki/File:Theatre_of_Epidaurus,_Greece_-_20050303.jpg" target="_blank" rel="noopener">fonte</a>, <a href="https://creativecommons.org/licenses/by-sa/3.0/deed.it" target="_blank" rel="noopener">CC BY-SA 3.0</a>, ritagliata.',
     'Divje Babe: interno della grotta, foto di Thilo Parg — <a href="https://commons.wikimedia.org/wiki/File:Inside_cave_Divje_Babe_1.JPG" target="_blank" rel="noopener">fonte</a>, <a href="https://creativecommons.org/licenses/by-sa/3.0/deed.it" target="_blank" rel="noopener">CC BY-SA 3.0</a>, ritagliata.',
@@ -321,102 +333,200 @@ const CREDITI_IMG = [
     'Cornu e tuba: musicisti del mosaico di Zliten — <a href="https://commons.wikimedia.org/wiki/File:Musicians_from_Zliten_mosaic.JPG" target="_blank" rel="noopener">fonte</a>, pubblico dominio.'
   ];
 
-  /* ---------- costruzione della griglia ---------- */
-  const griglia = document.getElementById("griglia");
-  document.getElementById("nAscolti").textContent = ASCOLTI.length;
-  document.getElementById("nStrumenti").textContent = STRUMENTI.length;
-  document.getElementById("nSuonare").textContent = SUONARE.length;
+  const CREDITI_PAGINE = [
+    "L'osso di Divje Babe, con i suoi fori, al Museo nazionale della Slovenia – dettaglio — <a href=\"https://commons.wikimedia.org/wiki/File:Divje_Babe_flute_in_the_National_Museum_of_Slovenia.jpg\" target=\"_blank\" rel=\"noopener\">fonte</a>, CC0 (pubblico dominio).",
+    "L'ingresso della grotta di Hohle Fels, in Germania – dettaglio, foto di Dr. Eugen Lehle — <a href=\"https://commons.wikimedia.org/wiki/File:Hohler_Fels.jpg\" target=\"_blank\" rel=\"noopener\">fonte</a>, <a href=\"https://creativecommons.org/licenses/by-sa/3.0/deed.it\" target=\"_blank\" rel=\"noopener\">CC BY-SA 3.0</a>.",
+    "Stalattiti nella grotta di Nerja, in Spagna: alcune hanno segni di percussione, foto di Luzzyacentillo — <a href=\"https://commons.wikimedia.org/wiki/File:Stalactites_in_the_cave_of_Nerja.jpg\" target=\"_blank\" rel=\"noopener\">fonte</a>, <a href=\"https://creativecommons.org/licenses/by-sa/3.0/deed.it\" target=\"_blank\" rel=\"noopener\">CC BY-SA 3.0</a>.",
+    "Un flauto d'osso di gru trovato a Jiahu, in Cina (circa 7000 a.C.) — <a href=\"https://commons.wikimedia.org/wiki/File:Bone_flute,_Peiligang_Culture_(6200-5500_BC),_Jiahu_site,_Wuyang,_Henan.jpg\" target=\"_blank\" rel=\"noopener\">fonte</a>, CC0 (pubblico dominio).",
+    "Un altro flauto di Jiahu: si vedono bene i fori, foto di ASHillocks — <a href=\"https://commons.wikimedia.org/wiki/File:Jiahu_Bone_Flute.jpg\" target=\"_blank\" rel=\"noopener\">fonte</a>, <a href=\"https://creativecommons.org/licenses/by-sa/4.0/deed.it\" target=\"_blank\" rel=\"noopener\">CC BY-SA 4.0</a>.",
+    "Arpe dell'antico Egitto al Museo del Louvre, Parigi – dettaglio — <a href=\"https://commons.wikimedia.org/wiki/File:Ancient_Egypt_Harps_(28412765995).jpg\" target=\"_blank\" rel=\"noopener\">fonte</a>, CC0 (pubblico dominio).",
+    "Un citaredo, cantante con la cetra, dipinto su un vaso greco (V secolo a.C.), foto di Marcus Cyron — <a href=\"https://commons.wikimedia.org/wiki/File:Halsamphora_des_Berliner_Malers_mit_Kithara-Spieler_1.JPG\" target=\"_blank\" rel=\"noopener\">fonte</a>, <a href=\"https://creativecommons.org/licenses/by-sa/3.0/deed.it\" target=\"_blank\" rel=\"noopener\">CC BY-SA 3.0</a>.",
+    "Il teatro di Epidauro, in Grecia: ancora oggi vi si fanno spettacoli, foto di Olecorre — <a href=\"https://commons.wikimedia.org/wiki/File:Theatre_of_Epidaurus_OLC.jpg\" target=\"_blank\" rel=\"noopener\">fonte</a>, <a href=\"https://creativecommons.org/licenses/by-sa/3.0/deed.it\" target=\"_blank\" rel=\"noopener\">CC BY-SA 3.0</a>."
+  ];
 
-  let scheda = "ascolti", mondo = null, elenco = [];
-  function disegna() {
-    griglia.innerHTML = "";
-    if (scheda === "suonare") {
-      SUONARE.forEach(s => {
-        const c = document.createElement("div"); c.className = "card suona empty";
-        c.innerHTML = `<div class="foto" style="background-image:url('${IMG + s.img}')"></div>
-          <div class="testo"><span class="label">Da suonare</span><h2>${s.titolo}</h2><span class="chi">${s.chi}</span></div>`;
-        griglia.appendChild(c);
-      });
-      return;
-    }
-    const dati = scheda === "ascolti" ? ASCOLTI : STRUMENTI;
-    elenco = dati.filter(d => !mondo || !d.mondo || d.mondo === mondo);
-    elenco.forEach((d, i) => {
-      const c = document.createElement("button"); c.type = "button";
-      c.className = "card " + (scheda === "ascolti" ? d.mondo : "strum");
-      c.innerHTML = `<div class="foto" style="background-image:url('${IMG + d.img}')"></div>
-        <div class="testo"><span class="label">${d.label}</span><h2>${d.titolo}</h2><span class="chi">${d.chi}</span><p>${d.gancio}</p></div>`;
-      c.addEventListener("click", () => apri(i));
-      griglia.appendChild(c);
-    });
-  }
+  /* =========================================================
+     MAPPA, ESERCIZI E SCHEDE (motore comune: storia-attivita.js; formato in _sviluppo/storia/LEGGIMI.md)
+     Mappa, vero o falso e verifica parlano di concetti, forme e prassi, non di nomi e date.
+     ========================================================= */
+  const ATTIVITA = {
+    mappa: { W: 1280, H: 530,
+      nodi: [
+        { id: "rad", x: 420, y: 0, w: 440, h: 60, t: "PREISTORIA E ANTICHITÀ", s: "fino al 476 d.C.", tipo: "radice" },
+        { id: "rit", x: 10, y: 0, w: 300, h: 64, t: "un [[rito]]", s: "per parlare con gli dèi e con la natura", tipo: "quadro", cap: "litofoni" },
+        { id: "scr", x: 970, y: 0, w: 300, h: 64, t: "la [[scrittura]]", s: "tavolette d'argilla, pietre, manoscritti", tipo: "quadro", cap: "hurrita" },
+        { id: "nat", x: 10, y: 98, w: 300, h: 52, t: "suoni della [[natura]]", s: "ossa, pietre, canne, conchiglie", tipo: "quadro", cap: "hohlefels" },
+        { id: "mem", x: 450, y: 98, w: 380, h: 52, t: "gli [[strumenti]], non le melodie", s: "li ricostruisce l'archeologia musicale", tipo: "quadro", cap: "divjebabe" },
+        { id: "pro", x: 970, y: 98, w: 300, h: 52, t: "musicisti di [[professione]]", s: "nei templi, nei palazzi, nei teatri", tipo: "quadro", cap: "hurrita" },
+        { id: "sx", x: 20, y: 204, w: 520, h: 58, t: "PREISTORIA", s: "senza scrittura: la musica non lascia tracce", tipo: "sx" },
+        { id: "dx", x: 620, y: 204, w: 640, h: 58, t: "ANTICHITÀ", s: "città, templi, teatri", tipo: "dx" },
+        { id: "v1", x: 0, y: 318, w: 134, h: 50, t: "Ossa forate", tipo: "c-sx", cap: "hohlefels" },
+        { id: "v2", x: 142, y: 318, w: 134, h: 50, t: "Litofoni", tipo: "c-sx", cap: "litofoni" },
+        { id: "v3", x: 284, y: 318, w: 134, h: 50, t: "Grotte", tipo: "c-sx", cap: "litofoni" },
+        { id: "v4", x: 426, y: 318, w: 134, h: 50, t: "Scala", tipo: "c-sx", cap: "jiahu" },
+        { id: "s1", x: 600, y: 318, w: 128, h: 50, t: "Notazione", tipo: "c-dx", cap: "hurrita" },
+        { id: "s2", x: 736, y: 318, w: 128, h: 50, t: "Mousiké", tipo: "c-dx", cap: "delfico" },
+        { id: "s3", x: 872, y: 318, w: 128, h: 50, t: "Coro", tipo: "c-dx", cap: "delfico" },
+        { id: "s4", x: 1008, y: 318, w: 128, h: 50, t: "Epitaffio", tipo: "c-dx", cap: "seikilos" },
+        { id: "s5", x: 1144, y: 318, w: 136, h: 50, t: "Spettacoli", tipo: "c-dx", cap: "mesomede" },
+        { id: "dv1", x: 0, y: 410, w: 134, h: 110, t: "flauti con fori, forse con l'[[ancia]]", tipo: "dettaglio", cap: "hohlefels" },
+        { id: "dv2", x: 142, y: 410, w: 134, h: 110, t: "pietre che suonano se colpite", tipo: "dettaglio", cap: "litofoni" },
+        { id: "dv3", x: 284, y: 410, w: 134, h: 110, t: "pitture dove c'è più [[risonanza]]", tipo: "dettaglio", cap: "litofoni" },
+        { id: "dv4", x: 426, y: 410, w: 134, h: 110, t: "fori a distanze studiate", tipo: "dettaglio", cap: "jiahu" },
+        { id: "ds1", x: 600, y: 410, w: 128, h: 110, t: "segni [[cuneiformi]] sull'argilla", tipo: "dettaglio", cap: "hurrita" },
+        { id: "ds2", x: 736, y: 410, w: 128, h: 110, t: "musica, poesia e [[danza]] insieme", tipo: "dettaglio", cap: "delfico" },
+        { id: "ds3", x: 872, y: 410, w: 128, h: 110, t: "canta e danza nel [[teatro]]", tipo: "dettaglio", cap: "delfico" },
+        { id: "ds4", x: 1008, y: 410, w: 128, h: 110, t: "una canzone [[completa]] su una tomba", tipo: "dettaglio", cap: "seikilos" },
+        { id: "ds5", x: 1144, y: 410, w: 136, h: 110, t: "trombe e [[organo ad acqua]]", tipo: "dettaglio", cap: "mesomede" }
+      ],
+      archi: [
+        { da: "rad", a: "rit", l: "la musica è", forma: "orizz" }, { da: "rad", a: "scr", l: "poi nasce", forma: "orizz" },
+        { da: "rit", a: "nat", l: "con" },
+        { da: "rad", a: "mem", l: "ci lascia", lato: "padre" },
+        { da: "scr", a: "pro", l: "e nelle città" },
+        { da: "mem", a: "sx", l: "due grandi periodi:", lato: "padre" }, { da: "mem", a: "dx" },
+        { da: "sx", a: "v1", l: "i fiati:" }, { da: "sx", a: "v2", l: "le percussioni:" }, { da: "sx", a: "v3", l: "il luogo:" }, { da: "sx", a: "v4", l: "le note:" },
+        { da: "dx", a: "s1", l: "scrivere:" }, { da: "dx", a: "s2", l: "Grecia:" }, { da: "dx", a: "s3", l: "il teatro:" }, { da: "dx", a: "s4", l: "la tomba:" }, { da: "dx", a: "s5", l: "Roma:" },
+        { da: "v1", a: "dv1", l: "sono" }, { da: "v2", a: "dv2", l: "sono" }, { da: "v3", a: "dv3", l: "con" }, { da: "v4", a: "dv4", l: "grazie ai" },
+        { da: "s1", a: "ds1", l: "con" }, { da: "s2", a: "ds2", l: "è" }, { da: "s3", a: "ds3", l: "che" }, { da: "s4", a: "ds4", l: "con" }, { da: "s5", a: "ds5", l: "con" }
+      ] },
+    mappaBuchi: ["rito", "scrittura", "natura", "strumenti", "professione", "ancia", "risonanza", "cuneiformi", "danza", "teatro", "completa", "organo ad acqua"],
+    mappaDistrattori: ["basso continuo", "chitarra elettrica", "polifonia"],
+    notaStrumenti: "Strumenti antichi: oggetti ritrovati dagli archeologi, statuette e mosaici dell'epoca.",
+    vf: [
+      ["Della preistoria conosciamo alcuni strumenti, ma non le melodie.", true, ""],
+      ["Nella preistoria la musica si scriveva sulle pareti delle grotte.", false, "Non esisteva la scrittura: la musica si imparava solo ascoltando e suonando."],
+      ["I più antichi strumenti arrivati fino a noi sono fatti di osso e di pietra.", true, ""],
+      ["Il legno e le pelli si conservano per migliaia di anni.", false, "Si decompongono: per questo restano quasi solo ossa e pietre."],
+      ["L'archeologia musicale ricostruisce gli strumenti antichi e prova a suonarli.", true, ""],
+      ["L'ancia è una linguetta che vibra in alcuni strumenti a fiato.", true, ""],
+      ["Un litofono è uno strumento di pietra che suona se viene colpito.", true, ""],
+      ["Le pitture rupestri sono spesso nei punti più silenziosi della grotta.", false, "Spesso sono dove la grotta fa più eco: dove c'è più risonanza."],
+      ["Nella preistoria la musica era probabilmente legata ai riti.", true, ""],
+      ["Una scala è una serie di note in ordine, dalla più grave alla più acuta.", true, ""],
+      ["La scrittura nasce con le prime città, in Mesopotamia.", true, ""],
+      ["La notazione è un modo per scrivere la musica con dei segni.", true, ""],
+      ["La musica scritta più antica è incisa su una tavoletta d'argilla.", true, ""],
+      ["Nell'antichità c'erano musicisti di professione nei templi e nei palazzi.", true, ""],
+      ["Nell'antico Egitto solo gli uomini potevano suonare.", false, "Tra i musicisti c'erano molte donne."],
+      ["Per i Greci la mousiké univa musica, poesia e danza.", true, ""],
+      ["Nel teatro greco il coro restava fermo e in silenzio.", false, "Il coro cantava e danzava, e raccontava la storia."],
+      ["I Greci scrivevano le note con delle lettere sopra il testo.", true, ""],
+      ["Un epitaffio è una canzone per le feste.", false, "È una scritta incisa su una tomba."],
+      ["L'organo ad acqua è l'antenato dell'organo delle chiese.", true, ""],
+      ["Delle musiche greche e romane ci sono arrivati moltissimi brani interi.", false, "Pochissimi, e spesso a pezzi."]
+    ],
+    personaggi: [
+      ["Apollo", "Il dio greco della musica e delle arti."],
+      ["Ermes", "Nel mito costruì la prima lira con un guscio di tartaruga."],
+      ["Saffo", "Poetessa greca: cantava le sue poesie con la lira."],
+      ["Pitagora", "Scoprì che le note dipendono da rapporti tra numeri."],
+      ["Seikilos", "Fece incidere una canzone completa su una colonna funeraria."],
+      ["Mesomede", "Musicista greco alla corte dell'imperatore Adriano."],
+      ["Ctesibio", "Inventò l'organo ad acqua, ad Alessandria d'Egitto."],
+      ["Nerone", "Imperatore romano appassionato di organi ad acqua."],
+      ["Vincenzo Galilei", "Il padre di Galileo: nel 1581 pubblicò gli inni greci."]
+    ],
+    cruciverba: [
+      ["RITO", "Cerimonia per parlare con gli dèi"],
+      ["LITOFONO", "Strumento di pietra"],
+      ["ANCIA", "Linguetta che vibra"],
+      ["SCALA", "Note in ordine, dal grave all'acuto"],
+      ["RISONANZA", "L'eco della grotta"],
+      ["NOTAZIONE", "Il modo di scrivere la musica"],
+      ["CUNEIFORME", "La scrittura della Mesopotamia"],
+      ["CORO", "Canta e danza nel teatro greco"],
+      ["EPITAFFIO", "Scritta su una tomba"],
+      ["LIRA", "Lo strumento di Apollo"],
+      ["AULOS", "Il doppio flauto greco"],
+      ["SISTRO", "Sonaglio sacro egizio"],
+      ["ARCHEOLOGIA", "Studia ciò che resta del passato"],
+      ["TEATRO", "Luogo di pietra per gli spettacoli greci"]
+    ],
+    ascolto: {
+      descr: "Ascolta ogni brano e rispondi: preistoria o antichità? Che strumento senti?",
+      criteri: [
+        { id: "chi", nome: "Chi suona o canta?", opz: ["Solo voci", "Solo strumenti", "Voci e strumenti"] },
+        { id: "mondo", nome: "Da quale periodo viene?", opz: ["Preistoria", "Antichità"] },
+        { id: "strum", nome: "Che cosa senti di più?", opz: ["Un flauto", "Pietre o percussioni", "La lira o altre corde", "La voce"] },
+        { id: "ritmo", nome: "Che carattere ha?", opz: ["Calmo", "Vivace"] }
+      ],
+      brani: [
+        { cap: "divjebabe", r: { chi: [1], mondo: [0], strum: [0], ritmo: [0, 1] }, nota: "Il musicista prova tante note diverse: a tratti calmo, a tratti vivace." },
+        { cap: "hohlefels", r: { chi: [1], mondo: [0], strum: [0], ritmo: [0, 1] } },
+        { cap: "litofoni", r: { chi: [1], mondo: [0], strum: [1], ritmo: [0, 1] } },
+        { cap: "jiahu", r: { chi: [1], mondo: [0], strum: [0], ritmo: [0] } },
+        { cap: "hurrita", r: { chi: [1, 2], mondo: [1], strum: [2], ritmo: [0] }, nota: "Era un canto: in questa versione si sente soprattutto la lira." },
+        { cap: "delfico", r: { chi: [1, 2], mondo: [1], strum: [2, 3], ritmo: [0] }, nota: "Era un canto: in questa versione si sente soprattutto la lira." },
+        { cap: "seikilos", r: { chi: [2], mondo: [1], strum: [2, 3], ritmo: [0] } },
+        { cap: "mesomede", r: { chi: [1, 2], mondo: [1], strum: [2, 3], ritmo: [0] }, nota: "Era un canto: in questa versione si sente soprattutto la lira." }
+      ] },
+    riassunto: {
+      testo: "Nella <b>preistoria</b> non c'è la scrittura: conosciamo alcuni <b>strumenti</b> (ossa forate, pietre sonore), ma non le melodie. La musica è soprattutto <b>rito</b>. Con le prime città nascono la <b>scrittura</b> e i <b>musicisti di professione</b>. In Grecia la musica è <b>mousiké</b>: musica, poesia e danza; a Roma accompagna gli spettacoli e l'esercito.",
+      immagini: [["p-hohlefels-1.jpg", "Il flauto d'osso"], ["p-litofoni-2.jpg", "Le grotte"], ["p-hurrita-2.jpg", "La prima notazione"], ["p-delfico-2.jpg", "Il teatro greco"]],
+      punti: [
+        ["Preistoria", ["L'<b>archeologia musicale</b> ricostruisce gli strumenti.", "<b>Flauti d'osso</b>: Divje Babe (forse Neanderthal), Hohle Fels (Homo sapiens).", "<b>Litofoni</b> e grotte con la <b>risonanza</b>.", "I flauti di Jiahu: la prima <b>scala</b>."]],
+        ["Antichità", ["Mesopotamia: la <b>notazione</b> cuneiforme, la lira di Ur.", "Egitto: arpe, sistri, musiciste.", "Grecia: <b>mousiké</b>, il <b>coro</b> nel teatro, le note scritte con lettere.", "Seikilos: la canzone completa più antica.", "Roma: spettacoli, trombe dell'esercito, <b>organo ad acqua</b>."]]
+      ] },
+    riassuntoBreve: {
+      testo: "Nella <b>preistoria</b> la musica è un <b>rito</b>, con ossa e pietre. Nell'<b>antichità</b> arrivano la <b>scrittura</b> e i musicisti di professione.",
+      date: [["40.000 anni fa", "il flauto d'avvoltoio"], ["1400 a.C.", "la musica scritta più antica"], ["138 a.C.", "l'inno ad Apollo"], ["I secolo d.C.", "l'epitaffio di Seikilos"], ["476 d.C.", "finisce l'antichità"]],
+      parole: [["Archeologia musicale", "studia i suoni del passato."], ["Litofono", "strumento di pietra."], ["Rito", "cerimonia per gli dèi."], ["Scala", "note in ordine."], ["Notazione", "musica scritta con segni."], ["Mousiké", "musica, poesia e danza."], ["Coro", "canta e danza nel teatro."], ["Epitaffio", "scritta su una tomba."]] },
+    raccontoBreve: {
+      divjebabe: "Della preistoria abbiamo solo ossa e pietre. L'archeologia musicale prova a farle suonare.",
+      hohlefels: "Il flauto d'avvoltoio di Hohle Fels ha 40.000 anni: è lo strumento più antico sicuro.",
+      litofoni: "Nelle grotte le stalattiti diventano litofoni. Forse la musica faceva parte dei riti.",
+      jiahu: "I flauti di Jiahu, in Cina, hanno 9.000 anni e suonano una vera scala.",
+      hurrita: "In Mesopotamia nasce la scrittura: su una tavoletta d'argilla c'è la musica scritta più antica.",
+      delfico: "Per i Greci la mousiké è musica, poesia e danza. Nel teatro il coro canta e danza.",
+      seikilos: "Su una colonna di pietra c'è la canzone completa più antica: l'epitaffio di Seikilos.",
+      mesomede: "A Roma la musica accompagna gli spettacoli e l'esercito. Mesomede suona per l'imperatore." },
+    verifica: {
+      quanti: { vf: 14, collega: 6, personaggi: 5, scelte: 10, frasi: 7, aperte: 2 },
+      scelte: [
+        ["Perché della preistoria non conosciamo le melodie?", ["Non esisteva la scrittura", "Erano vietate", "Si suonava solo di notte"], 0],
+        ["Perché ci sono arrivati quasi solo strumenti d'osso e di pietra?", ["Legno e pelli si decompongono", "Non si usava il legno", "Gli archeologi cercano solo ossa"], 0],
+        ["Che cosa fa l'archeologia musicale?", ["Ricostruisce gli strumenti antichi e prova a suonarli", "Scrive musica nuova", "Costruisce chitarre"], 0],
+        ["Che cos'è un litofono?", ["Uno strumento di pietra", "Un flauto d'osso", "Un tamburo di pelle"], 0],
+        ["A che cosa serviva soprattutto la musica nella preistoria?", ["Ai riti", "Ai concerti a pagamento", "Alla radio"], 0],
+        ["Che cos'è una scala?", ["Una serie di note in ordine", "Un canto a più voci", "Uno strumento a corde"], 0],
+        ["Che cosa cambia con le prime città?", ["Nascono la scrittura e i musicisti di professione", "Spariscono gli strumenti", "Si smette di cantare"], 0],
+        ["Che cos'è la notazione?", ["Un modo per scrivere la musica con dei segni", "Un tipo di flauto", "Una danza"], 0],
+        ["Su che cosa è scritta la musica più antica?", ["Su una tavoletta d'argilla", "Su un CD", "Su un foglio di carta"], 0],
+        ["Che cos'è la mousiké per i Greci?", ["Musica, poesia e danza insieme", "Solo musica strumentale", "Una festa"], 0],
+        ["Che cosa fa il coro nel teatro greco?", ["Canta e danza", "Vende i biglietti", "Sta in silenzio"], 0],
+        ["Come scrivevano le note i Greci?", ["Con lettere sopra il testo", "Con il pentagramma", "Con i colori"], 0],
+        ["Che cos'è un epitaffio?", ["Una scritta su una tomba", "Una canzone da ballo", "Un tipo di lira"], 0],
+        ["Dove si suonava l'organo ad acqua a Roma?", ["Negli spettacoli degli anfiteatri", "Nelle chiese", "Nelle grotte"], 0]
+      ],
+      frasi: [
+        "Lo studio dei suoni del passato si chiama [[archeologia]] musicale.",
+        "L'[[ancia]] è una linguetta che vibra in alcuni strumenti a fiato.",
+        "Un [[litofono]] è uno strumento di pietra.",
+        "Una cerimonia per parlare con gli dèi è un [[rito]].",
+        "Una serie di note in ordine si chiama [[scala]].",
+        "La scrittura della Mesopotamia si chiama [[cuneiforme]].",
+        "Un modo per scrivere la musica con dei segni è la [[notazione]].",
+        "Per i Greci musica, poesia e danza insieme sono la [[mousiké]].",
+        "Nel teatro greco il [[coro]] canta e danza.",
+        "Un [[epitaffio]] è una scritta incisa su una tomba.",
+        "La [[lira]] è lo strumento di Apollo.",
+        "L'antenato dell'organo è l'organo ad [[acqua]]."
+      ],
+      frasiDistrattori: ["Leitmotiv", "minuetto"],
+      aperte: [
+        ["Perché della musica della preistoria conosciamo gli strumenti ma non le melodie?", 3, "non c'era la scrittura e non c'erano registrazioni; restano solo ossa e pietre (legno e pelli si decompongono); le melodie si possono solo immaginare."],
+        ["Che cosa cambia per la musica quando nascono le prime città?", 3, "nascono la scrittura e la prima notazione (tavoletta hurrita); musicisti di professione nei templi e nei palazzi; strumenti preziosi come la lira di Ur."],
+        ["Che cos'è la mousiké e dove si ascoltava la musica in Grecia?", 3, "musica, poesia e danza insieme; a scuola, nelle feste per gli dèi, nelle gare, nel teatro con il coro che canta e danza."],
+        ["Come facciamo oggi ad ascoltare una musica di 2.000 anni fa?", 3, "partendo dalle note scritte (lettere greche, tavolette) e dagli strumenti ritrovati, gli studiosi ricostruiscono la musica: ogni versione è un'ipotesi."]
+      ] }
+  };
 
-  document.querySelectorAll(".scheda").forEach(b => b.addEventListener("click", () => {
-    scheda = b.dataset.scheda;
-    document.querySelectorAll(".scheda").forEach(x => x.classList.toggle("attiva", x === b));
-    disegna();
-  }));
-
-  /* ---------- banner: preistoria / antichità ---------- */
-  const banner = document.getElementById("banner");
-  function impostaMondo(m, senzaDisegno) {
-    mondo = m;
-    banner.classList.toggle("f-sx", m === "sx");
-    banner.classList.toggle("f-dx", m === "dx");
-    document.querySelectorAll(".etich-meta").forEach(e => e.classList.toggle("attiva", e.dataset.mondo === m));
-    if (!senzaDisegno) {
-      if (scheda === "suonare") { scheda = "ascolti"; document.querySelectorAll(".scheda").forEach(x => x.classList.toggle("attiva", x.dataset.scheda === "ascolti")); }
-      disegna();
-    }
-  }
-  banner.querySelectorAll("[data-mondo]").forEach(el => el.addEventListener("click", () => impostaMondo(mondo === el.dataset.mondo ? null : el.dataset.mondo)));
-
-  /* ---------- finestra con il video ---------- */
-  const velo = document.getElementById("velo"), schermo = document.getElementById("schermo"), finestra = document.getElementById("finestra");
-  let attuale = 0;
-  function apri(i) {
-    attuale = (i + elenco.length) % elenco.length;
-    const d = elenco[attuale];
-    finestra.style.setProperty("--accent", scheda === "ascolti" ? (d.mondo === "dx" ? "#a78bfa" : "#F99D1C") : "#5EC8D8");
-    document.getElementById("fLabel").textContent = d.label;
-    document.getElementById("fTitolo").textContent = d.titolo;
-    document.getElementById("fChi").textContent = d.chi;
-    document.getElementById("fGancio").textContent = d.gancio;
-    document.getElementById("fPunti").innerHTML = d.punti.map(p => `<li>${p}</li>`).join("");
-    document.getElementById("fSapevi").innerHTML = `<b>Lo sapevi?</b> ${d.sapevi}`;
-    document.getElementById("fFonte").innerHTML = `<a href="https://www.youtube.com/watch?v=${d.yt}" target="_blank" rel="noopener">Apri su YouTube ↗</a>`;
-    // anteprima: nessuna richiesta a YouTube finché non si preme play
-    schermo.innerHTML = "";
-    schermo.style.backgroundImage = `url('${IMG + d.img}')`;
-    const b = document.createElement("button"); b.className = "avvio"; b.type = "button";
-    b.innerHTML = `<span class="tondo">▶</span><span class="nota">Il video si carica da YouTube quando premi play</span>`;
-    b.addEventListener("click", () => {
-      schermo.innerHTML = `<iframe src="https://www.youtube-nocookie.com/embed/${d.yt}?autoplay=1&rel=0&playsinline=1" title="${d.titolo}"
-        allow="autoplay; encrypted-media; picture-in-picture; fullscreen" allowfullscreen referrerpolicy="strict-origin-when-cross-origin"></iframe>`;
-    });
-    schermo.appendChild(b);
-    velo.classList.add("aperto");
-    document.body.style.overflow = "hidden";
-    b.focus({ preventScroll: true });
-  }
-  function chiudi() { velo.classList.remove("aperto"); schermo.innerHTML = ""; document.body.style.overflow = ""; }
-  document.getElementById("chiudi").addEventListener("click", chiudi);
-  velo.addEventListener("click", e => { if (e.target === velo) chiudi(); });
-  document.getElementById("prec").addEventListener("click", () => apri(attuale - 1));
-  document.getElementById("succ").addEventListener("click", () => apri(attuale + 1));
-  document.addEventListener("keydown", e => {
-    if (!velo.classList.contains("aperto")) return;
-    if (e.key === "Escape") chiudi();
-    if (e.key === "ArrowRight") apri(attuale + 1);
-    if (e.key === "ArrowLeft") apri(attuale - 1);
-  });
-
-  /* ---------- crediti ---------- */
-  document.getElementById("listaCrediti").innerHTML = CREDITI_IMG.map(c => `<li>${c}</li>`).join("") +
-    [...ASCOLTI, ...STRUMENTI].map(d => `<li>${d.titolo} (${d.chi}): video di <a href="https://www.youtube.com/watch?v=${d.yt}" target="_blank" rel="noopener">${d.canale}</a> su YouTube</li>`).join("");
-
-  disegna();
+  /* tutto il resto (indice, capitoli, strumenti, mappa, esercizi, schede) lo fanno storia-percorso.js e storia-attivita.js */
+  StoriaPercorso.avvia({ epoca: "Preistoria e antichità", date: "fino al 476 d.C.", img: IMG, capitoli: CAPITOLI, linea: LINEA,
+    strumenti: STRUMENTI, suonare: SUONARE, crediti: [...CREDITI_IMG, ...CREDITI_PAGINE], attivita: ATTIVITA,
+    prossima: { nome: "Medioevo", articolo: "il", url: "storia-medioevo.html" } });
 })();
 </script>
+<script src="adatta-schermo.js" data-schermate="#cTelaio, #aTelaio, #contenuto"></script>
 </body>
 </html>
