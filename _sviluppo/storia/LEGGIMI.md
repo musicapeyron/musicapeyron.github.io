@@ -27,6 +27,7 @@ Per le altre epoche si copia il Medioevo e si cambiano solo i dati.
 - **Strumenti**: in «Che strumento è?» ogni strumento ha l'immagine d'epoca (`img`, o `epoca` se diversa) e una foto
   (`foto`: ricostruzione o strumento da museo, licenza libera, oggetto intero). Se nell'immagine d'epoca ci sono più
   strumenti, `cerchio` = ovale rosso sottile su quello giusto (coordinate su 640x400).
+  Se non si trova nessuna immagine d'epoca libera: `soloFoto: true` (si vede la foto e una nota lo dice).
 - **Verifica**: fronte e retro, A e B diverse e nuove a ogni apertura della pagina, «punteggio» (mai «voto»),
   soluzioni su un foglio a parte. Vero o falso stampabile in ordine sempre diverso.
 - **Versione breve** solo per scheda riassuntiva e racconto completo: davvero breve e a caratteri grandi.

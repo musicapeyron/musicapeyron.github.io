@@ -183,6 +183,8 @@
       const f = vista === "foto" && s.foto ? s.foto : (s.epoca || s.img);
       return `<img src="${C.img + f}" alt="Uno strumento: quale?">${ovale}`;
     };
+    /* soloFoto: strumento senza un'immagine d'epoca libera; nella vista «epoca» si vede la foto e lo si dice */
+    const nota = s => vista === "epoca" ? (s.soloFoto ? "Di questo strumento non abbiamo trovato un'immagine dell'epoca libera da diritti: ecco una foto." : "Iconografia dell'epoca: lo strumento come lo dipingevano allora, in miniature e quadri.") : "Foto: lo strumento ricostruito oggi o conservato in un museo.";
     const mostra = () => {
       if (k >= lista.length) {
         $("aNum").textContent = "";
@@ -193,7 +195,7 @@
       $("aNum").textContent = `Strumento ${k + 1} di ${lista.length}`;
       corpo.innerHTML = `<div class="strum1"><div><div class="a-scelta vista-sw"><button type="button" data-v="epoca"${vista === "epoca" ? ' class="si"' : ""}>Iconografia dell'epoca</button><button type="button" data-v="foto"${vista === "foto" ? ' class="si"' : ""}>Foto</button></div>
           <figure>${figura(s)}</figure>
-          <div class="nota-sw">${vista === "epoca" ? "Iconografia dell'epoca: lo strumento come lo dipingevano allora, in miniature e quadri." : "Foto: lo strumento ricostruito oggi o conservato in un museo."}</div></div>
+          <div class="nota-sw">${nota(s)}</div></div>
         <div><div class="dom">Che strumento è?</div><div class="nomi">${nomi.map(n => `<button type="button" class="cl" data-n="${n}"><span class="pal"></span><b>${n}</b></button>`).join("")}</div>
         <div class="a-msg"></div></div></div>`;
       corpo.querySelector(".vista-sw").addEventListener("click", e => {
@@ -201,7 +203,7 @@
         vista = b.dataset.v;
         corpo.querySelectorAll(".vista-sw button").forEach(x => x.classList.toggle("si", x === b));
         corpo.querySelector(".strum1 figure").innerHTML = figura(s);
-        corpo.querySelector(".nota-sw").textContent = vista === "epoca" ? "Iconografia dell'epoca: lo strumento come lo dipingevano allora, in miniature e quadri." : "Foto: lo strumento ricostruito oggi o conservato in un museo.";
+        corpo.querySelector(".nota-sw").textContent = nota(s);
       });
       barra("", "", bottone("Avanti ▶", "avanti")); const av = nav.lastElementChild; av.disabled = true;
       av.addEventListener("click", () => { k++; mostra(); });

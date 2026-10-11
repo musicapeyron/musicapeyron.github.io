@@ -4,151 +4,14 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Il Classicismo — Storia della musica — musicascuole.it</title>
-<meta name="description" content="La musica del Classicismo raccontata attraverso gli ascolti: la corte di Haydn e la città di Mozart e del giovane Beethoven, la sinfonia, il quartetto, la forma sonata e gli strumenti nuovi.">
+<meta name="description" content="Il Classicismo in musica, un capitolo alla volta: il secolo dei Lumi e la melodia accompagnata, la riforma dell'opera di Gluck, i concerti pubblici e le musiciste Sirmen e Martines, la musica da camera, Haydn alla corte degli Esterházy e a Londra, Mozart libero a Vienna, la forma sonata e il giovane Beethoven.">
 <link rel="icon" href="favicon.svg" type="image/svg+xml">
 <link rel="icon" href="favicon-32.png" type="image/png" sizes="32x32">
 <link rel="apple-touch-icon" href="apple-touch-icon.png">
 <link rel="stylesheet" href="fonts/caratteri.css">
 <link rel="stylesheet" href="comune.css">
-<style>
-  * { box-sizing: border-box; }
-  html, body { margin: 0; min-height: 100%; }
-  body { min-height: 100vh; font-family: 'Inter', 'Segoe UI', Arial, sans-serif; color: #EAF2FF; -webkit-font-smoothing: antialiased;
-    background: #0f172a; overflow-x: hidden; position: relative; }
-
-  .casetta { position: fixed; top: 12px; left: 12px; z-index: 40; width: 44px; height: 44px; border-radius: 50%; display: grid; place-items: center;
-    background: rgba(15,23,42,0.75); border: 1px solid rgba(255,255,255,0.18); text-decoration: none; font-size: 20px; color: #EAF2FF; font-weight: 700; }
-
-  main { position: relative; z-index: 1; max-width: 1400px; margin: 0 auto; padding: 12px 20px 24px; }
-
-  /* ---------- doppio banner ---------- */
-  .banner { position: relative; height: clamp(170px, 30vh, 320px); border-radius: 18px; overflow: hidden; background: #111827;
-    border: 1px solid rgba(255,255,255,0.1); user-select: none; -webkit-user-select: none; }
-  .meta { position: absolute; inset: 0; cursor: pointer; transition: filter .35s ease, opacity .35s ease; -webkit-tap-highlight-color: transparent; }
-  .meta img { width: 100%; height: 100%; object-fit: cover; display: block; }
-  .meta.sx { clip-path: polygon(0 0, 56% 0, 44% 100%, 0 100%); }
-  .meta.dx { clip-path: polygon(56% 0, 100% 0, 100% 100%, 44% 100%); }
-  .meta.sx img { width: 58%; object-position: 50% 55%; }
-  .meta.dx img { width: 58%; margin-left: 42%; object-position: 50% 40%; }
-  .banner.f-sx .meta.dx, .banner.f-dx .meta.sx { filter: grayscale(.85) brightness(.45); }
-  .banner::after { content: ""; position: absolute; inset: 0; pointer-events: none;
-    background: radial-gradient(ellipse at 50% 55%, rgba(15,23,42,0.55) 0%, rgba(15,23,42,0) 60%), linear-gradient(0deg, rgba(15,23,42,0.75), rgba(15,23,42,0) 45%); }
-  .titolo-epoca { position: absolute; left: 50%; top: 50%; transform: translate(-50%, -58%); text-align: center; z-index: 2; pointer-events: none; }
-  .titolo-epoca .sopra { font-family: 'Manrope', sans-serif; font-weight: 800; font-size: 11.5px; letter-spacing: .16em; text-transform: uppercase; color: #FDE7C7; text-shadow: 0 1px 6px rgba(0,0,0,.8); }
-  .titolo-epoca h1 { font-family: 'Fredoka', 'Manrope', sans-serif; font-weight: 600; margin: 0; font-size: clamp(32px, 6vw, 62px); line-height: 1.05; text-shadow: 0 2px 18px rgba(0,0,0,.85); }
-  .titolo-epoca .date { font-family: 'Manrope', sans-serif; font-weight: 800; color: #FFE58A; font-size: clamp(13px, 1.6vw, 17px); text-shadow: 0 1px 8px rgba(0,0,0,.9); }
-  .etich-meta { position: absolute; bottom: 12px; z-index: 3; font-family: 'Manrope', sans-serif; font-weight: 800; font-size: 12.5px;
-    padding: 6px 12px; border-radius: 999px; background: rgba(15,23,42,0.72); border: 1px solid rgba(255,255,255,0.22); cursor: pointer; white-space: nowrap; }
-  .etich-meta.sx { left: 12px; color: #FBC877; } .etich-meta.dx { right: 12px; color: #C4B5FD; }
-  .etich-meta.attiva { background: #EAF2FF; color: #0f172a; }
-  @media (max-width: 560px) { .etich-meta { font-size: 11px; padding: 5px 9px; bottom: 8px; } .etich-meta .lungo { display: none; } }
-
-  .atmosfera { text-align: center; color: #9FB3CE; font-size: 13px; font-style: italic; margin: 10px auto 12px; max-width: 760px; line-height: 1.45; }
-
-  /* ---------- schede ---------- */
-  .schede { display: flex; justify-content: center; gap: 8px; flex-wrap: wrap; margin-bottom: 12px; }
-  .scheda { font: 700 13.5px 'Manrope', sans-serif; color: #EAF2FF; cursor: pointer; padding: 8px 16px; border-radius: 999px;
-    background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.14); display: inline-flex; align-items: center; gap: 7px; }
-  .scheda:hover { background: rgba(255,255,255,0.12); }
-  .scheda.attiva { background: #EAF2FF; color: #0f172a; border-color: #EAF2FF; }
-  .scheda .n { font-size: 11px; opacity: .65; }
-  @media (max-width: 560px) { main { padding-top: 64px !important; } .schede { flex-wrap: nowrap; gap: 6px; } .scheda { font-size: 12.5px; padding: 7px 11px; gap: 5px; } .scheda .n { display: none; } }
-
-  /* ---------- griglia di card (come in home) ---------- */
-  .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 12px; }
-  @media (min-width: 1200px) { .grid { grid-template-columns: repeat(5, 1fr); } }
-  @media (max-width: 520px) { .grid { grid-template-columns: repeat(2, 1fr); gap: 9px; } main { padding: 10px 12px 20px; } }
-  .card { --accent: #5EC8D8; position: relative; background: rgba(255,255,255,0.035); border: 1px solid rgba(255,255,255,0.09); border-top: 2px solid var(--accent);
-    border-radius: 12px; overflow: hidden; display: flex; flex-direction: column; text-align: left; font: inherit; color: inherit; padding: 0; cursor: pointer;
-    transition: border-color .2s ease, transform .2s ease, background .2s ease; }
-  .card:hover { transform: translateY(-2px); background: rgba(255,255,255,0.06); border-color: color-mix(in srgb, var(--accent) 55%, transparent); border-top-color: var(--accent); }
-  .card:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
-  .card .foto { aspect-ratio: 16 / 10; background: #1e293b center / cover no-repeat; position: relative; }
-  .card .foto::after { content: "▶"; position: absolute; right: 8px; bottom: 8px; width: 30px; height: 30px; border-radius: 50%; display: grid; place-items: center;
-    font-size: 12px; background: rgba(15,23,42,0.8); color: #fff; border: 1px solid rgba(255,255,255,0.3); }
-  .card .testo { padding: 9px 11px 11px; display: flex; flex-direction: column; gap: 3px; flex: 1; }
-  .card .label { align-self: flex-start; font-size: 9px; font-weight: 700; letter-spacing: .05em; text-transform: uppercase; color: var(--accent);
-    background: color-mix(in srgb, var(--accent) 14%, transparent); padding: 2px 7px; border-radius: 999px; }
-  .card h2 { font-family: 'Manrope', sans-serif; font-weight: 700; font-size: 14px; margin: 2px 0 0; letter-spacing: -0.01em; line-height: 1.25; }
-  .card .chi { font-size: 11px; color: #9FB3CE; font-weight: 600; }
-  .card p { font-size: 11.5px; line-height: 1.4; color: #B8C7DD; margin: 2px 0 0; }
-  .card.dx { --accent: #a78bfa; } .card.sx { --accent: #F99D1C; } .card.strum { --accent: #5EC8D8; } .card.suona { --accent: #BED958; }
-  .card.empty { cursor: default; border-style: dashed; background: transparent; }
-  .card.empty:hover { transform: none; }
-  .card.empty .foto::after { content: "presto"; width: auto; height: auto; padding: 3px 9px; border-radius: 999px; font: 700 10.5px 'Manrope', sans-serif; letter-spacing: .04em; }
-  .card.nascosta { display: none; }
-
-  /* ---------- finestra dell'ascolto ---------- */
-  .velo { position: fixed; inset: 0; z-index: 60; background: rgba(2,6,23,0.82); display: none; align-items: center; justify-content: center; padding: 16px; }
-  .velo.aperto { display: flex; }
-  .finestra { position: relative; width: min(1180px, 100%); max-height: calc(100vh - 32px); overflow: auto; background: #131c33; border: 1px solid rgba(255,255,255,0.14);
-    border-top: 3px solid var(--accent, #5EC8D8); border-radius: 18px; display: grid; grid-template-columns: 1.55fr 1fr; gap: 0; box-shadow: 0 20px 60px rgba(0,0,0,.5); }
-  @media (max-width: 860px) { .finestra { grid-template-columns: 1fr; } }
-  .schermo { position: relative; aspect-ratio: 16 / 9; background: #000 center / cover no-repeat; }
-  .schermo iframe { position: absolute; inset: 0; width: 100%; height: 100%; border: 0; }
-  .avvio { position: absolute; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 10px; cursor: pointer;
-    background: rgba(2,6,23,0.55); border: 0; color: #fff; font: inherit; width: 100%; }
-  .avvio .tondo { width: 76px; height: 76px; border-radius: 50%; background: #FFE58A; color: #0f172a; display: grid; place-items: center; font-size: 30px; padding-left: 6px; box-shadow: 0 6px 24px rgba(0,0,0,.45); }
-  .avvio:hover .tondo { transform: scale(1.06); }
-  .avvio .nota { font-size: 12px; color: #DCE6F5; background: rgba(15,23,42,0.7); padding: 4px 10px; border-radius: 999px; }
-  .info { padding: 16px 18px 14px; display: flex; flex-direction: column; gap: 8px; }
-  .info .label { align-self: flex-start; font-size: 10px; font-weight: 800; letter-spacing: .06em; text-transform: uppercase; color: var(--accent); background: color-mix(in srgb, var(--accent) 16%, transparent); padding: 3px 9px; border-radius: 999px; }
-  .info h3 { font-family: 'Manrope', sans-serif; font-weight: 800; font-size: 22px; margin: 0; line-height: 1.2; }
-  .info .chi { font-size: 13px; color: #9FB3CE; font-weight: 600; margin-top: -4px; }
-  .info .gancio { font-family: 'Manrope', sans-serif; font-weight: 700; font-size: 16px; color: #FFE58A; margin: 2px 0 0; }
-  .info ul { margin: 0; padding-left: 0; list-style: none; display: flex; flex-direction: column; gap: 6px; }
-  .info li { font-size: 14.5px; color: #DCE6F5; line-height: 1.45; padding-left: 24px; position: relative; }
-  .info li::before { content: "🎧"; position: absolute; left: 0; top: 0; font-size: 13px; }
-  .info .sapevi { font-size: 13.5px; color: #DCE6F5; background: rgba(255,255,255,0.05); border-left: 3px solid var(--accent); border-radius: 8px; padding: 8px 10px; line-height: 1.45; }
-  .info .sapevi b { color: var(--accent); }
-  .info .piede { margin-top: auto; display: flex; justify-content: space-between; align-items: flex-end; gap: 10px; flex-wrap: wrap; font-size: 11px; color: #7F93B2; }
-  .info .piede a { color: #7DD3FC; }
-  .chiudi { position: absolute; top: 8px; right: 8px; z-index: 3; width: 40px; height: 40px; border-radius: 50%; border: 1px solid rgba(255,255,255,0.25);
-    background: rgba(15,23,42,0.85); color: #fff; font-size: 18px; cursor: pointer; }
-  .frecce { display: flex; gap: 8px; }
-  .freccia { font: 700 13px 'Manrope', sans-serif; color: #EAF2FF; background: rgba(255,255,255,0.08); border: 1px solid rgba(255,255,255,0.18); border-radius: 999px; padding: 7px 14px; cursor: pointer; }
-  .freccia:hover { background: rgba(255,255,255,0.15); }
-
-  /* ---------- Sezione speciale (pulsante dorato) ---------- */
-  .scheda.speciale { background: linear-gradient(135deg, rgba(180,83,9,0.55), rgba(124,45,18,0.55)); border-color: #FBBF24; color: #FFE58A; }
-  .scheda.speciale:hover { background: linear-gradient(135deg, rgba(180,83,9,0.8), rgba(124,45,18,0.8)); }
-  .scheda.speciale.attiva { background: #FFE58A; color: #0f172a; border-color: #FFE58A; }
-  .fuga { --accent: #FBBF24; display: grid; grid-template-columns: 1.55fr 1fr; background: #131c33; border: 1px solid rgba(255,255,255,0.14);
-    border-top: 3px solid var(--accent); border-radius: 18px; overflow: hidden; }
-  .fuga[hidden], .grid[hidden] { display: none; }
-  @media (max-width: 860px) { .fuga { grid-template-columns: 1fr; } }
-  .o-video { display: flex; flex-direction: column; background: #000; }
-  .o-sotto { font-size: 11.5px; color: #9FB3CE; padding: 8px 12px; background: #0b1224; }
-  .o-sotto a { color: #7DD3FC; }
-  .o-info { padding: 14px 16px 14px; display: flex; flex-direction: column; gap: 6px; min-height: 0; }
-  .o-info .label { align-self: flex-start; font-size: 10px; font-weight: 800; letter-spacing: .06em; text-transform: uppercase; color: var(--accent); background: color-mix(in srgb, var(--accent) 16%, transparent); padding: 3px 9px; border-radius: 999px; }
-  .o-info h3 { font-family: 'Fredoka', 'Manrope', sans-serif; font-weight: 600; font-size: 28px; margin: 0; line-height: 1.1; }
-  .o-info .chi { font-size: 13px; color: #9FB3CE; font-weight: 600; }
-  .o-info .gancio { font-family: 'Manrope', sans-serif; font-weight: 700; font-size: 15px; color: #FFE58A; }
-  .o-tab { display: flex; gap: 6px; margin-top: 4px; flex-wrap: wrap; }
-  .o-t { font: 700 12.5px 'Manrope', sans-serif; color: #EAF2FF; cursor: pointer; padding: 6px 12px; border-radius: 999px; background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.16); }
-  .o-t:hover { background: rgba(255,255,255,0.12); }
-  .o-t.attiva { background: var(--accent); color: #0f172a; border-color: var(--accent); }
-  .o-corpo { flex: 1; min-height: 0; overflow: auto; padding-right: 4px; }
-  @media (min-width: 861px) { .o-info { contain: size; } }   /* la colonna dei testi si adatta all'altezza del video e scorre */
-  .o-corpo ul { margin: 4px 0 0; padding: 0; list-style: none; display: flex; flex-direction: column; gap: 7px; }
-  .o-corpo li { font-size: 14px; color: #DCE6F5; line-height: 1.45; padding-left: 24px; position: relative; }
-  .o-corpo li::before { content: attr(data-i); position: absolute; left: 0; top: 0; font-size: 13px; }
-  .o-corpo .atto { display: grid; grid-template-columns: 62px 1fr; gap: 8px; align-items: baseline; padding: 6px 8px; border-radius: 8px; background: rgba(255,255,255,0.04); font-size: 13.5px; color: #DCE6F5; line-height: 1.4; }
-  .o-corpo .atto b { font: 800 11px 'Manrope', sans-serif; color: var(--accent); text-transform: uppercase; letter-spacing: .05em; }
-  .o-corpo .atto + .atto { margin-top: 5px; }
-  .o-corpo .cur { font-size: 13.5px; color: #DCE6F5; background: rgba(255,255,255,0.05); border-left: 3px solid var(--accent); border-radius: 8px; padding: 7px 10px; line-height: 1.45; }
-  .o-corpo .cur + .cur { margin-top: 6px; }
-  .o-corpo .cur b { color: var(--accent); }
-  .o-corpo .cur img { float: right; height: 150px; margin: 0 0 4px 10px; border-radius: 6px; background: #fff; cursor: zoom-in; }
-  .o-corpo .cur::after { content: ""; display: block; clear: both; }
-
-  .crediti-img { margin-top: 18px; font-size: 11.5px; color: #7F93B2; }
-  .crediti-img summary { cursor: pointer; color: #9FB3CE; }
-  .crediti-img li { margin: 3px 0; } .crediti-img a { color: #7DD3FC; }
-  footer.piede { position: relative; z-index: 1; text-align: center; font-size: 13px; color: #9FB3CE; padding: 12px 12px 24px; }
-  @media (prefers-reduced-motion: reduce) { .card, .meta { transition: none; } }
-</style>
+<link rel="stylesheet" href="storia-attivita.css">
+<link rel="stylesheet" href="storia-percorso.css">
 <!-- per i motori di ricerca e la condivisione -->
 <link rel="canonical" href="https://musicascuole.it/storia-classicismo.html">
 <meta property="og:type" content="website">
@@ -156,7 +19,7 @@
 <meta property="og:locale" content="it_IT">
 <meta property="og:url" content="https://musicascuole.it/storia-classicismo.html">
 <meta property="og:title" content="Il Classicismo — Storia della musica — musicascuole.it">
-<meta property="og:description" content="La musica del Classicismo raccontata attraverso gli ascolti: la corte di Haydn e la città di Mozart e del giovane Beethoven, la sinfonia, il quartetto, la forma sonata e gli strumenti nuovi.">
+<meta property="og:description" content="Il Classicismo in musica, un capitolo alla volta: il secolo dei Lumi e la melodia accompagnata, la riforma dell'opera di Gluck, i concerti pubblici e le musiciste Sirmen e Martines, la musica da camera, Haydn alla corte degli Esterházy e a Londra, Mozart libero a Vienna, la forma sonata e il giovane Beethoven.">
 <meta property="og:image" content="https://musicascuole.it/media/condivisione.jpg">
 <meta property="og:image:width" content="1200">
 <meta property="og:image:height" content="630">
@@ -169,209 +32,323 @@
 <main>
 
   <div class="banner" id="banner">
-    <div class="meta sx" data-mondo="sx" title="La corte"><img src="media/storia/classicismo/banner-corte.jpg" alt="Il palazzo Esterházy di Fertőd, in Ungheria"></div>
-    <div class="meta dx" data-mondo="dx" title="La città"><img src="media/storia/classicismo/banner-citta.jpg" alt="Il Duomo di Santo Stefano a Vienna"></div>
+    <div class="meta sx" title="La corte"><img src="media/storia/classicismo/banner-corte.jpg" alt="Il palazzo Esterházy di Fertőd, in Ungheria"></div>
+    <div class="meta dx" title="La città"><img src="media/storia/classicismo/banner-citta.jpg" alt="Il Duomo di Santo Stefano a Vienna"></div>
     <div class="titolo-epoca">
       <div class="sopra">Storia della musica</div>
       <h1>Il Classicismo</h1>
       <div class="date">1750 – 1820</div>
     </div>
-    <button class="etich-meta sx" data-mondo="sx">🏰 La corte<span class="lungo"> · principi, imperatori, servitori</span></button>
-    <button class="etich-meta dx" data-mondo="dx">🏙️ La città<span class="lungo"> · concerti, teatri, editori</span></button>
+    <span class="etich-meta sx">🏰 La corte<span class="lungo"> · principi, imperatori, servitori</span></span>
+    <span class="etich-meta dx">🏙️ La città<span class="lungo"> · concerti, teatri, editori</span></span>
   </div>
 
-  <p class="atmosfera">Per secoli il musicista è stato un servitore: vive a corte, indossa la livrea e scrive la musica che il principe ordina. Nel Settecento qualcosa cambia. In città nascono i concerti a pagamento, gli editori stampano musica per chi suona in casa, e un musicista può provare a vivere da solo.</p>
+  <div class="contenuto" id="contenuto">
+  <p class="atmosfera">Per secoli il musicista è stato un servitore: vive a corte e scrive ciò che il principe ordina. Nel Settecento qualcosa cambia: in città nascono i concerti a pagamento, e un musicista può provare a vivere da solo.</p>
 
   <nav class="schede" aria-label="Sezioni">
-    <button class="scheda attiva" data-scheda="ascolti">🎧 Ascolti <span class="n" id="nAscolti"></span></button>
+    <button class="scheda attiva" data-scheda="percorso">📖 Il percorso <span class="n" id="nCapitoli"></span></button>
     <button class="scheda" data-scheda="strumenti">🎺 Strumenti <span class="n" id="nStrumenti"></span></button>
-    <button class="scheda speciale" data-scheda="sonata">📐 La forma sonata</button>
+    <button class="scheda" data-scheda="sonata">📐 La forma sonata</button>
     <button class="scheda" data-scheda="suonare">🎼 Da suonare <span class="n" id="nSuonare"></span></button>
+    <button class="scheda" data-scheda="mappa">🗺️ Mappa<span class="lungo"> concettuale</span></button>
+    <button class="scheda" data-scheda="esercizi">✏️ Esercizi</button>
+    <button class="scheda" data-scheda="schede">🖨️ Schede</button>
   </nav>
 
-  <div class="grid" id="griglia"></div>
-
-  <!-- ===== LA FORMA SONATA: sezione speciale (testi qui sotto, nell'oggetto SONATA dello script) ===== -->
-  <section class="fuga" id="sonata" hidden aria-label="La forma sonata: Mozart, Sonata K 545">
-    <div class="o-video">
-      <div class="schermo" id="oSchermo"></div>
-      <div class="o-sotto">Le note cadono sui tasti del pianoforte: guarda le due mani · video di Rousseau · <a id="oLink" target="_blank" rel="noopener">Apri su YouTube ↗</a></div>
-    </div>
-    <div class="o-info">
-      <span class="label">Vienna, 1788 · primo movimento</span>
-      <h3>La forma sonata</h3>
-      <div class="chi">Wolfgang Amadeus Mozart · Sonata in do maggiore K 545</div>
-      <div class="gancio">Un movimento costruito come un racconto: presentazione, avventura, ritorno a casa.</div>
-      <div class="o-tab" role="tablist">
-        <button class="o-t attiva" data-o="cosa">📐 Cos'è</button>
-        <button class="o-t" data-o="ascolto">👂 Come ascoltarla</button>
-        <button class="o-t" data-o="curiosita">💡 Curiosità</button>
-      </div>
-      <div class="o-corpo" id="oCorpo"></div>
-    </div>
+  <section id="vistaPercorso">
+    <ol class="indice" id="indice"></ol>
   </section>
+  <div class="grid" id="griglia" hidden></div>
+  <section class="vista vista-alta" id="vistaMappa" hidden></section>
+  <section class="vista vista-alta" id="vistaEsercizi" hidden></section>
+  <section class="vista vista-alta" id="vistaSchede" hidden></section>
 
   <details class="crediti-img">
     <summary>Crediti delle immagini e dei video</summary>
     <ul id="listaCrediti"></ul>
     <p>I video sono incorporati da YouTube e restano dei rispettivi titolari: non fanno parte della licenza del sito.</p>
   </details>
+  </div>
 </main>
 
-<div class="velo" id="velo" role="dialog" aria-modal="true" aria-labelledby="fTitolo">
-  <div class="finestra" id="finestra">
-    <button class="chiudi" id="chiudi" aria-label="Chiudi">✕</button>
-    <div class="schermo" id="schermo"></div>
-    <div class="info">
-      <span class="label" id="fLabel"></span>
-      <h3 id="fTitolo"></h3>
-      <div class="chi" id="fChi"></div>
-      <div class="gancio" id="fGancio"></div>
-      <ul id="fPunti"></ul>
-      <div class="sapevi" id="fSapevi"></div>
-      <div class="piede">
-        <div class="frecce"><button class="freccia" id="prec">◀</button><button class="freccia" id="succ">▶</button></div>
-        <div id="fFonte"></div>
-      </div>
-    </div>
-  </div>
-</div>
-
+<script src="storia-attivita.js"></script>
+<script src="storia-percorso.js"></script>
 <script>
 (function () {
   "use strict";
   const IMG = "media/storia/classicismo/";
 
   /* =========================================================
-     CONTENUTI — per cambiare un video basta cambiare "yt"
-     mondo: "sx" = La corte (metà sinistra del banner), "dx" = La città (metà destra)
+     IL PERCORSO — un capitolo per ogni ascolto, in ordine di tempo (dopo l'introduzione).
+     mondo: "sx" = La corte (metà sinistra del banner, arancio), "dx" = La città (metà destra, viola).
+     pagine: { img, did (didascalia), t: [paragrafi] }. Per cambiare un video basta cambiare "yt".
      ========================================================= */
-  const ASCOLTI = [
-    { id: "addii", mondo: "sx", label: "Corte · sinfonia", titolo: "Sinfonia degli addii", chi: "Joseph Haydn · Sinfonia n. 45, Esterháza, 1772 · ultimo movimento", img: "addii.jpg", yt: "0YhtR43eNEs", canale: "Concerto Classic Wien (canale ufficiale)",
-      gancio: "I musicisti se ne vanno… uno alla volta.",
-      punti: ["L'estate a Esterháza non finiva mai: il principe restava nel palazzo e i musicisti erano lontani dalle loro famiglie.",
-              "Haydn trovò un modo gentile per farlo capire: nell'ultimo movimento gli strumenti smettono di suonare uno dopo l'altro.",
-              "Ogni musicista spegne la candela e lascia il palco. Alla fine restano solo due violini."],
-      sapevi: "Il principe capì il messaggio: il giorno dopo si partì e tutti tornarono a casa. Haydn restò al servizio della famiglia Esterházy per quasi trent'anni." },
-    { id: "imperatore", mondo: "sx", label: "Corte · quartetto d'archi", titolo: "Quartetto «Imperatore»", chi: "Joseph Haydn · op. 76 n. 3, Vienna, 1797 · secondo movimento", img: "imperatore.jpg", yt: "FWX2ozwjbyQ", canale: "TomatoClassic (Abel Quartet)",
-      gancio: "Un inno per l'imperatore, passato di mano in mano.",
-      punti: ["Il <b>quartetto d'archi</b> è formato da due violini, una viola e un violoncello.",
-              "Qui suonano un inno che Haydn aveva scritto per il compleanno dell'imperatore Francesco II.",
-              "Sono <b>variazioni</b>: la melodia passa al secondo violino, poi al violoncello, poi alla viola, poi torna al primo violino. Riesci a seguirla?"],
-      sapevi: "Quella melodia è diventata l'inno nazionale della Germania, che si canta ancora oggi prima delle partite." },
-    { id: "gluck", mondo: "sx", label: "Corte · opera", titolo: "Che farò senza Euridice", chi: "Christoph Willibald Gluck · Orfeo ed Euridice, Vienna, 1762", img: "gluck.jpg", yt: "D2EoqOcIuuM", canale: "Warner Classics (canale ufficiale)",
-      gancio: "Orfeo è tornato, 150 anni dopo Monteverdi.",
-      punti: ["È la stessa storia dell'Orfeo del Rinascimento: Orfeo si volta e perde Euridice per sempre.",
-              "Gluck voleva un'opera più semplice e sincera, senza virtuosismi inutili: conta la storia, non la bravura del cantante.",
-              "La melodia è dolce, quasi serena, anche se le parole sono disperate."],
-      sapevi: "L'opera fu rappresentata nel teatro della corte imperiale di Vienna per la festa dell'imperatore. Qui la canta un controtenore, un uomo che canta con voce acuta." },
-    { id: "figaro", mondo: "sx", label: "Corte · opera buffa", titolo: "Se vuol ballare, signor contino", chi: "Wolfgang Amadeus Mozart · Le nozze di Figaro, Vienna, 1786", img: "figaro.jpg", yt: "dWFRlcW-prQ", canale: "OperaVision (Royal Opera House)",
-      gancio: "Un servitore sfida il suo padrone.",
-      punti: ["Figaro, il servitore, scopre che il Conte vuole corteggiare Susanna, la sua fidanzata.",
-              "Arrabbiato, canta: «Se vuol ballare, signor contino, il chitarrino le suonerò». Cioè: la musica la decido io!",
-              "Il ritmo è quello di un <b>minuetto</b>, la danza dei nobili, ma usato per prendere in giro un nobile."],
-      sapevi: "L'opera nasce da una commedia francese che a Vienna era stata vietata: un servo più furbo del padrone sembrava un'idea pericolosa. Il librettista, l'italiano Lorenzo Da Ponte, tolse le parti più politiche." },
-    { id: "boccherini", mondo: "sx", label: "Corte · minuetto", titolo: "Minuetto", chi: "Luigi Boccherini · Quintetto op. 11 n. 5, Madrid, 1771", img: "boccherini.jpg", yt: "qmf3vZBKt3Q", canale: "Halidon Music (canale ufficiale)",
-      gancio: "Il minuetto più famoso di tutti.",
-      punti: ["Il <b>minuetto</b> era la danza elegante dei saloni nobili, in tre tempi, a piccoli passi.",
-              "Ascolta la melodia elegante del primo violino e l'accompagnamento leggero degli altri archi.",
-              "È scritto per cinque archi, con due violoncelli: Boccherini era un grande violoncellista."],
-      sapevi: "Boccherini era nato a Lucca e lavorò alla corte di Spagna, al servizio del fratello del re. Il suo Minuetto è stato usato in tantissimi film e pubblicità." },
-    { id: "martines", mondo: "sx", label: "Corte · sonata", titolo: "Sonata in sol maggiore", chi: "Marianna Martines · Vienna, Settecento", img: "martines.jpg", yt: "hKjPKI0bz8Q", canale: "Béatrice Martin (canale ufficiale)",
-      gancio: "Una compositrice che suonava per l'imperatrice.",
-      punti: ["È una <b>sonata</b>: un brano per strumento a tastiera, in tre movimenti, veloce, lento, veloce.",
-              "Qui la suona un clavicembalo antico: il pianoforte stava appena arrivando.",
-              "Ascolta le note veloci e brillanti del primo movimento, poi la calma del secondo."],
-      sapevi: "Marianna Martines prese lezioni dal giovane Haydn, che abitava nel suo stesso palazzo. Suonò davanti all'imperatrice Maria Teresa e fu la prima donna accolta nell'Accademia Filarmonica di Bologna." },
-
-    { id: "nachtmusik", mondo: "dx", label: "Città · serenata", titolo: "Eine kleine Nachtmusik", chi: "Wolfgang Amadeus Mozart · Vienna, 1787 · primo movimento", img: "nachtmusik.jpg", yt: "G3V-AYG9JYM", canale: "Voices of Music (canale ufficiale)",
+  const CAPITOLI = [
+    { id: "nachtmusik", mondo: "dx", label: "Introduzione", titolo: "Chiarezza ed eleganza", data: "1750 – 1820",
+      pagine: [
+        { img: "p-nachtmusik-1.jpg", did: "Un salotto di Parigi nel secolo dei Lumi: si legge ad alta voce un'opera di Voltaire (dipinto di Anicet-Charles-Gabriel Lemonnier).",
+          t: ["Dopo il Barocco arriva il <b>Classicismo</b>. Va più o meno dal <b>1750</b> al <b>1820</b>.",
+          "È il secolo dei <b>Lumi</b>: filosofi e scienziati credono nella <b>ragione</b> e discutono di libertà nei salotti delle città."] },
+        { img: "p-nachtmusik-2.jpg", did: "Vienna vista dal Belvedere, al centro il campanile di Santo Stefano (Bernardo Bellotto, 1759 – 1760 circa).",
+          t: ["Gli artisti guardano all'arte classica, greca e romana: semplice, ordinata, equilibrata. Da qui il nome Classicismo.",
+          "La capitale della musica è <b>Vienna</b>, dove lavorano Haydn, Mozart e il giovane Beethoven."] },
+        { img: "p-nachtmusik-3.jpg", did: "Wolfgang Amadeus Mozart in un ritratto dipinto da Barbara Krafft (1819).",
+          t: ["Anche la musica cambia. Basta basso continuo e intrecci complicati: ora c'è una <b>melodia</b> chiara, facile da ricordare, con un <b>accompagnamento</b> leggero.",
+          "Ascolta l'inizio di questo brano: forse lo conosci già."] }
+      ],
+      brano: "Eine kleine Nachtmusik", chi: "Wolfgang Amadeus Mozart · Vienna, 1787 · primo movimento", img: "nachtmusik.jpg", yt: "G3V-AYG9JYM", canale: "Voices of Music (canale ufficiale)",
       gancio: "«Una piccola musica notturna»: forse il brano più famoso di Mozart.",
       punti: ["È una <b>serenata</b> per archi: musica leggera, da suonare all'aperto o durante le feste.",
               "L'inizio è un motivo che sale deciso, come un saluto: lo riconoscerai subito.",
-              "Questo movimento è in <b>forma sonata</b>: due temi, uno sviluppo e il ritorno. Scoprila nel pulsante speciale!"],
-      sapevi: "Non sappiamo per chi o per quale occasione Mozart l'abbia scritta. Fu pubblicata solo molti anni dopo la sua morte." },
-    { id: "turca", mondo: "dx", label: "Città · rondò", titolo: "Rondò alla turca", chi: "Wolfgang Amadeus Mozart · Sonata K 331, Vienna, 1784", img: "turca.jpg", yt: "gxxpMvte04U", canale: "Luc Beauséjour",
-      gancio: "Una banda militare turca… dentro un pianoforte.",
-      punti: ["A Vienna erano di moda le bande dei <b>giannizzeri</b>, i soldati turchi, con tamburi, piatti e campanelli.",
-              "La mano sinistra imita i colpi dei tamburi con accordi ribattuti.",
-              "È un <b>rondò</b>: un ritornello che torna sempre, alternato a parti diverse."],
-      sapevi: "Qui la suona un <b>fortepiano</b>, il pianoforte di Mozart. Alcuni fortepiani avevano perfino un pedale «alla turca» che faceva suonare un campanello e un tamburo nascosti." },
-    { id: "stellina", mondo: "dx", label: "Città · tema con variazioni", titolo: "Variazioni su «Ah vous dirai-je, maman»", chi: "Wolfgang Amadeus Mozart · Vienna, 1781–82", img: "stellina.jpg", yt: "fGGWtz_v6xM", canale: "ClassicalSoundings (Steven Lubin)",
-      gancio: "È «Brilla brilla la stellina»… in dodici travestimenti.",
-      punti: ["Prima si sente il <b>tema</b>: una canzoncina francese che conosci di sicuro.",
-              "Poi arrivano 12 <b>variazioni</b>: la melodia resta, ma cambia vestito ogni volta.",
-              "Ascolta: note velocissime, accordi pieni, una variazione triste in minore e una lenta, prima del gran finale."],
-      sapevi: "A Vienna Mozart viveva anche dando lezioni e vendendo musica agli editori: le variazioni su melodie famose piacevano moltissimo a chi suonava in casa." },
-    { id: "sinfonia40", mondo: "dx", label: "Città · sinfonia", titolo: "Sinfonia n. 40", chi: "Wolfgang Amadeus Mozart · Vienna, 1788 · primo movimento", img: "sinfonia40.jpg", yt: "7shwnh5mst8", canale: "Boston Baroque (canale ufficiale)",
-      gancio: "Un tema agitato che non si dimentica.",
-      punti: ["La <b>sinfonia</b> è il grande brano per orchestra del Classicismo, in quattro movimenti.",
-              "Si apre con un motivo inquieto dei violini, sopra un accompagnamento che pulsa veloce.",
-              "Anche questo movimento è in <b>forma sonata</b>: prova a riconoscere il ritorno del primo tema."],
-      sapevi: "Mozart scrisse le sue ultime tre sinfonie in poche settimane, nell'estate del 1788. Questa è una delle sole due che compose in tonalità minore." },
-    { id: "regina", mondo: "dx", label: "Città · opera", titolo: "Der Hölle Rache (aria della Regina della notte)", chi: "Wolfgang Amadeus Mozart · Il flauto magico, Vienna, 1791", img: "regina.jpg", yt: "YuBeBjqKSGQ", canale: "Royal Ballet and Opera (canale ufficiale)",
-      gancio: "La nota più acuta di tutta l'opera.",
-      punti: ["La Regina della notte è furiosa: vuole vendetta e ordina alla figlia di aiutarla.",
-              "La voce fa salti e note velocissime, staccate, fino al <b>fa sovracuto</b>, altissimo.",
-              "Il Flauto magico è una fiaba in tedesco, con parti cantate e parti recitate."],
-      sapevi: "Non fu scritta per un teatro di corte ma per un teatro popolare di periferia, dove andava gente di ogni tipo. La prima Regina della notte fu Josepha Hofer, la cognata di Mozart." },
-    { id: "sorpresa", mondo: "dx", label: "Città · sinfonia", titolo: "Sinfonia «La sorpresa»", chi: "Joseph Haydn · Sinfonia n. 94, Londra, 1792 · secondo movimento", img: "sorpresa.jpg", yt: "VOLy6JxEDLw", canale: "Severinus Boethius (Berliner Philharmoniker, Mariss Jansons)",
-      gancio: "Shhh… BUM!",
-      punti: ["Il tema è semplicissimo, suonato pianissimo, quasi in punta di piedi.",
-              "Poi, all'improvviso, un accordo fortissimo con i timpani: la sorpresa!",
-              "Dopo, il tema viene trasformato in tante <b>variazioni</b>."],
-      sapevi: "Dopo la morte del principe Esterházy, Haydn fu libero di viaggiare: a Londra diresse concerti a pagamento davanti a un pubblico enorme e diventò una star. Si racconta che la sorpresa servisse a svegliare chi si addormentava." },
-    { id: "sirmen", mondo: "dx", label: "Città · concerto", titolo: "Concerto per violino in si bemolle", chi: "Maddalena Laura Sirmen · 1769 circa · primo movimento", img: "sirmen.jpg", yt: "Ty2U65aCVmc", canale: "Voices of Music (canale ufficiale)",
+              "Ascolta come la melodia dei violini è sempre in primo piano, e gli altri strumenti la accompagnano."],
+      sapevi: "Non sappiamo per chi o per quale occasione Mozart l'abbia scritta. Fu pubblicata solo molti anni dopo la sua morte.",
+      parole: [["Classicismo", "l'epoca tra il 1750 e il 1820: musica chiara, ordinata, equilibrata."], ["Illuminismo", "il secolo dei Lumi: si crede nella ragione e nella libertà."],
+               ["Melodia accompagnata", "una melodia chiara con un accompagnamento leggero."]] },
+
+    { id: "gluck", mondo: "sx", label: "La corte", titolo: "Un'opera più semplice", data: "Vienna, 1762",
+      pagine: [
+        { img: "p-gluck-1.jpg", did: "Il castello di Schönbrunn, residenza estiva della corte imperiale di Vienna (Bernardo Bellotto, 1759 – 1760 circa).",
+          t: ["A Vienna regna l'imperatrice <b>Maria Teresa</b>. La corte ama la musica: perfino i figli dell'imperatrice studiano canto e clavicembalo.",
+          "I musicisti di corte scrivono per le feste, per la chiesa e per il teatro dell'imperatore."] },
+        { img: "p-gluck-2.jpg", did: "Christoph Willibald Gluck al clavicembalo (Joseph-Siffred Duplessis, 1775).",
+          t: ["Il compositore <b>Gluck</b> vuole un'opera più vera: basta gare di bravura tra cantanti, conta la storia.",
+          "È la <b>riforma</b> dell'opera: musica semplice, al servizio delle parole e delle emozioni."] }
+      ],
+      brano: "Che farò senza Euridice", chi: "Christoph Willibald Gluck · Orfeo ed Euridice, Vienna, 1762", img: "gluck.jpg", yt: "D2EoqOcIuuM", canale: "Warner Classics (canale ufficiale)",
+      gancio: "Orfeo è tornato, 150 anni dopo Monteverdi.",
+      punti: ["È la stessa storia dell'Orfeo del Rinascimento: Orfeo si volta e perde Euridice per sempre.",
+              "Niente virtuosismi inutili: la melodia è semplice e si capisce ogni parola.",
+              "La melodia è dolce, quasi serena, anche se le parole sono disperate."],
+      sapevi: "L'opera fu rappresentata nel teatro della corte imperiale di Vienna per la festa dell'imperatore. Qui la canta un controtenore, un uomo che canta con voce acuta.",
+      strumenti: ["arpa"],
+      parole: [["Riforma dell'opera", "un'opera più semplice: conta la storia, non la bravura."]] },
+
+    { id: "sirmen", mondo: "dx", label: "La città", titolo: "Concerti per tutti", data: "1760 – 1770",
+      pagine: [
+        { img: "p-sirmen-1.jpg", did: "Un concerto all'aperto nei giardini di Vauxhall, a Londra: l'orchestra suona sulla balconata, il pubblico passeggia (Thomas Rowlandson, 1785).",
+          t: ["Nelle città nascono i <b>concerti pubblici</b>: chiunque paghi il biglietto può ascoltare un'orchestra.",
+          "A Parigi, a Londra, a Vienna la musica esce dai palazzi e va incontro a un pubblico nuovo."] },
+        { img: "p-sirmen-2.jpg", did: "Maddalena Laura Lombardini Sirmen in un ritratto del Settecento.",
+          t: ["<b>Maddalena Laura Sirmen</b> cresce in un orfanotrofio di Venezia, dove impara il violino.",
+          "Diventa una violinista famosa: suona nei concerti di Parigi e di Londra e pubblica la sua musica."] },
+        { img: "p-sirmen-3.jpg", did: "Marianna Martines in un ritratto del Settecento (particolare).",
+          t: ["A Vienna <b>Marianna Martines</b> compone sonate e musica sacra e suona per l'imperatrice.",
+          "È la prima donna accolta nell'Accademia Filarmonica di Bologna, un'importante associazione di musicisti."] }
+      ],
+      brano: "Concerto per violino in si bemolle", chi: "Maddalena Laura Sirmen · 1769 circa · primo movimento", img: "sirmen.jpg", yt: "Ty2U65aCVmc", canale: "Voices of Music (canale ufficiale)",
       gancio: "Una violinista veneziana in tournée per l'Europa.",
       punti: ["Nel <b>concerto</b> il violino solista dialoga con l'orchestra.",
               "Ascolta i passaggi difficili del violino, pensati per farsi applaudire.",
               "Il violino è di tipo classico, con le corde di budello."],
-      sapevi: "Maddalena Laura Lombardini crebbe in un ospedale-orfanotrofio di Venezia, come le ragazze di Vivaldi. Prese lezioni per lettera dal grande violinista Tartini, poi suonò nei concerti pubblici di Parigi e Londra e pubblicò la sua musica." },
-    { id: "patetica", mondo: "dx", label: "Città · sonata", titolo: "Sonata «Patetica»", chi: "Ludwig van Beethoven · op. 13, Vienna, 1798 · primo movimento", img: "patetica.jpg", yt: "hcczxDKkYhU", canale: "Deutsche Grammophon (canale ufficiale)",
+      sapevi: "Da ragazza Maddalena prese lezioni per lettera dal grande violinista Tartini: una delle sue lettere fu stampata e studiata dai violinisti per più di un secolo.",
+      altri: [{ brano: "Sonata in sol maggiore", chi: "Marianna Martines · Vienna, Settecento", img: "martines.jpg", yt: "hKjPKI0bz8Q", canale: "Béatrice Martin (canale ufficiale)" }],
+      parole: [["Concerto pubblico", "concerto a pagamento, aperto a chi compra il biglietto."]] },
+
+    { id: "boccherini", mondo: "sx", label: "La corte", titolo: "Musica da camera", data: "1771",
+      pagine: [
+        { img: "p-boccherini-1.jpg", did: "Un tè in un salotto di Parigi nel 1766: a sinistra il piccolo Mozart, 10 anni, al clavicembalo (Michel-Barthélemy Ollivier).",
+          t: ["Nei saloni dei palazzi si suona <b>musica da camera</b>: pochi musicisti, per pochi ascoltatori seduti vicino.",
+          "Spesso suonano anche i nobili e i loro figli: la musica si studia come le lingue e il ballo."] },
+        { img: "p-boccherini-2.jpg", did: "Luigi Boccherini con il suo violoncello (ritratto attribuito a Pompeo Batoni, 1765 circa).",
+          t: ["<b>Luigi Boccherini</b>, nato a Lucca, è un grande violoncellista.",
+          "Lavora alla corte di Spagna e scrive centinaia di brani per pochi archi: quintetti e quartetti."] },
+        { img: "p-boccherini-3.jpg", did: "L'inno per l'imperatore scritto a mano da Haydn (1797): la stessa melodia del Quartetto «Imperatore».",
+          t: ["La formazione preferita diventa il <b>quartetto d'archi</b>: due violini, una viola e un violoncello.",
+          "Quattro strumenti che conversano come amici intorno a un tavolo."] }
+      ],
+      brano: "Minuetto", chi: "Luigi Boccherini · Quintetto op. 11 n. 5, Madrid, 1771", img: "boccherini.jpg", yt: "qmf3vZBKt3Q", canale: "Halidon Music (canale ufficiale)",
+      gancio: "Il minuetto più famoso di tutti.",
+      punti: ["Il <b>minuetto</b> era la danza elegante dei saloni nobili, in tre tempi, a piccoli passi.",
+              "Ascolta la melodia elegante del primo violino e l'accompagnamento leggero degli altri archi.",
+              "È scritto per cinque archi, con due violoncelli: Boccherini era un grande violoncellista."],
+      sapevi: "Il Minuetto di Boccherini è stato usato in tantissimi film e pubblicità.",
+      altri: [{ brano: "Quartetto «Imperatore»", chi: "Haydn · Vienna, 1797", img: "imperatore.jpg", yt: "FWX2ozwjbyQ", canale: "TomatoClassic (Abel Quartet)" }],
+      parole: [["Musica da camera", "musica per pochi strumenti, da suonare in una sala."], ["Minuetto", "danza elegante dei nobili, in tre tempi."], ["Quartetto d'archi", "due violini, una viola e un violoncello."]] },
+
+    { id: "addii", mondo: "sx", label: "La corte", titolo: "Haydn, musicista di corte", data: "Esterháza, 1772",
+      pagine: [
+        { img: "p-addii-1.jpg", did: "Il palazzo di Esterháza, in Ungheria, durante una festa (incisione del 1791).",
+          t: ["<b>Joseph Haydn</b> lavora per quasi trent'anni al servizio dei principi <b>Esterházy</b>, nel loro grande palazzo in Ungheria.",
+          "Come i servitori indossa la <b>livrea</b>, la divisa di corte, e scrive la musica che il principe ordina."] },
+        { img: "p-addii-2.jpg", did: "Un'opera nel teatro di Esterháza: in basso l'orchestra di corte, tutti con la stessa livrea rossa; al clavicembalo, a sinistra, forse Haydn.",
+          t: ["Dirige l'orchestra di corte: archi, oboi, fagotti e corni. È l'<b>orchestra classica</b>.",
+          "Per lei scrive più di cento <b>sinfonie</b>: grandi brani per orchestra, in quattro movimenti."] }
+      ],
+      brano: "Sinfonia degli addii", chi: "Joseph Haydn · Sinfonia n. 45, Esterháza, 1772 · ultimo movimento", img: "addii.jpg", yt: "0YhtR43eNEs", canale: "Concerto Classic Wien (canale ufficiale)",
+      gancio: "I musicisti se ne vanno… uno alla volta.",
+      punti: ["L'estate a Esterháza non finiva mai: il principe restava nel palazzo e i musicisti erano lontani dalle loro famiglie.",
+              "Haydn trovò un modo gentile per farlo capire: nell'ultimo movimento gli strumenti smettono di suonare uno dopo l'altro.",
+              "Ogni musicista spegne la candela e lascia il palco. Alla fine restano solo due violini."],
+      sapevi: "Il principe capì il messaggio: il giorno dopo si partì e tutti tornarono a casa.",
+      strumenti: ["corno"],
+      parole: [["Livrea", "la divisa dei servitori di corte, anche dei musicisti."], ["Sinfonia", "grande brano per orchestra, in quattro movimenti."], ["Orchestra classica", "archi, legni, corni, trombe e timpani."]] },
+
+    { id: "mozart", mondo: "dx", label: "La città", titolo: "Mozart, libero a Vienna", data: "1781",
+      pagine: [
+        { img: "p-mozart-1.jpg", did: "Mozart a 7 anni, con l'abito di gala regalato dall'imperatrice (ritratto attribuito a Pietro Antonio Lorenzoni, 1763).",
+          t: ["<b>Wolfgang Amadeus Mozart</b> nasce a Salisburgo nel 1756.",
+          "È un bambino prodigio: a sei anni suona davanti all'imperatrice e gira l'Europa con il padre e la sorella Nannerl."] },
+        { img: "p-mozart-2.jpg", did: "La piazza della Residenza di Salisburgo, il palazzo dell'arcivescovo (incisione del 1791 circa).",
+          t: ["Da grande lavora per l'arcivescovo di Salisburgo, ma si sente trattato come un servo.",
+          "Nel <b>1781</b> se ne va e si trasferisce a Vienna, da <b>libero professionista</b>: dà lezioni, suona in concerti e vende la sua musica agli editori."] },
+        { img: "p-mozart-3.jpg", did: "Una lezione di pianoforte in casa (Pauline Auzou, fine Settecento).",
+          t: ["Chi suona in casa ama le <b>variazioni</b>: una melodia famosa che cambia vestito ogni volta.",
+          "Gli editori le vendono bene, e Mozart ne scrive tante."] }
+      ],
+      brano: "Variazioni su «Ah vous dirai-je, maman»", chi: "Wolfgang Amadeus Mozart · Vienna, 1781–82", img: "stellina.jpg", yt: "fGGWtz_v6xM", canale: "ClassicalSoundings (Steven Lubin)",
+      gancio: "È «Brilla brilla la stellina»… in dodici travestimenti.",
+      punti: ["Prima si sente il <b>tema</b>: una canzoncina francese che conosci di sicuro.",
+              "Poi arrivano 12 <b>variazioni</b>: la melodia resta, ma cambia vestito ogni volta.",
+              "Ascolta: note velocissime, accordi pieni, una variazione triste in minore e una lenta, prima del gran finale."],
+      sapevi: "Qui suona un <b>fortepiano</b>, il pianoforte dell'epoca di Mozart. Nell'«Ascolta anche» c'è un rondò che imita le bande militari turche, di gran moda a Vienna.",
+      altri: [{ brano: "Rondò alla turca", chi: "Mozart · Sonata K 331, Vienna, 1784", img: "turca.jpg", yt: "gxxpMvte04U", canale: "Luc Beauséjour" }],
+      strumenti: ["fortepiano", "glassarmonica"],
+      parole: [["Libero professionista", "musicista al servizio di nessuno: vive di lezioni, concerti, editori."], ["Tema e variazioni", "una melodia presentata e poi trasformata più volte."]] },
+
+    { id: "figaro", mondo: "sx", label: "La corte", titolo: "Servi e padroni a teatro", data: "1786 – 1791",
+      pagine: [
+        { img: "p-figaro-1.jpg", did: "Una scena della commedia di Beaumarchais «Il matrimonio di Figaro» (incisione del 1785).",
+          t: ["<b>Le nozze di Figaro</b> nasce da una commedia francese: un servitore più furbo del suo padrone.",
+          "A Vienna la commedia era vietata: sembrava un'idea pericolosa, pochi anni prima della Rivoluzione francese."] },
+        { img: "p-figaro-2.jpg", did: "Vienna, piazza San Michele: a destra il teatro di corte, dove andarono in scena Le nozze di Figaro (Carl Schütz, 1783).",
+          t: ["Mozart la mette in musica nel 1786, per il teatro di corte, con il librettista italiano Lorenzo Da Ponte.",
+          "È un'<b>opera buffa</b> in italiano: si ride, ma si pensa anche."] },
+        { img: "p-figaro-3.jpg", did: "La sala stellata della Regina della notte, scenografia per Il flauto magico (Karl Friedrich Schinkel, 1815 circa).",
+          t: ["Nel 1791 Mozart scrive <b>Il flauto magico</b> per un teatro popolare: una fiaba in tedesco, con parti cantate e parti recitate. È un <b>Singspiel</b>.",
+          "Pochi mesi dopo Mozart muore, a soli 35 anni."] }
+      ],
+      brano: "Se vuol ballare, signor contino", chi: "Wolfgang Amadeus Mozart · Le nozze di Figaro, Vienna, 1786", img: "figaro.jpg", yt: "dWFRlcW-prQ", canale: "OperaVision (Royal Opera House)",
+      gancio: "Un servitore sfida il suo padrone.",
+      punti: ["Figaro, il servitore, scopre che il Conte vuole corteggiare Susanna, la sua fidanzata.",
+              "Arrabbiato, canta: «Se vuol ballare, signor contino, il chitarrino le suonerò». Cioè: la musica la decido io!",
+              "Il ritmo è quello di un <b>minuetto</b>, la danza dei nobili, ma usato per prendere in giro un nobile."],
+      sapevi: "Il librettista Da Ponte tolse le parti più politiche della commedia, così l'imperatore permise l'opera. Nell'«Ascolta anche» c'è la Regina della notte del Flauto magico.",
+      altri: [{ brano: "Der Hölle Rache", chi: "Mozart · Il flauto magico, Vienna, 1791 · la Regina della notte", img: "regina.jpg", yt: "YuBeBjqKSGQ", canale: "Royal Ballet and Opera (canale ufficiale)" }],
+      parole: [["Opera buffa", "opera comica in italiano, con personaggi di tutti i giorni."], ["Singspiel", "opera in tedesco, con parti cantate e parti recitate."]] },
+
+    { id: "sonata", mondo: "dx", label: "La città", titolo: "La forma sonata", data: "1788",
+      pagine: [
+        { img: "p-sonata-1.jpg", did: "Due pagine del quaderno in cui Mozart annotava ogni brano nuovo, con le prime battute.",
+          t: ["La <b>sonata</b> è un brano per uno o due strumenti, in più movimenti.",
+          "La <b>forma sonata</b> invece è lo schema con cui si costruisce un movimento: un racconto in tre parti."] },
+        { img: "p-sonata-2.jpg", did: "Nannerl e Wolfgang suonano a quattro mani, il padre Leopold tiene il violino (Johann Nepomuk della Croce, 1780 circa).",
+          t: ["<b>Esposizione</b>: si presentano due temi, come due personaggi diversi. <b>Sviluppo</b>: i temi vengono spezzati e trasformati, e la musica si allontana da casa.",
+          "<b>Ripresa</b>: tornano i due temi, ora nella tonalità di casa. Nel Classicismo quasi tutti i primi movimenti di sonate, sinfonie e quartetti sono fatti così."] }
+      ],
+      brano: "Sonata facile, primo movimento", chi: "Wolfgang Amadeus Mozart · Sonata K 545, Vienna, 1788", img: "sonata-banner.jpg", yt: "qjk-YRuQZDE", canale: "Rousseau",
+      gancio: "Due temi, uno sviluppo e una ripresa: la forma sonata in tre minuti.",
+      punti: ["Tema 1: una melodia tranquilla; poi scale veloci portano al tema 2, più giocoso. Tutta l'esposizione viene ripetuta.",
+              "Lo sviluppo è breve e inquieto: la musica passa in tonalità più scure.",
+              "Poi la ripresa: torna il tema 1 e alla fine il tema 2, a casa. Alza la mano ogni volta che torna il tema 1!"],
+      sapevi: "Mozart annotava ogni brano nuovo in un quaderno. Accanto a questa sonata, il 26 giugno 1788, scrisse «per principianti»: per questo si chiama <b>Sonata facile</b>.",
+      altri: [{ brano: "Sinfonia n. 40", chi: "Mozart · Vienna, 1788 · primo movimento, in forma sonata", img: "sinfonia40.jpg", yt: "7shwnh5mst8", canale: "Boston Baroque (canale ufficiale)" }],
+      strumenti: ["clarinetto"],
+      parole: [["Sonata", "brano per uno o due strumenti, in più movimenti."], ["Forma sonata", "lo schema di un movimento: esposizione, sviluppo, ripresa."]] },
+
+    { id: "londra", mondo: "dx", label: "La città", titolo: "Haydn, una star a Londra", data: "1791 – 1795",
+      pagine: [
+        { img: "p-londra-1.jpg", did: "Haydn a Londra, in un ritratto di Thomas Hardy (1791).",
+          t: ["Nel 1790 muore il principe Esterházy. Haydn, ormai famoso in tutta Europa, è finalmente libero di viaggiare.",
+          "Un <b>impresario</b>, cioè un organizzatore di concerti, lo invita a <b>Londra</b>."] },
+        { img: "p-londra-2.jpg", did: "Un concerto nelle Hanover Square Rooms di Londra, la sala dove Haydn diresse le sue sinfonie (incisione dell'Ottocento).",
+          t: ["A Londra i concerti pubblici riempiono grandi sale: Haydn dirige le sue nuove sinfonie davanti a centinaia di persone.",
+          "In pochi mesi guadagna più che in tanti anni di servizio a corte."] }
+      ],
+      brano: "Sinfonia «La sorpresa»", chi: "Joseph Haydn · Sinfonia n. 94, Londra, 1792 · secondo movimento", img: "sorpresa.jpg", yt: "VOLy6JxEDLw", canale: "Severinus Boethius (Berliner Philharmoniker, Mariss Jansons)",
+      gancio: "Shhh… BUM!",
+      punti: ["Il tema è semplicissimo, suonato pianissimo, quasi in punta di piedi.",
+              "Poi, all'improvviso, un accordo fortissimo con i timpani: la sorpresa!",
+              "Dopo, il tema viene trasformato in tante <b>variazioni</b>."],
+      sapevi: "Si racconta che la sorpresa servisse a svegliare chi si addormentava durante il concerto.",
+      strumenti: ["timpani", "tromba"],
+      parole: [["Impresario", "chi organizza i concerti o gli spettacoli e paga i musicisti."]] },
+
+    { id: "beethoven", mondo: "dx", label: "La città", titolo: "Il giovane Beethoven", data: "Vienna, 1798",
+      pagine: [
+        { img: "p-beethoven-1.jpg", did: "Il palazzo del principe a Bonn, dove il padre e il nonno di Beethoven erano musicisti di corte (incisione del Settecento).",
+          t: ["<b>Ludwig van Beethoven</b> nasce a <b>Bonn</b>, in Germania, nel 1770, in una famiglia di musicisti di corte.",
+          "A 21 anni va a Vienna per studiare con Haydn."] },
+        { img: "p-beethoven-2.jpg", did: "Beethoven a circa trent'anni (incisione da un disegno di Gandolph Stainhauser, 1801).",
+          t: ["A Vienna vive dando concerti e vendendo la sua musica agli editori, aiutato da nobili ammiratori: ma non è il servitore di nessuno.",
+          "La sua musica è piena di contrasti: piano e forte, lento e veloce. Sta arrivando il Romanticismo."] }
+      ],
+      brano: "Sonata «Patetica»", chi: "Ludwig van Beethoven · op. 13, Vienna, 1798 · primo movimento", img: "patetica.jpg", yt: "hcczxDKkYhU", canale: "Deutsche Grammophon (canale ufficiale)",
       gancio: "Il giovane Beethoven alza la voce.",
       punti: ["Si apre con accordi lenti e pesanti, drammatici: è l'introduzione, il <b>Grave</b>.",
               "Poi parte un <b>Allegro</b> velocissimo e agitato, che corre senza fermarsi.",
               "Gli accordi dell'inizio ritornano più volte, come un ricordo che non se ne va."],
-      sapevi: "Beethoven arrivò a Vienna a 21 anni per studiare con Haydn. Visse dando concerti e vendendo la sua musica agli editori, aiutato da nobili ammiratori, ma senza essere servitore di nessuno. Lo ritroverai nel Romanticismo." }
+      sapevi: "«Patetica» vuol dire «piena di passione». Beethoven lo ritroverai nel Romanticismo, con la Quinta sinfonia e l'Inno alla gioia.",
+      parole: [["Tempo", "la velocità di un brano: Grave, Adagio, Allegro…"]] },
+
+    { id: "riepilogo", mondo: "sx", label: "Ricapitoliamo", titolo: "Che cosa abbiamo scoperto", data: "1750 – 1820", riepilogo: true, img: "p-nachtmusik-2.jpg",
+      pagine: [
+        { img: "p-nachtmusik-1.jpg", did: "Un salotto del secolo dei Lumi (Lemonnier).",
+          t: ["Il Classicismo è il secolo dei Lumi: ragione, ordine, equilibrio.",
+          "La musica ha una <b>melodia</b> chiara con un accompagnamento leggero. Nascono la sinfonia, il quartetto e la forma sonata."] },
+        { img: "p-addii-1.jpg", did: "Il palazzo di Esterháza (1791).",
+          t: ["<b>La corte</b>: il musicista è un servitore in livrea. Scrive opere, sinfonie e musica da camera per il principe.",
+          "Gluck riforma l'opera, Haydn dirige l'orchestra degli Esterházy."] },
+        { img: "p-londra-2.jpg", did: "Una sala da concerto a Londra.",
+          t: ["<b>La città</b>: concerti pubblici, editori, teatri popolari. Il musicista prova a vivere libero.",
+          "Mozart a Vienna, Haydn a Londra, il giovane Beethoven: arriva il Romanticismo."] }
+      ] }
+  ];
+
+  const LINEA = [
+    ["1750 circa", "Comincia il Classicismo."],
+    ["1756", "Nasce Mozart."],
+    ["1761", "Haydn entra al servizio dei principi Esterházy."],
+    ["1762", "Orfeo ed Euridice di Gluck."],
+    ["1769 circa", "Maddalena Laura Sirmen suona nei concerti pubblici d'Europa."],
+    ["1771", "Il Minuetto di Boccherini."],
+    ["1772", "La Sinfonia degli addii di Haydn."],
+    ["1781", "Mozart lascia Salisburgo e va a vivere a Vienna."],
+    ["1786", "Le nozze di Figaro di Mozart."],
+    ["1789", "Comincia la Rivoluzione francese."],
+    ["1791", "Il flauto magico; muore Mozart. Haydn a Londra."],
+    ["1798", "La Sonata Patetica di Beethoven."],
+    ["1820 circa", "Finisce il Classicismo: arriva il Romanticismo."]
   ];
 
   const STRUMENTI = [
-    { id: "fortepiano", label: "Tastiera", titolo: "Fortepiano", chi: "Il pianoforte di Mozart", img: "fortepiano.jpg", yt: "-LJ7uywsvIA", canale: "McNulty Fortepianos",
+    { id: "fortepiano", label: "Tastiera", titolo: "Fortepiano", chi: "Il pianoforte di Mozart", img: "fortepiano.jpg", epoca: "fortepiano-epoca.jpg", foto: "fortepiano.jpg", yt: "-LJ7uywsvIA", canale: "McNulty Fortepianos",
       gancio: "Finalmente una tastiera che suona piano e forte.",
       punti: ["Dentro, dei piccoli martelletti colpiscono le corde: più premi forte, più il suono è forte.",
               "Per questo si chiama <b>forte-piano</b>: il clavicembalo non poteva farlo.",
               "È più piccolo e leggero del pianoforte di oggi e ha un suono più chiaro."],
       sapevi: "Al posto dei pedali, i fortepiani viennesi avevano delle leve da spingere con le ginocchia. Nel video suonano la copia di un fortepiano di Anton Walter, il costruttore viennese dello strumento di Mozart." },
-    { id: "clarinetto", label: "Fiati", titolo: "Clarinetto", chi: "Il preferito di Mozart", img: "clarinetto.jpg", yt: "l1MWuZ97nZk", canale: "Victoria Symphony Orchestra (canale ufficiale)",
+    { id: "clarinetto", label: "Fiati", titolo: "Clarinetto", chi: "Il preferito di Mozart", img: "clarinetto.jpg", epoca: "clarinetto-epoca.jpg", foto: "clarinetto.jpg", yt: "l1MWuZ97nZk", canale: "Victoria Symphony Orchestra (canale ufficiale)",
       gancio: "Un fiato nuovo, dalla voce calda.",
       punti: ["Si suona con un'<b>ancia semplice</b>, una sola lamella di canna appoggiata sul bocchino.",
               "Nel Classicismo entra per la prima volta stabilmente nell'orchestra.",
               "Qui ascolti l'Adagio del Concerto per clarinetto di Mozart, uno dei suoi ultimi lavori."],
       sapevi: "Da giovane Mozart sentì i clarinetti a Mannheim e scrisse al padre: «Ah, se avessimo anche noi i clarinetti!». Il concerto lo scrisse per l'amico clarinettista Anton Stadler." },
-    { id: "corno", label: "Ottoni", titolo: "Corno naturale", chi: "Senza valvole", img: "corno.jpg", yt: "MgwE22lg9cA", canale: "Orchestra of the Age of Enlightenment (canale ufficiale)",
+    { id: "corno", label: "Ottoni", titolo: "Corno naturale", chi: "Senza valvole", img: "corno.jpg", epoca: "corno-epoca.jpg", foto: "corno.jpg", yt: "MgwE22lg9cA", canale: "Orchestra of the Age of Enlightenment (canale ufficiale)",
       gancio: "Le note si fanno con le labbra… e con la mano.",
       punti: ["Non ha pistoni: il cornista cambia nota con le labbra e infilando la mano nella campana.",
               "Per cambiare tonalità si aggiungono pezzi di tubo, le <b>ritorte</b>.",
               "Il Rondò ha il ritmo saltellante di una caccia: il corno nasce proprio come strumento da caccia."],
       sapevi: "Mozart scrisse i suoi concerti per corno per l'amico Joseph Leutgeb e sulle partiture gli lasciava battute scherzose, chiamandolo perfino «asino»." },
-    { id: "tromba", label: "Ottoni", titolo: "Tromba a chiavi", chi: "Un'invenzione viennese", img: "tromba-chiavi.jpg", yt: "WzHR46yaveQ", canale: "dingoandfox (Markus Würsch)",
+    { id: "tromba", label: "Ottoni", titolo: "Tromba a chiavi", chi: "Un'invenzione viennese", img: "tromba-chiavi.jpg", soloFoto: true, yt: "WzHR46yaveQ", canale: "dingoandfox (Markus Würsch)",
       gancio: "Una tromba con i fori, come un flauto.",
       punti: ["La tromba naturale suonava solo alcune note. Con le <b>chiavi</b>, che aprono dei fori nel tubo, può suonarle tutte.",
               "Ascolti l'ultimo movimento del Concerto per tromba di Haydn, brillante e allegro.",
               "In questo video l'orchestra è sostituita da un fortepiano."],
       sapevi: "La tromba a chiavi la inventò Anton Weidinger, trombettista della corte di Vienna. Haydn scrisse il concerto per lui nel 1796." },
-    { id: "arpa", label: "Corde pizzicate", titolo: "Arpa a pedali", chi: "Corde e pedali", img: "arpa.jpg", yt: "ps0bWrvia98", canale: "Alpha Classics (canale ufficiale)",
+    { id: "arpa", label: "Corde pizzicate", titolo: "Arpa a pedali", chi: "Corde e pedali", img: "arpa.jpg", epoca: "arpa-epoca.jpg", foto: "arpa.jpg", yt: "ps0bWrvia98", canale: "Alpha Classics (canale ufficiale)",
       gancio: "Con i piedi si cambiano le note.",
       punti: ["Ha tante corde, una per ogni nota della scala.",
               "Premendo i <b>pedali</b> l'arpista alza le note di mezzo tono e può suonare in tutte le tonalità.",
               "Ascolti il Concerto per flauto e arpa di Mozart, con un flauto e un'arpa d'epoca."],
       sapevi: "Mozart scrisse questo concerto a Parigi, nel 1778, per un duca che suonava il flauto e per sua figlia, arpista. Alla ragazza dava anche lezioni di composizione." },
-    { id: "glassarmonica", label: "Curiosità", titolo: "Glassarmonica", chi: "Musica di vetro", img: "glassarmonica.jpg", yt: "hqse6LNFfgA", canale: "ARD Klassik (canale ufficiale)",
+    { id: "glassarmonica", label: "Curiosità", titolo: "Glassarmonica", chi: "Musica di vetro", img: "glassarmonica.jpg", epoca: "glassarmonica-epoca.jpg", foto: "glassarmonica.jpg", yt: "hqse6LNFfgA", canale: "ARD Klassik (canale ufficiale)",
       gancio: "Bicchieri che cantano.",
       punti: ["Hai mai fatto «cantare» un bicchiere sfregando il bordo con un dito bagnato? La glassarmonica funziona così.",
               "Tante coppe di vetro infilate su un asse girano, e il musicista le tocca con le dita bagnate.",
               "Il suono è delicato e misterioso, quasi magico."],
       sapevi: "L'inventò Benjamin Franklin, lo scienziato americano del parafulmine, nel 1761. Mozart scrisse questo Adagio nel 1791 per una giovane musicista cieca, Marianne Kirchgessner." },
-    { id: "timpani", label: "Percussioni", titolo: "Timpani", chi: "Tamburi intonati", img: "timpani.jpg", yt: "CMxCh0AYmy0", canale: "Orchestra of the Age of Enlightenment (canale ufficiale)",
+    { id: "timpani", label: "Percussioni", titolo: "Timpani", chi: "Tamburi intonati", img: "timpani.jpg", epoca: "timpani-epoca.jpg", foto: "timpani.jpg", yt: "CMxCh0AYmy0", canale: "Orchestra of the Age of Enlightenment (canale ufficiale)",
       gancio: "Tamburi che suonano note precise.",
       punti: ["Sono grandi caldaie di metallo coperte da una pelle: tirando la pelle cambia la nota.",
               "Nell'orchestra classica suonano quasi sempre insieme alle trombe.",
@@ -384,35 +361,6 @@
     { titolo: "Eine kleine Nachtmusik (tema)", chi: "Wolfgang Amadeus Mozart", img: "nachtmusik.jpg" },
     { titolo: "Minuetto", chi: "Luigi Boccherini", img: "boccherini.jpg" }
   ];
-
-  /* ---------- La forma sonata (pulsante speciale) ---------- */
-  const SPECIALE = {
-    yt: "qjk-YRuQZDE", canale: "Rousseau", img: "sonata-banner.jpg", nome: "La forma sonata (Mozart, Sonata K 545)",
-    cosa: [
-      ["🧩", "La forma sonata non è un brano: è uno <b>schema</b>, il modo in cui è costruito un movimento."],
-      ["📖", "Funziona come un racconto in tre parti: <b>esposizione</b>, <b>sviluppo</b>, <b>ripresa</b>."],
-      ["🎭", "<b>Esposizione</b>: si presentano due temi, come due personaggi diversi, ognuno nella sua tonalità."],
-      ["🌪️", "<b>Sviluppo</b>: i temi vengono spezzati e trasformati, e la musica si allontana da casa."],
-      ["🏠", "<b>Ripresa</b>: tornano i due temi, ma ora tutti e due nella tonalità di casa."],
-      ["🎼", "Nel Classicismo quasi tutti i primi movimenti di sonate, sinfonie, quartetti e concerti sono in forma sonata."]
-    ],
-    ascolto: [
-      ["Tema 1", "Una melodia tranquilla, in do maggiore. La mano sinistra accompagna con un movimento ondeggiante."],
-      ["Ponte", "Scale velocissime che salgono e scendono: la musica si sta spostando verso un'altra tonalità."],
-      ["Tema 2", "Una melodia nuova, più giocosa, in sol maggiore."],
-      ["Di nuovo!", "Tutta l'esposizione viene ripetuta: è l'occasione per memorizzare i due temi."],
-      ["Sviluppo", "Breve e inquieto: la musica passa in tonalità minori, più scure, e non trova pace."],
-      ["Ripresa", "Torna il tema 1… ma in fa maggiore! È la sorpresa di Mozart. Poi arriva il tema 2, questa volta in do: siamo a casa."],
-      ["Sfida", "Alza la mano ogni volta che torna il tema 1."]
-    ],
-    curiosita: [
-      `<a href="${IMG}sonata.jpg" target="_blank" rel="noopener"><img src="${IMG}sonata.jpg" alt="Due pagine del catalogo scritto a mano da Mozart, con date, titoli e prime battute"></a><b>Per principianti.</b> Mozart annotava ogni brano nuovo in un quaderno: data, titolo e prime battute. Accanto a questa sonata, il 26 giugno 1788, scrisse «per principianti». Per questo è chiamata <b>Sonata facile</b>.`,
-      "<b>Sonata o forma sonata?</b> La <b>sonata</b> è un brano per uno o due strumenti, in più movimenti. La <b>forma sonata</b> è lo schema con cui è costruito un movimento. Questo primo movimento è entrambe le cose!",
-      "<b>Cercala altrove.</b> Anche il primo movimento di Eine kleine Nachtmusik e quello della Sinfonia n. 40, tra gli ascolti di questa pagina, sono in forma sonata.",
-      "<b>Un nome arrivato dopo.</b> Haydn e Mozart non la chiamavano «forma sonata»: il nome lo inventarono gli studiosi nell'Ottocento, studiando la loro musica.",
-      "<b>Due fratelli alla tastiera.</b> Nel quadro che vedi prima di avviare il video Mozart suona a quattro mani con la sorella Nannerl, bravissima al clavicembalo. Da bambini giravano insieme le corti d'Europa."
-    ]
-  };
 
   /* crediti delle immagini (tutte ospitate nel sito) */
   const CREDITI_IMG = [
@@ -440,135 +388,227 @@
     "Glassarmonica (armonica a bicchieri), forse Germania, XVIII secolo (Metropolitan Museum of Art, New York, 89.4.1211) — <a href=\"https://www.metmuseum.org/art/collection/search/501781\" target=\"_blank\" rel=\"noopener\">fonte</a>, pubblico dominio (Open Access).",
     "Franz Peter Bundsen, coppia di timpani in argento, Hannover, 1780 (Metropolitan Museum of Art, New York, 2010.138.1–.4) — <a href=\"https://www.metmuseum.org/art/collection/search/506174\" target=\"_blank\" rel=\"noopener\">fonte</a>, pubblico dominio (Open Access).",
     "Johann Nepomuk della Croce, ritratto della famiglia Mozart (Nannerl e Wolfgang alla tastiera, Leopold con il violino, la madre nel ritratto appeso), 1780–81 (Mozarteum, Salisburgo) – dettaglio — <a href=\"https://commons.wikimedia.org/wiki/File:Mozart_Family_Croce.jpg\" target=\"_blank\" rel=\"noopener\">fonte</a>, pubblico dominio.",
-    "Wolfgang Amadeus Mozart, «Verzeichnüss aller meiner Werke», catalogo autografo delle proprie opere: due pagine con le registrazioni del 1784 (British Library, Londra) — <a href=\"https://commons.wikimedia.org/wiki/File:MozartPersonalCatalogSamplePage.png\" target=\"_blank\" rel=\"noopener\">fonte</a>, pubblico dominio."
   ];
 
-  /* ---------- costruzione della griglia ---------- */
-  const griglia = document.getElementById("griglia");
-  document.getElementById("nAscolti").textContent = ASCOLTI.length;
-  document.getElementById("nStrumenti").textContent = STRUMENTI.length;
-  document.getElementById("nSuonare").textContent = SUONARE.length;
+  const CREDITI_PAGINE = [
+    "Un salotto di Parigi nel secolo dei Lumi: si legge ad alta voce un'opera di Voltaire (dipinto di Anicet-Charles-Gabriel Lemonnier) — <a href=\"https://commons.wikimedia.org/wiki/File:Anicet-Charles-Gabriel_Lemonnier_-_In_the_Salon_of_Madame_Geoffrin_in_1755_-_WGA12652.jpg\" target=\"_blank\" rel=\"noopener\">fonte</a>, pubblico dominio.",
+    "Vienna vista dal Belvedere, al centro il campanile di Santo Stefano (Bernardo Bellotto, 1759 – 1760 circa) — <a href=\"https://commons.wikimedia.org/wiki/File:Bernardo_Bellotto,_called_Canaletto_-_Vienna_Viewed_from_the_Belvedere_Palace_-_Google_Art_Project.jpg\" target=\"_blank\" rel=\"noopener\">fonte</a>, pubblico dominio.",
+    "Wolfgang Amadeus Mozart in un ritratto dipinto da Barbara Krafft (1819) — <a href=\"https://commons.wikimedia.org/wiki/File:Barbara_Krafft_-_Portr%C3%A4t_Wolfgang_Amadeus_Mozart_(1819).jpg\" target=\"_blank\" rel=\"noopener\">fonte</a>, pubblico dominio.",
+    "Il castello di Schönbrunn, residenza estiva della corte imperiale di Vienna (Bernardo Bellotto, 1759 – 1760 circa) — <a href=\"https://commons.wikimedia.org/wiki/File:Bernardo_Bellotto,_gen._Canaletto_-_Das_kaiserliche_Lustschlo%C3%9F_Sch%C3%B6nbrunn,_Gartenseite_-_GG_1667_-_Kunsthistorisches_Museum.jpg\" target=\"_blank\" rel=\"noopener\">fonte</a>, pubblico dominio.",
+    "Christoph Willibald Gluck al clavicembalo (Joseph-Siffred Duplessis, 1775) — <a href=\"https://commons.wikimedia.org/wiki/File:Joseph_Siffred_Duplessis_-_Christoph_Willibald_Gluck_-_Google_Art_Project.jpg\" target=\"_blank\" rel=\"noopener\">fonte</a>, pubblico dominio.",
+    "Un concerto all'aperto nei giardini di Vauxhall, a Londra: l'orchestra suona sulla balconata, il pubblico passeggia (Thomas Rowlandson, 1785) — <a href=\"https://commons.wikimedia.org/wiki/File:Thomas_Rowlandson,_Vauxhall_Gardens,_1785,_NGA_30982.jpg\" target=\"_blank\" rel=\"noopener\">fonte</a>, CC0 (pubblico dominio).",
+    "Maddalena Laura Lombardini Sirmen in un ritratto del Settecento — <a href=\"https://commons.wikimedia.org/wiki/File:%D0%9C%D0%B0%D0%B3%D0%B4%D0%B0%D0%BB%D0%B5%D0%BD%D0%B0_%D0%9B%D0%B0%D1%83%D1%80%D0%B0_%D0%A1%D0%B8%D1%80%D0%BC%D0%B5%D0%BD_(%D0%9B%D0%BE%D0%BC%D0%B1%D0%B0%D1%80%D0%B4%D0%B8%D0%BD%D0%B8).jpg\" target=\"_blank\" rel=\"noopener\">fonte</a>, pubblico dominio.",
+    "Marianna Martines in un ritratto del Settecento (particolare) — <a href=\"https://commons.wikimedia.org/wiki/File:Marianna_Martines,_Pupil_of_P._Metastasio;_born_in_Vienna,_4th_day_of_May_1744,_Member_Academia_Filarmonica.jpg\" target=\"_blank\" rel=\"noopener\">fonte</a>, pubblico dominio, ritagliata.",
+    "Un tè in un salotto di Parigi nel 1766: a sinistra il piccolo Mozart, 10 anni, al clavicembalo (Michel-Barthélemy Ollivier) — <a href=\"https://commons.wikimedia.org/wiki/File:Michel-Barth%C3%A9l%C3%A9my_Ollivier_-_Afternoon_Tea_at_the_Temple_-_WGA16645.jpg\" target=\"_blank\" rel=\"noopener\">fonte</a>, pubblico dominio.",
+    "Luigi Boccherini con il suo violoncello (ritratto attribuito a Pompeo Batoni, 1765 circa) — <a href=\"https://commons.wikimedia.org/wiki/File:LBoccherini.jpg\" target=\"_blank\" rel=\"noopener\">fonte</a>, pubblico dominio.",
+    "L'inno per l'imperatore scritto a mano da Haydn (1797): la stessa melodia del Quartetto «Imperatore» — <a href=\"https://commons.wikimedia.org/wiki/File:Haydn_Kaiserlied_Reinschrift.jpg\" target=\"_blank\" rel=\"noopener\">fonte</a>, pubblico dominio.",
+    "Il palazzo di Esterháza, in Ungheria, durante una festa (incisione del 1791) — <a href=\"https://commons.wikimedia.org/wiki/File:The_Esterh%C3%A1zy_palace_at_Fert%C5%91d_1791.jpg\" target=\"_blank\" rel=\"noopener\">fonte</a>, pubblico dominio, ritagliata.",
+    "Un'opera nel teatro di Esterháza: in basso l'orchestra di corte, tutti con la stessa livrea rossa; al clavicembalo, a sinistra, forse Haydn — <a href=\"https://commons.wikimedia.org/wiki/File:Operael%C5%91ad%C3%A1s_az_eszterh%C3%A1zai_kast%C3%A9ly_sz%C3%ADnpad%C3%A1n_Haydn_vez%C3%A9nylete_alatt.jpg\" target=\"_blank\" rel=\"noopener\">fonte</a>, pubblico dominio, ritagliata.",
+    "Mozart a 7 anni, con l'abito di gala regalato dall'imperatrice (ritratto attribuito a Pietro Antonio Lorenzoni, 1763) — <a href=\"https://commons.wikimedia.org/wiki/File:Wolfgang-amadeus-mozart_2.jpg\" target=\"_blank\" rel=\"noopener\">fonte</a>, pubblico dominio.",
+    "La piazza della Residenza di Salisburgo, il palazzo dell'arcivescovo (incisione del 1791 circa) — <a href=\"https://commons.wikimedia.org/wiki/File:Residenzplatz_Salzburg_Naumann_um_1791.jpg\" target=\"_blank\" rel=\"noopener\">fonte</a>, pubblico dominio.",
+    "Una lezione di pianoforte in casa (Pauline Auzou, fine Settecento) — <a href=\"https://commons.wikimedia.org/wiki/File:Pauline_Auzou_-_The_Piano_Lesson.jpg\" target=\"_blank\" rel=\"noopener\">fonte</a>, pubblico dominio.",
+    "Una scena della commedia di Beaumarchais «Il matrimonio di Figaro» (incisione del 1785) — <a href=\"https://commons.wikimedia.org/wiki/File:Malapeau_Saint-Quentin_Beaumarchais_Le_mariage_de_Figaro_1._Akt_1785.jpg\" target=\"_blank\" rel=\"noopener\">fonte</a>, pubblico dominio.",
+    "Vienna, piazza San Michele: a destra il teatro di corte, dove andarono in scena Le nozze di Figaro (Carl Schütz, 1783) — <a href=\"https://commons.wikimedia.org/wiki/File:Carl_Sch%C3%BCtz_Wien_Michaelerplatz.jpg\" target=\"_blank\" rel=\"noopener\">fonte</a>, pubblico dominio.",
+    "La sala stellata della Regina della notte, scenografia per Il flauto magico (Karl Friedrich Schinkel, 1815 circa) — <a href=\"https://commons.wikimedia.org/wiki/File:Karl_Friedrich_Schinkel_-_Die_Sternenhalle_der_K%C3%B6nigin_der_Nacht_(ca._1815).jpg\" target=\"_blank\" rel=\"noopener\">fonte</a>, pubblico dominio.",
+    "Due pagine del quaderno in cui Mozart annotava ogni brano nuovo, con le prime battute — <a href=\"https://commons.wikimedia.org/wiki/File:MozartPersonalCatalogSamplePage.png\" target=\"_blank\" rel=\"noopener\">fonte</a>, pubblico dominio.",
+    "Nannerl e Wolfgang suonano a quattro mani, il padre Leopold tiene il violino (Johann Nepomuk della Croce, 1780 circa) — <a href=\"https://commons.wikimedia.org/wiki/File:Mozart_Family_Croce.jpg\" target=\"_blank\" rel=\"noopener\">fonte</a>, pubblico dominio, ritagliata.",
+    "Haydn a Londra, in un ritratto di Thomas Hardy (1791) — <a href=\"https://commons.wikimedia.org/wiki/File:Joseph_Haydn_by_Thomas_Hardy.jpg\" target=\"_blank\" rel=\"noopener\">fonte</a>, pubblico dominio.",
+    "Un concerto nelle Hanover Square Rooms di Londra, la sala dove Haydn diresse le sue sinfonie (incisione dell'Ottocento) — <a href=\"https://commons.wikimedia.org/wiki/File:Hanover-Square-Rooms-concert.jpg\" target=\"_blank\" rel=\"noopener\">fonte</a>, pubblico dominio.",
+    "Il palazzo del principe a Bonn, dove il padre e il nonno di Beethoven erano musicisti di corte (incisione del Settecento) — <a href=\"https://commons.wikimedia.org/wiki/File:Bonn_Residenz_Leizel.jpg\" target=\"_blank\" rel=\"noopener\">fonte</a>, pubblico dominio.",
+    "Beethoven a circa trent'anni (incisione da un disegno di Gandolph Stainhauser, 1801) — <a href=\"https://commons.wikimedia.org/wiki/File:Stainhauser,_Neidl_%E2%80%93_Beethoven_aged_about_thirty_(1801).jpg\" target=\"_blank\" rel=\"noopener\">fonte</a>, pubblico dominio.",
+    "Fortepiano: «La lezione di pianoforte» di Pauline Auzou (fine Settecento) — <a href=\"https://commons.wikimedia.org/wiki/File:Pauline_Auzou_-_The_Piano_Lesson.jpg\" target=\"_blank\" rel=\"noopener\">fonte</a>, pubblico dominio.",
+    "Clarinetto: tavola dell'Encyclopédie di Diderot e d'Alembert (Settecento) — <a href=\"https://commons.wikimedia.org/wiki/File:Clarinette_et_Chalumeau.jpg\" target=\"_blank\" rel=\"noopener\">fonte</a>, pubblico dominio, ritagliata.",
+    "Corno: ritratto del cornista Frédéric Nicolas Duvernoy — <a href=\"https://commons.wikimedia.org/wiki/File:Portrait_du_corniste_Fr%C3%A9d%C3%A9ric_Nicolas_Duvernoy_(1765-1838).jpg\" target=\"_blank\" rel=\"noopener\">fonte</a>, pubblico dominio.",
+    "Arpa: la regina Maria Antonietta suona l'arpa a Versailles (Jean-Baptiste André Gautier-Dagoty, 1777) — <a href=\"https://commons.wikimedia.org/wiki/File:Marie_Antoinette_Young7.jpg\" target=\"_blank\" rel=\"noopener\">fonte</a>, pubblico dominio, ritagliata.",
+    "Glassarmonica: incisione da un libro del Settecento — <a href=\"https://commons.wikimedia.org/wiki/File:Benjamin_Franklin%27s_glass_harmonica_(LoC)_edited.jpg\" target=\"_blank\" rel=\"noopener\">fonte</a>, pubblico dominio, ritagliata.",
+    "Timpani: un timpanista a cavallo (David Morier, metà Settecento) — <a href=\"https://commons.wikimedia.org/wiki/File:David_Morier_(1705%5E-70)_-_Kettledrummer,_1st_Horse_-_RCIN_406845_-_Royal_Collection.jpg\" target=\"_blank\" rel=\"noopener\">fonte</a>, pubblico dominio, ritagliata."
+  ];
 
-  let scheda = "ascolti", mondo = null, elenco = [];
-  function disegna() {
-    griglia.innerHTML = "";
-    const conSpeciale = scheda === "sonata";
-    document.getElementById("sonata").hidden = !conSpeciale;
-    griglia.hidden = conSpeciale;
-    if (conSpeciale) { preparaSpeciale(); return; }
-    oSchermo.innerHTML = "";   // si esce dalla sezione speciale: il video si ferma
-    if (scheda === "suonare") {
-      SUONARE.forEach(s => {
-        const c = document.createElement("div"); c.className = "card suona empty";
-        c.innerHTML = `<div class="foto" style="background-image:url('${IMG + s.img}')"></div>
-          <div class="testo"><span class="label">Da suonare</span><h2>${s.titolo}</h2><span class="chi">${s.chi}</span></div>`;
-        griglia.appendChild(c);
-      });
-      return;
-    }
-    const dati = scheda === "ascolti" ? ASCOLTI : STRUMENTI;
-    elenco = dati.filter(d => !mondo || !d.mondo || d.mondo === mondo);
-    elenco.forEach((d, i) => {
-      const c = document.createElement("button"); c.type = "button";
-      c.className = "card " + (scheda === "ascolti" ? d.mondo : "strum");
-      c.innerHTML = `<div class="foto" style="background-image:url('${IMG + d.img}')"></div>
-        <div class="testo"><span class="label">${d.label}</span><h2>${d.titolo}</h2><span class="chi">${d.chi}</span><p>${d.gancio}</p></div>`;
-      c.addEventListener("click", () => apri(i));
-      griglia.appendChild(c);
-    });
-  }
+  /* =========================================================
+     MAPPA, ESERCIZI E SCHEDE (motore comune: storia-attivita.js; formato in _sviluppo/storia/LEGGIMI.md)
+     Mappa, vero o falso e verifica parlano di concetti, forme e prassi, non di nomi e date.
+     ========================================================= */
+  const ATTIVITA = {
+    mappa: { W: 1280, H: 530,
+      nodi: [
+        { id: "rad", x: 520, y: 0, w: 240, h: 60, t: "IL CLASSICISMO", s: "1750 – 1820", tipo: "radice" },
+        { id: "lumi", x: 10, y: 0, w: 330, h: 64, t: "il secolo dei [[Lumi]]", s: "si crede nella ragione e nella libertà", tipo: "quadro", cap: "nachtmusik" },
+        { id: "arte", x: 940, y: 0, w: 330, h: 64, t: "l'arte [[classica]] come modello", s: "semplice, ordinata, equilibrata, come per i Greci e i Romani", tipo: "quadro", cap: "nachtmusik" },
+        { id: "serv", x: 10, y: 98, w: 330, h: 52, t: "il musicista [[servitore]]", s: "a corte, con la livrea", tipo: "quadro", cap: "addii" },
+        { id: "mem", x: 450, y: 98, w: 380, h: 52, t: "la [[melodia]] accompagnata", s: "una melodia chiara sopra un accompagnamento leggero", tipo: "quadro", cap: "nachtmusik" },
+        { id: "lib", x: 940, y: 98, w: 330, h: 52, t: "il musicista [[libero]]", s: "vive di concerti, lezioni e musica venduta", tipo: "quadro", cap: "mozart" },
+        { id: "sx", x: 60, y: 204, w: 500, h: 58, t: "LA CORTE", s: "per il principe e i suoi ospiti", tipo: "sx" },
+        { id: "dx", x: 720, y: 204, w: 500, h: 58, t: "LA CITTÀ", s: "per chi compra un biglietto o uno spartito", tipo: "dx" },
+        { id: "v1", x: 0, y: 318, w: 150, h: 50, t: "[[Sinfonia]]", tipo: "c-sx", cap: "addii" },
+        { id: "v2", x: 160, y: 318, w: 150, h: 50, t: "Quartetto d'archi", tipo: "c-sx", cap: "boccherini" },
+        { id: "v3", x: 320, y: 318, w: 150, h: 50, t: "Opera", tipo: "c-sx", cap: "gluck" },
+        { id: "v4", x: 480, y: 318, w: 150, h: 50, t: "[[Minuetto]]", tipo: "c-sx", cap: "boccherini" },
+        { id: "s1", x: 650, y: 318, w: 150, h: 50, t: "Concerti pubblici", tipo: "c-dx", cap: "sirmen" },
+        { id: "s2", x: 810, y: 318, w: 150, h: 50, t: "Editori", tipo: "c-dx", cap: "mozart" },
+        { id: "s3", x: 970, y: 318, w: 150, h: 50, t: "[[Singspiel]]", tipo: "c-dx", cap: "figaro" },
+        { id: "s4", x: 1130, y: 318, w: 150, h: 50, t: "Forma sonata", tipo: "c-dx", cap: "sonata" },
+        { id: "dv1", x: 0, y: 410, w: 150, h: 104, t: "per l'[[orchestra]] classica, in quattro movimenti", tipo: "dettaglio", cap: "addii" },
+        { id: "dv2", x: 160, y: 410, w: 150, h: 104, t: "musica da [[camera]]: due violini, viola e violoncello", tipo: "dettaglio", cap: "boccherini" },
+        { id: "dv3", x: 320, y: 410, w: 150, h: 104, t: "la [[riforma]]: conta la storia, non la bravura", tipo: "dettaglio", cap: "gluck" },
+        { id: "dv4", x: 480, y: 410, w: 150, h: 104, t: "la danza elegante dei nobili, in tre tempi", tipo: "dettaglio", cap: "boccherini" },
+        { id: "ds1", x: 650, y: 410, w: 150, h: 104, t: "si entra con il [[biglietto]]; li organizza l'impresario", tipo: "dettaglio", cap: "londra" },
+        { id: "ds2", x: 810, y: 410, w: 150, h: 104, t: "[[variazioni]] e sonate per chi suona in casa", tipo: "dettaglio", cap: "mozart" },
+        { id: "ds3", x: 970, y: 410, w: 150, h: 104, t: "opera popolare in tedesco, cantata e recitata", tipo: "dettaglio", cap: "figaro" },
+        { id: "ds4", x: 1130, y: 410, w: 150, h: 104, t: "[[esposizione]], sviluppo e ripresa", tipo: "dettaglio", cap: "sonata" }
+      ],
+      archi: [
+        { da: "rad", a: "lumi", l: "è", forma: "orizz" }, { da: "rad", a: "arte", l: "prende", forma: "orizz" },
+        { da: "rad", a: "mem", l: "la musica ama", lato: "padre" },
+        { da: "mem", a: "serv", l: "la scrive prima il", forma: "orizz" }, { da: "mem", a: "lib", l: "e poi il", forma: "orizz" },
+        { da: "mem", a: "sx", l: "si ascolta a", lato: "padre" }, { da: "mem", a: "dx" },
+        { da: "sx", a: "v1", l: "per orchestra:" }, { da: "sx", a: "v2", l: "nei saloni:" }, { da: "sx", a: "v3", l: "a teatro:" }, { da: "sx", a: "v4", l: "per ballare:" },
+        { da: "dx", a: "s1", l: "nelle sale:" }, { da: "dx", a: "s2", l: "nelle case:" }, { da: "dx", a: "s3", l: "a teatro:" }, { da: "dx", a: "s4", l: "in ogni brano:" },
+        { da: "v1", a: "dv1", l: "è" }, { da: "v2", a: "dv2", l: "è" }, { da: "v3", a: "dv3", l: "con" }, { da: "v4", a: "dv4", l: "è" },
+        { da: "s1", a: "ds1", l: "dove" }, { da: "s2", a: "ds2", l: "stampano" }, { da: "s3", a: "ds3", l: "è" }, { da: "s4", a: "ds4", l: "ha" }
+      ] },
+    mappaBuchi: ["Lumi", "classica", "servitore", "melodia", "libero", "Sinfonia", "orchestra", "camera", "riforma", "Minuetto", "biglietto", "variazioni", "Singspiel", "esposizione"],
+    mappaDistrattori: ["basso continuo", "polifonia", "fuga"],
+    vf: [
+      ["Il Classicismo prende il nome dall'arte classica greca e romana.", true, ""],
+      ["Nel secolo dei Lumi si crede nella ragione.", true, ""],
+      ["Nella musica del Classicismo c'è sempre il basso continuo.", false, "Si preferisce una melodia chiara con un accompagnamento leggero."],
+      ["A corte il musicista era un servitore e indossava la livrea.", true, ""],
+      ["Un libero professionista è un musicista al servizio di un solo principe.", false, "Non serve nessuno: vive di concerti, lezioni e musica venduta agli editori."],
+      ["Nei concerti pubblici si entra pagando il biglietto.", true, ""],
+      ["L'impresario organizza i concerti e paga i musicisti.", true, ""],
+      ["La sinfonia è un brano per voce sola.", false, "È un grande brano per orchestra, in quattro movimenti."],
+      ["Il quartetto d'archi è formato da due violini, una viola e un violoncello.", true, ""],
+      ["La musica da camera si suona in grandi teatri, con centinaia di musicisti.", false, "Si suona in una sala, con pochi strumenti e pochi ascoltatori."],
+      ["Il minuetto è una danza elegante in tre tempi.", true, ""],
+      ["La riforma dell'opera voleva più gare di bravura tra i cantanti.", false, "Voleva un'opera più semplice: conta la storia."],
+      ["L'opera buffa è un'opera comica.", true, ""],
+      ["Il Singspiel è un'opera in tedesco con parti cantate e parti recitate.", true, ""],
+      ["Nel tema con variazioni la melodia cambia «vestito» ogni volta.", true, ""],
+      ["La forma sonata ha tre parti: esposizione, sviluppo e ripresa.", true, ""],
+      ["Una sonata è un brano per grande orchestra e coro.", false, "È un brano per uno o due strumenti, in più movimenti."],
+      ["Il fortepiano può suonare piano e forte.", true, "Per questo si chiama così: il clavicembalo non poteva farlo."],
+      ["Nel Classicismo il clarinetto entra stabilmente nell'orchestra.", true, ""],
+      ["Nella ripresa della forma sonata i temi non tornano più.", false, "Tornano tutti e due, nella tonalità di casa."]
+    ],
+    personaggi: [
+      ["Joseph Haydn", "Musicista di corte degli Esterházy, poi star dei concerti di Londra."],
+      ["Wolfgang Amadeus Mozart", "Bambino prodigio, poi libero professionista a Vienna."],
+      ["Christoph Willibald Gluck", "Riformò l'opera: più semplice, al servizio della storia."],
+      ["Luigi Boccherini", "Violoncellista nato a Lucca, alla corte di Spagna: il famoso Minuetto."],
+      ["Maddalena Laura Sirmen", "Violinista veneziana nei concerti pubblici di Parigi e Londra."],
+      ["Marianna Martines", "Compositrice viennese, prima donna dell'Accademia Filarmonica di Bologna."],
+      ["Ludwig van Beethoven", "Arrivò da Bonn a Vienna per studiare con Haydn."],
+      ["Lorenzo Da Ponte", "Librettista italiano delle Nozze di Figaro."],
+      ["Maria Teresa", "Imperatrice d'Austria: la sua corte amava la musica."],
+      ["Nannerl Mozart", "Sorella di Wolfgang, bravissima alla tastiera."]
+    ],
+    cruciverba: [
+      ["SINFONIA", "Grande brano per orchestra, in quattro movimenti"],
+      ["QUARTETTO", "Due violini, una viola e un violoncello"],
+      ["MINUETTO", "Danza elegante dei nobili, in tre tempi"],
+      ["SONATA", "Brano per uno o due strumenti, in più movimenti"],
+      ["RIPRESA", "Nella forma sonata, quando tornano i due temi"],
+      ["SVILUPPO", "Nella forma sonata, i temi spezzati e trasformati"],
+      ["VARIAZIONI", "La melodia cambia vestito ogni volta"],
+      ["LIVREA", "La divisa dei servitori di corte"],
+      ["IMPRESARIO", "Organizza i concerti e paga i musicisti"],
+      ["SINGSPIEL", "Opera in tedesco, cantata e recitata"],
+      ["FORTEPIANO", "La tastiera che suona piano e forte"],
+      ["CLARINETTO", "Fiato ad ancia semplice, nuovo nell'orchestra"],
+      ["SERENATA", "Musica leggera per le feste all'aperto"],
+      ["CLASSICISMO", "L'epoca tra il 1750 e il 1820"]
+    ],
+    ascolto: {
+      descr: "Ascolta ogni brano e rispondi: chi suona? Che genere è? Che carattere ha?",
+      criteri: [
+        { id: "chi", nome: "Chi suona o canta?", opz: ["Solo voci", "Solo strumenti", "Voci e strumenti"] },
+        { id: "gruppo", nome: "Quanti sono?", opz: ["Uno strumento da solo", "Pochi strumenti", "L'orchestra", "Un solista con l'orchestra"] },
+        { id: "genere", nome: "Che genere è?", opz: ["Opera", "Sinfonia", "Musica da camera", "Concerto", "Brano per tastiera", "Serenata o danza"] },
+        { id: "ling", nome: "In che lingua?", opz: ["Italiano", "Tedesco", "Nessuna: solo strumenti"] },
+        { id: "ritmo", nome: "Che carattere ha?", opz: ["Calmo, cantabile", "Vivace, energico"] }
+      ],
+      brani: [
+        { cap: "nachtmusik", r: { chi: [1], gruppo: [1, 2], genere: [5, 2], ling: [2], ritmo: [1] }, nota: "È una serenata per archi: si può suonare con pochi strumenti o con un'orchestra d'archi." },
+        { cap: "gluck", r: { chi: [2], gruppo: [3], genere: [0], ling: [0], ritmo: [0] } },
+        { cap: "sirmen", r: { chi: [1], gruppo: [3], genere: [3], ling: [2], ritmo: [1] } },
+        { cap: "boccherini", r: { chi: [1], gruppo: [1], genere: [2, 5], ling: [2], ritmo: [0, 1] }, nota: "È un minuetto, cioè una danza, dentro un quintetto per archi (musica da camera)." },
+        { cap: "addii", r: { chi: [1], gruppo: [2], genere: [1], ling: [2], ritmo: [0, 1] }, nota: "Comincia veloce, poi diventa lento mentre i musicisti se ne vanno." },
+        { cap: "mozart", r: { chi: [1], gruppo: [0], genere: [4], ling: [2], ritmo: [0, 1] }, nota: "Ogni variazione ha un carattere diverso." },
+        { cap: "figaro", r: { chi: [2], gruppo: [3], genere: [0], ling: [0], ritmo: [0, 1] } },
+        { cap: "sonata", r: { chi: [1], gruppo: [0], genere: [4], ling: [2], ritmo: [1] } },
+        { cap: "londra", r: { chi: [1], gruppo: [2], genere: [1], ling: [2], ritmo: [0] } },
+        { cap: "beethoven", r: { chi: [1], gruppo: [0], genere: [4], ling: [2], ritmo: [0, 1] }, nota: "Comincia lentissimo (Grave), poi corre velocissimo (Allegro)." }
+      ] },
+    riassunto: {
+      testo: "Il <b>Classicismo</b> (1750 – 1820) è il secolo dei Lumi: ragione, ordine ed equilibrio, come nell'arte classica. La musica ama una <b>melodia</b> chiara con un accompagnamento leggero. Nascono la <b>sinfonia</b>, il <b>quartetto d'archi</b> e la <b>forma sonata</b>. Il musicista, prima <b>servitore</b> a corte, prova a vivere <b>libero</b> in città, con i concerti pubblici e gli editori.",
+      immagini: [["p-nachtmusik-1.jpg", "Il secolo dei Lumi"], ["p-addii-1.jpg", "La corte"], ["p-boccherini-1.jpg", "Musica da camera"], ["p-londra-2.jpg", "Un concerto pubblico"]],
+      punti: [
+        ["La corte", ["Il musicista è un servitore in livrea (Haydn dagli Esterházy).", "<b>Sinfonia</b> per l'orchestra classica; <b>musica da camera</b> e quartetto d'archi.", "La <b>riforma dell'opera</b> (Gluck) e l'<b>opera buffa</b> (Le nozze di Figaro).", "Il <b>minuetto</b>, la danza dei nobili."]],
+        ["La città", ["<b>Concerti pubblici</b> con il biglietto; l'impresario.", "Gli <b>editori</b> vendono sonate e variazioni per chi suona in casa.", "Il <b>Singspiel</b> nei teatri popolari (Il flauto magico).", "Mozart libero a Vienna, Haydn star a Londra, il giovane Beethoven."]]
+      ] },
+    riassuntoBreve: {
+      testo: "Il <b>Classicismo</b> ama l'ordine e la chiarezza. La musica ha una <b>melodia</b> chiara. Il musicista lavora a <b>corte</b>, poi prova a vivere libero in <b>città</b>.",
+      date: [["1750", "comincia il Classicismo"], ["1756", "nasce Mozart"], ["1772", "la Sinfonia degli addii di Haydn"], ["1791", "muore Mozart"], ["1820", "arriva il Romanticismo"]],
+      parole: [["Sinfonia", "per orchestra, in quattro movimenti."], ["Quartetto", "due violini, viola, violoncello."], ["Musica da camera", "pochi strumenti, in una sala."], ["Minuetto", "danza dei nobili."], ["Forma sonata", "esposizione, sviluppo, ripresa."], ["Variazioni", "la melodia cambia vestito."], ["Concerto pubblico", "si entra con il biglietto."], ["Livrea", "la divisa dei servitori."]] },
+    raccontoBreve: {
+      nachtmusik: "Il Classicismo va dal 1750 al 1820. È il secolo dei Lumi. La musica ha una melodia chiara e un accompagnamento leggero.",
+      gluck: "A Vienna Gluck riforma l'opera: più semplice, conta la storia.",
+      sirmen: "Nascono i concerti pubblici. Maddalena Laura Sirmen suona il violino in tutta Europa.",
+      boccherini: "Nei saloni si suona musica da camera: il minuetto, il quartetto d'archi.",
+      addii: "Haydn è un musicista di corte: porta la livrea e scrive sinfonie per l'orchestra del principe.",
+      mozart: "Mozart è un bambino prodigio. Da grande lascia Salisburgo e vive libero a Vienna.",
+      figaro: "Nelle Nozze di Figaro un servo è più furbo del padrone. Il flauto magico è un Singspiel in tedesco.",
+      sonata: "La forma sonata ha tre parti: esposizione, sviluppo, ripresa.",
+      londra: "A Londra Haydn dirige concerti pubblici e diventa una star.",
+      beethoven: "Il giovane Beethoven arriva a Vienna. La sua musica è piena di contrasti." },
+    verifica: {
+      quanti: { vf: 14, collega: 6, personaggi: 5, scelte: 10, frasi: 7, aperte: 2 },
+      scelte: [
+        ["Perché si chiama Classicismo?", ["Perché prende come modello l'arte classica greca e romana", "Perché la musica è molto antica", "Perché si suona in classe"], 0],
+        ["Che cosa vuol dire «secolo dei Lumi»?", ["Un'epoca che crede nella ragione", "Un'epoca senza elettricità", "Un'epoca di guerre"], 0],
+        ["Com'è la melodia tipica del Classicismo?", ["Chiara, con un accompagnamento leggero", "Nascosta tra tante voci", "Sempre sopra un basso continuo"], 0],
+        ["Che cos'è la livrea?", ["La divisa dei servitori di corte", "Un libro di musica", "Uno strumento a fiato"], 0],
+        ["Che cosa fa un libero professionista della musica?", ["Vive di concerti, lezioni e musica venduta", "Serve un solo principe", "Suona solo in chiesa"], 0],
+        ["Che cos'è un concerto pubblico?", ["Un concerto in cui si entra con il biglietto", "Un concerto in piazza, gratis", "Un concerto per il principe"], 0],
+        ["Che cos'è una sinfonia?", ["Un grande brano per orchestra, in quattro movimenti", "Un brano per voce sola", "Una danza"], 0],
+        ["Da chi è formato il quartetto d'archi?", ["Due violini, una viola e un violoncello", "Quattro violini", "Violino, flauto, arpa e clavicembalo"], 0],
+        ["Che cos'è la musica da camera?", ["Musica per pochi strumenti, da suonare in una sala", "Musica per la camera da letto", "Musica per grande orchestra"], 0],
+        ["Che cosa voleva la riforma dell'opera?", ["Un'opera più semplice, dove conta la storia", "Più gare di bravura tra i cantanti", "Un'opera senza musica"], 0],
+        ["Che cos'è un Singspiel?", ["Un'opera in tedesco con parti cantate e recitate", "Una danza tedesca", "Un brano per pianoforte"], 0],
+        ["Quali sono le tre parti della forma sonata?", ["Esposizione, sviluppo, ripresa", "Inizio, metà, fine", "Aria, recitativo, coro"], 0],
+        ["Che cosa succede nel tema con variazioni?", ["La melodia torna trasformata ogni volta", "Le voci si rincorrono", "Si suona sempre la stessa cosa"], 0],
+        ["Perché il fortepiano si chiama così?", ["Può suonare piano e forte", "È molto forte e pesante", "Si suona solo forte"], 0]
+      ],
+      frasi: [
+        "Il Classicismo è il secolo dei [[Lumi]]: si crede nella ragione.",
+        "La musica del Classicismo ama una [[melodia]] chiara con un accompagnamento leggero.",
+        "A corte il musicista era un servitore e indossava la [[livrea]].",
+        "Nei concerti [[pubblici]] si entra pagando il biglietto.",
+        "La [[sinfonia]] è un grande brano per orchestra in quattro movimenti.",
+        "Due violini, una viola e un violoncello formano il [[quartetto]] d'archi.",
+        "Il [[minuetto]] è la danza elegante dei nobili.",
+        "Chi organizza i concerti e paga i musicisti è l'[[impresario]].",
+        "Il [[Singspiel]] è un'opera in tedesco con parti cantate e recitate.",
+        "La forma sonata ha tre parti: esposizione, [[sviluppo]] e ripresa.",
+        "Nel tema con [[variazioni]] la melodia cambia vestito ogni volta.",
+        "Il [[fortepiano]] può suonare piano e forte."
+      ],
+      frasiDistrattori: ["basso continuo", "fuga"],
+      aperte: [
+        ["Com'era la vita di un musicista a corte? E in città?", 3, "a corte: servitore in livrea, scrive ciò che il principe ordina (Haydn); in città: libero professionista, vive di concerti pubblici, lezioni, editori (Mozart a Vienna, Haydn a Londra)."],
+        ["Spiega com'è fatta la forma sonata.", 3, "esposizione (due temi), sviluppo (i temi trasformati, la musica si allontana), ripresa (tornano i temi nella tonalità di casa)."],
+        ["Che differenza c'è tra musica da camera e sinfonia?", 3, "musica da camera: pochi strumenti, in una sala (es. quartetto d'archi); sinfonia: grande brano per orchestra, in quattro movimenti."],
+        ["Perché Le nozze di Figaro sembrava un'opera «pericolosa»?", 3, "racconta un servitore più furbo del suo padrone: un'idea nuova negli anni della Rivoluzione francese; la commedia originale era vietata a Vienna."]
+      ] }
+  };
 
-  document.querySelectorAll(".scheda").forEach(b => b.addEventListener("click", () => {
-    scheda = b.dataset.scheda;
-    document.querySelectorAll(".scheda").forEach(x => x.classList.toggle("attiva", x === b));
-    disegna();
-  }));
-
-  /* ---------- banner: musica vocale / musica strumentale ---------- */
-  const banner = document.getElementById("banner");
-  function impostaMondo(m, senzaDisegno) {
-    mondo = m;
-    banner.classList.toggle("f-sx", m === "sx");
-    banner.classList.toggle("f-dx", m === "dx");
-    document.querySelectorAll(".etich-meta").forEach(e => e.classList.toggle("attiva", e.dataset.mondo === m));
-    if (!senzaDisegno) {
-      if (scheda !== "ascolti") { scheda = "ascolti"; document.querySelectorAll(".scheda").forEach(x => x.classList.toggle("attiva", x.dataset.scheda === "ascolti")); }
-      disegna();
-    }
-  }
-  banner.querySelectorAll("[data-mondo]").forEach(el => el.addEventListener("click", () => impostaMondo(mondo === el.dataset.mondo ? null : el.dataset.mondo)));
-
-  /* ---------- finestra con il video ---------- */
-  const velo = document.getElementById("velo"), schermo = document.getElementById("schermo"), finestra = document.getElementById("finestra");
-  let attuale = 0;
-  function apri(i) {
-    attuale = (i + elenco.length) % elenco.length;
-    const d = elenco[attuale];
-    finestra.style.setProperty("--accent", scheda === "ascolti" ? (d.mondo === "dx" ? "#a78bfa" : "#F99D1C") : "#5EC8D8");
-    document.getElementById("fLabel").textContent = d.label;
-    document.getElementById("fTitolo").textContent = d.titolo;
-    document.getElementById("fChi").textContent = d.chi;
-    document.getElementById("fGancio").textContent = d.gancio;
-    document.getElementById("fPunti").innerHTML = d.punti.map(p => `<li>${p}</li>`).join("");
-    document.getElementById("fSapevi").innerHTML = `<b>Lo sapevi?</b> ${d.sapevi}`;
-    document.getElementById("fFonte").innerHTML = `<a href="https://www.youtube.com/watch?v=${d.yt}" target="_blank" rel="noopener">Apri su YouTube ↗</a>`;
-    // anteprima: nessuna richiesta a YouTube finché non si preme play
-    schermo.innerHTML = "";
-    schermo.style.backgroundImage = `url('${IMG + d.img}')`;
-    const b = document.createElement("button"); b.className = "avvio"; b.type = "button";
-    b.innerHTML = `<span class="tondo">▶</span><span class="nota">Il video si carica da YouTube quando premi play</span>`;
-    b.addEventListener("click", () => {
-      schermo.innerHTML = `<iframe src="https://www.youtube-nocookie.com/embed/${d.yt}?autoplay=1&rel=0&playsinline=1" title="${d.titolo}"
-        allow="autoplay; encrypted-media; picture-in-picture; fullscreen" allowfullscreen referrerpolicy="strict-origin-when-cross-origin"></iframe>`;
-    });
-    schermo.appendChild(b);
-    velo.classList.add("aperto");
-    document.body.style.overflow = "hidden";
-    b.focus({ preventScroll: true });
-  }
-  function chiudi() { velo.classList.remove("aperto"); schermo.innerHTML = ""; document.body.style.overflow = ""; }
-  document.getElementById("chiudi").addEventListener("click", chiudi);
-  velo.addEventListener("click", e => { if (e.target === velo) chiudi(); });
-  document.getElementById("prec").addEventListener("click", () => apri(attuale - 1));
-  document.getElementById("succ").addEventListener("click", () => apri(attuale + 1));
-  document.addEventListener("keydown", e => {
-    if (!velo.classList.contains("aperto")) return;
-    if (e.key === "Escape") chiudi();
-    if (e.key === "ArrowRight") apri(attuale + 1);
-    if (e.key === "ArrowLeft") apri(attuale - 1);
-  });
-
-  /* ---------- La forma sonata ---------- */
-  const oSchermo = document.getElementById("oSchermo"), oCorpo = document.getElementById("oCorpo");
-  document.getElementById("oLink").href = "https://www.youtube.com/watch?v=" + SPECIALE.yt;
-  function preparaSpeciale() {
-    oSchermo.innerHTML = "";
-    oSchermo.style.backgroundImage = `url('${IMG + SPECIALE.img}')`;
-    const b = document.createElement("button"); b.className = "avvio"; b.type = "button";
-    b.innerHTML = `<span class="tondo">▶</span><span class="nota">Il video si carica da YouTube quando premi play</span>`;
-    b.addEventListener("click", () => {
-      oSchermo.innerHTML = `<iframe src="https://www.youtube-nocookie.com/embed/${SPECIALE.yt}?autoplay=1&rel=0&playsinline=1" title="${SPECIALE.nome}"
-        allow="autoplay; encrypted-media; picture-in-picture; fullscreen" allowfullscreen referrerpolicy="strict-origin-when-cross-origin"></iframe>`;
-    });
-    oSchermo.appendChild(b);
-  }
-  function mostraSpeciale(parte) {
-    document.querySelectorAll(".o-t").forEach(t => t.classList.toggle("attiva", t.dataset.o === parte));
-    if (parte === "cosa") oCorpo.innerHTML = "<ul>" + SPECIALE.cosa.map(([i, t]) => `<li data-i="${i}">${t}</li>`).join("") + "</ul>";
-    if (parte === "ascolto") oCorpo.innerHTML = SPECIALE.ascolto.map(([a, t]) => `<div class="atto"><b>${a}</b><span>${t}</span></div>`).join("");
-    if (parte === "curiosita") oCorpo.innerHTML = SPECIALE.curiosita.map(t => `<div class="cur">${t}</div>`).join("");
-    oCorpo.scrollTop = 0;
-  }
-  document.querySelectorAll(".o-t").forEach(t => t.addEventListener("click", () => mostraSpeciale(t.dataset.o)));
-  mostraSpeciale("cosa");
-
-  /* ---------- crediti ---------- */
-  document.getElementById("listaCrediti").innerHTML = CREDITI_IMG.map(c => `<li>${c}</li>`).join("") +
-    [...ASCOLTI, ...STRUMENTI].map(d => `<li>${d.titolo} (${d.chi}): video di <a href="https://www.youtube.com/watch?v=${d.yt}" target="_blank" rel="noopener">${d.canale}</a> su YouTube</li>`).join("") +
-    `<li>Sonata in do maggiore K 545, I movimento (W. A. Mozart): video di <a href="https://www.youtube.com/watch?v=${SPECIALE.yt}" target="_blank" rel="noopener">${SPECIALE.canale}</a> su YouTube</li>`;
-
-  disegna();
+  /* tutto il resto (indice, capitoli, strumenti, mappa, esercizi, schede) lo fanno storia-percorso.js e storia-attivita.js */
+  StoriaPercorso.avvia({ epoca: "Il Classicismo", date: "1750 – 1820", img: IMG, capitoli: CAPITOLI, linea: LINEA,
+    strumenti: STRUMENTI, suonare: SUONARE, crediti: [...CREDITI_IMG, ...CREDITI_PAGINE], attivita: ATTIVITA,
+    schedeCapitolo: { sonata: "sonata" },
+    prossima: { nome: "Romanticismo", articolo: "il", url: "storia-romanticismo.html" } });
 })();
 </script>
+<script src="adatta-schermo.js" data-schermate="#cTelaio, #aTelaio, #contenuto"></script>
 </body>
 </html>
