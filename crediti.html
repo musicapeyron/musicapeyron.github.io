@@ -32,6 +32,17 @@
   .sotto { margin: 6px 0 4px; padding-left: 20px; }
   .sotto li { margin: 5px 0; }
   .note-colori { display: inline-flex; flex-wrap: wrap; gap: 4px; margin: 2px 4px; vertical-align: middle; }
+  .contributori { list-style: none; padding: 0; margin: 12px 0 8px; display: grid; gap: 10px; }
+  .contributore { display: flex; gap: 14px; align-items: center; margin: 0; padding: 12px 14px; border-radius: 14px;
+    background: rgba(15,23,42,0.55); border: 1px solid rgba(255,255,255,0.1); }
+  .iniziali { flex: none; width: 48px; height: 48px; border-radius: 50%; display: grid; place-items: center; background: var(--c); color: #fff;
+    font: 800 17px 'Manrope', sans-serif; letter-spacing: .02em; box-shadow: inset 0 -3px 0 rgba(0,0,0,.2); }
+  .contributore .nome { font: 800 16.5px 'Manrope', sans-serif; color: #EAF2FF; margin-bottom: 6px; }
+  .lavori { display: flex; flex-wrap: wrap; gap: 6px; }
+  .lavoro { font-size: 13.5px; line-height: 1.3; padding: 4px 11px; border-radius: 999px; background: rgba(125,211,252,0.12);
+    border: 1px solid rgba(125,211,252,0.3); color: #DCE6F5; text-decoration: none; }
+  a.lavoro:hover { background: rgba(125,211,252,0.24); color: #fff; }
+  @media (max-width: 560px) { .contributore { align-items: flex-start; gap: 12px; } .iniziali { width: 40px; height: 40px; font-size: 15px; } .lavoro { border-radius: 10px; } }
   .nota-col { display: inline-block; min-width: 34px; text-align: center; font: 800 13px 'Manrope', sans-serif; padding: 3px 7px; border-radius: 999px; box-shadow: inset 0 -2px 0 rgba(0,0,0,.18); }
 </style>
 <!-- per i motori di ricerca e la condivisione -->
@@ -93,7 +104,29 @@
 
 <section id="contributi">
   <h2>Hanno contribuito</h2>
-  <p>Questa sezione aspetta i primi colleghi!</p>
+  <ul class="contributori">
+    <li class="contributore">
+      <span class="iniziali" style="--c:#E21C48" aria-hidden="true">AC</span>
+      <div>
+        <div class="nome">Arianna Cibonfa</div>
+        <div class="lavori">
+          <a class="lavoro" href="brani-propedeutici.html">Revisione dei Brani propedeutici</a>
+          <a class="lavoro" href="solfeggio-cantato.html">Revisione del Solfeggio cantato</a>
+        </div>
+      </div>
+    </li>
+    <li class="contributore">
+      <span class="iniziali" style="--c:#009C95" aria-hidden="true">RS</span>
+      <div>
+        <div class="nome">Roberto Stilo</div>
+        <div class="lavori">
+          <a class="lavoro" href="primi-brani.html">Revisione dei Primi brani, prima parte</a>
+          <a class="lavoro" href="primi-brani-2.html">Revisione dei Primi brani, seconda parte</a>
+          <span class="lavoro">Materiale didattico strumentale</span>
+        </div>
+      </div>
+    </li>
+  </ul>
 </section>
 
 <section id="chi-cura">
