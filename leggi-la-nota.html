@@ -332,7 +332,7 @@ h1 {
 .answer.sol { background: #009C95; }
 .answer.la { background: #5E50A1; }
 .answer.si { background: #CF3E96; }
-/* opzione "Colori" spenta: pulsanti delle note in bianco e nero */
+/* opzione "Colori pulsanti" spenta: pulsanti delle note in bianco e nero */
 body.senza-colori .answer.do, body.senza-colori .answer.re, body.senza-colori .answer.mi,
 body.senza-colori .answer.fa, body.senza-colori .answer.sol, body.senza-colori .answer.la,
 body.senza-colori .answer.si {
@@ -340,6 +340,15 @@ body.senza-colori .answer.si {
     box-shadow: inset 0 0 0 2px #111827, 0 5px 0 rgba(0,0,0,0.35), 0 8px 16px rgba(0,0,0,0.28);
 }
 body.senza-colori .answer::after { display: none; }
+/* opzione "Colori note": la testa della nota sul pentagramma prende il colore del suo nome */
+body.colori-note .vf-notehead path { stroke: #1F2430; stroke-width: 1.2px; }
+body.colori-note .vf-notehead[data-nota="do"] path { fill: #E21C48; }
+body.colori-note .vf-notehead[data-nota="re"] path { fill: #F99D1C; }
+body.colori-note .vf-notehead[data-nota="mi"] path { fill: #FFF428; }
+body.colori-note .vf-notehead[data-nota="fa"] path { fill: #BED958; }
+body.colori-note .vf-notehead[data-nota="sol"] path { fill: #009C95; }
+body.colori-note .vf-notehead[data-nota="la"] path { fill: #5E50A1; }
+body.colori-note .vf-notehead[data-nota="si"] path { fill: #CF3E96; }
 
 .message { min-height: 34px; font-size: 1.1rem; font-weight: 700; letter-spacing: 0.1px; }
 .correct-message { color: #86efac; }
@@ -1010,8 +1019,12 @@ body.mode-tutorial #trophyButton {
         <input type="checkbox" id="showSchemaToggle">
     </label>
     <label class="options-toggle-row">
-        <span>🎨 Colori</span>
+        <span>🎨 Colori pulsanti</span>
         <input type="checkbox" id="coloriToggle" checked>
+    </label>
+    <label class="options-toggle-row">
+        <span>🎵 Colori note</span>
+        <input type="checkbox" id="coloriNoteToggle">
     </label>
 </div>
 
@@ -1482,6 +1495,17 @@ function drawNote(vexKey, clefToUse) {
 
     new Formatter().joinVoices([voice]).format([voice], 260);
     voice.draw(context, stave);
+    segnaNomeTeste(staffInner, [vexKey]);
+}
+
+/* scrive sulla testa di ogni nota disegnata il suo nome (do, re…),
+   così l'opzione "Colori note" la colora solo con il CSS */
+const nomeDaLettera = { c: "do", d: "re", e: "mi", f: "fa", g: "sol", a: "la", b: "si" };
+function segnaNomeTeste(contenitore, chiavi) {
+    contenitore.querySelectorAll(".vf-notehead").forEach((testa, i) => {
+        const chiave = chiavi[i];
+        if (chiave) testa.setAttribute("data-nota", nomeDaLettera[chiave[0].toLowerCase()] || "");
+    });
 }
 
 /*
@@ -1627,6 +1651,7 @@ function drawReferenceStaff(clefToUse) {
 
     new Formatter().joinVoices([voice]).format([voice], noteAreaWidth);
     voice.draw(context, stave);
+    segnaNomeTeste(referenceInner, referenceNotes.map(([key]) => key));
 
     /*
        Il nome di ogni nota viene disegnato appena sotto la
@@ -2226,7 +2251,7 @@ document.addEventListener("click", e => {
    automaticamente più a sinistra perché lo schema fa
    parte della stessa riga centrata.
 */
-/* opzione "Colori": accesa di base; la scelta si ricorda su questo dispositivo */
+/* opzione "Colori pulsanti": accesa di base; la scelta si ricorda su questo dispositivo */
 const coloriToggle = document.getElementById("coloriToggle");
 function applicaColori(acceso) {
     document.body.classList.toggle("senza-colori", !acceso);
@@ -2236,6 +2261,18 @@ try { applicaColori(localStorage.getItem("leggiNota.colori") !== "0"); } catch (
 coloriToggle.addEventListener("change", () => {
     applicaColori(coloriToggle.checked);
     try { localStorage.setItem("leggiNota.colori", coloriToggle.checked ? "1" : "0"); } catch (e) {}
+});
+
+/* opzione "Colori note": spenta di base; la scelta si ricorda su questo dispositivo */
+const coloriNoteToggle = document.getElementById("coloriNoteToggle");
+function applicaColoriNote(acceso) {
+    document.body.classList.toggle("colori-note", acceso);
+    coloriNoteToggle.checked = acceso;
+}
+try { applicaColoriNote(localStorage.getItem("leggiNota.coloriNote") === "1"); } catch (e) { applicaColoriNote(false); }
+coloriNoteToggle.addEventListener("change", () => {
+    applicaColoriNote(coloriNoteToggle.checked);
+    try { localStorage.setItem("leggiNota.coloriNote", coloriNoteToggle.checked ? "1" : "0"); } catch (e) {}
 });
 
 showSchemaToggle.addEventListener("change", () => {
