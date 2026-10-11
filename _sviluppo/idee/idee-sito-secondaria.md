@@ -62,29 +62,32 @@ Raccolta di idee per nuovi giochi, app e sezioni. Ogni idea: concetto, come funz
 
 ---
 
-## 3. Scrittura musicale con il digitale (versione medie)
+## 3. Componi a celle (versione medie)
 
 **Destinatari:** secondaria di primo grado. Esiste una versione distinta per il liceo musicale, vedi `idee-sito-liceo-musicale.md`.
 
-**Concetto:** un piccolo editor di spartiti nel sito per scrivere musica al computer o alla LIM e sentirla subito suonare.
+**Concetto:** un semplice programma per comporre musica integrato nel sito, basato su una **griglia di celle**: ogni riga è un suono, ogni colonna un momento nel tempo. Si clicca una cella per accenderla e la musica suona in loop.
 
 **Come funziona:**
-- Un solo rigo in chiave di violino; si sceglie la figura (barra in basso) e si clicca sul rigo per posare la nota; pause, punto, legatura, alterazioni con pochi pulsanti grandi.
-- Riproduzione immediata di ciò che si è scritto (pianoforte), con la nota che si illumina mentre suona.
-- Controllo automatico delle battute: segnala se una battuta è troppo piena o incompleta.
-- Esercizi guidati: copia una melodia dal modello, completa la battuta, scrivi il ritmo che senti, inventa 4 battute che finiscono sul do.
-- Nomi delle note colorati facoltativi (colori del sito), da spegnere quando si è più sicuri.
-- Il lavoro si **scarica come file** o si stampa (PDF); nessun account, niente salvato online.
+- Griglia della melodia: 8 righe (do re mi fa sol la si do) con i colori delle note del sito, 16 colonne (4 battute da 4).
+- Sotto, righe di percussioni (cassa, rullante, piatto, battito di mani) e una riga di basso con pochi suoni (do, fa, sol).
+- Barra che scorre sulla griglia durante la riproduzione; tempo regolabile; tasto play/stop grande.
+- Celle lunghe: trascinando si allunga la nota (introduce le durate).
+- Scelta del timbro (pianoforte, flauto, marimba…).
+- Vista "spartito": la griglia si trasforma nelle note sul pentagramma, per collegare celle e notazione.
+- Sfide facoltative: componi una melodia che finisce sul do; crea un ostinato di 1 battuta; fai domanda e risposta.
+- Il lavoro si **scarica come file** e si può ricaricare; nessun account, niente salvato online.
 
 **Punti di forza didattici:**
-- Scrivere e sentire subito: il ragazzo verifica a orecchio quello che ha scritto e corregge da solo.
-- Il controllo delle battute rende concreto il valore delle figure (prosegue il "Costruttore di battute").
-- Primo passo verso la composizione: anche chi non suona uno strumento può inventare e far ascoltare una melodia.
-- Competenza digitale concreta, legata alla musica.
+- Chiunque compone subito, anche senza saper leggere la musica o suonare uno strumento: si vede e si sente.
+- La griglia rende visibili altezza (in verticale) e tempo (in orizzontale): ottima base per capire il pentagramma.
+- Si sperimentano ostinato, melodia e accompagnamento, ripetizione e variazione, forma domanda-risposta.
+- Lavoro creativo da fare in coppia o alla LIM con tutta la classe.
 
 **Note di sviluppo:**
 - Una sola schermata su PC e LIM, senza scorrere.
 - Nessun microfono/fotocamera, nessuna raccolta dati; salvataggi solo come file scaricato o in `localStorage`.
-- Si può costruire sul motore degli spartiti (VexFlow).
+- Audio generato nel browser (Web Audio), AudioContext in pausa quando tace (regole del sito sul risparmio energetico).
+- La vista spartito può usare il motore degli spartiti (VexFlow).
 
 ---

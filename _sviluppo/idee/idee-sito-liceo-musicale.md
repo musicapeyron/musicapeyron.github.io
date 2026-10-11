@@ -4,29 +4,31 @@ Raccolta di idee per nuovi giochi, app e sezioni. Ogni idea: concetto, come funz
 
 ---
 
-## 1. Scrittura musicale con il digitale (versione liceo)
+## 1. Componi a celle (versione liceo)
 
-**Destinatari:** liceo musicale. Ben distinta dalla versione delle medie (vedi `idee-sito-secondaria.md`): qui si scrive musica a più voci e si impara a lavorare come con un vero programma di notazione.
+**Destinatari:** liceo musicale. Ben distinta dalla versione delle medie (vedi `idee-sito-secondaria.md`): stessa idea della griglia, ma come un vero piccolo programma di composizione a più tracce.
 
-**Concetto:** editor e percorso per la scrittura digitale di partiture, dalla melodia accompagnata all'armonia a quattro voci, con regole di impaginazione professionale.
+**Concetto:** sequencer a celle ("piano roll") integrato nel sito per comporre, arrangiare e sperimentare con armonia, scale e forma.
 
 **Come funziona:**
-- Sistema di pianoforte (due righi) o coro a quattro voci; chiavi di violino e basso, armature, tempi composti, terzine, accordi.
-- Inserimento rapido anche da tastiera del computer (lettere per le note, numeri per le durate), come nei programmi professionali.
-- Esercizi di armonia: basso dato o soprano dato da armonizzare, con segnalazione di quinte e ottave parallele, estensioni delle voci, incroci, risoluzione della sensibile.
-- Riproduzione delle singole voci o di tutte insieme, a tempo regolabile.
-- Regole di scrittura corretta di una partitura: allineamento verticale, travature, posizione di gambi e alterazioni nelle voci multiple, legature, dinamiche e agogica.
-- Esportazione in PDF e in **MusicXML**, per continuare il lavoro in programmi gratuiti di notazione (es. MuseScore); scheda-guida su come aprirli lì.
+- Griglia cromatica (tutte le 12 note, più ottave) con tastiera di pianoforte a lato; celle di durata variabile, suddivisioni anche in terzine.
+- Più tracce: melodia, accordi, basso, percussioni, ognuna con il suo timbro e volume.
+- Scelta di tonalità e scala o modo (maggiore, minore, modi antichi, pentatonica, blues): le note della scala evidenziate, a scelta "bloccate".
+- Inserimento rapido di accordi per grado (I, IV, V7, ii…) e di giri armonici, con il basso che si adegua.
+- Struttura a sezioni (A, B, ritornello) da copiare e ripetere per costruire la forma.
+- Vista "partitura" sincronizzata con la griglia.
+- Esportazione in **MIDI** e **MusicXML** per continuare in programmi gratuiti (es. MuseScore); salvataggio del progetto come file.
 - Nessun account, niente salvato online.
 
 **Punti di forza didattici:**
-- Unisce teoria, armonia e scrittura: l'errore armonico si vede e si sente.
-- Prepara all'uso dei programmi di notazione professionali usati in conservatorio e nel lavoro musicale.
-- Utile per compiti di armonia, composizione e arrangiamento, con verifica immediata all'ascolto.
+- Si sente subito l'effetto di scelte armoniche e modali: la teoria diventa esperimento.
+- Lavoro su arrangiamento e forma con più tracce, come in uno studio di registrazione.
+- Ponte tra composizione intuitiva e notazione, e verso i programmi professionali (sequencer e notazione).
+- Utile per compiti di composizione, tecnologie musicali e laboratorio.
 
 **Note di sviluppo:**
 - Una sola schermata su PC e LIM, senza scorrere.
 - Nessun microfono/fotocamera, nessuna raccolta dati; salvataggi solo come file scaricato o in `localStorage`.
-- Stesso motore della versione medie (VexFlow), con più funzioni.
+- Stesso motore della versione medie (Web Audio + VexFlow), con più funzioni.
 
 ---
