@@ -1,5 +1,5 @@
 {
- "titolo": "Leggi la nota: tre modi, 17 livelli, due chiavi, gli aiuti e la verifica con il voto (ottobre 2026)",
+ "titolo": "Leggi la nota: tre modi, 17 livelli, due chiavi, gli aiuti e la verifica (ottobre 2026)",
  "clip": {
   "leggi_tel": {
    "pagina": "leggi-la-nota.html",
@@ -162,19 +162,7 @@
      "attendi": 400
     },
     {
-     "tocca": "#finishButton"
-    },
-    {
-     "attendi": 900
-    },
-    {
-     "tocca": "#confirmFinish"
-    },
-    {
-     "segna": "finale"
-    },
-    {
-     "attendi": 4500
+     "attendi": 800
     }
    ]
   }
@@ -223,13 +211,7 @@
   {
    "name": "lab_verifica",
    "hash": "t=label&c=si&l=La%20verifica%2C%20anche%20mista&s=Sulla%20LIM%20della%20tua%20classe&sy=392",
-   "dur": 3.2,
-   "alpha": true
-  },
-  {
-   "name": "lab_voto",
-   "hash": "t=label&c=fa&l=E%20alla%20fine%2C%20il%20voto&s=Sulla%20LIM%20della%20tua%20classe&sy=392",
-   "dur": 2.8,
+   "dur": 5.1,
    "alpha": true
   },
   {
@@ -255,11 +237,11 @@
   {
    "tipo": "schermata",
    "grafica": "card1",
-   "telefoni": [
-    "index",
-    "storia",
-    "brani"
-   ]
+   "dispositivi": {
+    "lim": "storia",
+    "tablet": "brani",
+    "telefono": "index"
+   }
   },
   {
    "tipo": "intera",
@@ -280,11 +262,11 @@
   {
    "tipo": "schermata",
    "grafica": "card2",
-   "telefoni": [
-    "schemi",
-    "scale",
-    "bona"
-   ]
+   "dispositivi": {
+    "lim": "scale",
+    "tablet": "bona",
+    "telefono": "schemi"
+   }
   },
   {
    "tipo": "intera",
@@ -298,21 +280,9 @@
    "tipo": "incorniciata",
    "clip": "leggi_lim",
    "da": "via-0.9",
-   "a": "nota_2+0.5",
+   "a": "nota_5+0.6",
    "grafica": "lab_verifica",
-   "vel": 1.5,
-   "sfondo": "classe",
-   "x": 130,
-   "y": 480,
-   "w": 820,
-   "h": 461
-  },
-  {
-   "tipo": "incorniciata",
-   "clip": "leggi_lim",
-   "da": "finale-0.3",
-   "a": "finale+2.5",
-   "grafica": "lab_voto",
+   "vel": 1.6,
    "sfondo": "classe",
    "x": 130,
    "y": 480,
@@ -322,11 +292,11 @@
   {
    "tipo": "schermata",
    "grafica": "card3",
-   "telefoni": [
-    "barocco",
-    "memory",
-    "suono"
-   ]
+   "dispositivi": {
+    "lim": "memory",
+    "tablet": "suono",
+    "telefono": "barocco"
+   }
   },
   {
    "tipo": "schermata",
@@ -335,7 +305,7 @@
  ],
  "copertina": {
   "titolo": "Leggi la nota|gratis",
-  "sottotitolo": "17 livelli, aiuti e verifica col voto",
+  "sottotitolo": "17 livelli, aiuti e verifica",
   "colore": "sol",
   "clip": "leggi_tel",
   "istante": "schema_1+0.5",
@@ -361,7 +331,7 @@
   }
  },
  "didascalia": {
-  "testo": "Leggere le note sul pentagramma, gratis 🎼 Leggi la nota è un gioco per la LIM, il PC e il telefono.\n🎓 Tutorial passo passo · 📘 Allenamento in 17 livelli, fino ai tagli addizionali · 📝 Verifica con il voto.\nChiave di violino, chiave di basso o mista. E per chi parte da zero, gli aiuti: lo schema delle note e i colori.\nNiente registrazione, niente login, nessun dato raccolto.\n\n📩 Hai un collega di musica? Mandaglielo!",
+  "testo": "Leggere le note sul pentagramma, gratis 🎼 Leggi la nota è un gioco per la LIM, il PC e il telefono.\n🎓 Tutorial passo passo · 📘 Allenamento in 17 livelli, fino ai tagli addizionali · 📝 Verifica, anche in chiave mista.\nChiave di violino, chiave di basso o mista. E per chi parte da zero, gli aiuti: lo schema delle note e i colori.\nNiente registrazione, niente login, nessun dato raccolto.\n\n📩 Hai un collega di musica? Mandaglielo!",
   "hashtag": [
    "educazionemusicale",
    "solfeggio",
@@ -369,6 +339,6 @@
    "docenti",
    "LIM"
   ],
-  "alt": "Il gioco Leggi la nota di musicascuole.it: su un telefono, note sul pentagramma con pulsanti colorati, livelli e schema dei nomi delle note; su una LIM in un'aula disegnata con i banchi, la verifica e il voto finale."
+  "alt": "Il gioco Leggi la nota di musicascuole.it: su un telefono, note sul pentagramma con pulsanti colorati, livelli e schema dei nomi delle note; su una LIM in un'aula disegnata con i banchi, la verifica."
  }
 }

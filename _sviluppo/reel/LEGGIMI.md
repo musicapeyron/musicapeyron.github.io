@@ -81,6 +81,8 @@ Ogni reel è un solo file. Per uno nuovo si copia **`reels/_modello.json`** (un 
 - Riprese **come da un vero telefono** (non solo la misura dello schermo): il sito è fatto per PC, telefono e LIM. Formato **misto**: quasi tutto da telefono, più una scena sulla LIM incorniciata.
 - Niente volti né voci di alunni; **nei disegni nessuna persona** (l'aula ha solo banchi e sedie).
 - **GRATIS sempre all'inizio**, in grande, nel testo d'apertura.
+- **Mai citare i voti** (né nei testi, né nella didascalia, né nelle schermate dei giochi: la registrazione si
+  ferma prima delle schermate finali che mostrano un voto).
 - Nelle **schermate colorate** di testo: mini-telefoni che scorrono pagine diverse del sito (varie ogni volta).
 - La **LIM dentro un'aula disegnata**, per far capire le dimensioni.
 - Nei reel si mettono in risalto **i vari aspetti del gioco**, uno per pezzo (livelli, aiuti, chiavi, verifica…).
@@ -133,7 +135,7 @@ Il primo fatto applicando `GUIDA-REEL.md`.
 | 4 | "Gli aiuti: schema e colori": pannello Opzioni, poi lo schema con i nomi colorati | 3,3 s |
 | 5 | re: "Tutorial, allenamento e verifica." + telefoni schemi, scale, Bona | 2,4 s |
 | 6 | "Anche in chiave di basso" | 2,8 s |
-| 7–8 | LIM nell'aula: "La verifica, anche mista", poi "E alla fine, il voto" (9,5) | 6 s |
+| 7 | LIM nell'aula: "La verifica, anche mista" (la verifica in corso, senza la schermata finale) | 5,1 s |
 | 9 | la: "Mandalo a un collega di musica." + telefoni barocco, memory, suono | 2,6 s |
 | 10 | Chiusura con logo e mail | 3,2 s |
 

@@ -41,6 +41,7 @@ Cosa vuol dire per noi:
 | **Copertina** | stessa grafica per tutti (titolo + fotogramma), tutto nel riquadro 3:4 centrale | nella griglia del profilo i reel si vedono tagliati a 3:4; una griglia ordinata fa capire subito cos'è il profilo |
 | **Privacy** | niente volti né voci di alunni, niente nomi; nei disegni nessuna persona | regola del sito; e un docente lo condivide più volentieri |
 | **GRATIS** | sempre nell'apertura, in grande; poi una schermata "Gratis. Niente login." | è la prima cosa che un docente vuole sapere |
+| **Niente voti** | mai citati: né nei testi, né in didascalia, né sullo schermo dei giochi | scelta di Cristiano |
 | **Il resto del sito** | mini-telefoni che scorrono altre pagine sotto le schermate colorate | fa capire in un attimo quanto c'è, senza cambiare argomento |
 
 ### Tipi di apertura che funzionano (da alternare)

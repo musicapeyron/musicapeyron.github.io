@@ -107,19 +107,91 @@ async def tap(page, locator):
         await page.mouse.move(x, y); await page.mouse.click(x, y)
 
 
-async def telefono(p, pagina, orizzontale=False):
+# Audio del gioco: ogni AudioContext della pagina manda il suo suono anche a un registratore
+# (MediaRecorder), che parte quando il contesto nasce. L'istante di partenza (in ms epoch) serve
+# a mettere il suono in sincrono con i fotogrammi.
+AUDIO_JS = """
+(() => {
+  if (!window.AudioNode || window.__reelAudio) return; window.__reelAudio = [];
+  const conn = AudioNode.prototype.connect;
+  AudioNode.prototype.connect = function (dest, ...resto) {
+    const r = conn.call(this, dest, ...resto);
+    try {
+      if (dest instanceof AudioDestinationNode) {
+        const ctx = this.context;
+        if (!ctx.__reel) {
+          const out = ctx.createMediaStreamDestination(), rec = new MediaRecorder(out.stream), pezzi = [];
+          rec.ondataavailable = e => pezzi.push(e.data);
+          ctx.__reel = {out, rec, pezzi, inizio: performance.timeOrigin + performance.now()};
+          rec.start(); window.__reelAudio.push(ctx.__reel);
+        }
+        conn.call(this, ctx.__reel.out);
+      }
+    } catch (e) {}
+    return r;
+  };
+})();
+"""
+
+RACCOGLI_AUDIO = """async () => Promise.all((window.__reelAudio || []).map(a => new Promise(ok => {
+  a.rec.onstop = () => { const fr = new FileReader();
+    fr.onload = () => ok({inizio: a.inizio, dati: fr.result.split(',')[1]});
+    fr.readAsDataURL(new Blob(a.pezzi, {type: a.rec.mimeType})); };
+  a.rec.stop(); })))"""
+
+
+async def audio_gioco(pg, r):
+    """Raccoglie il suono registrato nella pagina e scrive lavoro/clip/<clip>.wav, in sincrono col video."""
+    tracce = await pg.evaluate(RACCOGLI_AUDIO)
+    return tracce
+
+
+def scrivi_audio(r, tracce):
+    if not tracce: print("  (nessun suono registrato)"); return
+    t0 = r.frames[0][1]
+    ins, filtri = [], []
+    for i, t in enumerate(tracce):
+        f = r.dir.parent / f"{r.dir.name}_audio{i}.webm"; f.write_bytes(base64.b64decode(t["dati"]))
+        rit = max(0, int(round((t["inizio"] / 1000 - t0) * 1000)))
+        ins += ["-i", str(f)]; filtri.append(f"[{i}:a]adelay={rit}:all=1[a{i}]")
+    mix = "".join(f"[a{i}]" for i in range(len(tracce)))
+    subprocess.run(["ffmpeg", "-v", "error", "-y", *ins, "-filter_complex",
+                    ";".join(filtri) + f";{mix}amix=inputs={len(tracce)}:normalize=0[o]", "-map", "[o]",
+                    "-ar", "48000", "-ac", "2", str(r.dir.with_suffix(".wav"))], check=True)
+    print(f"  {r.dir.name}: audio del gioco -> {r.dir.name}.wav")
+
+
+async def telefono(p, pagina, orizzontale=False, audio=False):
     b = await p.chromium.launch(args=["--autoplay-policy=no-user-gesture-required"])
     vp = {"width": 732, "height": 412} if orizzontale else {"width": 412, "height": 732}
     ctx = await b.new_context(viewport=vp, screen=vp, device_scale_factor=2.625,
                               is_mobile=True, has_touch=True, user_agent=PIXEL_UA)
+    if audio: await ctx.add_init_script(AUDIO_JS)
     pg = await ctx.new_page(); pg._touch = True
     await pg.goto(U + pagina); await pg.wait_for_timeout(1500); await pg.evaluate(TAP_JS)
     return b, pg, ((1920, 1080) if orizzontale else (1080, 1920))
 
 
-async def lim(p, pagina, w=1920, h=1080, dsf=1):
+TABLET_UA = ("Mozilla/5.0 (Linux; Android 14; Pixel Tablet) AppleWebKit/537.36 "
+             "(KHTML, like Gecko) Chrome/141.0.0.0 Safari/537.36")
+
+
+async def tablet(p, pagina, audio=False):
+    """Tablet in verticale (768x1024, tocco, browser da tablet) -> 1080x1440."""
+    b = await p.chromium.launch(args=["--autoplay-policy=no-user-gesture-required"])
+    vp = {"width": 768, "height": 1024}
+    ctx = await b.new_context(viewport=vp, screen=vp, device_scale_factor=1.40625,
+                              is_mobile=True, has_touch=True, user_agent=TABLET_UA)
+    if audio: await ctx.add_init_script(AUDIO_JS)
+    pg = await ctx.new_page(); pg._touch = True
+    await pg.goto(U + pagina); await pg.wait_for_timeout(1500); await pg.evaluate(TAP_JS)
+    return b, pg, (1080, 1440)
+
+
+async def lim(p, pagina, w=1920, h=1080, dsf=1, audio=False):
     b = await p.chromium.launch(args=["--autoplay-policy=no-user-gesture-required"])
     ctx = await b.new_context(viewport={"width": w, "height": h}, device_scale_factor=dsf)
+    if audio: await ctx.add_init_script(AUDIO_JS)
     pg = await ctx.new_page(); await pg.goto(U + pagina); await pg.wait_for_timeout(1200)
     await pg.evaluate(TAP_JS)
     return b, pg, (int(w * dsf), int(h * dsf))
@@ -141,6 +213,7 @@ RISPOSTE = {
     "leggi-la-nota": "answering && !finished && document.querySelector(`.answers button[data-note=\"${currentNote.name}\"]`)",
     "figure-ritmiche": "document.querySelector(`.answers button[data-key=\"${currentQuestion.key}\"]`)",
     "tastierapianoforte": "document.querySelector(`button.answer[data-note=\"${expectedAnswerForKeyId(currentKey, gameMode)}\"]`)",
+    "acuto-o-grave": "answering && !finished && !isPlaying && document.querySelector(`.answers button[data-choice=\"${currentQuestion.correctChoice}\"]`)",
     "test-ingresso": """(() => { const k = GAME_ORDER[currentGameIndex];
         if (k==='acuto') return acutoAnswering && document.querySelector('.answers .answer.'+acutoQuestion.correctChoice);
         if (k==='tastiera') return tastieraAnswering && document.querySelector('.answers .answer.'+TASTIERA_CLASSES[tastieraCurrentKey]);
@@ -209,21 +282,26 @@ async def esegui(pg, r, passi):
 
 
 async def clip_a_passi(nome, d):
-    """d: {"pagina": "leggi-la-nota.html", "dispositivo": "telefono" | "telefono-orizzontale" | "lim",
+    """d: {"pagina": "leggi-la-nota.html", "dispositivo": "telefono" | "telefono-orizzontale" | "tablet" | "lim",
            "schermo": [1280, 800], "densita": 1.5   (solo per la LIM, facoltativi),
-           "prima": [passi prima di registrare], "passi": [passi registrati]}"""
+           "prima": [passi prima di registrare], "passi": [passi registrati],
+           "audio": true   (registra anche il suono del gioco -> lavoro/clip/<clip>.wav)}"""
     async with async_playwright() as p:
-        disp = d.get("dispositivo", "telefono")
+        disp, au = d.get("dispositivo", "telefono"), d.get("audio", False)
         if disp == "lim":
             w, h = d.get("schermo", [1920, 1080])
-            b, pg, (W, H) = await lim(p, d["pagina"], w, h, d.get("densita", 1))
+            b, pg, (W, H) = await lim(p, d["pagina"], w, h, d.get("densita", 1), audio=au)
+        elif disp == "tablet":
+            b, pg, (W, H) = await tablet(p, d["pagina"], audio=au)
         else:
-            b, pg, (W, H) = await telefono(p, d["pagina"], orizzontale=(disp == "telefono-orizzontale"))
+            b, pg, (W, H) = await telefono(p, d["pagina"], orizzontale=(disp == "telefono-orizzontale"), audio=au)
         await esegui(pg, None, d.get("prima", []))
         await pg.evaluate(TAP_JS)
         r = Rec(pg, nome, W, H); await r.start(); await pg.wait_for_timeout(400)
         await esegui(pg, r, d["passi"])
+        tracce = await audio_gioco(pg, r) if au else None
         await r.stop(); await b.close()
+        if au: scrivi_audio(r, tracce)
 
 
 # ---------------- clip scritte come funzioni ----------------

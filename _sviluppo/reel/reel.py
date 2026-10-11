@@ -30,6 +30,19 @@ L = BASE / "lavoro"
 FONT = SITO / "fonts" / "inter.woff"
 CHIUSURA = "👉 Il link è nella bio: musicascuole.it"
 MAX_HASHTAG = 5   # limite di Instagram da dicembre 2025
+VIETATE = r"\bvot[oi]\b"   # scelta di Cristiano: nei reel non si citano mai i voti
+
+
+def controlla_testi(d):
+    """Ferma il reel se testi, copertina o didascalia citano parole vietate (vedi VIETATE)."""
+    import re
+    from urllib.parse import unquote
+    testi = [unquote(x["hash"]) for x in d["schermate"]]
+    testi += [unquote(x["hash"]) for v in d.get("varianti", {}).values() for x in v.get("schermate", [])]
+    testi += [json.dumps(d.get("copertina", {}), ensure_ascii=False), json.dumps(d.get("didascalia", {}), ensure_ascii=False)]
+    trovati = [t for t in testi if re.search(VIETATE, t, re.I)]
+    if trovati:
+        raise SystemExit("Nei reel non si citano i voti; da cambiare:\n  " + "\n  ".join(trovati))
 
 
 def durata(f):
@@ -53,25 +66,38 @@ def clip(d, rifai):
         srv.terminate()
 
 
-def libreria(nomi=None, rifai=False):
-    """Mini-schermi che scorrono le pagine del sito (libreria/scorrimenti.json -> libreria/scorrimenti/<nome>.mp4).
-    Sono salvati nel repository (piccoli, 360x640) così si riusano in tutti i reel; si rifanno quando il sito cambia."""
+# Mini-schermi del sito: ogni pagina della libreria esiste in tre versioni, una per dispositivo.
+DISPOSITIVI = {"telefono": ("telefono", "", "360:640"), "tablet": ("tablet", "-tablet", "480:640"),
+               "lim": ("lim", "-lim", "640:360")}
+
+
+def file_libreria(nome, disp="telefono"):
+    return BASE / "libreria" / "scorrimenti" / f"{nome}{DISPOSITIVI[disp][1]}.mp4"
+
+
+def libreria(servono=None, rifai=False):
+    """Mini-schermi che scorrono le pagine del sito, per telefono, tablet e LIM
+    (libreria/scorrimenti.json -> libreria/scorrimenti/<nome>.mp4, <nome>-tablet.mp4, <nome>-lim.mp4).
+    Sono salvati nel repository (piccoli) così si riusano in tutti i reel; si rifanno quando il sito cambia.
+    servono: coppie (nome, dispositivo); None = tutte."""
     lib = json.loads((BASE / "libreria" / "scorrimenti.json").read_text())["scorrimenti"]
-    dove = BASE / "libreria" / "scorrimenti"; dove.mkdir(parents=True, exist_ok=True)
-    nomi = list(lib) if nomi is None else nomi
-    da_fare = [n for n in nomi if rifai or not (dove / f"{n}.mp4").exists()]
+    (BASE / "libreria" / "scorrimenti").mkdir(parents=True, exist_ok=True)
+    if servono is None: servono = [(n, dsp) for n in lib for dsp in DISPOSITIVI]
+    da_fare = [(n, dsp) for n, dsp in servono if rifai or not file_libreria(n, dsp).exists()]
     if not da_fare: return
-    sconosciuti = [n for n in da_fare if n not in lib]
+    sconosciuti = sorted({n for n, _ in da_fare if n not in lib})
     if sconosciuti: raise SystemExit(f"Scorrimenti non definiti in libreria/scorrimenti.json: {sconosciuti}")
-    print("Mini-schermi da registrare:", ", ".join(da_fare))
+    print("Mini-schermi da registrare:", ", ".join(f"{n} ({dsp})" for n, dsp in da_fare))
     (L / "clip").mkdir(parents=True, exist_ok=True)
     srv = registra.server()
     try:
-        for n in da_fare:
-            registra.registra(f"scorr_{n}", lib[n])
-            subprocess.run(["ffmpeg", "-v", "error", "-y", "-i", str(L / "clip" / f"scorr_{n}.mp4"), "-an",
-                            "-vf", "scale=360:640:flags=lanczos", "-c:v", "libx264", "-crf", "26",
-                            "-pix_fmt", "yuv420p", str(dove / f"{n}.mp4")], check=True)
+        for n, dsp in da_fare:
+            tipo, _, misura = DISPOSITIVI[dsp]
+            nome_clip = f"scorr_{n}{DISPOSITIVI[dsp][1]}"
+            registra.registra(nome_clip, {**lib[n], "dispositivo": tipo})
+            subprocess.run(["ffmpeg", "-v", "error", "-y", "-i", str(L / "clip" / f"{nome_clip}.mp4"), "-an",
+                            "-vf", f"scale={misura}:flags=lanczos", "-c:v", "libx264", "-crf", "26",
+                            "-pix_fmt", "yuv420p", str(file_libreria(n, dsp))], check=True)
     finally:
         srv.terminate()
 
@@ -92,14 +118,52 @@ def copertina(d, cart):
     return [{"name": "copertina", "hash": urlencode(par, quote_via=quote, safe="|/:?"), "dur": 0.04}]
 
 
-def audio(muto, finale, a):
-    """Mette sotto al reel una base del sito (audio originale), con dissolvenza alla fine."""
-    if not a:
+def atempo(vel):
+    """Filtro di velocità per l'audio (atempo accetta solo 0,5-2: si concatena)."""
+    f, v = [], float(vel)
+    while v > 2: f.append("atempo=2"); v /= 2
+    while v < 0.5: f.append("atempo=0.5"); v /= 0.5
+    if abs(v - 1) > 1e-3: f.append(f"atempo={v:.4f}")
+    return ("," + ",".join(f)) if f else ""
+
+
+def audio(d, segmenti, muto, finale):
+    """Colonna sonora del reel:
+      - la base del sito ("audio": file, da, volume, credito), con dissolvenza alla fine;
+      - con "gioco": true, il suono registrato dei giochi (clip con "audio": true) sotto i loro pezzi,
+        alla velocità del pezzo; la base lì si abbassa a "sotto" (di serie 0: tace, per sentire bene il gioco).
+    Un pezzo con "muto": true non porta il suono del suo gioco."""
+    a = d.get("audio") or {}
+    segs = sorted(Path(segmenti).glob("[0-9]*.mp4"))
+    durs = [durata(f) for f in segs]
+    D = sum(durs)
+    inizi = [sum(durs[:i]) for i in range(len(durs))]
+    ins, filtri, uscite, finestre = [], [], [], []
+    if a.get("gioco"):
+        for i, p in enumerate(d["scaletta"]):
+            wav = L / "clip" / f"{p.get('clip')}.wav"
+            if not p.get("clip") or p.get("muto") or not wav.exists(): continue
+            t1, t2 = monta.tempo(p["da"], p["clip"]), monta.tempo(p["a"], p["clip"])
+            k = n_in = len(ins) // 2 + 1; ins += ["-i", str(wav)]
+            ms = int(round(inizi[i] * 1000))
+            filtri.append(f"[{k}:a]atrim={t1:.3f}:{t2:.3f},asetpts=PTS-STARTPTS{atempo(p.get('vel', 1))},"
+                          f"afade=t=in:d=0.04,afade=t=out:st={max(0, durs[i]-0.08):.3f}:d=0.08,adelay={ms}:all=1[g{i}]")
+            uscite.append(f"[g{i}]"); finestre.append((inizi[i], inizi[i] + durs[i]))
+    if a.get("file"):
+        k = len([x for x in ins if x == "-i"]) + 1; ins += ["-ss", str(a.get("da", 0)), "-i", str(SITO / a["file"])]
+        V, sotto = a.get("volume", 1.0), a.get("sotto", 0.0)
+        livello = f"{V}"
+        if finestre:   # la base si abbassa (con 0,3 s di raccordo) dove suonano i giochi
+            dentro = "+".join(f"clip((t-({s0-0.3:.3f}))/0.3,0,1)*clip(({s1+0.3:.3f}-t)/0.3,0,1)" for s0, s1 in finestre)
+            livello = f"'{V}*({sotto}+(1-{sotto})*(1-min(1,{dentro})))'"
+        filtri.append(f"[{k}:a]atrim=0:{D:.3f},asetpts=PTS-STARTPTS,afade=t=in:d=0.25,"
+                      f"afade=t=out:st={max(0, D-1.6):.3f}:d=1.6,volume={livello}:eval=frame[mus]")
+        uscite.append("[mus]")
+    if not uscite:
         shutil.copy(muto, finale); return
-    D = durata(muto)
-    vol = a.get("volume", 1.0)
-    monta.run(f"ffmpeg -y -loglevel error -i {muto} -ss {a.get('da', 0)} -i {SITO / a['file']} -filter_complex "
-              f"\"[1:a]atrim=0:{D:.3f},asetpts=PTS-STARTPTS,afade=t=in:d=0.25,afade=t=out:st={max(0, D-1.6):.3f}:d=1.6,volume={vol}[a]\" "
+    mix = f"{''.join(uscite)}amix=inputs={len(uscite)}:normalize=0:duration=longest,alimiter=limit=0.95[a]" \
+        if len(uscite) > 1 else f"{uscite[0]}alimiter=limit=0.95[a]"
+    monta.run(f"ffmpeg -y -loglevel error -i {muto} {' '.join(ins)} -filter_complex \"{';'.join(filtri)};{mix}\" "
               f"-map 0:v -map [a] -c:v copy -c:a aac -b:a 192k -t {D:.3f} {finale}")
 
 
@@ -163,32 +227,34 @@ def variante(d, nome, v, cart, base_gr):
     asyncio.run(grafiche.disegna_tutte(v["schermate"], gr))
     muto = vc / "reel-muto.mp4"
     monta.monta(d["scaletta"], gr, vc / "segmenti", muto)
-    audio(muto, cart / f"reel-{nome}.mp4", d.get("audio"))
+    audio(d, vc / "segmenti", muto, cart / f"reel-{nome}.mp4")
     return cart / f"reel-{nome}.mp4"
 
 
 def main():
     if len(sys.argv) < 2: raise SystemExit(__doc__)
     if sys.argv[1] == "--libreria":   # rifà tutti i mini-schermi (o solo quelli nominati)
-        os.chdir(SITO); libreria(sys.argv[2:] or None, rifai=True); return
+        os.chdir(SITO)
+        libreria([(n, dsp) for n in sys.argv[2:] for dsp in DISPOSITIVI] or None, rifai=True); return
     nome = sys.argv[1]
     rifai = None
     for a in sys.argv[2:]:
         if a == "--clip": rifai = True
         elif a.startswith("--clip="): rifai = a[7:].split(",")
     d = json.loads((BASE / "reels" / f"{nome}.json").read_text())
+    controlla_testi(d)
     cart = L / nome; cart.mkdir(parents=True, exist_ok=True)
     os.chdir(SITO)
 
     clip(d, rifai)
-    libreria(sorted({t for p in d["scaletta"] for t in p.get("telefoni", [])}))
+    libreria(sorted({(n, dsp) for p in d["scaletta"] for dsp, n in p.get("dispositivi", {}).items()}))
     print("Schermate…")
     cop = copertina(d, cart)
     gr = cart / "grafiche"
     asyncio.run(grafiche.disegna_tutte(d["schermate"] + cop, gr))
     print("Montaggio…")
     monta.monta(d["scaletta"], gr, cart / "segmenti", cart / "reel-muto.mp4")
-    audio(cart / "reel-muto.mp4", cart / "reel.mp4", d.get("audio"))
+    audio(d, cart / "segmenti", cart / "reel-muto.mp4", cart / "reel.mp4")
     fatti = [cart / "reel.mp4"]
     for vn, v in d.get("varianti", {}).items():
         print(f"Variante {vn}…")

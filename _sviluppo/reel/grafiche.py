@@ -16,6 +16,7 @@ Una schermata già disegnata con gli stessi parametri non si ridisegna
 Tipi (parametro t):
   card       sfondo pieno nel colore di una nota (c=do..si), righe l="riga1|riga2", sottotitolo s
   hook       apertura trasparente: a / g / b (di serie "Giochi musicali / GRATIS / per la tua classe")
+             ("distanza": secondi fissi tra i due suoni, se nel gioco si sovrappongono: Acuto o grave 1.9)
   label      etichetta del gioco in alto (l, colore c) e frase sotto (s, all'altezza sy);
              fascia=1 (altezza fh) mette una fascia scura dietro, se sotto c'è già del testo
   bg         sfondo del sito con cornice: k=phone (arrotondata) o k=lim, rettangolo x,y,w,h

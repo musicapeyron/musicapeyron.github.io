@@ -45,7 +45,10 @@ def apertura(out, clip, a, b, overlay, scosta=200):
 
 
 def intera(out, clip, a, b, etichetta, vel=1.0):
-    """Clip da telefono verticale a schermo intero, con etichetta del gioco."""
+    """Clip da telefono verticale a schermo intero, con etichetta del gioco (None = senza)."""
+    if not etichetta:
+        return run(f"ffmpeg -y -loglevel error -i {CLIP}/{clip}.mp4 -vf \"{taglio(a,b,vel)},scale=1080:1920,setsar=1,format=yuv420p\" "
+                   f"-t {(b-a)/vel:.3f} {ENC} {SEG}/{out}.mp4")
     run(f"ffmpeg -y -loglevel error -i {CLIP}/{clip}.mp4 {seq(etichetta)} -filter_complex "
         f"\"[0:v]{taglio(a,b,vel)},scale=1080:1920,setsar=1[v];[v][1:v]overlay=0:0:eof_action=pass,format=yuv420p[o]\" "
         f"-map [o] -t {(b-a)/vel:.3f} {ENC} {SEG}/{out}.mp4")
@@ -55,53 +58,66 @@ def schermata(out, nome):
     run(f"ffmpeg -y -loglevel error {seq(nome)} -vf format=yuv420p {ENC} {SEG}/{out}.mp4")
 
 
-# Mini-telefoni sotto le schermate colorate: schermo 270x480 (9:16), cornice scura con ombra.
-TEL_W, TEL_H, TEL_M = 270, 480, 40        # schermo e margine dell'immagine della cornice (per l'ombra)
-TEL_Y, TEL_SU, TEL_GAP = 1000, 40, 40      # in alto a y=1000 (sotto i testi, sopra la didascalia); il centrale più su
+# Sotto le schermate colorate: una LIM (dietro), un tablet (a sinistra) e un telefono (a destra) che mostrano
+# pagine del sito che scorrono (libreria/scorrimenti). Rettangolo dello SCHERMO di ognuno sul 1080x1920.
+DISPOSITIVI = {"lim": (250, 965, 580, 326), "tablet": (70, 1075, 280, 373), "telefono": (820, 1100, 190, 338)}
+ORDINE = ["lim", "tablet", "telefono"]          # da dietro a davanti (ed entrano in quest'ordine)
+SUFFISSO = {"telefono": "", "tablet": "-tablet", "lim": "-lim"}
+M = 40                                          # margine delle immagini delle cornici (per l'ombra)
 
 
-def posizioni_telefoni(n):
-    """Angolo in alto a sinistra dello schermo di ogni telefono (1-3 telefoni, centrati)."""
-    tot = n * TEL_W + (n - 1) * TEL_GAP; x0 = (1080 - tot) // 2
-    return [(x0 + i * (TEL_W + TEL_GAP), TEL_Y - (TEL_SU if n == 3 and i == 1 else 0)) for i in range(n)]
-
-
-def cornice_telefono():
-    """cornice.png (telefono scuro con ombra) e schermo.png (maschera ad angoli arrotondati), fatte una volta."""
+def cornice(disp):
+    """Cornice del dispositivo (con ombra) e maschera dello schermo, disegnate una volta in lavoro/."""
     from PIL import ImageFilter
-    c, m = L / "telefono_cornice.png", L / "telefono_schermo.png"
+    c, m = L / f"cornice_{disp}.png", L / f"schermo_{disp}.png"
     if c.exists() and m.exists(): return c, m
-    W, H = TEL_W + 2 * TEL_M, TEL_H + 2 * TEL_M
-    ombra = Image.new("RGBA", (W, H), (0, 0, 0, 0))
-    ImageDraw.Draw(ombra).rounded_rectangle([TEL_M - 6, TEL_M + 10, W - TEL_M + 6, H - TEL_M + 22], radius=40, fill=(0, 0, 0, 150))
-    ombra = ombra.filter(ImageFilter.GaussianBlur(14))
-    d = ImageDraw.Draw(ombra)
-    d.rounded_rectangle([TEL_M - 11, TEL_M - 11, W - TEL_M + 11, H - TEL_M + 11], radius=40, fill=(11, 10, 31, 255),
-                        outline=(255, 255, 255, 60), width=3)
-    ombra.save(c)
-    mk = Image.new("L", (TEL_W, TEL_H), 0)
-    ImageDraw.Draw(mk).rounded_rectangle([0, 0, TEL_W - 1, TEL_H - 1], radius=30, fill=255)
+    _, _, w, h = DISPOSITIVI[disp]
+    W, H = w + 2 * M, h + 2 * M
+    im = Image.new("RGBA", (W, H), (0, 0, 0, 0))
+    om = Image.new("RGBA", (W, H), (0, 0, 0, 0))
+    ImageDraw.Draw(om).rounded_rectangle([M - 8, M + 10, W - M + 8, H - M + 24], radius=30, fill=(0, 0, 0, 140))
+    im = Image.alpha_composite(im, om.filter(ImageFilter.GaussianBlur(14)))
+    g = ImageDraw.Draw(im)
+    if disp == "lim":       # cornice chiara, bordo scuro, vaschetta dei pennarelli
+        g.rounded_rectangle([M - 14, M - 14, W - M + 13, H - M + 13], radius=10, fill=(228, 226, 238, 255))
+        g.rounded_rectangle([M - 5, M - 5, W - M + 4, H - M + 4], radius=4, fill=(42, 42, 51, 255))
+        g.rounded_rectangle([M + w * .2, H - M + 15, M + w * .8, H - M + 26], radius=4, fill=(201, 198, 216, 255))
+        rag = 0
+    elif disp == "tablet":
+        g.rounded_rectangle([M - 16, M - 16, W - M + 15, H - M + 15], radius=30, fill=(11, 10, 31, 255),
+                            outline=(255, 255, 255, 60), width=3)
+        rag = 12
+    else:
+        g.rounded_rectangle([M - 10, M - 10, W - M + 9, H - M + 9], radius=28, fill=(11, 10, 31, 255),
+                            outline=(255, 255, 255, 60), width=3)
+        rag = 20
+    im.save(c)
+    mk = Image.new("L", (w, h), 0)
+    ImageDraw.Draw(mk).rounded_rectangle([0, 0, w - 1, h - 1], radius=rag, fill=255)
     mk.save(m)
     return c, m
 
 
-def schermata_telefoni(out, nome, telefoni, inizio=0.8, ritardo=0.12):
-    """Schermata colorata con 1-3 mini-telefoni che entrano dal basso e scorrono pagine del sito."""
-    n = len(telefoni); pos = posizioni_telefoni(n); cor, msk = cornice_telefono()
+def schermata_dispositivi(out, nome, dispositivi, inizio=0.8, ritardo=0.12):
+    """Schermata colorata con LIM, tablet e telefono che entrano dal basso e scorrono pagine del sito.
+    dispositivi: {"lim": "storia", "tablet": "brani", "telefono": "index"} (anche solo alcuni)."""
     dur = len(list((GR / nome).glob("*.png"))) / 30
-    ins = " ".join(f"-ss {inizio} -i {SCORRIMENTI}/{t}.mp4" for t in telefoni)
-    f = [f"[1:v]format=rgba,split={n}" + "".join(f"[c{i}]" for i in range(n)),
-         f"[2:v]format=gray,split={n}" + "".join(f"[m{i}]" for i in range(n))]
+    usati = [k for k in ORDINE if k in dispositivi]
+    ins, f = [], []
+    for k in usati:
+        c, m = cornice(k)
+        ins += [f"-loop 1 -i {c}", f"-loop 1 -i {m}", f"-ss {inizio} -i {SCORRIMENTI}/{dispositivi[k]}{SUFFISSO[k]}.mp4"]
     base = "[0:v]"
-    for i, (x, y) in enumerate(pos):
-        d = 0.15 + i * ritardo   # entrano uno dopo l'altro, con una piccola frenata
-        f += [f"[{3+i}:v]fps=30,scale={TEL_W}:{TEL_H},setsar=1,format=rgba[s{i}]",
-              f"[s{i}][m{i}]alphamerge[a{i}]",
-              f"[c{i}][a{i}]overlay={TEL_M}:{TEL_M}[t{i}]",
-              f"{base}[t{i}]overlay=x={x - TEL_M}:y='if(lt(t,{d}),1920,{y - TEL_M}+420*pow(max(0,1-(t-{d})/0.5),3))':eof_action=repeat[b{i}]"]
+    for i, k in enumerate(usati):
+        x, y, w, h = DISPOSITIVI[k]; nc, nm, nv = 1 + 3 * i, 2 + 3 * i, 3 + 3 * i
+        d = 0.12 + i * ritardo   # entrano uno dopo l'altro, con una piccola frenata
+        f += [f"[{nv}:v]fps=30,scale={w}:{h},setsar=1,format=rgba[s{i}]",
+              f"[{nm}:v]format=gray[m{i}]", f"[s{i}][m{i}]alphamerge[a{i}]",
+              f"[{nc}:v]format=rgba[c{i}]", f"[c{i}][a{i}]overlay={M}:{M}[t{i}]",
+              f"{base}[t{i}]overlay=x={x - M}:y='if(lt(t,{d}),1920,{y - M}+420*pow(max(0,1-(t-{d})/0.5),3))':eof_action=repeat[b{i}]"]
         base = f"[b{i}]"
     f.append(f"{base}format=yuv420p[o]")
-    run(f"ffmpeg -y -loglevel error {seq(nome)} -loop 1 -i {cor} -loop 1 -i {msk} {ins} "
+    run(f"ffmpeg -y -loglevel error {seq(nome)} {' '.join(ins)} "
         f"-filter_complex \"{';'.join(f)}\" -map [o] -t {dur:.3f} {ENC} {SEG}/{out}.mp4")
 
 
@@ -134,9 +150,9 @@ def tempo(v, clip):
 def pezzo(n, p):
     """Un pezzo della scaletta -> lavoro/<reel>/segmenti/NN_<tipo>.mp4
     Tipi:
-      schermata     {"grafica": "card1"}   con "telefoni": ["index", "storia", "schemi"] (1-3 nomi della
-                    libreria/scorrimenti.json) aggiunge i mini-telefoni che scorrono; la card va
-                    disegnata con tel=1 (testi in alto, spazio libero sotto)
+      schermata     {"grafica": "card1"}   con "dispositivi": {"lim": "storia", "tablet": "brani", "telefono": "index"}
+                    (nomi di libreria/scorrimenti.json) aggiunge LIM, tablet e telefono che scorrono pagine
+                    del sito; la card va disegnata con tel=1 (testi in alto, spazio libero sotto)
       apertura      {"clip", "da", "a", "grafica": "hook", "scosta": 200}  clip a schermo intero spostata in basso, testo sopra
       intera        {"clip", "da", "a", "grafica": etichetta, "vel": 1.3}  clip verticale a schermo intero
       incorniciata  {"clip", "da", "a", "sfondo": "bg_lim", "grafica", "x", "y", "w", "h", "angoli", "vel", "filtro"}
@@ -144,14 +160,14 @@ def pezzo(n, p):
     "vel" accelera (1.3 = 30% più veloce); "filtro" sono filtri ffmpeg in più (ritagli, panoramiche)."""
     out = f"{n:02d}_{p['tipo']}"
     if p["tipo"] == "schermata":
-        if p.get("telefoni"):
-            return schermata_telefoni(out, p["grafica"], p["telefoni"], p.get("inizio", 0.8))
+        if p.get("dispositivi"):
+            return schermata_dispositivi(out, p["grafica"], p["dispositivi"], p.get("inizio", 0.8))
         return schermata(out, p["grafica"])
     a, b = tempo(p["da"], p["clip"]), tempo(p["a"], p["clip"])
     if p["tipo"] == "apertura":
         apertura(out, p["clip"], a, b, p["grafica"], p.get("scosta", 200))
     elif p["tipo"] == "intera":
-        intera(out, p["clip"], a, b, p["grafica"], p.get("vel", 1.0))
+        intera(out, p["clip"], a, b, p.get("grafica"), p.get("vel", 1.0))
     elif p["tipo"] == "incorniciata":
         incorniciata(out, p["clip"], a, b, p["sfondo"], p["grafica"], p["x"], p["y"], p["w"], p["h"],
                      p.get("angoli", 0), p.get("vel", 1.0), p.get("filtro", ""))

@@ -1,0 +1,202 @@
+{
+ "titolo": "Acuto o grave: il gioco d'ascolto (ottobre 2026)",
+ "clip": {
+  "acuto_tel": {
+   "pagina": "acuto-o-grave.html",
+   "dispositivo": "telefono",
+   "passi": [
+    {
+     "attendi": 400
+    },
+    {
+     "tocca": "#trainingButton"
+    },
+    {
+     "segna": "via"
+    },
+    {
+     "attendi": 800
+    },
+    {
+     "scorri_risposte": ".answers"
+    },
+    {
+     "rispondi": "acuto-o-grave",
+     "volte": 8,
+     "pausa": 900,
+     "errori": [
+      5
+     ],
+     "segna": "r"
+    },
+    {
+     "attendi": 800
+    }
+   ]
+  },
+  "acuto_lim": {
+   "pagina": "acuto-o-grave.html",
+   "dispositivo": "lim",
+   "passi": [
+    {
+     "attendi": 500
+    },
+    {
+     "tocca": "#trainingButton"
+    },
+    {
+     "segna": "via"
+    },
+    {
+     "attendi": 600
+    },
+    {
+     "rispondi": "acuto-o-grave",
+     "volte": 4,
+     "pausa": 900,
+     "segna": "r"
+    },
+    {
+     "attendi": 600
+    }
+   ]
+  }
+ },
+ "ricerca": "Applicata GUIDA-REEL.md: GRATIS nell'apertura sopra il gioco in movimento; domande vere con la risposta e le note che compaiono sul pentagramma; invito a mandarlo a un collega; base del sito come audio; 5 hashtag; variante B.",
+ "schermate": [
+  {
+   "name": "hook",
+   "hash": "t=hook&a=Acuto%20o%20grave%3F&g=GRATIS&b=per%20allenare%20l%27orecchio",
+   "dur": 3.6,
+   "alpha": true
+  },
+  {
+   "name": "card1",
+   "hash": "t=card&c=do&l=Gratis.|Niente%20login.&s=Nessun%20dato%20raccolto%2C%20niente%20pubblicit%C3%A0.&tel=1",
+   "dur": 2.4
+  },
+  {
+   "name": "card2",
+   "hash": "t=card&c=re&l=10%20livelli%3A|da%20due%20ottave|a%20un%20semitono.&s=E%20c%27%C3%A8%20anche%20l%27unisono.&tel=1",
+   "dur": 2.4
+  },
+  {
+   "name": "classe",
+   "hash": "t=classe&x=130&y=480&w=820&h=461",
+   "dur": 0.04
+  },
+  {
+   "name": "lab_lim",
+   "hash": "t=label&c=sol&l=Poi%20le%20note%20sul%20pentagramma&s=Sulla%20LIM%20della%20tua%20classe&sy=392",
+   "dur": 5.4,
+   "alpha": true
+  },
+  {
+   "name": "card3",
+   "hash": "t=card&c=la&l=Mandalo|a%20un%20collega|di%20musica.&s=Un%20progetto%20collaborativo%3A%20scrivici%20le%20tue%20idee%21&tel=1",
+   "dur": 2.6
+  },
+  {
+   "name": "end",
+   "hash": "t=end",
+   "dur": 3.2
+  }
+ ],
+ "scaletta": [
+  {
+   "tipo": "apertura",
+   "clip": "acuto_tel",
+   "da": "r_1-3.8",
+   "a": "r_1+1.4",
+   "grafica": "hook",
+   "scosta": 0
+  },
+  {
+   "tipo": "schermata",
+   "grafica": "card1",
+   "dispositivi": {
+    "lim": "suono",
+    "tablet": "solfeggio",
+    "telefono": "index"
+   }
+  },
+  {
+   "tipo": "intera",
+   "clip": "acuto_tel",
+   "da": "r_3-3.8",
+   "a": "r_3+1.4"
+  },
+  {
+   "tipo": "schermata",
+   "grafica": "card2",
+   "dispositivi": {
+    "lim": "brani",
+    "tablet": "bona",
+    "telefono": "scale"
+   }
+  },
+  {
+   "tipo": "incorniciata",
+   "clip": "acuto_lim",
+   "da": "r_1-3.8",
+   "a": "r_1+1.6",
+   "grafica": "lab_lim",
+   "sfondo": "classe",
+   "x": 130,
+   "y": 480,
+   "w": 820,
+   "h": 461
+  },
+  {
+   "tipo": "schermata",
+   "grafica": "card3",
+   "dispositivi": {
+    "lim": "memory",
+    "tablet": "novecento",
+    "telefono": "barocco"
+   }
+  },
+  {
+   "tipo": "schermata",
+   "grafica": "end"
+  }
+ ],
+ "copertina": {
+  "titolo": "Acuto o grave?|gratis",
+  "sottotitolo": "Il gioco d'ascolto per la classe",
+  "colore": "sol",
+  "clip": "acuto_tel",
+  "istante": "r_0+0.6",
+  "ritaglio": 0.72
+ },
+ "audio": {
+  "file": "media/brani-propedeutici/brano10-completo.mp3",
+  "da": 0,
+  "volume": 0.85,
+  "credito": "Musica: base di «Su in alto» (Brani propedeutici) – musicascuole.it, CC BY-SA 3.0"
+ },
+ "varianti": {
+  "B": {
+   "nota": "apertura diversa, da provare come Trial Reel (servono 1000 follower)",
+   "schermate": [
+    {
+     "name": "hook",
+     "hash": "t=hook&a=Quale%20suono%20%C3%A8%20pi%C3%B9%20acuto%3F&g=GRATIS&b=Il%20gioco%20d%27ascolto",
+     "dur": 3.6,
+     "alpha": true
+    }
+   ]
+  }
+ },
+ "didascalia": {
+  "testo": "Acuto o grave? Un gioco d'ascolto gratis per la classe 🎧\nDue suoni, una domanda: quale è più acuto? Quale più grave? O sono all'unisono?\n10 livelli, da due ottave fino a un semitono. Dopo ogni risposta giusta le due note compaiono sul pentagramma. Si gioca sulla LIM, sul PC e sul telefono, anche solo con le domande sull'acuto o solo sul grave.\nNiente registrazione, niente login, nessun dato raccolto.\n\n📩 Hai un collega di musica? Mandaglielo!",
+  "hashtag": [
+   "educazionemusicale",
+   "musicaascuola",
+   "scuolaprimaria",
+   "docenti",
+   "LIM"
+  ],
+  "alt": "Il gioco Acuto o grave di musicascuole.it su un telefono: la domanda «Quale dei due suoni è più acuto?», i pulsanti Il primo, Il secondo e Unisono, poi le due note sul pentagramma; e lo stesso gioco su una LIM in un'aula disegnata con i banchi."
+ }
+}
