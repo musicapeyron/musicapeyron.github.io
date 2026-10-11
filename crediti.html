@@ -38,6 +38,9 @@
   .iniziali { flex: none; width: 48px; height: 48px; border-radius: 50%; display: grid; place-items: center; background: var(--c); color: #fff;
     font: 800 17px 'Manrope', sans-serif; letter-spacing: .02em; box-shadow: inset 0 -3px 0 rgba(0,0,0,.2); }
   .contributore .nome { font: 800 16.5px 'Manrope', sans-serif; color: #EAF2FF; margin-bottom: 6px; }
+  .contributore .nome:has(+ .ruolo) { margin-bottom: 0; }
+  .contributore .ruolo { font-size: 13.5px; color: #9FB3CE; line-height: 1.35; margin: 1px 0 7px; }
+  .iniziali.chiaro { color: #1F2430; }
   .lavori { display: flex; flex-wrap: wrap; gap: 6px; }
   .lavoro { font-size: 13.5px; line-height: 1.3; padding: 4px 11px; border-radius: 999px; background: rgba(125,211,252,0.12);
     border: 1px solid rgba(125,211,252,0.3); color: #DCE6F5; text-decoration: none; }
@@ -124,11 +127,40 @@
 
 <section id="contributi">
   <h2>Hanno contribuito</h2>
+  <!--
+    PER AGGIUNGERE UN COLLABORATORE copia questo blocco dentro <ul class="contributori"> e cambia:
+    - iniziali e colore del cerchio (--c): usa un colore delle note non ancora usato,
+      do #E21C48, re #F99D1C, mi #FFF428, fa #BED958, sol #009C95, la #5E50A1, si #CF3E96
+      (con re, mi e fa aggiungi class="iniziali chiaro", così le lettere sono scure e si leggono);
+    - nome;
+    - ruolo: titolo e grado di scuola separati da " · ", per esempio
+        Docente di musica · scuola secondaria di primo grado
+        Docente di strumento musicale · scuola secondaria di primo grado
+        Docente di educazione musicale · scuola primaria
+        Docente di musica · scuola dell'infanzia
+        Docente di discipline musicali · liceo musicale
+        Docente di pianoforte · conservatorio
+      (se manca, togli la riga del ruolo);
+    - lavori: un <a class="lavoro" href="pagina.html"> per ogni pagina, oppure <span class="lavoro"> se non c'è una pagina.
+    Pubblica solo ciò che la persona ha approvato.
+
+    <li class="contributore">
+      <span class="iniziali" style="--c:#5E50A1" aria-hidden="true">NC</span>
+      <div>
+        <div class="nome">Nome Cognome</div>
+        <div class="ruolo">Docente di musica · scuola secondaria di primo grado</div>
+        <div class="lavori">
+          <a class="lavoro" href="pagina.html">Che cosa ha fatto</a>
+        </div>
+      </div>
+    </li>
+  -->
   <ul class="contributori">
     <li class="contributore">
       <span class="iniziali" style="--c:#E21C48" aria-hidden="true">AC</span>
       <div>
         <div class="nome">Arianna Cibonfa</div>
+        <div class="ruolo">Docente di musica · scuola secondaria di primo grado</div>
         <div class="lavori">
           <a class="lavoro" href="brani-propedeutici.html">Revisione dei Brani propedeutici</a>
           <a class="lavoro" href="solfeggio-cantato.html">Revisione del Solfeggio cantato</a>
@@ -139,6 +171,7 @@
       <span class="iniziali" style="--c:#009C95" aria-hidden="true">RS</span>
       <div>
         <div class="nome">Roberto Stilo</div>
+        <div class="ruolo">Docente di musica · scuola secondaria di primo grado</div>
         <div class="lavori">
           <a class="lavoro" href="primi-brani.html">Revisione dei Primi brani, prima parte</a>
           <a class="lavoro" href="primi-brani-2.html">Revisione dei Primi brani, seconda parte</a>
