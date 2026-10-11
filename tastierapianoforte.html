@@ -6503,7 +6503,25 @@ function loadPiano() {
 // i suoni cominciano a scaricarsi al primo tocco sulla pagina
 document.addEventListener("pointerdown", () => loadPiano(), { once: true });
 
-function playSampledNote(ctx, freq) {
+/*
+   Si suona un tasto alla volta: quando ne parte uno nuovo, la nota
+   precedente si spegne in pochi centesimi di secondo (senza «clic»).
+*/
+let voceAttiva = null;
+
+function nuovaVoce(ctx) {
+    if (voceAttiva) {
+        const vecchia = voceAttiva;
+        vecchia.gain.cancelScheduledValues(ctx.currentTime);
+        vecchia.gain.setTargetAtTime(0, ctx.currentTime, 0.015);
+        setTimeout(() => vecchia.disconnect(), 200);
+    }
+    voceAttiva = ctx.createGain();
+    voceAttiva.connect(getMasterGain());
+    return voceAttiva;
+}
+
+function playSampledNote(ctx, freq, voce) {
     const midi = 69 + 12 * Math.log2(freq / 440);
     let best = pianoBuffers[0];
     pianoBuffers.forEach(s => { if (Math.abs(s.midi - midi) < Math.abs(best.midi - midi)) best = s; });
@@ -6515,7 +6533,7 @@ function playSampledNote(ctx, freq) {
     g.gain.setValueAtTime(0.85, now);
     g.gain.setValueAtTime(0.85, fine);
     g.gain.setTargetAtTime(0.0001, fine, 0.12);   // si spegne come quando si alza il dito
-    src.connect(g); g.connect(getMasterGain());
+    src.connect(g); g.connect(voce);
     src.start(now, best.offset);
     src.stop(fine + 0.8);
     src.onended = () => { src.disconnect(); g.disconnect(); };
@@ -6537,9 +6555,12 @@ function playNote(index) {
     }
 
 
+    const voce =
+        nuovaVoce(ctx);
+
     // pianoforte registrato, se i suoni sono già arrivati
     if (pianoBuffers && pianoBuffers.length) {
-        playSampledNote(ctx, frequencyForKeyId(index));
+        playSampledNote(ctx, frequencyForKeyId(index), voce);
         return;
     }
     loadPiano();
@@ -6588,7 +6609,7 @@ function playNote(index) {
     );
 
     filter.connect(
-        getMasterGain()
+        voce
     );
 
 
