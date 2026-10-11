@@ -1356,14 +1356,15 @@ function playAcutoSequence() {
     acutoAnswering = false;
     setAnswersEnabled(false);
     listenButton.disabled = true;
+    // il primo suono si spegne prima che parta il secondo, con una piccola pausa in mezzo
     playPianoNote(acutoQuestion.firstPitch, 0, 1.1);
-    playPianoNote(acutoQuestion.secondPitch, 0.9, 1.1);
+    playPianoNote(acutoQuestion.secondPitch, 1.8, 1.1);
     setTimeout(() => {
         acutoPlaying = false;
         acutoAnswering = true;
         setAnswersEnabled(true);
         listenButton.disabled = false;
-    }, 2000);
+    }, 3000);
 }
 
 function checkAcutoAnswer(choice) {
