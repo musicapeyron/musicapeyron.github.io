@@ -3545,6 +3545,8 @@ body.mobile-mode .note-popup-staff {
     margin: 0;
 }
   .level-box, .note-popup-card { -webkit-backdrop-filter: none; backdrop-filter: none; }
+/* traguardi nascosti: vedi TRAGUARDI_VISIBILI nello script */
+body.senza-traguardi .solo-traguardi { display: none !important; }
 </style>
 
 <!-- per i motori di ricerca e la condivisione -->
@@ -4219,7 +4221,7 @@ body.mobile-mode .note-popup-staff {
             </button>
 
             <button
-                class="toolbar-button"
+                class="toolbar-button solo-traguardi"
                 id="trophyButton"
                 title="Trofei">
                 🏆
@@ -4288,11 +4290,11 @@ body.mobile-mode .note-popup-staff {
     </div>
 
 
-    <div class="options-group-title">
+    <div class="options-group-title solo-traguardi">
         Popup trofei
     </div>
 
-    <div class="options-pair">
+    <div class="options-pair solo-traguardi">
 
         <button
             class="options-choice"
@@ -5734,6 +5736,16 @@ let pendingTrophyUnlocks = [];
 */
 let trophiesPopupsEnabled = false;
 
+/*
+   TRAGUARDI NASCOSTI (per ora)
+   Il codice dei traguardi resta tutto qui e continua a contare
+   in silenzio, ma il pulsante 🏆, la scelta "Popup trofei"
+   nelle opzioni e i popup di sblocco non si vedono.
+   PER RIATTIVARLI: metti true qui sotto.
+*/
+const TRAGUARDI_VISIBILI = false;
+if (!TRAGUARDI_VISIBILI) document.body.classList.add("senza-traguardi");
+
 function unlockTrophy(id) {
 
     if (trophyUnlocked[id]) {
@@ -5745,7 +5757,7 @@ function unlockTrophy(id) {
         true;
 
 
-    if (!trophiesPopupsEnabled) {
+    if (!trophiesPopupsEnabled || !TRAGUARDI_VISIBILI) {
         return;
     }
 
