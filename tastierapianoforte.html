@@ -6469,6 +6469,60 @@ function getMasterGain() {
 
 
 /* =========================================================
+   PIANOFORTE CAMPIONATO
+   Salamander Grand Piano di Alexander Holm (CC BY 3.0), gli
+   stessi suoni del Test d'ingresso e dei dettati: una nota
+   registrata ogni terza minore dal Do2 al Do6, le altre si
+   ottengono accordando la più vicina. I file si scaricano al
+   primo tocco; finché non sono pronti suona il timbro sintetico.
+========================================================= */
+
+const PIANO_SAMPLES = [["C2", 36], ["Ds2", 39], ["Fs2", 42], ["A2", 45], ["C3", 48], ["Ds3", 51], ["Fs3", 54], ["A3", 57],
+    ["C4", 60], ["Ds4", 63], ["Fs4", 66], ["A4", 69], ["C5", 72], ["Ds5", 75], ["Fs5", 78], ["A5", 81], ["C6", 84]]
+    .map(([nome, midi]) => ({ midi, url: "media/suoni/pianoforte/" + nome + ".mp3" }));
+
+let pianoBuffers = null;
+
+let pianoLoading = null;
+
+function loadPiano() {
+    if (pianoBuffers) return Promise.resolve(pianoBuffers);
+    if (pianoLoading) return pianoLoading;
+    const ctx = getAudioContext();
+    pianoLoading = Promise.all(PIANO_SAMPLES.map(s => fetch(s.url).then(r => r.arrayBuffer())
+        .then(dati => new Promise(ok => ctx.decodeAudioData(dati, buf => {
+            const d = buf.getChannelData(0);   // salta il silenzio iniziale del file
+            let picco = 0; for (let i = 0; i < d.length; i++) picco = Math.max(picco, Math.abs(d[i]));
+            let i = 0; while (i < d.length && Math.abs(d[i]) < picco * 0.03) i++;
+            ok({ midi: s.midi, buf, offset: Math.max(0, i / buf.sampleRate - 0.002) });
+        }, () => ok(null)))).catch(() => null)))
+        .then(lista => { pianoBuffers = lista.filter(Boolean); return pianoBuffers; });
+    return pianoLoading;
+}
+
+// i suoni cominciano a scaricarsi al primo tocco sulla pagina
+document.addEventListener("pointerdown", () => loadPiano(), { once: true });
+
+function playSampledNote(ctx, freq) {
+    const midi = 69 + 12 * Math.log2(freq / 440);
+    let best = pianoBuffers[0];
+    pianoBuffers.forEach(s => { if (Math.abs(s.midi - midi) < Math.abs(best.midi - midi)) best = s; });
+    const now = ctx.currentTime, fine = now + 1.9;
+    const src = ctx.createBufferSource();
+    src.buffer = best.buf;
+    src.playbackRate.value = Math.pow(2, (midi - best.midi) / 12);
+    const g = ctx.createGain();
+    g.gain.setValueAtTime(0.85, now);
+    g.gain.setValueAtTime(0.85, fine);
+    g.gain.setTargetAtTime(0.0001, fine, 0.12);   // si spegne come quando si alza il dito
+    src.connect(g); g.connect(getMasterGain());
+    src.start(now, best.offset);
+    src.stop(fine + 0.8);
+    src.onended = () => { src.disconnect(); g.disconnect(); };
+}
+
+
+/* =========================================================
    SUONO DELLA NOTA
 ========================================================= */
 
@@ -6481,6 +6535,14 @@ function playNote(index) {
     if (ctx.state === "suspended") {
         ctx.resume();
     }
+
+
+    // pianoforte registrato, se i suoni sono già arrivati
+    if (pianoBuffers && pianoBuffers.length) {
+        playSampledNote(ctx, frequencyForKeyId(index));
+        return;
+    }
+    loadPiano();
 
 
     const now =
