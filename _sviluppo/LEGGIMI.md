@@ -307,3 +307,12 @@ Per un gioco nuovo, provarlo a quelle due misure in tutte le schermate, compresi
 - `google801644cff1ab0be4.html` nella cartella principale è il file di verifica della Google Search Console: NON cancellarlo.
 - `sitemap.xml` e `robots.txt`: se si aggiungono pagine, aggiungerle anche alla mappa. Ogni pagina ha in fondo all'intestazione il blocco
   «per i motori di ricerca e la condivisione» (canonical, anteprima con media/condivisione.jpg).
+
+## Pianoforte campionato (`media/suoni/pianoforte/`)
+
+- Salamander Grand Piano V3 (Alexander Holm, CC BY 3.0), strato morbido `v6`, una nota ogni terza minore
+  da Do2 a Do6 (`C2`, `Ds2`, `Fs2`, `A2` … `C6`). Lo usano i dettati, il solfeggio cantato, il Test d'ingresso
+  e Acuto, grave o unisono; le note in mezzo si ottengono accordando il campione più vicino.
+- Origine: https://github.com/sfzinstruments/SalamanderGrandPiano (`Samples/<nota>v6.flac`). Conversione:
+  `ffmpeg -i X.flac -t 3.5 -ac 1 -ar 44100 -af "volume=2.031,afade=t=out:st=2.7:d=0.8" -c:a libmp3lame -b:a 192k X.mp3`
+  (stesso volume e stessa dissolvenza dei file già presenti).
