@@ -59,6 +59,10 @@
   .invito .scrivici { margin: 14px 0 4px; padding: 12px 16px; border-radius: 12px; background: #FFE58A; color: #1F2430;
     font: 800 17px 'Manrope', sans-serif; text-align: center; }
   .invito .scrivici a { color: #1F2430; }
+  .invito .scrivici { display: flex; flex-wrap: wrap; align-items: center; justify-content: center; gap: 8px 14px; }
+  .copia-posta { font: 700 14.5px 'Manrope', sans-serif; padding: 6px 14px; border-radius: 999px; cursor: pointer;
+    background: #1F2430; color: #FFE58A; border: none; }
+  .copia-posta:hover { background: #2f3646; }
   @media (max-width: 560px) { .invito { padding: 18px 16px; } .invito .modi { grid-template-columns: 1fr; } }
 </style>
 <!-- per i motori di ricerca e la condivisione -->
@@ -122,7 +126,8 @@
   </ul>
   <p>Ogni contributo, piccolo o grande, aiuta a offrire alle scuole qualcosa di meglio e con il tuo permesso sarà segnalato nei crediti del sito e nella specifica sezione a cui hai lavorato.</p>
   <p class="piccolo">Chi invia un contributo accetta che venga pubblicato con le licenze del sito (CC BY-NC-SA 4.0 per i contenuti, MIT per il codice); il suo nome compare nei crediti solo se lo desidera.</p>
-  <div class="scrivici">Scrivici: <a class="posta" data-u="info" data-d="musicascuole.it">info [chiocciola] musicascuole.it</a></div>
+  <div class="scrivici"><span>Scrivici: <a class="posta" data-u="info" data-d="musicascuole.it">info [chiocciola] musicascuole.it</a></span>
+    <button type="button" class="copia-posta" data-u="info" data-d="musicascuole.it" hidden>Copia indirizzo</button></div>
 </section>
 
 <section id="contributi">
@@ -284,6 +289,22 @@
 </main>
 <script>
   document.querySelectorAll("a.posta").forEach(a => { const m = a.dataset.u + "@" + a.dataset.d; a.href = "mailto:" + m; a.textContent = m; });
+  /* «Copia indirizzo»: per chi non ha un programma di posta collegato ai link email */
+  document.querySelectorAll("button.copia-posta").forEach(b => {
+    const m = b.dataset.u + "@" + b.dataset.d;
+    b.hidden = false;
+    b.addEventListener("click", async () => {
+      let ok = false;
+      try { await navigator.clipboard.writeText(m); ok = true; } catch (e) {
+        const t = document.createElement("textarea"); t.value = m; t.style.position = "fixed"; t.style.opacity = "0";
+        document.body.appendChild(t); t.select();
+        try { ok = document.execCommand("copy"); } catch (e2) {}
+        t.remove();
+      }
+      b.textContent = ok ? "Copiato ✓" : m;
+      clearTimeout(b._t); b._t = setTimeout(() => { b.textContent = "Copia indirizzo"; }, 2500);
+    });
+  });
 </script>
 </body>
 </html>
