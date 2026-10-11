@@ -65,6 +65,10 @@
     background: #1F2430; color: #FFE58A; border: none; }
   .copia-posta:hover { background: #2f3646; }
   @media (max-width: 560px) { .invito { padding: 18px 16px; } .invito .modi { grid-template-columns: 1fr; } }
+  @media (min-width: 561px) {
+    .invito .modi li:last-child:nth-child(odd) { text-align: center; padding-left: 12px; }
+    .invito .modi li:last-child:nth-child(odd)::before { position: static; margin-right: 8px; }
+  }
 </style>
 <!-- per i motori di ricerca e la condivisione -->
 <link rel="canonical" href="https://musicascuole.it/crediti.html">
