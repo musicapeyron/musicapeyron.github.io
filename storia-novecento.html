@@ -4,153 +4,14 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Il Novecento — Storia della musica — musicascuole.it</title>
-<meta name="description" content="La musica del Novecento raccontata attraverso gli ascolti: le scuole nazionali, da Grieg a Bartók e Gershwin, e le avanguardie, da Debussy a Cage; i nuovi strumenti elettronici, Pierino e il lupo e La sagra della primavera.">
+<meta name="description" content="Il Novecento in musica, un capitolo alla volta: la registrazione e la radio, le scuole nazionali di Grieg, Dvořák e Bartók, l'Impressionismo di Debussy, l'atonalità di Schönberg, i rumori dei futuristi, lo scandalo della Sagra della primavera, il jazz di Gershwin, Pierino e il lupo, la musica elettronica e il silenzio di Cage.">
 <link rel="icon" href="favicon.svg" type="image/svg+xml">
 <link rel="icon" href="favicon-32.png" type="image/png" sizes="32x32">
 <link rel="apple-touch-icon" href="apple-touch-icon.png">
 <link rel="stylesheet" href="fonts/caratteri.css">
 <link rel="stylesheet" href="comune.css">
-<style>
-  * { box-sizing: border-box; }
-  html, body { margin: 0; min-height: 100%; }
-  body { min-height: 100vh; font-family: 'Inter', 'Segoe UI', Arial, sans-serif; color: #EAF2FF; -webkit-font-smoothing: antialiased;
-    background: #0f172a; overflow-x: hidden; position: relative; }
-
-  .casetta { position: fixed; top: 12px; left: 12px; z-index: 40; width: 44px; height: 44px; border-radius: 50%; display: grid; place-items: center;
-    background: rgba(15,23,42,0.75); border: 1px solid rgba(255,255,255,0.18); text-decoration: none; font-size: 20px; color: #EAF2FF; font-weight: 700; }
-
-  main { position: relative; z-index: 1; max-width: 1400px; margin: 0 auto; padding: 12px 20px 24px; }
-
-  /* ---------- doppio banner ---------- */
-  .banner { position: relative; height: clamp(170px, 30vh, 320px); border-radius: 18px; overflow: hidden; background: #111827;
-    border: 1px solid rgba(255,255,255,0.1); user-select: none; -webkit-user-select: none; }
-  .meta { position: absolute; inset: 0; cursor: pointer; transition: filter .35s ease, opacity .35s ease; -webkit-tap-highlight-color: transparent; }
-  .meta img { width: 100%; height: 100%; object-fit: cover; display: block; }
-  .meta.sx { clip-path: polygon(0 0, 56% 0, 44% 100%, 0 100%); }
-  .meta.dx { clip-path: polygon(56% 0, 100% 0, 100% 100%, 44% 100%); }
-  .meta.sx img { width: 58%; object-position: 50% 55%; }
-  .meta.dx img { width: 58%; margin-left: 42%; object-position: 50% 40%; }
-  .banner.f-sx .meta.dx, .banner.f-dx .meta.sx { filter: grayscale(.85) brightness(.45); }
-  .banner::after { content: ""; position: absolute; inset: 0; pointer-events: none;
-    background: radial-gradient(ellipse at 50% 55%, rgba(15,23,42,0.55) 0%, rgba(15,23,42,0) 60%), linear-gradient(0deg, rgba(15,23,42,0.75), rgba(15,23,42,0) 45%); }
-  .titolo-epoca { position: absolute; left: 50%; top: 50%; transform: translate(-50%, -58%); text-align: center; z-index: 2; pointer-events: none; }
-  .titolo-epoca .sopra { font-family: 'Manrope', sans-serif; font-weight: 800; font-size: 11.5px; letter-spacing: .16em; text-transform: uppercase; color: #FDE7C7; text-shadow: 0 1px 6px rgba(0,0,0,.8); }
-  .titolo-epoca h1 { font-family: 'Fredoka', 'Manrope', sans-serif; font-weight: 600; margin: 0; font-size: clamp(32px, 6vw, 62px); line-height: 1.05; text-shadow: 0 2px 18px rgba(0,0,0,.85); }
-  .titolo-epoca .date { font-family: 'Manrope', sans-serif; font-weight: 800; color: #FFE58A; font-size: clamp(13px, 1.6vw, 17px); text-shadow: 0 1px 8px rgba(0,0,0,.9); }
-  .etich-meta { position: absolute; bottom: 12px; z-index: 3; font-family: 'Manrope', sans-serif; font-weight: 800; font-size: 12.5px;
-    padding: 6px 12px; border-radius: 999px; background: rgba(15,23,42,0.72); border: 1px solid rgba(255,255,255,0.22); cursor: pointer; white-space: nowrap; }
-  .etich-meta.sx { left: 12px; color: #FBC877; } .etich-meta.dx { right: 12px; color: #C4B5FD; }
-  .etich-meta.attiva { background: #EAF2FF; color: #0f172a; }
-  @media (max-width: 560px) { .etich-meta { font-size: 11px; padding: 5px 9px; bottom: 8px; } .etich-meta .lungo { display: none; } }
-
-  .atmosfera { text-align: center; color: #9FB3CE; font-size: 13px; font-style: italic; margin: 10px auto 12px; max-width: 760px; line-height: 1.45; }
-
-  /* ---------- schede ---------- */
-  .schede { display: flex; justify-content: center; gap: 8px; flex-wrap: wrap; margin-bottom: 12px; }
-  .scheda { font: 700 13.5px 'Manrope', sans-serif; color: #EAF2FF; cursor: pointer; padding: 8px 16px; border-radius: 999px;
-    background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.14); display: inline-flex; align-items: center; gap: 7px; }
-  .scheda:hover { background: rgba(255,255,255,0.12); }
-  .scheda.attiva { background: #EAF2FF; color: #0f172a; border-color: #EAF2FF; }
-  .scheda .n { font-size: 11px; opacity: .65; }
-  @media (max-width: 560px) { main { padding-top: 64px !important; } .schede { flex-wrap: nowrap; gap: 6px; } .scheda { font-size: 12.5px; padding: 7px 11px; gap: 5px; } .scheda .n { display: none; } }
-
-  /* ---------- griglia di card (come in home) ---------- */
-  .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 12px; }
-  @media (min-width: 1200px) { .grid { grid-template-columns: repeat(5, 1fr); } }
-  @media (max-width: 520px) { .grid { grid-template-columns: repeat(2, 1fr); gap: 9px; } main { padding: 10px 12px 20px; } }
-  .card { --accent: #5EC8D8; position: relative; background: rgba(255,255,255,0.035); border: 1px solid rgba(255,255,255,0.09); border-top: 2px solid var(--accent);
-    border-radius: 12px; overflow: hidden; display: flex; flex-direction: column; text-align: left; font: inherit; color: inherit; padding: 0; cursor: pointer;
-    transition: border-color .2s ease, transform .2s ease, background .2s ease; }
-  .card:hover { transform: translateY(-2px); background: rgba(255,255,255,0.06); border-color: color-mix(in srgb, var(--accent) 55%, transparent); border-top-color: var(--accent); }
-  .card:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
-  .card .foto { aspect-ratio: 16 / 10; background: #1e293b center / cover no-repeat; position: relative; }
-  .card .foto::after { content: "▶"; position: absolute; right: 8px; bottom: 8px; width: 30px; height: 30px; border-radius: 50%; display: grid; place-items: center;
-    font-size: 12px; background: rgba(15,23,42,0.8); color: #fff; border: 1px solid rgba(255,255,255,0.3); }
-  .card .testo { padding: 9px 11px 11px; display: flex; flex-direction: column; gap: 3px; flex: 1; }
-  .card .label { align-self: flex-start; font-size: 9px; font-weight: 700; letter-spacing: .05em; text-transform: uppercase; color: var(--accent);
-    background: color-mix(in srgb, var(--accent) 14%, transparent); padding: 2px 7px; border-radius: 999px; }
-  .card h2 { font-family: 'Manrope', sans-serif; font-weight: 700; font-size: 14px; margin: 2px 0 0; letter-spacing: -0.01em; line-height: 1.25; }
-  .card .chi { font-size: 11px; color: #9FB3CE; font-weight: 600; }
-  .card p { font-size: 11.5px; line-height: 1.4; color: #B8C7DD; margin: 2px 0 0; }
-  .card.dx { --accent: #a78bfa; } .card.sx { --accent: #F99D1C; } .card.strum { --accent: #5EC8D8; } .card.suona { --accent: #BED958; }
-  .card.empty { cursor: default; border-style: dashed; background: transparent; }
-  .card.empty:hover { transform: none; }
-  .card.empty .foto::after { content: "presto"; width: auto; height: auto; padding: 3px 9px; border-radius: 999px; font: 700 10.5px 'Manrope', sans-serif; letter-spacing: .04em; }
-  .card.nascosta { display: none; }
-
-  /* ---------- finestra dell'ascolto ---------- */
-  .velo { position: fixed; inset: 0; z-index: 60; background: rgba(2,6,23,0.82); display: none; align-items: center; justify-content: center; padding: 16px; }
-  .velo.aperto { display: flex; }
-  .finestra { position: relative; width: min(1180px, 100%); max-height: calc(100vh - 32px); overflow: auto; background: #131c33; border: 1px solid rgba(255,255,255,0.14);
-    border-top: 3px solid var(--accent, #5EC8D8); border-radius: 18px; display: grid; grid-template-columns: 1.55fr 1fr; gap: 0; box-shadow: 0 20px 60px rgba(0,0,0,.5); }
-  @media (max-width: 860px) { .finestra { grid-template-columns: 1fr; } }
-  .schermo { position: relative; aspect-ratio: 16 / 9; background: #000 center / cover no-repeat; }
-  .schermo iframe { position: absolute; inset: 0; width: 100%; height: 100%; border: 0; }
-  .avvio { position: absolute; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 10px; cursor: pointer;
-    background: rgba(2,6,23,0.55); border: 0; color: #fff; font: inherit; width: 100%; }
-  .avvio .tondo { width: 76px; height: 76px; border-radius: 50%; background: #FFE58A; color: #0f172a; display: grid; place-items: center; font-size: 30px; padding-left: 6px; box-shadow: 0 6px 24px rgba(0,0,0,.45); }
-  .avvio:hover .tondo { transform: scale(1.06); }
-  .avvio .nota { font-size: 12px; color: #DCE6F5; background: rgba(15,23,42,0.7); padding: 4px 10px; border-radius: 999px; }
-  .info { padding: 16px 18px 14px; display: flex; flex-direction: column; gap: 8px; }
-  .info .label { align-self: flex-start; font-size: 10px; font-weight: 800; letter-spacing: .06em; text-transform: uppercase; color: var(--accent); background: color-mix(in srgb, var(--accent) 16%, transparent); padding: 3px 9px; border-radius: 999px; }
-  .info h3 { font-family: 'Manrope', sans-serif; font-weight: 800; font-size: 22px; margin: 0; line-height: 1.2; }
-  .info .chi { font-size: 13px; color: #9FB3CE; font-weight: 600; margin-top: -4px; }
-  .info .gancio { font-family: 'Manrope', sans-serif; font-weight: 700; font-size: 16px; color: #FFE58A; margin: 2px 0 0; }
-  .info ul { margin: 0; padding-left: 0; list-style: none; display: flex; flex-direction: column; gap: 6px; }
-  .info li { font-size: 14.5px; color: #DCE6F5; line-height: 1.45; padding-left: 24px; position: relative; }
-  .info li::before { content: "🎧"; position: absolute; left: 0; top: 0; font-size: 13px; }
-  .info .sapevi { font-size: 13.5px; color: #DCE6F5; background: rgba(255,255,255,0.05); border-left: 3px solid var(--accent); border-radius: 8px; padding: 8px 10px; line-height: 1.45; }
-  .info .sapevi b { color: var(--accent); }
-  .info .piede { margin-top: auto; display: flex; justify-content: space-between; align-items: flex-end; gap: 10px; flex-wrap: wrap; font-size: 11px; color: #7F93B2; }
-  .info .piede a { color: #7DD3FC; }
-  .chiudi { position: absolute; top: 8px; right: 8px; z-index: 3; width: 40px; height: 40px; border-radius: 50%; border: 1px solid rgba(255,255,255,0.25);
-    background: rgba(15,23,42,0.85); color: #fff; font-size: 18px; cursor: pointer; }
-  .frecce { display: flex; gap: 8px; }
-  .freccia { font: 700 13px 'Manrope', sans-serif; color: #EAF2FF; background: rgba(255,255,255,0.08); border: 1px solid rgba(255,255,255,0.18); border-radius: 999px; padding: 7px 14px; cursor: pointer; }
-  .freccia:hover { background: rgba(255,255,255,0.15); }
-
-  /* ---------- Sezione speciale (pulsante dorato) ---------- */
-  .scheda.speciale { background: linear-gradient(135deg, rgba(180,83,9,0.55), rgba(124,45,18,0.55)); border-color: #FBBF24; color: #FFE58A; }
-  .scheda.speciale:hover { background: linear-gradient(135deg, rgba(180,83,9,0.8), rgba(124,45,18,0.8)); }
-  .scheda.speciale.attiva { background: #FFE58A; color: #0f172a; border-color: #FFE58A; }
-  .fuga { --accent: #FBBF24; display: grid; grid-template-columns: 1.55fr 1fr; background: #131c33; border: 1px solid rgba(255,255,255,0.14);
-    border-top: 3px solid var(--accent); border-radius: 18px; overflow: hidden; }
-  .fuga[hidden], .grid[hidden] { display: none; }
-  @media (max-width: 860px) { .fuga { grid-template-columns: 1fr; } }
-  .o-video { display: flex; flex-direction: column; background: #000; }
-  .o-sotto { font-size: 11.5px; color: #9FB3CE; padding: 8px 12px; background: #0b1224; }
-  .o-sotto a { color: #7DD3FC; }
-  .o-info { padding: 14px 16px 14px; display: flex; flex-direction: column; gap: 6px; min-height: 0; }
-  .o-info .label { align-self: flex-start; font-size: 10px; font-weight: 800; letter-spacing: .06em; text-transform: uppercase; color: var(--accent); background: color-mix(in srgb, var(--accent) 16%, transparent); padding: 3px 9px; border-radius: 999px; }
-  .o-info h3 { font-family: 'Fredoka', 'Manrope', sans-serif; font-weight: 600; font-size: 28px; margin: 0; line-height: 1.1; }
-  .o-info .chi { font-size: 13px; color: #9FB3CE; font-weight: 600; }
-  .o-info .gancio { font-family: 'Manrope', sans-serif; font-weight: 700; font-size: 15px; color: #FFE58A; }
-  .o-tab { display: flex; gap: 6px; margin-top: 4px; flex-wrap: wrap; }
-  .o-t { font: 700 12.5px 'Manrope', sans-serif; color: #EAF2FF; cursor: pointer; padding: 6px 12px; border-radius: 999px; background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.16); }
-  .o-t:hover { background: rgba(255,255,255,0.12); }
-  .o-t.attiva { background: var(--accent); color: #0f172a; border-color: var(--accent); }
-  .o-corpo { flex: 1; min-height: 0; overflow: auto; padding-right: 4px; }
-  @media (min-width: 861px) { .o-info { contain: size; } }   /* la colonna dei testi si adatta all'altezza del video e scorre */
-  .o-corpo ul { margin: 4px 0 0; padding: 0; list-style: none; display: flex; flex-direction: column; gap: 7px; }
-  .o-corpo li { font-size: 14px; color: #DCE6F5; line-height: 1.45; padding-left: 24px; position: relative; }
-  .o-corpo li::before { content: attr(data-i); position: absolute; left: 0; top: 0; font-size: 13px; }
-  .o-corpo .atto { display: grid; grid-template-columns: 62px 1fr; gap: 8px; align-items: baseline; padding: 6px 8px; border-radius: 8px; background: rgba(255,255,255,0.04); font-size: 13.5px; color: #DCE6F5; line-height: 1.4; }
-  .o-corpo .atto b { font: 800 11px 'Manrope', sans-serif; color: var(--accent); text-transform: uppercase; letter-spacing: .05em; }
-  .o-corpo .atto + .atto { margin-top: 5px; }
-  .o-corpo .cur { font-size: 13.5px; color: #DCE6F5; background: rgba(255,255,255,0.05); border-left: 3px solid var(--accent); border-radius: 8px; padding: 7px 10px; line-height: 1.45; }
-  .o-corpo .cur + .cur { margin-top: 6px; }
-  .o-corpo .cur b { color: var(--accent); }
-  .o-corpo .cur img { float: right; height: 150px; margin: 0 0 4px 10px; border-radius: 6px; background: #fff; cursor: zoom-in; }
-  .o-corpo .cur::after { content: ""; display: block; clear: both; }
-
-  .crediti-img { margin-top: 18px; font-size: 11.5px; color: #7F93B2; }
-  .crediti-img summary { cursor: pointer; color: #9FB3CE; }
-  .crediti-img li { margin: 3px 0; } .crediti-img a { color: #7DD3FC; }
-  footer.piede { position: relative; z-index: 1; text-align: center; font-size: 13px; color: #9FB3CE; padding: 12px 12px 24px; }
-  @media (prefers-reduced-motion: reduce) { .card, .meta { transition: none; } }
-  /* due pulsanti dorati: sul telefono nomi corti e fila su due righe */
-  @media (max-width: 560px) { .schede { flex-wrap: wrap; } .scheda .lungo { display: none; } }
-</style>
+<link rel="stylesheet" href="storia-attivita.css">
+<link rel="stylesheet" href="storia-percorso.css">
 <!-- per i motori di ricerca e la condivisione -->
 <link rel="canonical" href="https://musicascuole.it/storia-novecento.html">
 <meta property="og:type" content="website">
@@ -158,7 +19,7 @@
 <meta property="og:locale" content="it_IT">
 <meta property="og:url" content="https://musicascuole.it/storia-novecento.html">
 <meta property="og:title" content="Il Novecento — Storia della musica — musicascuole.it">
-<meta property="og:description" content="La musica del Novecento raccontata attraverso gli ascolti: le scuole nazionali, da Grieg a Bartók e Gershwin, e le avanguardie, da Debussy a Cage; i nuovi strumenti elettronici, Pierino e il lupo e La sagra della primavera.">
+<meta property="og:description" content="Il Novecento in musica, un capitolo alla volta: la registrazione e la radio, le scuole nazionali di Grieg, Dvořák e Bartók, l'Impressionismo di Debussy, l'atonalità di Schönberg, i rumori dei futuristi, lo scandalo della Sagra della primavera, il jazz di Gershwin, Pierino e il lupo, la musica elettronica e il silenzio di Cage.">
 <meta property="og:image" content="https://musicascuole.it/media/condivisione.jpg">
 <meta property="og:image:width" content="1200">
 <meta property="og:image:height" content="630">
@@ -171,170 +32,275 @@
 <main>
 
   <div class="banner" id="banner">
-    <div class="meta sx" data-mondo="sx" title="Scuole nazionali"><img src="media/storia/novecento/banner-nazionali.jpg" alt="Béla Bartók registra i canti popolari con il fonografo in un villaggio"></div>
-    <div class="meta dx" data-mondo="dx" title="Avanguardie"><img src="media/storia/novecento/banner-avanguardie.jpg" alt="Lo Studio di Fonologia della RAI, con le apparecchiature per la musica elettronica"></div>
+    <div class="meta sx" title="Scuole nazionali"><img src="media/storia/novecento/banner-nazionali.jpg" alt="Béla Bartók registra i canti popolari con il fonografo in un villaggio"></div>
+    <div class="meta dx" title="Avanguardie"><img src="media/storia/novecento/banner-avanguardie.jpg" alt="Lo Studio di Fonologia della RAI, con le apparecchiature per la musica elettronica"></div>
     <div class="titolo-epoca">
       <div class="sopra">Storia della musica</div>
       <h1>Il Novecento</h1>
       <div class="date">1900 – 2000</div>
     </div>
-    <button class="etich-meta sx" data-mondo="sx">🌍 Scuole nazionali<span class="lungo"> · la musica dei popoli</span></button>
-    <button class="etich-meta dx" data-mondo="dx">🚀 Avanguardie<span class="lungo"> · suoni mai sentiti</span></button>
+    <span class="etich-meta sx">🌍 Scuole nazionali<span class="lungo"> · la musica dei popoli</span></span>
+    <span class="etich-meta dx">🚀 Avanguardie<span class="lungo"> · suoni mai sentiti</span></span>
   </div>
 
-  <p class="atmosfera">Un secolo di grandi cambiamenti. Da una parte i compositori vanno nei villaggi ad ascoltare i canti dei contadini, e costruiscono la musica del proprio Paese. Dall'altra c'è chi rompe tutte le regole: rumori, silenzi, voci che ridono, nastri tagliati e macchine elettroniche.</p>
+  <div class="contenuto" id="contenuto">
+  <p class="atmosfera">Un secolo di grandi cambiamenti. Da una parte la musica dei popoli: canti e danze dei villaggi. Dall'altra chi rompe tutte le regole: rumori, silenzi, macchine elettroniche.</p>
 
   <nav class="schede" aria-label="Sezioni">
-    <button class="scheda attiva" data-scheda="ascolti">🎧 Ascolti <span class="n" id="nAscolti"></span></button>
+    <button class="scheda attiva" data-scheda="percorso">📖 Il percorso <span class="n" id="nCapitoli"></span></button>
     <button class="scheda" data-scheda="strumenti">🎛️ Strumenti <span class="n" id="nStrumenti"></span></button>
-    <button class="scheda speciale" data-scheda="pierino">🐺 Pierino<span class="lungo"> e il lupo</span></button>
-    <button class="scheda speciale" data-scheda="sagra">🔥 La sagra<span class="lungo"> della primavera</span></button>
+    <button class="scheda" data-scheda="pierino">🐺 Pierino<span class="lungo"> e il lupo</span></button>
+    <button class="scheda" data-scheda="sagra">🔥 La Sagra<span class="lungo"> della primavera</span></button>
     <button class="scheda" data-scheda="suonare">🎼 Da suonare <span class="n" id="nSuonare"></span></button>
+    <button class="scheda" data-scheda="mappa">🗺️ Mappa<span class="lungo"> concettuale</span></button>
+    <button class="scheda" data-scheda="esercizi">✏️ Esercizi</button>
+    <button class="scheda" data-scheda="schede">🖨️ Schede</button>
   </nav>
 
-  <div class="grid" id="griglia"></div>
-
-  <!-- ===== PULSANTI DORATI: una sola sezione, riempita dall'oggetto SPECIALI dello script ===== -->
-  <section class="fuga" id="speciale" hidden aria-label="Sezione speciale">
-    <div class="o-video">
-      <div class="schermo" id="oSchermo"></div>
-      <div class="o-sotto"><span id="oSotto"></span> · <a id="oLink" target="_blank" rel="noopener">Apri su YouTube ↗</a></div>
-    </div>
-    <div class="o-info">
-      <span class="label" id="oLabel"></span>
-      <h3 id="oTitolo"></h3>
-      <div class="chi" id="oChi"></div>
-      <div class="gancio" id="oGancio"></div>
-      <div class="o-tab" role="tablist">
-        <button class="o-t attiva" data-o="cosa"></button>
-        <button class="o-t" data-o="ascolto"></button>
-        <button class="o-t" data-o="curiosita"></button>
-      </div>
-      <div class="o-corpo" id="oCorpo"></div>
-    </div>
+  <section id="vistaPercorso">
+    <ol class="indice" id="indice"></ol>
   </section>
+  <div class="grid" id="griglia" hidden></div>
+  <section class="vista vista-alta" id="vistaMappa" hidden></section>
+  <section class="vista vista-alta" id="vistaEsercizi" hidden></section>
+  <section class="vista vista-alta" id="vistaSchede" hidden></section>
 
   <details class="crediti-img">
     <summary>Crediti delle immagini e dei video</summary>
     <ul id="listaCrediti"></ul>
     <p>I video sono incorporati da YouTube e restano dei rispettivi titolari: non fanno parte della licenza del sito.</p>
   </details>
+  </div>
 </main>
 
-<div class="velo" id="velo" role="dialog" aria-modal="true" aria-labelledby="fTitolo">
-  <div class="finestra" id="finestra">
-    <button class="chiudi" id="chiudi" aria-label="Chiudi">✕</button>
-    <div class="schermo" id="schermo"></div>
-    <div class="info">
-      <span class="label" id="fLabel"></span>
-      <h3 id="fTitolo"></h3>
-      <div class="chi" id="fChi"></div>
-      <div class="gancio" id="fGancio"></div>
-      <ul id="fPunti"></ul>
-      <div class="sapevi" id="fSapevi"></div>
-      <div class="piede">
-        <div class="frecce"><button class="freccia" id="prec">◀</button><button class="freccia" id="succ">▶</button></div>
-        <div id="fFonte"></div>
-      </div>
-    </div>
-  </div>
-</div>
-
+<script src="storia-attivita.js"></script>
+<script src="storia-percorso.js"></script>
 <script>
 (function () {
   "use strict";
   const IMG = "media/storia/novecento/";
 
   /* =========================================================
-     CONTENUTI — per cambiare un video basta cambiare "yt"
-     mondo: "sx" = Scuole nazionali (metà sinistra del banner), "dx" = Avanguardie (metà destra)
+     IL PERCORSO — un capitolo per ogni ascolto, in ordine di tempo (dopo l'introduzione).
+     mondo: "sx" = Scuole nazionali (metà sinistra del banner, arancio), "dx" = Avanguardie (metà destra, viola).
+     pagine: { img, did (didascalia), t: [paragrafi] }. Per cambiare un video basta cambiare "yt".
      ========================================================= */
-  const ASCOLTI = [
-    { id: "grieg", mondo: "sx", label: "Norvegia", titolo: "Nell'antro del re della montagna", chi: "Edvard Grieg · Peer Gynt, 1875", img: "grieg.jpg", yt: "ao4jIo4O85Q", canale: "DR Koncerthuset (canale ufficiale)",
+  const CAPITOLI = [
+    { id: "grieg", mondo: "sx", label: "Introduzione", titolo: "Un secolo di cambiamenti", data: "1900 – 2000",
+      pagine: [
+        { img: "p-grieg-1.jpg", did: "Il cane Nipper ascolta il grammofono: «La voce del padrone» (Francis Barraud, 1899).",
+          t: ["Il <b>Novecento</b> è il secolo delle grandi invenzioni: elettricità, automobili, aerei, cinema, radio.",
+          "Per la musica la novità più grande è la <b>registrazione</b>: con il grammofono la musica si può riascoltare quando si vuole."] },
+        { img: "p-grieg-2.jpg", did: "Tre sorelle cantanti, le Brox Sisters, accendono la radio (New York, anni Venti).",
+          t: ["Negli anni Venti arriva la <b>radio</b>: la musica entra in tutte le case.",
+          "È anche il secolo di due guerre mondiali, che cambiano per sempre l'Europa."] },
+        { img: "p-grieg-3.jpg", did: "Edvard Grieg, il compositore della Norvegia (fotografia del 1888).",
+          t: ["I compositori non seguono più una sola strada. Alcuni ascoltano i canti e le danze del proprio popolo e costruiscono la musica del loro Paese: sono le <b>scuole nazionali</b>, nate già nell'Ottocento.",
+          "Altri rompono tutte le regole e cercano suoni mai sentiti: sono le <b>avanguardie</b>. Cominciamo dalla Norvegia."] }
+      ],
+      brano: "Nell'antro del re della montagna", chi: "Edvard Grieg · Peer Gynt, Norvegia, 1875", img: "grieg.jpg", yt: "ao4jIo4O85Q", canale: "DR Koncerthuset (canale ufficiale)",
       gancio: "Un ragazzo nella grotta dei troll.",
       punti: ["Il giovane Peer Gynt entra nel regno dei troll, le creature delle fiabe norvegesi.",
               "Un tema breve si ripete sempre uguale, ma sempre più forte e sempre più veloce.",
               "Alla fine i troll lo inseguono: l'orchestra esplode."],
-      sapevi: "Grieg raccoglieva le melodie popolari della Norvegia. Questo brano però non gli piaceva: diceva che «puzzava di letame di mucca»! Oggi è uno dei più famosi al mondo." },
-    { id: "kiev", mondo: "sx", label: "Russia", titolo: "La grande porta di Kiev", chi: "Modest Musorgskij · Quadri di un'esposizione, 1874 (orchestrazione di Ravel, 1922)", img: "musorgskij.jpg", yt: "b8gs4TozJbQ", canale: "CBC Music (canale ufficiale)",
-      gancio: "Una passeggiata in una mostra di quadri.",
-      punti: ["Musorgskij visitò la mostra dei disegni di un amico pittore morto da poco, Viktor Hartmann, e trasformò ogni quadro in musica.",
-              "Questo è il gran finale: il progetto di una porta monumentale per la città di Kiev.",
-              "Ascolta le campane e il tema solenne, come una processione."],
-      sapevi: "Musorgskij faceva parte del «Gruppo dei Cinque», che voleva una musica tutta russa. Lo scrisse per pianoforte; Ravel, cinquant'anni dopo, lo trasformò per orchestra." },
-    { id: "dvorak", mondo: "sx", label: "Boemia e America", titolo: "Sinfonia «Dal Nuovo Mondo»", chi: "Antonín Dvořák · New York, 1893 · ultimo movimento", img: "dvorak.jpg", yt: "pGdtkUiKaA8", canale: "Sony Classical (canale ufficiale)",
-      gancio: "Un ceco in America.",
-      punti: ["Dvořák veniva dalla Boemia (oggi Repubblica Ceca) e andò a dirigere una scuola di musica a New York.",
-              "Dopo un inizio drammatico, corni e trombe lanciano un tema potente.",
-              "In America ascoltò gli spiritual degli afroamericani e disse che dovevano diventare la base della musica americana."],
-      sapevi: "Si racconta che Neil Armstrong portò con sé la registrazione di questa sinfonia nel viaggio verso la Luna, nel 1969." },
-    { id: "bartok", mondo: "sx", label: "Ungheria e Romania", titolo: "Danze popolari rumene", chi: "Béla Bartók · 1915", img: "bartok.jpg", yt: "Z50Ooqv1GFg", canale: "Norwegian Chamber Orchestra (canale ufficiale)",
-      gancio: "Sei danze da un villaggio della Transilvania.",
-      punti: ["Sono sei danze brevissime, una diversa dall'altra: con il bastone, con la fascia, sul posto, veloci…",
-              "Bartók non le ha inventate: sono melodie vere, che aveva ascoltato dai contadini.",
-              "Ascolta i ritmi irregolari e le scale strane, diverse da quelle della musica classica."],
-      sapevi: "Bartók girava i villaggi con un fonografo, l'antenato del registratore, e raccolse migliaia di canti: lo vedi nella foto del banner, a sinistra." },
-    { id: "defalla", mondo: "sx", label: "Spagna", titolo: "Danza rituale del fuoco", chi: "Manuel de Falla · L'amore stregone, 1915", img: "defalla.jpg", yt: "sUdRxMc5sNg", canale: "Filarmonica di Budapest (canale ufficiale)",
-      gancio: "Una danza gitana per scacciare un fantasma.",
-      punti: ["Nel balletto la gitana Candela danza intorno al fuoco per liberarsi dal fantasma del suo vecchio fidanzato.",
-              "Il ritmo martellante e i trilli imitano le fiamme che si alzano.",
-              "La musica viene dal flamenco dell'Andalusia, nel sud della Spagna."],
-      sapevi: "Il dipinto nella scheda è «El Jaleo» di John Singer Sargent (1882): una danzatrice di flamenco con i chitarristi." },
-    { id: "gershwin", mondo: "sx", label: "Stati Uniti", titolo: "Rhapsody in Blue", chi: "George Gershwin · New York, 1924", img: "gershwin.jpg", yt: "VR8X26YpUbQ", canale: "hr-Sinfonieorchester (canale ufficiale)",
-      gancio: "Quando il jazz entra in sala da concerto.",
-      punti: ["Si apre con il clarinetto che sale scivolando dal grave all'acuto: un «glissando» famosissimo.",
-              "Pianoforte e orchestra mescolano musica classica e jazz.",
-              "Ascolta il grande tema lento, verso la fine: sembra la colonna sonora di un film."],
-      sapevi: "Il glissando iniziale lo inventò il clarinettista durante una prova, per scherzo: a Gershwin piacque così tanto che lo tenne. Per il jazz e il pop c'è una pagina tutta sua!" },
-    { id: "price", mondo: "sx", label: "Stati Uniti", titolo: "Juba Dance", chi: "Florence Price · Sinfonia n. 1, 1932", img: "price.jpg", yt: "WaH6aIxDGWw", canale: "Chineke! Orchestra (canale ufficiale)",
-      gancio: "Una danza nata battendo le mani sulle gambe.",
-      punti: ["La <b>juba</b> era una danza degli afroamericani, accompagnata battendo mani, cosce e petto.",
-              "Price la porta in orchestra: ascolta il ritmo sincopato e allegro.",
-              "È il terzo movimento della sua prima sinfonia."],
-      sapevi: "Nel 1933 l'Orchestra Sinfonica di Chicago suonò questa sinfonia: Florence Price fu la prima donna afroamericana a sentire una sua sinfonia eseguita da una grande orchestra americana." },
+      sapevi: "Grieg raccoglieva le melodie popolari della Norvegia. Nell'«Ascolta anche» c'è la Russia: Musorgskij trasforma in musica i quadri di una mostra.",
+      altri: [{ brano: "La grande porta di Kiev", chi: "Modest Musorgskij · Quadri di un'esposizione, 1874", img: "musorgskij.jpg", yt: "b8gs4TozJbQ", canale: "CBC Music (canale ufficiale)" }],
+      parole: [["Scuole nazionali", "la musica di un Paese, costruita sui canti popolari."], ["Avanguardie", "chi rompe le regole e cerca suoni mai sentiti."], ["Registrazione", "musica su disco o nastro, da riascoltare quando vuoi."]] },
 
-    { id: "debussy", mondo: "dx", label: "Impressionismo", titolo: "La cattedrale sommersa", chi: "Claude Debussy · Preludi, 1910", img: "debussy.jpg", yt: "gN3S2LMF6Oc", canale: "Deutsche Grammophon (canale ufficiale)",
+    { id: "dvorak", mondo: "sx", label: "Scuole nazionali", titolo: "Un boemo in America", data: "1893",
+      pagine: [
+        { img: "p-dvorak-1.jpg", did: "Antonín Dvořák (fotografia del 1882).",
+          t: ["<b>Antonín Dvořák</b> viene dalla Boemia, oggi Repubblica Ceca. La sua musica è piena delle danze del suo popolo.",
+          "Nel 1892 lo chiamano a dirigere una scuola di musica a <b>New York</b>."] },
+        { img: "p-dvorak-2.jpg", did: "I Fisk Jubilee Singers, coro afroamericano che fece conoscere gli spiritual in America e in Europa (1882).",
+          t: ["In America ascolta gli <b>spiritual</b>, i canti religiosi degli afroamericani.",
+          "Dice che devono diventare la base di una musica tutta americana. Nella sua sinfonia «Dal Nuovo Mondo» si sente questa nostalgia."] }
+      ],
+      brano: "Sinfonia «Dal Nuovo Mondo»", chi: "Antonín Dvořák · New York, 1893 · ultimo movimento", img: "dvorak.jpg", yt: "pGdtkUiKaA8", canale: "Sony Classical (canale ufficiale)",
+      gancio: "Un ceco in America.",
+      punti: ["Dopo un inizio drammatico, corni e trombe lanciano un tema potente.",
+              "Ascolta come il tema torna più volte, passando da uno strumento all'altro.",
+              "Alla fine ritornano anche i temi dei movimenti precedenti, come un riassunto."],
+      sapevi: "Si racconta che Neil Armstrong portò con sé la registrazione di questa sinfonia nel viaggio verso la Luna, nel 1969.",
+      parole: [["Spiritual", "canto religioso degli afroamericani."]] },
+
+    { id: "debussy", mondo: "dx", label: "Avanguardie", titolo: "Musica come colore", data: "1910",
+      pagine: [
+        { img: "p-debussy-1.jpg", did: "«Impressione, levar del sole»: il quadro che diede il nome all'Impressionismo (Claude Monet, 1872).",
+          t: ["I pittori <b>impressionisti</b> dipingono la luce che cambia, l'acqua, la nebbia, con piccole macchie di colore.",
+          "<b>Claude Debussy</b> fa lo stesso con i suoni: la sua musica sembra sfumata, come un acquerello."] },
+        { img: "p-debussy-2.jpg", did: "Claude Debussy (fotografia di Nadar, 1908 circa).",
+          t: ["Debussy non ama i grandi temi e i finali trionfali: preferisce le atmosfere, i colori, le sorprese dell'armonia.",
+          "È l'<b>Impressionismo musicale</b>."] },
+        { img: "p-debussy-3.jpg", did: "Erik Satie suona l'armonium (disegno di Santiago Rusiñol, 1891).",
+          t: ["Il suo amico <b>Erik Satie</b> va ancora più in là: musica semplicissima, poche note, nessun effetto.",
+          "Una reazione alla musica grandiosa dell'Ottocento."] }
+      ],
+      brano: "La cattedrale sommersa", chi: "Claude Debussy · Preludi, 1910", img: "debussy.jpg", yt: "gN3S2LMF6Oc", canale: "Deutsche Grammophon (canale ufficiale)",
       gancio: "Una chiesa che emerge dal mare… e poi sparisce.",
       punti: ["Una leggenda bretone racconta di una città sommersa: nelle mattine calme la cattedrale emerge dall'acqua e suonano le campane.",
-              "Il pianoforte dipinge con il suono, come i pittori impressionisti con il colore: nebbia, onde, rintocchi.",
+              "Il pianoforte dipinge con il suono: nebbia, onde, rintocchi.",
               "Ascolta il momento in cui la cattedrale emerge: accordi grandi e solenni, poi tutto torna a sfumare."],
-      sapevi: "Debussy scriveva il titolo di ogni preludio alla fine, tra parentesi: voleva che chi suona prima ascoltasse la musica, e solo dopo scoprisse a cosa pensava lui." },
-    { id: "satie", mondo: "dx", label: "Musica semplice", titolo: "Gymnopédie n. 1", chi: "Erik Satie · Parigi, 1888", img: "satie.jpg", yt: "TL0xzp4zzBE", canale: "Khatia Buniatishvili (canale ufficiale)",
-      gancio: "Pochissime note, lentissime.",
-      punti: ["La mano sinistra dondola tra due accordi; la destra canta una melodia semplice e malinconica.",
-              "Nessun virtuosismo, nessuna esplosione: Satie va contro la musica grandiosa del suo tempo.",
-              "Per questo è considerato un precursore delle avanguardie e della musica minimalista."],
-      sapevi: "Satie era un tipo stravagante: possedeva sette vestiti di velluto tutti identici e inventò la «musica d'arredamento», da ascoltare distrattamente, come un mobile." },
-    { id: "russolo", mondo: "dx", label: "Futurismo", titolo: "Risveglio di una città", chi: "Luigi Russolo · 1913", img: "russolo.jpg", yt: "2JfOE69I928", canale: "Productions SuperMusique (canale ufficiale)",
-      gancio: "Musica fatta di rumori.",
-      punti: ["Per i futuristi italiani la musica doveva raccontare il mondo moderno: motori, fabbriche, treni, città.",
-              "Russolo costruì gli <b>intonarumori</b>: scatole con una manovella e un grande imbuto, che ronzano, scoppiettano, gorgogliano.",
-              "Gli strumenti originali sono andati distrutti: qui suonano copie ricostruite."],
-      sapevi: "Nel 1913 Russolo scrisse il manifesto «L'arte dei rumori». Ai suoi concerti il pubblico rideva, fischiava… e qualche volta si azzuffava." },
-    { id: "schoenberg", mondo: "dx", label: "Atonalità", titolo: "Pierrot lunaire: «Ebbro di luna»", chi: "Arnold Schönberg · 1912", img: "schoenberg.jpg", yt: "-FUySRVF75k", canale: "Guarneri Hall (canale ufficiale)",
+      sapevi: "Debussy scriveva il titolo di ogni preludio alla fine, tra parentesi: voleva che chi suona prima ascoltasse la musica. Nell'«Ascolta anche» c'è la semplicità di Satie.",
+      altri: [{ brano: "Gymnopédie n. 1", chi: "Erik Satie · Parigi, 1888", img: "satie.jpg", yt: "TL0xzp4zzBE", canale: "Khatia Buniatishvili (canale ufficiale)" }],
+      parole: [["Impressionismo", "musica che dipinge atmosfere e colori sfumati."]] },
+
+    { id: "schoenberg", mondo: "dx", label: "Avanguardie", titolo: "Musica senza casa", data: "1912",
+      pagine: [
+        { img: "p-schoenberg-1.jpg", did: "Arnold Schönberg (ritratto di Egon Schiele, 1917).",
+          t: ["Nella musica dei secoli precedenti c'è sempre una nota che fa da «casa», la <b>tonica</b>: la musica si allontana e poi ci ritorna.",
+          "<b>Arnold Schönberg</b>, a Vienna, la abolisce: la sua musica è <b>atonale</b>, senza una casa."] },
+        { img: "p-schoenberg-2.jpg", did: "«Impressione III (Concerto)»: Kandinskij la dipinse dopo aver ascoltato la musica di Schönberg (1911).",
+          t: ["Anche la voce cambia: nel <b>Pierrot lunaire</b> la cantante usa lo <b>Sprechgesang</b>, un canto parlato.",
+          "Il pittore Kandinsky ascolta un concerto di Schönberg e ne rimane così colpito che dipinge un quadro e gli scrive una lettera."] }
+      ],
+      brano: "Pierrot lunaire: «Ebbro di luna»", chi: "Arnold Schönberg · 1912", img: "schoenberg.jpg", yt: "-FUySRVF75k", canale: "Guarneri Hall (canale ufficiale)",
       gancio: "Né parlato né cantato.",
-      punti: ["La voce usa lo <b>Sprechgesang</b>, il «canto parlato»: sale e scende come nel canto, ma senza tenere le note.",
-              "La musica è <b>atonale</b>: non c'è una tonalità, nessuna nota fa da «casa».",
+      punti: ["La voce sale e scende come nel canto, ma senza tenere le note.",
+              "Nessuna nota fa da «casa»: la musica sembra sospesa, inquieta.",
               "Pierrot, la maschera triste, si ubriaca della luce della luna."],
-      sapevi: "Il ritratto nella scheda è del pittore Egon Schiele. Schönberg era anche pittore, e più tardi inventò un metodo nuovo per comporre: la dodecafonia." },
-    { id: "cage", mondo: "dx", label: "Musica e silenzio", titolo: "4'33\"", chi: "John Cage · 1952", img: "cage.jpg", yt: "AWVUp12XPpU", canale: "Berliner Philharmoniker (canale ufficiale)",
+      sapevi: "Più tardi Schönberg inventò un metodo nuovo per comporre: la dodecafonia, che usa tutte le dodici note in un ordine scelto dal compositore.",
+      parole: [["Atonalità", "musica senza una nota che faccia da «casa»."], ["Sprechgesang", "il «canto parlato»: a metà tra parlare e cantare."]] },
+
+    { id: "russolo", mondo: "dx", label: "Avanguardie", titolo: "Futurismo: l'arte dei rumori", data: "1913",
+      pagine: [
+        { img: "p-russolo-1.jpg", did: "«La città che sale»: cavalli, operai, cantieri, tutto in movimento (Umberto Boccioni, 1910).",
+          t: ["In Italia i <b>futuristi</b> amano la velocità, le macchine, le città moderne. Vogliono un'arte che racconti il mondo nuovo.",
+          "Per loro il mondo moderno è pieno di <b>rumori</b>: motori, fabbriche, treni, tram."] },
+        { img: "p-russolo-2.jpg", did: "Luigi Russolo e Ugo Piatti con gli intonarumori, nel laboratorio futurista di Milano (1913 circa).",
+          t: ["Il pittore <b>Luigi Russolo</b> scrive il manifesto «L'arte dei rumori» e costruisce gli <b>intonarumori</b>: strumenti che ronzano, scoppiettano, gorgogliano.",
+          "Ai suoi concerti il pubblico rideva, fischiava… e qualche volta si azzuffava."] }
+      ],
+      brano: "Risveglio di una città", chi: "Luigi Russolo · 1913", img: "russolo.jpg", yt: "2JfOE69I928", canale: "Productions SuperMusique (canale ufficiale)",
+      gancio: "Musica fatta di rumori.",
+      punti: ["Ascolta: non ci sono melodie, ma ronzii, sibili, scoppi.",
+              "Prova a immaginare la città che si sveglia: macchine, fabbriche, folla.",
+              "Gli strumenti originali sono andati distrutti: qui suonano copie ricostruite."],
+      sapevi: "Gli intonarumori avevano nomi buffi: ululatore, rombatore, gracidatore, scoppiatore…",
+      strumenti: ["intonarumori"],
+      parole: [["Futurismo", "arte italiana che ama velocità, macchine e rumori."], ["Rumore", "un suono senza un'altezza precisa."]] },
+
+    { id: "sagra", mondo: "dx", label: "Avanguardie", titolo: "Lo scandalo della Sagra", data: "Parigi, 1913",
+      pagine: [
+        { img: "p-sagra-1.jpg", did: "Igor' Stravinskij (fotografia degli anni Venti).",
+          t: ["Parigi, 29 maggio 1913: debutta il balletto <b>La sagra della primavera</b> di <b>Igor' Stravinskij</b>.",
+          "Dopo pochi minuti il pubblico ride, fischia, grida. I sostenitori rispondono: in sala scoppia una baruffa."] },
+        { img: "p-sagra-2.jpg", did: "Le ballerine della prima, nel 1913, con i costumi russi disegnati da Nicholas Roerich.",
+          t: ["La musica era sconvolgente: accordi <b>dissonanti</b>, che «stridono», e ritmi irregolari, con gli accenti dove meno te lo aspetti.",
+          "Anche la danza era il contrario del balletto classico: piedi in dentro, salti pesanti, corpi curvi."] },
+        { img: "p-sagra-3.jpg", did: "«Il bacio alla terra»: bozzetto di Nicholas Roerich per la scena della Sagra (1912).",
+          t: ["Racconta un antico rito della Russia: una ragazza danza fino allo sfinimento, perché torni la primavera.",
+          "Un anno dopo, suonata in concerto senza ballerini, la Sagra fu un trionfo."] }
+      ],
+      brano: "La sagra della primavera", chi: "Igor' Stravinskij · balletto, Parigi, 1913", img: "sagra-banner.jpg", yt: "NQQR-GU14sQ", canale: "Fatova Mingus (ripresa del canale televisivo arte)",
+      gancio: "Il balletto che fece scoppiare una rissa a teatro.",
+      punti: ["Si apre con il fagotto da solo, in una zona acutissima: sembra uno strumento antico, misterioso.",
+              "Poi un accordo martellato con accenti irregolari: i giovani ballano pestando i piedi per svegliare la terra.",
+              "Nel finale l'Eletta danza da sola, senza sosta: ascolta il ritmo che cambia di continuo."],
+      sapevi: "Il frastuono era così forte che i ballerini non sentivano l'orchestra: il coreografo Nižinskij, in piedi su una sedia dietro le quinte, gridava loro i numeri per tenere il tempo.",
+      strumenti: ["percussioni"],
+      parole: [["Balletto", "una storia raccontata con la danza e la musica."], ["Dissonanza", "accordo che «stride», che crea tensione."], ["Ritmo irregolare", "accenti che cadono dove non te lo aspetti."]] },
+
+    { id: "bartok", mondo: "sx", label: "Scuole nazionali", titolo: "Bartók e i canti dei contadini", data: "1915",
+      pagine: [
+        { img: "p-bartok-1.jpg", did: "Bartók registra con il fonografo i canti dei contadini di un villaggio (1907 circa).",
+          t: ["<b>Béla Bartók</b>, ungherese, gira i villaggi con un <b>fonografo</b>, l'antenato del registratore.",
+          "Registra migliaia di canti e danze dei contadini: è una ricerca da scienziato, l'<b>etnomusicologia</b>."] },
+        { img: "p-bartok-2.jpg", did: "Béla Bartók (fotografia del 1922).",
+          t: ["Poi usa quelle melodie, con i loro ritmi irregolari e le loro scale strane, nella sua musica.",
+          "Anche in Spagna Manuel de Falla porta in orchestra il flamenco dell'Andalusia."] }
+      ],
+      brano: "Danze popolari rumene", chi: "Béla Bartók · 1915", img: "bartok.jpg", yt: "Z50Ooqv1GFg", canale: "Norwegian Chamber Orchestra (canale ufficiale)",
+      gancio: "Sei danze da un villaggio della Transilvania.",
+      punti: ["Sono sei danze brevissime, una diversa dall'altra: con il bastone, con la fascia, sul posto, veloci…",
+              "Bartók non le ha inventate: sono melodie vere, ascoltate dai contadini.",
+              "Ascolta i ritmi irregolari e le scale diverse da quelle della musica classica."],
+      sapevi: "Bartók raccolse più di diecimila melodie popolari. Nell'«Ascolta anche» c'è la Spagna: una danza gitana intorno al fuoco.",
+      altri: [{ brano: "Danza rituale del fuoco", chi: "Manuel de Falla · L'amore stregone, 1915", img: "defalla.jpg", yt: "sUdRxMc5sNg", canale: "Filarmonica di Budapest (canale ufficiale)" }],
+      parole: [["Canto popolare", "canto tramandato a voce, senza un autore conosciuto."], ["Etnomusicologia", "lo studio della musica dei popoli, registrata dal vivo."]] },
+
+    { id: "gershwin", mondo: "sx", label: "Scuole nazionali", titolo: "L'America: il jazz in sala da concerto", data: "1924 – 1932",
+      pagine: [
+        { img: "p-gershwin-1.jpg", did: "George Gershwin (fotografia di Carl Van Vechten, 1937).",
+          t: ["Negli Stati Uniti nasce il <b>jazz</b>, dalla musica degli afroamericani. È la musica nuova del Novecento.",
+          "<b>George Gershwin</b> lo porta in sala da concerto: nella Rhapsody in Blue mescola musica classica e jazz."] },
+        { img: "p-gershwin-2.jpg", did: "Florence Price, compositrice afroamericana.",
+          t: ["<b>Florence Price</b> è la prima compositrice afroamericana a sentire una sua sinfonia suonata da una grande orchestra americana, nel 1933.",
+          "Nella sua musica ci sono gli spiritual e le danze della tradizione afroamericana."] }
+      ],
+      brano: "Rhapsody in Blue", chi: "George Gershwin · New York, 1924", img: "gershwin.jpg", yt: "VR8X26YpUbQ", canale: "hr-Sinfonieorchester (canale ufficiale)",
+      gancio: "Quando il jazz entra in sala da concerto.",
+      punti: ["Si apre con il clarinetto che sale scivolando dal grave all'acuto: un <b>glissando</b> famosissimo.",
+              "Pianoforte e orchestra mescolano musica classica e jazz.",
+              "Ascolta il grande tema lento, verso la fine: sembra la colonna sonora di un film."],
+      sapevi: "Il glissando iniziale lo inventò il clarinettista durante una prova, per scherzo: a Gershwin piacque così tanto che lo tenne. Per il jazz e il pop c'è una pagina tutta sua!",
+      altri: [{ brano: "Juba Dance", chi: "Florence Price · Sinfonia n. 1, 1932", img: "price.jpg", yt: "WaH6aIxDGWw", canale: "Chineke! Orchestra (canale ufficiale)" }],
+      parole: [["Jazz", "musica afroamericana, con ritmi sincopati e improvvisazione."], ["Glissando", "scivolare da una nota all'altra, passando per quelle in mezzo."]] },
+
+    { id: "pierino", mondo: "sx", label: "Scuole nazionali", titolo: "Pierino e il lupo: l'orchestra racconta", data: "Mosca, 1936",
+      pagine: [
+        { img: "p-pierino-1.jpg", did: "Sergej Prokof'ev (fotografia del 1918 circa).",
+          t: ["Il russo <b>Sergej Prokof'ev</b> scrive <b>Pierino e il lupo</b> per il Teatro dei bambini di Mosca, diretto da una donna, Natalija Sac.",
+          "Vuole far conoscere ai più piccoli gli strumenti dell'orchestra."] },
+        { img: "p-pierino-2.jpg", did: "Il lupo delle fiabe russe: «Ivan Zarevič sul lupo grigio» (Viktor Vasnecov, 1889).",
+          t: ["Ogni personaggio ha il suo strumento e il suo tema: Pierino gli archi, l'uccellino il flauto, l'anatra l'oboe, il gatto il clarinetto.",
+          "Il nonno è il fagotto, il lupo tre corni, i cacciatori i timpani e la gran cassa."] }
+      ],
+      brano: "Pierino e il lupo", chi: "Sergej Prokof'ev · Mosca, 1936 · con la narratrice in italiano", img: "pierino-banner.jpg", yt: "VAqlhn9-Q98", canale: "Teatro La Fenice (canale ufficiale)",
+      gancio: "Ogni personaggio è uno strumento dell'orchestra.",
+      punti: ["Prima di cominciare, la narratrice presenta ogni personaggio con il suo strumento: ascolta bene!",
+              "Quando senti un tema, sai chi è in scena: è come il Leitmotiv di Wagner.",
+              "Ascolta il finale: si sente ancora l'anatra… nella pancia del lupo!"],
+      sapevi: "Prova a riascoltare un pezzo della fiaba senza guardare il video: riesci a dire quale personaggio sta arrivando solo dallo strumento?",
+      parole: [["Timbro", "il «colore» del suono che fa riconoscere uno strumento."], ["Fiaba musicale", "una storia raccontata da un narratore e dall'orchestra."]] },
+
+    { id: "cage", mondo: "dx", label: "Avanguardie", titolo: "Dopo la guerra: tutto è musica", data: "1950 – 1975",
+      pagine: [
+        { img: "p-cage-1.jpg", did: "Le apparecchiature dello Studio di Fonologia della RAI di Milano (1955), oggi al Castello Sforzesco.",
+          t: ["Dopo la Seconda guerra mondiale i compositori sperimentano ancora di più: suoni elettronici, suoni registrati, perfino il silenzio.",
+          "Negli studi della radio, come quello di Milano, si inventa la <b>musica elettronica</b>."] },
+        { img: "p-cage-2.jpg", did: "John Cage (fotografia del 1988).",
+          t: ["L'americano <b>John Cage</b> scrive un brano in cui i musicisti non suonano: la musica sono i suoni intorno a noi.",
+          "Altri usano la voce in modi nuovi o ripetono pochissime note: è il <b>minimalismo</b>."] }
+      ],
+      brano: "4'33\"", chi: "John Cage · 1952", img: "cage.jpg", yt: "AWVUp12XPpU", canale: "Berliner Philharmoniker (canale ufficiale)",
       gancio: "Un brano in cui l'orchestra non suona nemmeno una nota.",
       punti: ["Per tre movimenti i musicisti restano fermi e in silenzio.",
               "La musica sono i suoni intorno a te: un colpo di tosse, un fruscio, il traffico fuori dalla finestra.",
               "Provate in classe: state in silenzio e ascoltate. Che cosa sentite?"],
-      sapevi: "Cage entrò in una stanza completamente isolata dai rumori e sentì comunque due suoni: il suo sistema nervoso e il battito del suo sangue. Capì che il silenzio assoluto non esiste." },
-    { id: "reich", mondo: "dx", label: "Minimalismo", titolo: "Clapping Music", chi: "Steve Reich · 1972", img: "reich.jpg", yt: "liYkRarIDfo", canale: "London Sinfonietta (canale ufficiale)",
-      gancio: "Due persone, quattro mani, un solo ritmo.",
-      punti: ["Tutti e due battono lo stesso ritmo di 12 battiti.",
-              "Ogni tanto uno dei due sposta il ritmo di un battito: nascono incastri sempre diversi.",
-              "Dopo 12 spostamenti i due ritmi tornano insieme. Si può fare in classe!"],
-      sapevi: "Nel video, tra chi batte le mani, c'è Steve Reich in persona. La musica <b>minimalista</b> usa pochissimo materiale ripetuto e trasformato piano piano." },
-    { id: "berio", mondo: "dx", label: "Avanguardia italiana", titolo: "Sequenza III", chi: "Luciano Berio · 1966", img: "berberian.jpg", yt: "YiznrEc7hss", canale: "Divertimento Ensemble (canale ufficiale)",
-      gancio: "Una voce che ride, sussurra, tossisce… e canta.",
-      punti: ["Berio usa tutti i suoni che può fare una voce, non solo il canto: risate, sospiri, bisbigli, schiocchi.",
-              "Le emozioni cambiano velocissime: nervosismo, allegria, paura.",
-              "Qui la canta Maria Eleonora Caminada."],
-      sapevi: "Berio la scrisse per Cathy Berberian, la cantante della foto: americana di origine armena, sapeva fare con la voce cose che nessuno aveva mai fatto." }
+      sapevi: "Cage entrò in una stanza isolata dai rumori e sentì comunque due suoni: il suo sistema nervoso e il battito del suo sangue. Negli «Ascolta anche»: una voce che ride e sussurra, e un ritmo battuto con le mani.",
+      altri: [{ brano: "Sequenza III", chi: "Luciano Berio · 1966", img: "berberian.jpg", yt: "YiznrEc7hss", canale: "Divertimento Ensemble (canale ufficiale)" },
+              { brano: "Clapping Music", chi: "Steve Reich · 1972", img: "reich.jpg", yt: "liYkRarIDfo", canale: "London Sinfonietta (canale ufficiale)" }],
+      strumenti: ["preparato", "nastro", "theremin", "ondes"],
+      parole: [["Musica elettronica", "suoni prodotti o trasformati da apparecchi elettrici."], ["Minimalismo", "pochissime note, ripetute e trasformate piano piano."]] },
+
+    { id: "riepilogo", mondo: "sx", label: "Ricapitoliamo", titolo: "Che cosa abbiamo scoperto", data: "1900 – 2000", riepilogo: true, img: "p-grieg-1.jpg",
+      pagine: [
+        { img: "p-grieg-1.jpg", did: "Il cane Nipper ascolta il grammofono: «La voce del padrone» (Francis Barraud, 1899).",
+          t: ["Il Novecento è il secolo delle invenzioni e delle guerre. Con la <b>registrazione</b> la musica entra in tutte le case.",
+          "I compositori non seguono più una sola strada."] },
+        { img: "p-bartok-1.jpg", did: "Bartók registra con il fonografo i canti dei contadini di un villaggio (1907 circa).",
+          t: ["<b>Scuole nazionali</b>: i canti popolari diventano la musica di un Paese (Norvegia, Russia, Ungheria, Spagna, America).",
+          "Dalla musica afroamericana nasce il jazz."] },
+        { img: "p-russolo-2.jpg", did: "Luigi Russolo e Ugo Piatti con gli intonarumori, nel laboratorio futurista di Milano (1913 circa).",
+          t: ["<b>Avanguardie</b>: impressionismo, atonalità, rumori, dissonanze e ritmi irregolari, elettronica, silenzio, minimalismo.",
+          "Ogni regola si può rompere: tutto può diventare musica."] }
+      ] }
+  ];
+
+  const LINEA = [
+    ["1893", "Dvořák a New York: la Sinfonia «Dal Nuovo Mondo»."],
+    ["1910", "Debussy pubblica i Preludi per pianoforte."],
+    ["1912", "Il Pierrot lunaire di Schönberg."],
+    ["1913", "Russolo: «L'arte dei rumori». Lo scandalo della Sagra a Parigi."],
+    ["1914–18", "La Prima guerra mondiale."],
+    ["1915", "Le Danze popolari rumene di Bartók."],
+    ["1924", "La Rhapsody in Blue di Gershwin."],
+    ["1933", "Si suona la prima sinfonia di Florence Price."],
+    ["1936", "Pierino e il lupo di Prokof'ev."],
+    ["1939–45", "La Seconda guerra mondiale."],
+    ["1952", "4'33\" di John Cage."],
+    ["1955", "A Milano apre lo Studio di Fonologia della RAI."]
   ];
 
   const STRUMENTI = [
@@ -382,69 +348,6 @@
     { titolo: "Clapping Music", chi: "Steve Reich · con le mani", img: "reich.jpg" }
   ];
 
-  /* ---------- i due pulsanti dorati ---------- */
-  const SPECIALI = {
-    pierino: {
-      yt: "VAqlhn9-Q98", canale: "Teatro La Fenice (canale ufficiale)", img: "pierino-banner.jpg", nome: "Pierino e il lupo",
-      sotto: "Versione completa con la narratrice in italiano (Sonia Bergamasco) · Teatro La Fenice di Venezia",
-      label: "Mosca, 1936 · fiaba musicale", titolo: "Pierino e il lupo", chi: "Sergej Prokof'ev",
-      gancio: "Ogni personaggio è uno strumento dell'orchestra.",
-      tab: ["🎻 I personaggi", "🎬 La storia", "💡 Curiosità"],
-      cosa: [
-        ["🧒", "<b>Pierino</b>: gli archi, con una melodia allegra e sicura di sé."],
-        ["🐦", "<b>L'uccellino</b>: il flauto, che svolazza velocissimo."],
-        ["🦆", "<b>L'anatra</b>: l'oboe, un po' goffo e dondolante."],
-        ["🐈", "<b>Il gatto</b>: il clarinetto, con note staccate e furtive."],
-        ["👴", "<b>Il nonno</b>: il fagotto, grave e brontolone."],
-        ["🐺", "<b>Il lupo</b>: tre corni, minacciosi."],
-        ["🔫", "<b>I cacciatori</b>: i legni, con i timpani e la gran cassa per gli spari."]
-      ],
-      ascolto: [
-        ["Inizio", "Prima di cominciare, la narratrice presenta ogni personaggio con il suo strumento: ascolta bene!"],
-        ["Il prato", "Pierino esce nel prato e lascia il cancello aperto. L'anatra va a nuotare nello stagno e litiga con l'uccellino."],
-        ["Il gatto", "Il gatto si avvicina di soppiatto per acchiappare l'uccellino, che vola sull'albero."],
-        ["Il nonno", "Il nonno brontola: il prato è pericoloso! Riporta Pierino a casa e chiude il cancello."],
-        ["Il lupo", "Arriva il lupo. L'anatra esce dallo stagno, scappa… ma il lupo la raggiunge e la inghiotte."],
-        ["La cattura", "Pierino si arrampica sul muro con una corda; l'uccellino distrae il lupo e Pierino lo prende per la coda."],
-        ["Il finale", "Arrivano i cacciatori e tutti in corteo portano il lupo allo zoo. Ascolta bene: si sente ancora l'anatra… nella pancia del lupo!"]
-      ],
-      curiosita: [
-        `<a href="${IMG}prokofiev.jpg" target="_blank" rel="noopener"><img src="${IMG}prokofiev.jpg" alt="Ritratto di Sergej Prokof'ev"></a><b>Per i bambini.</b> Prokof'ev la scrisse nel 1936 in pochi giorni, per il Teatro dei bambini di Mosca, diretto da una donna, Natalija Sac. Voleva far conoscere ai più piccoli gli strumenti dell'orchestra.`,
-        "<b>Un gioco di memoria.</b> Prova a riascoltare un pezzo della fiaba senza guardare il video: riesci a dire quale personaggio sta arrivando solo dallo strumento?",
-        "<b>I temi che ritornano.</b> Ogni personaggio ha la sua melodia e il suo strumento: quando la senti, sai chi è in scena. È lo stesso trucco usato da Wagner nelle sue opere e oggi dalle colonne sonore dei film.",
-        "<b>Narratori famosi.</b> In tutto il mondo l'hanno raccontata attori, cantanti, perfino politici. In Italia, per esempio, Roberto Benigni con il direttore Claudio Abbado."
-      ]
-    },
-    sagra: {
-      yt: "NQQR-GU14sQ", canale: "Fatova Mingus (ripresa del canale televisivo arte)", img: "sagra-banner.jpg", nome: "La sagra della primavera",
-      sotto: "Balletto completo · Teatro Mariinskij, ricostruzione della coreografia originale del 1913 · dirige Valerij Gergiev",
-      label: "Parigi, 1913 · balletto", titolo: "La sagra della primavera", chi: "Igor' Stravinskij · coreografia di Vaslav Nižinskij",
-      gancio: "Il balletto che fece scoppiare una rissa a teatro.",
-      tab: ["🔥 Lo scandalo", "🎬 La storia", "💡 Curiosità"],
-      cosa: [
-        ["📅", "Parigi, 29 maggio 1913, Théâtre des Champs-Élysées: debutta il nuovo balletto dei Ballets Russes di Djagilev."],
-        ["😱", "Dopo pochi minuti il pubblico comincia a ridere, fischiare, gridare. I sostenitori rispondono, e in sala scoppia una baruffa."],
-        ["🎵", "La musica era sconvolgente: accordi dissonanti, ritmi irregolari, accenti che cadono dove meno te lo aspetti."],
-        ["🩰", "Anche la danza: piedi in dentro, salti pesanti, corpi curvi. Il contrario del balletto classico, tutto leggerezza e punte."],
-        ["📣", "Il frastuono era così forte che i ballerini non sentivano l'orchestra: il coreografo Nižinskij, in piedi su una sedia dietro le quinte, gridava loro i numeri per tenere il tempo."]
-      ],
-      ascolto: [
-        ["Parte I", "«L'adorazione della terra». Si apre con il fagotto da solo, in una zona acutissima: sembra uno strumento antico, misterioso."],
-        ["Gli auguri", "Un accordo martellato con accenti irregolari: i giovani ballano pestando i piedi per svegliare la terra."],
-        ["I giochi", "Gare tra tribù, rapimenti per gioco, cortei: l'orchestra diventa sempre più selvaggia."],
-        ["Il saggio", "Un anziano bacia la terra. Silenzio improvviso… poi la danza riparte, furiosa."],
-        ["Parte II", "«Il sacrificio». Di notte le ragazze danzano in cerchio: una di loro viene scelta, l'Eletta."],
-        ["Il finale", "L'Eletta danza da sola, senza sosta, fino allo sfinimento: è il sacrificio perché torni la primavera."]
-      ],
-      curiosita: [
-        `<a href="${IMG}stravinskij.jpg" target="_blank" rel="noopener"><img src="${IMG}stravinskij.jpg" alt="Ritratto di Igor' Stravinskij"></a><b>Una visione.</b> Stravinskij raccontò che l'idea gli era venuta come un sogno: un antico rito pagano della Russia, con una ragazza che danza fino a cadere.`,
-        "<b>La rivincita.</b> Un anno dopo la Sagra fu suonata in concerto, senza ballerini: fu un trionfo, e Stravinskij fu portato in spalla per strada dal pubblico.",
-        "<b>Una coreografia ritrovata.</b> La danza originale di Nižinskij era andata perduta. Due studiosi l'hanno ricostruita negli anni '80 da disegni, appunti e ricordi dei ballerini: è quella del video. I costumi sono quelli disegnati nel 1913 da Nicholas Roerich, come nella foto.",
-        "<b>Dinosauri!</b> Nel 1940 Walt Disney usò la Sagra nel film «Fantasia», per raccontare la nascita della Terra e l'epoca dei dinosauri."
-      ]
-    }
-  };
-
   /* crediti delle immagini (tutte ospitate nel sito) */
   const CREDITI_IMG = [
     "Béla Bartók registra con il fonografo i canti di contadini slovacchi (Zobordarázs), 1907-1908, fotografo sconosciuto – dettaglio — <a href=\"https://commons.wikimedia.org/wiki/File:Bartok_recording_folk_music.jpg\" target=\"_blank\" rel=\"noopener\">fonte</a>, pubblico dominio.",
@@ -475,136 +378,211 @@
     "Igor' Stravinskij, fotografia della Bain News Service, 1920-1925 circa (Library of Congress) – dettaglio — <a href=\"https://commons.wikimedia.org/wiki/File:Igor_Stravinsky_LOC_32392u.jpg\" target=\"_blank\" rel=\"noopener\">fonte</a>, pubblico dominio."
   ];
 
-  /* ---------- costruzione della griglia ---------- */
-  const griglia = document.getElementById("griglia");
-  document.getElementById("nAscolti").textContent = ASCOLTI.length;
-  document.getElementById("nStrumenti").textContent = STRUMENTI.length;
-  document.getElementById("nSuonare").textContent = SUONARE.length;
+  const CREDITI_PAGINE = [
+    "Il cane Nipper ascolta il grammofono, «La voce del padrone» (Francis Barraud, 1899) — <a href=\"https://commons.wikimedia.org/wiki/File:His_Master%27s_Voice.jpg\" target=\"_blank\" rel=\"noopener\">fonte</a>, pubblico dominio.",
+    "Le Brox Sisters accendono la radio, anni Venti, fotografia della Bain News Service (Library of Congress) — <a href=\"https://commons.wikimedia.org/wiki/File:BroxSistersRadioTeddyBear.jpg\" target=\"_blank\" rel=\"noopener\">fonte</a>, pubblico dominio.",
+    "I Fisk Jubilee Singers nel 1882, fotografo sconosciuto (Moorland-Spingarn Research Center) – dettaglio — <a href=\"https://commons.wikimedia.org/wiki/File:Fisk_Jubilee_Singers_1882.jpg\" target=\"_blank\" rel=\"noopener\">fonte</a>, pubblico dominio.",
+    "Claude Monet, «Impressione, levar del sole», 1872 (Musée Marmottan Monet, Parigi) — <a href=\"https://commons.wikimedia.org/wiki/File:Monet_-_Impression,_Sunrise.jpg\" target=\"_blank\" rel=\"noopener\">fonte</a>, pubblico dominio.",
+    "Vasilij Kandinskij, «Impressione III (Concerto)», 1911 (Lenbachhaus, Monaco di Baviera) — <a href=\"https://commons.wikimedia.org/wiki/File:Wassily_Kandinsky_-_Impression_III_(Concert)_-_Google_Art_Project.jpg\" target=\"_blank\" rel=\"noopener\">fonte</a>, pubblico dominio.",
+    "Umberto Boccioni, «La città che sale», 1910 (MoMA, New York) — <a href=\"https://commons.wikimedia.org/wiki/File:The_City_Rises_by_Umberto_Boccioni_1910.jpg\" target=\"_blank\" rel=\"noopener\">fonte</a>, pubblico dominio.",
+    "Nicholas Roerich, «Il bacio alla terra», bozzetto di scena per la Sagra della primavera, 1912 (Museo Russo, San Pietroburgo) — <a href=\"https://commons.wikimedia.org/wiki/File:Roerich_Rite_of_Spring.jpg\" target=\"_blank\" rel=\"noopener\">fonte</a>, pubblico dominio."
+  ];
 
-  let scheda = "ascolti", mondo = null, elenco = [];
-  function disegna() {
-    griglia.innerHTML = "";
-    const conSpeciale = !!SPECIALI[scheda];
-    document.getElementById("speciale").hidden = !conSpeciale;
-    griglia.hidden = conSpeciale;
-    if (conSpeciale) { preparaSpeciale(); return; }
-    oSchermo.innerHTML = "";   // si esce dalla sezione speciale: il video si ferma
-    if (scheda === "suonare") {
-      SUONARE.forEach(s => {
-        const c = document.createElement("div"); c.className = "card suona empty";
-        c.innerHTML = `<div class="foto" style="background-image:url('${IMG + s.img}')"></div>
-          <div class="testo"><span class="label">Da suonare</span><h2>${s.titolo}</h2><span class="chi">${s.chi}</span></div>`;
-        griglia.appendChild(c);
-      });
-      return;
-    }
-    const dati = scheda === "ascolti" ? ASCOLTI : STRUMENTI;
-    elenco = dati.filter(d => !mondo || !d.mondo || d.mondo === mondo);
-    elenco.forEach((d, i) => {
-      const c = document.createElement("button"); c.type = "button";
-      c.className = "card " + (scheda === "ascolti" ? d.mondo : "strum");
-      c.innerHTML = `<div class="foto" style="background-image:url('${IMG + d.img}')"></div>
-        <div class="testo"><span class="label">${d.label}</span><h2>${d.titolo}</h2><span class="chi">${d.chi}</span><p>${d.gancio}</p></div>`;
-      c.addEventListener("click", () => apri(i));
-      griglia.appendChild(c);
-    });
-  }
+  /* =========================================================
+     MAPPA, ESERCIZI E SCHEDE (motore comune: storia-attivita.js; formato in _sviluppo/storia/LEGGIMI.md)
+     Mappa, vero o falso e verifica parlano di concetti, forme e prassi, non di nomi e date.
+     ========================================================= */
+  const ATTIVITA = {
+    mappa: { W: 1280, H: 530,
+      nodi: [
+        { id: "rad", x: 490, y: 0, w: 300, h: 60, t: "IL NOVECENTO", s: "1900 – 2000", tipo: "radice" },
+        { id: "inv", x: 10, y: 0, w: 330, h: 64, t: "delle [[invenzioni]]", s: "elettricità, aerei, cinema, radio", tipo: "quadro", cap: "grieg" },
+        { id: "reg", x: 940, y: 0, w: 330, h: 64, t: "la [[registrazione]]", s: "grammofono e radio: la musica in tutte le case", tipo: "quadro", cap: "grieg" },
+        { id: "gue", x: 10, y: 98, w: 330, h: 52, t: "due [[guerre]] mondiali", s: "che cambiano per sempre l'Europa", tipo: "quadro", cap: "grieg" },
+        { id: "mem", x: 450, y: 98, w: 380, h: 52, t: "tante [[strade]] diverse", s: "ogni compositore cerca la sua", tipo: "quadro", cap: "grieg" },
+        { id: "str", x: 940, y: 98, w: 330, h: 52, t: "strumenti nuovi", s: "elettrici, a rumore, tante percussioni", tipo: "quadro", cap: "cage" },
+        { id: "sx", x: 40, y: 204, w: 560, h: 58, t: "SCUOLE NAZIONALI", s: "la musica del proprio popolo", tipo: "sx" },
+        { id: "dx", x: 680, y: 204, w: 560, h: 58, t: "AVANGUARDIE", s: "rompere le regole, cercare suoni mai sentiti", tipo: "dx" },
+        { id: "v1", x: 0, y: 318, w: 120, h: 50, t: "Leggende", tipo: "c-sx", cap: "grieg" },
+        { id: "v2", x: 127, y: 318, w: 120, h: 50, t: "Spiritual", tipo: "c-sx", cap: "dvorak" },
+        { id: "v3", x: 254, y: 318, w: 120, h: 50, t: "Canto popolare", tipo: "c-sx", cap: "bartok" },
+        { id: "v4", x: 381, y: 318, w: 120, h: 50, t: "Jazz", tipo: "c-sx", cap: "gershwin" },
+        { id: "v5", x: 508, y: 318, w: 120, h: 50, t: "Fiaba musicale", tipo: "c-sx", cap: "pierino" },
+        { id: "s1", x: 652, y: 318, w: 120, h: 50, t: "Impressio&shy;nismo", tipo: "c-dx", cap: "debussy" },
+        { id: "s2", x: 779, y: 318, w: 120, h: 50, t: "Atonalità", tipo: "c-dx", cap: "schoenberg" },
+        { id: "s3", x: 906, y: 318, w: 120, h: 50, t: "Futurismo", tipo: "c-dx", cap: "russolo" },
+        { id: "s4", x: 1033, y: 318, w: 120, h: 50, t: "Dissonanza", tipo: "c-dx", cap: "sagra" },
+        { id: "s5", x: 1160, y: 318, w: 120, h: 50, t: "Elettronica", tipo: "c-dx", cap: "cage" },
+        { id: "dv1", x: 0, y: 410, w: 120, h: 110, t: "le fiabe del proprio [[popolo]] in orchestra", tipo: "dettaglio", cap: "grieg" },
+        { id: "dv2", x: 127, y: 410, w: 120, h: 110, t: "canti religiosi degli afro&shy;americani", tipo: "dettaglio", cap: "dvorak" },
+        { id: "dv3", x: 254, y: 410, w: 120, h: 110, t: "registrato nei villaggi con il [[fonografo]]", tipo: "dettaglio", cap: "bartok" },
+        { id: "dv4", x: 381, y: 410, w: 120, h: 110, t: "entra in sala da concerto", tipo: "dettaglio", cap: "gershwin" },
+        { id: "dv5", x: 508, y: 410, w: 120, h: 110, t: "ogni personaggio ha il suo [[timbro]]", tipo: "dettaglio", cap: "pierino" },
+        { id: "ds1", x: 652, y: 410, w: 120, h: 110, t: "suoni [[sfumati]], come macchie di colore", tipo: "dettaglio", cap: "debussy" },
+        { id: "ds2", x: 779, y: 410, w: 120, h: 110, t: "senza la [[tonica]], la nota «casa»", tipo: "dettaglio", cap: "schoenberg" },
+        { id: "ds3", x: 906, y: 410, w: 120, h: 110, t: "macchine e città negli [[intonarumori]]", tipo: "dettaglio", cap: "russolo" },
+        { id: "ds4", x: 1033, y: 410, w: 120, h: 110, t: "accordi che stridono e [[ritmi]] irregolari", tipo: "dettaglio", cap: "sagra" },
+        { id: "ds5", x: 1160, y: 410, w: 120, h: 110, t: "suoni registrati… e perfino il [[silenzio]]", tipo: "dettaglio", cap: "cage" }
+      ],
+      archi: [
+        { da: "rad", a: "inv", l: "è il secolo", forma: "orizz" }, { da: "rad", a: "reg", l: "inventa", forma: "orizz" },
+        { da: "inv", a: "gue", l: "ma anche" },
+        { da: "rad", a: "mem", l: "per la musica", lato: "padre" },
+        { da: "mem", a: "str", l: "con", forma: "orizz" },
+        { da: "mem", a: "sx", l: "le due più grandi:", lato: "padre" }, { da: "mem", a: "dx" },
+        { da: "sx", a: "v1", l: "le fiabe:" }, { da: "sx", a: "v2", l: "la fede:" }, { da: "sx", a: "v3", l: "la ricerca:" }, { da: "sx", a: "v4", l: "l'America:" }, { da: "sx", a: "v5", l: "i piccoli:" },
+        { da: "dx", a: "s1", l: "la luce:" }, { da: "dx", a: "s2", l: "l'armonia:" }, { da: "dx", a: "s3", l: "i rumori:" }, { da: "dx", a: "s4", l: "il ritmo:" }, { da: "dx", a: "s5", l: "le macchine:" },
+        { da: "v1", a: "dv1", l: "sono" }, { da: "v2", a: "dv2", l: "sono" }, { da: "v3", a: "dv3", l: "è" }, { da: "v4", a: "dv4", l: "che" }, { da: "v5", a: "dv5", l: "dove" },
+        { da: "s1", a: "ds1", l: "con" }, { da: "s2", a: "ds2", l: "musica" }, { da: "s3", a: "ds3", l: "suona" }, { da: "s4", a: "ds4", l: "con" }, { da: "s5", a: "ds5", l: "con" }
+      ] },
+    mappaBuchi: ["invenzioni", "registrazione", "guerre", "strade", "popolo", "fonografo", "timbro", "sfumati", "tonica", "intonarumori", "ritmi", "silenzio"],
+    mappaDistrattori: ["basso continuo", "Leitmotiv", "polifonia"],
+    notaStrumenti: "Strumenti nuovi del Novecento: foto dell'epoca o esemplari di oggi.",
+    vf: [
+      ["Con la registrazione la musica si può riascoltare quando si vuole.", true, ""],
+      ["Nel Novecento tutti i compositori seguono le stesse regole.", false, "Ognuno cerca la sua strada: scuole nazionali, avanguardie e tante altre."],
+      ["Le scuole nazionali partono dai canti e dalle danze del proprio popolo.", true, ""],
+      ["Le avanguardie rispettano le regole della musica del passato.", false, "Le rompono e cercano suoni mai sentiti."],
+      ["Un canto popolare è tramandato a voce, spesso senza un autore conosciuto.", true, ""],
+      ["L'etnomusicologia studia la musica dei popoli, registrandola dal vivo.", true, ""],
+      ["Gli spiritual sono canti religiosi degli afroamericani.", true, ""],
+      ["Il jazz nasce dalla musica degli afroamericani.", true, ""],
+      ["Un glissando è un salto improvviso tra due note lontane.", false, "È uno scivolare da una nota all'altra, passando per tutte quelle in mezzo."],
+      ["La musica impressionista dipinge atmosfere e colori sfumati.", true, ""],
+      ["Nella musica atonale c'è sempre una nota che fa da «casa».", false, "Manca proprio la nota «casa», la tonica."],
+      ["Lo Sprechgesang è a metà tra parlare e cantare.", true, ""],
+      ["Per i futuristi anche il rumore può diventare musica.", true, ""],
+      ["Una dissonanza è un accordo dolce e riposante.", false, "È un accordo che «stride» e crea tensione."],
+      ["In un ritmo irregolare gli accenti cadono dove non te li aspetti.", true, ""],
+      ["Nel balletto la storia è raccontata dalla danza e dalla musica.", true, ""],
+      ["Il timbro è il «colore» del suono che fa riconoscere uno strumento.", true, ""],
+      ["Nel Novecento le percussioni restano strumenti poco importanti.", false, "Diventano protagoniste: c'è perfino musica per sole percussioni."],
+      ["La musica elettronica usa suoni prodotti o trasformati da apparecchi elettrici.", true, ""],
+      ["Il minimalismo usa tantissimi temi diversi, uno dopo l'altro.", false, "Usa pochissimo materiale, ripetuto e trasformato piano piano."],
+      ["Nel Novecento anche i suoni intorno a noi possono diventare musica.", true, ""]
+    ],
+    personaggi: [
+      ["Edvard Grieg", "Norvegese: la musica per Peer Gynt e i troll della montagna."],
+      ["Antonín Dvořák", "Boemo a New York: la Sinfonia «Dal Nuovo Mondo»."],
+      ["Claude Debussy", "L'Impressionismo musicale: La cattedrale sommersa."],
+      ["Erik Satie", "Musica semplicissima: le Gymnopédies."],
+      ["Arnold Schönberg", "Musica atonale e Sprechgesang nel Pierrot lunaire."],
+      ["Luigi Russolo", "Futurista italiano: inventò gli intonarumori."],
+      ["Igor' Stravinskij", "La sagra della primavera: lo scandalo di Parigi."],
+      ["Béla Bartók", "Registrò migliaia di canti di contadini con il fonografo."],
+      ["George Gershwin", "Portò il jazz in sala da concerto: la Rhapsody in Blue."],
+      ["Florence Price", "La prima compositrice afroamericana suonata da una grande orchestra americana."],
+      ["Sergej Prokof'ev", "Pierino e il lupo: ogni personaggio è uno strumento."],
+      ["John Cage", "4'33\": un brano in cui i musicisti non suonano."]
+    ],
+    cruciverba: [
+      ["REGISTRAZIONE", "La musica fissata su un disco, da riascoltare"],
+      ["AVANGUARDIE", "Chi rompe le regole e cerca suoni nuovi"],
+      ["SPIRITUAL", "Canto religioso degli afroamericani"],
+      ["IMPRESSIONISMO", "Musica che dipinge atmosfere sfumate"],
+      ["ATONALE", "Musica senza la nota «casa»"],
+      ["FUTURISMO", "Movimento italiano che ama macchine e velocità"],
+      ["RUMORE", "Suono senza un'altezza precisa"],
+      ["DISSONANZA", "Accordo che stride"],
+      ["BALLETTO", "Storia raccontata con danza e musica"],
+      ["JAZZ", "Musica nata dagli afroamericani"],
+      ["GLISSANDO", "Scivolare da una nota all'altra"],
+      ["TIMBRO", "Il «colore» di uno strumento"],
+      ["MINIMALISMO", "Pochissime note, ripetute a lungo"],
+      ["SILENZIO", "Anche lui, nel Novecento, diventa musica"],
+      ["FONOGRAFO", "L'antenato del registratore"]
+    ],
+    ascolto: {
+      descr: "Ascolta ogni brano e rispondi: scuola nazionale o avanguardia? Com'è il suono?",
+      criteri: [
+        { id: "chi", nome: "Chi suona o canta?", opz: ["Solo voci", "Solo strumenti", "Voci e strumenti"] },
+        { id: "gruppo", nome: "Quanti sono?", opz: ["Uno strumento da solo", "Un piccolo gruppo", "L'orchestra", "Una voce che racconta e gli strumenti"] },
+        { id: "strada", nome: "Che strada segue?", opz: ["Scuola nazionale: canti e danze del popolo", "Avanguardia: regole e suoni nuovi"] },
+        { id: "suono", nome: "Com'è il suono?", opz: ["Melodie cantabili, accordi consonanti", "Atmosfere sfumate", "Accordi che stridono", "Rumori o silenzio"] },
+        { id: "ritmo", nome: "Che carattere ha?", opz: ["Calmo, sognante", "Agitato, energico"] }
+      ],
+      brani: [
+        { cap: "grieg", r: { chi: [1], gruppo: [2], strada: [0], suono: [0], ritmo: [1] } },
+        { cap: "dvorak", r: { chi: [1], gruppo: [2], strada: [0], suono: [0], ritmo: [1] } },
+        { cap: "debussy", r: { chi: [1], gruppo: [0], strada: [1], suono: [1], ritmo: [0] } },
+        { cap: "schoenberg", r: { chi: [2], gruppo: [1, 3], strada: [1], suono: [2], ritmo: [0, 1] }, nota: "La voce e cinque strumenti: un piccolo gruppo. La musica è inquieta, sospesa." },
+        { cap: "russolo", r: { chi: [1], gruppo: [1], strada: [1], suono: [3], ritmo: [1] } },
+        { cap: "sagra", r: { chi: [1], gruppo: [2], strada: [0, 1], suono: [2], ritmo: [1] }, nota: "Usa antiche melodie popolari russe, ma in modo rivoluzionario: è un'avanguardia." },
+        { cap: "bartok", r: { chi: [1], gruppo: [2], strada: [0], suono: [0], ritmo: [0, 1] }, nota: "Sei danze diverse: alcune calme, altre velocissime." },
+        { cap: "gershwin", r: { chi: [1], gruppo: [2], strada: [0], suono: [0], ritmo: [0, 1] }, nota: "Pianoforte e orchestra: momenti scatenati e un grande tema lento." },
+        { cap: "pierino", r: { chi: [2], gruppo: [3], strada: [0], suono: [0], ritmo: [0, 1] } },
+        { cap: "cage", r: { chi: [1], gruppo: [2], strada: [1], suono: [3], ritmo: [0] }, nota: "L'orchestra è sul palco… ma non suona: la musica sono i suoni della sala." }
+      ] },
+    riassunto: {
+      testo: "Il <b>Novecento</b> (1900 – 2000) è il secolo delle <b>invenzioni</b> e di <b>due guerre mondiali</b>. Con la <b>registrazione</b> e la radio la musica entra in tutte le case. I compositori non seguono più una sola strada: le <b>scuole nazionali</b> partono dai canti del proprio popolo, le <b>avanguardie</b> rompono le regole e cercano suoni mai sentiti. Nascono il jazz, la musica elettronica e strumenti nuovi.",
+      immagini: [["p-grieg-1.jpg", "La registrazione"], ["p-bartok-1.jpg", "Canti popolari"], ["p-russolo-2.jpg", "I rumori"], ["p-cage-1.jpg", "La musica elettronica"]],
+      punti: [
+        ["Scuole nazionali", ["Fiabe e danze del <b>popolo</b> in orchestra (Grieg, Musorgskij).", "Gli <b>spiritual</b> per una musica americana (Dvořák).", "I <b>canti popolari</b> registrati con il fonografo (Bartók).", "Il <b>jazz</b> in sala da concerto (Gershwin, Florence Price).", "La <b>fiaba musicale</b>: ogni personaggio uno strumento (Prokof'ev)."]],
+        ["Avanguardie", ["L'<b>Impressionismo</b>: suoni sfumati (Debussy).", "L'<b>atonalità</b> e lo Sprechgesang (Schönberg).", "Il <b>Futurismo</b> e l'arte dei rumori (Russolo).", "<b>Dissonanze</b> e ritmi irregolari (Stravinskij).", "<b>Elettronica</b>, silenzio, minimalismo (Cage, Berio, Reich)."]]
+      ] },
+    riassuntoBreve: {
+      testo: "Il <b>Novecento</b> è il secolo delle <b>invenzioni</b>. Con la <b>registrazione</b> la musica entra in tutte le case. Ci sono le <b>scuole nazionali</b> e le <b>avanguardie</b>.",
+      date: [["1913", "lo scandalo della Sagra"], ["1914 – 1918", "la Prima guerra mondiale"], ["1924", "la Rhapsody in Blue"], ["1939 – 1945", "la Seconda guerra mondiale"], ["1952", "4'33\" di Cage"]],
+      parole: [["Registrazione", "musica su disco, da riascoltare."], ["Canto popolare", "tramandato a voce dalla gente."], ["Jazz", "nato dagli afroamericani."], ["Impressionismo", "suoni sfumati, come colori."], ["Atonalità", "senza nota «casa»."], ["Rumore", "anche lui diventa musica."], ["Dissonanza", "accordo che stride."], ["Timbro", "il colore di uno strumento."]] },
+    raccontoBreve: {
+      grieg: "Nel Novecento la musica si registra. Grieg porta in orchestra le fiabe della Norvegia.",
+      dvorak: "Dvořák va a New York e ascolta gli spiritual, i canti degli afroamericani.",
+      debussy: "Debussy dipinge con i suoni, come i pittori impressionisti.",
+      schoenberg: "Schönberg scrive musica atonale: nessuna nota fa da «casa».",
+      russolo: "I futuristi amano le macchine. Russolo inventa gli intonarumori.",
+      sagra: "La sagra della primavera di Stravinskij fa scoppiare una rissa a teatro.",
+      bartok: "Bartók registra i canti dei contadini con il fonografo.",
+      gershwin: "Gershwin porta il jazz in sala da concerto con la Rhapsody in Blue.",
+      pierino: "In Pierino e il lupo ogni personaggio è uno strumento dell'orchestra.",
+      cage: "Dopo la guerra nasce la musica elettronica. Cage fa ascoltare perfino il silenzio." },
+    verifica: {
+      quanti: { vf: 14, collega: 6, personaggi: 5, scelte: 10, frasi: 7, aperte: 2 },
+      scelte: [
+        ["Quale invenzione cambia di più la musica nel Novecento?", ["La registrazione", "La stampa", "L'organo"], 0],
+        ["Che cosa fanno le scuole nazionali?", ["Partono dai canti e dalle danze del proprio popolo", "Copiano la musica antica", "Usano solo strumenti elettrici"], 0],
+        ["Che cosa cercano le avanguardie?", ["Suoni e regole nuove", "Di imitare il Barocco", "Solo canti religiosi"], 0],
+        ["Che cos'è un canto popolare?", ["Un canto tramandato a voce dalla gente", "Una canzone famosa alla radio", "Un'aria d'opera"], 0],
+        ["Che cosa studia l'etnomusicologia?", ["La musica dei popoli, registrata dal vivo", "La storia dei pianoforti", "Le note più acute"], 0],
+        ["Che cosa sono gli spiritual?", ["Canti religiosi degli afroamericani", "Danze norvegesi", "Brani per organo"], 0],
+        ["Da dove nasce il jazz?", ["Dalla musica degli afroamericani", "Dai canti dei monaci", "Dalle corti dei re"], 0],
+        ["Com'è la musica impressionista?", ["Sfumata, piena di atmosfere e colori", "Rumorosa e meccanica", "Fatta solo di silenzio"], 0],
+        ["Che cosa vuol dire «atonale»?", ["Senza una nota che faccia da «casa»", "Senza strumenti", "Molto lenta"], 0],
+        ["Che cos'è lo Sprechgesang?", ["Un modo di cantare a metà tra parlare e cantare", "Una danza tedesca", "Un tipo di tamburo"], 0],
+        ["Che cosa amano i futuristi?", ["Le macchine, la velocità e i rumori", "La campagna silenziosa", "La musica antica"], 0],
+        ["Che cos'è una dissonanza?", ["Un accordo che «stride» e crea tensione", "Un accordo dolce", "Una nota lunghissima"], 0],
+        ["Che cos'è il timbro?", ["Il «colore» del suono di uno strumento", "La velocità della musica", "Il volume"], 0],
+        ["Che cos'è il minimalismo?", ["Musica fatta di pochissimo materiale, ripetuto", "Musica per pochissimi ascoltatori", "Musica brevissima"], 0]
+      ],
+      frasi: [
+        "Con la [[registrazione]] la musica si può riascoltare quando si vuole.",
+        "Le [[scuole nazionali]] partono dai canti del proprio popolo.",
+        "Le [[avanguardie]] rompono le regole e cercano suoni nuovi.",
+        "Il canto [[popolare]] è tramandato a voce dalla gente.",
+        "Gli [[spiritual]] sono canti religiosi degli afroamericani.",
+        "Il [[jazz]] nasce dalla musica degli afroamericani.",
+        "La musica senza una nota «casa» si dice [[atonale]].",
+        "Per i futuristi anche il [[rumore]] può diventare musica.",
+        "Un accordo che «stride» è una [[dissonanza]].",
+        "Il «colore» del suono di uno strumento è il [[timbro]].",
+        "Nel [[balletto]] la storia è raccontata dalla danza e dalla musica.",
+        "Scivolare da una nota all'altra si dice fare un [[glissando]]."
+      ],
+      frasiDistrattori: ["Leitmotiv", "minuetto"],
+      aperte: [
+        ["Che differenza c'è tra le scuole nazionali e le avanguardie? Fai un esempio per ciascuna.", 3, "scuole nazionali: partono dai canti e dalle danze del popolo (Grieg, Bartók, Gershwin); avanguardie: rompono le regole e cercano suoni nuovi (Debussy, Schönberg, Russolo, Cage)."],
+        ["Come cambia la vita della musica con la registrazione e la radio?", 3, "la musica entra in tutte le case, si può riascoltare quando si vuole; si possono registrare e studiare i canti popolari (Bartók); nascono la musica su nastro e quella elettronica."],
+        ["Perché la prima della Sagra della primavera fu uno scandalo?", 3, "musica con dissonanze e ritmi irregolari, danza contraria al balletto classico: il pubblico, abituato a musica e danza tradizionali, fischiò e si azzuffò."],
+        ["Nel Novecento «tutto può diventare musica». Spiega con due esempi.", 3, "i rumori delle macchine negli intonarumori dei futuristi; i suoni registrati e trasformati della musica elettronica; i suoni della sala in 4'33\" di Cage."]
+      ] }
+  };
 
-  document.querySelectorAll(".scheda").forEach(b => b.addEventListener("click", () => {
-    scheda = b.dataset.scheda;
-    document.querySelectorAll(".scheda").forEach(x => x.classList.toggle("attiva", x === b));
-    disegna();
-  }));
-
-  /* ---------- banner: musica vocale / musica strumentale ---------- */
-  const banner = document.getElementById("banner");
-  function impostaMondo(m, senzaDisegno) {
-    mondo = m;
-    banner.classList.toggle("f-sx", m === "sx");
-    banner.classList.toggle("f-dx", m === "dx");
-    document.querySelectorAll(".etich-meta").forEach(e => e.classList.toggle("attiva", e.dataset.mondo === m));
-    if (!senzaDisegno) {
-      if (scheda !== "ascolti") { scheda = "ascolti"; document.querySelectorAll(".scheda").forEach(x => x.classList.toggle("attiva", x.dataset.scheda === "ascolti")); }
-      disegna();
-    }
-  }
-  banner.querySelectorAll("[data-mondo]").forEach(el => el.addEventListener("click", () => impostaMondo(mondo === el.dataset.mondo ? null : el.dataset.mondo)));
-
-  /* ---------- finestra con il video ---------- */
-  const velo = document.getElementById("velo"), schermo = document.getElementById("schermo"), finestra = document.getElementById("finestra");
-  let attuale = 0;
-  function apri(i) {
-    attuale = (i + elenco.length) % elenco.length;
-    const d = elenco[attuale];
-    finestra.style.setProperty("--accent", scheda === "ascolti" ? (d.mondo === "dx" ? "#a78bfa" : "#F99D1C") : "#5EC8D8");
-    document.getElementById("fLabel").textContent = d.label;
-    document.getElementById("fTitolo").textContent = d.titolo;
-    document.getElementById("fChi").textContent = d.chi;
-    document.getElementById("fGancio").textContent = d.gancio;
-    document.getElementById("fPunti").innerHTML = d.punti.map(p => `<li>${p}</li>`).join("");
-    document.getElementById("fSapevi").innerHTML = `<b>Lo sapevi?</b> ${d.sapevi}`;
-    document.getElementById("fFonte").innerHTML = `<a href="https://www.youtube.com/watch?v=${d.yt}" target="_blank" rel="noopener">Apri su YouTube ↗</a>`;
-    // anteprima: nessuna richiesta a YouTube finché non si preme play
-    schermo.innerHTML = "";
-    schermo.style.backgroundImage = `url('${IMG + d.img}')`;
-    const b = document.createElement("button"); b.className = "avvio"; b.type = "button";
-    b.innerHTML = `<span class="tondo">▶</span><span class="nota">Il video si carica da YouTube quando premi play</span>`;
-    b.addEventListener("click", () => {
-      schermo.innerHTML = `<iframe src="https://www.youtube-nocookie.com/embed/${d.yt}?autoplay=1&rel=0&playsinline=1" title="${d.titolo}"
-        allow="autoplay; encrypted-media; picture-in-picture; fullscreen" allowfullscreen referrerpolicy="strict-origin-when-cross-origin"></iframe>`;
-    });
-    schermo.appendChild(b);
-    velo.classList.add("aperto");
-    document.body.style.overflow = "hidden";
-    b.focus({ preventScroll: true });
-  }
-  function chiudi() { velo.classList.remove("aperto"); schermo.innerHTML = ""; document.body.style.overflow = ""; }
-  document.getElementById("chiudi").addEventListener("click", chiudi);
-  velo.addEventListener("click", e => { if (e.target === velo) chiudi(); });
-  document.getElementById("prec").addEventListener("click", () => apri(attuale - 1));
-  document.getElementById("succ").addEventListener("click", () => apri(attuale + 1));
-  document.addEventListener("keydown", e => {
-    if (!velo.classList.contains("aperto")) return;
-    if (e.key === "Escape") chiudi();
-    if (e.key === "ArrowRight") apri(attuale + 1);
-    if (e.key === "ArrowLeft") apri(attuale - 1);
-  });
-
-  /* ---------- pulsanti dorati: la sezione si riempie con i dati dello speciale scelto ---------- */
-  const oSchermo = document.getElementById("oSchermo"), oCorpo = document.getElementById("oCorpo");
-  let SPECIALE = null;
-  function preparaSpeciale() {
-    SPECIALE = SPECIALI[scheda];
-    document.getElementById("oLink").href = "https://www.youtube.com/watch?v=" + SPECIALE.yt;
-    ["Sotto:sotto", "Label:label", "Titolo:titolo", "Chi:chi", "Gancio:gancio"].forEach(c => { const [id, k] = c.split(":"); document.getElementById("o" + id).textContent = SPECIALE[k]; });
-    document.querySelectorAll(".o-t").forEach((t, i) => t.textContent = SPECIALE.tab[i]);
-    oSchermo.innerHTML = "";
-    oSchermo.style.backgroundImage = `url('${IMG + SPECIALE.img}')`;
-    const b = document.createElement("button"); b.className = "avvio"; b.type = "button";
-    b.innerHTML = `<span class="tondo">▶</span><span class="nota">Il video si carica da YouTube quando premi play</span>`;
-    b.addEventListener("click", () => {
-      oSchermo.innerHTML = `<iframe src="https://www.youtube-nocookie.com/embed/${SPECIALE.yt}?autoplay=1&rel=0&playsinline=1" title="${SPECIALE.nome}"
-        allow="autoplay; encrypted-media; picture-in-picture; fullscreen" allowfullscreen referrerpolicy="strict-origin-when-cross-origin"></iframe>`;
-    });
-    oSchermo.appendChild(b);
-    mostraSpeciale("cosa");
-  }
-  function mostraSpeciale(parte) {
-    document.querySelectorAll(".o-t").forEach(t => t.classList.toggle("attiva", t.dataset.o === parte));
-    if (parte === "cosa") oCorpo.innerHTML = "<ul>" + SPECIALE.cosa.map(([i, t]) => `<li data-i="${i}">${t}</li>`).join("") + "</ul>";
-    if (parte === "ascolto") oCorpo.innerHTML = SPECIALE.ascolto.map(([a, t]) => `<div class="atto"><b>${a}</b><span>${t}</span></div>`).join("");
-    if (parte === "curiosita") oCorpo.innerHTML = SPECIALE.curiosita.map(t => `<div class="cur">${t}</div>`).join("");
-    oCorpo.scrollTop = 0;
-  }
-  document.querySelectorAll(".o-t").forEach(t => t.addEventListener("click", () => mostraSpeciale(t.dataset.o)));
-
-  /* ---------- crediti ---------- */
-  document.getElementById("listaCrediti").innerHTML = CREDITI_IMG.map(c => `<li>${c}</li>`).join("") +
-    [...ASCOLTI, ...STRUMENTI].map(d => `<li>${d.titolo} (${d.chi}): video di <a href="https://www.youtube.com/watch?v=${d.yt}" target="_blank" rel="noopener">${d.canale}</a> su YouTube</li>`).join("") +
-    Object.values(SPECIALI).map(s => `<li>${s.nome}: video di <a href="https://www.youtube.com/watch?v=${s.yt}" target="_blank" rel="noopener">${s.canale}</a> su YouTube</li>`).join("");
-
-  disegna();
+  /* tutto il resto (indice, capitoli, strumenti, mappa, esercizi, schede) lo fanno storia-percorso.js e storia-attivita.js */
+  StoriaPercorso.avvia({ epoca: "Il Novecento", date: "1900 – 2000", img: IMG, capitoli: CAPITOLI, linea: LINEA,
+    strumenti: STRUMENTI, suonare: SUONARE, crediti: [...CREDITI_IMG, ...CREDITI_PAGINE], attivita: ATTIVITA,
+    schedeCapitolo: { pierino: "pierino", sagra: "sagra" },
+    prossima: { nome: "jazz e il pop", articolo: "il", url: "storia-jazz-pop.html" } });
 })();
 </script>
+<script src="adatta-schermo.js" data-schermate="#cTelaio, #aTelaio, #contenuto"></script>
 </body>
 </html>
