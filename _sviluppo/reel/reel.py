@@ -4,6 +4,8 @@ Uso (dalla cartella del sito):
     python3 _sviluppo/reel/reel.py <reel>                registra le clip che mancano e fa tutto il resto
     python3 _sviluppo/reel/reel.py <reel> --clip         registra di nuovo tutte le clip
     python3 _sviluppo/reel/reel.py <reel> --clip=a,b     registra di nuovo solo le clip a e b
+    python3 _sviluppo/reel/reel.py --libreria            rifà i mini-schermi del sito (quando il sito cambia)
+    python3 _sviluppo/reel/reel.py --libreria storia     rifà solo alcuni mini-schermi
 
 Risultato in lavoro/<reel>/:
     reel.mp4          il reel da caricare (con l'audio, se il file del reel ne indica uno)
@@ -47,6 +49,29 @@ def clip(d, rifai):
     try:
         for n in da_fare:
             registra.registra(n, d["clip"][n])
+    finally:
+        srv.terminate()
+
+
+def libreria(nomi=None, rifai=False):
+    """Mini-schermi che scorrono le pagine del sito (libreria/scorrimenti.json -> libreria/scorrimenti/<nome>.mp4).
+    Sono salvati nel repository (piccoli, 360x640) così si riusano in tutti i reel; si rifanno quando il sito cambia."""
+    lib = json.loads((BASE / "libreria" / "scorrimenti.json").read_text())["scorrimenti"]
+    dove = BASE / "libreria" / "scorrimenti"; dove.mkdir(parents=True, exist_ok=True)
+    nomi = list(lib) if nomi is None else nomi
+    da_fare = [n for n in nomi if rifai or not (dove / f"{n}.mp4").exists()]
+    if not da_fare: return
+    sconosciuti = [n for n in da_fare if n not in lib]
+    if sconosciuti: raise SystemExit(f"Scorrimenti non definiti in libreria/scorrimenti.json: {sconosciuti}")
+    print("Mini-schermi da registrare:", ", ".join(da_fare))
+    (L / "clip").mkdir(parents=True, exist_ok=True)
+    srv = registra.server()
+    try:
+        for n in da_fare:
+            registra.registra(f"scorr_{n}", lib[n])
+            subprocess.run(["ffmpeg", "-v", "error", "-y", "-i", str(L / "clip" / f"scorr_{n}.mp4"), "-an",
+                            "-vf", "scale=360:640:flags=lanczos", "-c:v", "libx264", "-crf", "26",
+                            "-pix_fmt", "yuv420p", str(dove / f"{n}.mp4")], check=True)
     finally:
         srv.terminate()
 
@@ -144,6 +169,8 @@ def variante(d, nome, v, cart, base_gr):
 
 def main():
     if len(sys.argv) < 2: raise SystemExit(__doc__)
+    if sys.argv[1] == "--libreria":   # rifà tutti i mini-schermi (o solo quelli nominati)
+        os.chdir(SITO); libreria(sys.argv[2:] or None, rifai=True); return
     nome = sys.argv[1]
     rifai = None
     for a in sys.argv[2:]:
@@ -154,6 +181,7 @@ def main():
     os.chdir(SITO)
 
     clip(d, rifai)
+    libreria(sorted({t for p in d["scaletta"] for t in p.get("telefoni", [])}))
     print("Schermate…")
     cop = copertina(d, cart)
     gr = cart / "grafiche"

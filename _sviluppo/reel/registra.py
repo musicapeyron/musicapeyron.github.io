@@ -93,6 +93,12 @@ class Rec:
 async def tap(page, locator):
     await page.evaluate(TAP_JS)
     box = await locator.bounding_box()
+    vp = page.viewport_size
+    if box and (box["y"] < 0 or box["y"] + box["height"] > vp["height"]):
+        # fuori schermo: prima ci si scorre sopra, come farebbe una persona
+        await locator.evaluate("e=>e.scrollIntoView({block:'center',behavior:'smooth'})")
+        await page.wait_for_timeout(700)
+        box = await locator.bounding_box()
     x, y = box["x"] + box["width"] / 2, box["y"] + box["height"] / 2
     await page.evaluate(f"window.__tap({x},{y})")
     if getattr(page, "_touch", False):
@@ -132,7 +138,7 @@ SCROLL = ("(sel)=>{const a=document.querySelector(sel).getBoundingClientRect();"
 # se un gioco cambia nome a queste variabili, aggiornare qui.
 # Per un gioco nuovo: python3 _sviluppo/reel/esplora.py <pagina>.html elenca variabili e pulsanti.
 RISPOSTE = {
-    "leggi-la-nota": "document.querySelector(`.answers button[data-note=\"${currentNote.name}\"]`)",
+    "leggi-la-nota": "answering && !finished && document.querySelector(`.answers button[data-note=\"${currentNote.name}\"]`)",
     "figure-ritmiche": "document.querySelector(`.answers button[data-key=\"${currentQuestion.key}\"]`)",
     "tastierapianoforte": "document.querySelector(`button.answer[data-note=\"${expectedAnswerForKeyId(currentKey, gameMode)}\"]`)",
     "test-ingresso": """(() => { const k = GAME_ORDER[currentGameIndex];

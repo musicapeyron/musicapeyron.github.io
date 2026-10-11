@@ -11,6 +11,7 @@ python3 _sviluppo/reel/reel.py test-ingresso          # fa tutto; le clip già r
 python3 _sviluppo/reel/reel.py test-ingresso --clip   # registra di nuovo tutte le clip
 python3 _sviluppo/reel/reel.py primo --clip=rap       # registra di nuovo solo una clip
 python3 _sviluppo/reel/esplora.py memory-strumenti.html   # studia un gioco prima di farne un reel
+python3 _sviluppo/reel/reel.py --libreria             # rifà i mini-schermi del sito (quando il sito cambia)
 ```
 
 Risultato in `lavoro/<reel>/`:
@@ -38,11 +39,27 @@ Ogni reel è un solo file. Per uno nuovo si copia **`reels/_modello.json`** (un 
   `rispondi` gioca da solo, anche con errori voluti: serve la voce del gioco in `RISPOSTE` (`registra.py`);
   oggi ci sono Leggi la nota, Figure ritmiche, Le note sul pianoforte e il Test d'ingresso.
   Per i casi complicati una clip può essere una funzione Python (`{"funzione": "test"}`).
-- **`schermate`**: testi e grafiche (tipi `hook`, `card`, `label`, `bg`, `end`, descritti in `grafiche.py`).
+- **`schermate`**: testi e grafiche (tipi `hook`, `card`, `label`, `bg`, `classe`, `end`, descritti in `grafiche.py`).
 - **`scaletta`**: i pezzi in ordine (`apertura`, `schermata`, `intera`, `incorniciata`, descritti in `monta.py`).
   I tempi si scrivono a partire dai **segni** registrati, ad esempio `"da": "acuto_0-0.55"`: se si registra di nuovo
   (domande diverse), la scaletta resta giusta.
 - **`copertina`**: titolo, sottotitolo, colore, fotogramma di una clip (`clip`, `istante`, `ritaglio`).
+
+## Pezzi riutilizzabili
+
+- **Mini-telefoni del sito** (`libreria/scorrimenti/`, definiti in `libreria/scorrimenti.json`): video piccoli
+  (360x640) di pagine del sito che scorrono su un telefono: index, solfeggio, storia, schemi, brani, spartiti,
+  barocco, medioevo, novecento, memory, suono, scale, bona. Sono **salvati nel repository**, così si riusano in
+  qualsiasi ordine. In una schermata colorata disegnata con `tel=1` (testi in alto) si aggiungono con
+  `"telefoni": ["index", "storia", "brani"]` (da 1 a 3): entrano dal basso uno dopo l'altro e scorrono.
+  Quando il sito cambia: `reel.py --libreria` (tutti) o `reel.py --libreria storia scale` (alcuni).
+  Per aggiungerne uno: una voce in `scorrimenti.json` (pagina e passi), poi `reel.py --libreria <nome>`.
+  Pagine scartate perché sul telefono non scorrono: `giochi.html`, `schemi.html`, `scarta-la-nota` (chiede di girare
+  il telefono), `test-ingresso` (menu fermo).
+- **L'aula con la LIM** (tipo `classe` in `grafiche.html`): un'aula vista dal fondo, con la LIM sul muro, la cattedra,
+  la finestra e i banchi con le sedie vuote. **Nessuna persona disegnata** (scelta di Cristiano).
+  Si usa come sfondo di un pezzo `incorniciata` con gli stessi `x, y, w, h` della LIM (di serie 130, 480, 820, 461);
+  l'etichetta sta sopra, la frase sotto l'etichetta (`sy=392`), non sulla cattedra.
 - **`audio`** (facoltativo): una base del sito (`media/...mp3`), da che secondo, volume e credito per la didascalia.
 - **`varianti`** (facoltativo): schermate diverse (di solito l'hook) per una seconda versione del reel.
 - **`didascalia`**: testo, hashtag (massimo 5), testo alternativo.
@@ -62,7 +79,11 @@ Ogni reel è un solo file. Per uno nuovo si copia **`reels/_modello.json`** (un 
 - **Chiusura**: "Un progetto collaborativo" (= mandateci idee e segnalazioni), poi logo musicascuole.it con le note colorate e **info@musicascuole.it**.
 - **Logo**: ripreso dall'immagine di anteprima della home (`media/condivisione.jpg`): scritta bianca + pastiglie do re mi fa sol la si.
 - Riprese **come da un vero telefono** (non solo la misura dello schermo): il sito è fatto per PC, telefono e LIM. Formato **misto**: quasi tutto da telefono, più una scena sulla LIM incorniciata.
-- Niente volti né voci di alunni.
+- Niente volti né voci di alunni; **nei disegni nessuna persona** (l'aula ha solo banchi e sedie).
+- **GRATIS sempre all'inizio**, in grande, nel testo d'apertura.
+- Nelle **schermate colorate** di testo: mini-telefoni che scorrono pagine diverse del sito (varie ogni volta).
+- La **LIM dentro un'aula disegnata**, per far capire le dimensioni.
+- Nei reel si mettono in risalto **i vari aspetti del gioco**, uno per pezzo (livelli, aiuti, chiavi, verifica…).
 - Vuole che resti tutto ciò che serve per rifare i reel e farne di nuovi.
 
 ## I reel fatti
@@ -99,6 +120,26 @@ Ogni reel è un solo file. Per uno nuovo si copia **`reels/_modello.json`** (un 
 - Il test si fa **tutto** davvero (le domande sono a caso) con qualche errore voluto (`TEST_ERRORI` in `registra.py`),
   così la tabella finale ha percentuali credibili (88% complessivo) e non tutti 100%.
 - Variante B: hook "Primo giorno di musica? TEST PRONTO, gratis, senza login", da provare come Trial Reel.
+
+### `leggi-la-nota` (ottobre 2026, 29 s, con audio e variante B)
+
+Il primo fatto applicando `GUIDA-REEL.md`.
+
+| # | Cosa | Durata |
+|---|------|--------|
+| 1 | Il gioco già in movimento + "Leggi le note GRATIS per la tua classe" | 3 s |
+| 2 | do: "Gratis. Niente login. Nessun dato raccolto, niente pubblicità." + telefoni index, storia, brani | 2,4 s |
+| 3 | "17 livelli, uno alla volta": risposte e coriandoli del livello superato | 3,3 s |
+| 4 | "Gli aiuti: schema e colori": pannello Opzioni, poi lo schema con i nomi colorati | 3,3 s |
+| 5 | re: "Tutorial, allenamento e verifica." + telefoni schemi, scale, Bona | 2,4 s |
+| 6 | "Anche in chiave di basso" | 2,8 s |
+| 7–8 | LIM nell'aula: "La verifica, anche mista", poi "E alla fine, il voto" (9,5) | 6 s |
+| 9 | la: "Mandalo a un collega di musica." + telefoni barocco, memory, suono | 2,6 s |
+| 10 | Chiusura con logo e mail | 3,2 s |
+
+- Audio: base del brano 21 dei Brani propedeutici, dal secondo 16 (si cambia in `"audio"`).
+- Variante B: apertura a sfida "Che nota è? GRATIS – Leggi la nota, per la LIM".
+- Sul telefono il pulsante ⚙️ Opzioni è in fondo alla pagina: `tocca` ora scorre da solo fino a un elemento fuori schermo.
 
 ### `_modello` (circa 13 s, con audio)
 

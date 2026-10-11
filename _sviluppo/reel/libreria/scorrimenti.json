@@ -1,0 +1,655 @@
+{
+ "nota": "Mini-schermi di telefono che scorrono le pagine del sito, da mettere sotto le schermate colorate (\"telefoni\" nella scaletta). Si rifanno con: python3 _sviluppo/reel/reel.py --libreria. Scelte pagine che scorrono bene su telefono: giochi.html, schemi.html (indici corti), scarta-la-nota (chiede di girare il telefono) e test-ingresso (menu fermo) restano fuori.",
+ "scorrimenti": {
+  "index": {
+   "pagina": "index.html",
+   "passi": [
+    {
+     "attendi": 700
+    },
+    {
+     "scorri": 300
+    },
+    {
+     "attendi": 650
+    },
+    {
+     "scorri": 300
+    },
+    {
+     "attendi": 650
+    },
+    {
+     "scorri": 300
+    },
+    {
+     "attendi": 650
+    },
+    {
+     "scorri": 300
+    },
+    {
+     "attendi": 650
+    },
+    {
+     "scorri": 300
+    },
+    {
+     "attendi": 650
+    },
+    {
+     "scorri": 300
+    },
+    {
+     "attendi": 650
+    },
+    {
+     "scorri": 300
+    },
+    {
+     "attendi": 650
+    }
+   ]
+  },
+  "solfeggio": {
+   "pagina": "solfeggio.html",
+   "passi": [
+    {
+     "attendi": 700
+    },
+    {
+     "scorri": 300
+    },
+    {
+     "attendi": 650
+    },
+    {
+     "scorri": 300
+    },
+    {
+     "attendi": 650
+    },
+    {
+     "scorri": 300
+    },
+    {
+     "attendi": 650
+    },
+    {
+     "scorri": 300
+    },
+    {
+     "attendi": 650
+    },
+    {
+     "scorri": 300
+    },
+    {
+     "attendi": 650
+    },
+    {
+     "scorri": 300
+    },
+    {
+     "attendi": 650
+    },
+    {
+     "scorri": 300
+    },
+    {
+     "attendi": 650
+    }
+   ]
+  },
+  "storia": {
+   "pagina": "storia.html",
+   "passi": [
+    {
+     "attendi": 700
+    },
+    {
+     "scorri": 300
+    },
+    {
+     "attendi": 650
+    },
+    {
+     "scorri": 300
+    },
+    {
+     "attendi": 650
+    },
+    {
+     "scorri": 300
+    },
+    {
+     "attendi": 650
+    },
+    {
+     "scorri": 300
+    },
+    {
+     "attendi": 650
+    },
+    {
+     "scorri": 300
+    },
+    {
+     "attendi": 650
+    },
+    {
+     "scorri": 300
+    },
+    {
+     "attendi": 650
+    },
+    {
+     "scorri": 300
+    },
+    {
+     "attendi": 650
+    }
+   ]
+  },
+  "schemi": {
+   "pagina": "schemi-strumenti.html",
+   "passi": [
+    {
+     "attendi": 700
+    },
+    {
+     "scorri": 300
+    },
+    {
+     "attendi": 650
+    },
+    {
+     "scorri": 300
+    },
+    {
+     "attendi": 650
+    },
+    {
+     "scorri": 300
+    },
+    {
+     "attendi": 650
+    },
+    {
+     "scorri": 300
+    },
+    {
+     "attendi": 650
+    },
+    {
+     "scorri": 300
+    },
+    {
+     "attendi": 650
+    },
+    {
+     "scorri": 300
+    },
+    {
+     "attendi": 650
+    },
+    {
+     "scorri": 300
+    },
+    {
+     "attendi": 650
+    }
+   ]
+  },
+  "brani": {
+   "pagina": "brani-propedeutici.html",
+   "passi": [
+    {
+     "attendi": 700
+    },
+    {
+     "scorri": 300
+    },
+    {
+     "attendi": 650
+    },
+    {
+     "scorri": 300
+    },
+    {
+     "attendi": 650
+    },
+    {
+     "scorri": 300
+    },
+    {
+     "attendi": 650
+    },
+    {
+     "scorri": 300
+    },
+    {
+     "attendi": 650
+    },
+    {
+     "scorri": 300
+    },
+    {
+     "attendi": 650
+    },
+    {
+     "scorri": 300
+    },
+    {
+     "attendi": 650
+    },
+    {
+     "scorri": 300
+    },
+    {
+     "attendi": 650
+    }
+   ]
+  },
+  "spartiti": {
+   "pagina": "spartiti.html",
+   "passi": [
+    {
+     "attendi": 700
+    },
+    {
+     "scorri": 300
+    },
+    {
+     "attendi": 650
+    },
+    {
+     "scorri": 300
+    },
+    {
+     "attendi": 650
+    },
+    {
+     "scorri": 300
+    },
+    {
+     "attendi": 650
+    },
+    {
+     "scorri": 300
+    },
+    {
+     "attendi": 650
+    },
+    {
+     "scorri": 300
+    },
+    {
+     "attendi": 650
+    },
+    {
+     "scorri": 300
+    },
+    {
+     "attendi": 650
+    },
+    {
+     "scorri": 300
+    },
+    {
+     "attendi": 650
+    }
+   ]
+  },
+  "barocco": {
+   "pagina": "storia-barocco.html",
+   "passi": [
+    {
+     "attendi": 700
+    },
+    {
+     "scorri": 300
+    },
+    {
+     "attendi": 650
+    },
+    {
+     "scorri": 300
+    },
+    {
+     "attendi": 650
+    },
+    {
+     "scorri": 300
+    },
+    {
+     "attendi": 650
+    },
+    {
+     "scorri": 300
+    },
+    {
+     "attendi": 650
+    },
+    {
+     "scorri": 300
+    },
+    {
+     "attendi": 650
+    },
+    {
+     "scorri": 300
+    },
+    {
+     "attendi": 650
+    },
+    {
+     "scorri": 300
+    },
+    {
+     "attendi": 650
+    }
+   ]
+  },
+  "memory": {
+   "pagina": "memory-strumenti.html",
+   "passi": [
+    {
+     "attendi": 700
+    },
+    {
+     "scorri": 300
+    },
+    {
+     "attendi": 650
+    },
+    {
+     "scorri": 300
+    },
+    {
+     "attendi": 650
+    },
+    {
+     "scorri": 300
+    },
+    {
+     "attendi": 650
+    },
+    {
+     "scorri": 300
+    },
+    {
+     "attendi": 650
+    },
+    {
+     "scorri": 300
+    },
+    {
+     "attendi": 650
+    },
+    {
+     "scorri": 300
+    },
+    {
+     "attendi": 650
+    },
+    {
+     "scorri": 300
+    },
+    {
+     "attendi": 650
+    }
+   ]
+  },
+  "suono": {
+   "pagina": "qualita-del-suono.html",
+   "passi": [
+    {
+     "attendi": 700
+    },
+    {
+     "scorri": 300
+    },
+    {
+     "attendi": 650
+    },
+    {
+     "scorri": 300
+    },
+    {
+     "attendi": 650
+    },
+    {
+     "scorri": 300
+    },
+    {
+     "attendi": 650
+    },
+    {
+     "scorri": 300
+    },
+    {
+     "attendi": 650
+    },
+    {
+     "scorri": 300
+    },
+    {
+     "attendi": 650
+    },
+    {
+     "scorri": 300
+    },
+    {
+     "attendi": 650
+    },
+    {
+     "scorri": 300
+    },
+    {
+     "attendi": 650
+    }
+   ]
+  },
+  "medioevo": {
+   "pagina": "storia-medioevo.html",
+   "passi": [
+    {
+     "attendi": 700
+    },
+    {
+     "scorri": 300
+    },
+    {
+     "attendi": 650
+    },
+    {
+     "scorri": 300
+    },
+    {
+     "attendi": 650
+    },
+    {
+     "scorri": 300
+    },
+    {
+     "attendi": 650
+    },
+    {
+     "scorri": 300
+    },
+    {
+     "attendi": 650
+    },
+    {
+     "scorri": 300
+    },
+    {
+     "attendi": 650
+    },
+    {
+     "scorri": 300
+    },
+    {
+     "attendi": 650
+    },
+    {
+     "scorri": 300
+    },
+    {
+     "attendi": 650
+    }
+   ]
+  },
+  "novecento": {
+   "pagina": "storia-novecento.html",
+   "passi": [
+    {
+     "attendi": 700
+    },
+    {
+     "scorri": 300
+    },
+    {
+     "attendi": 650
+    },
+    {
+     "scorri": 300
+    },
+    {
+     "attendi": 650
+    },
+    {
+     "scorri": 300
+    },
+    {
+     "attendi": 650
+    },
+    {
+     "scorri": 300
+    },
+    {
+     "attendi": 650
+    },
+    {
+     "scorri": 300
+    },
+    {
+     "attendi": 650
+    },
+    {
+     "scorri": 300
+    },
+    {
+     "attendi": 650
+    },
+    {
+     "scorri": 300
+    },
+    {
+     "attendi": 650
+    }
+   ]
+  },
+  "scale": {
+   "pagina": "scale.html",
+   "passi": [
+    {
+     "attendi": 700
+    },
+    {
+     "scorri": 300
+    },
+    {
+     "attendi": 650
+    },
+    {
+     "scorri": 300
+    },
+    {
+     "attendi": 650
+    },
+    {
+     "scorri": 300
+    },
+    {
+     "attendi": 650
+    },
+    {
+     "scorri": 300
+    },
+    {
+     "attendi": 650
+    },
+    {
+     "scorri": 300
+    },
+    {
+     "attendi": 650
+    },
+    {
+     "scorri": 300
+    },
+    {
+     "attendi": 650
+    },
+    {
+     "scorri": 300
+    },
+    {
+     "attendi": 650
+    }
+   ]
+  },
+  "bona": {
+   "pagina": "solfeggio-parlato.html",
+   "passi": [
+    {
+     "attendi": 700
+    },
+    {
+     "scorri": 300
+    },
+    {
+     "attendi": 650
+    },
+    {
+     "scorri": 300
+    },
+    {
+     "attendi": 650
+    },
+    {
+     "scorri": 300
+    },
+    {
+     "attendi": 650
+    },
+    {
+     "scorri": 300
+    },
+    {
+     "attendi": 650
+    },
+    {
+     "scorri": 300
+    },
+    {
+     "attendi": 650
+    },
+    {
+     "scorri": 300
+    },
+    {
+     "attendi": 650
+    },
+    {
+     "scorri": 300
+    },
+    {
+     "attendi": 650
+    }
+   ]
+  }
+ }
+}

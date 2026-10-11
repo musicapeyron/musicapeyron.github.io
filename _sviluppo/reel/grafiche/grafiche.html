@@ -62,8 +62,9 @@ function d(s){return `style="animation-delay:${s}s"`}
 if(t==='card'){
   const c=P.get('c'), fg=darkText[c]?'#17133f':'#fff';
   const lines=P.get('l').split('|'); const sub=P.get('s');
+  const tel=P.get('tel');   // tel=1: testi in alto, sotto lo spazio per i mini-telefoni (monta.py)
   R.innerHTML=`<div class="full" style="background:${C[c]}"></div>
-  <div class="card" style="color:${fg}">
+  <div class="card" style="color:${fg}${tel?';justify-content:flex-start;padding:330px 90px 0':''}">
    <div class="bar" style="background:${fg};opacity:.9"></div>
    ${lines.map((x,i)=>`<div class="l pop" ${d(.08+i*.22)}>${x}</div>`).join('')}
    ${sub?`<div class="s pop" ${d(.08+lines.length*.22)}>${sub}</div>`:''}
@@ -71,6 +72,10 @@ if(t==='card'){
   const ls=[...R.querySelectorAll('.l')]; let fs=132;
   const fits=()=>ls.every(e=>{e.style.display='inline-block';const w=e.scrollWidth;e.style.display='';return w<=900});
   ls.forEach(e=>e.style.fontSize=fs+'px'); while(!fits()&&fs>60){fs-=4;ls.forEach(e=>e.style.fontSize=fs+'px')}
+  if(tel){ // tutto il testo deve finire sopra i telefoni (y=900)
+    const fondo=()=>Math.max(...[...R.querySelectorAll('.card > *')].map(e=>e.offsetTop+e.offsetHeight));
+    while(fondo()>900&&fs>60){fs-=4;ls.forEach(e=>e.style.fontSize=fs+'px')}
+  }
 }
 if(t==='hook'){
   // testi cambiabili: a (sopra), g (nella pastiglia gialla), b (sotto); se una riga è troppo larga si rimpicciolisce
@@ -101,6 +106,49 @@ if(t==='end'){
    <div class="tagl fade" ${d(.95)}>Giochi, spartiti, solfeggio e storia<br>della musica per la scuola.</div>
    <div class="mail pop" ${d(1.25)}><span class="k">Idee, segnalazioni, collaborazioni:</span><span class="v">info@musicascuole.it</span></div>
   </div>`;
+}
+if(t==='classe'){
+  // Un'aula vista dal fondo: la LIM sul muro (lo schermo è il rettangolo x,y,w,h, dove monta.py
+  // mette la clip), i banchi con le sedie vuote (nessuna persona), la cattedra, la finestra.
+  // Serve a far capire quanto è grande il gioco sulla LIM. Di serie x=130 y=480 w=820 h=461 (16:9).
+  const x=+(P.get('x')||130), y=+(P.get('y')||480), w=+(P.get('w')||820), h=+(P.get('h')||461);
+  // banco biposto con due sedie vuote, visti dal fondo dell'aula (s = scala: più vicino, più grande)
+  const sedia=(cx,b,s)=>`<rect x="${cx-50*s}" y="${b-30*s}" width="${100*s}" height="${16*s}" rx="${5*s}" fill="#3a3f5c"/>`+
+      `<rect x="${cx-46*s}" y="${b-14*s}" width="${8*s}" height="${62*s}" fill="#2e3250"/><rect x="${cx+38*s}" y="${b-14*s}" width="${8*s}" height="${62*s}" fill="#2e3250"/>`+
+      `<rect x="${cx-8*s}" y="${b-112*s}" width="${16*s}" height="${84*s}" fill="#2e3250"/>`+
+      `<rect x="${cx-58*s}" y="${b-150*s}" width="${116*s}" height="${52*s}" rx="${12*s}" fill="#4d5374"/>`;
+  const banco=(px,b,s)=>`<rect x="${px-205*s}" y="${b-150*s}" width="${410*s}" height="${24*s}" rx="${5*s}" fill="#d6b089"/>`+
+      `<rect x="${px-195*s}" y="${b-126*s}" width="${390*s}" height="${70*s}" fill="#a77b55"/>`+
+      `<rect x="${px-190*s}" y="${b-56*s}" width="${10*s}" height="${100*s}" fill="#7d5a3c"/><rect x="${px+180*s}" y="${b-56*s}" width="${10*s}" height="${100*s}" fill="#7d5a3c"/>`+
+      sedia(px-100*s,b+40*s,s)+sedia(px+100*s,b+40*s,s);
+  const file=[[1300,.6,[290,790]],[1580,.86,[245,835]],[1930,1.18,[170,910]]];
+  let doghe=''; for(let i=0;i<11;i++){const a=540+(i-5)*70, b2=540+(i-5)*430; doghe+=`<line x1="${a}" y1="1160" x2="${b2}" y2="1920" stroke="#fff" stroke-opacity=".07" stroke-width="3"/>`;}
+  R.innerHTML=`<svg width="1080" height="1920" viewBox="0 0 1080 1920" xmlns="http://www.w3.org/2000/svg">
+   <defs>
+    <linearGradient id="muro" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#4a40a8"/><stop offset="1" stop-color="#2d2672"/></linearGradient>
+    <linearGradient id="pav" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#2b2468"/><stop offset="1" stop-color="#151236"/></linearGradient>
+    <linearGradient id="cielo" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#8fc6ff"/><stop offset="1" stop-color="#d7ecff"/></linearGradient>
+    <radialGradient id="alone" cx=".5" cy=".5" r=".5"><stop offset="0" stop-color="#9a8cff" stop-opacity=".45"/><stop offset="1" stop-color="#9a8cff" stop-opacity="0"/></radialGradient>
+    <linearGradient id="luce" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#fff" stop-opacity=".16"/><stop offset="1" stop-color="#fff" stop-opacity="0"/></linearGradient>
+   </defs>
+   <rect width="1080" height="1160" fill="url(#muro)"/>
+   <rect y="1010" width="1080" height="150" fill="#262061"/><rect y="1006" width="1080" height="6" fill="#5a50b8"/>
+   <rect y="1160" width="1080" height="760" fill="url(#pav)"/>${doghe}<rect y="1152" width="1080" height="10" fill="#1b1745"/>
+   <rect x="-10" y="380" width="88" height="540" rx="6" fill="#d8d3f5"/><rect x="0" y="392" width="66" height="516" fill="url(#cielo)"/>
+   <rect x="0" y="646" width="66" height="8" fill="#d8d3f5"/><polygon points="66,392 66,908 330,1160 180,1160" fill="url(#luce)"/>
+   <ellipse cx="${x+w/2}" cy="${y+h/2}" rx="${w*.85}" ry="${h*.95}" fill="url(#alone)"/>
+   <rect x="${x-58}" y="${y+24}" width="36" height="${h*.5}" rx="8" fill="#1c1940"/><rect x="${x+w+22}" y="${y+24}" width="36" height="${h*.5}" rx="8" fill="#1c1940"/>
+   <rect x="${x-18}" y="${y-18}" width="${w+36}" height="${h+36}" rx="12" fill="#e4e2ee"/><rect x="${x-8}" y="${y-8}" width="${w+16}" height="${h+16}" rx="6" fill="#2a2a33"/>
+   <rect x="${x}" y="${y}" width="${w}" height="${h}" fill="#000"/>
+   <rect x="${x+w*.18}" y="${y+h+18}" width="${w*.64}" height="18" rx="6" fill="#c9c6d8"/>
+   <rect x="${x+w*.3}" y="${y+h+12}" width="40" height="8" rx="3" fill="#E21C48"/><rect x="${x+w*.3+50}" y="${y+h+12}" width="40" height="8" rx="3" fill="#009C95"/>
+   <circle cx="${x+w-30}" cy="${y-92}" r="40" fill="#f4f2fb" stroke="#d6d2ea" stroke-width="6"/>
+   <line x1="${x+w-30}" y1="${y-92}" x2="${x+w-30}" y2="${y-118}" stroke="#2a2440" stroke-width="5" stroke-linecap="round"/>
+   <line x1="${x+w-30}" y1="${y-92}" x2="${x+w-12}" y2="${y-84}" stroke="#2a2440" stroke-width="5" stroke-linecap="round"/>
+   <rect x="660" y="1048" width="380" height="26" rx="5" fill="#c99e73"/><rect x="672" y="1074" width="356" height="110" fill="#8f6542"/>
+   <rect x="760" y="1004" width="120" height="44" rx="4" fill="#2b2b3a"/><rect x="742" y="1044" width="156" height="8" rx="3" fill="#51516a"/>
+   ${file.map(([b,s,ps])=>ps.map(px=>banco(px,b,s)).join('')).join('')}
+  </svg>`;
 }
 if(t==='copertina'){
   const c=P.get('c')||'mi', notes=['do','re','mi','fa','sol','la','si'], img=P.get('img');

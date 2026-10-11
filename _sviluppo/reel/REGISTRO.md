@@ -7,3 +7,4 @@ Una riga per reel pubblicato. I numeri si prendono dagli Insights del reel **dop
 |---|---|---|---|---|---|---|---|---|---|---|---|
 | 11/10/2026 | `primo` | Giochi musicali GRATIS per la tua classe | 30 s | musica da Instagram | | | | | | | primo reel, profilo appena aperto (0 follower) |
 | | `test-ingresso` | Test d'ingresso GRATIS di musica, già pronto | 30 s | | | | | | | | variante B pronta per i Trial Reel |
+| | `leggi-la-nota` | Leggi le note GRATIS per la tua classe | 29 s | base brano 21 | | | | | | | variante B pronta ("Che nota è?") |

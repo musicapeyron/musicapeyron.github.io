@@ -39,7 +39,9 @@ Cosa vuol dire per noi:
 | **Chiusura** | "progetto collaborativo" + logo + mail; si può far ripartire bene in loop | chi lo riguarda conta |
 | **Audio** | meglio una **base del sito** (audio originale) che un brano di tendenza | è nostra (niente problemi di diritti), è "audio originale" per Instagram e fa sentire la qualità del sito |
 | **Copertina** | stessa grafica per tutti (titolo + fotogramma), tutto nel riquadro 3:4 centrale | nella griglia del profilo i reel si vedono tagliati a 3:4; una griglia ordinata fa capire subito cos'è il profilo |
-| **Privacy** | niente volti né voci di alunni, niente nomi | regola del sito; e un docente lo condivide più volentieri |
+| **Privacy** | niente volti né voci di alunni, niente nomi; nei disegni nessuna persona | regola del sito; e un docente lo condivide più volentieri |
+| **GRATIS** | sempre nell'apertura, in grande; poi una schermata "Gratis. Niente login." | è la prima cosa che un docente vuole sapere |
+| **Il resto del sito** | mini-telefoni che scorrono altre pagine sotto le schermate colorate | fa capire in un attimo quanto c'è, senza cambiare argomento |
 
 ### Tipi di apertura che funzionano (da alternare)
 
@@ -110,6 +112,7 @@ Claude:
 | Gioco/tema | Apertura | Pubblico | Note |
 |---|---|---|---|
 | Test d'ingresso | "Il test d'ingresso di musica, GRATIS e già pronto" | media | **fatto** |
+| Leggi la nota | "Leggi le note GRATIS per la tua classe" (B: "Che nota è?") | media | **fatto** |
 | Acuto o grave | "Il primo gioco d'ascolto per i più piccoli" | primaria | con audio del gioco |
 | Recita le note | "Do re mi fa sol la si… e ritorno. Da ogni nota" | primaria | |
 | Memory strumenti | "Il memory che suona" | primaria/media | con audio del gioco |
