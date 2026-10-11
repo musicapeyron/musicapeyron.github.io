@@ -247,7 +247,15 @@
     color: inherit;
     cursor: pointer;
   }
-  .card:focus-visible { outline: 2px solid #5EC8D8; outline-offset: 2px; }
+  .card:focus-visible, .card:has(.card-link:focus-visible) { outline: 2px solid #5EC8D8; outline-offset: 2px; }
+  .card .card-link { color: inherit; text-decoration: none; outline: none; }
+  .card .card-link::after { content: ""; position: absolute; inset: 0; border-radius: inherit; }
+  /* sottosezione «Allenati con…»: link a un altro gioco, sopra il link della card */
+  .card .allenati { margin-top: calc(9 * var(--u)); padding-top: calc(7 * var(--u)); border-top: 1px solid rgba(255,255,255,0.1);
+    font-size: calc(11 * var(--u)); color: #9FB3CE; font-weight: 500; }
+  .card .allenati a { position: relative; z-index: 1; color: var(--accent, #7FD8E4); font-weight: 700; text-decoration: underline;
+    text-underline-offset: 2px; display: inline-block; padding: calc(4 * var(--u)) 0; margin: calc(-4 * var(--u)) 0; }
+  .card .allenati a:hover { color: #fff; }
 
   .card:hover {
     border-color: rgba(94, 200, 216, 0.45);
@@ -436,29 +444,33 @@
       icon: '<svg class="ico" viewBox="0 0 48 48" aria-hidden="true"><use href="icone.svg#ic-memory-note"/></svg>',
       label: "Note",
       desc: "Trova le coppie: nota e nome, due note uguali o la stessa nota in due chiavi. Da 1 a 4 giocatori.",
-      url: "memory-note.html"
+      url: "memory-note.html",
+      allenati: { title: "Leggi la nota", url: "leggi-la-nota.html" }
     },
     {
       title: "Memory degli Strumenti",
       icon: '<svg class="ico" viewBox="0 0 48 48" aria-hidden="true"><use href="icone.svg#ic-memory-strumenti"/></svg>',
       label: "Strumenti",
       desc: "Trova le coppie di foto, nomi e suoni degli strumenti dell'orchestra. Da 1 a 4 giocatori.",
-      url: "memory-strumenti.html"
+      url: "memory-strumenti.html",
+      allenati: { title: "Riconosci lo strumento", url: "riconosci-lo-strumento.html" }
     }
   ];
 
   const grid = document.getElementById('grid');
   giochi.forEach(t => {
-    const card = document.createElement('a');
+    /* la card è un riquadro; il link del titolo si allarga a tutta la card,
+       così dentro ci può stare anche il link «Allenati con…» a un altro gioco */
+    const card = document.createElement('div');
     card.className = 'card';
-    card.href = t.url;
     card.innerHTML = `
       <div class="top-row">
         <div class="icon">${t.icon}</div>
         ${t.label ? `<span class="label">${t.label}</span>` : ''}
       </div>
-      <h2>${t.title}</h2>
+      <h2><a class="card-link" href="${t.url}">${t.title}</a></h2>
       ${t.desc ? `<p>${t.desc}</p>` : ''}
+      ${t.allenati ? `<div class="allenati">Allenati con <a href="${t.allenati.url}">${t.allenati.title}</a></div>` : ''}
     `;
     grid.appendChild(card);
   });
