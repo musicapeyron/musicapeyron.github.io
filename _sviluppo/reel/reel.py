@@ -102,6 +102,32 @@ def libreria(servono=None, rifai=False):
         srv.terminate()
 
 
+def attacchi(clip, da, a):
+    """Istanti (in secondi dall'inizio del pezzo) in cui partono i suoni del gioco, dall'audio registrato."""
+    import re
+    wav = L / "clip" / f"{clip}.wav"
+    r = subprocess.run(["ffmpeg", "-ss", f"{da:.3f}", "-t", f"{a - da:.3f}", "-i", str(wav), "-af",
+                        "silencedetect=n=-40dB:d=0.12", "-f", "null", "-"], capture_output=True, text=True)
+    fini = [float(x) for x in re.findall(r"silence_end: ([\d.]+)", r.stderr)]
+    inizio_rumoroso = not re.search(r"silence_start: 0(\.0+)?\b", r.stderr)
+    return ([0.0] if inizio_rumoroso else []) + fini
+
+
+def con_suoni(schermate):
+    """Le schermate con "suoni": {"clip", "da", "tocco"} ricevono gli istanti delle bolle (n) e del tocco (f)."""
+    fuori = []
+    for x in schermate:
+        su = x.get("suoni")
+        if su:
+            da, tocco = monta.tempo(su["da"], su["clip"]), monta.tempo(su["tocco"], su["clip"])
+            n = [t for t in attacchi(su["clip"], da, tocco) if t < tocco - da][:2]
+            if su.get("distanza") and n:   # i suoni si sovrappongono: il secondo parte a distanza fissa dal primo
+                n = [n[0], n[0] + su["distanza"]]
+            x = {**x, "hash": x["hash"] + f"&n={','.join(f'{t:.2f}' for t in n)}&f={tocco - da:.2f}"}
+        fuori.append(x)
+    return fuori
+
+
 def copertina(d, cart):
     """Aggiunge alle schermate quella della copertina, con un fotogramma della clip scelta."""
     c = d.get("copertina")
@@ -224,7 +250,7 @@ def variante(d, nome, v, cart, base_gr):
         dst = gr / s["name"]
         if s["name"] not in cambiate and not dst.exists():
             dst.symlink_to(base_gr / s["name"], target_is_directory=True)
-    asyncio.run(grafiche.disegna_tutte(v["schermate"], gr))
+    asyncio.run(grafiche.disegna_tutte(con_suoni(v["schermate"]), gr))
     muto = vc / "reel-muto.mp4"
     monta.monta(d["scaletta"], gr, vc / "segmenti", muto)
     audio(d, vc / "segmenti", muto, cart / f"reel-{nome}.mp4")
@@ -251,7 +277,7 @@ def main():
     print("Schermate…")
     cop = copertina(d, cart)
     gr = cart / "grafiche"
-    asyncio.run(grafiche.disegna_tutte(d["schermate"] + cop, gr))
+    asyncio.run(grafiche.disegna_tutte(con_suoni(d["schermate"]) + cop, gr))
     print("Montaggio…")
     monta.monta(d["scaletta"], gr, cart / "segmenti", cart / "reel-muto.mp4")
     audio(d, cart / "segmenti", cart / "reel-muto.mp4", cart / "reel.mp4")

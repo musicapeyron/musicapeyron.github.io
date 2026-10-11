@@ -1,5 +1,5 @@
 {
- "titolo": "Acuto o grave: il gioco d'ascolto (ottobre 2026)",
+ "titolo": "Acuto o grave: il gioco d'ascolto, a sfide, con il suono del gioco (ottobre 2026)",
  "clip": {
   "acuto_tel": {
    "pagina": "acuto-o-grave.html",
@@ -32,7 +32,8 @@
     {
      "attendi": 800
     }
-   ]
+   ],
+   "audio": true
   },
   "acuto_lim": {
    "pagina": "acuto-o-grave.html",
@@ -59,21 +60,40 @@
     {
      "attendi": 600
     }
-   ]
+   ],
+   "audio": true
   }
  },
- "ricerca": "Applicata GUIDA-REEL.md: GRATIS nell'apertura sopra il gioco in movimento; domande vere con la risposta e le note che compaiono sul pentagramma; invito a mandarlo a un collega; base del sito come audio; 5 hashtag; variante B.",
+ "ricerca": "Applicata GUIDA-REEL.md: formato a sfida (si ascolta e si prova a indovinare prima del tocco: tiene a guardare e fa rivedere); bolle 1 e 2 che si accendono coi suoni (movimento nei primi secondi, si capisce anche senza audio); GRATIS nell'apertura; suono vero del gioco, con la base che tace sotto le sfide; invito a mandarlo a un collega; 5 hashtag; variante B con apertura diversa.",
  "schermate": [
   {
    "name": "hook",
-   "hash": "t=hook&a=Acuto%20o%20grave%3F&g=GRATIS&b=per%20allenare%20l%27orecchio",
+   "hash": "t=hook&a=Acuto%20o%20grave%3F&g=GRATIS&b=Ascolta%20e%20indovina%20%F0%9F%94%8A",
    "dur": 3.6,
-   "alpha": true
+   "alpha": true,
+   "suoni": {
+    "clip": "acuto_tel",
+    "da": "r_1-3.8",
+    "tocco": "r_1",
+    "distanza": 1.9
+   }
   },
   {
    "name": "card1",
    "hash": "t=card&c=do&l=Gratis.|Niente%20login.&s=Nessun%20dato%20raccolto%2C%20niente%20pubblicit%C3%A0.&tel=1",
    "dur": 2.4
+  },
+  {
+   "name": "sfida2",
+   "hash": "t=sfida",
+   "dur": 5.2,
+   "alpha": true,
+   "suoni": {
+    "clip": "acuto_tel",
+    "da": "r_3-3.8",
+    "tocco": "r_3",
+    "distanza": 1.9
+   }
   },
   {
    "name": "card2",
@@ -124,7 +144,8 @@
    "tipo": "intera",
    "clip": "acuto_tel",
    "da": "r_3-3.8",
-   "a": "r_3+1.4"
+   "a": "r_3+1.4",
+   "grafica": "sfida2"
   },
   {
    "tipo": "schermata",
@@ -172,8 +193,10 @@
  "audio": {
   "file": "media/brani-propedeutici/brano10-completo.mp3",
   "da": 0,
-  "volume": 0.85,
-  "credito": "Musica: base di «Su in alto» (Brani propedeutici) – musicascuole.it, CC BY-SA 3.0"
+  "volume": 0.8,
+  "gioco": true,
+  "sotto": 0,
+  "credito": "Musica: base di «Su in alto» (Brani propedeutici) – musicascuole.it, CC BY-SA 3.0. Suoni del pianoforte: Salamander Grand Piano (Alexander Holm, CC BY 3.0)"
  },
  "varianti": {
   "B": {
@@ -181,15 +204,21 @@
    "schermate": [
     {
      "name": "hook",
-     "hash": "t=hook&a=Quale%20suono%20%C3%A8%20pi%C3%B9%20acuto%3F&g=GRATIS&b=Il%20gioco%20d%27ascolto",
+     "hash": "t=hook&a=Quale%20suono%20%C3%A8%20pi%C3%B9%20acuto%3F&g=GRATIS&b=Alza%20il%20volume%20%F0%9F%94%8A",
      "dur": 3.6,
-     "alpha": true
+     "alpha": true,
+     "suoni": {
+      "clip": "acuto_tel",
+      "da": "r_1-3.8",
+      "tocco": "r_1",
+      "distanza": 1.9
+     }
     }
    ]
   }
  },
  "didascalia": {
-  "testo": "Acuto o grave? Un gioco d'ascolto gratis per la classe 🎧\nDue suoni, una domanda: quale è più acuto? Quale più grave? O sono all'unisono?\n10 livelli, da due ottave fino a un semitono. Dopo ogni risposta giusta le due note compaiono sul pentagramma. Si gioca sulla LIM, sul PC e sul telefono, anche solo con le domande sull'acuto o solo sul grave.\nNiente registrazione, niente login, nessun dato raccolto.\n\n📩 Hai un collega di musica? Mandaglielo!",
+  "testo": "Acuto o grave? Un gioco d'ascolto gratis per la classe 🎧\nDue suoni, una domanda: quale è più acuto? Quale più grave? O sono all'unisono?\n10 livelli, da due ottave fino a un semitono. Dopo ogni risposta giusta le due note compaiono sul pentagramma. Si gioca sulla LIM, sul PC e sul telefono, anche solo con le domande sull'acuto o solo sul grave.\nNiente registrazione, niente login, nessun dato raccolto.\n\n🔊 Alza il volume e prova a indovinare prima del tocco!\n📩 Hai un collega di musica? Mandaglielo!",
   "hashtag": [
    "educazionemusicale",
    "musicaascuola",

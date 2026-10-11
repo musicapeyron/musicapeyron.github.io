@@ -11,7 +11,7 @@ python3 _sviluppo/reel/reel.py test-ingresso          # fa tutto; le clip già r
 python3 _sviluppo/reel/reel.py test-ingresso --clip   # registra di nuovo tutte le clip
 python3 _sviluppo/reel/reel.py primo --clip=rap       # registra di nuovo solo una clip
 python3 _sviluppo/reel/esplora.py memory-strumenti.html   # studia un gioco prima di farne un reel
-python3 _sviluppo/reel/reel.py --libreria             # rifà i mini-schermi del sito (quando il sito cambia)
+python3 _sviluppo/reel/reel.py --libreria             # rifà i mini-schermi del sito, per telefono, tablet e LIM
 ```
 
 Risultato in `lavoro/<reel>/`:
@@ -47,15 +47,29 @@ Ogni reel è un solo file. Per uno nuovo si copia **`reels/_modello.json`** (un 
 
 ## Pezzi riutilizzabili
 
-- **Mini-telefoni del sito** (`libreria/scorrimenti/`, definiti in `libreria/scorrimenti.json`): video piccoli
-  (360x640) di pagine del sito che scorrono su un telefono: index, solfeggio, storia, schemi, brani, spartiti,
-  barocco, medioevo, novecento, memory, suono, scale, bona. Sono **salvati nel repository**, così si riusano in
-  qualsiasi ordine. In una schermata colorata disegnata con `tel=1` (testi in alto) si aggiungono con
-  `"telefoni": ["index", "storia", "brani"]` (da 1 a 3): entrano dal basso uno dopo l'altro e scorrono.
+- **LIM, tablet e telefono del sito** (`libreria/scorrimenti/`, definiti in `libreria/scorrimenti.json`): video
+  piccoli di pagine del sito che scorrono, ognuna in tre versioni: telefono (`<nome>.mp4`, 360x640), tablet
+  (`<nome>-tablet.mp4`, 480x640) e LIM (`<nome>-lim.mp4`, 640x360). Pagine: index, solfeggio, storia, schemi, brani,
+  spartiti, barocco, medioevo, novecento, memory, suono, scale, bona. Sono **salvati nel repository**, così si riusano
+  in qualsiasi ordine. Sotto una schermata colorata disegnata con `tel=1` (testi in alto) si mettono con
+  `"dispositivi": {"lim": "storia", "tablet": "brani", "telefono": "index"}`: la LIM dietro, il tablet a sinistra,
+  il telefono a destra, che entrano dal basso uno dopo l'altro e scorrono (scelta di Cristiano: niente tre telefoni,
+  ma i tre dispositivi, per far vedere che il sito va dappertutto).
+  Molte pagine su LIM e tablet stanno in una schermata e restano ferme: va bene così (il montaggio parte dall'inizio
+  e tiene l'ultima immagine).
   Quando il sito cambia: `reel.py --libreria` (tutti) o `reel.py --libreria storia scale` (alcuni).
   Per aggiungerne uno: una voce in `scorrimenti.json` (pagina e passi), poi `reel.py --libreria <nome>`.
   Pagine scartate perché sul telefono non scorrono: `giochi.html`, `schemi.html`, `scarta-la-nota` (chiede di girare
   il telefono), `test-ingresso` (menu fermo).
+- **Il suono dei giochi**: una clip con `"audio": true` registra anche il suono vero del gioco (`lavoro/clip/<clip>.wav`,
+  in sincrono col video). Nel reel lo si mette con `"audio": {..., "gioco": true, "sotto": 0}`: il suono del gioco
+  va sotto i suoi pezzi (alla loro velocità) e la base tace lì (`sotto` = volume della base sotto i giochi).
+  Un pezzo con `"muto": true` non porta il suono.
+- **Le bolle dei suoni** (tipo `sfida`, o l'apertura `hook`): nei giochi d'ascolto due bolle "1" e "2" si accendono
+  quando suonano i due suoni, poi compare la domanda e tutto sparisce al tocco della risposta: così nei secondi
+  d'ascolto lo schermo si muove e si capisce anche senza audio. Nel file del reel basta
+  `"suoni": {"clip", "da", "tocco", "distanza"}`: gli istanti si ricavano dall'audio registrato
+  (`distanza` = secondi fissi tra i due suoni quando nel gioco si sovrappongono; Acuto o grave: 1.9).
 - **L'aula con la LIM** (tipo `classe` in `grafiche.html`): un'aula vista dal fondo, con la LIM sul muro, la cattedra,
   la finestra e i banchi con le sedie vuote. **Nessuna persona disegnata** (scelta di Cristiano).
   Si usa come sfondo di un pezzo `incorniciata` con gli stessi `x, y, w, h` della LIM (di serie 130, 480, 820, 461);
@@ -83,7 +97,7 @@ Ogni reel è un solo file. Per uno nuovo si copia **`reels/_modello.json`** (un 
 - **GRATIS sempre all'inizio**, in grande, nel testo d'apertura.
 - **Mai citare i voti** (né nei testi, né nella didascalia, né nelle schermate dei giochi: la registrazione si
   ferma prima delle schermate finali che mostrano un voto).
-- Nelle **schermate colorate** di testo: mini-telefoni che scorrono pagine diverse del sito (varie ogni volta).
+- Nelle **schermate colorate** di testo: LIM, tablet e telefono che scorrono pagine diverse del sito (varie ogni volta).
 - La **LIM dentro un'aula disegnata**, per far capire le dimensioni.
 - Nei reel si mettono in risalto **i vari aspetti del gioco**, uno per pezzo (livelli, aiuti, chiavi, verifica…).
 - Vuole che resti tutto ciò che serve per rifare i reel e farne di nuovi.
@@ -142,6 +156,23 @@ Il primo fatto applicando `GUIDA-REEL.md`.
 - Audio: base del brano 21 dei Brani propedeutici, dal secondo 16 (si cambia in `"audio"`).
 - Variante B: apertura a sfida "Che nota è? GRATIS – Leggi la nota, per la LIM".
 - Sul telefono il pulsante ⚙️ Opzioni è in fondo alla pagina: `tocca` ora scorre da solo fino a un elemento fuori schermo.
+
+### `acuto-o-grave` (ottobre 2026, 26 s, con il suono del gioco e variante B)
+
+| # | Cosa | Durata |
+|---|------|--------|
+| 1 | Sfida: "Acuto o grave? GRATIS – Ascolta e indovina 🔊", i due suoni con le bolle 1 e 2, il tocco, le note sul pentagramma | 5,2 s |
+| 2 | do: "Gratis. Niente login." + LIM, tablet e telefono | 2,4 s |
+| 3 | Seconda sfida, con le bolle | 5,2 s |
+| 4 | re: "10 livelli: da due ottave a un semitono. E c'è anche l'unisono." | 2,4 s |
+| 5 | LIM nell'aula, col suono: "Poi le note sul pentagramma" | 5,4 s |
+| 6 | la: "Mandalo a un collega di musica." | 2,6 s |
+| 7 | Chiusura con logo e mail | 3,2 s |
+
+- Il suono è quello vero del gioco (pianoforte Salamander, CC BY 3.0, credito in didascalia); la base di "Su in alto"
+  suona solo sulle schermate colorate e sulla chiusura.
+- La schermata iniziale del gioco non si mostra: sotto "Verifica" c'è scritto "scopri il tuo voto".
+- Variante B: "Quale suono è più acuto? GRATIS – Alza il volume 🔊".
 
 ### `_modello` (circa 13 s, con audio)
 

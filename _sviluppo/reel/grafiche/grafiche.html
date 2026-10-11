@@ -53,6 +53,17 @@ html,body{width:1080px;height:1920px;overflow:hidden;background:transparent;font
 .cop .tel img{height:100%;aspect-ratio:9/16;object-fit:cover;object-position:top;border-radius:34px;
  box-shadow:0 0 0 12px #0b0a1f,0 0 0 15px rgba(255,255,255,.16),0 30px 70px rgba(0,0,0,.55)}
 .cop .pills{margin-top:auto}
+/* bolle dei suoni (giochi d'ascolto): "1" e "2" si accendono quando suonano; n=istanti, f=istante del tocco */
+.bolle{position:absolute;left:0;right:0;top:800px;height:400px;display:flex;justify-content:center;align-items:center;gap:110px}
+.bolla{position:relative;width:240px;height:240px;border-radius:50%;display:flex;align-items:center;justify-content:center;
+ font-family:Inter;font-weight:800;font-size:130px;color:#fff;opacity:.28;transform:scale(.9);box-shadow:0 16px 40px rgba(0,0,0,.45)}
+.bolla.uno{background:linear-gradient(160deg,#4fb3ff,#1f7fd1)} .bolla.due{background:linear-gradient(160deg,#ffb04d,#f07a12)}
+.bolla .onda{position:absolute;inset:-6px;border-radius:50%;border:10px solid #fff;opacity:0}
+@keyframes accendi{0%{opacity:.28;transform:scale(.9)}35%{opacity:1;transform:scale(1.14)}100%{opacity:1;transform:scale(1)}}
+@keyframes onda{0%{opacity:.85;transform:scale(1)}100%{opacity:0;transform:scale(1.75)}}
+@keyframes via{to{opacity:0;transform:translateY(-30px)}}
+.domanda{position:absolute;left:0;right:0;top:1195px;text-align:center;font-weight:800;font-size:46px;color:#fff;opacity:0;
+ text-shadow:0 4px 18px rgba(0,0,0,.6)}
 </style></head><body><div id="root"></div>
 <script>
 const P=new URLSearchParams(location.hash.slice(1));const R=document.getElementById('root');const t=P.get('t');
@@ -77,13 +88,23 @@ if(t==='card'){
     while(fondo()>900&&fs>60){fs-=4;ls.forEach(e=>e.style.fontSize=fs+'px')}
   }
 }
+function bolle(){ // usate dall'apertura (hook) e dal tipo "sfida"
+  const n=(P.get('n')||'').split(',').filter(Boolean).map(Number), f=+(P.get('f')||0);
+  if(n.length<2) return '';
+  const b=(cl,num,t)=>`<div class="bolla ${cl}" style="animation:fade .2s .1s both,accendi .45s ${t}s forwards">${num}`+
+     `<div class="onda" style="animation:onda .9s ${t}s forwards"></div></div>`;
+  const q=P.get('q')||'Il primo, il secondo… o unisono?';
+  return `<div class="bolle" ${f?`style="animation:via .25s ${f-0.1}s forwards"`:''}>${b('uno',1,n[0])}${b('due',2,n[1])}</div>`+
+    `<div class="domanda" style="animation:fade .3s ${n[1]+0.9}s forwards${f?`,via .25s ${f-0.1}s forwards`:''}">${q}</div>`;
+}
+if(t==='sfida'){ R.innerHTML=bolle(); }
 if(t==='hook'){
   // testi cambiabili: a (sopra), g (nella pastiglia gialla), b (sotto); se una riga è troppo larga si rimpicciolisce
   const A=P.get('a')||'Giochi musicali', G=P.get('g')||'GRATIS', B=P.get('b')||'per la tua classe';
   R.innerHTML=`<div class="band fade" style="animation-duration:.2s"></div><div class="hook">
    <div class="a pop" ${d(0)}>${A}</div>
    <div class="g pop" ${d(.18)}>${G}</div>
-   <div class="a pop" ${d(.36)}>${B}</div></div>`;
+   <div class="a pop" ${d(.36)}>${B}</div></div>`+bolle();
   R.querySelectorAll('.hook .a').forEach(e=>{let fs=84;e.style.whiteSpace='nowrap';
     while(e.scrollWidth>920&&fs>50){fs-=2;e.style.fontSize=fs+'px'}});
   R.querySelectorAll('.hook .g').forEach(e=>{let fs=170;e.style.whiteSpace='nowrap';

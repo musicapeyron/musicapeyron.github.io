@@ -66,6 +66,12 @@ SUFFISSO = {"telefono": "", "tablet": "-tablet", "lim": "-lim"}
 M = 40                                          # margine delle immagini delle cornici (per l'ombra)
 
 
+def durata_video(f):
+    r = subprocess.run(["ffprobe", "-v", "error", "-show_entries", "format=duration", "-of", "csv=p=0", str(f)],
+                       capture_output=True, text=True)
+    return float(r.stdout.strip() or 0)
+
+
 def cornice(disp):
     """Cornice del dispositivo (con ombra) e maschera dello schermo, disegnate una volta in lavoro/."""
     from PIL import ImageFilter
@@ -106,12 +112,15 @@ def schermata_dispositivi(out, nome, dispositivi, inizio=0.8, ritardo=0.12):
     ins, f = [], []
     for k in usati:
         c, m = cornice(k)
-        ins += [f"-loop 1 -i {c}", f"-loop 1 -i {m}", f"-ss {inizio} -i {SCORRIMENTI}/{dispositivi[k]}{SUFFISSO[k]}.mp4"]
+        v = SCORRIMENTI / f"{dispositivi[k]}{SUFFISSO[k]}.mp4"
+        # le pagine che sul dispositivo non scorrono danno video cortissimi: si parte dall'inizio
+        ss = inizio if durata_video(v) > inizio + 1 else 0
+        ins += [f"-loop 1 -i {c}", f"-loop 1 -i {m}", f"-ss {ss} -i {v}"]
     base = "[0:v]"
     for i, k in enumerate(usati):
         x, y, w, h = DISPOSITIVI[k]; nc, nm, nv = 1 + 3 * i, 2 + 3 * i, 3 + 3 * i
         d = 0.12 + i * ritardo   # entrano uno dopo l'altro, con una piccola frenata
-        f += [f"[{nv}:v]fps=30,scale={w}:{h},setsar=1,format=rgba[s{i}]",
+        f += [f"[{nv}:v]fps=30,tpad=stop_mode=clone:stop_duration={dur + 1:.2f},scale={w}:{h},setsar=1,format=rgba[s{i}]",
               f"[{nm}:v]format=gray[m{i}]", f"[s{i}][m{i}]alphamerge[a{i}]",
               f"[{nc}:v]format=rgba[c{i}]", f"[c{i}][a{i}]overlay={M}:{M}[t{i}]",
               f"{base}[t{i}]overlay=x={x - M}:y='if(lt(t,{d}),1920,{y - M}+420*pow(max(0,1-(t-{d})/0.5),3))':eof_action=repeat[b{i}]"]

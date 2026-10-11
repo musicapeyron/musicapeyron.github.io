@@ -42,7 +42,8 @@ Cosa vuol dire per noi:
 | **Privacy** | niente volti né voci di alunni, niente nomi; nei disegni nessuna persona | regola del sito; e un docente lo condivide più volentieri |
 | **GRATIS** | sempre nell'apertura, in grande; poi una schermata "Gratis. Niente login." | è la prima cosa che un docente vuole sapere |
 | **Niente voti** | mai citati: né nei testi, né in didascalia, né sullo schermo dei giochi | scelta di Cristiano |
-| **Il resto del sito** | mini-telefoni che scorrono altre pagine sotto le schermate colorate | fa capire in un attimo quanto c'è, senza cambiare argomento |
+| **Il resto del sito** | LIM, tablet e telefono che scorrono altre pagine sotto le schermate colorate | fa capire in un attimo quanto c'è e che va su ogni dispositivo, senza cambiare argomento |
+| **Giochi d'ascolto** | formato a sfida col suono vero del gioco; bolle "1" e "2" che si accendono coi suoni; la base tace sotto | chi guarda prova a indovinare (resta e riguarda); le bolle si muovono e si capiscono anche senza audio |
 
 ### Tipi di apertura che funzionano (da alternare)
 
@@ -114,7 +115,7 @@ Claude:
 |---|---|---|---|
 | Test d'ingresso | "Il test d'ingresso di musica, GRATIS e già pronto" | media | **fatto** |
 | Leggi la nota | "Leggi le note GRATIS per la tua classe" (B: "Che nota è?") | media | **fatto** |
-| Acuto o grave | "Il primo gioco d'ascolto per i più piccoli" | primaria | con audio del gioco |
+| Acuto o grave | "Acuto o grave? GRATIS – Ascolta e indovina 🔊" (B: "Quale suono è più acuto?") | primaria | **fatto**, a sfide, col suono del gioco |
 | Recita le note | "Do re mi fa sol la si… e ritorno. Da ogni nota" | primaria | |
 | Memory strumenti | "Il memory che suona" | primaria/media | con audio del gioco |
 | Scarta la nota | "Batti Bach, Mozart e Beethoven a carte" | media | |
