@@ -14,21 +14,12 @@
   </defs>
   <g filter="url(#adesivo)">
 
-    <path d="M40 112 L110 84 L180 112 L110 140 Z" fill="#FFC4DA" stroke="#C2648A" stroke-width="4" stroke-linejoin="round"/>
-    <path d="M40 112 V176 L110 204 V140 Z" fill="#F48FB7" stroke="#C2648A" stroke-width="4" stroke-linejoin="round"/>
-    <path d="M180 112 V176 L110 204 V140 Z" fill="#E86FA2" stroke="#C2648A" stroke-width="4" stroke-linejoin="round"/>
-    <path d="M52 136 L98 154 M52 152 L98 170" stroke="#FFD54A" stroke-width="4" stroke-linecap="round"/>
-    <path d="M168 136 L122 154 M168 152 L122 170" stroke="#FFD54A" stroke-width="4" stroke-linecap="round"/>
-    <circle cx="146" cy="170" r="6" fill="#FFD54A" stroke="#B9831A" stroke-width="2.5"/>
-    <path d="M146 170 L188 160 L192 176" fill="none" stroke="#B9831A" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"/>
-    <circle cx="193" cy="180" r="7" fill="#FFD54A" stroke="#B9831A" stroke-width="2.5"/>
-    <path d="M110 84 V64" stroke="#B9831A" stroke-width="4"/>
-    <ellipse cx="110" cy="62" rx="16" ry="5" fill="#FFD54A" stroke="#B9831A" stroke-width="3"/>
-    <circle cx="110" cy="40" r="11" fill="#FFD9B8" stroke="#C99A72" stroke-width="2.5"/>
-    <path d="M100 34 q10 -12 20 0" fill="#8B5E34"/>
-    <path d="M110 51 L96 62 H124 Z" fill="#CF3E96" stroke="#8F2464" stroke-width="2.5" stroke-linejoin="round"/>
-    <path d="M100 52 l-12 -10 M120 52 l12 -10" stroke="#FFD9B8" stroke-width="4" stroke-linecap="round"/>
-    <g transform="translate(40 70) scale(0.65)"><rect x="9" y="-44" width="5" height="46" rx="2" fill="#5E50A1"/><ellipse cx="2" cy="2" rx="13" ry="9.5" transform="rotate(-20 2 2)" fill="#5E50A1" stroke="#1F2430" stroke-opacity="0.35" stroke-width="2"/></g><g transform="translate(170 58) scale(0.6)"><rect x="9" y="-44" width="5" height="46" rx="2" fill="#009C95"/><ellipse cx="2" cy="2" rx="13" ry="9.5" transform="rotate(-20 2 2)" fill="#009C95" stroke="#1F2430" stroke-opacity="0.35" stroke-width="2"/></g><g transform="translate(24 108) scale(0.55)"><path d="M10 -44 v46" stroke="#E21C48" stroke-width="5" stroke-linecap="round"/><path d="M12 -44 q16 8 14 24 q-4 -10 -14 -12" fill="#E21C48"/><ellipse cx="2" cy="2" rx="13" ry="9.5" transform="rotate(-20 2 2)" fill="#E21C48"/></g>
-    <text x="150" y="104" font-family="Fredoka, Arial Rounded MT Bold, sans-serif" font-weight="700" font-size="22" fill="#5E50A1" stroke="#fff" stroke-width="4" paint-order="stroke">3/4</text>
+    <path d="M40 196 L136 92" stroke="#1F2430" stroke-width="10" stroke-linecap="round"/>
+    <path d="M40 196 L56 178" stroke="#fff" stroke-width="10" stroke-linecap="round"/>
+    <polygon points="150.7,46.3 156.6,69.0 179.5,74.1 159.8,86.7 162.0,110.0 143.9,95.2 122.4,104.5 130.9,82.7 115.4,65.1 138.8,66.5" fill="#FFD54A" stroke="#E3A814" stroke-width="3" stroke-linejoin="round"/>
+    <circle cx="186" cy="44" r="12" fill="#E21C48" stroke="#8F1230" stroke-width="3"/>
+    <path d="M168 30 l-8 -8 M200 30 l8 -8 M186 22 v-10 M208 48 h10" stroke="#F99D1C" stroke-width="4" stroke-linecap="round"/>
+    <polygon points="63.1,51.5 63.4,57.7 69.0,60.3 63.2,62.5 62.5,68.7 58.6,63.8 52.5,65.0 56.0,59.9 52.9,54.5 58.9,56.1" fill="#CF3E96" stroke="#8F2464" stroke-width="2.5" stroke-linejoin="round"/><polygon points="187.4,142.1 188.6,147.5 193.9,148.9 189.2,151.7 189.5,157.2 185.4,153.5 180.2,155.6 182.4,150.5 178.9,146.2 184.4,146.8" fill="#009C95" stroke="#00675F" stroke-width="2.5" stroke-linejoin="round"/><polygon points="96.0,164.0 97.6,167.8 101.7,168.1 98.6,170.8 99.5,174.9 96.0,172.7 92.5,174.9 93.4,170.8 90.3,168.1 94.4,167.8" fill="#5E50A1" stroke="#3E3478" stroke-width="2.5" stroke-linejoin="round"/>
+    <g transform="translate(40 120)"><rect x="9" y="-44" width="5" height="46" rx="2" fill="#5E50A1"/><ellipse cx="2" cy="2" rx="13" ry="9.5" transform="rotate(-20 2 2)" fill="#fff" stroke="#5E50A1" stroke-width="5"/><circle cx="26" cy="2" r="5" fill="#E21C48"/></g>
   </g>
 </svg>

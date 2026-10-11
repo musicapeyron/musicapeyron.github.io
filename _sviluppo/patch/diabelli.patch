@@ -1,5 +1,5 @@
---- /home/claude/musicapeyron.github.io/brani-propedeutici.html	2026-10-09 06:04:24.314928239 +0000
-+++ /home/claude/musicapeyron.github.io/diabelli.html	2026-10-09 06:04:24.316671084 +0000
+--- /home/claude/musicapeyron.github.io/brani-propedeutici.html	2026-10-11 11:28:43.813245987 +0000
++++ /home/claude/musicapeyron.github.io/diabelli.html	2026-10-10 17:43:53.860593318 +0000
 @@ -5,21 +5,18 @@
  <meta name="viewport" content="width=device-width, initial-scale=1.0">
  <!--
@@ -41,7 +41,25 @@
    .brano-card { -webkit-backdrop-filter: none; backdrop-filter: none; }
    .barra-fissa { -webkit-backdrop-filter: none; backdrop-filter: none; background: rgba(15, 23, 42, 0.97); }
    .strumenti-bar { -webkit-backdrop-filter: none; backdrop-filter: none; background: rgba(15, 23, 42, 0.97); }
-@@ -603,9 +605,8 @@
+@@ -597,13 +599,13 @@
+ <script src="vexflow.js"></script>
+ <script src="motore-schemi.js?v=2026-10-09a"></script>
+ <!-- per i motori di ricerca e la condivisione -->
+-<link rel="canonical" href="https://musicascuole.it/brani-propedeutici.html">
++<link rel="canonical" href="https://musicascuole.it/diabelli.html">
+ <meta property="og:type" content="website">
+ <meta property="og:site_name" content="musicascuole.it">
+ <meta property="og:locale" content="it_IT">
+-<meta property="og:url" content="https://musicascuole.it/brani-propedeutici.html">
+-<meta property="og:title" content="Brani propedeutici — musicascuole.it">
+-<meta property="og:description" content="Brani propedeutici: 21 brani progressivi da sol a re, con basi, spartiti colorati e schemi per flauto, tastiera, chitarra e ukulele.">
++<meta property="og:url" content="https://musicascuole.it/diabelli.html">
++<meta property="og:title" content="Diabelli — musicascuole.it">
++<meta property="og:description" content="Diabelli, Studi melodici op. 149: spartiti per flauto, tastiera, chitarra e ukulele, con basi a diverse velocità.">
+ <meta property="og:image" content="https://musicascuole.it/media/condivisione.jpg">
+ <meta property="og:image:width" content="1200">
+ <meta property="og:image:height" content="630">
+@@ -617,9 +619,8 @@
  
  <header class="hero">
    <a class="breadcrumb" href="spartiti.html">← Spartiti</a>
@@ -53,7 +71,7 @@
  </header>
  
  <div class="barra-fissa">
-@@ -623,12 +624,11 @@
+@@ -637,12 +638,11 @@
  <footer></footer>
  
  <script>
@@ -64,12 +82,12 @@
    let ETICHETTE_INDICE = {};
    /* spartito che segue la base: secondi di attacco della base prima della prima battuta (misurati) */
 -  const SINCRO = { 1: 2.57, 2: 2.69, 3: 2.37, 4: -0.03, 5: 2.96, 6: 2.57, 7: -0.03, 8: 2.57, 9: -0.03, 10: 2.38, 11: -0.02, 12: 2.46, 13: 2.28, 14: 1.81,
--    15: -0.02, 16: 2.69, 17: 2.58, 18: 1.77, 19: 1.69, 20: 2.46, 21: -0.02 };   // misurati sulla pulsazione della base
+-    15: -0.02, 16: 2.69, 17: 2.58, 18: 2.46, 19: 1.77, 20: 1.69, 21: -0.02 };   // misurati sulla pulsazione della base
 +  const SINCRO = {};   // lo spartito che segue la base: per ora solo nei Brani propedeutici 1-10
    /* solfeggio: spento di base; velocità e clic ricordati */
    const leggi = (k, d) => { try { const v = localStorage.getItem(k); return v === null ? d : v; } catch (e) { return d; } };
    const scrivi = (k, v) => { try { localStorage.setItem(k, v); } catch (e) {} };
-@@ -641,7 +641,7 @@
+@@ -655,7 +655,7 @@
      return `<button type="button" class="solf-via${on ? ' in-corso' : ''}" data-solf="${n}">${on ? '■ Ferma' : '▶ Solfeggia'}</button>`; };
  
    /* sorpresa nel finale: da questa battuta l'evidenziatore diventa un ballerino (con Segui la base o Solfeggio) */
@@ -78,7 +96,7 @@
    let festa = null, festaOn = false;
  
    /* interruttore "Segui la base": spento di base, la scelta viene ricordata */
-@@ -649,13 +649,15 @@
+@@ -663,13 +663,15 @@
    const interruttoreSegui = n => SINCRO[n] === undefined ? '' :
      `<label class="segui" title="Mentre la base suona, la figura da suonare si illumina"><input type="checkbox" class="chk-segui" ${segui ? 'checked' : ''}><span>Segui la base</span></label>`;
              // testo accanto al numero nell'indice (es. la tonalità delle scale)
@@ -98,7 +116,7 @@
    const riquadroHTML = testo => {
      const righe = testo.split(/\n/).map(r => r.trim()).filter(Boolean);
      const novita = /^NOVIT/i.test(righe[0]);
-@@ -684,26 +686,22 @@
+@@ -698,26 +700,22 @@
  
    /* Novità che nei file MusicXML non hanno il loro riquadro: si aggiungono qui.
       "prima": il riquadro va prima di quelli già presenti nel brano (es. la nota prima della figura). */
@@ -130,7 +148,7 @@
  
  
    /* ---------- barra degli strumenti ---------- */
-@@ -734,7 +732,7 @@
+@@ -748,7 +746,7 @@
    async function apriTelefono(n, versione) {
      const brano = await caricaBrano(n), note = MotoreSchemi.noteUsate(brano);
      const verticale = window.innerHeight > window.innerWidth;
@@ -139,7 +157,7 @@
      const riquadri = brano.riquadri.map(riquadroHTML).join("") + comandiBasi(n);
      lightboxInner.innerHTML = verticale
        ? `<div class="tel tel-vert">${testa}<div class="tel-riquadri">${riquadri}</div><div class="tel-spartito"><div class="spartito"></div></div><div class="tel-carte lim-carte"></div></div>`
-@@ -807,7 +805,7 @@
+@@ -821,7 +819,7 @@
        <div class="lim-lato">
          <div class="lim-testa">
            <div><div class="bp-numero">${n}</div><h2 class="bp-titolo">${titoloColorato(brano.titoloBreve)}</h2></div>
@@ -148,7 +166,7 @@
          </div>
          ${brano.riquadri.map(riquadroHTML).join("")}${comandiBasi(n)}
          <div class="lim-carte"></div>
-@@ -882,18 +880,14 @@
+@@ -896,18 +894,14 @@
        <div class="bp-testa">
          <div class="bp-numero">${n}</div>
          <h2 class="bp-titolo"></h2>
@@ -172,7 +190,7 @@
        <div class="versions">${VERSIONI.map((v, i) => `<button type="button" data-v="${i}" class="${i === VERSIONE_INIZIALE ? 'active' : ''}">${v.label}</button>`).join('')}</div>
        ${pulsanteSolfeggia(n)}
        <div class="dit-scelta"><span class="dit-etichetta">Diteggiatura</span>${[['no', 'No'], ['prima', 'Prima volta'], ['sempre', 'Sempre']].map(([d, t]) => `<button type="button" data-d="${d}" class="${d === 'no' ? 'active' : ''}">${t}</button>`).join('')}</div>
-@@ -941,7 +935,7 @@
+@@ -955,7 +949,7 @@
        const testo = btnPdf.textContent; btnPdf.textContent = 'Preparo il PDF…'; btnPdf.disabled = true;
        try {
          const brano = await caricaBrano(n);
