@@ -44,6 +44,21 @@
   a.lavoro:hover { background: rgba(125,211,252,0.24); color: #fff; }
   @media (max-width: 560px) { .contributore { align-items: flex-start; gap: 12px; } .iniziali { width: 40px; height: 40px; font-size: 15px; } .lavoro { border-radius: 10px; } }
   .nota-col { display: inline-block; min-width: 34px; text-align: center; font: 800 13px 'Manrope', sans-serif; padding: 3px 7px; border-radius: 999px; box-shadow: inset 0 -2px 0 rgba(0,0,0,.18); }
+  /* «Un invito ai colleghi»: riquadro in evidenza con il bordo nei colori delle note */
+  .invito { border: 3px solid transparent; padding: 22px 24px;
+    background: linear-gradient(160deg, #2a2a6e, #1c1b4d) padding-box,
+      linear-gradient(90deg, #E21C48, #F99D1C, #FFF428, #BED958, #009C95, #5E50A1, #CF3E96) border-box;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.35); }
+  .invito h2 { font-size: clamp(22px, 3vw, 27px); margin-bottom: 10px; }
+  .invito .invito-apertura { font-size: 17px; color: #EAF2FF; }
+  .invito .modi { list-style: none; padding: 0; margin: 12px 0; display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+  .invito .modi li { margin: 0; padding: 9px 12px 9px 34px; position: relative; border-radius: 10px;
+    background: rgba(255,255,255,0.07); border: 1px solid rgba(255,255,255,0.12); color: #EAF2FF; line-height: 1.4; }
+  .invito .modi li::before { content: "✓"; position: absolute; left: 12px; top: 9px; font-weight: 800; color: #BED958; }
+  .invito .scrivici { margin: 14px 0 4px; padding: 12px 16px; border-radius: 12px; background: #FFE58A; color: #1F2430;
+    font: 800 17px 'Manrope', sans-serif; text-align: center; }
+  .invito .scrivici a { color: #1F2430; }
+  @media (max-width: 560px) { .invito { padding: 18px 16px; } .invito .modi { grid-template-columns: 1fr; } }
 </style>
 <!-- per i motori di ricerca e la condivisione -->
 <link rel="canonical" href="https://musicascuole.it/crediti.html">
@@ -89,21 +104,24 @@
   <p>Il sito è recente e cambia costantemente: si aggiungono attività, si correggono errori, si migliora quello che in classe funziona meno. Per farlo usiamo anche l’intelligenza artificiale: ci aiuta a scrivere il codice, a trascrivere gli spartiti, a controllare il lavoro, e ci permette di fare in poco tempo cose che prima non erano alla portata di un singolo o pochi insegnanti. Le scelte didattiche e i controlli finali restano però di persone che insegnano.</p>
   <p>Non si propone di sostituirsi ai docenti, ma di fornire uno strumento rapido, gratuito e funzionale.</p>
   <p>Sicuramente ci sono ancora errori e cose da migliorare.</p>
-  <h3>Un invito ai colleghi</h3>
-  <p>musicascuole vuole essere un progetto <b>di tutti i docenti</b>, non di uno solo. Puoi aiutarci in tanti modi:</p>
-  <ul>
-    <li>segnalare un errore;</li>
-    <li>proporre e/o elaborare esercizi, raccolte di brani o qualsiasi contenuto;</li>
-    <li>raccontare come usi lo strumento in classe;</li>
-    <li>suggerire un ascolto;</li>
-    <li>postare il sito sul tuo blog/canale social;</li>
-    <li>proporlo ad altri colleghi;</li>
-    <li>portare le tue competenze su specifici gradi di scuola;</li>
-    <li>sollevare perplessità o critiche.</li>
+</section>
+
+<section id="invito" class="invito">
+  <h2>🤝 Un invito ai colleghi</h2>
+  <p class="invito-apertura">musicascuole vuole essere un progetto <b>di tutti i docenti</b>, non di uno solo. Puoi aiutarci in tanti modi:</p>
+  <ul class="modi">
+    <li>segnalare un errore</li>
+    <li>proporre e/o elaborare esercizi, raccolte di brani o qualsiasi contenuto</li>
+    <li>raccontare come usi lo strumento in classe</li>
+    <li>suggerire un ascolto</li>
+    <li>postare il sito sul tuo blog/canale social</li>
+    <li>proporlo ad altri colleghi</li>
+    <li>portare le tue competenze su specifici gradi di scuola</li>
+    <li>sollevare perplessità o critiche</li>
   </ul>
   <p>Ogni contributo, piccolo o grande, aiuta a offrire alle scuole qualcosa di meglio e con il tuo permesso sarà segnalato nei crediti del sito e nella specifica sezione a cui hai lavorato.</p>
   <p class="piccolo">Chi invia un contributo accetta che venga pubblicato con le licenze del sito (CC BY-NC-SA 4.0 per i contenuti, MIT per il codice); il suo nome compare nei crediti solo se lo desidera.</p>
-  <div class="citazione">Scrivici: <a class="posta" data-u="info" data-d="musicascuole.it">info [chiocciola] musicascuole.it</a></div>
+  <div class="scrivici">✉️ Scrivici: <a class="posta" data-u="info" data-d="musicascuole.it">info [chiocciola] musicascuole.it</a></div>
 </section>
 
 <section id="contributi">
