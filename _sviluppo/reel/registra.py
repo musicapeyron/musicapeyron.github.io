@@ -1,7 +1,8 @@
 """Registra le clip dei giochi per i reel Instagram.
 
-Uso:  python3 _sviluppo/reel/registra.py            (tutte le clip)
-      python3 _sviluppo/reel/registra.py leggi rap  (solo alcune)
+Uso:  python3 _sviluppo/reel/registra.py                 (le clip del primo reel)
+      python3 _sviluppo/reel/registra.py leggi rap       (solo alcune)
+      python3 _sviluppo/reel/registra.py test-ingresso   (le clip di un altro reel, vedi REEL)
 
 Avvia da solo un server locale sulla cartella del sito, apre i giochi in
 Chromium (Playwright) e registra lo schermo con lo screencast di Chrome:
@@ -12,7 +13,7 @@ Telefono: emulazione vera (Pixel 7: tocco, browser mobile, densità 2.625),
 verticale 412x732 -> 1080x1920, orizzontale 732x412 -> 1920x1080.
 LIM: 1920x1080 con il mouse.
 """
-import asyncio, base64, os, shutil, subprocess, sys, time
+import asyncio, base64, json, os, shutil, subprocess, sys, time
 from pathlib import Path
 from playwright.async_api import async_playwright
 
@@ -44,6 +45,9 @@ class Rec:
     def __init__(self, page, nome, w, h):
         self.page, self.dir, self.w, self.h = page, CLIP / nome, w, h
         self.frames = []
+        self.segni = {}   # momenti notevoli -> <nome>.json, letti da monta.py
+    def segna(self, nome):
+        self.segni[nome] = time.time()
     async def start(self):
         if self.dir.exists(): shutil.rmtree(self.dir)
         self.dir.mkdir(parents=True)
@@ -55,7 +59,12 @@ class Rec:
         p = self.dir / f"f{len(self.frames):05d}.jpg"
         p.write_bytes(base64.b64decode(ev["data"]))
         self.frames.append((p, ev["metadata"]["timestamp"]))
-        asyncio.ensure_future(self.cdp.send("Page.screencastFrameAck", {"sessionId": ev["sessionId"]}))
+        asyncio.ensure_future(self._ack(ev["sessionId"]))
+    async def _ack(self, sid):
+        try:  # dopo la chiusura del browser l'ultima conferma non trova più la pagina: va bene così
+            await self.cdp.send("Page.screencastFrameAck", {"sessionId": sid})
+        except Exception:
+            pass
     async def stop(self):
         await self.cdp.send("Page.stopScreencast")
         fr, righe = self.frames, ["ffconcat version 1.0"]
@@ -68,6 +77,9 @@ class Rec:
         subprocess.run(["ffmpeg", "-y", "-loglevel", "error", "-f", "concat", "-safe", "0", "-i", str(txt),
                         "-vf", f"scale={self.w}:{self.h}:flags=lanczos,fps=30,format=yuv420p",
                         "-c:v", "libx264", "-crf", "17", str(mp4)], check=True)
+        if self.segni:  # secondi dall'inizio del video (i tempi dei fotogrammi sono in secondi epoch)
+            segni = {k: round(t - fr[0][1], 3) for k, t in self.segni.items()}
+            self.dir.with_suffix(".json").write_text(json.dumps(segni, indent=1))
         print(f"{self.dir.name}: {len(fr)} fotogrammi, {fr[-1][1]-fr[0][1]:.1f} s -> {mp4.name}")
 
 
@@ -189,7 +201,78 @@ async def figure():
         await r.stop(); await b.close()
 
 
+# ---------------- reel 2: test d'ingresso ----------------
+
+# Bottone giusto e uno sbagliato del mini-gioco in corso (null se non si può rispondere).
+TEST_RISPOSTA = """() => {
+ const k = GAME_ORDER[currentGameIndex];
+ let ok = null;
+ if (k==='acuto') ok = acutoAnswering && document.querySelector('.answers .answer.'+acutoQuestion.correctChoice);
+ else if (k==='tastiera') ok = tastieraAnswering && document.querySelector('.answers .answer.'+TASTIERA_CLASSES[tastieraCurrentKey]);
+ else if (k==='figure') ok = figureAnswering && answersBox.children[FIGURES.findIndex(f=>f.key===figureCurrentQuestion.key)];
+ else ok = leggiAnswering && document.querySelector('.answers .answer.'+LEGGI_NOTE_CLASSES[leggiCurrentNote.name]);
+ if (!ok) return null;
+ const tutti = [...answersBox.children], i = tutti.indexOf(ok);
+ return {gioco: k, giusto: i + 1, sbagliato: (i + 1) % tutti.length + 1};
+}"""
+# qualche errore, perché la tabella finale sembri quella di un alunno vero
+TEST_ERRORI = {"acuto": [6], "figure": [4, 11, 16], "leggiViolino": [8], "leggiBasso": [3, 7, 10]}
+
+
+async def test_risposte(pg, r, pausa=900, scorri=True):
+    """Risponde a tutto il test (le domande sono a caso), segnando i momenti per il montaggio."""
+    contati = {}
+    for _ in range(3000):
+        if await pg.is_visible("#finalScreen"):
+            r.segna("finale"); return
+        if await pg.is_visible("#gameIntroStart"):
+            k = await pg.evaluate("GAME_ORDER[currentGameIndex]")
+            r.segna(k + "_intro"); await pg.wait_for_timeout(1100)
+            await tap(pg, pg.locator("#gameIntroStart")); r.segna(k + "_via")
+            await pg.wait_for_timeout(700)
+            if scorri: await pg.evaluate(SCROLL, ".answers")
+            await pg.wait_for_timeout(500); continue
+        q = await pg.evaluate(TEST_RISPOSTA)
+        if q:
+            n = contati.get(q["gioco"], 0); contati[q["gioco"]] = n + 1
+            quale = q["sbagliato"] if n in TEST_ERRORI.get(q["gioco"], []) else q["giusto"]
+            r.segna(f"{q['gioco']}_{n}")
+            await tap(pg, pg.locator(f".answers > .answer:nth-child({quale})"))
+            await pg.wait_for_timeout(pausa)
+        await pg.wait_for_timeout(120)
+
+
+async def test():
+    async with async_playwright() as p:
+        b, pg, (W, H) = await telefono(p, "test-ingresso.html")
+        r = Rec(pg, "test", W, H); await r.start(); await pg.wait_for_timeout(600)
+        r.segna("home"); await pg.wait_for_timeout(1800)
+        await tap(pg, pg.locator("#startButton")); r.segna("comincia"); await pg.wait_for_timeout(600)
+        await test_risposte(pg, r)
+        await pg.wait_for_timeout(4500)
+        await r.stop(); await b.close()
+
+
+async def test_lim():
+    # LIM: si parte direttamente da "Leggi la nota (chiave di violino)", il quarto gioco
+    async with async_playwright() as p:
+        b, pg, (W, H) = await lim(p, "test-ingresso.html")
+        await pg.click("#startButton"); await pg.wait_for_timeout(500)
+        await pg.evaluate("currentGameIndex = 3; launchGame('leggiViolino')"); await pg.wait_for_timeout(800)
+        await pg.evaluate(TAP_JS)
+        r = Rec(pg, "test_lim", W, H); await r.start(); await pg.wait_for_timeout(500)
+        await tap(pg, pg.locator("#gameIntroStart")); r.segna("via"); await pg.wait_for_timeout(900)
+        for i in range(7):
+            q = await pg.evaluate(TEST_RISPOSTA)
+            if q:
+                r.segna(f"nota_{i}")
+                await tap(pg, pg.locator(f".answers > .answer:nth-child({q['giusto']})"))
+            await pg.wait_for_timeout(1250)
+        await r.stop(); await b.close()
+
+
 TUTTE = ["leggi", "rap", "brani", "storia", "tastiera", "figure"]
+REEL = {"primo": TUTTE, "test-ingresso": ["test", "test_lim"]}
 
 if __name__ == "__main__":
     CLIP.mkdir(parents=True, exist_ok=True)
@@ -197,7 +280,10 @@ if __name__ == "__main__":
                            stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
     time.sleep(1)
     try:
-        for nome in (sys.argv[1:] or TUTTE):
+        scelte = []
+        for a in sys.argv[1:]:   # nomi di clip o di reel interi
+            scelte += REEL.get(a, [a])
+        for nome in (scelte or TUTTE):
             asyncio.run(globals()[nome]())
     finally:
         srv.terminate()

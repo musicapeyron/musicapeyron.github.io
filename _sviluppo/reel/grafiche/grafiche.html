@@ -24,6 +24,7 @@ html,body{width:1080px;height:1920px;overflow:hidden;background:transparent;font
 .hook .a{font-weight:800;font-size:84px;color:#fff;letter-spacing:-.02em;line-height:1.05}
 .hook .g{display:inline-block;margin:18px 0 14px;font-weight:800;font-size:170px;line-height:1;letter-spacing:-.04em;color:var(--ink);background:var(--mi);padding:6px 34px 16px;border-radius:40px;box-shadow:0 12px 0 #c9bf12}
 /* label pill */
+.fascia{position:absolute;left:0;right:0;top:0;height:500px;background:linear-gradient(#0f0d2a 0%,#0f0d2a 72%,rgba(15,13,42,0) 100%)}
 .lwrap{position:absolute;left:0;right:0;top:250px;display:flex;justify-content:center}
 .label{white-space:nowrap;display:flex;align-items:center;gap:22px;
  background:rgba(15,13,42,.88);border:3px solid rgba(255,255,255,.18);color:#fff;font-weight:800;font-size:54px;padding:22px 44px;border-radius:999px;box-shadow:0 14px 40px rgba(0,0,0,.4)}
@@ -62,13 +63,17 @@ if(t==='card'){
   ls.forEach(e=>e.style.fontSize=fs+'px'); while(!fits()&&fs>60){fs-=4;ls.forEach(e=>e.style.fontSize=fs+'px')}
 }
 if(t==='hook'){
+  // testi cambiabili: a (sopra), g (nella pastiglia gialla), b (sotto); se una riga è troppo larga si rimpicciolisce
+  const A=P.get('a')||'Giochi musicali', G=P.get('g')||'GRATIS', B=P.get('b')||'per la tua classe';
   R.innerHTML=`<div class="band fade" style="animation-duration:.2s"></div><div class="hook">
-   <div class="a pop" ${d(0)}>Giochi musicali</div>
-   <div class="g pop" ${d(.18)}>GRATIS</div>
-   <div class="a pop" ${d(.36)}>per la tua classe</div></div>`;
+   <div class="a pop" ${d(0)}>${A}</div>
+   <div class="g pop" ${d(.18)}>${G}</div>
+   <div class="a pop" ${d(.36)}>${B}</div></div>`;
+  R.querySelectorAll('.hook .a').forEach(e=>{let fs=84;e.style.whiteSpace='nowrap';
+    while(e.scrollWidth>920&&fs>50){fs-=2;e.style.fontSize=fs+'px'}});
 }
-if(t==='label'){
-  R.innerHTML=`<div class="lwrap"><div class="label pop" ${d(.05)}><i style="background:${C[P.get('c')]}"></i>${P.get('l')}</div></div>`+
+if(t==='label'){ // fascia=1 (altezza fh, di serie 500): fascia scura dietro l'etichetta, per le pagine che hanno già testo in alto
+  R.innerHTML=(P.get('fascia')?`<div class="fascia fade" style="animation-duration:.15s;height:${P.get('fh')||500}px"></div>`:'')+`<div class="lwrap"><div class="label pop" ${d(.05)}><i style="background:${C[P.get('c')]}"></i>${P.get('l')}</div></div>`+
    (P.get('s')?`<div class="sub fade" style="top:${P.get('sy')||1560}px;animation-delay:.3s">${P.get('s')}</div>`:'');
 }
 if(t==='bg'){ // background with frame for landscape clips; frame rect params

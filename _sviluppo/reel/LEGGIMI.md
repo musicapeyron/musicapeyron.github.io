@@ -1,7 +1,7 @@
 # Reel Instagram per musicascuole.it
 
 Strumenti per fare reel verticali (1080x1920) che mostrano i giochi del sito.
-Il primo reel è di ottobre 2026: 30 secondi, muto.
+Il primo reel è di ottobre 2026: 30 secondi, muto. Il secondo (test d'ingresso) è descritto più sotto.
 
 ## In tre comandi (dalla cartella del sito)
 
@@ -37,6 +37,31 @@ Servono Playwright con Chromium, ffmpeg e Pillow. `lavoro/` non va nel repositor
 | 9 | Storia della musica fino al Barocco | 3,2 s |
 | 10 | la: "Un progetto collaborativo. Scrivici le tue idee!" | 1,9 s |
 | 11 | Chiusura con logo e mail | 4 s |
+
+## Secondo reel: il test d'ingresso (ottobre 2026, circa 30 s)
+
+```
+python3 _sviluppo/reel/registra.py test-ingresso   # clip "test" (telefono, tutto il test) e "test_lim"
+python3 _sviluppo/reel/grafiche.py test-ingresso   # schermate da grafiche/schermate-test-ingresso.json
+python3 _sviluppo/reel/monta.py test-ingresso      # -> lavoro/reel-test-ingresso.mp4
+```
+
+| # | Cosa | Durata |
+|---|------|--------|
+| 1 | Schermata iniziale del test + "Test d'ingresso GRATIS di musica, già pronto", tocco su Comincia | 3,6 s |
+| 2 | do: "Niente registrazione. Niente login." | 1,9 s |
+| 3–5 | 1/5 Acuto o grave, 2/5 Tastiera, 3/5 Figure ritmiche (telefono) | 6,3 s |
+| 6 | LIM: 4/5 Leggi la nota (chiave di violino), "Anche sulla LIM" | 3 s |
+| 7 | 5/5 Chiave di basso (telefono) | 1,9 s |
+| 8 | re: "Alla fine, i risultati di ogni gioco." | 1,9 s |
+| 9 | Il riepilogo finale (tabella con le percentuali) | 3,2 s |
+| 10 | sol: "Nessun dato raccolto. I risultati restano sullo schermo." | 1,9 s |
+| 11–12 | la: "Un progetto collaborativo", chiusura con logo e mail | 5,9 s |
+
+- Il test si fa **tutto** davvero (le domande sono a caso) con qualche errore voluto (`TEST_ERRORI`), così la tabella finale ha percentuali credibili (88% complessivo) e non tutti 100%.
+- Durante la registrazione si segnano i momenti notevoli (`lavoro/clip/test.json`: inizio di ogni gioco, ogni risposta, finale): `monta.py` taglia a partire da quelli, quindi se si registra di nuovo la scaletta resta giusta.
+- Etichette dei giochi con `fascia=1`: una fascia scura copre il titolo della pagina sotto l'etichetta, altrimenti i due testi si sovrappongono.
+- Ogni reel nuovo: funzioni delle clip in `registra.py` (e il nome in `REEL`), `grafiche/schermate-<reel>.json`, una funzione in `SCALETTE` di `monta.py`. I file di lavoro vanno in `lavoro/<reel>/`.
 
 ## Trucchi imparati
 
