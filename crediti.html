@@ -44,11 +44,9 @@
   a.lavoro:hover { background: rgba(125,211,252,0.24); color: #fff; }
   @media (max-width: 560px) { .contributore { align-items: flex-start; gap: 12px; } .iniziali { width: 40px; height: 40px; font-size: 15px; } .lavoro { border-radius: 10px; } }
   .nota-col { display: inline-block; min-width: 34px; text-align: center; font: 800 13px 'Manrope', sans-serif; padding: 3px 7px; border-radius: 999px; box-shadow: inset 0 -2px 0 rgba(0,0,0,.18); }
-  /* «Un invito ai colleghi»: riquadro in evidenza con il bordo nei colori delle note */
-  .invito { border: 3px solid transparent; padding: 22px 24px;
-    background: linear-gradient(160deg, #2a2a6e, #1c1b4d) padding-box,
-      linear-gradient(90deg, #E21C48, #F99D1C, #FFF428, #BED958, #009C95, #5E50A1, #CF3E96) border-box;
-    box-shadow: 0 10px 30px rgba(0,0,0,0.35); }
+  /* «Un invito ai colleghi»: riquadro in evidenza */
+  .invito { border: 2px solid rgba(255,229,138,0.5); padding: 22px 24px;
+    background: linear-gradient(160deg, #2a2a6e, #1c1b4d); box-shadow: 0 10px 30px rgba(0,0,0,0.35); }
   .invito h2 { font-size: clamp(22px, 3vw, 27px); margin-bottom: 10px; }
   .invito .invito-apertura { font-size: 17px; color: #EAF2FF; }
   .invito .modi { list-style: none; padding: 0; margin: 12px 0; display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
@@ -107,7 +105,7 @@
 </section>
 
 <section id="invito" class="invito">
-  <h2>🤝 Un invito ai colleghi</h2>
+  <h2>Un invito ai colleghi</h2>
   <p class="invito-apertura">musicascuole vuole essere un progetto <b>di tutti i docenti</b>, non di uno solo. Puoi aiutarci in tanti modi:</p>
   <ul class="modi">
     <li>segnalare un errore</li>
@@ -121,7 +119,7 @@
   </ul>
   <p>Ogni contributo, piccolo o grande, aiuta a offrire alle scuole qualcosa di meglio e con il tuo permesso sarà segnalato nei crediti del sito e nella specifica sezione a cui hai lavorato.</p>
   <p class="piccolo">Chi invia un contributo accetta che venga pubblicato con le licenze del sito (CC BY-NC-SA 4.0 per i contenuti, MIT per il codice); il suo nome compare nei crediti solo se lo desidera.</p>
-  <div class="scrivici">✉️ Scrivici: <a class="posta" data-u="info" data-d="musicascuole.it">info [chiocciola] musicascuole.it</a></div>
+  <div class="scrivici">Scrivici: <a class="posta" data-u="info" data-d="musicascuole.it">info [chiocciola] musicascuole.it</a></div>
 </section>
 
 <section id="contributi">
