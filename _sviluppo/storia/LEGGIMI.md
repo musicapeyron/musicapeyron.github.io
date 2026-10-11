@@ -29,6 +29,7 @@ Per le altre epoche si copia il Medioevo e si cambiano solo i dati.
   strumenti, `cerchio` = ovale rosso sottile su quello giusto (coordinate su 640x400).
   Se non si trova nessuna immagine d'epoca libera: `soloFoto: true` (si vede la foto e una nota lo dice).
   Se nessuno strumento dell'epoca ha `epoca`/`foto` (Novecento: strumenti nuovi, foto del tempo) la scelta «Iconografia/Foto» sparisce e sotto l'immagine si legge `ATTIVITA.notaStrumenti`.
+- Con 11 capitoli più il riepilogo (Jazz e popular) l'indice su LIM/PC ha una riga in più e si rimpicciolisce un po' da solo: meglio non superare 11.
 - **Verifica**: fronte e retro, A e B diverse e nuove a ogni apertura della pagina, «punteggio» (mai «voto»),
   soluzioni su un foglio a parte. Vero o falso stampabile in ordine sempre diverso.
 - **Versione breve** solo per scheda riassuntiva e racconto completo: davvero breve e a caratteri grandi.

@@ -250,7 +250,8 @@ button.mc-n:hover { filter: brightness(1.18); }
 #stampa .grande p { margin-bottom: 2.5mm; }
 #stampa .grande .imm-r img { height: 40mm; }
 #stampa .grande .imm-r figure { font-size: 10pt; }
-#stampa .grande .pag-s.con-img { grid-template-columns: 1fr 55mm; }
+#stampa .grande .pag-s.con-img { grid-template-columns: 1fr 55mm; margin-bottom: 0; }
+#stampa .grande .pag-s h2 { margin-top: 4.5mm; }   /* 11 capitoli (Jazz e popular) stanno in due pagine */
 #stampa .grande .fig img { max-height: 42mm; }
 #stampa .grande .asc-b { font-size: 13pt; }
 #stampa .asc-s { border: 0.8pt solid #000; padding: 2mm 3mm; margin-bottom: 3mm; break-inside: avoid; }

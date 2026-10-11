@@ -252,6 +252,7 @@ body.in-capitolo { overflow: hidden; }
   #vistaPercorso { max-width: none; }
   .indice { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px 14px; height: 372px; align-content: start; }
   .indice li { display: flex; }
+  .indice:has(> li:nth-child(13)) { height: auto; }   /* più di 11 capitoli (Jazz e popular): una riga in più */
   .voce { grid-template-columns: 36px 112px 1fr; gap: 12px; padding: 7px 12px 7px 10px; height: 84px; }
   .voce:hover { transform: none; filter: brightness(1.1); }
   .v-vai { display: none; }
