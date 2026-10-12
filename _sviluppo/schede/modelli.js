@@ -162,3 +162,114 @@
 
   global.Modelli = { consiglio, testo, etichetta, posti, legenda, righeNote, disegnaNote, presentaNota, righeRitmo, carte, notaInCarta, diploma, caselle, mm };
 })(window);
+
+/* ---- aggiunte: disegni semplici, collegamenti, cuori ---- */
+(function (global) {
+  "use strict";
+  const S = global.Schede, M = global.Modelli, { el, img, MM } = S;
+  const mm = v => v * MM;
+
+  /* piccoli disegni in SVG per ciò che manca nelle illustrazioni */
+  function disegno(nome, misura) {
+    const c = S.col();
+    const tinte = { metallo: c ? "#c9ced8" : "#fff", legno: c ? "#d9a066" : "#fff", pelle: c ? "#f3e1c0" : "#fff", rosso: c ? "#e25555" : "#fff", giallo: c ? "#f6c945" : "#fff" };
+    const k = 'stroke="#222" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"';
+    const svg = {
+      triangolo: `<path d="M36 10 L60 58 H12 Z M36 10 L33 4" fill="none" ${k}/><path d="M44 30 L58 22" ${k}/><circle cx="60" cy="21" r="2.5" fill="#222"/>`,
+      tamburello: `<circle cx="36" cy="36" r="24" fill="${tinte.pelle}" ${k}/><circle cx="36" cy="36" r="18" fill="none" ${k} stroke-dasharray="0.1 5"/>` +
+        [0, 60, 120, 180, 240, 300].map(a => { const x = 36 + 24 * Math.cos(a * Math.PI / 180), y = 36 + 24 * Math.sin(a * Math.PI / 180); return `<rect x="${x - 4}" y="${y - 3}" width="8" height="6" rx="2" fill="${tinte.giallo}" ${k}/>`; }).join(""),
+      legnetti: `<rect x="10" y="18" width="52" height="9" rx="4.5" fill="${tinte.legno}" ${k} transform="rotate(-18 36 22)"/><rect x="10" y="42" width="52" height="9" rx="4.5" fill="${tinte.legno}" ${k} transform="rotate(14 36 46)"/>`,
+      guiro: `<rect x="8" y="22" width="56" height="26" rx="13" fill="${tinte.legno}" ${k}/>` + [18, 25, 32, 39, 46, 53].map(x => `<path d="M${x} 24 V46" ${k} stroke-width="1.6"/>`).join("") + `<path d="M20 64 L60 12" ${k}/>`,
+      campanelli: `<path d="M14 40 H58" ${k}/><rect x="8" y="18" width="8" height="40" rx="3" fill="${tinte.legno}" ${k}/>` + [24, 36, 48].map(x => `<circle cx="${x}" cy="40" r="6" fill="${tinte.giallo}" ${k}/>`).join(""),
+      battente: `<path d="M14 58 L50 22" ${k} stroke-width="4"/><circle cx="54" cy="18" r="8" fill="${tinte.rosso}" ${k}/>`,
+      metallofono: `<rect x="6" y="40" width="60" height="6" fill="#999" ${k}/>` + [0, 1, 2, 3, 4, 5].map(i => `<rect x="${9 + i * 9.5}" y="${14 + i * 3}" width="7" height="${36 - i * 4}" rx="1.5" fill="${tinte.metallo}" ${k} stroke-width="1.8"/>`).join("")
+    }[nome];
+    const d = el("span", { class: "img", html: `<svg viewBox="0 0 72 72" width="100%" height="100%">${svg}</svg>` });
+    d.style.width = misura + "mm"; d.style.height = misura + "mm";
+    return d;
+  }
+  /* figura: illustrazione OpenMoji oppure disegno nostro */
+  const NOSTRI = ["triangolo", "tamburello", "legnetti", "guiro", "campanelli", "battente", "metallofono"];
+  function figura(nome, misura) { return NOSTRI.includes(nome) ? disegno(nome, misura) : img(nome, misura); }
+
+  function cuoreVuoto(misura, pieno) {
+    const d = el("span", { class: "img", html: `<svg viewBox="0 0 24 24" width="100%" height="100%"><path d="M12 21s-7.5-4.7-9.6-9.3C.9 8.4 3 4.8 6.6 4.6c2.2-.1 4 1.2 5.4 3 1.4-1.8 3.2-3.1 5.4-3 3.6.2 5.7 3.8 4.2 7.1C19.5 16.3 12 21 12 21z" fill="${pieno ? (S.col() ? "#e0344b" : "#555") : "#fff"}" stroke="#333" stroke-width="1.3" stroke-linejoin="round"/></svg>` });
+    d.style.width = misura + "mm"; d.style.height = misura + "mm";
+    return d;
+  }
+
+  /* collega: due colonne di elementi; il bambino unisce i puntini (soluzione: le linee) */
+  function collega(corpo, sinistra, destra, coppie, sol) {
+    const box = el("div", { style: { position: "relative", display: "flex", justifyContent: "space-between", flex: 1 } });
+    corpo.appendChild(box);
+    const col = (lista, lato) => {
+      const c = el("div", { style: { display: "flex", flexDirection: "column", justifyContent: "space-around" } });
+      lista.forEach(x => {
+        const r = el("div", { class: "riga", style: { gap: "3mm", flexDirection: lato === "sx" ? "row" : "row-reverse" } }, x,
+          el("span", { class: "punto", style: { width: "4mm", height: "4mm", borderRadius: "50%", background: "#333", display: "inline-block" } }));
+        c.appendChild(r);
+      });
+      box.appendChild(c); return c;
+    };
+    const cs = col(sinistra, "sx"), cd = col(destra, "dx");
+    if (sol) {
+      const B = box.getBoundingClientRect();
+      const svg = document.createElementNS("http://www.w3.org/2000/svg", "svg");
+      svg.setAttribute("style", "position:absolute;inset:0;width:100%;height:100%;pointer-events:none");
+      const ps = cs.querySelectorAll(".punto"), pd = cd.querySelectorAll(".punto");
+      coppie.forEach(([i, j]) => {
+        const a = ps[i].getBoundingClientRect(), b = pd[j].getBoundingClientRect();
+        const l = document.createElementNS("http://www.w3.org/2000/svg", "line");
+        l.setAttribute("x1", a.left + a.width / 2 - B.left); l.setAttribute("y1", a.top + a.height / 2 - B.top);
+        l.setAttribute("x2", b.left + b.width / 2 - B.left); l.setAttribute("y2", b.top + b.height / 2 - B.top);
+        l.setAttribute("stroke", "#c00"); l.setAttribute("stroke-width", "2.5");
+        svg.appendChild(l);
+      });
+      box.appendChild(svg);
+    }
+    return box;
+  }
+
+  /* scelta tra due (o più) immagini: in soluzione si cerchia quella giusta */
+  function sceltaImmagini(nomi, giusta, sol, misura) {
+    const c = el("div", { class: "riga", style: { gap: "2mm", justifyContent: "space-around" } });
+    nomi.forEach(n => {
+      const w = el("div", { style: { position: "relative", padding: "1.5mm" } }, figura(n, misura || 15));
+      if (sol && n === giusta) w.appendChild(el("div", { style: { position: "absolute", inset: 0, border: ".7mm solid #c00", borderRadius: "50%" } }));
+      c.appendChild(w);
+    });
+    return c;
+  }
+
+  /* griglia di schede di ascolto numerate (il docente suona, il bambino sceglie) */
+  function ascoltoScelta(corpo, a, nomi, quante, colonne, testoDocente) {
+    const seq = a.rnd.serie(nomi, quante);
+    const g = el("div", { class: "griglia", style: { gridTemplateColumns: `repeat(${colonne}, minmax(0, 1fr))`, gap: "4mm" } }); corpo.appendChild(g);
+    seq.forEach((x, i) => {
+      const c = el("div", { class: "riquadro riga", style: { justifyContent: "space-between", padding: "2mm 3mm" } },
+        el("span", { style: { fontSize: "18pt", fontWeight: 600, color: "var(--inch)", width: "8mm" } }, String(i + 1)), sceltaImmagini(nomi, x, a.sol, 15));
+      g.appendChild(c);
+    });
+    if (a.sol) corpo.appendChild(el("div", { class: "testo sol", style: { fontSize: "12pt" } }, "Sequenza: " + seq.map((x, i) => `${i + 1}) ${testoDocente[x]}`).join(" · ")));
+    else M.consiglio(corpo, "Per l'insegnante: suona, batti o canta un esempio alla volta. Una sequenza già pronta è nel fascicolo delle soluzioni.", "gufo", { fontSize: "11pt" });
+    return seq;
+  }
+
+  /* simboli della partitura non convenzionale */
+  function simbolo(tipo, misura) {
+    const k = 'stroke="#222" stroke-linecap="round" fill="none"';
+    const s = {
+      forte: `<circle cx="20" cy="20" r="11" fill="#222"/>`,
+      piano: `<circle cx="20" cy="20" r="4" fill="#222"/>`,
+      lungo: `<path d="M3 20 H37" ${k} stroke-width="4"/>`,
+      sale: `<path d="M3 32 Q14 30 20 20 T37 6" ${k} stroke-width="3.5"/>`,
+      scende: `<path d="M3 6 Q14 8 20 20 T37 32" ${k} stroke-width="3.5"/>`,
+      silenzio: `<rect x="5" y="9" width="30" height="22" rx="4" ${k} stroke-width="1.5" stroke-dasharray="3 3"/>`,
+      onda: `<path d="M3 20 q4.25 -10 8.5 0 t8.5 0 t8.5 0 t8.5 0" ${k} stroke-width="3"/>`
+    }[tipo];
+    const d = el("span", { class: "img", html: `<svg viewBox="0 0 40 40" width="100%" height="100%">${s}</svg>` });
+    d.style.width = misura + "mm"; d.style.height = misura + "mm"; return d;
+  }
+
+  Object.assign(M, { disegno, figura, cuoreVuoto, collega, sceltaImmagini, ascoltoScelta, simbolo });
+})(window);

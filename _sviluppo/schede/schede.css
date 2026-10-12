@@ -38,7 +38,7 @@ body { font-family: 'Fredoka', 'Inter', sans-serif; color: var(--testo); backgro
 .consegna { display: flex; align-items: center; gap: 2.5mm; font-size: 14pt; line-height: 1.25;
   background: var(--tinta); border: .35mm solid var(--bordo); border-radius: 3mm; padding: 2mm 3.5mm; }
 .consegna img { width: 9mm; height: 9mm; flex: none; }
-.maiuscolo .titolo, .maiuscolo .consegna, .maiuscolo .maiu { text-transform: uppercase; }
+.maiuscolo .titolo, .maiuscolo .consegna, .maiuscolo .maiu, .maiuscolo .corpo { text-transform: uppercase; }
 
 /* ---- corpo ---- */
 .corpo { flex: 1; position: relative; display: flex; flex-direction: column; justify-content: space-evenly;
