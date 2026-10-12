@@ -255,6 +255,17 @@ Motore del mazzo e dei simboli: `uno-in-comune.js`.
 - **Riconoscimento, non ragionamento:** il simbolo va identificato in un paio di secondi.
   È un allenamento diverso da tutti gli altri giochi del sito, che chiedono di pensare:
   qui si costruisce l'automatismo, cioè quello che serve davvero leggendo uno spartito.
+- **Trovarlo non basta: bisogna saperlo nominare.** Appena un giocatore trova il simbolo
+  il gioco si ferma e gli chiede, dalla sua parte dello schermo, **come si chiama**, fra
+  quattro possibilità. Il punto si prende solo rispondendo bene; se sbaglia va
+  all'avversario. È la parte che trasforma un gioco di rapidità in un esercizio di
+  vocabolario musicale: le risposte sbagliate proposte vengono dalla **stessa famiglia**
+  del simbolo (fra le pause, fra le dinamiche, fra le articolazioni), quindi bisogna
+  distinguere davvero, non tirare a indovinare.
+- **Statistiche come negli altri giochi** (risposte, giuste, errori, accuratezza), sempre
+  visibili durante la partita: contano sia i simboli toccati sia le risposte al quiz. Con
+  più giocatori sono della classe nel suo insieme, utili al docente per capire dove si
+  sbaglia.
 - **Il simbolo cambia misura e orientamento** da una carta all'altra: si impara a
   riconoscere la *forma*, non una figurina memorizzata in una posizione.
 - **Si gioca in due, tre o quattro sullo stesso schermo**, alla LIM: è uno dei pochi
@@ -289,6 +300,12 @@ e matematica (una carta per ogni retta del piano, un simbolo per ogni punto).
   chi sta dall'altro lato è capovolta, così si gioca uno di fronte all'altro.
 - **Chi sbaglia resta fermo poco più di un secondo**: scoraggia il toccare a caso senza
   bloccare la partita.
+- **Il quiz compare dalla parte di chi ha trovato il simbolo** e il gioco resta fermo
+  finché non risponde: sulla LIM gli altri vedono la domanda ma non possono rubare il
+  turno. Sul telefono, se la carta è capovolta, lo è anche la domanda.
+- **Se il quiz va male il punto va all'avversario.** Con più di due giocatori va al
+  giocatore successivo: così la regola resta una sola e non serve scegliere a chi darlo.
+  Da soli non lo prende nessuno, e l'errore finisce comunque nelle statistiche.
 - **Partita di 10 carte**: dura due o tre minuti, sta in un intervallo di lezione.
 - **Niente livello difficile con le sole note**: servirebbero 57 note diverse e si
   arriverebbe a estensioni che in seconda media non si leggono ancora.

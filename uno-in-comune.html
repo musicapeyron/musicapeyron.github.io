@@ -106,6 +106,53 @@
   .pulsantone:hover { filter: brightness(1.07); }
   .pulsantone:active { filter: brightness(0.9); }
 
+  /* ---------- statistiche (stesso aspetto degli altri giochi) ---------- */
+  .stats { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; margin: 0 auto 10px; max-width: 460px; }
+  .stat {
+    position: relative; padding: 10px 6px 9px; border-radius: 13px; overflow: hidden;
+    background: linear-gradient(180deg, rgba(255,255,255,0.08), rgba(255,255,255,0.045));
+    border: 1px solid rgba(255,255,255,0.12);
+    box-shadow: 0 1px 0 rgba(255,255,255,0.05) inset, 0 8px 20px rgba(0,0,0,0.2);
+    text-align: center;
+  }
+  .stat::before { content: ""; position: absolute; left: 0; right: 0; top: 0; height: 3px; background: #64748b; }
+  .stat.total::before { background: #38bdf8; }
+  .stat.correct::before { background: #22c55e; }
+  .stat.errors::before { background: #ef4444; }
+  .stat.acc::before { background: linear-gradient(90deg, #a16207, #facc15, #a16207); }
+  .stat-label { display: block; color: #cbd5e1; font-size: 0.58rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 3px; }
+  .stat-value { font-family: 'Manrope', 'Inter', Arial, sans-serif; font-size: 1.15rem; font-weight: 800; font-variant-numeric: tabular-nums; }
+  .stat.total .stat-value { color: #7dd3fc; }
+  .stat.correct .stat-value { color: #86efac; }
+  .stat.errors .stat-value { color: #fca5a5; }
+  .stat.acc .stat-value { color: #facc15; }
+
+  /* ---------- quiz: compare dalla parte del giocatore che ha trovato ---------- */
+  .quiz {
+    position: absolute; left: 50%; top: 50%; transform: translate(-50%, -50%);
+    z-index: 20; width: max(100%, 250px);
+    background: #101a33; border: 2px solid #7FD8E4; border-radius: 16px;
+    padding: 12px 12px 13px; box-shadow: 0 14px 34px rgba(0,0,0,0.55);
+    text-align: center;
+  }
+  /* chi gioca dall'altro lato legge la domanda dal suo verso */
+  .posto.capovolto .quiz { transform: translate(-50%, -50%) rotate(180deg); }
+  .quiz h3 { font-family: 'Manrope', sans-serif; font-size: 0.92rem; margin: 0 0 9px; color: #EAF2FF; }
+  .quiz-risposte { display: grid; grid-template-columns: 1fr 1fr; gap: 7px; }
+  .quiz-risposta {
+    font-family: inherit; font-size: 0.85rem; font-weight: 600; line-height: 1.25;
+    color: #EAF2FF; background: rgba(255,255,255,0.07);
+    border: 1px solid rgba(255,255,255,0.16); border-radius: 10px;
+    padding: 9px 5px; cursor: pointer;
+  }
+  .quiz-risposta:hover { background: rgba(255,255,255,0.14); }
+  .quiz-risposta:active { filter: brightness(0.9); }
+  .quiz-risposta.giusta { background: rgba(34,197,94,0.35); border-color: #22c55e; }
+  .quiz-risposta.sbagliata { background: rgba(239,68,68,0.35); border-color: #ef4444; }
+  .quiz-esito { margin: 9px 0 0; font-size: 0.85rem; font-weight: 700; min-height: 1.1em; }
+  .quiz-esito.bene { color: #86efac; }
+  .quiz-esito.male { color: #fca5a5; }
+
   /* ---------- tavolo di gioco ---------- */
   #schermataGioco { --carta: 220px; }
   .riga-stato {
@@ -120,7 +167,7 @@
     grid-template-rows: auto auto auto;
     gap: 10px 16px; margin: 0 auto;
   }
-  .posto { display: flex; flex-direction: column; align-items: center; gap: 4px; }
+  .posto { position: relative; display: flex; flex-direction: column; align-items: center; gap: 4px; }
   .posto.centro { grid-column: 2; grid-row: 2; }
   .posto.p1 { grid-column: 1; grid-row: 2; }
   .posto.p2 { grid-column: 3; grid-row: 2; }
@@ -194,6 +241,13 @@
     .opz { font-size: 1.02rem; padding: 14px 10px; }
     .opz .sotto { font-size: 0.8rem; }
     #schermataGioco { --carta: 300px; }
+    .stats { max-width: 560px; gap: 10px; }
+    .stat { padding: 12px 8px 11px; }
+    .stat-label { font-size: 0.66rem; }
+    .stat-value { font-size: 1.45rem; }
+    .quiz { width: max(100%, 300px); padding: 15px; }
+    .quiz h3 { font-size: 1.1rem; }
+    .quiz-risposta { font-size: 1rem; padding: 11px 6px; }
     .tavolo { gap: 12px 26px; }
     .etichetta { font-size: 0.95rem; }
     .riga-stato { font-size: 1.05rem; margin-bottom: 12px; }
@@ -205,10 +259,20 @@
 
   /* ---------- telefono girato (schermo basso): carte più piccole ---------- */
   @media (orientation: landscape) and (max-height: 560px) {
-    #schermataGioco { --carta: min(23vh, 140px); }
-    .tavolo { gap: 4px 12px; }
-    h1 { font-size: 1.1rem; }
+    body { padding: 6px 10px 8px; }
+    #schermataGioco { --carta: min(18vh, 106px); }
+    .tavolo { gap: 2px 12px; }
     .sottotitolo { display: none; }
+    /* il titolo lascia il posto alle carte: lo spazio in altezza è pochissimo */
+    #schermataGioco.attiva ~ * h1, body:has(#schermataGioco.attiva) > h1 { display: none; }
+    body:has(#schermataGioco.attiva) .riga-stato { margin-bottom: 4px; font-size: 0.8rem; }
+    .stats { gap: 5px; margin-bottom: 5px; max-width: 380px; }
+    .stat { padding: 5px 2px 4px; }
+    .stat-label { font-size: 0.48rem; margin-bottom: 1px; }
+    .stat-value { font-size: 0.85rem; }
+    .etichetta { font-size: 0.66rem; }
+    .pulsantone { font-size: 0.82rem; padding: 7px 16px; }
+    .bottoni { margin-top: 6px !important; }
   }
 
   /* ---------- telefono in verticale ---------- */
@@ -220,7 +284,14 @@
     .opz { padding: 8px 6px; font-size: 0.82rem; }
     .opz .sotto { display: none; }
     .site-home-button { top: 8px; left: 8px; width: 36px; height: 36px; font-size: 15px; }
+    /* Le carte seguono l'altezza vera del telefono e quante ne stanno in
+       colonna: così la partita resta in una schermata anche sui telefoni
+       piccoli. La riga in vh serve ai browser che non conoscono dvh. */
     #schermataGioco { --carta: min(43vw, 170px); }
+    .tavolo[data-carte="2"] { --carta: min(58vw, calc((100vh - 256px) / 2)); --carta: min(58vw, calc((100dvh - 256px) / 2)); }
+    .tavolo[data-carte="3"] { --carta: min(43vw, calc((100vh - 276px) / 3)); --carta: min(43vw, calc((100dvh - 276px) / 3)); }
+    .tavolo[data-carte="4"] { --carta: min(34vw, calc((100vh - 292px) / 4)); --carta: min(34vw, calc((100dvh - 292px) / 4)); }
+    .tavolo[data-carte="5"] { --carta: min(30vw, calc((100vh - 308px) / 5)); --carta: min(30vw, calc((100dvh - 308px) / 5)); }
     /* in verticale le carte stanno incolonnate: chi gioca in due si mette
        uno di fronte all'altro, con il telefono in mezzo */
     .tavolo { grid-template-columns: var(--carta); gap: 6px; }
@@ -228,6 +299,14 @@
     .posto.p3 { grid-row: 1; } .posto.centro { grid-row: 2; }
     .posto.p1 { grid-row: 3; } .posto.p2 { grid-row: 4; } .posto.p4 { grid-row: 5; }
     .etichetta { font-size: 0.72rem; }
+    /* caselline strette in una riga sola, come negli altri giochi */
+    .stats { gap: 5px; margin-bottom: 6px; }
+    .stat { padding: 6px 2px 5px; border-radius: 10px; }
+    .stat-label { font-size: 0.5rem; letter-spacing: 0.2px; margin-bottom: 1px; }
+    .stat-value { font-size: 0.95rem; }
+    .quiz { width: min(92vw, 270px); padding: 10px; }
+    .quiz h3 { font-size: 0.82rem; margin-bottom: 7px; }
+    .quiz-risposta { font-size: 0.76rem; padding: 8px 4px; }
     .tut-corpo { flex-direction: column; min-height: 0; gap: 10px; }
     .tut-testo { flex: 0 0 auto; }
     .tut-figura { --carta: 128px; gap: 8px; }
@@ -288,6 +367,12 @@
   <div class="riga-stato">
     <span>Carta <b id="numCarta">1</b> di <b id="totCarte">10</b></span>
     <span id="boxTempo" hidden>Tempo <b id="tempo">0,0 s</b></span>
+  </div>
+  <div class="stats">
+    <div class="stat total"><span class="stat-label">Risposte</span><span class="stat-value" id="stTot">0</span></div>
+    <div class="stat correct"><span class="stat-label">Giuste</span><span class="stat-value" id="stGiuste">0</span></div>
+    <div class="stat errors"><span class="stat-label">Errori</span><span class="stat-value" id="stErrori">0</span></div>
+    <div class="stat acc"><span class="stat-label">Accuratezza</span><span class="stat-value" id="stAcc">—</span></div>
   </div>
   <div class="tavolo" id="tavolo"></div>
   <div class="bottoni" style="margin-top:12px">
@@ -449,6 +534,22 @@
     return (l || 220) / (f || 1);
   }
 
+  /* ================= statistiche della partita ================= */
+  let stat = { tot: 0, giuste: 0, errori: 0 };
+  function azzeraStat() { stat = { tot: 0, giuste: 0, errori: 0 }; mostraStat(); }
+  function segna(giusta) {
+    stat.tot++;
+    if (giusta) stat.giuste++; else stat.errori++;
+    mostraStat();
+  }
+  function mostraStat() {
+    document.getElementById("stTot").textContent = stat.tot;
+    document.getElementById("stGiuste").textContent = stat.giuste;
+    document.getElementById("stErrori").textContent = stat.errori;
+    document.getElementById("stAcc").textContent =
+      stat.tot ? Math.round(stat.giuste / stat.tot * 100) + "%" : "—";
+  }
+
   /* ================= partita ================= */
   let stato = null;
 
@@ -459,9 +560,10 @@
     stato = {
       mazzo: mazzo, simboli: simboli,
       giocatori: Array.from({ length: scelte.giocatori }, (_, i) => ({ nome: NOMI[i], punti: 0, bloccato: false })),
-      carta: 0, inizio: Date.now(), finita: false
+      carta: 0, inizio: Date.now(), finita: false, quizAperto: false
     };
     costruisciTavolo();
+    azzeraStat();
     document.getElementById("totCarte").textContent = CARTE_PARTITA;
     document.getElementById("boxTempo").hidden = (scelte.giocatori !== 1);
     mostra("schermataGioco");
@@ -495,6 +597,9 @@
   function costruisciTavolo() {
     const t = document.getElementById("tavolo");
     t.innerHTML = "";
+    // quante carte ci sono in tutto: sul telefono decide quanto possono essere
+    // grandi, perché stanno una sotto l'altra
+    t.dataset.carte = stato.giocatori.length + 1;
     const centro = document.createElement("div");
     centro.className = "posto centro";
     centro.innerHTML = '<div class="etichetta">Carta in mezzo</div><div class="porta" id="portaCentro"></div>';
@@ -532,24 +637,21 @@
   function comune(a, b) { return a.simboli.find(s => b.simboli.includes(s)); }
 
   function tocca(iGiocatore, idSimbolo, bottone) {
-    if (!stato || stato.risolto || stato.giocatori[iGiocatore].bloccato) return;
+    if (!stato || stato.risolto || stato.quizAperto || stato.giocatori[iGiocatore].bloccato) return;
     const giusto = comune(stato.centro, stato.mani[iGiocatore]);
     if (idSimbolo === giusto) {
       stato.risolto = true;
-      stato.giocatori[iGiocatore].punti++;
+      segna(true);
       bottone.classList.add("giusto");
       // si accende anche sulla carta in mezzo: si vede qual era la coppia
       const gemello = document.querySelector('#portaCentro .simbolo[data-simbolo="' + giusto + '"]');
       if (gemello) gemello.classList.add("giusto");
       document.querySelector("#posto" + iGiocatore + " .carta").classList.add("vinta");
-      const p = document.getElementById("punti" + iGiocatore);
-      if (p) p.textContent = stato.giocatori[iGiocatore].punti;
       suonoGiusto(stato.simboli[giusto]);
-      stato.carta++;
-      setTimeout(() => {
-        if (stato.carta >= CARTE_PARTITA) finePartita(); else round();
-      }, 850);
+      // il punto non è ancora assegnato: prima bisogna dire che simbolo è
+      setTimeout(() => apriQuiz(iGiocatore, stato.simboli[giusto]), 420);
     } else {
+      segna(false);
       bottone.classList.add("sbagliato");
       suonoSbagliato();
       const posto = document.getElementById("posto" + iGiocatore);
@@ -560,6 +662,90 @@
         if (stato && !stato.risolto) { posto.classList.remove("bloccato"); stato.giocatori[iGiocatore].bloccato = false; }
       }, 1200);
     }
+  }
+
+  /* ================= il quiz sul nome del simbolo =================
+     Appare dalla parte di chi ha trovato il simbolo, e il gioco resta fermo
+     finché non risponde. Il punto si prende solo rispondendo bene; se sbaglia
+     il punto va all'avversario (con più di due giocatori, a quello dopo). */
+
+  function mescola(a) {
+    for (let i = a.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [a[i], a[j]] = [a[j], a[i]]; }
+    return a;
+  }
+
+  function domandaQuiz(simbolo) {
+    if (simbolo.lettera) {
+      // una nota: si chiede il nome della nota, non la posizione
+      const giusta = U.SOLFEGGIO[simbolo.lettera].toUpperCase();
+      const altre = Object.keys(U.SOLFEGGIO).filter(l => l !== simbolo.lettera)
+        .map(l => U.SOLFEGGIO[l].toUpperCase());
+      return { testo: "Che nota hai trovato?", giusta: giusta, opzioni: mescola([giusta].concat(mescola(altre).slice(0, 3))) };
+    }
+    // un segno: le risposte sbagliate vengono dalla stessa famiglia e solo
+    // fra i simboli di questa partita, così non spuntano nomi mai visti
+    const stessaFamiglia = stato.simboli.filter(s => s !== simbolo && s.famiglia === simbolo.famiglia).map(s => s.nome);
+    const resto = stato.simboli.filter(s => s !== simbolo && s.famiglia !== simbolo.famiglia).map(s => s.nome);
+    const sbagliate = mescola(stessaFamiglia).slice(0, 3);
+    while (sbagliate.length < 3 && resto.length) sbagliate.push(mescola(resto).pop());
+    return { testo: "Che simbolo hai trovato?", giusta: simbolo.nome, opzioni: mescola([simbolo.nome].concat(sbagliate)) };
+  }
+
+  function apriQuiz(iGiocatore, simbolo) {
+    if (!stato) return;
+    stato.quizAperto = true;
+    const d = domandaQuiz(simbolo);
+    const posto = document.getElementById("posto" + iGiocatore);
+    const pannello = document.createElement("div");
+    pannello.className = "quiz";
+    pannello.innerHTML = '<h3>' + d.testo + '</h3><div class="quiz-risposte"></div><p class="quiz-esito"></p>';
+    const risposte = pannello.querySelector(".quiz-risposte");
+    const esito = pannello.querySelector(".quiz-esito");
+
+    d.opzioni.forEach(testo => {
+      const b = document.createElement("button");
+      b.type = "button";
+      b.className = "quiz-risposta";
+      b.textContent = testo;
+      b.addEventListener("click", () => {
+        if (pannello.dataset.fatto) return;
+        pannello.dataset.fatto = "1";
+        const giusta = (testo === d.giusta);
+        b.classList.add(giusta ? "giusta" : "sbagliata");
+        segna(giusta);
+        let chiPunto = iGiocatore;
+        if (giusta) {
+          esito.textContent = "Giusto!";
+          esito.className = "quiz-esito bene";
+          suona(880, 0.18, 0.16);
+        } else {
+          // si mostra qual era la risposta giusta
+          [...risposte.children].forEach(x => { if (x.textContent === d.giusta) x.classList.add("giusta"); });
+          suonoSbagliato();
+          if (stato.giocatori.length > 1) {
+            chiPunto = (iGiocatore + 1) % stato.giocatori.length;
+            esito.textContent = "Era «" + d.giusta + "»: punto a " + NOMI_CORTI[chiPunto];
+          } else {
+            chiPunto = -1;
+            esito.textContent = "Era «" + d.giusta + "»";
+          }
+          esito.className = "quiz-esito male";
+        }
+        if (chiPunto >= 0) {
+          stato.giocatori[chiPunto].punti++;
+          const p = document.getElementById("punti" + chiPunto);
+          if (p) p.textContent = stato.giocatori[chiPunto].punti;
+        }
+        setTimeout(() => {
+          pannello.remove();
+          stato.quizAperto = false;
+          stato.carta++;
+          if (stato.carta >= CARTE_PARTITA) finePartita(); else round();
+        }, giusta ? 900 : 2100);
+      });
+      risposte.appendChild(b);
+    });
+    posto.appendChild(pannello);
   }
 
   function finePartita() {
@@ -586,6 +772,11 @@
         lista.appendChild(li);
       });
     }
+    const li = document.createElement("li");
+    li.innerHTML = '<span>Accuratezza</span><span class="punti">' +
+      (stat.tot ? Math.round(stat.giuste / stat.tot * 100) + "%" : "—") +
+      '</span>';
+    lista.appendChild(li);
     mostra("schermataFine");
   }
 
@@ -606,13 +797,19 @@
     {
       titolo: "Come si gioca",
       testo: "<p>In mezzo c'è una carta scoperta. Ogni giocatore ha la <b>sua</b> carta.</p>" +
-             "<p>Tocca sulla <b>tua</b> carta il simbolo che c'è anche su quella in mezzo. Chi lo trova per primo prende <b>un punto</b>.</p>",
+             "<p>Tocca sulla <b>tua</b> carta il simbolo che c'è anche su quella in mezzo. Vince la carta chi lo trova per primo.</p>",
       figura: "tavolo", indica: false
     },
     {
-      titolo: "Se sbagli",
-      testo: "<p>Se tocchi il simbolo sbagliato resti fermo <b>un attimo</b> e gli altri possono rispondere.</p>" +
-             "<p>Meglio guardare bene prima di toccare.</p>",
+      titolo: "Non basta trovarlo: bisogna saperlo dire",
+      testo: "<p>Appena trovi il simbolo il gioco si ferma e ti chiede <b>come si chiama</b>, dalla tua parte dello schermo.</p>" +
+             "<p>Se rispondi bene prendi <b>un punto</b>. Se sbagli il punto va <b>all'avversario</b>: conviene guardare bene prima di toccare.</p>",
+      figura: "tavolo", indica: false
+    },
+    {
+      titolo: "Se tocchi il simbolo sbagliato",
+      testo: "<p>Resti fermo <b>un attimo</b> e intanto gli altri possono trovarlo loro.</p>" +
+             "<p>Gli errori, tuoi e degli altri, finiscono nelle statistiche in alto insieme all'accuratezza.</p>",
       figura: "tavolo", indica: false
     },
     {
@@ -712,7 +909,7 @@
   window.addEventListener("resize", () => {
     if (window.innerWidth === larghezza) return;
     larghezza = window.innerWidth;
-    if (stato && !stato.finita) { costruisciTavolo(); round(); }
+    if (stato && !stato.finita && !stato.quizAperto) { costruisciTavolo(); round(); }
     if (document.getElementById("schermataTutorial").classList.contains("attiva")) mostraPasso();
   });
 

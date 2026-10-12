@@ -42,12 +42,25 @@
   const G = (g, x, y, s) => ({ g: g, x: x || 0, y: y || 0, s: s || 38 });
   const R = (x, y, w, h) => ({ r: [x, y, w, h] });
 
-  // figura musicale: testa + gambo + eventuale coda + eventuale punto
+  /* Misure vere dei glifi alla grandezza che usiamo (38), lette una volta con
+     getBBox: i glifi musicali partono dal loro BORDO SINISTRO, non dal centro,
+     quindi il gambo va calcolato, non messo a occhio. */
+  const SPAZIO = 9.85;          // uno spazio del pentagramma
+  const TESTA_W = 11.63;        // larghezza della testa di nota (1,18 spazi)
+  const TESTA_W_SEMIBREVE = 16.63;
+  const GAMBO_W = SPAZIO * 0.12;    // spessore del gambo, come da regola tipografica
+  const GAMBO_H = SPAZIO * 3.5;     // lunghezza normale del gambo
+
+  /* Figura musicale: testa, gambo a destra della testa (note con gambo in su),
+     coda attaccata in cima al gambo, punto di valore dopo la testa. */
   function figura(nome, testa, gambo, coda, punto) {
-    const pezzi = [G(testa, 0, 0, 38)];
-    if (gambo) pezzi.push(R(5.0, -32, 1.4, 32));
-    if (coda) pezzi.push(G(coda, 5.5, -32, 38));
-    if (punto) pezzi.push(G("augmentationDot", 11.5, 0, 38));
+    const larghezza = (testa === "noteheadWhole") ? TESTA_W_SEMIBREVE : TESTA_W;
+    const x0 = -larghezza / 2;                 // la testa sta al centro
+    const xGambo = x0 + larghezza - GAMBO_W;   // lato destro della testa
+    const pezzi = [G(testa, x0, 0, 38)];
+    if (gambo) pezzi.push(R(xGambo, -GAMBO_H, GAMBO_W, GAMBO_H));
+    if (coda) pezzi.push(G(coda, xGambo, -GAMBO_H, 38));
+    if (punto) pezzi.push(G("augmentationDot", x0 + larghezza + SPAZIO * 0.26, 0, 38));
     return { nome: nome, pezzi: pezzi };
   }
 
@@ -67,11 +80,16 @@
 
   // due crome unite dalla travatura: si distingue a colpo d'occhio da una
   // croma sola, mentre "croma puntata" sarebbe stata quasi identica
-  const DUE_CROME = { nome: "due crome", pezzi: [
-    G("noteheadBlack", -8, 0, 38), G("noteheadBlack", 8, 0, 38),
-    R(-3.2, -32, 1.4, 32), R(12.8, -32, 1.4, 32),
-    R(-3.2, -32, 17.4, 4.2)
-  ] };
+  const DUE_CROME = (function () {
+    const passo = SPAZIO * 1.7;                 // distanza fra le due teste
+    const xa = -passo / 2 - TESTA_W / 2, xb = passo / 2 - TESTA_W / 2;
+    const ga = xa + TESTA_W - GAMBO_W, gb = xb + TESTA_W - GAMBO_W;
+    return { nome: "due crome", pezzi: [
+      G("noteheadBlack", xa, 0, 38), G("noteheadBlack", xb, 0, 38),
+      R(ga, -GAMBO_H, GAMBO_W, GAMBO_H), R(gb, -GAMBO_H, GAMBO_W, GAMBO_H),
+      R(ga, -GAMBO_H, gb + GAMBO_W - ga, SPAZIO * 0.5)   // la travatura
+    ] };
+  })();
 
   /* I segni sono in ordine di importanza didattica: le difficoltà più
      basse usano i primi della lista. */
@@ -137,6 +155,21 @@
     { nome: "arpeggio",  pezzi: [G("arpeggiatoUp", 0, 0, 38)] },
     { nome: "tremolo",   pezzi: [G("tremolo1", 0, 0, 44)] }
   ];
+
+  /* Famiglia di ogni segno: serve al quiz per proporre risposte sbagliate
+     dello stesso tipo (fra pause, fra dinamiche…), non a caso.
+     Gli estremi sono gli indici nell'elenco SEGNI qui sopra. */
+  const FAMIGLIE = [
+    [0, 2, "chiavi"], [3, 7, "figure"], [8, 12, "pause"], [13, 15, "alterazioni"],
+    [16, 21, "dinamiche"], [22, 26, "articolazioni"], [27, 30, "tempi"],
+    [31, 33, "espressione"], [34, 37, "abbellimenti"], [38, 42, "esecuzione"],
+    [43, 44, "alterazioni"], [45, 46, "pause"], [47, 48, "tempi"],
+    [49, 52, "figure"], [53, 56, "varie"]
+  ];
+  function famigliaDi(i) {
+    const f = FAMIGLIE.find(r => i >= r[0] && i <= r[1]);
+    return f ? f[2] : "varie";
+  }
 
   /* ================= le note sul pentagramma ================= */
   const LETTERE = ["c", "d", "e", "f", "g", "a", "b"];
@@ -293,7 +326,11 @@
     }
     return scelti.map((s, i) => {
       const colore = s.lettera ? COLORE_NOTA[s.lettera] : TAVOLOZZA[i % TAVOLOZZA.length];
-      return { id: i, nome: s.nome, def: s, colore: colore };
+      return {
+        id: i, nome: s.nome, def: s, colore: colore,
+        lettera: s.lettera || null,
+        famiglia: s.lettera ? "note" : famigliaDi(SEGNI.indexOf(s))
+      };
     });
   }
 
@@ -346,6 +383,7 @@
   }
 
   global.UnoInComune = {
+    SOLFEGGIO: SOLFEGGIO,
     costruisciMazzo: costruisciMazzo,
     simboliPerPartita: simboliPerPartita,
     simboliDisponibili: simboliDisponibili,
