@@ -637,6 +637,71 @@ h1 { margin: 0; font-family: "Sora", "Inter", Arial, sans-serif; font-size: 2rem
     .st-dettaglio .st-box { overflow: visible; }
 }
 </style>
+<link rel="stylesheet" href="telefono.css?v=1">
+<style id="telefono-gioco">
+/* TELEFONO IN VERTICALE: ritocchi solo per questo gioco (le regole comuni sono in telefono.css) */
+@media (max-width: 620px) and (orientation: portrait) {
+.menu-screen .hero-badge { display: none; }
+    .help-button { top: 8px; right: 8px; width: 38px; height: 38px; font-size: 1rem; }
+    .game h1, .menu-screen h1 { margin-left: 44px; margin-right: 44px; }
+    /* pentagramma ritagliato, riquadro che segue lo schermo */
+    .staff-wrap { margin-bottom: 8px; padding: 6px; min-height: 0;
+        height: clamp(90px, calc(100vh - 520px), 200px); height: clamp(90px, calc(100dvh - 520px), 200px); }
+    #staffContainer { height: 100%; display: flex; justify-content: center; }
+    #staffContainer svg { height: 100% !important; width: auto !important; max-width: 100%; }
+    /* risposte: le sette note su una riga; alterazione e qualità affiancate */
+    #nameModeSection .answer-section, #nameAnswerSection .answer-section { display: grid; grid-template-columns: 1fr 1fr; column-gap: 10px;
+        grid-template-areas: "tn tn" "l l" "ta tq" "a q"; }
+    .answer-section > :nth-child(1) { grid-area: tn; }
+    .answer-section > :nth-child(2) { grid-area: l; }
+    .answer-section > :nth-child(3) { grid-area: ta; }
+    .answer-section > :nth-child(4) { grid-area: a; }
+    .answer-section > :nth-child(5) { grid-area: tq; }
+    .answer-section > :nth-child(6) { grid-area: q; }
+    #letterRow { display: grid; grid-template-columns: repeat(7, 1fr); gap: 4px; }
+    #letterRow .choice-btn { padding: 11px 0; font-size: 0.8rem; }
+    #accidentalRow, #qualityRow { flex-wrap: nowrap; }
+    #accidentalRow .choice-btn, #qualityRow .choice-btn { flex: 1 1 0; padding: 10px 2px; font-size: 0.78rem; }
+    /* modalità armature: tonalità richiesta compatta, armature cinque per riga */
+    .question-box { padding: 6px 10px; margin-bottom: 4px; }
+    .question-text { font-size: 1.1rem; }
+    .staff-hint { font-size: 0.72rem; margin: 2px 0 6px; }
+    .signature-grid { gap: 5px; margin-bottom: 8px; }
+    .signature-btn { flex: 0 0 calc(20% - 5px); padding: 2px; }
+    /* tutorial */
+    .tut-head h1 { font-size: 1.05rem; }
+    .tut-head span { display: none; }
+    .tut-panel { padding: 8px 10px; }
+    .tut-topics { gap: 3px; flex-wrap: nowrap; overflow: hidden; }
+    .tut-topic { padding: 2px 6px; font-size: 0.6rem; white-space: nowrap; }
+    .tut-title { font-size: 0.95rem; margin: 4px 0 2px; }
+    .tut-text { font-size: 0.82rem; line-height: 1.38; }
+    .tut-nav button { padding: 6px 12px; font-size: 0.78rem; }
+    .tut-consegna { font-size: 0.74rem; }
+    .tut-qstaff svg, .tut-card-staff svg { max-height: 110px; width: auto; }
+    .tut-answers .choice-btn { padding: 8px 6px; min-width: 0; }
+    .tut-answers .nota-btn { min-width: 0; }
+    .tut-answers .choice-row { flex-wrap: nowrap; }
+    .tut-answers .choice-row:has(> :nth-child(5)) .choice-btn { flex: 1 1 0; font-size: 0.74rem; padding: 8px 0; }
+    .tut-footer .menu-button { padding: 7px 14px; font-size: 0.78rem; }
+    /* la colonna del tutorial su PC è "flex: 0 1 640px": impilata sul telefono diventerebbe alta 640 px */
+    .tut-main { flex: 0 0 auto; }
+    .tut-side { padding: 6px 8px; }
+    .tut-side-title { font-size: 0.74rem; margin-bottom: 2px; }
+    .tut-msg { min-height: 0; margin: 0 0 4px; }
+    .tut-qname { padding: 4px 10px 6px; margin-bottom: 6px; }
+    .tut-qname .question-text { font-size: 1rem; }
+    .tut-side .schema-riga { padding: 2px 4px; gap: 6px; }
+    .tut-side .schema-arm svg { height: 30px !important; width: auto !important; }
+    .tut-side .schema-nomi, .tut-side .schema-nomi small { font-size: 0.64rem; }
+    .tut-side .schema-testa { font-size: 0.6rem; }
+    /* passi con lo schema sotto: domanda più bassa per fargli posto */
+    .tut-layout:has(> .tut-side:not([hidden])) .tut-qstaff { padding: 2px 8px; }
+    .tut-layout:has(> .tut-side:not([hidden])) .tut-qstaff svg { max-height: 62px; }
+    .tut-layout:has(> .tut-side:not([hidden])) .tut-answers .choice-btn { padding: 7px 4px; }
+    .tut-layout:has(> .tut-side:not([hidden])) .tut-consegna { margin-bottom: 2px; }
+}
+</style>
 <!-- per i motori di ricerca e la condivisione -->
 <link rel="canonical" href="https://musicascuole.it/identifica-tonalita.html">
 <meta property="og:type" content="website">
@@ -743,7 +808,7 @@ h1 { margin: 0; font-family: "Sora", "Inter", Arial, sans-serif; font-size: 2rem
 
     <div id="nameModeSection" class="game-col">
         <div class="staff-wrap">
-            <div id="staffContainer"></div>
+            <div id="staffContainer" data-ritaglia-tel="45 105"></div>
         </div>
     </div>
     </div>

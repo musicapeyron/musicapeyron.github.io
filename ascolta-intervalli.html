@@ -628,6 +628,25 @@ h1 {
     #gameOver .final-stats { grid-template-columns: repeat(auto-fit, minmax(120px, 1fr)); }
 }
 </style>
+<link rel="stylesheet" href="telefono.css?v=1">
+<style id="telefono-gioco">
+/* TELEFONO IN VERTICALE: ritocchi solo per questo gioco (le regole comuni sono in telefono.css) */
+@media (max-width: 620px) and (orientation: portrait) {
+.menu-screen .hero-badge { display: none; }
+    .staff-row { margin-bottom: 6px; }
+    .staff-card { min-height: 0; width: 100%; padding: 6px;
+        height: clamp(100px, calc(100vh - 560px), 220px); height: clamp(100px, calc(100dvh - 560px), 220px); }
+    .staff-inner { height: 100%; }
+    #staffInner svg { height: 100% !important; width: auto !important; max-width: 100%; }
+    .staff-placeholder { font-size: 0.85rem; }
+    .staff-placeholder .staff-placeholder-emoji { font-size: 1.6rem; margin-bottom: 2px; }
+    /* risposte: tre per riga (fino a undici intervalli) */
+    #answerRow { gap: 5px; }
+    #answerRow .choice-btn { flex: 1 1 calc(33.3% - 5px); padding: 9px 2px; font-size: 0.76rem; }
+    #answerRow:has(> .choice-btn:nth-child(4):last-child) .choice-btn { flex-basis: calc(50% - 5px); }
+    .play-button { width: 52px; height: 52px; font-size: 1.4rem; margin: 2px auto 8px; }
+}
+</style>
 <!-- per i motori di ricerca e la condivisione -->
 <link rel="canonical" href="https://musicascuole.it/ascolta-intervalli.html">
 <meta property="og:type" content="website">
@@ -747,7 +766,7 @@ h1 {
     <div class="staff-row" id="staffRow">
         <div class="staff-card">
             <div class="staff-placeholder" id="staffPlaceholder"><span class="staff-placeholder-emoji">🎧</span>Ascolta e indovina</div>
-            <div class="staff-inner" id="staffInner"></div>
+            <div class="staff-inner" id="staffInner" data-ritaglia-tel="5 172"></div>
             <div class="confetti-layer" id="confettiLayer"></div>
         </div>
     </div>

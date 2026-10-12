@@ -1,0 +1,68 @@
+/* =========================================================
+   telefono.css — regole comuni per il TELEFONO IN VERTICALE.
+   Rendono compatti i pezzi che quasi tutti i giochi hanno (menu, statistiche,
+   livello, pulsanti di risposta, pulsanti in fondo), così una partita sta in
+   una schermata. Su PC, LIM e telefono girato non fa nulla.
+
+   Uso: nel gioco, SUBITO DOPO il suo </style> principale:
+     <link rel="stylesheet" href="telefono.css?v=1">
+   e, se servono ritocchi solo per quel gioco (pentagramma, griglie di risposte…),
+   un secondo <style> dopo il link, con lo stesso @media.
+   Guida completa: _sviluppo/GUIDA-INTERFACCE-GIOCHI.md, punto 9.
+   ========================================================= */
+@media (max-width: 620px) and (orientation: portrait) {
+    body { padding: 6px 10px 8px; min-height: 0; }
+    .site-home-button { top: 8px; left: 8px; width: 38px; height: 38px; font-size: 1rem; }
+
+    /* ---------- menu e schermate di scelta ---------- */
+    .menu-screen .hero-badge { width: 46px; height: 46px; font-size: 1.35rem; margin: 0 auto 6px; }
+    .menu-screen h1 { font-size: 1.45rem; line-height: 1.2; margin: 0 34px; }
+    .menu-screen .subtitle { font-size: 0.84rem; margin: 4px 0 12px; }
+    .mode-grid { gap: 8px; margin-top: 12px; }
+    .mode-button { padding: 11px 14px; border-radius: 13px; gap: 2px; }
+    .mode-button-title { font-size: 0.95rem; }
+    .mode-button-desc { font-size: 0.72rem; }
+    .mode-divider { margin: 10px 0; }
+    .answer-mode-title { margin: 2px 0 6px; font-size: 0.64rem; }
+    .answer-mode-pair { margin-bottom: 12px; }
+    .options-choice { padding: 9px 6px; font-size: 0.78rem; }
+    .theme-grid { gap: 7px; margin-top: 12px; }
+    .theme-tile { padding: 12px 6px; font-size: 0.84rem; border-radius: 12px; }
+    .theme-tile.wide { padding: 11px; }
+    .check-grid { gap: 7px; }
+    .check-tile { padding: 9px 10px; font-size: 0.84rem; }
+    .tutorial-cta { padding: 10px 12px; margin-bottom: 12px; gap: 10px; border-radius: 14px; }
+    .tutorial-cta-icon { font-size: 1.6rem; }
+    .tutorial-cta-title { font-size: 0.92rem; }
+    .tutorial-cta-desc { font-size: 0.72rem; }
+    .toggle-item { padding: 9px 12px; font-size: 0.8rem; }
+
+    /* ---------- partita: titolo, statistiche, livello ---------- */
+    .game h1 { font-size: 1.2rem; line-height: 1.25; margin: 2px 40px 6px; }
+    .game .subtitle { display: none; }   /* sul telefono si toglie: la consegna è già nella domanda o nel livello */
+    .stats { display: grid; grid-template-columns: repeat(5, 1fr); gap: 4px; margin: 0 auto 6px; }
+    .stats .stat { padding: 5px 2px 4px; border-radius: 9px; text-align: center; }
+    .stats .stat-label { font-size: 0.5rem; letter-spacing: 0.1px; margin-bottom: 1px; }
+    .stats .stat-value { font-size: 0.95rem; line-height: 1.15; }
+    .level-box { margin: 0 auto 8px; padding: 6px 12px 7px; border-radius: 12px; }
+    .level-header { margin-bottom: 4px; }
+    .level-title { font-size: 0.66rem; }
+    .level-number { font-size: 0.85rem; }
+    .progress-bar { height: 8px; }
+    .level-footer { margin-top: 2px; }
+    .level-info, .level-name, .level-timer { font-size: 0.64rem; margin-top: 0; }
+
+    /* ---------- risposte e pulsanti ---------- */
+    .answer-section-title { font-size: 0.62rem; margin-bottom: 4px; }
+    .choice-row { gap: 5px; margin-bottom: 8px; }
+    .choice-btn { min-width: 0; padding: 9px 4px; font-size: 0.8rem; border-radius: 10px; }
+    .submit-button, .next-button { padding: 10px 28px; font-size: 0.9rem; margin: 2px auto 6px; }
+    .message { min-height: 22px; font-size: 0.95rem; }
+    .game-buttons { gap: 6px; margin-top: 2px; }
+    .game-buttons .menu-button, .game-buttons .new-game, .game-buttons .finish-button,
+    .game-buttons .schema-button { padding: 8px 12px; font-size: 0.78rem; }
+    .toolbar { margin-top: 6px; gap: 10px; }
+    .listen-controls { margin-bottom: 8px; gap: 6px; }
+    .listen-button { padding: 8px 14px; font-size: 0.8rem; }
+    /* .play-button NON è qui: in alcuni giochi è un cerchio, in altri un pulsante con scritta */
+}

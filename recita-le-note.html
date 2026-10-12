@@ -1278,6 +1278,22 @@ body.senza-colori .card-front { --note-color: #1F2430 !important; --note-ink: #1
     .menu-screen { width: 560px; }
 }
 </style>
+<link rel="stylesheet" href="telefono.css?v=1">
+<style id="telefono-gioco">
+/* TELEFONO IN VERTICALE: ritocchi solo per questo gioco (le regole comuni sono in telefono.css) */
+@media (max-width: 620px) and (orientation: portrait) {
+.site-home-button { left: auto; right: 8px; }
+    .menu-screen .hero-badge { display: none; }
+    .play-area { gap: 8px; margin-bottom: 8px; }
+    .note-column { gap: 5px; }
+    .answer { width: 62px; padding: 9px 2px; font-size: 0.95rem; }
+    .stage { padding: 8px 8px 6px; border-radius: 16px; }
+    .stage-header { gap: 6px; }
+    .replay-button, .dir-chip { padding: 5px 9px; font-size: 0.74rem; }
+    .cards { padding-top: 30px; row-gap: 34px; column-gap: 6px; }
+    .card-slot::before { top: -26px; font-size: 0.9rem; }
+}
+</style>
 <!-- per i motori di ricerca e la condivisione -->
 <link rel="canonical" href="https://musicascuole.it/recita-le-note.html">
 <meta property="og:type" content="website">

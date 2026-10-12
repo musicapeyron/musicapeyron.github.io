@@ -207,7 +207,9 @@ Passi:
 - [ ] Pulsanti senza `transform` su hover/active (`bordo.py` tutto ok)
 - [ ] Nessun `html { background }`
 - [ ] `stati.py`: tutti gli stati a 0 scorrimento, schermate guardate a `tuo` e `pc`
-- [ ] `telefono.py`: IDENTICO in verticale e orizzontale
+- [ ] Telefono in verticale: `telefono.css` + ritocchi del gioco; `stati.py ... telefono` a 0 sui tre telefoni,
+      tutorial passo per passo, pentagrammi ritagliati (`data-ritaglia-tel`)
+- [ ] `telefono.py <commit prima>`: telefono in **orizzontale** IDENTICO
 - [ ] Nessun errore JS, nessuna richiesta esterna
 - [ ] Commit in italiano sul branch, schermate a Cristiano, attesa dell'ok
 
@@ -216,15 +218,31 @@ Passi:
 ## 9. Telefono in verticale (ottobre 2026, branch `telefono-una-schermata`)
 
 Obiettivo: la partita (e il tutorial) stanno in una schermata su `tel360`, `tel390`, `tel412`, senza
-pulsanti che escono dai lati. Modelli: `acuto-o-grave.html`, `figure-ritmiche.html`.
+pulsanti che escono dai lati. Modelli: `nomina-intervalli.html` (con tutorial), `identifica-accordi.html`, `leggi-la-nota.html`,
+`triadi-tonali.html` (comandi per costruire), `dettato-melodico.html` (molti pulsanti).
+`acuto-o-grave.html` e `figure-ritmiche.html` hanno le regole tutte nel loro CSS (fatte prima di `telefono.css`).
+
+Restano più lunghe dello schermo (scelta consapevole): le schermate ricche di Qualità del suono
+(Armoniche, Ricapitolando, ADSR, Doppler), le statistiche finali del tutorial di Identifica la tonalità,
+la finestra dei crediti; Rappa le note consiglia di girare il telefono per vedere le carte grandi.
 
 ### Dove si scrive
-Un blocco in fondo allo `<style>`, **dopo** quello per PC/LIM:
-```css
+1. **Regole comuni: `telefono.css`** (menu, statistiche in una riga, livello compatto, risposte, pulsanti
+   di fondo, titolo su una riga, sottotitolo nascosto). Il gioco lo carica subito dopo il suo `</style>`.
+2. **Ritocchi del singolo gioco**: un secondo `<style id="telefono-gioco">` subito dopo il link, con
+   `@media (max-width: 620px) and (orientation: portrait) { ... }`. Si scrive (e si riscrive) con lo script
+   `inserisci_tel.py` (vedi sotto) o a mano, sempre in quella posizione.
+```html
+</style>
+<link rel="stylesheet" href="telefono.css?v=1">
+<style id="telefono-gioco">
+/* TELEFONO IN VERTICALE: ritocchi solo per questo gioco */
 @media (max-width: 620px) and (orientation: portrait) { ... }
+</style>
 ```
-`orientation: portrait` lascia fuori il telefono girato. Le regole vecchie `@media (max-width: 640px)` del
-gioco restano: il blocco nuovo viene dopo e le corregge.
+`orientation: portrait` lascia fuori il telefono girato (che resta com'è). Le regole vecchie
+`@media (max-width: 640px)` del gioco restano: il blocco nuovo viene dopo e le corregge.
+Se `telefono.css` cambia, aggiornare `?v=` in tutte le pagine.
 
 ### La disposizione tipo
 - `body { padding: 6px 10px 8px; min-height: 0; }`; casetta più piccola in alto a sinistra
@@ -248,12 +266,40 @@ gioco restano: il blocco nuovo viene dopo e le corregge.
 - Pannelli/tabelle opzionali (es. tabella di riferimento): accanto alla figura, non sotto
   (`.staff-row:has(.legend-card.show) .staff-card { flex: 0 0 34%; }`).
 
+### Trucchi che funzionano
+- **Pentagrammi ritagliati** (`data-ritaglia-tel="y altezza"` sul contenitore dove VexFlow disegna, es.
+  `<div id="staffInner" data-ritaglia-tel="5 172">`): sul telefono `adatta-schermo.js` ritaglia ogni svg a
+  quella fascia, così il riquadro mostra il pentagramma senza spazio vuoto e più grande. La fascia si misura
+  una volta per tutte disegnando molte domande (note più alte e più basse) e leggendo `svg.getBBox()`;
+  è fissa, così la scala non cambia fra una domanda e l'altra. Terzo valore opzionale `"36 124 220x200"`:
+  ritaglia solo i disegni di quella misura (utile nei tutorial con altri disegni, es. la tastiera).
+- **Altezza che segue lo schermo**: `height: clamp(MIN, calc(100dvh - RESTO), MAX)` (con la stessa riga
+  in `vh` prima, per i browser vecchi). Il riquadro cresce sui telefoni lunghi, si stringe sui piccoli.
+- **Spostare i pezzi sulla stessa riga**: frecce + alterazioni, Annulla + Invia + Termina, pulsanti di fondo
+  + volume (`display: inline-flex` o un contenitore `flex-wrap: wrap`).
+- **Nascondere ciò che compare solo a volte**: un pulsante "Avanti" disabilitato (`:disabled { display:none }`)
+  o i comandi inutili mentre si chiede altro (`.game:has(.riga-qualita:not([style*="none"])) .frecce { display:none }`).
+- **"Prima e dopo" affiancati** invece che uno sotto l'altro (frecce ruotate di 90°).
+- **Menu lunghi**: icona + titolo in griglia da due, descrizioni nascoste; in schede con due pulsanti
+  (es. Ascolta/Osserva) i pulsanti vanno accanto al titolo.
+- **Doppioni**: se c'è già un pulsante fisso in alto (es. ↩), il "← Home" nella pagina si nasconde.
+
+### Trappole
+- **`flex: 0 0 190px` (o `flex: 0 1 640px`) pensato per una colonna su PC**: quando sul telefono il
+  contenitore va in colonna, quel valore diventa un'**altezza** di 190/640 px. Rimettere `flex: 0 0 auto`.
+- **Nomi di classe uguali con significati diversi**: `.play-button` è un cerchio in un gioco e un pulsante
+  con scritta in un altro. In `telefono.css` vanno solo regole sicure per tutti; il resto nel gioco.
+- Riquadri con `overflow-x: auto` (es. pentagramma della scala): sul telefono scorrevano di lato; meglio
+  `width: 100%` sull'svg.
+- Pulsante della casetta a destra in alcuni giochi (Recita, Rappa): ripristinare `left: auto; right: 8px`.
+
 ### La rete di sicurezza
 `adatta-schermo.js` sul telefono in verticale: se la schermata sporge di poco la rimpicciolisce (mai sotto
 l'85%); se sporge di più lascia scorrere a grandezza normale. Non è un modo per non fare il layout: serve
 solo per i telefoni più piccoli e per qualche passo lungo del tutorial.
 
 ### Come si prova
+- `python3 _sviluppo/prove/inserisci_tel.py pagina.html ritocchi.css` scrive/riscrive il blocco del gioco.
 - `python3 _sviluppo/prove/stati.py <pagina> <cartella> <prefisso> <azioni.json> telefono` → tre telefoni veri
   (tocco, alta densità). Tutti gli stati a 0, schermate guardate.
 - Tutorial: percorrere **tutti** i passi (se il gioco ha una funzione tipo `goToTutStep(i)` / `vaiA(i)`,
