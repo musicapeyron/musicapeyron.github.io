@@ -149,7 +149,7 @@ Schema di ogni voce: dove si trova · concetti · punti di forza · come usarlo 
   (stessi nomi in ottave diverse: La, Si, Do sotto e sopra).
 - **Allenamento a livelli**: una nota nuova per livello, per grado congiunto. Opzione nella rotellina
   «Note con i tagli addizionali»: spenta = solo note del rigo (9 livelli), accesa = si prosegue con i tagli (17 livelli).
-- **Allenamento sui tagli**: solo le note sotto e sopra il rigo (con lo spazio vicino per orientarsi), 8 livelli,
+- **Allenamento sui tagli addizionali**: solo le note sotto e sopra il rigo (con lo spazio vicino per orientarsi), 8 livelli,
   almeno 8 domande per livello.
 - **Verifica** con scelta delle note (solo pentagramma / anche con i tagli, che compaiono già dal primo livello)
   e della chiave (violino, basso, mista); nel riepilogo compaiono le scelte fatte, così il docente le vede.
