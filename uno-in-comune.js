@@ -42,26 +42,13 @@
   const G = (g, x, y, s) => ({ g: g, x: x || 0, y: y || 0, s: s || 38 });
   const R = (x, y, w, h) => ({ r: [x, y, w, h] });
 
-  /* Misure vere dei glifi alla grandezza che usiamo (38), lette una volta con
-     getBBox: i glifi musicali partono dal loro BORDO SINISTRO, non dal centro,
-     quindi il gambo va calcolato, non messo a occhio. */
-  const SPAZIO = 9.85;          // uno spazio del pentagramma
-  const TESTA_W = 11.63;        // larghezza della testa di nota (1,18 spazi)
-  const TESTA_W_SEMIBREVE = 16.63;
-  const GAMBO_W = SPAZIO * 0.12;    // spessore del gambo, come da regola tipografica
-  const GAMBO_H = SPAZIO * 3.5;     // lunghezza normale del gambo
-
-  /* Figura musicale: testa, gambo a destra della testa (note con gambo in su),
-     coda attaccata in cima al gambo, punto di valore dopo la testa. */
-  function figura(nome, testa, gambo, coda, punto) {
-    const larghezza = (testa === "noteheadWhole") ? TESTA_W_SEMIBREVE : TESTA_W;
-    const x0 = -larghezza / 2;                 // la testa sta al centro
-    const xGambo = x0 + larghezza - GAMBO_W;   // lato destro della testa
-    const pezzi = [G(testa, x0, 0, 38)];
-    if (gambo) pezzi.push(R(xGambo, -GAMBO_H, GAMBO_W, GAMBO_H));
-    if (coda) pezzi.push(G(coda, xGambo, -GAMBO_H, 38));
-    if (punto) pezzi.push(G("augmentationDot", x0 + larghezza + SPAZIO * 0.26, 0, 38));
-    return { nome: nome, pezzi: pezzi };
+  /* Figure musicali (semibreve, minima, croma, due crome unite…).
+     NON si disegnano assemblando testa + gambo + coda a mano: gambi,
+     code e travature hanno regole tipografiche precise e venivano male.
+     Le disegna VexFlow, che quelle regole le conosce: si usa un rigo
+     senza righe e senza stanghette, così resta solo la figura. */
+  function figura(nome, durata, quante) {
+    return { nome: nome, figura: { durata: durata, quante: quante || 1 } };
   }
 
   // indicazione di tempo: due cifre incolonnate
@@ -80,16 +67,7 @@
 
   // due crome unite dalla travatura: si distingue a colpo d'occhio da una
   // croma sola, mentre "croma puntata" sarebbe stata quasi identica
-  const DUE_CROME = (function () {
-    const passo = SPAZIO * 1.7;                 // distanza fra le due teste
-    const xa = -passo / 2 - TESTA_W / 2, xb = passo / 2 - TESTA_W / 2;
-    const ga = xa + TESTA_W - GAMBO_W, gb = xb + TESTA_W - GAMBO_W;
-    return { nome: "due crome", pezzi: [
-      G("noteheadBlack", xa, 0, 38), G("noteheadBlack", xb, 0, 38),
-      R(ga, -GAMBO_H, GAMBO_W, GAMBO_H), R(gb, -GAMBO_H, GAMBO_W, GAMBO_H),
-      R(ga, -GAMBO_H, gb + GAMBO_W - ga, SPAZIO * 0.5)   // la travatura
-    ] };
-  })();
+  const DUE_CROME = figura("due crome", "8", 2);
 
   /* I segni sono in ordine di importanza didattica: le difficoltà più
      basse usano i primi della lista. */
@@ -98,11 +76,11 @@
     { nome: "chiave di violino", pezzi: [G("gClef", 0, 2, 32)] },
     { nome: "chiave di basso",   pezzi: [G("fClef", 0, -4, 38)] },
     { nome: "chiave di do",      pezzi: [G("cClef", 0, 0, 38)] },
-    figura("semibreve",   "noteheadWhole", false, null, false),
-    figura("minima",      "noteheadHalf",  true,  null, false),
-    figura("semiminima",  "noteheadBlack", true,  null, false),
-    figura("croma",       "noteheadBlack", true,  "flag8thUp", false),
-    figura("semicroma",   "noteheadBlack", true,  "flag16thUp", false),
+    figura("semibreve", "w"),
+    figura("minima", "h"),
+    figura("semiminima", "q"),
+    figura("croma", "8"),
+    figura("semicroma", "16"),
     { nome: "pausa di semibreve", pezzi: [G("restWholeLegerLine", 0, 0, 38)] },
     { nome: "pausa di minima",    pezzi: [G("restHalfLegerLine", 0, 0, 38)] },
     { nome: "pausa di semiminima",pezzi: [G("restQuarter", 0, 0, 38)] },
@@ -146,9 +124,9 @@
     { nome: "pausa di biscroma", pezzi: [G("rest32nd", 0, 0, 38)] },
     { nome: "tempo tagliato",    pezzi: [G("timeSigCutCommon", 0, 0, 38)] },
     tempo("tempo due mezzi", "timeSig2", "timeSig2"),
-    figura("semibreve puntata",  "noteheadWhole", false, null, true),
-    figura("minima puntata",     "noteheadHalf",  true,  null, true),
-    figura("semiminima puntata", "noteheadBlack", true,  null, true),
+    figura("semibreve puntata", "wd"),
+    figura("minima puntata", "hd"),
+    figura("semiminima puntata", "qd"),
     DUE_CROME,
     { nome: "segno",     pezzi: [G("segno", 0, 0, 38)] },
     { nome: "coda",      pezzi: [G("coda", 0, 0, 38)] },
@@ -274,6 +252,33 @@
     ctx.setFillStyle(colore);
     ctx.setStrokeStyle(colore);
 
+    if (simbolo.figura) {
+      // rigo senza righe e senza stanghette: resta solo la figura
+      const rigo = new VF.Stave(0, 60, 150);
+      if (rigo.setNumLines) rigo.setNumLines(0);
+      if (VF.Barline) { rigo.setBegBarType(VF.Barline.type.NONE); rigo.setEndBarType(VF.Barline.type.NONE); }
+      rigo.setContext(ctx).draw();
+      const note = [];
+      for (let k = 0; k < simbolo.figura.quante; k++) {
+        const n = new VF.StaveNote({ keys: ["b/4"], duration: simbolo.figura.durata });
+        n.setStemDirection(VF.Stem.UP);
+        n.setStyle({ fillStyle: colore, strokeStyle: colore });
+        if (/d$/.test(simbolo.figura.durata)) {
+          if (VF.Dot && VF.Dot.buildAndAttach) VF.Dot.buildAndAttach([n]); else n.addModifier(new VF.Dot(), 0);
+        }
+        note.push(n);
+      }
+      let travatura = null;
+      if (note.length > 1) { travatura = new VF.Beam(note); travatura.setStyle({ fillStyle: colore, strokeStyle: colore }); }
+      VF.Formatter.FormatAndDraw(ctx, rigo, note);
+      if (travatura) travatura.setContext(ctx).draw();
+      const svg = host.querySelector("svg");
+      inquadra(svg, lato);
+      const out = svg.outerHTML;
+      cacheSVG[chiave] = out;
+      return out;
+    }
+
     if (simbolo.nota) {
       // una nota vera su un pentagramma in miniatura: rigo e chiave sempre
       // scuri, colorata solo la nota, così il colore dice il nome
@@ -374,8 +379,12 @@
         posti.push({
           x: 0.5 + Math.cos(ang) * r / 2,
           y: 0.5 + Math.sin(ang) * r / 2,
-          scala: 0.82 + rnd() * 0.33,
-          rotazione: (rnd() - 0.5) * 50
+          // Nel Dobble commerciale i simboli sono anche girati. Qui no: una
+          // semiminima inclinata sembra scritta male (il gambo esce storto) e
+          // i ragazzi memorizzerebbero una forma sbagliata. La difficoltà la
+          // dà la variazione di grandezza, che invece non falsa niente.
+          scala: 0.76 + rnd() * 0.46,
+          rotazione: 0
         });
       }
     });
