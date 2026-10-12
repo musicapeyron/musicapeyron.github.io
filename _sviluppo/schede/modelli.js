@@ -50,7 +50,7 @@
         S.testa(P, xs[k], n.passo, colore ? "bianca" : opz.stile, colore || undefined);
         if (opz.cerchia && opz.sol && opz.cerchia.includes(s)) P.add("circle", { cx: xs[k], cy: P.y(n.passo), r: 10, fill: "none", stroke: "#c00", "stroke-width": 1.2 });
         if (opz.risposta === "linea") {
-          const t = S.scritta(P, xs[k], P.yRigo(0) + 19, opz.sol ? n.nome : "", { width: mm(17) + "px" });
+          const t = S.scritta(P, xs[k], P.yRigo(0) + (r.some(q => nota(q).passo <= -2) ? 24 : 19), opz.sol ? n.nome : "", { width: mm(Math.min(17, 170 / opz.perRiga - 3)) + "px", minWidth: "0" });
           t.className = "sopra linea-risposta";
         }
       });
@@ -131,6 +131,7 @@
     const n = nota(s);
     const P = S.pentagramma(c, { larg: mm(larg), spazio: mm(spazio), chiave: "nera", sopra: 2.2, sotto: 2.2 });
     S.testa(P, P.W * 0.66, n.passo, opz.colore && S.col() ? "colore" : "piena", opz.colore && S.col() ? COLORI[n.l] : undefined);
+    if (n.alt === "#" || n.alt === "b") S.glifo(P, P.W * 0.66 - 19, P.y(n.passo), n.alt === "#" ? "accidentalSharp" : "accidentalFlat");
     return P;
   }
 

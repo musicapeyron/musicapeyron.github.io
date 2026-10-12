@@ -26,7 +26,7 @@
     V: ["Verifica", "stella"], M: ["Per tutto l'anno", "libro"]
   };
 
-  const stato = { classe: 2, modo: "col", sol: false, solo: null, schede: { 1: [], 2: [], 3: [], 4: [], 5: [] },
+  const stato = { classe: 2, modo: "col", sol: false, solo: null, schede: { 0: [], 1: [], 2: [], 3: [], 4: [], 5: [] },
     titoliClasse: {}, pagine: 0, corpi: [], adattate: [] };
 
   /* ---------------- utilità ---------------- */
@@ -271,7 +271,7 @@
     const r = new VF.Renderer(wrap, VF.Renderer.Backends.SVG); r.resize(o.larg, H * sc);
     const ctx = r.getContext(); ctx.scale(sc, sc);
     const n = o.misure.length;
-    const testa0 = (o.chiave && !o.unaLinea ? 36 : 6) + (o.tempo ? 22 : 0);
+    const testa0 = (o.chiave && !o.unaLinea ? 36 : 6) + (o.tempo ? 22 : 0) + (o.armatura ? 16 : 0);
     const resto = (W - 2 - testa0) / n;
     let x = 0, contaNote = 0; const out = { note: [], staves: [], wrap, sc, ctx };
     o.misure.forEach((m, i) => {
@@ -310,7 +310,7 @@
         /* ritmo proporzionale: lo spazio è il tempo (un battito = stessa larghezza) */
         const tot = toks.reduce((q, t) => q + valore(t), 0) || 1;
         const battiti = o.battitiMisura || (o.tempo ? +o.tempo.split("/")[0] : Math.max(1, Math.round(tot)));
-        if (o.proporzionale !== false) {
+        if (o.proporzionale === true || (o.proporzionale !== false && o.unaLinea)) {
           let t = (i === 0 && o.anacrusi) ? battiti - tot : 0;
           notes.forEach(sn => { sn.getTickContext().setX(4 + (t / battiti) * (largNote - 6)); t += valore(sn._tok); });
         }
@@ -354,7 +354,7 @@
   function piede(pg) {
     pg.appendChild(el("div", { class: "piede" },
       el("span", null, "musicascuole.it · schede gratuite · CC BY-NC-SA 4.0"),
-      el("span", null, `Il mio quaderno di musica · classe ${stato.classe}ª`),
+      el("span", null, stato.classe ? `Il mio quaderno di musica · classe ${stato.classe}ª` : "Il mio quaderno di musica · materiali"),
       el("span", { class: "num" }, String(stato.pagine))));
   }
   function paginaScheda(meta, parte) {
@@ -362,7 +362,7 @@
     const [nomeArea, icona] = AREE[meta.codice[1]] || AREE.M;
     pg.appendChild(el("div", { class: "testata" },
       el("span", { class: "area" }, img(icona, 6.5), nomeArea),
-      el("span", { class: "nome" }, "Nome", el("span")),
+      meta.senzaNome ? el("span", { style: { marginLeft: "auto" } }) : el("span", { class: "nome" }, "Nome", el("span")),
       el("span", { class: "codice" }, meta.codice + (parte ? " · " + parte : ""))));
     pg.appendChild(el("div", { class: "titolo" }, (stato.sol ? "Soluzioni · " : "") + meta.titolo));
     if (meta.consegna) {
@@ -391,7 +391,7 @@
     pg.append(
       el("div", { style: { marginTop: "6mm" } }, img("note", 34)),
       el("div", { class: "grande" }, stato.sol ? "Soluzioni" : "Il mio quaderno di musica"),
-      el("div", { class: "classe" }, `classe ${classe}ª`),
+      el("div", { class: "classe" }, classe ? `classe ${classe}ª` : "materiali"),
       el("div", { class: "testo", style: { color: "var(--grigio)", maxWidth: "140mm" } }, t.sottotitolo || ""),
       fila,
       stato.sol ? el("div", { class: "testo" }, "Per l'insegnante") :
@@ -437,7 +437,7 @@
 
   async function avvia() {
     const q = new URLSearchParams(location.search);
-    stato.classe = +(q.get("classe") || 2);
+    stato.classe = q.has("classe") ? +q.get("classe") : 2;
     stato.modo = q.get("modo") === "bn" ? "bn" : "col";
     stato.sol = q.get("sol") === "1";
     stato.solo = q.get("solo");

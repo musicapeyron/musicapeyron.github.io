@@ -1,8 +1,9 @@
 """Genera i PDF delle schede per la primaria (A4), uno per classe e per versione.
 
 Uso:   python3 _sviluppo/schede/genera_pdf.py            tutte le classi
-       python3 _sviluppo/schede/genera_pdf.py 2 3        solo alcune classi
+       python3 _sviluppo/schede/genera_pdf.py 2 3        solo alcune classi (0 = materiali)
 Escono in _sviluppo/schede/pdf/:  classe-2-colori.pdf, classe-2-bianco-e-nero.pdf, classe-2-soluzioni.pdf
+(la "classe 0" sono i materiali per tutti gli anni: materiali-colori.pdf, materiali-bianco-e-nero.pdf)
 Serve Playwright con Chromium (già installato nell'ambiente di lavoro).
 """
 import sys, pathlib, threading, functools
@@ -34,6 +35,8 @@ def genera(classi):
         b = p.chromium.launch()
         for c in classi:
             for modo, sol, nome in VERSIONI:
+                if c == 0 and sol == "1":
+                    continue
                 pg = b.new_page()
                 errori = []
                 pg.on("pageerror", lambda e: errori.append(str(e)))
@@ -43,7 +46,7 @@ def genera(classi):
                 pg.wait_for_timeout(500)
                 n = pg.evaluate("document.querySelectorAll('.pagina').length")
                 adattate = pg.evaluate("Schede.stato.adattate")
-                f = USCITA / f"classe-{c}-{nome}.pdf"
+                f = USCITA / (f"classe-{c}-{nome}.pdf" if c else f"materiali-{nome}.pdf")
                 pg.pdf(path=str(f), format="A4", print_background=True, prefer_css_page_size=True)
                 print(f"{f.name}: {n} pagine" + (f" · rimpicciolite: {', '.join(adattate)}" if adattate else ""))
                 for e in errori:
@@ -53,4 +56,4 @@ def genera(classi):
 
 
 if __name__ == "__main__":
-    genera([int(x) for x in sys.argv[1:]] or [1, 2, 3, 4, 5])
+    genera([int(x) for x in sys.argv[1:]] or [0, 1, 2, 3, 4, 5])
