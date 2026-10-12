@@ -232,3 +232,65 @@ Scarta la nota — carte da stampare (`carte-scarta-la-nota.html`). Ottobre 2026
 - Con triadi e settime le carte tornano invece in mano: altrimenti sbagliare apposta converrebbe
   (ci si libererebbe di tre carte al prezzo di una pescata).
 - Niente dorsi da stampare: su cartoncino opaco non servono, e il doppio lato complica la stampa.
+
+---
+
+## Uno in comune (simboli musicali)
+
+**Dove:** Giochi → Uno in comune (`uno-in-comune.html`). Ottobre 2026.
+Motore del mazzo e dei simboli: `uno-in-comune.js`.
+
+### Concetti
+- **Riconoscimento rapido dei segni musicali**: chiavi (violino, basso, do), figure
+  (semibreve, minima, semiminima, croma, semicroma, due crome, figure puntate), pause
+  corrispondenti, alterazioni, dinamiche (p, f, mf, mp, pp, ff), articolazioni (accento,
+  staccato, tenuto, staccatissimo, marcato), indicazioni di tempo, corona, respiro,
+  abbellimenti, arcate, pedale, segno e coda.
+- **Lettura delle note sul pentagramma** in chiave di violino e di basso (set "Note"),
+  dove il simbolo da riconoscere è la posizione della nota sul rigo.
+- Il segno resta legato al suono: quando il simbolo trovato è una nota, il gioco **suona
+  la sua altezza vera**.
+
+### Punti di forza
+- **Riconoscimento, non ragionamento:** il simbolo va identificato in un paio di secondi.
+  È un allenamento diverso da tutti gli altri giochi del sito, che chiedono di pensare:
+  qui si costruisce l'automatismo, cioè quello che serve davvero leggendo uno spartito.
+- **Il simbolo cambia misura e orientamento** da una carta all'altra: si impara a
+  riconoscere la *forma*, non una figurina memorizzata in una posizione.
+- **Si gioca in due, tre o quattro sullo stesso schermo**, alla LIM: è uno dei pochi
+  giochi del sito davvero competitivi in tempo reale, e funziona come riempitivo di
+  cinque minuti a fine ora.
+- **Tre livelli veri**, non cosmetici: 4, 6 o 8 simboli per carta, cioè 13, 31 o 57
+  segni musicali diversi in gioco. Il livello difficile mette in gioco anche coppie
+  ravvicinate (semiminima e semiminima puntata, croma e due crome) che obbligano a
+  guardare il dettaglio.
+- **Da solo si gioca a tempo**: il cronometro dà un obiettivo personale da migliorare,
+  utile quando un ragazzo finisce prima degli altri.
+- Nessun microfono, nessuna fotocamera, nessun dato raccolto.
+
+### Perché il mazzo funziona (la matematica dietro)
+Il mazzo non è casuale: è un **piano proiettivo finito** di ordine n (n primo), che ha
+n²+n+1 carte, n+1 simboli per carta e n²+n+1 simboli diversi, e garantisce che **due
+carte qualsiasi abbiano esattamente un simbolo in comune**. È lo stesso principio del
+gioco commerciale Dobble. Si può raccontare alla classe: è un bell'aggancio fra musica
+e matematica (una carta per ogni retta del piano, un simbolo per ogni punto).
+
+### Come usarlo in classe
+- Alla LIM in due squadre: un rappresentante per squadra al tocco, gli altri guardano.
+- Come ripasso prima di una verifica sui segni musicali: livello medio, set "Segni".
+- Per la lettura delle note: set "Note", livello facile (solo chiave di violino) e poi
+  medio (si aggiunge la chiave di basso).
+- Il tutorial "Come si gioca" (6 passi, con una prova finale da fare davvero) basta per
+  partire senza spiegazioni.
+
+### Scelte fatte (e perché)
+- **Una carta per giocatore attorno a quella centrale**, non la pila comune: sullo stesso
+  schermo serve che ognuno abbia la sua zona da toccare. In due sul telefono la carta di
+  chi sta dall'altro lato è capovolta, così si gioca uno di fronte all'altro.
+- **Chi sbaglia resta fermo poco più di un secondo**: scoraggia il toccare a caso senza
+  bloccare la partita.
+- **Partita di 10 carte**: dura due o tre minuti, sta in un intervallo di lezione.
+- **Niente livello difficile con le sole note**: servirebbero 57 note diverse e si
+  arriverebbe a estensioni che in seconda media non si leggono ancora.
+- I simboli piccolissimi (il punto dello staccato) restano piccoli come nella scrittura
+  vera, ma l'area da toccare è grande: la grafica è corretta e il tocco resta comodo.

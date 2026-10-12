@@ -1,0 +1,724 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Uno in comune — musicascuole.it</title>
+<link rel="icon" href="favicon.svg" type="image/svg+xml">
+<link rel="icon" href="favicon-32.png" type="image/png" sizes="32x32">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
+<meta name="description" content="Due carte hanno sempre un solo simbolo musicale uguale: trovalo per primo. Da 1 a 4 giocatori, con i segni musicali o le note sul pentagramma.">
+
+<!--
+  ============================================================
+  UNO IN COMUNE — gioco di rapidità sui simboli musicali.
+  Il mazzo è un piano proiettivo finito: due carte qualsiasi hanno
+  sempre esattamente un simbolo in comune (vedi uno-in-comune.js).
+  Da 1 a 4 giocatori sullo stesso schermo: una carta al centro e una
+  carta per giocatore attorno.
+  ============================================================
+-->
+
+<link rel="stylesheet" href="fonts/caratteri.css">
+<link rel="stylesheet" href="comune.css">
+<style>
+  * { box-sizing: border-box; }
+  html, body { margin: 0; min-height: 100%; }
+  body {
+    /* niente min-height:100vh: bloccherebbe l'ingrandimento sulla LIM */
+    font-family: 'Inter', 'Segoe UI', Arial, sans-serif;
+    color: #EAF2FF;
+    -webkit-font-smoothing: antialiased;
+    overflow-x: hidden;
+    position: relative;
+    padding: 10px 12px 14px;
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  /* ---------- casetta ---------- */
+  .site-home-button {
+    position: fixed; top: 12px; left: 12px; z-index: 50;
+    width: 40px; height: 40px; border-radius: 50%;
+    border: 1px solid rgba(255,255,255,0.18);
+    background: linear-gradient(180deg, rgba(255,255,255,0.12), rgba(255,255,255,0.04));
+    color: #e2e8f0; font-size: 17px; text-decoration: none;
+    display: flex; align-items: center; justify-content: center;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+  }
+  .site-home-button:hover { background: rgba(255,255,255,0.2); }
+
+  h1 {
+    font-family: 'Manrope', sans-serif; font-weight: 800;
+    font-size: 1.5rem; margin: 2px 0 4px; text-align: center;
+    letter-spacing: -0.015em; white-space: nowrap;
+  }
+  .sottotitolo { text-align: center; color: #9FB3CE; font-size: 0.85rem; margin: 0 0 12px; }
+
+  .schermata { display: none; }
+  /* larghezza del contenuto, non della finestra: così adatta-schermo.js sa
+     quanto spazio avanza e può ingrandire il gioco sulla LIM */
+  .schermata.attiva { display: block; width: max-content; max-width: 100%; margin: 0 auto; }
+
+  /* ---------- menu ---------- */
+  #schermataMenu { max-width: 760px; margin: 0 auto; }
+  .scelta { margin-bottom: 14px; }
+  .scelta > h2 {
+    font-family: 'Manrope', sans-serif; font-weight: 800;
+    font-size: 0.72rem; letter-spacing: 0.08em; text-transform: uppercase;
+    color: #cbd5e1; margin: 0 0 7px; padding-left: 9px;
+    border-left: 3px solid #7FD8E4;
+  }
+  .opzioni { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; }
+  #gr-giocatori { grid-template-columns: repeat(4, 1fr); }
+  .opz {
+    font-family: inherit; font-size: 0.92rem; font-weight: 600;
+    color: #EAF2FF; text-align: center; cursor: pointer; line-height: 1.3;
+    background: rgba(255,255,255,0.035);
+    border: 1px solid rgba(255,255,255,0.09);
+    border-top: 2px solid rgba(255,255,255,0.09);
+    border-radius: 12px; padding: 11px 8px;
+    transition: border-color 0.2s ease, background 0.2s ease;
+  }
+  /* mai transform su hover/active: il pulsante scapperebbe da sotto il dito */
+  .opz:hover { background: rgba(255,255,255,0.08); }
+  .opz:active { filter: brightness(0.92); }
+  .opz .sotto { display: block; font-weight: 500; font-size: 0.72rem; color: #9FB3CE; margin-top: 2px; }
+  .opz[aria-pressed="true"] {
+    border-top-color: #7FD8E4; border-color: rgba(127,216,228,0.45);
+    background: linear-gradient(180deg, rgba(127,216,228,0.18), rgba(255,255,255,0.04));
+  }
+  .opz[disabled] { opacity: 0.35; cursor: default; }
+  .opz[disabled]:hover { background: rgba(255,255,255,0.035); }
+
+  .avviso { text-align: center; color: #FCD34D; font-size: 0.78rem; min-height: 1.1em; margin: 6px 0 0; }
+
+  .bottoni { display: flex; gap: 12px; justify-content: center; margin-top: 16px; }
+  .pulsantone {
+    font-family: 'Manrope', sans-serif; font-weight: 800; font-size: 1.05rem;
+    color: #06262b; background: linear-gradient(180deg, #7fdce8, #34b6c9);
+    border: none; border-radius: 13px; padding: 12px 30px; cursor: pointer;
+    box-shadow: 0 4px 14px rgba(0,0,0,0.35);
+  }
+  .pulsantone.secondario {
+    color: #EAF2FF; background: rgba(255,255,255,0.07);
+    border: 1px solid rgba(255,255,255,0.14); box-shadow: none;
+  }
+  .pulsantone:hover { filter: brightness(1.07); }
+  .pulsantone:active { filter: brightness(0.9); }
+
+  /* ---------- tavolo di gioco ---------- */
+  #schermataGioco { --carta: 220px; }
+  .riga-stato {
+    display: flex; align-items: center; justify-content: center; gap: 18px;
+    margin-bottom: 8px; font-size: 0.9rem; color: #9FB3CE;
+  }
+  .riga-stato b { color: #EAF2FF; }
+
+  .tavolo {
+    display: grid; justify-content: center; align-content: center;
+    grid-template-columns: var(--carta) var(--carta) var(--carta);
+    grid-template-rows: auto auto auto;
+    gap: 10px 16px; margin: 0 auto;
+  }
+  .posto { display: flex; flex-direction: column; align-items: center; gap: 4px; }
+  .posto.centro { grid-column: 2; grid-row: 2; }
+  .posto.p1 { grid-column: 1; grid-row: 2; }
+  .posto.p2 { grid-column: 3; grid-row: 2; }
+  .posto.p3 { grid-column: 2; grid-row: 1; }
+  .posto.p4 { grid-column: 2; grid-row: 3; }
+  .posto[hidden] { display: none; }
+
+  .etichetta { font-size: 0.8rem; font-weight: 700; color: #9FB3CE; }
+  .etichetta .punti { color: #EAF2FF; }
+  .posto.centro .etichetta { color: #7FD8E4; }
+
+  .porta { width: var(--carta); height: var(--carta); }
+  .carta {
+    width: var(--carta); height: var(--carta); border-radius: 50%;
+    background: radial-gradient(circle at 36% 28%, #ffffff, #f1e9db);
+    border: 3px solid rgba(255,255,255,0.75);
+    box-shadow: 0 6px 18px rgba(0,0,0,0.45);
+    position: relative; overflow: hidden; flex: 0 0 auto;
+  }
+  .posto.centro .carta { border-color: #7FD8E4; }
+
+  .simbolo {
+    position: absolute; display: flex; align-items: center; justify-content: center;
+    transform: translate(-50%, -50%); border-radius: 12px;
+    background: transparent; border: none; padding: 0; cursor: pointer;
+  }
+  .posto.centro .simbolo, .carta.ferma .simbolo { cursor: default; }
+  .simbolo svg { display: block; pointer-events: none; }
+  .simbolo:active { filter: brightness(0.8); }
+  .simbolo.giusto { background: rgba(34,197,94,0.3); }
+  .simbolo.sbagliato { background: rgba(239,68,68,0.3); }
+  /* nel tutorial: cerchietto attorno al simbolo in comune */
+  .simbolo.indicato { box-shadow: 0 0 0 3px #16a34a; background: rgba(34,197,94,0.18); }
+
+  .carta.vinta { border-color: #22c55e; }
+  .carta.persa { border-color: #ef4444; }
+  .posto.bloccato .carta { opacity: 0.45; }
+
+  /* il giocatore seduto dall'altra parte vede la sua carta al dritto */
+  .posto.capovolto .carta { transform: rotate(180deg); }
+  .posto.capovolto .etichetta { transform: rotate(180deg); }
+  .posto.capovolto { flex-direction: column-reverse; }
+
+  /* ---------- tutorial ---------- */
+  #schermataTutorial { max-width: 980px; margin: 0 auto; }
+  .tut-corpo { display: flex; gap: 22px; align-items: center; justify-content: center; min-height: 330px; }
+  .tut-testo { flex: 0 0 340px; }
+  .tut-testo h2 { font-family: 'Manrope', sans-serif; font-size: 1.15rem; margin: 0 0 8px; }
+  .tut-testo p { color: #cbd5e1; font-size: 0.95rem; line-height: 1.55; margin: 0 0 8px; }
+  .tut-figura { display: flex; gap: 14px; align-items: center; justify-content: center; --carta: 180px; }
+  .tut-passi { text-align: center; color: #9FB3CE; font-size: 0.8rem; margin-top: 6px; }
+
+  /* ---------- fine ---------- */
+  #schermataFine { max-width: 620px; margin: 0 auto; text-align: center; }
+  .classifica { list-style: none; padding: 0; margin: 14px 0; }
+  .classifica li {
+    display: flex; justify-content: space-between; align-items: center;
+    background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.09);
+    border-radius: 12px; padding: 10px 16px; margin-bottom: 8px; font-size: 1rem;
+  }
+  .classifica li.vince { border-color: rgba(250,204,21,0.5); background: rgba(250,204,21,0.12); }
+  .classifica .punti { font-weight: 800; font-size: 1.15rem; }
+
+  /* ---------- PC e LIM ---------- */
+  @media (min-width: 900px) and (min-height: 560px) {
+    body { padding: 14px 18px 18px; }
+    h1 { font-size: 2rem; }
+    .sottotitolo { font-size: 1rem; margin-bottom: 18px; }
+    #schermataMenu { max-width: 900px; }
+    .scelte-riga { display: grid; grid-template-columns: 1fr 1fr; gap: 10px 26px; }
+    .opz { font-size: 1.02rem; padding: 14px 10px; }
+    .opz .sotto { font-size: 0.8rem; }
+    #schermataGioco { --carta: 300px; }
+    .tavolo { gap: 12px 26px; }
+    .etichetta { font-size: 0.95rem; }
+    .riga-stato { font-size: 1.05rem; margin-bottom: 12px; }
+    .tut-figura { --carta: 220px; }
+    .tut-testo { flex: 0 0 380px; }
+    .tut-testo h2 { font-size: 1.35rem; }
+    .tut-testo p { font-size: 1.05rem; }
+  }
+
+  /* ---------- telefono girato (schermo basso): carte più piccole ---------- */
+  @media (orientation: landscape) and (max-height: 560px) {
+    #schermataGioco { --carta: min(23vh, 140px); }
+    .tavolo { gap: 4px 12px; }
+    h1 { font-size: 1.1rem; }
+    .sottotitolo { display: none; }
+  }
+
+  /* ---------- telefono in verticale ---------- */
+  @media (max-width: 620px) and (orientation: portrait) {
+    body { padding: 6px 10px 10px; }
+    h1 { font-size: 1.15rem; margin-top: 34px; }
+    .sottotitolo { font-size: 0.75rem; margin-bottom: 8px; }
+    .scelta { margin-bottom: 9px; }
+    .opz { padding: 8px 6px; font-size: 0.82rem; }
+    .opz .sotto { display: none; }
+    .site-home-button { top: 8px; left: 8px; width: 36px; height: 36px; font-size: 15px; }
+    #schermataGioco { --carta: min(43vw, 170px); }
+    /* in verticale le carte stanno incolonnate: chi gioca in due si mette
+       uno di fronte all'altro, con il telefono in mezzo */
+    .tavolo { grid-template-columns: var(--carta); gap: 6px; }
+    .posto.centro, .posto.p1, .posto.p2, .posto.p3, .posto.p4 { grid-column: 1; }
+    .posto.p3 { grid-row: 1; } .posto.centro { grid-row: 2; }
+    .posto.p1 { grid-row: 3; } .posto.p2 { grid-row: 4; } .posto.p4 { grid-row: 5; }
+    .etichetta { font-size: 0.72rem; }
+    .tut-corpo { flex-direction: column; min-height: 0; gap: 10px; }
+    .tut-testo { flex: 0 0 auto; }
+    .tut-figura { --carta: 128px; gap: 8px; }
+    .pulsantone { font-size: 0.92rem; padding: 10px 20px; }
+  }
+</style>
+</head>
+<body>
+<script src="info-sito.js"></script>
+
+<a class="site-home-button" href="index.html" aria-label="Torna al sito" title="Torna al sito">🏠</a>
+
+<h1>Uno in comune</h1>
+<p class="sottotitolo" id="sottotitolo">Due carte hanno sempre un solo simbolo uguale: trovalo per primo.</p>
+
+<!-- ============ MENU ============ -->
+<div class="schermata attiva" id="schermataMenu">
+  <div class="scelte-riga">
+    <div class="scelta">
+      <h2>Simboli</h2>
+      <div class="opzioni" id="gr-simboli">
+        <button type="button" class="opz" data-v="segni">Segni musicali<span class="sotto">chiavi, figure, pause…</span></button>
+        <button type="button" class="opz" data-v="note">Note<span class="sotto">sul pentagramma</span></button>
+        <button type="button" class="opz" data-v="misto">Misti<span class="sotto">segni e note</span></button>
+      </div>
+    </div>
+
+    <div class="scelta">
+      <h2>Difficoltà</h2>
+      <div class="opzioni" id="gr-difficolta">
+        <button type="button" class="opz" data-v="3">Facile<span class="sotto">4 simboli per carta</span></button>
+        <button type="button" class="opz" data-v="5">Medio<span class="sotto">6 simboli per carta</span></button>
+        <button type="button" class="opz" data-v="7">Difficile<span class="sotto">8 simboli per carta</span></button>
+      </div>
+    </div>
+  </div>
+
+  <div class="scelta">
+    <h2>Giocatori</h2>
+    <div class="opzioni" id="gr-giocatori">
+      <button type="button" class="opz" data-v="1">1<span class="sotto">da solo, a tempo</span></button>
+      <button type="button" class="opz" data-v="2">2</button>
+      <button type="button" class="opz" data-v="3">3</button>
+      <button type="button" class="opz" data-v="4">4</button>
+    </div>
+  </div>
+
+  <p class="avviso" id="avviso"></p>
+
+  <div class="bottoni">
+    <button type="button" class="pulsantone" id="btnGioca">Gioca</button>
+    <button type="button" class="pulsantone secondario" id="btnTutorial">Come si gioca</button>
+  </div>
+</div>
+
+<!-- ============ GIOCO ============ -->
+<div class="schermata" id="schermataGioco">
+  <div class="riga-stato">
+    <span>Carta <b id="numCarta">1</b> di <b id="totCarte">10</b></span>
+    <span id="boxTempo" hidden>Tempo <b id="tempo">0,0 s</b></span>
+  </div>
+  <div class="tavolo" id="tavolo"></div>
+  <div class="bottoni" style="margin-top:12px">
+    <button type="button" class="pulsantone secondario" id="btnMenu">Menù</button>
+  </div>
+</div>
+
+<!-- ============ TUTORIAL ============ -->
+<div class="schermata" id="schermataTutorial">
+  <div class="tut-corpo">
+    <div class="tut-testo">
+      <h2 id="tutTitolo"></h2>
+      <div id="tutTesto"></div>
+    </div>
+    <div class="tut-figura" id="tutFigura"></div>
+  </div>
+  <p class="tut-passi" id="tutPassi"></p>
+  <div class="bottoni">
+    <button type="button" class="pulsantone secondario" id="btnTutIndietro">Indietro</button>
+    <button type="button" class="pulsantone" id="btnTutAvanti">Avanti</button>
+    <button type="button" class="pulsantone secondario" id="btnTutEsci">Menù</button>
+  </div>
+</div>
+
+<!-- ============ FINE ============ -->
+<div class="schermata" id="schermataFine">
+  <h2 id="fineTitolo" style="font-family:'Manrope',sans-serif"></h2>
+  <ul class="classifica" id="classifica"></ul>
+  <div class="bottoni">
+    <button type="button" class="pulsantone" id="btnAncora">Gioca ancora</button>
+    <button type="button" class="pulsantone secondario" id="btnFineMenu">Menù</button>
+  </div>
+</div>
+
+<script src="vexflow.js"></script>
+<script src="uno-in-comune.js?v=1"></script>
+<script>
+(function () {
+  "use strict";
+  const U = window.UnoInComune;
+
+  /* ================= scelte ================= */
+  const scelte = { simboli: "segni", ordine: 3, giocatori: 1 };
+  const CARTE_PARTITA = 10;
+  const NOMI = ["Giocatore 1", "Giocatore 2", "Giocatore 3", "Giocatore 4"];
+  const NOMI_CORTI = ["Gioc. 1", "Gioc. 2", "Gioc. 3", "Gioc. 4"];
+
+  function serve(ordine) { return ordine * ordine + ordine + 1; }
+
+  function aggiornaMenu() {
+    [["gr-simboli", "simboli"], ["gr-difficolta", "ordine"], ["gr-giocatori", "giocatori"]].forEach(([id, campo]) => {
+      document.getElementById(id).querySelectorAll(".opz").forEach(b => {
+        b.setAttribute("aria-pressed", String(b.dataset.v) === String(scelte[campo]) ? "true" : "false");
+      });
+    });
+    // con le sole note i simboli diversi sono 34: non bastano per il difficile
+    const disponibili = U.simboliDisponibili(scelte.simboli);
+    let messaggio = "";
+    document.getElementById("gr-difficolta").querySelectorAll(".opz").forEach(b => {
+      const troppo = serve(+b.dataset.v) > disponibili;
+      b.disabled = troppo;
+      if (troppo && +b.dataset.v === scelte.ordine) { scelte.ordine = 5; }
+    });
+    if (scelte.simboli === "note") {
+      messaggio = "Con le sole note il livello difficile non c'è: servirebbero 57 note diverse.";
+    }
+    if (scelte.giocatori > 2 && telefonoVerticale()) {
+      messaggio = "In tre o quattro si gioca molto meglio sulla LIM, sul computer o su un tablet.";
+    }
+    document.getElementById("avviso").textContent = messaggio;
+    document.getElementById("gr-difficolta").querySelectorAll(".opz").forEach(b => {
+      b.setAttribute("aria-pressed", String(b.dataset.v) === String(scelte.ordine) ? "true" : "false");
+    });
+  }
+
+  function collega(id, campo, numerico) {
+    document.getElementById(id).querySelectorAll(".opz").forEach(b => {
+      b.addEventListener("click", () => {
+        if (b.disabled) return;
+        scelte[campo] = numerico ? +b.dataset.v : b.dataset.v;
+        aggiornaMenu();
+      });
+    });
+  }
+  collega("gr-simboli", "simboli", false);
+  collega("gr-difficolta", "ordine", true);
+  collega("gr-giocatori", "giocatori", true);
+
+  /* ================= schermate ================= */
+  function mostra(id) {
+    document.querySelectorAll(".schermata").forEach(s => s.classList.toggle("attiva", s.id === id));
+    document.getElementById("sottotitolo").style.display = (id === "schermataGioco") ? "none" : "";
+    if (window.adattaSchermo) window.adattaSchermo();
+  }
+
+  /* ================= suono ================= */
+  let ctxAudio = null;
+  function audio() {
+    if (!ctxAudio) { const A = window.AudioContext || window.webkitAudioContext; if (A) ctxAudio = new A(); }
+    if (ctxAudio && ctxAudio.state === "suspended") ctxAudio.resume();
+    return ctxAudio;
+  }
+  const SEMITONI = { c: 0, d: 2, e: 4, f: 5, g: 7, a: 9, b: 11 };
+  function frequenza(key) {
+    const [l, o] = key.split("/");
+    const midi = (parseInt(o, 10) + 1) * 12 + SEMITONI[l];
+    return 440 * Math.pow(2, (midi - 69) / 12);
+  }
+  function suona(freq, durata, volume) {
+    const a = audio(); if (!a) return;
+    const osc = a.createOscillator(), g = a.createGain();
+    osc.type = "triangle"; osc.frequency.value = freq;
+    g.gain.setValueAtTime(0, a.currentTime);
+    g.gain.linearRampToValueAtTime(volume, a.currentTime + 0.02);
+    g.gain.exponentialRampToValueAtTime(0.001, a.currentTime + durata);
+    osc.connect(g); g.connect(a.destination);
+    osc.start(); osc.stop(a.currentTime + durata + 0.05);
+  }
+  function suonoGiusto(simbolo) {
+    // se il simbolo è una nota si sente la sua altezza vera: il segno e il
+    // suono restano collegati
+    if (simbolo.def.nota) suona(frequenza(simbolo.def.nota.key), 0.5, 0.22);
+    else { suona(784, 0.12, 0.15); setTimeout(() => suona(1046, 0.22, 0.15), 110); }
+  }
+  function suonoSbagliato() { suona(150, 0.22, 0.14); }
+
+  /* ================= disegno delle carte ================= */
+  function disegnaCarta(contenitore, carta, simboli, alTocco) {
+    contenitore.innerHTML = "";
+    const el = document.createElement("div");
+    el.className = "carta";
+    contenitore.appendChild(el);
+    // la misura si legge dalla carta vera appena messa nella pagina: così
+    // vale anche quando lo zoom della LIM o il telefono la cambiano
+    const geo = U.disposizione(carta.id, carta.simboli.length);
+    const lato = Math.round(diametro(el) * geo.misura);
+    carta.simboli.forEach((idSimbolo, i) => {
+      const s = simboli[idSimbolo];
+      const posto = geo.posti[i];
+      const b = document.createElement(alTocco ? "button" : "div");
+      b.className = "simbolo";
+      b.style.left = (posto.x * 100) + "%";
+      b.style.top = (posto.y * 100) + "%";
+      b.style.width = b.style.height = Math.round(lato * posto.scala) + "px";
+      b.style.transform = "translate(-50%, -50%) rotate(" + posto.rotazione.toFixed(1) + "deg)";
+      b.dataset.simbolo = idSimbolo;
+      b.innerHTML = U.simboloSVG(s.def, s.colore, Math.round(lato * posto.scala * 0.9));
+      if (alTocco) { b.type = "button"; b.setAttribute("aria-label", s.nome); b.addEventListener("click", () => alTocco(idSimbolo, b)); }
+      el.appendChild(b);
+    });
+    return el;
+  }
+
+  function diametro(el) {
+    const l = el.getBoundingClientRect().width;
+    // con lo zoom della LIM la misura letta è quella ingrandita sullo schermo:
+    // va divisa per il fattore, altrimenti i simboli crescerebbero due volte
+    const f = window.fattoreSchermo ? window.fattoreSchermo() : 1;
+    return (l || 220) / (f || 1);
+  }
+
+  /* ================= partita ================= */
+  let stato = null;
+
+  function nuovaPartita() {
+    const n = scelte.ordine;
+    const mazzo = U.costruisciMazzo(n).map((simboli, id) => ({ id: id, simboli: simboli }));
+    const simboli = U.simboliPerPartita(scelte.simboli, serve(n));
+    stato = {
+      mazzo: mazzo, simboli: simboli,
+      giocatori: Array.from({ length: scelte.giocatori }, (_, i) => ({ nome: NOMI[i], punti: 0, bloccato: false })),
+      carta: 0, inizio: Date.now(), finita: false
+    };
+    costruisciTavolo();
+    document.getElementById("totCarte").textContent = CARTE_PARTITA;
+    document.getElementById("boxTempo").hidden = (scelte.giocatori !== 1);
+    mostra("schermataGioco");
+    round();
+    if (scelte.giocatori === 1) avviaCrono();
+  }
+
+  let crono = null;
+  function avviaCrono() {
+    fermaCrono();
+    crono = setInterval(() => {
+      if (!stato || stato.finita) return;
+      const s = (Date.now() - stato.inizio) / 1000;
+      document.getElementById("tempo").textContent = s.toFixed(1).replace(".", ",") + " s";
+    }, 100);
+  }
+  function fermaCrono() { if (crono) { clearInterval(crono); crono = null; } }
+
+  // i posti attorno alla carta centrale, secondo quanti sono i giocatori
+  const POSTI = { 1: ["p4"], 2: ["p1", "p2"], 3: ["p1", "p2", "p4"], 4: ["p1", "p2", "p3", "p4"] };
+  // sul telefono in verticale le carte sono incolonnate: in due ci si mette
+  // uno di fronte all'altro, con il telefono appoggiato in mezzo
+  const POSTI_TELEFONO = { 2: ["p3", "p4"] };
+  function telefonoVerticale() {
+    return window.matchMedia && window.matchMedia("(max-width: 620px) and (orientation: portrait)").matches;
+  }
+  function posti(quanti) {
+    return (telefonoVerticale() && POSTI_TELEFONO[quanti]) || POSTI[quanti];
+  }
+
+  function costruisciTavolo() {
+    const t = document.getElementById("tavolo");
+    t.innerHTML = "";
+    const centro = document.createElement("div");
+    centro.className = "posto centro";
+    centro.innerHTML = '<div class="etichetta">Carta in mezzo</div><div class="porta" id="portaCentro"></div>';
+    t.appendChild(centro);
+    posti(stato.giocatori.length).forEach((posto, i) => {
+      const d = document.createElement("div");
+      // chi sta in alto gioca dall'altro lato del tavolo: la sua carta è girata
+      d.className = "posto " + posto + (posto === "p3" ? " capovolto" : "");
+      d.id = "posto" + i;
+      const nome = stato.giocatori.length === 1 ? "La tua carta" : NOMI_CORTI[i];
+      d.innerHTML = '<div class="etichetta">' + nome +
+        (stato.giocatori.length > 1 ? ' · <span class="punti" id="punti' + i + '">0</span>' : '') +
+        '</div><div class="porta" id="porta' + i + '"></div>';
+      t.appendChild(d);
+    });
+  }
+
+  function round() {
+    const m = stato.mazzo.slice();
+    for (let i = m.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [m[i], m[j]] = [m[j], m[i]]; }
+    stato.centro = m[0];
+    stato.mani = stato.giocatori.map((g, i) => m[1 + i]);
+    stato.risolto = false;
+    document.getElementById("numCarta").textContent = stato.carta + 1;
+
+    disegnaCarta(document.getElementById("portaCentro"), stato.centro, stato.simboli, null);
+    stato.mani.forEach((carta, i) => {
+      const porta = document.getElementById("porta" + i);
+      disegnaCarta(porta, carta, stato.simboli, (idSimbolo, bottone) => tocca(i, idSimbolo, bottone));
+      document.getElementById("posto" + i).classList.remove("bloccato");
+      stato.giocatori[i].bloccato = false;
+    });
+  }
+
+  function comune(a, b) { return a.simboli.find(s => b.simboli.includes(s)); }
+
+  function tocca(iGiocatore, idSimbolo, bottone) {
+    if (!stato || stato.risolto || stato.giocatori[iGiocatore].bloccato) return;
+    const giusto = comune(stato.centro, stato.mani[iGiocatore]);
+    if (idSimbolo === giusto) {
+      stato.risolto = true;
+      stato.giocatori[iGiocatore].punti++;
+      bottone.classList.add("giusto");
+      // si accende anche sulla carta in mezzo: si vede qual era la coppia
+      const gemello = document.querySelector('#portaCentro .simbolo[data-simbolo="' + giusto + '"]');
+      if (gemello) gemello.classList.add("giusto");
+      document.querySelector("#posto" + iGiocatore + " .carta").classList.add("vinta");
+      const p = document.getElementById("punti" + iGiocatore);
+      if (p) p.textContent = stato.giocatori[iGiocatore].punti;
+      suonoGiusto(stato.simboli[giusto]);
+      stato.carta++;
+      setTimeout(() => {
+        if (stato.carta >= CARTE_PARTITA) finePartita(); else round();
+      }, 850);
+    } else {
+      bottone.classList.add("sbagliato");
+      suonoSbagliato();
+      const posto = document.getElementById("posto" + iGiocatore);
+      posto.classList.add("bloccato");
+      stato.giocatori[iGiocatore].bloccato = true;
+      setTimeout(() => {
+        bottone.classList.remove("sbagliato");
+        if (stato && !stato.risolto) { posto.classList.remove("bloccato"); stato.giocatori[iGiocatore].bloccato = false; }
+      }, 1200);
+    }
+  }
+
+  function finePartita() {
+    stato.finita = true;
+    fermaCrono();
+    const secondi = (Date.now() - stato.inizio) / 1000;
+    const lista = document.getElementById("classifica");
+    lista.innerHTML = "";
+    if (stato.giocatori.length === 1) {
+      document.getElementById("fineTitolo").textContent = "Fatto!";
+      lista.innerHTML = '<li class="vince"><span>' + CARTE_PARTITA + ' carte trovate</span>' +
+        '<span class="punti">' + secondi.toFixed(1).replace(".", ",") + ' s</span></li>' +
+        '<li><span>Media per carta</span><span class="punti">' +
+        (secondi / CARTE_PARTITA).toFixed(1).replace(".", ",") + ' s</span></li>';
+    } else {
+      const max = Math.max.apply(null, stato.giocatori.map(g => g.punti));
+      const vincitori = stato.giocatori.filter(g => g.punti === max);
+      document.getElementById("fineTitolo").textContent =
+        vincitori.length > 1 ? "Pareggio!" : "Vince " + vincitori[0].nome + "!";
+      stato.giocatori.slice().sort((a, b) => b.punti - a.punti).forEach(g => {
+        const li = document.createElement("li");
+        if (g.punti === max) li.className = "vince";
+        li.innerHTML = '<span>' + g.nome + '</span><span class="punti">' + g.punti + '</span>';
+        lista.appendChild(li);
+      });
+    }
+    mostra("schermataFine");
+  }
+
+  /* ================= tutorial ================= */
+  const PASSI = [
+    {
+      titolo: "La regola è una sola",
+      testo: "<p>Prendi due carte qualunque di questo mazzo: hanno <b>sempre un simbolo uguale</b>, e ne hanno <b>uno solo</b>.</p>" +
+             "<p>Non è fortuna: il mazzo è costruito apposta perché succeda con ogni coppia di carte.</p>",
+      figura: "due", indica: true
+    },
+    {
+      titolo: "Attento agli scherzi",
+      testo: "<p>Lo stesso simbolo può essere <b>più grande o più piccolo</b>, e <b>girato</b> in un altro verso.</p>" +
+             "<p>È sempre lui: conta la forma, non la misura.</p>",
+      figura: "due", indica: false
+    },
+    {
+      titolo: "Come si gioca",
+      testo: "<p>In mezzo c'è una carta scoperta. Ogni giocatore ha la <b>sua</b> carta.</p>" +
+             "<p>Tocca sulla <b>tua</b> carta il simbolo che c'è anche su quella in mezzo. Chi lo trova per primo prende <b>un punto</b>.</p>",
+      figura: "tavolo", indica: false
+    },
+    {
+      titolo: "Se sbagli",
+      testo: "<p>Se tocchi il simbolo sbagliato resti fermo <b>un attimo</b> e gli altri possono rispondere.</p>" +
+             "<p>Meglio guardare bene prima di toccare.</p>",
+      figura: "tavolo", indica: false
+    },
+    {
+      titolo: "Da soli o in tanti",
+      testo: "<p>Da <b>1 a 4 giocatori</b> sullo stesso schermo. Da solo giochi a tempo: trovi le 10 carte più in fretta che puoi.</p>" +
+             "<p>Nel menù scegli anche i <b>simboli</b> (segni musicali, note sul pentagramma o misti) e la <b>difficoltà</b>: 4, 6 o 8 simboli per carta.</p>",
+      figura: "due", indica: false
+    },
+    {
+      titolo: "Prova tu",
+      testo: "<p>Tocca sulla carta di <b>destra</b> il simbolo che c'è anche su quella di sinistra.</p>",
+      figura: "prova", indica: false
+    }
+  ];
+  let passo = 0, provaFatta = false;
+
+  function mostraPasso() {
+    const p = PASSI[passo];
+    document.getElementById("tutTitolo").textContent = p.titolo;
+    document.getElementById("tutTesto").innerHTML = p.testo;
+    document.getElementById("tutPassi").textContent = "Passo " + (passo + 1) + " di " + PASSI.length;
+    document.getElementById("btnTutIndietro").disabled = (passo === 0);
+    document.getElementById("btnTutAvanti").textContent = (passo === PASSI.length - 1) ? "Gioca" : "Avanti";
+    disegnaFigura(p);
+  }
+
+  // mazzo piccolo e fisso, sempre lo stesso: il tutorial è prevedibile
+  function mazzoTutorial() {
+    const mazzo = U.costruisciMazzo(3).map((s, id) => ({ id: id, simboli: s }));
+    const simboli = U.simboliPerPartita("segni", 13);
+    return { mazzo: mazzo, simboli: simboli };
+  }
+
+  function disegnaFigura(p) {
+    const fig = document.getElementById("tutFigura");
+    fig.innerHTML = "";
+    const { mazzo, simboli } = mazzoTutorial();
+    const a = mazzo[0], b = mazzo[5];
+    const g = a.simboli.find(s => b.simboli.includes(s));
+
+    function carta(c, alTocco, etichetta) {
+      const posto = document.createElement("div");
+      posto.className = "posto";
+      posto.innerHTML = etichetta ? '<div class="etichetta">' + etichetta + '</div>' : '';
+      const porta = document.createElement("div");
+      porta.className = "porta";
+      posto.appendChild(porta);
+      fig.appendChild(posto);
+      disegnaCarta(porta, c, simboli, alTocco);
+      return porta;
+    }
+
+    if (p.figura === "due" || p.figura === "prova") {
+      const prova = (p.figura === "prova");
+      carta(a, null, prova ? "Carta in mezzo" : "");
+      const porta = carta(b, prova ? (id, bottone) => {
+        if (provaFatta) return;
+        if (id === g) {
+          provaFatta = true;
+          bottone.classList.add("giusto");
+          const gem = fig.querySelector('.simbolo[data-simbolo="' + g + '"]');
+          if (gem) gem.classList.add("giusto");
+          suonoGiusto(simboli[g]);
+          document.getElementById("tutTesto").innerHTML = "<p><b>Esatto!</b> Era l'unico simbolo presente su tutte e due le carte. Ora sai giocare.</p>";
+        } else { bottone.classList.add("sbagliato"); suonoSbagliato();
+          setTimeout(() => bottone.classList.remove("sbagliato"), 800); }
+      } : null, prova ? "La tua carta" : "");
+      if (p.indica) {
+        fig.querySelectorAll('.simbolo[data-simbolo="' + g + '"]').forEach(e => e.classList.add("indicato"));
+      }
+      if (prova) provaFatta = false;
+    } else {
+      // il tavolo con due giocatori
+      carta(a, null, "Carta in mezzo");
+      carta(b, null, "La tua carta");
+      carta(mazzo[9], null, "L'altro giocatore");
+    }
+  }
+
+  document.getElementById("btnTutAvanti").addEventListener("click", () => {
+    if (passo === PASSI.length - 1) { mostra("schermataMenu"); passo = 0; return; }
+    passo++; mostraPasso();
+  });
+  document.getElementById("btnTutIndietro").addEventListener("click", () => { if (passo > 0) { passo--; mostraPasso(); } });
+  document.getElementById("btnTutEsci").addEventListener("click", () => { mostra("schermataMenu"); passo = 0; });
+
+  /* ================= pulsanti ================= */
+  document.getElementById("btnGioca").addEventListener("click", nuovaPartita);
+  document.getElementById("btnTutorial").addEventListener("click", () => { passo = 0; mostra("schermataTutorial"); mostraPasso(); });
+  document.getElementById("btnMenu").addEventListener("click", () => { fermaCrono(); stato = null; mostra("schermataMenu"); });
+  document.getElementById("btnAncora").addEventListener("click", nuovaPartita);
+  document.getElementById("btnFineMenu").addEventListener("click", () => mostra("schermataMenu"));
+
+  /* si ridisegna solo se cambia la larghezza: altrimenti sul telefono la
+     barra del browser che compare e scompare farebbe ridisegnare tutto */
+  let larghezza = window.innerWidth;
+  window.addEventListener("resize", () => {
+    if (window.innerWidth === larghezza) return;
+    larghezza = window.innerWidth;
+    if (stato && !stato.finita) { costruisciTavolo(); round(); }
+    if (document.getElementById("schermataTutorial").classList.contains("attiva")) mostraPasso();
+  });
+
+  aggiornaMenu();
+})();
+</script>
+<script src="adatta-schermo.js" data-schermate="#schermataMenu, #schermataGioco, #schermataTutorial, #schermataFine"></script>
+</body>
+</html>
