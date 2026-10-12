@@ -73,6 +73,15 @@ così il docente mostra il gesto alla LIM e i bambini lo ripetono sulla scheda.
   8–10 mm · 3ª circa 6 mm · 4ª–5ª circa 4 mm.
 - Nessun dato raccolto: le schede si scaricano e si stampano, senza registrazione.
 
+### Da ripensare: 1ª e 2ª sul metodo Goitre (ottobre 2026)
+Cristiano vuole incentrare le schede di 1ª e 2ª sul metodo di Roberto Goitre (*Cantar leggendo*): prima si canta, poi si legge.
+Manderà alcuni estratti del libro per costruire la progressione (le idee del metodo sì, esercizi e testi del libro no).
+- **Le prime schede: «linee e musica» (pregrafismo musicale).** Il segno nasce dal suono: si ascolta o si canta e intanto
+  si traccia la linea che lo rappresenta. Suono lungo = linea lunga, suono breve = punto o trattino, suono che sale o scende
+  = linea che sale o scende, suono che trema = linea ondulata, silenzio = spazio vuoto, forte o piano = segno spesso o sottile.
+  Le schede guidano il gesto (partenza, direzione, tratteggio) come preparazione alla scrittura musicale.
+- Le schede di 1ª e 2ª elencate qui sotto restano come bozza finché non arriva la nuova progressione.
+
 ### Classe 1ª – Il suono e i primi segni (prima della notazione)
 Obiettivi: suono e silenzio, contrasti (forte/piano, alto/basso, lungo/corto, veloce/lento), pulsazione,
 segni grafici liberi, preparazione della mano alla scrittura musicale.
