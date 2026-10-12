@@ -1143,6 +1143,32 @@ h1 {
     .overlay-card { max-height: calc((100vh - 32px) / var(--zoom, 1)); }
 }
 </style>
+<link rel="stylesheet" href="telefono.css?v=1">
+<style id="telefono-gioco">
+/* TELEFONO IN VERTICALE: ritocchi solo per questo gioco (le regole comuni sono in telefono.css) */
+@media (max-width: 620px) and (orientation: portrait) {
+.menu-screen .hero-badge { display: none; }
+    .menu-screen .subtitle { margin-bottom: 8px; }
+    /* menu: nelle schede, i due pulsanti accanto al titolo */
+    .mode-card { display: grid; grid-template-columns: 1fr auto; align-items: center; column-gap: 8px; padding: 9px 10px 9px 12px; }
+    .mode-card .mode-button-desc { grid-column: 1; font-size: 0.66rem; }
+    .mode-card .mode-sub { grid-column: 2; grid-row: 1 / span 2; margin: 0; flex-direction: column; gap: 4px; }
+    .sub-button { padding: 5px 10px; font-size: 0.74rem; }
+    .mode-help { margin-top: 6px; font-size: 0.68rem; line-height: 1.35; }
+    .home-option { padding: 7px 10px; }
+    .home-option strong { font-size: 0.8rem; }
+    .home-option small { font-size: 0.66rem; }
+    .home-option-next { margin-top: 6px; }
+    .sound-status { margin-top: 6px; padding: 5px 10px; font-size: 0.7rem; }
+    .credits-link { margin-top: 4px; font-size: 0.68rem; }
+    /* partita */
+    .listen-card { min-height: 0; padding: 10px; }
+    .listen-inner { gap: 6px; }
+    .play-button { width: 64px; height: 64px; font-size: 1.8rem; }
+    .answers { gap: 6px; }
+    .answer { padding-top: 12px; padding-bottom: 12px; }
+}
+</style>
 <!-- per i motori di ricerca e la condivisione -->
 <link rel="canonical" href="https://musicascuole.it/riconosci-lo-strumento.html">
 <meta property="og:type" content="website">
