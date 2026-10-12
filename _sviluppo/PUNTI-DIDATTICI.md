@@ -165,3 +165,70 @@ Schema di ogni voce: dove si trova · concetti · punti di forza · come usarlo 
 - Nel tutorial sui tagli i ripassi sono più corti (una salita e discesa e il cammino per grado congiunto):
   le note nuove sono 10 e il tutorial dura così quanto il primo.
 - Nessun microfono, nessun dato raccolto; le opzioni si ricordano solo sul dispositivo.
+
+---
+
+## Scarta la nota (gioco di carte)
+
+**Dove:** Giochi → Scarta la nota (`scarta-la-nota.html`). Carte da stampare: Schede →
+Scarta la nota — carte da stampare (`carte-scarta-la-nota.html`). Ottobre 2026.
+
+### Concetti
+- Lettura delle note sul pentagramma in **chiave di violino e di basso**, in quattro estensioni:
+  violino LA3→DO5 e LA4→DO6, basso DO2→MI3 e DO3→MI4 (tagli addizionali compresi).
+- **Nome della nota** come identità indipendente da ottava, chiave, colore e alterazione: due carte
+  si abbinano se hanno lo stesso nome, anche se una è in chiave di basso e l'altra di violino.
+- Altezza reale: ogni carta suona la propria nota, quindi nome scritto e suono restano collegati.
+- Modalità facoltative: **triadi** (maggiore, minore, diminuita, aumentata), **settime**
+  (maggiore, di dominante, minore, semidiminuita, diminuita) e **intervalli** (nome e qualità).
+- Tonalità: 18 armature, maggiori e minori, con scelta fra minore naturale e armonica.
+
+### Punti di forza
+- **Si legge per giocare, non per esercizio:** il riconoscimento della nota serve a decidere la mossa.
+  La motivazione è il gioco, la lettura è il mezzo.
+- **La domanda dopo ogni carta** («Che nota hai giocato?») obbliga a *nominare* ciò che si è letto:
+  non basta accoppiare le figure a occhio. Sbagliare costa (si pesca e si salta il turno), quindi
+  conviene leggere davvero.
+- **Violino e basso insieme nello stesso mazzo:** è il punto più utile didatticamente. Costringe a
+  tenere attive due chiavi contemporaneamente, cosa che nei normali esercizi non succede mai.
+- **Mazzo bilanciato:** il numero di copie è calibrato perché ogni nome di nota esca esattamente lo
+  stesso numero di volte (12 su 116 carte), in tutte le modalità di chiave. Senza questa correzione
+  DO e SI uscivano quasi il doppio di FA e SOL e certe note si esercitavano poco.
+- **Triadi e settime come colpo grosso:** calare più carte insieme è vantaggioso, quindi conviene
+  cercare gli accordi; l'accordo va però riconosciuto e nominato, altrimenti le carte tornano in mano.
+- **Tre avversari con un carattere** (Mozart, Bach, Beethoven): la classe li riconosce e fa il tifo.
+- **Statistiche cumulative** (corrette, errori, partite vinte e perse) che non si azzerano fra una
+  partita e l'altra: danno il senso del miglioramento.
+- Nessun microfono, nessuna fotocamera, nessun dato raccolto. Funziona anche senza connessione.
+
+### Le carte da stampare
+- Stessa logica del gioco sullo schermo (stesse estensioni, stesso disegno del pentagramma): il
+  mazzo di carta e quello digitale si corrispondono, quindi si può passare dall'uno all'altro.
+- **Misura standard delle carte da gioco (63 × 88 mm)**, 9 per foglio A4: si maneggiano come carte
+  vere e stanno nelle bustine protettive.
+- Tre scelte, che cambiano il livello di difficoltà:
+  - **chiave**: violino e basso insieme (come nel gioco), solo violino, solo basso;
+  - **nome della nota**: non scritto (si legge il pentagramma), scritto in nero, scritto a colori;
+  - **quante carte**: mazzo completo da gioco (116) oppure una carta per tipo (54).
+- Il **nome scritto a colori** usa i colori ufficiali delle note del sito: fa da ponte con gli altri
+  giochi e schemi, e permette di usare le carte anche con chi non legge ancora il pentagramma
+  (si abbina per colore della scritta, poi si toglie l'aiuto passando al mazzo senza nomi).
+- La versione **una per tipo** non serve per giocare ma come **cartellone o mazzo di flashcard**:
+  54 carte, una per ogni nota e per ogni carta speciale.
+- Il PDF viene preparato **nel browser al momento**: così resta sempre uguale al gioco e si possono
+  avere tutte le combinazioni senza tenere decine di file pronti.
+
+### Come usarlo in classe
+- Alla LIM come gioco collettivo (la classe divisa in squadre contro i tre compositori).
+- Con le carte stampate: a gruppi di quattro, mazzo con i nomi scritti per iniziare, poi senza.
+- Le carte con i nomi a colori servono anche fuori dal gioco: ordinare le note dalla più grave alla
+  più acuta, costruire una triade, trovare tutte le carte con lo stesso nome in chiavi diverse.
+
+### Scelte fatte (e perché)
+- Le alterazioni sono scritte **sulla singola nota**, non in armatura: in un gioco di carte non c'è
+  un «prima» della battuta, quindi l'armatura non si potrebbe leggere.
+- Rispondere male lascia comunque la carta giocata (nel gioco singolo) ma fa pescare e perdere il
+  turno: la partita non si blocca, l'errore però pesa.
+- Con triadi e settime le carte tornano invece in mano: altrimenti sbagliare apposta converrebbe
+  (ci si libererebbe di tre carte al prezzo di una pescata).
+- Niente dorsi da stampare: su cartoncino opaco non servono, e il doppio lato complica la stampa.
