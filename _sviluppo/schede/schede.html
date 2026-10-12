@@ -1,0 +1,29 @@
+<!doctype html>
+<html lang="it">
+<head>
+<meta charset="utf-8">
+<title>Schede per la primaria — musicascuole.it</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="stylesheet" href="../../fonts/caratteri.css">
+<link rel="stylesheet" href="schede.css">
+<script src="../../vexflow.js"></script>
+<script src="../../motore-schemi.js"></script>
+<script src="motore.js"></script>
+<script src="modelli.js"></script>
+<script src="classe1.js"></script>
+<script src="classe2.js"></script>
+<script src="classe3.js"></script>
+<script src="classe4.js"></script>
+<script src="classe5.js"></script>
+</head>
+<body>
+<!--
+  Uso: schede.html?classe=2&modo=col   (modo: col = a colori, bn = bianco e nero)
+       &sol=1      solo le soluzioni
+       &solo=2G-09 una sola scheda (per le prove)
+  I PDF si generano con: python3 _sviluppo/schede/genera_pdf.py
+-->
+<div id="volume"></div>
+<script>Schede.avvia();</script>
+</body>
+</html>
