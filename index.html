@@ -474,6 +474,7 @@
       <line x1="0" y1="24.5" x2="300" y2="24.5"></line>
       <line x1="0" y1="31" x2="300" y2="31"></line>
       <path class="clef" transform="translate(-6.75 -34.0) scale(0.65)" d="M30.191 73.208C30.135 72.731,30.191 72.703,30.444 72.45C34.824 68.378,38.138 63.24,38.138 57.034C38.138 53.524,37.155 50.042,35.498 47.627C34.881 46.729,33.842 45.606,33.392 45.606C32.831 45.606,31.567 46.644,30.781 47.543C27.776 50.856,26.794 55.911,26.794 60.123C26.794 62.454,27.102 65.093,27.383 66.75C27.468 67.227,27.496 67.311,27.018 67.733C21.178 72.534,15 78.319,15 86.49C15 93.51,19.802 100.193,29.714 100.193C30.641 100.193,31.708 100.109,32.522 99.94C32.943 99.856,33.027 99.828,33.112 100.305C33.589 103.029,34.207 106.539,34.207 108.449C34.207 114.43,30.163 115.16,27.776 115.16C25.586 115.16,24.547 114.514,24.547 113.98C24.547 113.7,24.912 113.587,25.839 113.278C27.102 112.913,28.535 111.846,28.535 109.488C28.535 107.269,27.131 105.36,24.66 105.36C21.964 105.36,20.335 107.522,20.335 110.021C20.335 112.632,21.908 116.62,28.029 116.62C30.725 116.62,35.976 115.384,35.976 108.533C35.976 106.202,35.246 102.383,34.824 99.856C34.74 99.379,34.768 99.435,35.33 99.182C39.43 97.554,42.125 94.128,42.125 89.551C42.125 84.384,38.334 79.807,32.382 79.807C31.343 79.807,31.343 79.807,31.202 79.077M34.01 51.867C35.33 51.867,36.425 52.962,36.425 55.181C36.425 59.674,32.578 63.324,29.405 66.104C29.124 66.357,28.956 66.3,28.872 65.767C28.703 64.728,28.619 63.352,28.619 62.06C28.619 55.742,31.539 51.867,34.01 51.867M29.602 79.414C29.714 80.172,29.714 80.144,28.984 80.369C25.446 81.576,23.115 84.777,23.115 88.231C23.115 91.853,25.025 94.437,27.776 95.391C28.113 95.504,28.591 95.616,28.872 95.616C29.18 95.616,29.349 95.419,29.349 95.167C29.349 94.886,29.04 94.774,28.759 94.661C27.046 93.931,25.839 92.19,25.839 90.337C25.839 88.006,27.411 86.293,29.882 85.591C30.528 85.423,30.612 85.479,30.697 85.928L32.718 97.975C32.803 98.424,32.747 98.424,32.157 98.536C31.511 98.649,30.697 98.733,29.882 98.733C22.806 98.733,18.229 94.802,18.229 89.186C18.229 86.799,18.65 83.598,21.992 79.807C24.435 77.111,26.288 75.595,28.17 74.079C28.591 73.742,28.675 73.798,28.759 74.219M32.382 85.844C32.297 85.339,32.353 85.226,32.831 85.283C36.116 85.563,38.812 88.315,38.812 91.853C38.812 94.409,37.267 96.458,35.021 97.61C34.544 97.834,34.459 97.834,34.375 97.357"></path>
+      <rect id="secretClef" x="0" y="-6" width="24" height="50" fill="transparent"></rect>
       <circle class="melody-note" cx="0" cy="0" r="3"></circle>
     </svg>
   </div>
@@ -734,17 +735,31 @@
     }
   ];
 
-  /* Accesso nascosto: 6 clic ravvicinati sulla parola "la" del titolo */
+  /* Accesso nascosto: prima 3 clic ravvicinati sulla chiave di violino del rigo,
+     poi (entro 10 secondi) 6 clic ravvicinati sulla parola "la" del titolo */
   (function () {
-    const target = document.getElementById('secretLa');
-    const NEEDED = 6, WINDOW_MS = 2500;
-    let clicks = 0, timer = null;
-    target.addEventListener('click', () => {
-      clicks++;
-      clearTimeout(timer);
-      timer = setTimeout(() => { clicks = 0; }, WINDOW_MS);
-      if (clicks >= NEEDED) {
-        clicks = 0;
+    const chiave = document.getElementById('secretClef');
+    const la = document.getElementById('secretLa');
+    const CLIC_CHIAVE = 3, CLIC_LA = 6, RAVVICINATI_MS = 2500, PRONTO_MS = 10000;
+    let nChiave = 0, nLa = 0, tChiave = null, tLa = null, pronto = false, tPronto = null;
+    chiave.addEventListener('click', () => {
+      nLa = 0; pronto = false;
+      nChiave++;
+      clearTimeout(tChiave);
+      tChiave = setTimeout(() => { nChiave = 0; }, RAVVICINATI_MS);
+      if (nChiave >= CLIC_CHIAVE) {
+        nChiave = 0; pronto = true;
+        clearTimeout(tPronto);
+        tPronto = setTimeout(() => { pronto = false; nLa = 0; }, PRONTO_MS);
+      }
+    });
+    la.addEventListener('click', () => {
+      if (!pronto) { nLa = 0; return; }
+      nLa++;
+      clearTimeout(tLa);
+      tLa = setTimeout(() => { nLa = 0; }, RAVVICINATI_MS);
+      if (nLa >= CLIC_LA) {
+        nLa = 0; pronto = false;
         window.location.href = 'programma/programma-m1cekg1q.html';
       }
     });
