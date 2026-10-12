@@ -266,8 +266,8 @@ Motore del mazzo e dei simboli: `uno-in-comune.js`.
   visibili durante la partita: contano sia i simboli toccati sia le risposte al quiz. Con
   più giocatori sono della classe nel suo insieme, utili al docente per capire dove si
   sbaglia.
-- **Il simbolo cambia molto di misura** da una carta all'altra: si impara a riconoscere
-  la *forma*, non una figurina memorizzata in una grandezza.
+- **Il simbolo cambia molto di misura** da una carta all'altra, ed è un po' inclinato: si
+  impara a riconoscere la *forma*, non una figurina memorizzata in una grandezza.
 - **Si gioca in due, tre o quattro sullo stesso schermo**, alla LIM: è uno dei pochi
   giochi del sito davvero competitivi in tempo reale, e funziona come riempitivo di
   cinque minuti a fine ora.
@@ -311,9 +311,11 @@ e matematica (una carta per ogni retta del piano, un simbolo per ogni punto).
   arriverebbe a estensioni che in seconda media non si leggono ancora.
 - I simboli piccolissimi (il punto dello staccato) restano piccoli come nella scrittura
   vera, ma l'area da toccare è grande: la grafica è corretta e il tocco resta comodo.
-- **I simboli non sono girati**, a differenza del gioco commerciale: una semiminima
-  inclinata sembra scritta male (il gambo esce storto) e i ragazzi memorizzerebbero una
-  forma sbagliata. La difficoltà la dà la variazione di grandezza, che non falsa niente.
+- **I simboli sono inclinati al massimo di 14 gradi**, non girati a caso come nel gioco
+  commerciale: lì sono gufi e fiocchi di neve, dove l'orientamento non significa niente,
+  mentre una semiminima molto inclinata sembra scritta male (il gambo esce storto) e in
+  classe si memorizzerebbe una forma sbagliata. Entro quei gradi si vede il movimento e la
+  figura resta leggibile come sullo spartito; il resto della difficoltà lo dà la grandezza.
 - **Le figure musicali le disegna VexFlow**, non il nostro codice: gambi (sempre a destra
   della testa, lunghi tre spazi e mezzo), code e travature seguono così le regole
   tipografiche vere invece di essere assemblate a occhio.

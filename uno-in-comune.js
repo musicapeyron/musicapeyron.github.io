@@ -366,6 +366,7 @@
     8: [{ n: 3, r: 0.33 }, { n: 5, r: 0.70 }]
   };
   const MISURA = { 4: 0.37, 6: 0.31, 8: 0.26 };
+  const ROTAZIONE_MAX = 14;   // gradi: oltre, i simboli musicali sembrano scritti male
 
   function disposizione(idCarta, quanti) {
     const rnd = caso(idCarta * 7919 + quanti);
@@ -379,12 +380,12 @@
         posti.push({
           x: 0.5 + Math.cos(ang) * r / 2,
           y: 0.5 + Math.sin(ang) * r / 2,
-          // Nel Dobble commerciale i simboli sono anche girati. Qui no: una
-          // semiminima inclinata sembra scritta male (il gambo esce storto) e
-          // i ragazzi memorizzerebbero una forma sbagliata. La difficoltà la
-          // dà la variazione di grandezza, che invece non falsa niente.
+          // I simboli sono girati, ma di poco: entro 14 gradi si vede il
+          // movimento e la figura resta leggibile come sullo spartito. Più in
+          // là una semiminima sembra scritta male (il gambo esce storto) e in
+          // classe si memorizzerebbe una forma sbagliata.
           scala: 0.76 + rnd() * 0.46,
-          rotazione: 0
+          rotazione: (rnd() - 0.5) * (ROTAZIONE_MAX * 2)
         });
       }
     });
