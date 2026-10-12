@@ -64,5 +64,5 @@
     .toolbar { margin-top: 6px; gap: 10px; }
     .listen-controls { margin-bottom: 8px; gap: 6px; }
     .listen-button { padding: 8px 14px; font-size: 0.8rem; }
-    .play-button { width: 52px; height: 52px; font-size: 1.4rem; margin: 2px auto 8px; }
+    /* .play-button NON è qui: in alcuni giochi è un cerchio, in altri un pulsante con scritta */
 }

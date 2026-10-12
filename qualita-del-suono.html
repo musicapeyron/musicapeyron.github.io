@@ -536,6 +536,33 @@ input[type="range"]::-moz-range-thumb {
     #screen-doppler .scope-card canvas { height: 230px; }
 }
 </style>
+<link rel="stylesheet" href="telefono.css?v=1">
+<style id="telefono-gioco">
+/* TELEFONO IN VERTICALE: ritocchi solo per questo gioco (le regole comuni sono in telefono.css) */
+@media (max-width: 620px) and (orientation: portrait) {
+.hero-badge { display: none; }
+    .app h1 { font-size: 1.25rem; margin: 2px 40px 4px; }
+    .app .subtitle { font-size: 0.8rem; line-height: 1.45; margin: 0 0 8px; }
+    /* menu: due colonne, solo icona e titolo */
+    .mode-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 7px; margin-top: 10px; }
+    .mode-divider { grid-column: 1 / -1; margin: 2px 0; }
+    .mode-button { flex-direction: column; gap: 3px; padding: 10px 6px; text-align: center; border-radius: 13px; }
+    .mode-icon { font-size: 1.4rem; width: auto; }
+    .mode-text { align-items: center; }
+    .mode-button-title { font-size: 0.86rem; line-height: 1.15; }
+    .mode-button-desc { display: none; }
+    /* lezioni: il pulsante "← Home" è già in alto (↩), il riquadro è più compatto */
+    .back-button { display: none; }
+    .panel { padding: 10px 10px 12px; gap: 8px; border-radius: 14px; }
+    .control-row { margin-bottom: 6px; }
+    .scope-card { padding: 6px; }
+    .scope-card canvas { height: 130px; }
+    .footnote { margin-top: 8px; font-size: 0.72rem; line-height: 1.45; }
+    /* nelle lezioni il titolo scende sotto i pulsanti in alto (↩ e volume) */
+    .lesson-screen h1 { margin-top: 40px; }
+    .play-button { padding: 10px 22px; font-size: 0.95rem; }
+}
+</style>
 <!-- per i motori di ricerca e la condivisione -->
 <link rel="canonical" href="https://musicascuole.it/qualita-del-suono.html">
 <meta property="og:type" content="website">
