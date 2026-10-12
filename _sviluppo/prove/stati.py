@@ -1,7 +1,7 @@
 """Scatta una schermata per ogni stato di un gioco, a tre misure di finestra, e dice se qualcosa scorre.
 
 Uso (dalla cartella del sito, con il server acceso: python3 -m http.server 8765 --bind 127.0.0.1):
-    python3 _sviluppo/prove/stati.py <pagina.html> <cartella_uscita> <prefisso> <azioni.json>
+    python3 _sviluppo/prove/stati.py <pagina.html> <cartella_uscita> <prefisso> <azioni.json> [telefono]
 
 azioni.json = lista di [nome_stato, [passi...]]; un passo è uno di:
     ["click", "#selettore"]   ["wait", millisecondi]   ["js", "codice"]   ["key", "Enter"]
@@ -11,13 +11,17 @@ Per ogni stato stampa: giu/lato = px di scorrimento della pagina (devono essere 
 zoom = ingrandimento scelto da adatta-schermo.js, interni = riquadri interni che scorrono,
 fuori = elementi fissi che escono dallo schermo, e gli eventuali errori JavaScript.
 Misure: tuo 1920x915 (LIM/schermo grande), pc 1366x657, portatile 1536x730.
+Con "telefono" in fondo: tel360 360x640 (Android piccolo), tel390 390x664 (iPhone con le barre del
+browser), tel412 412x780 (Android grande), come telefoni veri (tocco, schermo ad alta densità).
 """
 import sys, asyncio, json
 from playwright.async_api import async_playwright
 
 pagina, out, pref, af = sys.argv[1:5]
+TELEFONO = len(sys.argv) > 5 and sys.argv[5] == "telefono"
 AZ = json.load(open(af, encoding="utf-8"))
-MISURE = [(1920, 915, "tuo"), (1366, 657, "pc"), (1536, 730, "portatile")]
+MISURE = [(360, 640, "tel360"), (390, 664, "tel390"), (412, 780, "tel412")] if TELEFONO else \
+         [(1920, 915, "tuo"), (1366, 657, "pc"), (1536, 730, "portatile")]
 CONTROLLO = """(()=>{const d=document.documentElement;let inn=[];
 for(const e of document.querySelectorAll('*')){const cs=getComputedStyle(e);
  if(/(auto|scroll)/.test(cs.overflowY+cs.overflowX)&&e.offsetParent!==null&&(e.scrollHeight>e.clientHeight+2||e.scrollWidth>e.clientWidth+2))
@@ -33,7 +37,10 @@ async def main():
     async with async_playwright() as p:
         b = await p.chromium.launch()
         for w, h, t in MISURE:
-            pg = await b.new_page(viewport={"width": w, "height": h})
+            if TELEFONO:
+                pg = await b.new_page(viewport={"width": w, "height": h}, is_mobile=True, has_touch=True, device_scale_factor=2)
+            else:
+                pg = await b.new_page(viewport={"width": w, "height": h})
             err = []
             pg.on("pageerror", lambda e: err.append(str(e)[:90]))
             # stesso "caso" a ogni prova, così le schermate prima/dopo sono confrontabili
