@@ -1,5 +1,5 @@
 /* =========================================================
-   info-sito.js — la riga «musicascuole.it — Crediti e licenza · Privacy» in cima a ogni pagina.
+   info-sito.js — la riga «musicascuole.it — Il progetto, crediti e licenza · Privacy» in cima a ogni pagina.
    Si carica subito dopo <body>:  <script src="info-sito.js"></script>
    La riga sta sopra a tutto (in alto, al centro) e la pagina scende di quanto serve,
    così non copre titoli o pulsanti. Nella modalità schermo intero (body.lim) sparisce.
@@ -15,7 +15,9 @@
     "border-radius:0 0 12px 12px;padding:3px 12px 4px;}" +
     ".info-sito a{color:#7DD3FC;text-decoration:none;}.info-sito a:hover{text-decoration:underline;}" +
     "body.lim .info-sito{display:none;}" +
-    "@media (max-width:420px){.info-sito{font-size:11px;}.info-sito span{padding:3px 9px 4px;}}" +
+    ".info-nome{font-weight:inherit;}" +
+    /* sul telefono la riga resta corta e non tocca la casetta in alto a sinistra */
+    "@media (max-width:420px){.info-sito{font-size:11px;}.info-sito span{padding:3px 9px 4px;}.info-nome{display:none;}}" +
     "@media print{.info-sito{display:none;}}";
   document.head.appendChild(stile);
 
@@ -23,7 +25,7 @@
   riga.className = "info-sito";
   riga.setAttribute("aria-label", "Informazioni sul sito");
   var cartella = /\/programma\//.test(location.pathname) ? "../" : "";
-  riga.innerHTML = '<span>musicascuole.it — <a href="' + cartella + 'crediti.html">Crediti e licenza</a> · <a href="' + cartella + 'privacy.html">Privacy</a></span>';
+  riga.innerHTML = '<span><b class="info-nome">musicascuole.it — </b><a href="' + cartella + 'crediti.html">Il progetto, crediti e licenza</a> · <a href="' + cartella + 'privacy.html">Privacy</a></span>';
 
   function aggiungi() {
     var b = document.body;
