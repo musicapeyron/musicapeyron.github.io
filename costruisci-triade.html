@@ -275,6 +275,34 @@ h1 { margin: 0; font-family: "Sora", "Inter", Arial, sans-serif; font-size: 2rem
     .overlay-card { max-height: calc((100vh - 40px) / var(--zoom, 1)); overflow-y: auto; }
 }
 </style>
+<link rel="stylesheet" href="telefono.css?v=1">
+<style id="telefono-gioco">
+/* TELEFONO IN VERTICALE: ritocchi solo per questo gioco (le regole comuni sono in telefono.css) */
+@media (max-width: 620px) and (orientation: portrait) {
+.question-box { margin: 0 auto 6px; padding: 5px 10px; border-radius: 12px; }
+    .question-label { font-size: 0.56rem; margin-bottom: 0; }
+    .question-text { font-size: 1rem; }
+    .question-inversion { font-size: 0.74rem; }
+    .staff-wrap { margin-bottom: 6px; padding: 4px; min-height: 0; overflow: hidden;
+        height: clamp(120px, calc(100vh - 450px), 260px); height: clamp(120px, calc(100dvh - 450px), 260px); }
+    #staffContainer { height: 100%; display: flex; justify-content: center; }
+    #staffContainer svg { height: 100% !important; width: auto !important; max-width: 100%; }
+    .note-tabs { margin: 0 auto 4px; gap: 5px; }
+    .note-tab { padding: 7px 14px; font-size: 0.8rem; }
+    .staff-hint { display: none; }   /* la spiegazione è nel tutorial e nel titolo della domanda */
+    /* frecce e alterazioni sulla stessa riga */
+    .build-controls, .accidental-controls { display: inline-flex; vertical-align: middle; margin: 0 2px 6px; gap: 4px; }
+    .arrow-button { width: 40px; height: 40px; font-size: 1.05rem; }
+    .accidental-button { padding: 8px 8px; font-size: 0.74rem; }
+    .quality-guess-row { margin: 0 auto 6px; gap: 4px; }
+    .quality-guess-btn { padding: 8px 8px; font-size: 0.76rem; }
+    .game-buttons .cancel-button, .game-buttons .submit-button { padding: 8px 14px; font-size: 0.8rem; margin: 0; display: inline-block; }
+    .menu-screen .hero-badge { display: none; }
+    /* Annulla, Invia e Termina sulla stessa riga */
+    .game-buttons { display: inline-flex; vertical-align: middle; margin: 2px 2px 0 !important; }
+    .game-buttons .menu-button { padding: 8px 12px; font-size: 0.78rem; }
+}
+</style>
 <!-- per i motori di ricerca e la condivisione -->
 <link rel="canonical" href="https://musicascuole.it/costruisci-triade.html">
 <meta property="og:type" content="website">
@@ -360,7 +388,7 @@ h1 { margin: 0; font-family: "Sora", "Inter", Arial, sans-serif; font-size: 2rem
     </div>
 
     <div class="staff-wrap">
-        <div id="staffContainer"></div>
+        <div id="staffContainer" data-ritaglia-tel="20 190"></div>
     </div>
     </div>
 

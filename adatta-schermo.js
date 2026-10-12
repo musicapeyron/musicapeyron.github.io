@@ -50,7 +50,7 @@
     if (h <= H + 1) return;
     var z = Math.max(MIN_TEL, H / h);
     b.style.zoom = z;
-    while (z > MIN_TEL && d.scrollHeight > window.innerHeight + 1) { z -= 0.01; b.style.zoom = z; }
+    while (z > MIN_TEL && d.scrollHeight > window.innerHeight) { z -= 0.01; b.style.zoom = z; }
     if (d.scrollHeight > window.innerHeight + 1 && z <= MIN_TEL) { b.style.zoom = ""; return; }   // troppo alta: si scorre a grandezza normale
     d.style.setProperty("--zoom", z);
   }
