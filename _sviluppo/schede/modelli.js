@@ -335,3 +335,39 @@
 
   Object.assign(M, { tastiera, dado, figuraSola });
 })(window);
+
+/* ---- brani del sito (motore-schemi.js) e carte del flauto ---- */
+(function (global) {
+  "use strict";
+  const S = global.Schede, M = global.Modelli, { el, COLORI, NOMI } = S;
+  const MS = () => global.MotoreSchemi;
+
+  /* un brano della raccolta "Brani propedeutici" disegnato con il motore del sito */
+  async function brano(cont, numero, opz) {
+    opz = Object.assign({ interna: 560, colori: false, nomi: false, titolo: true, perRiga: 4, schema: false }, opz);
+    const nn = String(numero).padStart(2, "0");
+    const testo = await (await fetch(`../../media/brani-propedeutici/brano${nn}.musicxml`)).text();
+    const b = MS().leggiMusicXML(testo);
+    if (opz.battute) b.battute = b.battute.slice(0, opz.battute);
+    if (opz.titolo) cont.appendChild(el("div", { style: { fontSize: "17pt", fontWeight: 600, textAlign: "center", color: "var(--inch)" } }, b.titoloBreve || b.titolo));
+    const d = el("div", { class: "brano", style: { width: "100%" } }); cont.appendChild(d);
+    MS().disegnaBrano(d, b, { strumento: "flauto", colori: opz.colori && S.col(), nomi: opz.nomi, larghezza: opz.interna, perRiga: opz.perRiga, titolo: false, testi: false, schema: opz.schema });
+    const sc = d.querySelector(".schema-brano svg"); if (sc) sc.style.maxWidth = (opz.larghSchema || 60) + "mm";
+    return b;
+  }
+  /* carta di una nota con la diteggiatura del flauto (tedesca), come nelle carte del sito */
+  function cartaFlauto(cont, k, opz) {
+    opz = opz || {};
+    const n = MS().analizza(k);
+    const c = el("div", { class: "riquadro", style: { display: "flex", flexDirection: "column", alignItems: "center", gap: "1mm", padding: "2mm",
+      borderColor: S.col() ? COLORI[n.lettera] : "#888", borderWidth: ".7mm" } });
+    const rigo = el("div", { style: { width: (opz.larg || 40) + "mm" } }); c.appendChild(rigo);
+    MS().rigoNota(rigo, n);
+    const nome = NOMI[n.lettera] + (n.alt === "#" ? "♯" : n.alt === "b" ? "♭" : "") + (opz.acuto ? " acuto" : "");
+    c.appendChild(el("div", { style: { fontSize: "20pt", fontWeight: 600, color: S.col() ? S.scuro(COLORI[n.lettera], n.lettera === "e" ? 0.75 : 0.95) : "#000" } }, nome));
+    const sch = el("div", { style: { width: (opz.schema || 15) + "mm" }, html: MS().schemaNota("flauto", n) }); c.appendChild(sch);
+    if (!S.col()) sch.querySelectorAll("[fill]").forEach(e => { const f = e.getAttribute("fill"); if (f && f !== "none" && f !== "#fff" && f !== "#ffffff" && f !== "white") e.setAttribute("fill", "#222"); });
+    cont.appendChild(c); return c;
+  }
+  Object.assign(M, { brano, cartaFlauto });
+})(window);

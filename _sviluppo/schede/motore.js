@@ -259,6 +259,7 @@
     return { d, punti, pausa, key, n, durata: d + (pausa ? "r" : "") };
   }
   const BATTITI = { w: 4, h: 2, q: 1, "8": 0.5, "16": 0.25 };
+  const ATTESA = [];
   function valore(t) { let v = BATTITI[t.d]; let agg = v; for (let i = 0; i < t.punti; i++) { agg /= 2; v += agg; } return v; }
 
   function battute(cont, o) {
@@ -277,6 +278,7 @@
       const w = resto + (i === 0 ? testa0 : 0);
       const st = new VF.Stave(x, o.sopra * 10, w, { space_above_staff_ln: 0, space_below_staff_ln: 0 });
       if (i === 0 && o.chiave && !o.unaLinea) st.addClef("treble");
+      if (i === 0 && o.armatura) st.addKeySignature(o.armatura);
       if (i === 0 && o.tempo) st.addTimeSignature(o.tempo);
       st.setBegBarType(VF.Barline.type.NONE);
       if (i === 0 && o.ritornello) st.setBegBarType(VF.Barline.type.REPEAT_BEGIN);
@@ -292,7 +294,7 @@
         const opz = { keys: [t.key], duration: t.durata, clef: "treble", dots: t.punti };
         if (o.unaLinea || o.gambiSu) opz.stem_direction = 1; else opz.auto_stem = true;
         const sn = new VF.StaveNote(opz);
-        if (t.n && t.n.alt && t.n.alt !== "") sn.addModifier(new VF.Accidental(t.n.alt), 0);
+        if (t.n && t.n.alt && t.n.alt !== "" && !(o.armatura === "G" && t.n.l === "f" && t.n.alt === "#") && !(o.armatura === "F" && t.n.l === "b" && t.n.alt === "b")) sn.addModifier(new VF.Accidental(t.n.alt), 0);
         for (let k = 0; k < t.punti; k++) VF.Dot.buildAndAttach([sn], { all: true });
         if (o.colori && t.n && !t.pausa) sn.setKeyStyle(0, { fillStyle: COLORI[t.n.l], strokeStyle: scuro(COLORI[t.n.l], 0.55) });
         if (o.stile === "grigio") sn.setStyle({ fillStyle: "#b9bdc8", strokeStyle: "#b9bdc8" });
@@ -301,7 +303,7 @@
         return sn;
       });
       if (notes.length) {
-        const beams = VF.Beam.generateBeams(notes.filter(s => !s._tok.pausa), { stem_direction: o.unaLinea || o.gambiSu ? 1 : undefined, maintain_stem_directions: !!(o.unaLinea || o.gambiSu) });
+        const beams = VF.Beam.generateBeams(notes, { groups: [new VF.Fraction(2, 8)], beam_rests: false, stem_direction: o.unaLinea || o.gambiSu ? 1 : undefined, maintain_stem_directions: !!(o.unaLinea || o.gambiSu) });
         const voice = new VF.Voice({ num_beats: 4, beat_value: 4 }).setMode(VF.Voice.Mode.SOFT).addTickables(notes);
         const largNote = w - (st.getNoteStartX() - x) - 12;
         new VF.Formatter().joinVoices([voice]).format([voice], largNote);
@@ -309,7 +311,7 @@
         const tot = toks.reduce((q, t) => q + valore(t), 0) || 1;
         const battiti = o.battitiMisura || (o.tempo ? +o.tempo.split("/")[0] : Math.max(1, Math.round(tot)));
         if (o.proporzionale !== false) {
-          let t = 0;
+          let t = (i === 0 && o.anacrusi) ? battiti - tot : 0;
           notes.forEach(sn => { sn.getTickContext().setX(4 + (t / battiti) * (largNote - 6)); t += valore(sn._tok); });
         }
         voice.draw(ctx, st);
@@ -452,7 +454,7 @@
       s._pagina = stato.pagine + 1;
       const api = { altraPagina: (parte) => paginaScheda(s, parte), rnd: caso(s.codice), sol: stato.sol, col: col() };
       stato.corpi = [];
-      try { s.disegna(paginaScheda(s), api); }
+      try { await s.disegna(paginaScheda(s), api); }
       catch (e) { console.error("Errore nella scheda " + s.codice, e); }
       stato.corpi.forEach(c => adatta(c, s.codice));
     }

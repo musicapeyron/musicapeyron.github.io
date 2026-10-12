@@ -275,14 +275,14 @@
   function stanghetteRighe(corpo, a, tempo, righe, figure) {
     const b = +tempo.split("/")[0];
     for (let r = 0; r < righe; r++) {
-      const misure = Array.from({ length: 4 }, () => battuta(a.rnd, b, figure));
+      const misure = Array.from({ length: b === 4 ? 3 : 4 }, () => battuta(a.rnd, b, figure));
       const tot = misure.length * b;
       const riga = el("div", { class: "riga", style: { gap: "2mm" } }, el("div", { style: { fontSize: "14pt", fontWeight: 600, width: "6mm", color: "var(--inch)" } }, String(r + 1)));
       const box = el("div"); riga.appendChild(box); corpo.appendChild(riga);
       const out = S.battute(box, { larg: S.LARGHEZZA - mm(9), spazio: mm(5.2), unaLinea: true, chiave: false, tempo, misure: [misure.map(comeToken).join(" ")], battitiMisura: tot, sopra: 2.2, sotto: 0 });
       if (a.sol) {
         const m = out.misure[0];
-        for (let k = 1; k < 4; k++) {
+        for (let k = 1; k < misure.length; k++) {
           const x = m.x0 + (k * b / tot) * m.larg - 4;
           out.ctx.svg.appendChild(S.sv("line", { x1: x, x2: x, y1: out.yLinea - 12, y2: out.yLinea + 12, stroke: "#c00", "stroke-width": 1.4 }));
         }
@@ -355,7 +355,7 @@
   });
   sch({ codice: "3R-07", titolo: "Leggi e batti", consegna: "Leggi e batti tenendo il battito con il piede. Sulle pause apri le mani.", icona: "mani" }, (corpo, a) => {
     [["2/4", 2], ["3/4", 3], ["4/4", 4], ["4/4", 4], ["3/4", 3], ["2/4", 2]].forEach(([t, b], i) => {
-      const misure = Array.from({ length: b === 4 ? 3 : 4 }, () => comeToken(battuta(a.rnd, b, ["q", "q", "88", "88", "h", "r", "h.", "w"].filter(f => VAL[f] <= b))));
+      const misure = Array.from({ length: b === 4 ? 2 : b === 3 ? 3 : 4 }, () => comeToken(battuta(a.rnd, b, ["q", "q", "88", "88", "h", "r", "h.", "w"].filter(f => VAL[f] <= b))));
       const riga = el("div", { class: "riga", style: { gap: "2mm" } }, el("div", { style: { fontSize: "14pt", fontWeight: 600, width: "6mm", color: "var(--inch)" } }, String(i + 1)));
       const box = el("div"); riga.appendChild(box); corpo.appendChild(riga);
       S.battute(box, { larg: S.LARGHEZZA - mm(9), spazio: mm(4.4), unaLinea: true, chiave: false, tempo: t, misure, sopra: 2.2, sotto: 0, battitiMisura: b });
