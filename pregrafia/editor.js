@@ -428,6 +428,20 @@
     else u = (t - g.inizio) / g.durata;
     return MARGINE + (1 - 2 * MARGINE) * limita(u, 0, 1);
   }
+  function rangePagina(p) {
+    const g = p.guida, tp = L.tempiPagina(p);
+    if (g && tp) return [Math.min(g.inizio, tp[0]), Math.max(g.inizio + g.durata, tp[1])];
+    if (g) return [g.inizio, g.inizio + g.durata];
+    return tp && tp[1] < 1e8 ? tp : null;
+  }
+  function paginaSotto(x, v) {
+    for (let k = prog.pagine.length - 1; k >= 0; k--) {
+      const r = rangePagina(prog.pagine[k]); if (!r) continue;
+      const xa = xT(r[0], v), xb = Math.max(xa + 6, xT(r[1], v));
+      if (x >= xa - 2 && x <= xb + 2) return k;
+    }
+    return -1;
+  }
   function inizioPagina(p) { if (p.guida) return p.guida.inizio; const tp = L.tempiPagina(p); return tp ? tp[0] : Infinity; }
   function preparaPaginaGuidata(t, g) {
     const i = paginaGuidata(t); if (i >= 0) return i;
@@ -971,15 +985,15 @@
     sporcoOnda = false;
     const W = G.W, H = G.H, v = vistaTL(), c = octx;
     c.clearRect(0, 0, W, H); c.fillStyle = "#0a1022"; c.fillRect(0, 0, W, H);
-    const y0 = 15, y1 = H - 31, ym = (y0 + y1) / 2, hh = (y1 - y0) / 2;
+    const y0 = 18, y1 = H - 31, ym = (y0 + y1) / 2, hh = (y1 - y0) / 2;
     prog.pagine.forEach((p, k) => {
-      const g = p.guida, tp = L.tempiPagina(p);
-      const a = g ? g.inizio : tp && tp[0], b = g ? g.inizio + g.durata : tp && tp[1];
-      if (a == null) return;
-      const xa = xT(a, v), xb = Math.max(xa + 3, xT(b, v)); if (xb < 0 || xa > W) return;
-      c.fillStyle = k === ui.pagina ? "rgba(249,157,28,0.55)" : (k % 2 ? "rgba(94,80,161,0.55)" : "rgba(0,156,149,0.5)");
-      c.fillRect(xa, 1, xb - xa, 12);
-      if (xb - xa > 14) { c.fillStyle = "#fff"; c.font = "bold 10px Inter, sans-serif"; c.fillText(String(k + 1), xa + 3, 11); }
+      const r = rangePagina(p); if (!r) return;
+      const xa = xT(r[0], v), xb = Math.max(xa + 6, xT(r[1], v)); if (xb < 0 || xa > W) return;
+      const presa = tlDrag && tlDrag.tipo === "pagina" && tlDrag.pag === p;
+      c.fillStyle = presa ? "rgba(255,255,255,0.75)" : k === ui.pagina ? "rgba(249,157,28,0.7)" : (k % 2 ? "rgba(94,80,161,0.6)" : "rgba(0,156,149,0.55)");
+      c.fillRect(xa, 1, xb - xa, 15);
+      c.fillStyle = "rgba(255,255,255,0.35)"; c.fillRect(xa, 1, 2, 15);
+      if (xb - xa > 14) { c.fillStyle = presa ? "#1f2a5c" : "#fff"; c.font = "bold 11px Inter, sans-serif"; c.fillText(String(k + 1), xa + 5, 13); }
     });
     if (analisi) {
       const pk = analisi.picchi, ps = analisi.perSec, nb = pk.length / 2;
@@ -1015,7 +1029,7 @@
       c.fillStyle = "rgba(61,190,110,0.18)"; c.fillRect(xa, 0, xb - xa, H);
       c.fillStyle = "#3DBE6E"; c.fillRect(xa, 0, 2, H); c.fillRect(xb - 2, 0, 2, H);
     } else if (ui.giro) { const xa = xT(ui.giro[0], v), xb = xT(ui.giro[1], v); c.fillStyle = "rgba(255,255,255,0.06)"; c.fillRect(xa, 0, xb - xa, H); }
-    if (batti) { c.fillStyle = "#E21C48"; batti.colpi.forEach(b => { const x = xT(b, v); c.fillRect(x - 1, 15, 3, H - 46); }); }
+    if (batti) { c.fillStyle = "#E21C48"; batti.colpi.forEach(b => { const x = xT(b, v); c.fillRect(x - 1, 18, 3, H - 49); }); }
     const x = xT(t, v);
     c.fillStyle = "#FF4D6D"; c.fillRect(Math.round(x) - 1, 0, 2, H);
     c.beginPath(); c.moveTo(x - 6, 0); c.lineTo(x + 6, 0); c.lineTo(x, 8); c.closePath(); c.fill();
@@ -1363,6 +1377,15 @@
     const r = lt.getBoundingClientRect(), x = e.clientX - r.left, y = e.clientY - r.top, v = vistaTL(), t = tX(x, v);
     try { lt.setPointerCapture(e.pointerId); } catch (er) { /* niente */ }
     if (e.shiftKey) { tlDrag = { tipo: "giro", a: t }; ui.giro = [t, t]; $("giro").checked = true; richiedi(); return; }
+    if (y < 17) {
+      const k = paginaSotto(x, v);
+      if (k >= 0) {
+        const pag = prog.pagine[k], r = rangePagina(pag);
+        salvaStorico(); virtuale = null; vai(k);
+        tlDrag = { tipo: "pagina", pag, x0: x, a: r[0], orig: JSON.parse(JSON.stringify(pag)), mosso: false };
+        lt.style.cursor = "grabbing"; sporcoOnda = true; richiedi(); return;
+      }
+    }
     if (y >= G.H - 30) {
       const o = barre.slice().reverse().find(o => { const xa = xT(o.a, v), xb = Math.max(xa + 3, xT(o.b, v)), yy = G.H - 29 + o.c * 9; return x >= xa - 3 && x <= xb + 3 && y >= yy - 2 && y <= yy + 9; });
       if (o) {
@@ -1376,10 +1399,27 @@
     }
     tlDrag = { tipo: "cerca" }; vaiA(t, true);
   });
+  function cursoreTL(x, y, v) {
+    let c = "pointer";
+    if (y < 17 && paginaSotto(x, v) >= 0) c = "grab";
+    else if (y >= G.H - 30) {
+      const o = barre.find(o => { const xa = xT(o.a, v), xb = Math.max(xa + 3, xT(o.b, v)), yy = G.H - 29 + o.c * 9; return x >= xa - 3 && x <= xb + 3 && y >= yy - 2 && y <= yy + 9; });
+      if (o) { const xa = xT(o.a, v), xb = Math.max(xa + 3, xT(o.b, v)); c = xb - xa > 14 && (x < xa + 5 || x > xb - 5) ? "ew-resize" : "grab"; }
+    }
+    lt.style.cursor = c;
+  }
   lt.addEventListener("pointermove", e => {
-    if (!tlDrag) return;
     const r = lt.getBoundingClientRect(), x = e.clientX - r.left, v = vistaTL(), t = limita(tX(x, v), 0, durata());
+    if (!tlDrag) { cursoreTL(x, e.clientY - r.top, v); return; }
     if (tlDrag.tipo === "cerca") vaiA(t, true);
+    else if (tlDrag.tipo === "pagina") {
+      const d = tlDrag; let dt = (x - d.x0) / G.W * v.span;
+      if (ui.calamita && listaBattiti()) dt = battitoVicino(d.a + dt) - d.a;
+      dt = Math.max(-d.a, dt);
+      d.pag.tratti.forEach((tr, i) => tr.punti.forEach((q, j) => { const o = d.orig.tratti[i].punti[j][2]; q[2] = o == null ? null : r3(o + dt); }));
+      if (d.pag.guida) d.pag.guida.inizio = r3(d.orig.guida.inizio + dt);
+      d.mosso = Math.abs(dt) > 0.001; d.dt = dt; sporcoOnda = true; richiedi();
+    }
     else if (tlDrag.tipo === "giro") { ui.giro = [Math.min(tlDrag.a, t), Math.max(tlDrag.a, t)]; richiedi(); }
     else {
       let dt = (x - tlDrag.x0) / G.W * v.span;
@@ -1396,6 +1436,16 @@
     if (tlDrag.tipo === "giro" && ui.giro && ui.giro[1] - ui.giro[0] < 0.3) { ui.giro = null; $("giro").checked = false; }
     if (tlDrag.tipo === "giro" && ui.giro) avviso("Il pezzo segnato si ripete. Togli «Ripeti il pezzo» per smettere.");
     if (tlDrag.tr) { if (tlDrag.mosso) modificato(); else { storico.pop(); aggiornaAnnulla(); } }
+    if (tlDrag.tipo === "pagina") {
+      const d = tlDrag; lt.style.cursor = "grab";
+      if (!d.mosso) { storico.pop(); aggiornaAnnulla(); }
+      else {
+        prog.pagine.sort((p, q) => inizioPagina(p) - inizioPagina(q));
+        ui.pagina = prog.pagine.indexOf(d.pag); modificato(); aggiornaPagine();
+        const r = rangePagina(d.pag), altra = prog.pagine.find(p => { if (p === d.pag) return false; const q = rangePagina(p); return q && q[0] < r[1] - 0.01 && q[1] > r[0] + 0.01; });
+        avviso(altra ? `Pagina spostata, ma si sovrappone alla pagina ${prog.pagine.indexOf(altra) + 1}.` : `Pagina spostata di ${d.dt > 0 ? "+" : ""}${d.dt.toFixed(2)} s.`);
+      }
+    }
     tlDrag = null; richiedi();
   };
   lt.addEventListener("pointerup", fineTL); lt.addEventListener("pointercancel", fineTL);
