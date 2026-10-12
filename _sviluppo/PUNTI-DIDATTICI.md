@@ -94,10 +94,13 @@ Schema di ogni voce: dove si trova · concetti · punti di forza · come usarlo 
 | Quinta | tutte perfette | Si-Fa diminuita (attraversa tutte e due le coppie); è Fa-Si rovesciata |
 | Sesta | una coppia → maggiore, due → minore | minori quelle che partono da **Mi, La, Si**; trucco in più: sesta e terza rovesciata hanno qualità opposte |
 | Settima | quasi tutte minori (attraversano due coppie) | maggiori solo **Do-Si e Fa-Mi** = le seconde minori Si-Do e Mi-Fa rovesciate |
+| Ottava | tutte perfette (attraversa sempre le due coppie, una volta) | nessuna; con le alterazioni basta confrontarle: nota sopra «più alta» → aumentata, «più bassa» → diminuita, uguali → perfetta |
 
 ### Punti di forza
 - **Tutorial a passi brevi**, spiegazione e subito esercizi, caso per caso: prima 15 domande sulle naturali,
   poi ogni alterazione (5 casi per quarte e quinte, 7 per le altre) con la sua spiegazione e 8 esercizi.
+- **Tutorial brevi dove basta**: l'unisono ha poche domande; l'ottava (senza eccezioni) ha 3 domande sulle naturali,
+  4 esercizi per caso e un **ripasso misto** finale con i casi in ordine sparso.
 - **Prima senza alterazioni, poi con**: ogni caso mostra due pentagrammi e una freccia (allarga/stringe/uguale).
 - **L'errore insegna**: ogni risposta sbagliata ha una spiegazione su misura; nelle naturali compare la tastiera
   con il percorso e le coppie attaccate in arancione. Pulsante «Rispiegalo» per tornare alla spiegazione.
