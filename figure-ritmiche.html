@@ -891,6 +891,103 @@ h1 {
     .game-main:has(.legend-card.show) .answer { min-height: 82px; }
     .game-main:has(.legend-card.show) .answer .vex-figure { height: 68px; }
 }
+
+/* =========================================================
+   TELEFONO IN VERTICALE: la partita sta tutta in una schermata.
+   Statistiche in una riga di caselline, titolo piccolo, livello compatto,
+   figura che segue l'altezza del telefono, risposte su più righe (prima
+   uscivano dallo schermo ai lati). Su PC e LIM non cambia nulla.
+   ========================================================= */
+@media (max-width: 620px) and (orientation: portrait) {
+    body { padding: 6px 10px 8px; min-height: 0; }
+    .site-home-button { top: 8px; left: 8px; width: 38px; height: 38px; font-size: 1rem; }
+    .game-layout { gap: 6px; }
+    /* statistiche: una riga di cinque caselline, accanto alla casetta */
+    .stats-col { flex: 0 0 auto; width: auto; flex-wrap: nowrap; gap: 4px; padding: 0 0 0 42px; }
+    .stats-col .stat { flex: 1 1 0; min-width: 0; flex-direction: column; justify-content: center; align-items: center; gap: 0; padding: 5px 2px 4px; border-radius: 9px; }
+    .stats-col .stat-label { font-size: 0.48rem; letter-spacing: 0.1px; }
+    .stats-col .stat-value { font-size: 0.95rem; line-height: 1.15; }
+    #gameContainer h1 { font-size: 1.2rem; margin: 2px 0 6px; }
+    #gameContainer .subtitle { display: none; }   /* la consegna è già nel tipo di livello */
+    .level-box { margin: 0 auto 8px; padding: 6px 12px 7px; border-radius: 12px; }
+    .level-header { margin-bottom: 2px; }
+    .level-title { font-size: 0.66rem; }
+    .level-number { font-size: 0.85rem; }
+    .level-type { font-size: 0.74rem; margin-bottom: 4px; }
+    .progress-bar { height: 8px; }
+    .level-footer { margin-top: 2px; }
+    .level-info, .level-timer { font-size: 0.64rem; }
+    /* figura: riquadro che segue l'altezza visibile del telefono */
+    .staff-row { margin-bottom: 8px; gap: 8px; flex-wrap: nowrap; }
+    .staff-card { flex: 1 1 auto; max-width: none; width: auto; min-height: 0; padding: 6px;
+        height: clamp(130px, calc(100vh - 480px), 260px); height: clamp(130px, calc(100dvh - 480px), 260px); }
+    .staff-card .vex-figure { height: 92%; width: 46%; }
+    .staff-card .figure-name-text { font-size: 1.4rem; }
+    /* con la tabella di riferimento aperta: figura stretta a sinistra, tabella a destra */
+    .staff-row:has(.legend-card.show) .staff-card { flex: 0 0 34%; }
+    .legend-card { flex: 1 1 auto; min-height: 0; padding: 5px 8px; }
+    .legend-title { font-size: 0.62rem; margin-bottom: 2px; }
+    .legend-table th, .legend-table td { padding: 0 2px; }
+    .legend-table .vex-figure { width: 26px; height: 30px; }
+    .legend-table .vex-figure svg { max-height: 30px; }
+    .legend-table td { height: 31px; }
+    /* con la tabella aperta le risposte sono un po' più basse */
+    .game-main:has(.legend-card.show) .answer { min-height: 52px; }
+    .game-main:has(.legend-card.show) .answer .vex-figure { height: 44px; }
+    .legend-table .figure-name-text { font-size: 0.62rem; }
+    /* risposte: tre per riga, non escono più dai lati */
+    .answers { flex-wrap: wrap; gap: 6px; margin-bottom: 4px; }
+    .answer { flex: 1 1 calc(33.3% - 6px); min-width: 0; min-height: 62px; padding: 4px 4px; font-size: 0.86rem; white-space: normal; }
+    .answer .vex-figure { width: 44px; height: 54px; }
+    .answer .figure-name-text { font-size: 0.92rem; white-space: normal; }
+    #gameContainer .message { min-height: 22px; font-size: 0.95rem; }
+    .game-buttons { gap: 6px; margin-top: 2px; }
+    .game-buttons .menu-button, .game-buttons .new-game { padding: 8px 12px; font-size: 0.78rem; }
+    .toolbar { margin-top: 6px; gap: 10px; }
+
+    /* tutorial */
+    .tutorial-game h1 { font-size: 1.1rem; margin: 2px 40px 6px; }
+    .lesson-panel { padding: 8px 10px; margin-bottom: 8px; gap: 6px; }
+    .lesson-title { font-size: 0.98rem; }
+    .lesson-text { font-size: 0.84rem; line-height: 1.4; }
+    .lesson-nav button { padding: 8px 10px; font-size: 0.82rem; }
+    .tut-stage { min-height: clamp(130px, calc(100vh - 500px), 280px); min-height: clamp(130px, calc(100dvh - 500px), 280px); padding: 8px 10px; gap: 8px; margin-bottom: 6px; }
+    .tut-question { min-height: 0; }
+    .tut-question .vex-figure { width: 72px; height: 100px; }
+    .tut-answers { gap: 6px; }
+    .tut-answers .answer { flex: 1 1 calc(33.3% - 6px); min-height: 62px; }
+    .tut-answers .answer .vex-figure { width: 40px; height: 52px; }
+    .tut-answers .answer .figure-name-text { font-size: 0.85rem; white-space: normal; }
+    .tut-footer { margin-top: 2px; }
+    .tut-footer .menu-button { padding: 7px 14px; font-size: 0.78rem; }
+    .tut-message { min-height: 20px; font-size: 0.92rem; }
+    .tut-progress { margin: 0 0 2px; }
+    .tut-answers .answer { min-height: 54px; }
+    .tutorial-game h1 { font-size: 1rem; white-space: nowrap; }
+    /* quattro risposte: due per riga invece di tre più una */
+    .answers:has(> .answer:nth-child(4):last-child) .answer,
+    .tut-answers:has(> .answer:nth-child(4):last-child) .answer { flex-basis: calc(50% - 6px); }
+    /* passi con lo schema accanto (sotto, sul telefono): domanda e risposte compatte, schema basso */
+    .tutorial-game.with-legend .tut-stage, .tutorial-game.with-bricks .tut-stage { min-height: 0; padding: 6px 8px; gap: 4px; }
+    .tutorial-game.with-legend .tut-question .vex-figure { width: 52px; height: 72px; }
+    .tutorial-game.with-bricks .count-q { font-size: 1rem; gap: 8px; }
+    .tutorial-game.with-bricks .count-q .vex-figure { width: 36px; height: 60px; }
+    .tutorial-game.with-legend .tut-answers, .tutorial-game.with-bricks .tut-answers { flex-wrap: nowrap; gap: 5px; }
+    .tutorial-game.with-legend .tut-answers .answer, .tutorial-game.with-bricks .tut-answers .answer { flex: 1 1 0; min-height: 48px; padding: 3px; }
+    .tutorial-game.with-legend .tut-answers .answer .vex-figure { width: 30px; height: 40px; }
+    .tutorial-game.with-legend .tut-answers .figure-name-text { font-size: 0.72rem; }
+    .tutorial-game.with-legend .tut-body, .tutorial-game.with-bricks .tut-body { gap: 6px; }
+    .tutorial-game.with-legend .tut-side, .tutorial-game.with-bricks .tut-side { padding: 5px 8px; border-radius: 12px; }
+    .tutorial-game .tut-side .legend-title { font-size: 0.6rem; margin-bottom: 2px; }
+    .brick-tree.compact { gap: 2px; }
+    .brick-tree.compact .brick { height: 20px; }
+    .brick-tree.compact .brick-label { width: 74px; font-size: 0.62rem; }
+    .brick-tree.compact .ruler-cell { font-size: 0.54rem; }
+    .brick-tree.compact .vex-figure, .brick-tree.compact .brick svg { max-height: 16px; }
+    .tut-side .legend-table th, .tut-side .legend-table td, .tut-side .tut-table > * { padding-top: 0; padding-bottom: 0; }
+    .tut-side .vex-figure { width: 26px !important; height: 30px !important; }
+    .tut-side .figure-name-text { font-size: 0.62rem !important; }
+}
 </style>
 <!-- per i motori di ricerca e la condivisione -->
 <link rel="canonical" href="https://musicascuole.it/figure-ritmiche.html">

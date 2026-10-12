@@ -2,7 +2,10 @@
    adatta-schermo.js — sui PC e sulla LIM (schermi larghi almeno 900 px e alti almeno 560)
    la schermata visibile del gioco si ingrandisce in proporzione fino a
    riempire la finestra, come una diapositiva, senza mai superarla.
-   Sul telefono non fa nulla.
+   Sul telefono in verticale fa solo da "rete di sicurezza": se la schermata sporge di poco
+   (un passo lungo del tutorial, un telefono piccolo) la rimpicciolisce un poco, mai sotto l'85%;
+   se sporge di più lascia scorrere. Il layout del telefono va fatto nel CSS del gioco
+   (@media (max-width: 620px) and (orientation: portrait)), vedi _sviluppo/GUIDA-INTERFACCE-GIOCHI.md.
 
    Attenzione: con lo zoom anche le misure in vh crescono. Per finestre e pannelli
    con max-height in vh, nella parte "larga" del CSS dividere per var(--zoom, 1),
@@ -23,6 +26,8 @@
   // schermi larghi e non troppo bassi: così i telefoni girati in orizzontale (larghi
   // anche 930 px ma alti circa 400) tengono la loro impaginazione
   var largo = window.matchMedia("(min-width: 900px) and (min-height: 560px)");
+  var telefono = window.matchMedia("(max-width: 620px) and (orientation: portrait)");
+  var MIN_TEL = 0.85;
 
   function schermate() {
     return selettori.split(",").map(function (s) { return document.querySelector(s.trim()); }).filter(Boolean);
@@ -36,9 +41,26 @@
     return null;
   }
 
+  // telefono: solo rimpicciolire un poco se la pagina sporge di poco
+  function adattaTelefono() {
+    var b = document.body, d = document.documentElement;
+    b.style.zoom = "";
+    d.style.removeProperty("--zoom");
+    var h = d.scrollHeight, H = window.innerHeight;
+    if (h <= H + 1) return;
+    var z = Math.max(MIN_TEL, H / h);
+    b.style.zoom = z;
+    while (z > MIN_TEL && d.scrollHeight > window.innerHeight + 1) { z -= 0.01; b.style.zoom = z; }
+    if (d.scrollHeight > window.innerHeight + 1 && z <= MIN_TEL) { b.style.zoom = ""; return; }   // troppo alta: si scorre a grandezza normale
+    d.style.setProperty("--zoom", z);
+  }
+
   function adatta() {
     var b = document.body;
-    if (!largo.matches) { b.style.zoom = ""; document.documentElement.style.removeProperty("--zoom"); return; }
+    if (!largo.matches) {
+      if (telefono.matches) { adattaTelefono(); return; }
+      b.style.zoom = ""; document.documentElement.style.removeProperty("--zoom"); return;
+    }
     var el = visibile();
     if (!el) return;
     b.style.zoom = 1;
