@@ -945,6 +945,45 @@ h1 {
     .tutorial-end-emoji { font-size: 2.4rem; margin-bottom: 4px; }
 }
 </style>
+<link rel="stylesheet" href="telefono.css?v=1">
+<style id="telefono-gioco">
+/* TELEFONO IN VERTICALE: ritocchi solo per questo gioco (le regole comuni sono in telefono.css) */
+@media (max-width: 620px) and (orientation: portrait) {
+.menu-screen .hero-badge { display: none; }
+    .staff-row { margin-bottom: 8px; }
+    .staff-card { min-height: 0; width: 100%; padding: 6px;
+        height: clamp(110px, calc(100vh - 530px), 230px); height: clamp(110px, calc(100dvh - 530px), 230px); }
+    .staff-inner { height: 100%; }
+    #staffInner svg { height: 100% !important; width: auto !important; max-width: 100%; }
+    .answer-section { margin-bottom: 4px; }
+    .number-row { display: grid; grid-template-columns: repeat(4, 1fr); }
+    .quality-row { display: grid; grid-template-columns: repeat(5, 1fr); }
+    .quality-row .choice-btn { font-size: 0.7rem; padding: 9px 1px; }
+    /* tutorial */
+    .tutorial-top { margin-bottom: 6px; padding-left: 44px; }
+    .tutorial-topic-dots { margin-bottom: 8px; }
+    .tutorial-card { padding: 12px 12px 14px; border-radius: 16px; }
+    .tutorial-step-title { font-size: 1.05rem; margin-bottom: 6px; }
+    .tutorial-step-body { font-size: 0.86rem; line-height: 1.45; }
+    .tutorial-step-body p { margin-bottom: 7px; }
+    .tutorial-step-body ul { margin-bottom: 7px; }
+    .tutorial-diagram-wrap { margin: 8px 0; padding: 6px; }
+    .tutorial-diagram-wrap svg { max-height: 150px; width: auto; }
+    .tutorial-select-grid { gap: 7px; }
+    .tutorial-tile { padding: 10px 8px; }
+    /* "prima e dopo" del tutorial affiancati invece che uno sotto l'altro */
+    .shift-demo { flex-direction: row; justify-content: center; align-items: center; gap: 6px; margin: 8px 0; }
+    .shift-stage { width: auto; flex: 1 1 0; gap: 4px; min-width: 0; }
+    .shift-stage-label { font-size: 0.56rem; text-align: center; }
+    .shift-diagram { padding: 4px 6px; }
+    .shift-diagram svg { max-width: 100%; width: 130px; height: auto; }
+    .shift-quality { font-size: 0.86rem; padding: 4px 10px; }
+    .shift-arrow-block { flex: 0 0 auto; margin: 0; max-width: 78px; }
+    .shift-arrow-glyph { font-size: 1.4rem; transform: rotate(90deg); }
+    .shift-arrow-label { font-size: 0.6rem; max-width: 78px; }
+    .shift-demo-heading { margin-top: 8px; font-size: 0.88rem; }
+}
+</style>
 <!-- per i motori di ricerca e la condivisione -->
 <link rel="canonical" href="https://musicascuole.it/nomina-intervalli.html">
 <meta property="og:type" content="website">
@@ -1026,7 +1065,7 @@ h1 {
         <span class="tutorial-progress-label" id="tutorialProgressLabel"></span>
     </div>
     <div class="tutorial-topic-dots" id="tutorialTopicDots"></div>
-    <div class="tutorial-card" id="tutorialCard"></div>
+    <div class="tutorial-card" id="tutorialCard" data-ritaglia-tel="36 124 220x200"></div>
 </div>
 
 <div class="menu-screen" id="selectScreen" style="display: none;">
@@ -1079,7 +1118,7 @@ h1 {
 
     <div class="staff-row" id="staffRow">
         <div class="staff-card">
-            <div class="staff-inner" id="staffInner"></div>
+            <div class="staff-inner" id="staffInner" data-ritaglia-tel="30 155"></div>
             <div class="confetti-layer" id="confettiLayer"></div>
         </div>
     </div>

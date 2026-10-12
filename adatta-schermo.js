@@ -106,6 +106,41 @@
     if (document.fonts && document.fonts.ready) document.fonts.ready.then(presto);
     adatta();
   }
+  // Telefono: pentagrammi senza spazio vuoto sopra e sotto. Il contenitore del disegno ha
+  // data-ritaglia-tel="y altezza" (in unità del disegno, es. "30 155"): ogni <svg> che ci compare
+  // dentro viene ritagliato a quella fascia, così a parità di riquadro il pentagramma è più grande.
+  // Con un terzo valore "LxA" (es. "36 124 220x200") si ritagliano solo i disegni di quella misura
+  // (utile se nel contenitore ci sono anche altri disegni, es. la tastiera nel tutorial).
+  // La fascia è fissa (non segue le note) perché la scala non cambi fra una domanda e l'altra.
+  function ritaglia(svg) {
+    if (!telefono.matches || svg.dataset.ritagliato) return;
+    var box = svg.parentElement && svg.parentElement.closest("[data-ritaglia-tel]");
+    if (!box) return;
+    var vb = (svg.getAttribute("viewBox") || ("0 0 " + (svg.getAttribute("width") || 0) + " " + (svg.getAttribute("height") || 0))).split(/[\s,]+/).map(Number);
+    var f = box.getAttribute("data-ritaglia-tel").split(/\s+/).map(Number);
+    var solo = box.getAttribute("data-ritaglia-tel").split(/\s+/)[2];
+    if (!vb[2] || f.length < 2) return;
+    if (solo && solo !== vb[2] + "x" + vb[3]) return;
+    svg.setAttribute("viewBox", vb[0] + " " + f[0] + " " + vb[2] + " " + f[1]);
+    // anche le misure dichiarate seguono il ritaglio (il browser ne ricava le proporzioni)
+    var w = parseFloat(svg.getAttribute("width")) || vb[2];
+    var h = Math.round(f[1] * w / vb[2]);
+    svg.setAttribute("height", h);
+    if (svg.style.height) svg.style.height = h + "px";
+    svg.dataset.ritagliato = "1";
+  }
+  function cercaDaRitagliare() {
+    document.querySelectorAll("[data-ritaglia-tel] svg").forEach(ritaglia);
+  }
+  // si osservano solo i contenitori marcati (poco lavoro: niente telefoni che scaldano)
+  function osservaRitagli() {
+    document.querySelectorAll("[data-ritaglia-tel]").forEach(function (c) {
+      new MutationObserver(cercaDaRitagliare).observe(c, { childList: true, subtree: true });
+    });
+    cercaDaRitagliare();
+  }
+  if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", osservaRitagli); else osservaRitagli();
+
   window.adattaSchermo = adatta;
   // fattore di ingrandimento attuale (1 sul telefono). Attenzione: con lo zoom,
   // getBoundingClientRect() dà misure già ingrandite; se un gioco usa la differenza
