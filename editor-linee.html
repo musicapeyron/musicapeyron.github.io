@@ -1,0 +1,414 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<!--
+  ============================================================
+  EDITOR DELLE LINEE — per costruire le tappe della Pregrafia musicale.
+  Si carica un brano, si disegna con il mouse mentre suona, si sistemano le linee,
+  si presenta alla LIM o si salva il file della tappa. Tutto resta nel browser:
+  nessun file viene inviato, niente registrazione. Codice in pregrafia/editor.js,
+  disegno comune con il percorso in pregrafia/lettore.js.
+  ============================================================
+-->
+<title>Editor delle linee — musicascuole.it</title>
+<link rel="icon" href="favicon.svg" type="image/svg+xml">
+<link rel="icon" href="favicon-32.png" type="image/png" sizes="32x32">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
+<meta name="description" content="Editor gratuito per creare linee che si colorano a tempo di musica: si disegna con il mouse mentre il brano suona, poi si presenta alla LIM.">
+<meta name="robots" content="noindex">
+<link rel="stylesheet" href="fonts/caratteri.css">
+<link rel="stylesheet" href="comune.css">
+<style>
+  * { box-sizing: border-box; }
+  html, body { margin: 0; height: 100%; }
+  body { font-family: 'Inter', 'Segoe UI', Arial, sans-serif; color: #EAF2FF; background: #0f172a; overflow: hidden; -webkit-font-smoothing: antialiased; font-size: 13px; }
+  button, input, select { font-family: inherit; font-size: inherit; color: inherit; }
+  .app { position: fixed; inset: 26px 0 0 0; z-index: 1; display: grid; grid-template-rows: 50px 1fr 156px; grid-template-columns: 68px 1fr 300px;
+    grid-template-areas: "testa testa testa" "attrezzi palco lato" "tempo tempo tempo"; }
+  .ico { width: 18px; height: 18px; flex: none; display: block; }
+
+  /* ---------- testata ---------- */
+  .testa { grid-area: testa; display: flex; align-items: center; gap: 8px; padding: 0 12px 0 64px; border-bottom: 1px solid rgba(255,255,255,0.08);
+    background: rgba(15,23,42,0.96); position: relative; z-index: 3; }
+  .casetta { position: absolute; left: 10px; top: 6px; width: 40px; height: 40px; border-radius: 50%; display: flex; align-items: center; justify-content: center;
+    text-decoration: none; font-size: 1.05rem; border: 1px solid rgba(255,255,255,0.18); background: rgba(255,255,255,0.06); }
+  .marchio { font-family: 'Fredoka', 'Manrope', sans-serif; font-weight: 700; font-size: 18px; white-space: nowrap; margin-right: 6px; }
+  .marchio span:nth-child(1) { color: #FF4D6D; } .marchio span:nth-child(2) { color: #FFB020; } .marchio span:nth-child(3) { color: #2EE6D6; }
+  #titolo { flex: 1; min-width: 120px; max-width: 360px; background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.14); border-radius: 8px; padding: 7px 10px; }
+  .spazio { flex: 1; }
+  .btn { display: inline-flex; align-items: center; gap: 6px; padding: 7px 11px; border-radius: 8px; border: 1px solid rgba(255,255,255,0.16);
+    background: rgba(255,255,255,0.06); cursor: pointer; font-weight: 600; white-space: nowrap; }
+  .btn:hover { background: rgba(255,255,255,0.14); }
+  .btn.primario { background: #3DBE6E; border-color: #3DBE6E; color: #fff; }
+  .btn.attivo { background: #F99D1C; border-color: #F99D1C; color: #1F2430; }
+  .btn:disabled { opacity: .4; cursor: default; }
+  .btn.piccolo { padding: 5px 8px; font-size: 12px; }
+  .menu { position: relative; }
+  .tendina { position: absolute; top: 100%; right: 0; margin-top: 6px; min-width: 250px; background: #1b2442; border: 1px solid rgba(255,255,255,0.14);
+    border-radius: 10px; padding: 6px; box-shadow: 0 12px 30px rgba(0,0,0,0.45); z-index: 20; }
+  .tendina[hidden] { display: none; }
+  .tendina button, .tendina label.voce { display: flex; width: 100%; align-items: center; gap: 8px; padding: 8px 10px; border: 0; background: none; border-radius: 6px; cursor: pointer; text-align: left; }
+  .tendina button:hover, .tendina label.voce:hover { background: rgba(255,255,255,0.1); }
+  .tendina hr { border: 0; border-top: 1px solid rgba(255,255,255,0.1); margin: 4px 0; }
+  .tendina .nota { padding: 4px 10px 6px; color: #9FB3CE; font-size: 11.5px; line-height: 1.4; }
+
+  /* ---------- attrezzi ---------- */
+  .attrezzi { grid-area: attrezzi; display: flex; flex-direction: column; align-items: center; gap: 4px; padding: 8px 0; border-right: 1px solid rgba(255,255,255,0.08);
+    background: rgba(15,23,42,0.9); overflow-y: auto; scrollbar-width: none; }
+  .attr { width: 56px; padding: 6px 0 5px; border-radius: 10px; border: 1px solid transparent; background: none; cursor: pointer; display: flex; flex-direction: column;
+    align-items: center; gap: 3px; font-size: 10.5px; font-weight: 600; color: #cbd5e1; }
+  .attr svg { width: 24px; height: 24px; }
+  .attr:hover { background: rgba(255,255,255,0.08); }
+  .attr.attivo { background: rgba(249,157,28,0.18); border-color: #F99D1C; color: #fff; }
+  .attrezzi hr { width: 40px; border: 0; border-top: 1px solid rgba(255,255,255,0.1); margin: 4px 0; }
+  .colori { display: grid; grid-template-columns: 1fr 1fr; gap: 5px; }
+  .colori button { width: 22px; height: 22px; border-radius: 50%; border: 2px solid rgba(255,255,255,0.25); cursor: pointer; }
+  .colori button.attivo { border-color: #fff; box-shadow: 0 0 0 2px #F99D1C; }
+  .spessori { display: flex; flex-direction: column; gap: 4px; align-items: center; }
+  .spessori button { width: 44px; height: 18px; border: 0; border-radius: 6px; background: none; cursor: pointer; display: grid; place-items: center; }
+  .spessori button span { display: block; width: 32px; border-radius: 9px; background: #cbd5e1; }
+  .spessori button.attivo { background: rgba(249,157,28,0.25); }
+
+  /* ---------- palco ---------- */
+  .palco { grid-area: palco; position: relative; display: flex; align-items: center; justify-content: center; padding: 10px; min-width: 0; min-height: 0; }
+  .foglio { position: relative; box-shadow: 0 8px 30px rgba(0,0,0,0.4); border-radius: 12px; overflow: hidden; }
+  #tela { display: block; cursor: crosshair; touch-action: none; }
+  .barra-palco { position: absolute; left: 10px; right: 10px; top: 10px; display: flex; justify-content: space-between; pointer-events: none; }
+  .etichetta { pointer-events: auto; background: rgba(15,23,42,0.75); color: #fff; padding: 4px 9px; border-radius: 99px; font-size: 12px; font-weight: 600; }
+  .vuoto { position: absolute; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 14px; color: #1f2a5c; text-align: center; padding: 20px; }
+  .vuoto[hidden] { display: none; }
+  .vuoto h2 { font-family: 'Fredoka', sans-serif; margin: 0; font-size: 26px; }
+  .vuoto p { margin: 0; max-width: 520px; line-height: 1.45; font-size: 14px; color: #475069; }
+  .vuoto .scelte { display: flex; gap: 10px; flex-wrap: wrap; justify-content: center; }
+  .vuoto .btn { color: #1f2a5c; background: #fff; border-color: #d7dbe8; font-size: 14px; padding: 10px 16px; }
+  .vuoto .btn.primario { background: #3DBE6E; color: #fff; border-color: #3DBE6E; }
+  .lascia { position: absolute; inset: 0; border: 4px dashed #3DBE6E; border-radius: 12px; background: rgba(61,190,110,0.12); display: none; align-items: center; justify-content: center;
+    font-family: 'Fredoka', sans-serif; font-size: 26px; color: #1f6b3b; pointer-events: none; }
+  .lascia.su { display: flex; }
+
+  /* ---------- pannello laterale ---------- */
+  .lato { grid-area: lato; border-left: 1px solid rgba(255,255,255,0.08); background: rgba(15,23,42,0.9); overflow-y: auto; padding: 8px; display: flex; flex-direction: column; gap: 8px; scrollbar-width: thin; }
+  .riquadro { background: rgba(255,255,255,0.035); border: 1px solid rgba(255,255,255,0.08); border-radius: 10px; padding: 8px 9px; }
+  .riquadro h3 { margin: 0 0 7px; font-family: 'Manrope', sans-serif; font-size: 11.5px; letter-spacing: .07em; text-transform: uppercase; color: #9FB3CE; display: flex; align-items: center; gap: 6px; }
+  .riquadro h3 .dx { margin-left: auto; text-transform: none; letter-spacing: 0; }
+  .righe { display: flex; flex-wrap: wrap; gap: 5px; }
+  .campo { display: flex; align-items: center; gap: 6px; margin: 5px 0; }
+  .campo label { flex: 1; color: #cbd5e1; }
+  .campo input[type=number], .campo select, .campo input[type=text] { width: 86px; background: rgba(255,255,255,0.07); border: 1px solid rgba(255,255,255,0.14); border-radius: 6px; padding: 4px 6px; }
+  .campo input[type=range] { width: 120px; accent-color: #F99D1C; }
+  .campo input[type=checkbox] { accent-color: #F99D1C; width: 16px; height: 16px; }
+  .pagine { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; max-height: 210px; overflow-y: auto; padding: 2px; }
+  .pag { position: relative; border-radius: 6px; overflow: hidden; border: 2px solid transparent; cursor: pointer; background: #fff; }
+  .pag canvas { display: block; width: 100%; height: auto; }
+  .pag span { position: absolute; left: 4px; top: 3px; font-size: 10.5px; font-weight: 700; color: #1f2a5c; background: rgba(255,255,255,0.8); border-radius: 5px; padding: 0 4px; }
+  .pag.attiva { border-color: #F99D1C; }
+  .pag.suona { box-shadow: 0 0 0 2px #3DBE6E; }
+  .aiuto-modo { color: #9FB3CE; font-size: 12px; line-height: 1.45; margin: 0; }
+  .aiuto-modo b { color: #EAF2FF; }
+  .nascosto { display: none !important; }
+
+  /* ---------- tempo: trasporto + onda sonora ---------- */
+  .tempo { grid-area: tempo; border-top: 1px solid rgba(255,255,255,0.08); background: rgba(12,18,36,0.97); display: flex; flex-direction: column; padding: 6px 10px 8px; gap: 6px; }
+  .trasporto { display: flex; align-items: center; gap: 6px; flex-wrap: nowrap; overflow-x: auto; scrollbar-width: none; }
+  .tondo { width: 38px; height: 38px; border-radius: 50%; border: 0; background: rgba(255,255,255,0.1); cursor: pointer; display: grid; place-items: center; flex: none; }
+  .tondo:hover { background: rgba(255,255,255,0.2); }
+  .tondo.grande { width: 46px; height: 46px; background: #3DBE6E; }
+  .tondo.rosso { background: #E21C48; }
+  .orologio { font-family: 'Manrope', monospace; font-weight: 700; font-size: 15px; min-width: 120px; text-align: center; font-variant-numeric: tabular-nums; }
+  .separa { width: 1px; height: 26px; background: rgba(255,255,255,0.15); margin: 0 4px; flex: none; }
+  .trasporto select, .trasporto input[type=number] { background: rgba(255,255,255,0.07); border: 1px solid rgba(255,255,255,0.14); border-radius: 6px; padding: 5px 6px; }
+  .trasporto input[type=number] { width: 64px; }
+  .trasporto label { display: inline-flex; align-items: center; gap: 5px; color: #cbd5e1; white-space: nowrap; }
+  .linea-tempo { position: relative; flex: 1; min-height: 0; border-radius: 8px; overflow: hidden; background: #0a1022; border: 1px solid rgba(255,255,255,0.08); cursor: pointer; }
+  .linea-tempo canvas { position: absolute; inset: 0; width: 100%; height: 100%; display: block; }
+  .stato { position: absolute; right: 8px; top: 4px; font-size: 11px; color: #8193AE; pointer-events: none; }
+
+  /* ---------- finestre ---------- */
+  .velo { position: fixed; inset: 0; z-index: 100; background: rgba(5,8,20,0.7); display: flex; align-items: center; justify-content: center; padding: 20px; }
+  .velo[hidden] { display: none; }
+  .finestra { background: #141c36; border: 1px solid rgba(255,255,255,0.14); border-radius: 14px; max-width: 760px; width: 100%; max-height: 90vh; overflow-y: auto; padding: 18px 22px; box-shadow: 0 20px 60px rgba(0,0,0,0.5); }
+  .finestra h2 { margin: 0 0 10px; font-family: 'Fredoka', sans-serif; font-size: 24px; }
+  .finestra h3 { margin: 14px 0 6px; font-family: 'Manrope', sans-serif; font-size: 15px; color: #F99D1C; }
+  .finestra p, .finestra li { line-height: 1.5; color: #cbd5e1; }
+  .finestra kbd { background: rgba(255,255,255,0.12); border-radius: 4px; padding: 1px 6px; font-family: 'Manrope', monospace; font-size: 12px; color: #fff; }
+  .finestra .chiudi { float: right; }
+  .finestra .campo input[type=text] { width: 100%; }
+  .finestra table { border-collapse: collapse; width: 100%; } .finestra td { padding: 3px 6px; color: #cbd5e1; vertical-align: top; } .finestra td:first-child { white-space: nowrap; }
+
+  /* ---------- presentazione (vista dei bambini) ---------- */
+  .presenta { position: fixed; inset: 0; z-index: 90; background: #0f172a; display: flex; flex-direction: column; padding: 14px; gap: 12px; }
+  .presenta[hidden] { display: none; }
+  .presenta .palco-p { flex: 1; min-height: 0; display: flex; align-items: center; justify-content: center; }
+  .presenta canvas { border-radius: 20px; display: block; }
+  .presenta .comandi-p { display: flex; justify-content: center; align-items: center; gap: 12px; }
+  .presenta .tondo { width: 60px; height: 60px; } .presenta .tondo.grande { width: 74px; height: 74px; }
+  .presenta .tondo svg { width: 26px; height: 26px; }
+  .presenta .titolo-p { position: absolute; left: 24px; top: 22px; font-family: 'Fredoka', sans-serif; font-size: 22px; color: #1f2a5c; pointer-events: none; }
+  .avviso { position: fixed; left: 50%; bottom: 172px; transform: translateX(-50%); background: #1b2442; border: 1px solid rgba(255,255,255,0.2); padding: 9px 16px; border-radius: 99px;
+    z-index: 120; box-shadow: 0 8px 24px rgba(0,0,0,0.4); font-weight: 600; transition: opacity .3s; }
+  .avviso[hidden] { display: none; }
+
+  @media (max-width: 1100px) { .app { grid-template-columns: 62px 1fr 250px; } .marchio { display: none; } }
+  @media (max-width: 800px) {
+    .app { grid-template-rows: 50px 1fr auto 156px; grid-template-columns: 62px 1fr; grid-template-areas: "testa testa" "attrezzi palco" "lato lato" "tempo tempo"; }
+    .lato { max-height: 34vh; } .testa .btn span { display: none; }
+  }
+</style>
+</head>
+<body>
+<script src="info-sito.js"></script>
+
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <symbol id="i-play" viewBox="0 0 24 24"><path d="M7 4.5 L19.5 12 L7 19.5 Z" fill="currentColor" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/></symbol>
+  <symbol id="i-pausa" viewBox="0 0 24 24"><rect x="6" y="5" width="4.2" height="14" rx="1.2" fill="currentColor"/><rect x="13.8" y="5" width="4.2" height="14" rx="1.2" fill="currentColor"/></symbol>
+  <symbol id="i-inizio" viewBox="0 0 24 24"><path d="M18 5 L9 12 L18 19 Z" fill="currentColor"/><rect x="5" y="5" width="3" height="14" rx="1" fill="currentColor"/></symbol>
+  <symbol id="i-indietro" viewBox="0 0 24 24"><path d="M12 6 L5 12 L12 18 Z M20 6 L13 12 L20 18 Z" fill="currentColor"/></symbol>
+  <symbol id="i-avanti" viewBox="0 0 24 24"><path d="M12 6 L19 12 L12 18 Z M4 6 L11 12 L4 18 Z" fill="currentColor"/></symbol>
+  <symbol id="i-ripeti" viewBox="0 0 24 24"><path d="M19 12 A7 7 0 1 1 16.5 6.6" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round"/><path d="M14.5 3.5 L18 6.8 L14 9" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/></symbol>
+  <symbol id="i-chiudi" viewBox="0 0 24 24"><path d="M6 6 L18 18 M18 6 L6 18" stroke="currentColor" stroke-width="2.8" stroke-linecap="round"/></symbol>
+  <symbol id="i-libero" viewBox="0 0 24 24"><path d="M3 17 C6 6, 9 20, 13 10 S 19 6, 21 12" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"/></symbol>
+  <symbol id="i-guidato" viewBox="0 0 24 24"><path d="M3 14 Q7 6 11 13 T21 11" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"/><path d="M3 20 H21 M17 17 L21 20 L17 23" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" opacity=".7"/></symbol>
+  <symbol id="i-forme" viewBox="0 0 24 24"><path d="M2 12 L5 6 L8 12 L11 6 L14 12" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/><path d="M14 12 Q16 4 18 12 T22 12" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"/><path d="M2 19 H22" stroke="currentColor" stroke-width="1.4" stroke-dasharray="2 2"/></symbol>
+  <symbol id="i-tempo" viewBox="0 0 24 24"><path d="M4 16 C8 4 14 4 20 16" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"/><circle cx="12" cy="18" r="3.6" fill="none" stroke="currentColor" stroke-width="1.8"/><path d="M12 16.4 V18 L13.3 18.8" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></symbol>
+  <symbol id="i-seleziona" viewBox="0 0 24 24"><path d="M5 3 L5 19 L9.5 14.8 L12.6 21 L15.2 19.8 L12.2 13.7 L18 13.4 Z" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/></symbol>
+  <symbol id="i-gomma" viewBox="0 0 24 24"><path d="M15.5 4 L21 9.5 L11.5 19 H6.5 L3 15.5 Z" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/><path d="M9 10.5 L14.5 16" stroke="currentColor" stroke-width="2"/><path d="M11.5 19 H21" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></symbol>
+  <symbol id="i-annulla" viewBox="0 0 24 24"><path d="M9 8 H15 A5 5 0 0 1 15 18 H8" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"/><path d="M12 4 L8 8 L12 12" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></symbol>
+  <symbol id="i-rifai" viewBox="0 0 24 24"><path d="M15 8 H9 A5 5 0 0 0 9 18 H16" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"/><path d="M12 4 L16 8 L12 12" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></symbol>
+  <symbol id="i-presenta" viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="12" rx="2" fill="none" stroke="currentColor" stroke-width="2"/><path d="M10 7.5 L15 10 L10 12.5 Z" fill="currentColor"/><path d="M12 16 V20 M8 20 H16" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></symbol>
+  <symbol id="i-file" viewBox="0 0 24 24"><path d="M6 3 H14 L19 8 V21 H6 Z" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/><path d="M14 3 V8 H19" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/></symbol>
+  <symbol id="i-musica" viewBox="0 0 24 24"><path d="M9 18 V5 L20 3 V16" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/><circle cx="6.5" cy="18" r="2.6" fill="currentColor"/><circle cx="17.5" cy="16" r="2.6" fill="currentColor"/></symbol>
+  <symbol id="i-aiuto" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9" fill="none" stroke="currentColor" stroke-width="2"/><path d="M9.5 9.5 A2.6 2.6 0 1 1 13 12 C12.3 12.4 12 13 12 14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><circle cx="12" cy="17.2" r="1.3" fill="currentColor"/></symbol>
+  <symbol id="i-metronomo" viewBox="0 0 24 24"><path d="M8 21 L10.5 3 H13.5 L16 21 Z" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/><path d="M12 16 L17 7" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></symbol>
+  <symbol id="i-cerchio-rosso" viewBox="0 0 24 24"><circle cx="12" cy="12" r="7" fill="currentColor"/></symbol>
+</svg>
+
+<div class="app" id="app">
+  <!-- ======== testata ======== -->
+  <header class="testa">
+    <a class="casetta" href="index.html" aria-label="Torna al sito" title="Torna al sito">🏠</a>
+    <div class="marchio"><span>Editor</span> <span>delle</span> <span>linee</span></div>
+    <input id="titolo" type="text" placeholder="Titolo della tappa" aria-label="Titolo della tappa">
+    <div class="menu">
+      <button class="btn" id="btnBrano"><svg class="ico"><use href="#i-musica"/></svg><span>Brano</span></button>
+      <div class="tendina" id="menuBrano" hidden>
+        <button id="apriFile"><svg class="ico"><use href="#i-file"/></svg>Apri un brano dal computer… (mp3, mp4, ogg, wav)</button>
+        <hr><div class="nota">Brani di esempio, liberi da diritti:</div>
+        <div id="esempi"></div>
+      </div>
+    </div>
+    <div class="menu">
+      <button class="btn" id="btnFile"><svg class="ico"><use href="#i-file"/></svg><span>File</span></button>
+      <div class="tendina" id="menuFile" hidden>
+        <button id="nuovo">Nuovo progetto</button>
+        <button id="apriProgetto">Apri un progetto salvato… (.json)</button>
+        <hr>
+        <button id="salva">Salva il progetto (.json)</button>
+        <label class="voce"><input type="checkbox" id="conAudio"> includi il brano nel file (più grande, ma completo da condividere)</label>
+        <hr>
+        <button id="video">Esporta un video (.webm)…</button>
+        <button id="infoBtn">Titolo, autore e crediti…</button>
+        <div class="nota">Il progetto si salva anche da solo in questo browser.</div>
+      </div>
+    </div>
+    <button class="btn" id="annulla" title="Annulla (Ctrl+Z)"><svg class="ico"><use href="#i-annulla"/></svg></button>
+    <button class="btn" id="rifai" title="Rifai (Ctrl+Y)"><svg class="ico"><use href="#i-rifai"/></svg></button>
+    <div class="spazio"></div>
+    <button class="btn" id="aiuto"><svg class="ico"><use href="#i-aiuto"/></svg><span>Guida</span></button>
+    <button class="btn primario" id="presentaBtn"><svg class="ico"><use href="#i-presenta"/></svg><span>Presenta alla LIM</span></button>
+  </header>
+
+  <!-- ======== attrezzi ======== -->
+  <nav class="attrezzi" aria-label="Modalità e strumenti">
+    <button class="attr attivo" data-modo="libero" title="Disegno libero a tempo (1)"><svg><use href="#i-libero"/></svg>Libero</button>
+    <button class="attr" data-modo="guidato" title="Guidato: la linea avanza col tempo, tu muovi su e giù (2)"><svg><use href="#i-guidato"/></svg>Guidato</button>
+    <button class="attr" data-modo="forme" title="Forme a tempo: onde, zig-zag, riccioli… sui battiti (3)"><svg><use href="#i-forme"/></svg>Forme</button>
+    <button class="attr" data-modo="tempo" title="Disegna da fermo, poi dai il tempo (4)"><svg><use href="#i-tempo"/></svg>Poi tempo</button>
+    <hr>
+    <button class="attr" data-modo="seleziona" title="Seleziona e sposta (5)"><svg><use href="#i-seleziona"/></svg>Sposta</button>
+    <button class="attr" data-modo="gomma" title="Cancella una linea (6)"><svg><use href="#i-gomma"/></svg>Gomma</button>
+    <hr>
+    <div class="colori" id="colori"></div>
+    <hr>
+    <div class="spessori" id="spessori"></div>
+  </nav>
+
+  <!-- ======== palco ======== -->
+  <main class="palco" id="palco">
+    <div class="foglio" id="foglio">
+      <canvas id="tela"></canvas>
+      <div class="barra-palco"><span class="etichetta" id="etPagina">Pagina 1</span><span class="etichetta" id="etModo"></span></div>
+      <div class="vuoto" id="vuoto">
+        <h2>Linee a tempo di musica</h2>
+        <p>Carica un brano, premi play e disegna con il mouse mentre la musica suona: ogni linea si ricorda il momento in cui l'hai tracciata.
+          Poi presentala alla LIM: i bambini la vedranno colorarsi a tempo e la seguiranno con il dito.</p>
+        <div class="scelte"><button class="btn primario" id="vuotoFile">Apri un brano dal computer</button><button class="btn" id="vuotoEsempio">Usa un brano di esempio</button></div>
+        <p style="font-size:12px">Puoi anche trascinare qui un file audio o video. Niente viene inviato: tutto resta nel tuo browser.</p>
+      </div>
+      <div class="lascia" id="lascia">Lascia qui il brano o il progetto</div>
+    </div>
+  </main>
+
+  <!-- ======== pannello laterale ======== -->
+  <aside class="lato">
+    <div class="riquadro" id="boxModo">
+      <h3 id="boxModoTitolo">Disegno libero</h3>
+      <p class="aiuto-modo" id="aiutoModo"></p>
+      <div id="opzGuidato" class="nascosto">
+        <div class="campo"><label for="durPag">Lunghezza pagina</label><input type="number" id="durPag" min="1" max="64" step="1" value="8"><select id="unitaPag"><option value="battiti">battiti</option><option value="secondi">secondi</option></select></div>
+        <div class="campo"><label for="pagAuto">Pagina nuova da sola</label><input type="checkbox" id="pagAuto" checked></div>
+      </div>
+      <div id="opzTempo" class="nascosto">
+        <div class="righe"><button class="btn piccolo" id="togliTempo">Togli il tempo alle linee della pagina</button></div>
+      </div>
+      <div id="opzForme" class="nascosto">
+        <div class="righe" id="sceltaForme"></div>
+        <div class="campo"><label for="cicli">Figure per battito</label><select id="cicli" style="width:140px"><option value="0.25">1 ogni 4 battiti</option><option value="0.5">1 ogni 2 battiti</option><option value="1" selected>1 per battito</option><option value="2">2 per battito</option><option value="3">3 per battito</option></select></div>
+        <div class="campo"><label for="ampiezza">Grandezza</label><input type="range" id="ampiezza" min="0.03" max="0.3" step="0.01" value="0.12"></div>
+      </div>
+    </div>
+
+    <div class="riquadro">
+      <h3>Pagine <span class="dx"><button class="btn piccolo" id="pagNuova" title="Nuova pagina (N)">+ Nuova</button></span></h3>
+      <div class="pagine" id="pagine"></div>
+      <div class="righe" style="margin-top:6px">
+        <button class="btn piccolo" id="pagDuplica">Duplica</button><button class="btn piccolo" id="pagSvuota">Svuota</button><button class="btn piccolo" id="pagElimina">Elimina</button>
+      </div>
+      <div class="campo"><label for="fantasma">Mostra la pagina prima, in trasparenza</label><input type="checkbox" id="fantasma" checked></div>
+      <div class="campo"><label for="tuttoColorato">A musica ferma, linee già colorate</label><input type="checkbox" id="tuttoColorato" checked></div>
+    </div>
+
+    <div class="riquadro nascosto" id="boxSel">
+      <h3>Linea scelta <span class="dx" id="selInfo"></span></h3>
+      <p class="aiuto-modo" id="selVuota">Con <b>Sposta</b> clicca una linea per sceglierla. I comandi qui sotto valgono per la linea scelta o, se non ne hai scelta una, per tutta la pagina.</p>
+      <div id="selCampi" class="nascosto">
+        <div class="campo"><label>Inizio / fine (s)</label><input type="number" id="selInizio" step="0.05"><input type="number" id="selFine" step="0.05"></div>
+        <div class="righe">
+          <button class="btn piccolo" id="selDuplica" title="Ctrl+D">Duplica</button>
+          <button class="btn piccolo" id="selRipeti">Ripeti…</button>
+          <button class="btn piccolo" id="selDopo">→ Pagina dopo</button>
+          <button class="btn piccolo" id="selElimina" title="Canc">Elimina</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="riquadro">
+      <h3>Sistema le linee</h3>
+      <div class="righe">
+        <button class="btn piccolo" data-sistema="smussa" title="Toglie il tremolio della mano">Smussa</button>
+        <button class="btn piccolo" data-sistema="raddrizza" title="Raddrizza i tratti quasi dritti, tiene gli spigoli">Raddrizza</button>
+        <button class="btn piccolo" data-sistema="forma" title="Riconosce onda, zig-zag, archi, riccioli, cerchio o linea e la rende perfetta">Forma perfetta</button>
+        <button class="btn piccolo" data-sistema="velocita" title="La linea si colora a velocità costante">Velocità regolare</button>
+        <button class="btn piccolo" data-sistema="aggancia" title="Inizio e fine sul battito più vicino">Aggancia ai battiti</button>
+        <button class="btn piccolo" data-sistema="attacchi" title="Inizio sull'attacco musicale più vicino nella registrazione">Aggancia agli attacchi</button>
+      </div>
+      <div class="campo"><label for="ambito">Vale per</label><select id="ambito" style="width:130px"><option value="sel">linea scelta</option><option value="pagina">pagina</option><option value="tutto">tutto il progetto</option></select></div>
+      <div class="campo"><label>Sposta i tempi</label><button class="btn piccolo" data-sposta="-0.05">−50 ms</button><button class="btn piccolo" data-sposta="0.05">+50 ms</button></div>
+      <div class="campo"><label for="ritardo" title="La mano arriva sempre un po' dopo la musica: si corregge mentre disegni">Ritardo della mano</label><input type="number" id="ritardo" min="0" max="0.5" step="0.01" value="0.12"><span>s</span></div>
+    </div>
+  </aside>
+
+  <!-- ======== trasporto e onda sonora ======== -->
+  <section class="tempo">
+    <div class="trasporto">
+      <button class="tondo" id="tInizio" title="All'inizio (Home)"><svg class="ico"><use href="#i-inizio"/></svg></button>
+      <button class="tondo" id="tIndietro" title="Indietro 5 s"><svg class="ico"><use href="#i-indietro"/></svg></button>
+      <button class="tondo grande" id="tPlay" title="Play / pausa (spazio)"><svg class="ico"><use href="#i-play"/></svg></button>
+      <button class="tondo" id="tAvanti" title="Avanti 5 s"><svg class="ico"><use href="#i-avanti"/></svg></button>
+      <span class="orologio" id="orologio">0:00.0 / 0:00</span>
+      <select id="velocita" title="Velocità della musica (il tono non cambia)"><option value="0.5">50%</option><option value="0.75">75%</option><option value="1" selected>100%</option></select>
+      <label title="Ripete il pezzo segnato sull'onda sonora (trascina con Maiusc premuto)"><input type="checkbox" id="giro"> Ripeti il pezzo</label>
+      <span class="separa"></span>
+      <label>Battiti <input type="number" id="bpm" min="30" max="240" step="0.1" placeholder="bpm" title="Battiti al minuto"></label>
+      <button class="btn piccolo" id="trovaBattiti" title="Trova i battiti nella registrazione">Trova</button>
+      <button class="btn piccolo" id="registraBattiti" title="Premi B a ogni battito mentre la musica suona"><svg class="ico" style="width:12px;height:12px;color:#E21C48"><use href="#i-cerchio-rosso"/></svg>Batti il tempo</button>
+      <button class="btn piccolo" id="metronomo" title="Clic sui battiti (M)"><svg class="ico"><use href="#i-metronomo"/></svg></button>
+      <label title="Le linee nuove cominciano e finiscono sui battiti"><input type="checkbox" id="calamita"> Aggancia</label>
+      <span class="separa"></span>
+      <label title="Ingrandisci l'onda sonora">Zoom <input type="range" id="zoom" min="1" max="20" step="0.5" value="1" style="width:90px;accent-color:#F99D1C"></label>
+    </div>
+    <div class="linea-tempo" id="lineaTempo"><canvas id="ondaBase"></canvas><canvas id="ondaSopra"></canvas><span class="stato" id="stato"></span></div>
+  </section>
+</div>
+
+<!-- presentazione -->
+<div class="presenta" id="presenta" hidden>
+  <div class="palco-p"><canvas id="telaP"></canvas></div>
+  <div class="comandi-p">
+    <button class="tondo" id="pChiudi" title="Chiudi (Esc)"><svg><use href="#i-chiudi"/></svg></button>
+    <button class="tondo" id="pRicomincia" title="Ricomincia"><svg><use href="#i-ripeti"/></svg></button>
+    <button class="tondo grande" id="pPlay" title="Play / pausa"><svg><use href="#i-play"/></svg></button>
+    <button class="btn" id="pLento">Più lento</button>
+  </div>
+</div>
+
+<!-- finestre -->
+<div class="velo" id="veloAiuto" hidden><div class="finestra">
+  <button class="btn chiudi" data-chiudi>Chiudi</button>
+  <h2>Come si usa</h2>
+  <p>Con questo editor costruisci una «tappa»: un brano e delle linee che si colorano a tempo. Alla LIM i bambini guardano la linea che si colora e la seguono con il dito in aria.</p>
+  <h3>1 · Il brano</h3>
+  <p>Apri un file audio o video dal computer (o trascinalo sul foglio), oppure scegli un brano di esempio. Il file non lascia il tuo computer. Usa registrazioni che puoi usare in classe: musica di pubblico dominio o con licenza libera.</p>
+  <h3>2 · Le modalità di disegno</h3>
+  <ul>
+    <li><b>Libero</b>: premi play, tieni premuto il mouse e disegna dove vuoi. Se la musica è ferma, parte da sola quando cominci a disegnare.</li>
+    <li><b>Guidato</b>: la linea avanza da sola da sinistra a destra col tempo, tu muovi il mouse solo su e giù. Ogni pagina dura i battiti (o i secondi) che scegli; quando finisce ne comincia un'altra da sola. Alza il mouse per lasciare un vuoto.</li>
+    <li><b>Forme</b>: come Guidato, ma la linea fa da sola onde, zig-zag, archi, riccioli, scalini o greche, perfettamente a tempo sui battiti. Tu decidi solo l'altezza e quando cominciare e smettere. Servono i battiti (vedi sotto).</li>
+    <li><b>Poi tempo</b>: a musica ferma disegni con calma le linee che vuoi. Poi premi play e, per ogni linea, tieni premuto il mouse (o il tasto <kbd>T</kbd>) per tutto il tempo in cui deve colorarsi.</li>
+  </ul>
+  <h3>3 · I battiti</h3>
+  <p><b>Trova</b> cerca il tempo nella registrazione. Per i brani che rallentano e accelerano è meglio <b>Batti il tempo</b>: premi play e batti <kbd>B</kbd> su ogni battito fino alla fine (Esc per fermarti). Con <b>Aggancia</b> attivo, inizio e fine delle linee nuove cadono sui battiti. Il metronomo fa sentire i battiti mentre lavori.</p>
+  <h3>4 · Sistemare le linee</h3>
+  <p><b>Smussa</b> toglie il tremolio, <b>Raddrizza</b> rende dritti i tratti quasi dritti e tiene gli spigoli, <b>Forma perfetta</b> riconosce la figura e la ridisegna regolare, <b>Velocità regolare</b> fa colorare la linea in modo uniforme, <b>Aggancia ai battiti / agli attacchi</b> mette la linea a tempo. Il <b>ritardo della mano</b> corregge il piccolo ritardo con cui si disegna rispetto alla musica.</p>
+  <p>Con <b>Sposta</b> scegli una linea: puoi spostarla, cambiarle colore e spessore, cambiarne i tempi, duplicarla, ripeterla più volte o mandarla alla pagina dopo. La <b>Gomma</b> cancella una linea con un clic.</p>
+  <h3>La linea del tempo</h3>
+  <p>In basso vedi l'onda sonora con i battiti (righe arancioni), le pagine (strisce numerate) e una barretta colorata per ogni linea. Clicca sull'onda per spostarti nel brano; trascina una barretta per spostare la linea nel tempo, o i suoi bordi per allungarla e accorciarla. Con <kbd>Maiusc</kbd> premuto trascini un pezzo da ripetere (utile per disegnare la stessa frase più volte). La rotellina ingrandisce.</p>
+  <h3>5 · Presentare e condividere</h3>
+  <p><b>Presenta alla LIM</b> mostra la vista dei bambini a schermo intero. Dal menu <b>File</b> salvi il progetto (anche con il brano dentro, per darlo a un collega) e puoi esportare un video da usare anche senza internet.</p>
+  <h3>Tasti</h3>
+  <table>
+    <tr><td><kbd>Spazio</kbd></td><td>play / pausa</td></tr>
+    <tr><td><kbd>1</kbd>…<kbd>6</kbd></td><td>modalità e strumenti</td></tr>
+    <tr><td><kbd>Ctrl</kbd>+<kbd>Z</kbd> / <kbd>Ctrl</kbd>+<kbd>Y</kbd></td><td>annulla / rifai</td></tr>
+    <tr><td><kbd>N</kbd>, <kbd>PagSu</kbd> / <kbd>PagGiù</kbd></td><td>pagina nuova, pagina precedente / successiva</td></tr>
+    <tr><td><kbd>Canc</kbd>, <kbd>Ctrl</kbd>+<kbd>D</kbd>, frecce</td><td>elimina, duplica, sposta la linea scelta</td></tr>
+    <tr><td><kbd>←</kbd> / <kbd>→</kbd></td><td>indietro / avanti di 2 secondi (senza linea scelta)</td></tr>
+    <tr><td><kbd>B</kbd>, <kbd>M</kbd>, <kbd>T</kbd></td><td>batti il tempo, metronomo, dai il tempo a una linea</td></tr>
+    <tr><td><kbd>P</kbd></td><td>presenta alla LIM</td></tr>
+  </table>
+</div></div>
+
+<div class="velo" id="veloInfo" hidden><div class="finestra" style="max-width:520px">
+  <button class="btn chiudi" data-chiudi>Chiudi</button>
+  <h2>La tappa</h2>
+  <div class="campo"><label for="infoTitolo">Titolo</label></div><div class="campo"><input type="text" id="infoTitolo"></div>
+  <div class="campo"><label for="infoAutore">Fatta da</label></div><div class="campo"><input type="text" id="infoAutore"></div>
+  <div class="campo"><label for="infoCrediti">Brano e licenza della registrazione</label></div><div class="campo"><input type="text" id="infoCrediti" placeholder="es. Beethoven, Quinta sinfonia — Orchestra… — Pubblico dominio"></div>
+  <div class="campo"><label for="infoAnticipo">Secondi in cui si vede la pagina nuova prima che cominci</label><input type="number" id="infoAnticipo" min="0" max="3" step="0.1" value="0.8"></div>
+</div></div>
+
+<div class="velo" id="veloRipeti" hidden><div class="finestra" style="max-width:440px">
+  <h2>Ripeti la linea</h2>
+  <div class="campo"><label for="ripVolte">Quante copie</label><input type="number" id="ripVolte" min="1" max="32" value="3"></div>
+  <div class="campo"><label for="ripOgni">Una ogni</label><input type="number" id="ripOgni" min="0.25" max="32" step="0.25" value="2"><select id="ripUnita"><option value="battiti">battiti</option><option value="secondi">secondi</option></select></div>
+  <div class="campo"><label for="ripDx">Spostata a destra di (% della pagina)</label><input type="number" id="ripDx" min="-50" max="50" step="1" value="20"></div>
+  <div class="righe" style="justify-content:flex-end;margin-top:10px"><button class="btn" data-chiudi>Annulla</button><button class="btn primario" id="ripOk">Ripeti</button></div>
+</div></div>
+
+<div class="velo" id="veloVideo" hidden><div class="finestra" style="max-width:480px">
+  <h2>Video in preparazione</h2>
+  <p id="videoTesto">Il video si registra mentre il brano suona: ci vuole quanto dura il brano. Non chiudere la pagina.</p>
+  <div class="campo"><progress id="videoBarra" max="1" value="0" style="width:100%"></progress></div>
+  <div class="righe" style="justify-content:flex-end"><button class="btn" id="videoStop">Ferma</button></div>
+</div></div>
+
+<div class="avviso" id="avviso" hidden></div>
+<input type="file" id="sceltaFile" accept="audio/*,video/*,.mp3,.ogg,.oga,.wav,.m4a,.mp4,.webm,.flac" hidden>
+<input type="file" id="sceltaProgetto" accept=".json,application/json" hidden>
+
+<script src="pregrafia/battiti.js"></script>
+<script src="pregrafia/lettore.js"></script>
+<script src="pregrafia/editor.js"></script>
+</body>
+</html>

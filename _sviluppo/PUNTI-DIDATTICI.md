@@ -278,3 +278,35 @@ Sei fascicoli: materiali per tutti gli anni e classi dalla 1ª alla 5ª, ognuno 
 - Note introdotte partendo dal sol, il rigo della chiave; poi mi, la, fa, si; do e re con il taglio in 3ª.
 - Nessun dato raccolto, nessuna registrazione: sono PDF da stampare.
 - Illustrazioni OpenMoji (CC BY-SA 4.0, da citare nei crediti), notazione VexFlow, carattere Fredoka.
+
+## Pregrafia musicale (percorso) ed Editor delle linee
+
+**Dove:** «Consigliato per la primaria» → Pregrafia musicale (`pregrafia-musicale.html`); l'editor per costruire le tappe è
+`editor-linee.html`. Per ora nel ramo `schede-primaria`. Ottobre 2026.
+
+### Concetti
+- Pregrafismo musicale: il gesto prima del segno. Linee dritte, onde, archi, zig-zag, riccioli, scalini, greche:
+  i movimenti che poi serviranno per scrivere teste, gambi, chiavi e pause.
+- Il gesto segue la musica: lungo/corto, veloce/lento, legato (linee continue e curve) o staccato (pezzi brevi e spigolosi),
+  pulsazione (una figura per battito), frasi che si ripetono (stesso disegno che torna).
+
+### Punti di forza
+- **Si parte subito, niente spiegoni:** la linea si colora a tempo e i bambini la seguono con il dito in aria.
+- **Linee piene che si colorano** su sfondo chiaro, senza puntini, senza personaggi, senza emoji: l'occhio va solo al gesto.
+- **Musica vera:** registrazioni di musica classica libere da diritti, dal semplice ai brani famosi (Beethoven, Grieg, Strauss…).
+- **Percorso a tappe** come la Storia della musica, ma colorato per i più piccoli.
+- **Ogni tappa è anche un video:** alla LIM le linee si tracciano da sole, si può rallentare la musica senza cambiarne il tono.
+- **L'editor è dell'insegnante:** si apre un brano, si disegna con il mouse mentre suona e ogni punto si ricorda il suo momento.
+  Modalità: libero, guidato (la penna avanza col tempo, si muove solo su e giù), forme a tempo (onde, zig-zag, archi, riccioli…
+  perfette sui battiti), «disegna poi dai il tempo». Poi si sistemano le linee (smussa, raddrizza, forma perfetta, aggancia ai battiti).
+- **Condivisibile tra colleghi:** il progetto si salva in un file (anche con il brano dentro) e si esporta un video da usare senza internet.
+- **Privacy:** niente microfono, niente fotocamera, nessun file inviato: tutto resta nel browser.
+
+### Come usarlo in classe
+- Prima si guarda e si ascolta, poi si segue con il dito in aria, poi con il braccio intero; più avanti la stessa linea sul foglio.
+- «Più lento» per le prime volte; poi alla velocità vera.
+- Si può chiedere ai bambini di indovinare quale figura verrà (la frase si ripete!).
+
+### Scelte fatte (e perché)
+- Niente «tocca a te» né punteggi: è un'attività di movimento e ascolto, non un gioco a punti.
+- Le prime schede di 1ª e 2ª saranno ripensate sul metodo Goitre («Cantar leggendo»), partendo proprio da linee e musica.
