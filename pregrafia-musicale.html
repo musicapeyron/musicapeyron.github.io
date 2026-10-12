@@ -6,17 +6,18 @@
 <!--
   ============================================================
   PREGRAFIA MUSICALE (primaria, prototipo) — percorso a tappe.
-  In ogni tappa si preme ▶: la musica parte e una linea colorata si disegna a tempo;
-  i bambini la seguono con il dito in aria. Niente spiegazioni.
-  La musica la suona la pagina (pianoforte campionato + timbri sintetici), così è sempre a tempo.
-  Le tappe sono dati: elenco TAPPE più sotto (formato spiegato lì).
+  In ogni tappa si preme ▶: parte un brano vero (registrazione libera da diritti) e una linea
+  piena, chiara, si colora a tempo di musica; i bambini la seguono con il dito in aria.
+  I battiti di ogni registrazione sono in pregrafia/battiti.js (li trova _sviluppo/pregrafia/prepara_brano.py),
+  le registrazioni in media/pregrafia/, i crediti nell'elenco TAPPE.
+  Le linee sono "gesti" misurati in battiti: elenco TAPPE più sotto (formato spiegato lì).
   ============================================================
 -->
 <title>Pregrafia musicale — musicascuole.it</title>
 <link rel="icon" href="favicon.svg" type="image/svg+xml">
 <link rel="icon" href="favicon-32.png" type="image/png" sizes="32x32">
 <link rel="apple-touch-icon" href="apple-touch-icon.png">
-<meta name="description" content="Pregrafia musicale per la primaria: linee colorate che si disegnano a tempo di musica, da seguire con il dito.">
+<meta name="description" content="Pregrafia musicale per la primaria: linee che si colorano a tempo di grande musica, da seguire con il dito.">
 <link rel="stylesheet" href="fonts/caratteri.css">
 <link rel="stylesheet" href="comune.css">
 <style>
@@ -26,10 +27,10 @@
     overflow: hidden; position: relative; }
   .schermo { position: fixed; inset: 0; display: flex; flex-direction: column; padding: 34px 18px 14px; gap: 10px; z-index: 1; }
   .schermo[hidden] { display: none; }
-
   .casetta { position: fixed; top: 14px; left: 14px; z-index: 60; width: 44px; height: 44px; border-radius: 50%; display: flex; align-items: center;
     justify-content: center; text-decoration: none; font-size: 1.15rem; border: 1px solid rgba(255,255,255,0.18);
     background: linear-gradient(180deg, rgba(255,255,255,0.1), rgba(255,255,255,0.04)); box-shadow: 0 4px 12px rgba(0,0,0,0.3); }
+  .ico { width: 1.15em; height: 1.15em; display: block; flex: none; }
 
   /* ---------- il percorso ---------- */
   .p-testa { text-align: center; flex: none; }
@@ -41,9 +42,9 @@
   .mappa-box { flex: 1; min-height: 0; display: flex; align-items: center; justify-content: center; }
   #mappa { width: 100%; height: 100%; display: block; }
   #mappa .tappa { cursor: pointer; }
-  #mappa .tappa:hover .disco { filter: brightness(1.12); }
+  #mappa .tappa:hover .disco { filter: brightness(1.1); }
   #mappa .tappa:focus { outline: none; }
-  #mappa .tappa:focus-visible .disco { stroke: #fff; stroke-width: 6; }
+  #mappa .tappa:focus-visible .disco { stroke: #1f2a5c; stroke-width: 8; }
 
   /* ---------- una tappa ---------- */
   .t-barra { flex: none; display: flex; align-items: center; gap: 12px; padding-left: 52px; min-height: 52px; }
@@ -51,44 +52,60 @@
     border: 1px solid rgba(255,255,255,0.2); background: rgba(255,255,255,0.07); display: inline-flex; align-items: center; gap: 8px; }
   .t-btn:hover { background: rgba(255,255,255,0.16); }
   .t-btn.attivo { background: #F99D1C; color: #1F2430; border-color: #F99D1C; }
-  .t-titolo { flex: 1; display: flex; align-items: center; justify-content: center; gap: 12px; font-family: 'Fredoka', 'Manrope', sans-serif;
-    font-weight: 700; font-size: clamp(20px, 2.4vw, 32px); }
-  .t-titolo img { width: 46px; height: 46px; }
-  .t-num { width: 40px; height: 40px; border-radius: 50%; display: grid; place-items: center; font-size: 20px; color: #fff; flex: none; }
+  .t-titolo { flex: 1; min-width: 0; display: flex; align-items: center; justify-content: center; gap: 12px; text-align: center; }
+  .t-titolo .nome { font-family: 'Fredoka', 'Manrope', sans-serif; font-weight: 700; font-size: clamp(20px, 2.3vw, 30px); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .t-titolo .brano { font-size: clamp(12px, 1.1vw, 15px); color: #9FB3CE; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .t-num { width: 40px; height: 40px; border-radius: 50%; display: grid; place-items: center; font-family: 'Fredoka', sans-serif; font-weight: 700; font-size: 20px; color: #fff; flex: none; }
   .palco { position: relative; flex: 1; min-height: 0; border-radius: 22px; overflow: hidden;
-    background: radial-gradient(ellipse at 50% 40%, #1d2a5a 0%, #121a3c 60%, #0b1129 100%); border: 2px solid rgba(255,255,255,0.12); }
+    background: linear-gradient(160deg, #fffaf3 0%, #fdeef2 55%, #f6ecff 100%); box-shadow: inset 0 0 0 2px rgba(0,0,0,0.04); }
   #tela { position: absolute; inset: 0; width: 100%; height: 100%; display: block; }
   .via { position: absolute; left: 50%; top: 50%; transform: translate(-50%, -50%); width: 150px; height: 150px; border-radius: 50%; border: 0; cursor: pointer;
-    background: #3DBE6E; color: #fff; font-size: 64px; box-shadow: 0 10px 40px rgba(0,0,0,0.45), 0 0 0 10px rgba(61,190,110,0.25); }
-  .via:hover { filter: brightness(1.1); }
+    background: #3DBE6E; color: #fff; box-shadow: 0 10px 40px rgba(0,0,0,0.25), 0 0 0 12px rgba(61,190,110,0.22); display: grid; place-items: center; }
+  .via svg { width: 62px; height: 62px; margin-left: 8px; }
+  .via:hover { filter: brightness(1.08); }
   .via[hidden] { display: none; }
-  .fine { position: absolute; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 22px; background: rgba(11,17,41,0.55); }
+  .fine { position: absolute; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 22px; background: rgba(255,250,243,0.6); }
   .fine[hidden] { display: none; }
-  .fine .stelle { font-size: 90px; line-height: 1; }
+  .fine .stella { width: 130px; height: 130px; }
   .fine .scelte { display: flex; gap: 14px; flex-wrap: wrap; justify-content: center; }
-  .fine .t-btn { font-size: 20px; padding: 14px 26px; }
+  .fine .t-btn { font-size: 20px; padding: 14px 26px; color: #1f2a5c; background: #fff; border-color: #d7dbe8; }
   .fine .t-btn.verde { background: #3DBE6E; border-color: #3DBE6E; color: #fff; }
   .t-comandi { flex: none; display: flex; justify-content: center; align-items: center; gap: 12px; }
-  .tondo { width: 64px; height: 64px; border-radius: 50%; border: 0; cursor: pointer; font-size: 28px; color: #fff; background: rgba(255,255,255,0.12); }
+  .tondo { width: 64px; height: 64px; border-radius: 50%; border: 0; cursor: pointer; color: #fff; background: rgba(255,255,255,0.12); display: grid; place-items: center; }
+  .tondo svg { width: 28px; height: 28px; }
   .tondo:hover { background: rgba(255,255,255,0.22); }
-  .tondo.grande { width: 78px; height: 78px; background: #3DBE6E; font-size: 34px; }
+  .tondo.grande { width: 78px; height: 78px; background: #3DBE6E; }
+  .tondo.grande svg { width: 34px; height: 34px; }
+  .crediti { flex: none; text-align: center; font-size: 11px; color: #8193AE; min-height: 14px; }
+  .crediti a { color: #9FB3CE; }
 
   @media (max-width: 620px) and (orientation: portrait) {
-    .schermo { padding: 30px 8px 10px; }
+    .schermo { padding: 30px 8px 8px; }
     .casetta { top: 8px; left: 8px; width: 38px; height: 38px; }
     .t-barra { padding-left: 42px; gap: 6px; }
     .t-barra .t-btn { padding: 7px 10px; font-size: 13px; }
-    .t-titolo { font-size: 18px; gap: 6px; } .t-titolo img { width: 30px; height: 30px; } .t-num { width: 30px; height: 30px; font-size: 15px; }
-    .via { width: 110px; height: 110px; font-size: 48px; }
-    .tondo { width: 52px; height: 52px; font-size: 22px; } .tondo.grande { width: 64px; height: 64px; }
-    .fine .stelle { font-size: 64px; } .fine .t-btn { font-size: 16px; padding: 10px 18px; }
+    .t-barra .t-btn span { display: none; }
+    .t-titolo { flex-direction: column; gap: 0; } .t-titolo .nome { font-size: 18px; } .t-titolo .brano { font-size: 11px; }
+    .t-num { display: none; }
+    .via { width: 110px; height: 110px; } .via svg { width: 46px; height: 46px; }
+    .tondo { width: 52px; height: 52px; } .tondo.grande { width: 64px; height: 64px; }
+    .fine .stella { width: 90px; height: 90px; } .fine .t-btn { font-size: 16px; padding: 10px 18px; }
   }
-  @media (prefers-reduced-motion: reduce) { .via { box-shadow: none; } }
 </style>
 </head>
 <body>
 <script src="info-sito.js"></script>
 <a class="casetta" href="index.html" aria-label="Torna al sito" title="Torna al sito">🏠</a>
+
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <symbol id="i-play" viewBox="0 0 24 24"><path d="M7 4.5 L19.5 12 L7 19.5 Z" fill="currentColor" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/></symbol>
+  <symbol id="i-pausa" viewBox="0 0 24 24"><rect x="6" y="5" width="4.2" height="14" rx="1.2" fill="currentColor"/><rect x="13.8" y="5" width="4.2" height="14" rx="1.2" fill="currentColor"/></symbol>
+  <symbol id="i-ripeti" viewBox="0 0 24 24"><path d="M19 12 A7 7 0 1 1 16.5 6.6" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round"/><path d="M14.5 3.5 L18 6.8 L14 9" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/></symbol>
+  <symbol id="i-prec" viewBox="0 0 24 24"><path d="M17 5 L8 12 L17 19" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/><path d="M6 5 V19" stroke="currentColor" stroke-width="3" stroke-linecap="round"/></symbol>
+  <symbol id="i-succ" viewBox="0 0 24 24"><path d="M7 5 L16 12 L7 19" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/><path d="M18 5 V19" stroke="currentColor" stroke-width="3" stroke-linecap="round"/></symbol>
+  <symbol id="i-mappa" viewBox="0 0 24 24"><path d="M3 6 L9 4 L15 6 L21 4 V18 L15 20 L9 18 L3 20 Z" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/><path d="M9 4 V18 M15 6 V20" stroke="currentColor" stroke-width="2"/></symbol>
+  <symbol id="i-lento" viewBox="0 0 24 24"><path d="M3 15 Q4 9 10 8.5 Q16 8 18 13 L21 13 Q22 15 19.5 15.5 L18 15.5 Q17 17.5 15 17.5 M6 17.5 Q4.5 17.5 3 15" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><path d="M6 15 L6.5 19 M15 15.5 L15.5 19" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></symbol>
+</svg>
 
 <!-- ======== il percorso ======== -->
 <section class="schermo" id="vistaPercorso">
@@ -102,410 +119,253 @@
 <!-- ======== una tappa ======== -->
 <section class="schermo" id="vistaTappa" hidden>
   <div class="t-barra">
-    <button type="button" class="t-btn" id="alPercorso">🗺️ <span>Percorso</span></button>
-    <div class="t-titolo"><span class="t-num" id="tNum"></span><img id="tIcona" alt=""><span id="tNome"></span></div>
-    <button type="button" class="t-btn" id="lento" title="Più lento">🐢 <span>Lento</span></button>
+    <button type="button" class="t-btn" id="alPercorso"><svg class="ico"><use href="#i-mappa"/></svg><span>Percorso</span></button>
+    <div class="t-titolo"><span class="t-num" id="tNum"></span><div><div class="nome" id="tNome"></div><div class="brano" id="tBrano"></div></div></div>
+    <button type="button" class="t-btn" id="lento" title="Musica più lenta"><svg class="ico"><use href="#i-lento"/></svg><span>Più lento</span></button>
   </div>
   <div class="palco" id="palco">
     <canvas id="tela"></canvas>
-    <button type="button" class="via" id="via" aria-label="Via!">▶</button>
+    <button type="button" class="via" id="via" aria-label="Via!"><svg><use href="#i-play"/></svg></button>
     <div class="fine" id="fine" hidden>
-      <div class="stelle">⭐</div>
+      <svg class="stella" viewBox="0 0 100 100" aria-hidden="true"><path d="M50 6 L62 36 L94 38 L69 58 L77 90 L50 72 L23 90 L31 58 L6 38 L38 36 Z" fill="#FFD23F" stroke="#F2A900" stroke-width="5" stroke-linejoin="round"/></svg>
       <div class="scelte">
-        <button type="button" class="t-btn" id="ancora">↺ Ancora</button>
-        <button type="button" class="t-btn verde" id="avanti">Avanti ▶</button>
+        <button type="button" class="t-btn" id="ancora"><svg class="ico"><use href="#i-ripeti"/></svg>Ancora</button>
+        <button type="button" class="t-btn verde" id="avanti">Avanti<svg class="ico"><use href="#i-succ"/></svg></button>
       </div>
     </div>
   </div>
   <div class="t-comandi">
-    <button type="button" class="tondo" id="prec" aria-label="Tappa precedente">⏮</button>
-    <button type="button" class="tondo" id="ricomincia" aria-label="Ricomincia">↺</button>
-    <button type="button" class="tondo grande" id="playPausa" aria-label="Avvia o metti in pausa">▶</button>
-    <button type="button" class="tondo" id="succ" aria-label="Tappa successiva">⏭</button>
+    <button type="button" class="tondo" id="prec" aria-label="Tappa precedente"><svg><use href="#i-prec"/></svg></button>
+    <button type="button" class="tondo" id="ricomincia" aria-label="Ricomincia"><svg><use href="#i-ripeti"/></svg></button>
+    <button type="button" class="tondo grande" id="playPausa" aria-label="Avvia o metti in pausa"><svg><use href="#i-play"/></svg></button>
+    <button type="button" class="tondo" id="succ" aria-label="Tappa successiva"><svg><use href="#i-succ"/></svg></button>
   </div>
+  <div class="crediti" id="crediti"></div>
 </section>
 
+<script src="pregrafia/battiti.js"></script>
 <script>
 (function () {
   "use strict";
 
   /* =====================================================================
+     I GESTI (tutte le misure in battiti del brano)
+       onda(da, a, giri, ampiezza)      curva su e giù, continua
+       archi(da, a, quanti, ampiezza)   archi che rimbalzano (arcobaleni)
+       zigzag(da, a, denti, ampiezza)   spigoli
+       riccioli(da, a, quanti, misura)  occhielli legati
+       scala(da, a, gradini, ampiezza)  scalini (ampiezza negativa = scende)
+       linea(da, a, {y0, y1})           linea dritta, anche in salita o discesa (y da -1 a 1, su = positivo)
+     opzioni comuni: { y: spostamento verticale, giu: true per capovolgere, sottile / grossa: true }
+     ripeti(f, da, quanti, ogni) ripete un gesto staccato: es. ripeti(b => archi(b, b + 1.5, 1), 0, 4, 2)
+     ===================================================================== */
+  const G = (tipo, da, a, n, A, o) => Object.assign({ tipo, da, a, n: n || 1, A: A == null ? 1 : A }, o || {});
+  const onda = (da, a, n, A, o) => G("onda", da, a, n, A, o);
+  const archi = (da, a, n, A, o) => G("archi", da, a, n, A, o);
+  const zigzag = (da, a, n, A, o) => G("zigzag", da, a, n, A, o);
+  const riccioli = (da, a, n, A, o) => G("riccioli", da, a, n, A, o);
+  const scala = (da, a, n, A, o) => G("scala", da, a, n, A, o);
+  const linea = (da, a, o) => G("linea", da, a, 1, 1, o);
+  const ripeti = (f, da, quanti, ogni) => Array.from({ length: quanti }, (_, k) => f(da + k * ogni, k));
+
+  /* =====================================================================
      LE TAPPE
-     nota: "nome+ottava:battiti[:segni]"   es. "sol4:2", "fa#4:1", "-:1" = silenzio
-       segni: s = staccato (puntino), p / pp = piano, f = forte, F = fortissimo (con accordo)
-     forma della frase: linee | punti | misto (s = puntino, il resto linea) | curva | zigzag | riccioli
-     strumento: flauto | archi | piano | campanella | pizzicato
-     accordi: uno per battuta; accompagna: lunghi | valzer | marcia | pedale (+ basso: nota)
+     brano: chiave in BATTITI (pregrafia/battiti.js) e nome del file in media/pregrafia/.
+     Se la registrazione non c'è ancora, la tappa suona un metronomo (bpm) per le prove.
+     righe: ogni riga occupa tutto lo schermo; i gesti di una riga si colorano uno dopo l'altro.
      ===================================================================== */
   const TAPPE = [
-    { nome: "Linee lunghe", icona: "treno", bpm: 72, metro: 4, strumento: "flauto", accompagna: "lunghi", frasi: [
-      { forma: "linee", note: "sol4:3 -:1 sol4:3 -:1 sol4:3 -:1 sol4:4", accordi: "C Em C C" },
-      { forma: "linee", note: "mi4:4 mi4:4 mi4:4 mi4:4", accordi: "C Am C Am" },
-      { forma: "linee", note: "la4:2 -:2 la4:2 -:2 la4:6 -:2", accordi: "F Dm F F" } ] },
-    { nome: "Puntini", icona: "goccia", bpm: 96, metro: 4, strumento: "campanella", accompagna: "lunghi", frasi: [
-      { forma: "punti", note: "mi5:1 mi5:1 mi5:1 -:1 mi5:1 mi5:1 mi5:1 -:1 mi5:1 -:1 mi5:1 -:1 mi5:1 mi5:1 mi5:1 -:1", accordi: "C Am C Am" },
-      { forma: "punti", note: "sol5:1 -:1 sol5:1 -:1 sol5:0.5 sol5:0.5 sol5:1 -:2 sol5:1 sol5:1 sol5:1 sol5:1 sol5:1 -:3", accordi: "C Em C G" } ] },
-    { nome: "Lunghi e corti", icona: "bicicletta", bpm: 88, metro: 4, strumento: "flauto", accompagna: "lunghi", frasi: [
-      { forma: "misto", note: "do5:4 do5:1:s do5:1:s do5:1:s -:1 do5:4 do5:1:s do5:1:s do5:2:s", accordi: "C F C C" },
-      { forma: "misto", note: "sol4:1:s sol4:1:s sol4:2 sol4:1:s sol4:1:s sol4:2 sol4:1:s sol4:1:s sol4:1:s sol4:1:s sol4:4", accordi: "C Em C C" } ] },
-    { nome: "Sale e scende", icona: "razzo", bpm: 92, metro: 4, strumento: "flauto", accompagna: "lunghi", frasi: [
-      { forma: "curva", note: "do4:1 re4:1 mi4:1 fa4:1 sol4:1 la4:1 si4:1 do5:1 do5:1 si4:1 la4:1 sol4:1 fa4:1 mi4:1 re4:1 do4:1", accordi: "C G C C" },
-      { forma: "curva", note: "do4:2 mi4:2 sol4:2 do5:2 sol4:2 mi4:2 do4:4", accordi: "C C C C" } ] },
-    { nome: "Onde", icona: "pesce", bpm: 84, metro: 4, strumento: "archi", accompagna: "lunghi", frasi: [
-      { forma: "curva", note: "sol4:2 mi4:2 sol4:2 mi4:2 sol4:2 mi4:2 sol4:4", accordi: "C C C C" },
-      { forma: "curva", note: "sol4:1 la4:1 sol4:1 mi4:1 sol4:1 la4:1 sol4:1 mi4:1 sol4:1 la4:1 sol4:1 mi4:1 sol4:2 mi4:2", accordi: "C F C C" },
-      { forma: "curva", note: "do4:2 do5:2 do4:2 do5:2 mi4:2 sol4:2 do4:4", accordi: "C C C C" } ] },
-    { nome: "Zig-zag", icona: "temporale", bpm: 100, metro: 4, strumento: "piano", accompagna: "marcia", frasi: [
-      { forma: "zigzag", note: "do4:1 sol4:1 do4:1 sol4:1 do4:1 sol4:1 do4:1 sol4:1 mi4:1 do5:1 mi4:1 do5:1 mi4:1 do5:1 mi4:2", accordi: "C C C C" },
-      { forma: "zigzag", note: "sol4:0.5 re5:0.5 sol4:0.5 re5:0.5 sol4:0.5 re5:0.5 sol4:0.5 re5:0.5 sol4:0.5 re5:0.5 sol4:0.5 re5:0.5 sol4:0.5 re5:0.5 sol4:1 do4:0.5 do5:0.5 do4:0.5 do5:0.5 do4:0.5 do5:0.5 do4:0.5 do5:0.5 do4:0.5 do5:0.5 do4:0.5 do5:0.5 do4:2", accordi: "G G C C" } ] },
-    { nome: "Riccioli", icona: "lumaca", bpm: 138, metro: 3, strumento: "flauto", accompagna: "valzer", frasi: [
-      { forma: "riccioli", note: "mi4:3 sol4:3 mi4:3 sol4:3 do5:3 sol4:3 mi4:6", accordi: "C Em C Em Am C C C" },
-      { forma: "riccioli", note: "sol4:3 la4:3 sol4:3 mi4:3 sol4:3 la4:3 sol4:6", accordi: "C F C C C F C C" } ] },
-    { nome: "Forte e piano", icona: "leone", bpm: 90, metro: 4, strumento: "campanella", accompagna: "lunghi", frasi: [
-      { forma: "punti", note: "do5:1:f do5:1:f do5:1:f -:1 do5:1:p do5:1:p do5:1:p -:1 do5:1:f do5:1:f do5:1:f -:1 do5:1:p do5:1:p do5:1:p -:1", accordi: "C C C C" },
-      { forma: "linee", strumento: "archi", note: "sol4:4:f sol4:4:p sol4:4:f sol4:4:p", accordi: "C C C C" } ] },
-    { nome: "Inno alla gioia", autore: "Beethoven", icona: "festa", bpm: 104, metro: 4, strumento: "archi", accompagna: "lunghi", grande: true, frasi: [
-      { forma: "curva", note: "mi4:1 mi4:1 fa4:1 sol4:1 sol4:1 fa4:1 mi4:1 re4:1 do4:1 do4:1 re4:1 mi4:1 mi4:1.5 re4:0.5 re4:2", accordi: "C G C G" },
-      { forma: "curva", note: "mi4:1 mi4:1 fa4:1 sol4:1 sol4:1 fa4:1 mi4:1 re4:1 do4:1 do4:1 re4:1 mi4:1 re4:1.5 do4:0.5 do4:2", accordi: "C G C C" } ] },
-    { nome: "La sorpresa", autore: "Haydn", icona: "dorme", bpm: 100, metro: 4, strumento: "pizzicato", accompagna: "lunghi", grande: true, frasi: [
-      { forma: "punti", note: "do4:1:p do4:1:p mi4:1:p mi4:1:p sol4:1:p sol4:1:p mi4:2:p fa4:1:p fa4:1:p re4:1:p re4:1:p si3:1:p si3:1:p sol3:2:p", accordi: "C C G G" },
-      { forma: "punti", note: "do4:1:pp do4:1:pp mi4:1:pp mi4:1:pp sol4:1:pp sol4:1:pp mi4:2:pp fa#4:1:pp fa#4:1:pp la4:1:pp la4:1:pp sol4:2:pp -:1 sol4:1:F", accordi: "C C D7 G" } ] },
-    { nome: "Il re della montagna", autore: "Grieg", icona: "orso", metro: 4, strumento: "pizzicato", accompagna: "pedale", basso: "si2", grande: true, frasi: [
-      { forma: "punti", bpm: 104, note: "si3:1:pp do#4:1:pp re4:1:pp mi4:1:pp fa#4:1:pp re4:1:pp fa#4:2:pp mi#4:1:pp do#4:1:pp mi#4:2:pp mi4:1:pp do4:1:pp mi4:2:pp si3:1:pp do#4:1:pp re4:1:pp mi4:1:pp fa#4:1:pp re4:1:pp fa#4:1:pp si4:1:pp la4:1:pp fa#4:1:pp re4:1:pp fa#4:1:pp la4:4:pp" },
-      { forma: "punti", bpm: 124, note: "si3:1 do#4:1 re4:1 mi4:1 fa#4:1 re4:1 fa#4:2 mi#4:1 do#4:1 mi#4:2 mi4:1 do4:1 mi4:2 si3:1 do#4:1 re4:1 mi4:1 fa#4:1 re4:1 fa#4:1 si4:1 la4:1 fa#4:1 re4:1 fa#4:1 la4:4" },
-      { forma: "punti", bpm: 148, note: "si3:1:f do#4:1:f re4:1:f mi4:1:f fa#4:1:f re4:1:f fa#4:2:f mi#4:1:f do#4:1:f mi#4:2:f mi4:1:f do4:1:f mi4:2:f si3:1:f do#4:1:f re4:1:f mi4:1:f fa#4:1:f re4:1:f fa#4:1:f si4:1:f la4:1:f fa#4:1:f re4:1:f fa#4:1:f si4:4:F" } ] }
+    { nome: "Linee lunghe", brano: "bach-aria", titolo: "Aria sulla quarta corda", autore: "J. S. Bach", bpm: 60, motivo: linea(0, 1),
+      righe: [
+        [linea(0, 4), linea(4, 8)],
+        [linea(8, 12, { y0: -0.5, y1: 0.5 }), linea(12, 16, { y0: 0.5, y1: -0.5 })],
+        [onda(16, 24, 1, 0.6)],
+        [linea(24, 28), onda(28, 32, 1, 0.5)] ] },
+    { nome: "Onde", brano: "cigno", titolo: "Il cigno", autore: "C. Saint-Saëns", bpm: 66, motivo: onda(0, 1, 2, 0.8),
+      righe: [[onda(0, 8, 2, 0.8)], [onda(8, 16, 2, 0.8)], [onda(16, 24, 3, 0.6)], [onda(24, 32, 2, 1)]] },
+    { nome: "Arcobaleni", brano: "mattino", titolo: "Il mattino", autore: "E. Grieg", bpm: 72, motivo: archi(0, 1, 2, 0.9),
+      righe: [ripeti(b => archi(b, b + 3, 1, 0.9), 0, 3, 4), ripeti(b => archi(b, b + 3, 1, 0.9), 12, 3, 4), [archi(24, 36, 3, 0.9)]] },
+    { nome: "Dondolo", brano: "barcarola", titolo: "Barcarola", autore: "J. Offenbach", bpm: 56, motivo: onda(0, 1, 1, 0.9),
+      righe: [[onda(0, 8, 4, 0.5)], [onda(8, 16, 4, 0.5)], [onda(16, 24, 2, 0.9)], [onda(24, 32, 4, 0.5)]] },
+    { nome: "Riccioli", brano: "danubio", titolo: "Sul bel Danubio blu", autore: "J. Strauss", bpm: 168, metro: 3, motivo: riccioli(0, 1, 3, 0.7),
+      righe: [[riccioli(0, 12, 4, 0.8)], [riccioli(12, 24, 4, 0.8)], [riccioli(24, 36, 4, 0.8)], [riccioli(36, 48, 4, 0.8)]] },
+    { nome: "Colline e scalini", brano: "inno", titolo: "Inno alla gioia", autore: "L. van Beethoven", bpm: 104, motivo: scala(0, 1, 3, 0.8),
+      righe: [[archi(0, 8, 2, 0.7)], [scala(8, 12, 4, 0.8), scala(12, 16, 4, -0.8)], [archi(16, 24, 2, 0.7)], [scala(24, 28, 4, 0.8), linea(28, 32, { y0: 0.8, y1: 0.8 })]] },
+    { nome: "Passi del troll", brano: "troll", titolo: "Nell'antro del re della montagna", autore: "E. Grieg", bpm: 120, motivo: zigzag(0, 1, 2, 0.8),
+      righe: [ripeti(b => scala(b, b + 1.6, 3, 0.4), 0, 4, 2), ripeti(b => zigzag(b, b + 1.6, 2, 0.55), 8, 4, 2), ripeti(b => zigzag(b, b + 1.8, 2, 0.8), 16, 4, 2), [zigzag(24, 32, 8, 1)]] },
+    { nome: "Piano… forte!", brano: "sorpresa", titolo: "Sinfonia «La sorpresa»", autore: "J. Haydn", bpm: 100, motivo: zigzag(0, 1, 3, 0.9),
+      righe: [ripeti(b => linea(b, b + 1.4, { y0: -0.15, y1: 0.15, sottile: true }), 0, 8, 2), [...ripeti(b => linea(b, b + 1.4, { y0: -0.15, y1: 0.15, sottile: true }), 16, 7, 2), zigzag(30, 32, 3, 1.2, { grossa: true })]] },
+    { nome: "Lampi", brano: "temporale", titolo: "L'estate, il temporale", autore: "A. Vivaldi", bpm: 140, motivo: zigzag(0, 1, 2, 1),
+      righe: [ripeti(b => zigzag(b, b + 1, 2, 0.9), 0, 4, 2), ripeti(b => linea(b, b + 1, { y0: 0.9, y1: -0.9 }), 8, 4, 2), [zigzag(16, 24, 8, 0.9)], ripeti(b => zigzag(b, b + 1.5, 3, 1), 24, 4, 2)] },
+    { nome: "Zig-zag veloce", brano: "calabrone", titolo: "Il volo del calabrone", autore: "N. Rimskij-Korsakov", bpm: 160, motivo: zigzag(0, 1, 5, 0.6),
+      righe: [[zigzag(0, 8, 12, 0.5)], [zigzag(8, 16, 12, 0.7)], [onda(16, 24, 6, 0.6)], [zigzag(24, 32, 16, 0.6)]] }
   ];
 
-  const COLORI_LINEA = ["#FF4D6D", "#FFB020", "#2EE6D6", "#BED958", "#A78BFA", "#FF6EC7", "#FFF428"];
-  const COLORI_TAPPA = ["#E21C48", "#F99D1C", "#d9b800", "#8fb83a", "#009C95", "#5E50A1", "#CF3E96"];
-  const NOTE = { do: 0, re: 2, mi: 4, fa: 5, sol: 7, la: 9, si: 11 };
-  const GRADO = { do: 0, re: 1, mi: 2, fa: 3, sol: 4, la: 5, si: 6 };
-  const DIN = { pp: 0.4, p: 0.6, "": 1, f: 1.6, F: 2.4 };
+  const COLORI = ["#E21C48", "#009C95", "#5E50A1", "#F99D1C", "#1E88E5", "#CF3E96", "#2E9E5B"];
+  const COLORI_TAPPA = ["#E21C48", "#F99D1C", "#d9b800", "#8fb83a", "#009C95", "#5E50A1", "#CF3E96", "#1E88E5", "#2E9E5B", "#E8603C"];
   const $ = id => document.getElementById(id);
+  const BATT = window.BATTITI || {};
 
-  /* ---------- lettura delle note ---------- */
-  function leggiNote(testo) {
-    let t = 0;
-    return testo.trim().split(/\s+/).map(tok => {
-      const [n, d, segni = ""] = tok.split(":");
-      const dur = +d, ev = { t0: t, t1: t + dur, dur };
-      t += dur;
-      if (n === "-") { ev.pausa = true; return ev; }
-      const m = /^(do|re|mi|fa|sol|la|si)(#|b)?(\d)$/.exec(n);
-      ev.midi = 12 * (+m[3] + 1) + NOTE[m[1]] + (m[2] === "#" ? 1 : m[2] === "b" ? -1 : 0);
-      ev.grado = +m[3] * 7 + GRADO[m[1]];
-      ev.stacc = segni.includes("s");
-      ev.din = segni.includes("F") ? "F" : segni.includes("pp") ? "pp" : segni.includes("p") ? "p" : segni.includes("f") ? "f" : "";
-      return ev;
-    });
-  }
-  /* prepara una tappa: tempi in secondi, frase dopo frase */
-  function prepara(tp, lento) {
-    let tAss = 0;
-    const frasi = tp.frasi.map((f, i) => {
-      const bpm = (f.bpm || tp.bpm) * (lento ? 0.75 : 1), sb = 60 / bpm;
-      const note = leggiNote(f.note);
-      const battiti = note.length ? note[note.length - 1].t1 : 0;
-      const fr = { i, metro: tp.metro, forma: f.forma, strumento: f.strumento || tp.strumento, note, battiti, sb, inizio: tAss, durata: battiti * sb,
-        accordi: (f.accordi || "").split(/\s+/).filter(Boolean), colore: COLORI_LINEA[i % COLORI_LINEA.length] };
-      tAss += fr.durata;
-      return fr;
-    });
-    return { frasi, durata: tAss, metro: tp.metro, bpm0: (tp.frasi[0].bpm || tp.bpm) * (lento ? 0.75 : 1) };
-  }
-
-  /* =====================================================================
-     AUDIO: pianoforte campionato (Salamander, CC BY 3.0, gli stessi suoni dei giochi) + timbri sintetici
-     ===================================================================== */
-  let ctx = null, uscita = null, sorgenti = [];
-  function audio() {
-    if (!ctx) {
-      const AC = window.AudioContext || window.webkitAudioContext;
-      ctx = new AC();
-      uscita = ctx.createGain(); uscita.gain.value = 0.8;
-      const comp = ctx.createDynamicsCompressor(); uscita.connect(comp); comp.connect(ctx.destination);
-    }
-    if (ctx.state === "suspended") ctx.resume();
-    return ctx;
-  }
-  const hz = m => 440 * Math.pow(2, (m - 69) / 12);
-  const PIANO = [["C2", 36], ["Ds2", 39], ["Fs2", 42], ["A2", 45], ["C3", 48], ["Ds3", 51], ["Fs3", 54], ["A3", 57], ["C4", 60], ["Ds4", 63],
-    ["Fs4", 66], ["A4", 69], ["C5", 72], ["Ds5", 75], ["Fs5", 78], ["A5", 81], ["C6", 84]].map(([n, m]) => ({ midi: m, url: "media/suoni/pianoforte/" + n + ".mp3" }));
-  let pianoBuf = null, pianoProm = null;
-  function caricaPiano() {
-    if (pianoProm) return pianoProm;
-    const c = audio();
-    pianoProm = Promise.all(PIANO.map(s => fetch(s.url).then(r => r.arrayBuffer()).then(d => new Promise(ok => c.decodeAudioData(d, buf => {
-      const ch = buf.getChannelData(0); let picco = 0; for (let i = 0; i < ch.length; i++) picco = Math.max(picco, Math.abs(ch[i]));
-      let i = 0; while (i < ch.length && Math.abs(ch[i]) < picco * 0.03) i++;
-      ok({ midi: s.midi, buf, off: Math.max(0, i / buf.sampleRate - 0.002) });
-    }, () => ok(null)))).catch(() => null))).then(l => (pianoBuf = l.filter(Boolean)));
-    return pianoProm;
-  }
-  function tieni(src) { sorgenti.push(src); src.onended = () => { const i = sorgenti.indexOf(src); if (i >= 0) sorgenti.splice(i, 1); }; }
-  function piano(m, t, dur, vol) {
-    if (!pianoBuf || !pianoBuf.length) return sintetico("campanella", m, t, dur, vol * 0.8);
-    let b = pianoBuf[0]; pianoBuf.forEach(s => { if (Math.abs(s.midi - m) < Math.abs(b.midi - m)) b = s; });
-    const src = ctx.createBufferSource(); src.buffer = b.buf; src.playbackRate.value = Math.pow(2, (m - b.midi) / 12);
-    const g = ctx.createGain(), fine = t + Math.max(0.15, dur);
-    g.gain.setValueAtTime(vol, t); g.gain.setValueAtTime(vol, fine); g.gain.setTargetAtTime(0.0001, fine, 0.1);
-    src.connect(g); g.connect(uscita); src.start(t, b.off); src.stop(fine + 0.6); tieni(src);
-  }
-  function sintetico(tipo, m, t, dur, vol) {
-    const f = hz(m), g = ctx.createGain(), filtro = ctx.createBiquadFilter();
-    filtro.type = "lowpass"; g.connect(uscita); filtro.connect(g);
-    const osc = [];
-    const aggiungi = (forma, fr, v, det) => { const o = ctx.createOscillator(); o.type = forma; o.frequency.value = fr; if (det) o.detune.value = det;
-      const gg = ctx.createGain(); gg.gain.value = v; o.connect(gg); gg.connect(filtro); osc.push(o); return o; };
-    let fine;
-    if (tipo === "flauto") {
-      filtro.frequency.value = 2600;
-      const o1 = aggiungi("sine", f, 1); aggiungi("triangle", f * 2, 0.12);
-      const lfo = ctx.createOscillator(), lg = ctx.createGain(); lfo.frequency.value = 5.2; lg.gain.value = 0;
-      lg.gain.setValueAtTime(0, t + 0.25); lg.gain.linearRampToValueAtTime(f * 0.006, t + 0.6); lfo.connect(lg); lg.connect(o1.frequency); osc.push(lfo);
-      fine = t + dur * 0.92;
-      g.gain.setValueAtTime(0.0001, t); g.gain.linearRampToValueAtTime(vol * 0.5, t + 0.07); g.gain.setValueAtTime(vol * 0.5, fine); g.gain.linearRampToValueAtTime(0.0001, fine + 0.12);
-    } else if (tipo === "archi") {
-      filtro.frequency.value = 1700;
-      aggiungi("sawtooth", f, 0.35, -7); aggiungi("sawtooth", f, 0.35, 7); aggiungi("sine", f / 2, 0.25);
-      fine = t + dur * 0.96;
-      g.gain.setValueAtTime(0.0001, t); g.gain.linearRampToValueAtTime(vol * 0.42, t + 0.16); g.gain.setValueAtTime(vol * 0.42, fine); g.gain.linearRampToValueAtTime(0.0001, fine + 0.25);
-    } else if (tipo === "pizzicato") {
-      filtro.frequency.setValueAtTime(3000, t); filtro.frequency.exponentialRampToValueAtTime(500, t + 0.3);
-      aggiungi("sawtooth", f, 0.5); aggiungi("triangle", f, 0.5);
-      fine = t + 0.05;
-      g.gain.setValueAtTime(0.0001, t); g.gain.linearRampToValueAtTime(vol * 0.6, t + 0.006); g.gain.exponentialRampToValueAtTime(0.0001, t + 0.45);
-      fine = t + 0.45;
-    } else {   // campanella (marimba)
-      filtro.frequency.value = 6000;
-      aggiungi("sine", f, 1); aggiungi("sine", f * 4, 0.18);
-      g.gain.setValueAtTime(0.0001, t); g.gain.linearRampToValueAtTime(vol * 0.7, t + 0.005); g.gain.exponentialRampToValueAtTime(0.0001, t + 0.7);
-      fine = t + 0.7;
-    }
-    osc.forEach(o => { o.start(t); o.stop(fine + 0.4); tieni(o); });
-  }
-  function suona(strumento, m, t, dur, vol) { if (strumento === "piano") piano(m, t, dur, vol); else sintetico(strumento, m, t, dur, vol); }
-  function clic(t, forte) {
-    const o = ctx.createOscillator(), g = ctx.createGain(); o.type = "triangle"; o.frequency.value = forte ? 1500 : 1100;
-    g.gain.setValueAtTime(0.0001, t); g.gain.linearRampToValueAtTime(0.25, t + 0.003); g.gain.exponentialRampToValueAtTime(0.0001, t + 0.08);
-    o.connect(g); g.connect(uscita); o.start(t); o.stop(t + 0.1); tieni(o);
-  }
-  const ACCORDI = { C: [48, 60, 64, 67], G: [43, 59, 62, 67], Am: [45, 60, 64, 69], F: [41, 60, 65, 69], Em: [40, 59, 64, 67], Dm: [38, 62, 65, 69], D7: [38, 60, 62, 66], G7: [43, 59, 62, 65], Bm: [47, 62, 66, 71] };
-  /* programma la musica da "da" (secondi dall'inizio della tappa) */
-  function programma(P, tp, t0, da) {
-    P.frasi.forEach(fr => {
-      const base = t0 + fr.inizio - da;
-      fr.note.forEach(n => {
-        if (n.pausa) return;
-        const t = base + n.t0 * fr.sb, dur = n.dur * fr.sb;
-        if (t + dur < t0 - 0.01) return;
-        const parte = Math.max(t, t0), resto = t + dur - parte;
-        if (t < t0 - 0.02 && (fr.forma === "punti" || n.stacc)) return;
-        const strum = (fr.forma === "misto" && n.stacc) ? "campanella" : fr.strumento;
-        const vol = 0.55 * Math.min(1.5, DIN[n.din]);
-        suona(strum, n.midi, parte, (fr.forma === "punti" || n.stacc) ? Math.min(dur, 0.35) : resto, vol);
-        if (n.din === "F") (ACCORDI[fr.accordi[fr.accordi.length - 1]] || ACCORDI.G).forEach(m => piano(m, parte, 1.2, 0.5));
-      });
-      /* accompagnamento */
-      const metro = tp.metro;
-      for (let b = 0; b * metro < fr.battiti; b++) {
-        const acc = ACCORDI[fr.accordi[b]] || null;
-        for (let k = 0; k < metro; k++) {
-          const beat = b * metro + k; if (beat >= fr.battiti) break;
-          const t = base + beat * fr.sb; if (t < t0 - 0.01) continue;
-          const v = 0.16 * (fr.note.some(n => n.din === "pp" && n.t0 <= beat && n.t1 > beat) ? 0.6 : 1);
-          if (tp.accompagna === "pedale") { const mb = { si2: 47 }[tp.basso] || 47; suona("pizzicato", mb, t, 0.3, v * 2.2 * (fr.i + 1) / 2); continue; }
-          if (!acc) continue;
-          if (tp.accompagna === "lunghi" && k === 0) acc.forEach(m => piano(m, t, metro * fr.sb * 0.95, v));
-          else if (tp.accompagna === "valzer") { if (k === 0) piano(acc[0], t, fr.sb * 0.9, v * 1.3); else acc.slice(1).forEach(m => piano(m, t, fr.sb * 0.5, v * 0.8)); }
-          else if (tp.accompagna === "marcia") { if (k % 2 === 0) piano(acc[0], t, fr.sb * 0.9, v * 1.3); else acc.slice(1).forEach(m => piano(m, t, fr.sb * 0.5, v * 0.8)); }
-        }
+  /* ---------- forme: punto del gesto per s da 0 a 1 (x in pixel dall'inizio del gesto, y in unità, su = negativo) ---------- */
+  function forma(g, s, larg, U) {
+    const A = g.A * (g.giu ? -1 : 1), y0 = -(g.y || 0);
+    switch (g.tipo) {
+      case "onda": return [s * larg, y0 - A * Math.sin(2 * Math.PI * g.n * s)];
+      case "archi": return [s * larg, y0 + A * (0.5 - Math.abs(Math.sin(Math.PI * g.n * s)))];
+      case "zigzag": { const u = g.n * s, f = u - Math.floor(u); const tri = f < 0.25 ? f * 4 : f < 0.75 ? 2 - f * 4 : f * 4 - 4; return [s * larg, y0 - A * tri]; }
+      case "scala": { const k = Math.min(g.n - 1, Math.floor(s * g.n)); return [s * larg, y0 + (g.n > 1 ? A * (1 - 2 * k / (g.n - 1)) : 0)]; }
+      case "riccioli": {
+        const passo = larg / g.n, R = Math.min(passo * 0.36, A * U * 0.55) / U, a = 2 * Math.PI * g.n * s;
+        return [s * larg + R * U * Math.sin(a), y0 + 0.55 * A - R * (1 - Math.cos(a)) * 1.2];
       }
-    });
+      default: { const a = g.y0 || 0, b = g.y1 == null ? a : g.y1; return [s * larg, y0 - (a + (b - a) * s)]; }
+    }
   }
-  function silenzio() { sorgenti.slice().forEach(s => { try { s.stop(); } catch (e) {} }); sorgenti = []; }
 
   /* =====================================================================
-     LE LINEE: per ogni frase, la posizione della matita nel tempo
+     TEMPO: battiti veri della registrazione (o metronomo per le prove)
+     ===================================================================== */
+  let tp = null, battiti = null;
+  function prepara(t) {
+    tp = t;
+    const b = BATT[t.brano];
+    if (b && b.length > 1) battiti = b.slice();
+    else { const sb = 60 / t.bpm; battiti = Array.from({ length: 400 }, (_, i) => 1 + i * sb); battiti.prova = true; }
+    t.ultimo = Math.max(...t.righe.flat().map(g => g.a));
+  }
+  function battitoA(t) {   // da secondi a battiti (interpolando fra i battiti veri)
+    const b = battiti;
+    if (t <= b[0]) return (t - b[0]) / (b[1] - b[0]);
+    let lo = 0, hi = b.length - 1;
+    if (t >= b[hi]) return hi + (t - b[hi]) / (b[hi] - b[hi - 1]);
+    while (hi - lo > 1) { const m = (lo + hi) >> 1; if (b[m] <= t) lo = m; else hi = m; }
+    return lo + (t - b[lo]) / (b[lo + 1] - b[lo]);
+  }
+  function secondiA(beat) { const b = battiti, i = Math.max(0, Math.min(b.length - 2, Math.floor(beat))); return b[i] + (beat - i) * (b[i + 1] - b[i]); }
+
+  /* ---------- riproduzione: registrazione vera, oppure metronomo ---------- */
+  const audioEl = new Audio(); audioEl.preload = "auto";
+  try { audioEl.preservesPitch = true; audioEl.mozPreservesPitch = true; audioEl.webkitPreservesPitch = true; } catch (e) {}
+  let ctx = null, clicTimer = null, provaT0 = 0, provaDa = 0, lento = false, suonando = false, raf = 0;
+  let ultimoT = -1, ultimoPerf = 0;
+  const rate = () => lento ? 0.78 : 1;
+  function tempoOra() {
+    if (battiti.prova) return suonando ? provaDa + (performance.now() / 1000 - provaT0) * rate() : provaDa;
+    const t = audioEl.currentTime;
+    if (!suonando) return t;
+    const ora = performance.now() / 1000;
+    if (t !== ultimoT) { ultimoT = t; ultimoPerf = ora; return t; }
+    return t + (ora - ultimoPerf) * rate();   // l'orologio dell'audio avanza a scatti: si interpola
+  }
+  function avviaAudio(da) {
+    if (battiti.prova) {
+      if (!ctx) ctx = new (window.AudioContext || window.webkitAudioContext)();
+      ctx.resume(); provaDa = da; provaT0 = performance.now() / 1000;
+      let k = Math.max(0, Math.ceil(battitoA(da)));
+      const clic = () => {
+        const att = secondiA(k) - tempoOra();
+        if (att < 0.25) {
+          const o = ctx.createOscillator(), g = ctx.createGain(), t = ctx.currentTime + Math.max(0, att / rate());
+          o.frequency.value = k % (tp.metro || 4) === 0 ? 1500 : 1000;
+          g.gain.setValueAtTime(0.0001, t); g.gain.linearRampToValueAtTime(0.3, t + 0.004); g.gain.exponentialRampToValueAtTime(0.0001, t + 0.08);
+          o.connect(g); g.connect(ctx.destination); o.start(t); o.stop(t + 0.1); k++;
+        }
+        clicTimer = setTimeout(clic, 30);
+      };
+      clic();
+      return Promise.resolve();
+    }
+    audioEl.playbackRate = rate();
+    audioEl.currentTime = da;
+    return audioEl.play();
+  }
+  function fermaAudio() { clearTimeout(clicTimer); if (battiti.prova) provaDa = tempoOra(); audioEl.pause(); }
+
+  /* =====================================================================
+     DISEGNO: la linea intera chiara, e sopra la parte già colorata
      ===================================================================== */
   const tela = $("tela"), c2 = tela.getContext("2d");
-  let W = 0, H = 0, DPR = 1;
+  let W = 0, H = 0, righe = [];
   function misura() {
-    const r = $("palco").getBoundingClientRect();
-    DPR = Math.min(2, window.devicePixelRatio || 1);
+    const r = $("palco").getBoundingClientRect(), dpr = Math.min(2, window.devicePixelRatio || 1);
     W = r.width; H = r.height;
-    tela.width = Math.round(W * DPR); tela.height = Math.round(H * DPR);
-    c2.setTransform(DPR, 0, 0, DPR, 0, 0);
-    if (P) P.frasi.forEach(geometria);
-    disegna();
+    tela.width = Math.round(W * dpr); tela.height = Math.round(H * dpr);
+    c2.setTransform(dpr, 0, 0, dpr, 0, 0);
+    geometria(); disegna();
   }
-  /* calcola i punti della linea (campioni nel tempo) */
-  function geometria(fr) {
-    const mx = W * 0.07, larg = W - 2 * mx, T = fr.battiti;
-    const suoni = fr.note.filter(n => !n.pausa);
-    const gmin = Math.min(...suoni.map(n => n.grado)), gmax = Math.max(...suoni.map(n => n.grado));
-    const cy = H * 0.52, alt = H * 0.58, rng = Math.max(gmax - gmin, 5), mid = (gmin + gmax) / 2;
-    const Y = g => gmax === gmin ? cy : cy - (g - mid) / rng * alt;
-    const X = b => mx + larg * b / T;
-    const spess = Math.max(9, Math.min(W, H * 1.6) * 0.022);
-    fr.X = X; fr.spess = spess;
-    const camp = [], punti = [];
-    const PASSO = 1 / 48;
-    const ancore = []; // per curva e zigzag: gruppi legati
-    if (fr.forma === "curva" || fr.forma === "zigzag") {
-      let gr = [];
-      fr.note.forEach(n => { if (n.pausa) { if (gr.length) ancore.push(gr); gr = []; } else gr.push(n); });
-      if (gr.length) ancore.push(gr);
-    }
-    const valore = (gr, b) => {   // y nella curva/zigzag di un gruppo al battito b
-      const pts = gr.map(n => [n.t0, Y(n.grado)]); pts.push([gr[gr.length - 1].t1, Y(gr[gr.length - 1].grado)]);
-      let i = 0; while (i < pts.length - 2 && b > pts[i + 1][0]) i++;
-      const [x0, y0] = pts[i], [x1, y1] = pts[i + 1], u = Math.max(0, Math.min(1, (b - x0) / (x1 - x0 || 1)));
-      if (fr.forma === "zigzag") return i === pts.length - 2 ? y0 : y0 + (y1 - y0) * u;
-      const m = j => { const a = pts[Math.max(0, j - 1)], c = pts[Math.min(pts.length - 1, j + 1)]; return (c[1] - a[1]) / ((c[0] - a[0]) || 1); };
-      const h = x1 - x0, m0 = i === pts.length - 2 ? 0 : m(i) * h, m1 = i + 1 >= pts.length - 2 ? 0 : m(i + 1) * h;
-      const u2 = u * u, u3 = u2 * u;
-      return (2 * u3 - 3 * u2 + 1) * y0 + (u3 - 2 * u2 + u) * m0 + (-2 * u3 + 3 * u2) * y1 + (u3 - u2) * m1;
-    };
-    fr.note.forEach(n => {
-      if (n.pausa) return;
-      const w = spess * DIN[n.din];
-      const comePunto = fr.forma === "punti" || (fr.forma === "misto" && n.stacc);
-      if (comePunto) { punti.push({ t: n.t0, x: X(n.t0), y: Y(n.grado), r: spess * 1.15 * Math.sqrt(DIN[n.din]) * (n.din === "F" ? 1.6 : 1) }); return; }
-      if (fr.forma === "linee" || fr.forma === "misto") {
-        const fine = n.t0 + n.dur * 0.88;
-        for (let b = n.t0; b <= fine + 1e-6; b += PASSO) camp.push({ t: b, x: X(b), y: Y(n.grado), w, giu: b > n.t0 });
-      } else if (fr.forma === "riccioli") {
-        /* un ricciolo per battuta, tutti legati: x = avanti + giro, y = su e giù */
-        const giri = Math.max(1, Math.round(n.dur / fr.metro)), x0 = X(n.t0), dx = (X(n.t1) - x0) / giri;
-        const R = Math.min(dx * 0.34, H * 0.15), base = H * 0.52 + R * 1.15;
-        const primo = fr.note.indexOf(n) === 0 || fr.note[fr.note.indexOf(n) - 1].pausa;
-        for (let b = n.t0; b <= n.t1 + 1e-6; b += PASSO) {
-          const s = (b - n.t0) / n.dur * giri, a = 2 * Math.PI * (s % 1 || (s > 0 ? 1 : 0)), k = Math.floor(Math.min(s, giri - 1e-9));
-          camp.push({ t: b, x: x0 + dx * k + dx * (s - k) + R * Math.sin(a), y: base - R * (1 - Math.cos(a)) * 1.15, w, giu: !(primo && b === n.t0) });
-        }
-      } else {   // curva, zigzag
-        const gr = ancore.find(g => g.includes(n)), primo = gr[0] === n;
-        for (let b = n.t0; b <= n.t1 + 1e-6; b += PASSO) camp.push({ t: b, x: X(b), y: valore(gr, b), w, giu: !(primo && b === n.t0) });
-      }
+  function geometria() {
+    if (!tp) return;
+    const mx = Math.max(40, W * 0.07), U = H * 0.3, cy = H * 0.52;
+    righe = tp.righe.map((gesti, ri) => {
+      const r0 = Math.min(...gesti.map(g => g.da)), r1 = Math.max(...gesti.map(g => g.a));
+      const X = b => mx + (W - 2 * mx) * (b - r0) / (r1 - r0);
+      const tratti = gesti.map(g => {
+        const x0 = X(g.da), larg = X(g.a) - x0, n = Math.max(60, Math.round(larg / 2.5)), pts = [];
+        for (let i = 0; i <= n; i++) { const s = i / n, [dx, y] = forma(g, s, larg, U); pts.push({ b: g.da + (g.a - g.da) * s, x: x0 + dx, y: cy + y * U }); }
+        return { g, pts };
+      });
+      return { r0, r1, colore: COLORI[ri % COLORI.length], tratti };
     });
-    fr.camp = camp; fr.punti = punti;
   }
-
-  /* ---------- disegno ---------- */
-  let P = null, tp = null, statoT = 0;   // statoT: secondi dall'inizio della tappa
-  const icone = {};
-  function icona(nome) { if (!icone[nome]) { const im = new Image(); im.src = "primaria/img/col/" + nome + ".svg"; im.onload = () => disegna(); icone[nome] = im; } return icone[nome]; }
-  function fraseA(t) { if (!P) return null; for (const fr of P.frasi) if (t < fr.inizio + fr.durata - 1e-6) return fr; return P.frasi[P.frasi.length - 1]; }
+  function chiaro(hex, f) { const n = parseInt(hex.slice(1), 16), r = n >> 16, g = (n >> 8) & 255, b = n & 255; return `rgb(${Math.round(r + (255 - r) * f)},${Math.round(g + (255 - g) * f)},${Math.round(b + (255 - b) * f)})`; }
+  function rigaA(beat) { for (let i = 0; i < righe.length; i++) if (beat < righe[i].r1) return i; return righe.length - 1; }
   function disegna() {
     if (!W) return;
     c2.clearRect(0, 0, W, H);
-    if (!P) return;
-    const fr = fraseA(Math.max(0, statoT));
-    if (!fr || !fr.camp) return;
-    const b = Math.max(0, (statoT - fr.inizio) / fr.sb);   // battito nella frase
-    /* tratteggio: tutta la frase, chiaro */
+    if (!righe.length) return;
+    const beat = battitoA(tempoOra());
+    const R = righe[rigaA(beat)];
+    const base = Math.max(16, Math.min(W, H * 1.8) * 0.034);
     c2.lineCap = "round"; c2.lineJoin = "round";
-    c2.strokeStyle = "rgba(255,255,255,0.28)"; c2.setLineDash([fr.spess * 0.9, fr.spess * 1.3]);
-    c2.lineWidth = fr.spess * 0.55;
-    traccia(fr.camp, Infinity);
-    c2.setLineDash([]);
-    fr.punti.forEach(p => { c2.beginPath(); c2.arc(p.x, p.y, p.r * 0.85, 0, 7); c2.strokeStyle = "rgba(255,255,255,0.3)"; c2.lineWidth = 2.5; c2.setLineDash([5, 6]); c2.stroke(); c2.setLineDash([]); });
-    /* la linea colorata fino a ora */
-    c2.strokeStyle = fr.colore; c2.shadowColor = fr.colore; c2.shadowBlur = 14;
-    traccia(fr.camp, b, true);
-    fr.punti.forEach(p => {
-      if (p.t > b) return;
-      const cresce = Math.min(1, (b - p.t) / 0.15);
-      c2.beginPath(); c2.arc(p.x, p.y, p.r * (0.4 + 0.6 * cresce), 0, 7); c2.fillStyle = fr.colore; c2.fill();
-    });
-    c2.shadowBlur = 0;
-    /* la matita: un animaletto sulla punta della linea */
-    const pos = posizione(fr, b);
-    const im = icona(tp.icona), s = Math.max(48, fr.spess * 4.6);
-    if (im.complete && im.naturalWidth) { c2.globalAlpha = pos.giu ? 1 : 0.75; c2.drawImage(im, pos.x - s / 2, pos.y - s * 1.05, s, s); c2.globalAlpha = 1; }
-    c2.beginPath(); c2.arc(pos.x, pos.y, fr.spess * 0.55, 0, 7); c2.fillStyle = "#fff"; c2.fill();
-    /* conto alla rovescia prima di partire: pallini dei battiti */
-    if (statoT < 0) {
-      const n = P.metro, quanto = -statoT / (60 / P.bpm0), k = n - Math.ceil(quanto - 1e-6);
-      for (let i = 0; i < n; i++) {
-        c2.beginPath(); c2.arc(W / 2 + (i - (n - 1) / 2) * 60, H * 0.14, i <= k ? 16 : 11, 0, 7);
-        c2.fillStyle = i <= k ? "#FFF428" : "rgba(255,255,255,0.25)"; c2.fill();
+    R.tratti.forEach(({ g, pts }) => {
+      const w = base * (g.sottile ? 0.45 : g.grossa ? 1.7 : 1);
+      c2.strokeStyle = chiaro(R.colore, 0.78); c2.lineWidth = w;
+      c2.beginPath(); pts.forEach((p, i) => i ? c2.lineTo(p.x, p.y) : c2.moveTo(p.x, p.y)); c2.stroke();
+      if (beat > g.da) {
+        c2.strokeStyle = R.colore; c2.beginPath();
+        for (let i = 0; i < pts.length; i++) {
+          const p = pts[i];
+          if (p.b > beat) { const q = pts[i - 1], u = (beat - q.b) / (p.b - q.b); c2.lineTo(q.x + (p.x - q.x) * u, q.y + (p.y - q.y) * u); break; }
+          if (i) c2.lineTo(p.x, p.y); else c2.moveTo(p.x, p.y);
+        }
+        c2.stroke();
       }
-    }
-  }
-  function traccia(camp, fino, colore) {
-    let aperto = false;
-    for (let i = 0; i < camp.length; i++) {
-      const p = camp[i]; if (p.t > fino) break;
-      if (!p.giu || !aperto) { if (aperto) c2.stroke(); c2.beginPath(); c2.moveTo(p.x, p.y); aperto = true; if (colore) c2.lineWidth = p.w; continue; }
-      if (colore && Math.abs(c2.lineWidth - p.w) > 0.5) { c2.lineTo(p.x, p.y); c2.stroke(); c2.beginPath(); c2.moveTo(p.x, p.y); c2.lineWidth = p.w; continue; }
-      c2.lineTo(p.x, p.y);
-    }
-    if (aperto) c2.stroke();
-  }
-  function posizione(fr, b) {
-    let ult = null;
-    for (const p of fr.camp) { if (p.t > b) break; ult = p; }
-    const pp = fr.punti.filter(p => p.t <= b).pop();
-    if (pp && (!ult || pp.t >= ult.t)) return { x: fr.X(Math.min(b, fr.battiti)), y: pp.y, giu: b - pp.t < 0.3 };
-    if (ult && b - ult.t < 0.1) return { x: ult.x, y: ult.y, giu: true };
-    const prossimo = fr.camp.find(p => p.t > b) || fr.punti.find(p => p.t > b);
-    const y = ult ? ult.y : prossimo ? prossimo.y : H / 2;
-    return { x: fr.X(Math.min(b, fr.battiti)), y, giu: false };
+    });
   }
 
   /* =====================================================================
-     RIPRODUZIONE
+     RIPRODUZIONE E VISTE
      ===================================================================== */
-  let suonando = false, tAvvio = 0, daT = 0, raf = 0, lento = false;
-  const ATTESA = () => P.metro * 60 / P.bpm0;   // una battuta di conto alla rovescia
-  function play(dall) {
-    const c = audio();
-    caricaPiano().then(() => {
-      if (suonando) return;
-      suonando = true;
-      daT = dall;
-      const pre = daT <= 0 ? ATTESA() : 0;
-      if (daT <= 0) daT = -pre;
-      tAvvio = c.currentTime + 0.12;
-      if (pre) for (let k = 0; k < P.metro; k++) clic(tAvvio + k * 60 / P.bpm0, k === 0);
-      programma(P, tp, tAvvio + Math.max(0, -daT), Math.max(0, daT));
-      $("via").hidden = true; $("fine").hidden = true; $("playPausa").textContent = "⏸";
-      ciclo();
-    });
+  function icona(el, id) { el.querySelector("use").setAttribute("href", "#" + id); }
+  function play(da) {
+    if (suonando) return;
+    const parte = da == null ? (battiti.prova ? Math.max(0, secondiA(-4)) : 0) : da;
+    $("via").hidden = true; $("fine").hidden = true;
+    avviaAudio(parte).then(() => { suonando = true; icona($("playPausa"), "i-pausa"); ultimoT = -1; ciclo(); })
+      .catch(() => { $("via").hidden = false; });
   }
   function ciclo() {
-    statoT = daT + (ctx.currentTime - tAvvio);
     disegna();
-    if (statoT >= P.durata + 0.3) { stop(); finito(); return; }
+    if (tempoOra() >= secondiA(tp.ultimo) + 0.4 || (!battiti.prova && audioEl.ended)) { pausa(); finito(); return; }
     raf = requestAnimationFrame(ciclo);
   }
-  function pausa() { if (!suonando) return; suonando = false; cancelAnimationFrame(raf); silenzio(); $("playPausa").textContent = "▶"; }
-  function stop() { pausa(); }
-  function finito() {
-    statoT = P.durata; disegna();
-    $("fine").hidden = false;
-    $("avanti").hidden = indice >= TAPPE.length - 1;
-    segnaFatta(indice);
-  }
+  function pausa() { if (!suonando) return; suonando = false; cancelAnimationFrame(raf); fermaAudio(); icona($("playPausa"), "i-play"); }
+  function finito() { $("fine").hidden = false; $("avanti").hidden = indice >= TAPPE.length - 1; segnaFatta(indice); }
+  function riavvolgi() { pausa(); if (battiti.prova) provaDa = 0; else audioEl.currentTime = 0; disegna(); }
 
-  /* =====================================================================
-     VISTE
-     ===================================================================== */
   let indice = 0;
   function apriTappa(i) {
     pausa();
-    indice = i; tp = TAPPE[i];
-    P = prepara(tp, lento);
-    statoT = 0;
+    indice = i; prepara(TAPPE[i]);
+    const t = TAPPE[i];
     $("vistaPercorso").hidden = true; $("vistaTappa").hidden = false;
-    $("tNum").textContent = i + 1; $("tNum").style.background = COLORI_TAPPA[i % 7];
-    $("tIcona").src = "primaria/img/col/" + tp.icona + ".svg";
-    $("tNome").textContent = tp.nome + (tp.autore ? " · " + tp.autore : "");
-    $("via").hidden = false; $("fine").hidden = true; $("playPausa").textContent = "▶";
+    $("tNum").textContent = i + 1; $("tNum").style.background = COLORI_TAPPA[i % COLORI_TAPPA.length];
+    $("tNome").textContent = t.nome; $("tBrano").textContent = `${t.titolo} · ${t.autore}`;
+    $("crediti").innerHTML = t.crediti || (battiti.prova ? "Prova: la registrazione non è ancora caricata, suona un metronomo." : "");
+    $("via").hidden = false; $("fine").hidden = true; icona($("playPausa"), "i-play");
     $("prec").style.visibility = i > 0 ? "visible" : "hidden"; $("succ").style.visibility = i < TAPPE.length - 1 ? "visible" : "hidden";
-    icona(tp.icona);
+    provaDa = 0;
+    if (!battiti.prova) { audioEl.src = "media/pregrafia/" + t.brano + ".mp3"; audioEl.load(); }
     requestAnimationFrame(misura);
     try { history.replaceState(null, "", "#" + (i + 1)); } catch (e) {}
   }
@@ -515,27 +375,28 @@
     disegnaMappa();
     try { history.replaceState(null, "", location.pathname + location.search); } catch (e) {}
   }
-  $("via").addEventListener("click", () => play(0));
-  $("playPausa").addEventListener("click", () => { if (suonando) pausa(); else if (statoT >= P.durata) play(0); else play(statoT > 0 ? statoT : 0); });
-  $("ricomincia").addEventListener("click", () => { pausa(); statoT = 0; disegna(); play(0); });
-  $("ancora").addEventListener("click", () => { statoT = 0; play(0); });
-  $("avanti").addEventListener("click", () => { apriTappa(indice + 1); play(0); });
+  $("via").addEventListener("click", () => play());
+  $("playPausa").addEventListener("click", () => {
+    if (suonando) return pausa();
+    if (!$("fine").hidden || tempoOra() >= secondiA(tp.ultimo)) { riavvolgi(); return play(); }
+    play(tempoOra() > 0.05 ? tempoOra() : null);
+  });
+  $("ricomincia").addEventListener("click", () => { riavvolgi(); play(); });
+  $("ancora").addEventListener("click", () => { riavvolgi(); play(); });
+  $("avanti").addEventListener("click", () => { apriTappa(indice + 1); play(); });
   $("prec").addEventListener("click", () => apriTappa(indice - 1));
   $("succ").addEventListener("click", () => apriTappa(indice + 1));
   $("alPercorso").addEventListener("click", apriPercorso);
   $("lento").addEventListener("click", () => {
+    const t = tempoOra(), su = suonando; pausa();
     lento = !lento; $("lento").classList.toggle("attivo", lento);
-    if (!P) return;
-    const eraSu = suonando, frazione = P.durata ? statoT / P.durata : 0;
-    pausa(); P = prepara(tp, lento); P.frasi.forEach(geometria); statoT = frazione * P.durata; disegna();
-    if (eraSu) play(statoT);
+    if (su) play(t);
   });
   document.addEventListener("keydown", e => {
     if ($("vistaTappa").hidden) return;
     if (e.key === " ") { e.preventDefault(); $("playPausa").click(); }
     else if (e.key === "Escape") apriPercorso();
   });
-  document.addEventListener("pointerdown", () => caricaPiano(), { once: true });
   document.addEventListener("visibilitychange", () => { if (document.hidden) pausa(); });
   let ultimaL = 0, ultimaA = 0, attesaR;
   window.addEventListener("resize", () => { clearTimeout(attesaR); attesaR = setTimeout(() => {
@@ -548,49 +409,45 @@
   try { fatte = JSON.parse(localStorage.getItem("pregrafia.fatte") || "[]"); } catch (e) {}
   function segnaFatta(i) { if (!fatte.includes(i)) fatte.push(i); try { localStorage.setItem("pregrafia.fatte", JSON.stringify(fatte)); } catch (e) {} }
 
-  /* ---------- la mappa del percorso ---------- */
-  const NS = "http://www.w3.org/2000/svg";
-  const POSTI = [[150, 250], [420, 165], [690, 250], [960, 165], [1230, 250], [1460, 380], [1230, 520], [960, 610], [690, 520], [420, 610], [170, 520]];
+  /* ---------- la mappa: ogni tappa mostra il suo segno ---------- */
+  const POSTI = [[160, 250], [430, 165], [700, 250], [970, 165], [1240, 250], [1450, 420], [1210, 580], [930, 500], [650, 590], [370, 510]];
+  function segnoSVG(g) {
+    const pts = []; for (let i = 0; i <= 80; i++) { const [x, y] = forma(Object.assign({}, g, { da: 0, a: 1 }), i / 80, 84, 22); pts.push(`${(x - 42).toFixed(1)},${(y * 22).toFixed(1)}`); }
+    return `<polyline points="${pts.join(" ")}" fill="none" stroke="#fff" stroke-width="9" stroke-linecap="round" stroke-linejoin="round"/>`;
+  }
   function disegnaMappa() {
-    const svg = $("mappa");
-    let s = `<defs><linearGradient id="cielo" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#7dd3fc"/><stop offset="1" stop-color="#c7f0ff"/></linearGradient>
-      <linearGradient id="prato" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#86d96b"/><stop offset="1" stop-color="#4fb34a"/></linearGradient></defs>
+    let s = `<defs><linearGradient id="cielo" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#7dd3fc"/><stop offset="1" stop-color="#d6f3ff"/></linearGradient>
+      <linearGradient id="prato" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#8fdc74"/><stop offset="1" stop-color="#4fb34a"/></linearGradient></defs>
       <rect x="0" y="0" width="1600" height="760" rx="36" fill="url(#cielo)"/>
       <path d="M0 330 Q 260 250 520 320 T 1040 300 T 1600 320 V 760 H 0 Z" fill="url(#prato)"/>
-      <path d="M0 470 Q 300 400 640 470 T 1280 450 T 1600 470 V 760 H 0 Z" fill="#3e9e44" opacity=".55"/>
+      <path d="M0 470 Q 300 400 640 470 T 1280 450 T 1600 470 V 760 H 0 Z" fill="#3e9e44" opacity=".5"/>
       <circle cx="1480" cy="96" r="52" fill="#FFE066"/>
-      <g fill="#fff" opacity=".9"><ellipse cx="260" cy="90" rx="70" ry="24"/><ellipse cx="310" cy="76" rx="50" ry="26"/><ellipse cx="900" cy="70" rx="80" ry="22"/><ellipse cx="950" cy="58" rx="46" ry="24"/></g>`;
-    /* la strada che collega le tappe */
+      <g fill="#fff" opacity=".92"><ellipse cx="260" cy="90" rx="70" ry="24"/><ellipse cx="310" cy="76" rx="50" ry="26"/><ellipse cx="900" cy="70" rx="80" ry="22"/><ellipse cx="950" cy="58" rx="46" ry="24"/></g>`;
     let d = `M ${POSTI[0][0]} ${POSTI[0][1]}`;
     for (let i = 1; i < TAPPE.length; i++) { const [x0, y0] = POSTI[i - 1], [x1, y1] = POSTI[i]; d += ` C ${(x0 + x1) / 2} ${y0}, ${(x0 + x1) / 2} ${y1}, ${x1} ${y1}`; }
     s += `<path d="${d}" fill="none" stroke="#f5e6c4" stroke-width="58" stroke-linecap="round"/><path d="${d}" fill="none" stroke="#fff" stroke-width="5" stroke-dasharray="18 18" stroke-linecap="round" opacity=".9"/>`;
     s += `<g font-family="Fredoka, Manrope, sans-serif" font-weight="700" text-anchor="middle">`;
-    const primoGrande = TAPPE.findIndex(t => t.grande);
-    if (primoGrande > 0) { const [x, y] = POSTI[primoGrande]; s += `<g transform="translate(${x + 95} ${y - 95})"><rect x="-92" y="-22" width="184" height="40" rx="20" fill="#5E50A1"/><text y="7" font-size="21" fill="#fff">🎻 Grandi musiche</text></g>`; }
     TAPPE.forEach((t, i) => {
-      const [x, y] = POSTI[i], col = COLORI_TAPPA[i % 7], fatta = fatte.includes(i);
+      const [x, y] = POSTI[i], col = COLORI_TAPPA[i % COLORI_TAPPA.length], fatta = fatte.includes(i);
       s += `<g class="tappa" data-i="${i}" tabindex="0" role="button" aria-label="Tappa ${i + 1}: ${t.nome}" transform="translate(${x} ${y})">
         <circle class="disco" r="66" fill="${col}" stroke="#fff" stroke-width="7"/>
-        <image href="primaria/img/col/${t.icona}.svg" x="-46" y="-50" width="92" height="92"/>
+        ${segnoSVG(t.motivo)}
         <circle cx="-50" cy="-50" r="23" fill="#fff"/><text x="-50" y="-41" font-size="25" fill="${col}">${i + 1}</text>
-        ${fatta ? `<text x="52" y="-40" font-size="34">⭐</text>` : ""}
-        <rect x="-110" y="76" width="220" height="40" rx="20" fill="rgba(15,23,42,0.82)"/>
+        ${fatta ? `<path transform="translate(34 -70) scale(.36)" d="M50 6 L62 36 L94 38 L69 58 L77 90 L50 72 L23 90 L31 58 L6 38 L38 36 Z" fill="#FFD23F" stroke="#F2A900" stroke-width="6" stroke-linejoin="round"/>` : ""}
+        <rect x="-118" y="76" width="236" height="40" rx="20" fill="rgba(15,23,42,0.82)"/>
         <text y="104" font-size="${t.nome.length > 15 ? 20 : 23}" fill="#fff">${t.nome}</text>
       </g>`;
     });
     s += `</g>`;
-    svg.innerHTML = s;
-    svg.querySelectorAll(".tappa").forEach(g => {
+    $("mappa").innerHTML = s;
+    $("mappa").querySelectorAll(".tappa").forEach(g => {
       const vai = () => apriTappa(+g.dataset.i);
       g.addEventListener("click", vai);
       g.addEventListener("keydown", e => { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); vai(); } });
     });
   }
 
-  /* titolo colorato, lettera per lettera */
   const h1 = $("titoloColorato"); h1.innerHTML = [...h1.textContent].map(ch => ch === " " ? " " : `<span>${ch}</span>`).join("");
-
-  /* avvio: #3 apre direttamente la tappa 3 */
   function daIndirizzo() { const n = parseInt(location.hash.slice(1), 10); if (n >= 1 && n <= TAPPE.length) apriTappa(n - 1); else apriPercorso(); }
   window.addEventListener("hashchange", daIndirizzo);
   daIndirizzo();
