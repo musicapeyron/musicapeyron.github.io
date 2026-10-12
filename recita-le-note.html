@@ -859,6 +859,33 @@ h1 {
 }
 .options-group-title.first { margin-top: 0; }
 
+/* opzioni delle carte: pentagramma (chiave, nome) e colori */
+.options-pair { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-top: 8px; }
+.options-pair .options-choice { padding: 9px 6px; }
+.staff-options { margin-bottom: 4px; }
+.staff-options[hidden] { display: none; }
+.colori-row { margin-top: 8px; }
+
+/* note sul pentagramma dentro la carta */
+.card-front .staff { display: none; width: 100%; padding: 0 4cqi; }
+.card-front .staff svg { width: 100%; height: auto; display: block; }
+.card-front .staff g.vf-stavenote { fill: var(--note-ink); stroke: var(--note-ink); }
+.cards.staffmode .card-front { padding-top: 6cqi; }
+.cards.staffmode .card-front .staff { display: block; }
+.cards.staffmode .card-pip { display: none; }
+.cards.staffmode .card-name { font-size: 19cqi; margin-top: 1cqi; }
+.cards.staffmode-noname .card-name { display: none; }
+
+/* opzione "Colori" spenta: pulsanti e carte in bianco e nero */
+body.senza-colori .answer.do, body.senza-colori .answer.re, body.senza-colori .answer.mi,
+body.senza-colori .answer.fa, body.senza-colori .answer.sol, body.senza-colori .answer.la,
+body.senza-colori .answer.si {
+    background: #ffffff; color: #111827; text-shadow: none; --glow: rgba(255,255,255,0.9);
+}
+body.senza-colori .answer:not(.lit):not(.hint) { box-shadow: inset 0 0 0 2px #111827, 0 5px 0 rgba(0,0,0,0.35), 0 8px 16px rgba(0,0,0,0.28); }
+body.senza-colori .answer::after { display: none; }
+body.senza-colori .card-front { --note-color: #1F2430 !important; --note-ink: #1F2430 !important; }
+
 .options-trio {
     display: grid;
     grid-template-columns: repeat(3, 1fr);
@@ -1408,6 +1435,26 @@ h1 {
             <input type="checkbox" id="hintToggle" checked>
         </label>
     </div>
+
+    <div class="options-group-title">Carte</div>
+    <label class="options-toggle-row">
+        <span>🎼 Note sul pentagramma</span>
+        <input type="checkbox" id="staffToggle">
+    </label>
+    <div class="staff-options" id="staffOptions" hidden>
+        <div class="options-pair">
+            <button class="options-choice active" data-clef="treble">Chiave di violino</button>
+            <button class="options-choice" data-clef="bass">Chiave di basso</button>
+        </div>
+        <div class="options-pair">
+            <button class="options-choice active" data-names="1">Con il nome</button>
+            <button class="options-choice" data-names="0">Senza il nome</button>
+        </div>
+    </div>
+    <label class="options-toggle-row colori-row">
+        <span>🎨 Colori</span>
+        <input type="checkbox" id="coloriToggle" checked>
+    </label>
 </div>
 
 <!-- CONFERMA FINE PARTITA -->
@@ -1455,6 +1502,7 @@ h1 {
     </div>
 </div>
 
+<script src="note-pentagramma.js"></script>
 <script>
 /* =========================================================
    NOTE
@@ -1504,7 +1552,64 @@ function buildRoundNotes(round) {
             rank: round.dir === "up" ? i : CARDS - 1 - i
         });
     }
+    applicaPentagramma(notes, round);
     return notes;
+}
+
+/* =========================================================
+   NOTE SUL PENTAGRAMMA (opzione)
+
+   I disegni pronti vanno dal Do centrale al Do due ottave sopra
+   (k = 0…14) in chiave di violino; in chiave di basso sono le stesse
+   note due ottave sotto. Con il pentagramma acceso ogni giro viene
+   spostato di ottave per stare in quel tratto, e il suono segue la
+   nota scritta (come in «Rappa le note»). Se tutti i giri del livello
+   ci stanno con lo stesso spostamento, si usa quello: così la carta che
+   passa da un giro al successivo non cambia ottava.
+========================================================= */
+
+let staffMode = false;
+let staffClef = "treble";
+let staffNames = true;
+
+function rangeOfRound(r) {
+    const a = r.d0, b = r.dir === "up" ? r.d0 + CARDS - 1 : r.d0 - (CARDS - 1);
+    return [Math.min(a, b), Math.max(a, b)];
+}
+
+function spostamentoPentagramma(round) {
+    if (rounds && rounds.length) {
+        let lo = Infinity, hi = -Infinity;
+        rounds.forEach(r => { const [a, b] = rangeOfRound(r); lo = Math.min(lo, a); hi = Math.max(hi, b); });
+        for (let m = -3; m <= 3; m++) {
+            const sp = 7 * m;
+            if (lo + sp >= 0 && hi + sp <= 14) return sp;
+        }
+    }
+    const [lo] = rangeOfRound(round);
+    return mod7(lo) - lo;
+}
+
+function frequenzaScritta(k) {
+    const base = staffClef === "bass" ? 36 : 60;
+    const midi = base + Math.floor(k / 7) * 12 + SEMITONES[mod7(k)];
+    return 440 * Math.pow(2, (midi - 69) / 12);
+}
+
+function applicaPentagramma(notes, round) {
+    if (!staffMode || !window.NOTE_PENTAGRAMMA) {
+        notes.forEach(n => { n.k = null; n.freq = frequencyForDiatonic(n.d); });
+        return;
+    }
+    const sp = spostamentoPentagramma(round);
+    notes.forEach(n => { n.k = n.d + sp; n.freq = frequenzaScritta(n.k); });
+}
+
+function frontHTML(n) {
+    const pent = n.k != null && window.NOTE_PENTAGRAMMA ? window.NOTE_PENTAGRAMMA[staffClef]["d" + n.k] : "";
+    return (pent ? "<span class=\"staff\">" + pent + "</span>" : "") +
+        "<span class=\"card-name\">" + NOTE_NAMES[n.idx].toUpperCase() + "</span>" +
+        "<span class=\"card-pip\"></span>";
 }
 
 function answersFor(round) {
@@ -2178,8 +2283,7 @@ function renderCards(notes, enterStyle, firstRevealed) {
                 "<div class=\"card-flip\">" +
                     "<div class=\"card-face card-back\"></div>" +
                     "<div class=\"card-face card-front\" style=\"--note-color:" + NOTE_COLORS[n.idx] + ";--note-ink:" + NOTE_INKS[n.idx] + "\">" +
-                        "<span class=\"card-name\">" + NOTE_NAMES[n.idx].toUpperCase() + "</span>" +
-                        "<span class=\"card-pip\"></span>" +
+                        frontHTML(n) +
                     "</div>" +
                 "</div>" +
             "</div>";
@@ -3023,6 +3127,65 @@ speedButtons.forEach(btn => {
 hintToggle.addEventListener("change", () => {
     hintsOn = hintToggle.checked;
     if (!hintsOn) clearHints();
+});
+
+/* opzioni delle carte: si ricordano su questo dispositivo */
+const staffToggle = $("staffToggle");
+const staffOptions = $("staffOptions");
+const clefButtons = Array.from(optionsPanel.querySelectorAll("[data-clef]"));
+const namesButtons = Array.from(optionsPanel.querySelectorAll("[data-names]"));
+const coloriToggle = $("coloriToggle");
+
+function salva(chiave, valore) { try { localStorage.setItem("recita." + chiave, valore); } catch (e) {} }
+function leggi(chiave) { try { return localStorage.getItem("recita." + chiave); } catch (e) { return null; } }
+
+/* ridisegna le carte del giro in corso con le nuove impostazioni */
+function aggiornaCarte() {
+    cardsEl.classList.toggle("staffmode", staffMode);
+    cardsEl.classList.toggle("staffmode-noname", staffMode && !staffNames);
+    staffOptions.hidden = !staffMode;
+    staffToggle.checked = staffMode;
+    clefButtons.forEach(b => b.classList.toggle("active", b.dataset.clef === staffClef));
+    namesButtons.forEach(b => b.classList.toggle("active", (b.dataset.names === "1") === staffNames));
+    if (!roundNotes.length || !rounds.length) return;
+    applicaPentagramma(roundNotes, currentRound());
+    slotEls.forEach((slot, i) => {
+        const front = slot.querySelector(".card-front");
+        if (front && roundNotes[i]) front.innerHTML = frontHTML(roundNotes[i]);
+    });
+}
+
+function applicaColori(acceso) {
+    document.body.classList.toggle("senza-colori", !acceso);
+    coloriToggle.checked = acceso;
+}
+
+staffMode = leggi("pentagramma") === "1";
+staffClef = leggi("chiave") === "bass" ? "bass" : "treble";
+staffNames = leggi("nomi") !== "0";
+applicaColori(leggi("colori") !== "0");
+aggiornaCarte();
+
+staffToggle.addEventListener("change", () => {
+    staffMode = staffToggle.checked;
+    salva("pentagramma", staffMode ? "1" : "0");
+    aggiornaCarte();
+});
+clefButtons.forEach(btn => btn.addEventListener("click", () => {
+    playClickSound();
+    staffClef = btn.dataset.clef;
+    salva("chiave", staffClef);
+    aggiornaCarte();
+}));
+namesButtons.forEach(btn => btn.addEventListener("click", () => {
+    playClickSound();
+    staffNames = btn.dataset.names === "1";
+    salva("nomi", staffNames ? "1" : "0");
+    aggiornaCarte();
+}));
+coloriToggle.addEventListener("change", () => {
+    applicaColori(coloriToggle.checked);
+    salva("colori", coloriToggle.checked ? "1" : "0");
 });
 
 document.addEventListener("click", e => {
