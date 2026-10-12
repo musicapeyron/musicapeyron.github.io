@@ -3345,6 +3345,593 @@ function buildQuartaSteps() {
     return steps;
 }
 
+// ===================== TUTORIAL QUINTA, SESTA, SETTIMA =====================
+// Strumenti comuni: i semitoni e le qualità si calcolano, non si scrivono a mano.
+
+const T567_SOLFEGE = ["Do", "Re", "Mi", "Fa", "Sol", "La", "Si"];
+const T567_WORD = { 5: "quinta", 6: "sesta", 7: "settima" };
+const T567_WORD_PL = { 5: "quinte", 6: "seste", 7: "settime" };
+
+function t567Name(l, a) { return T567_SOLFEGE[l] + (a === 0 ? "" : (a > 0 ? "#" : "b")); }
+function t567Semitones(l1, a1, o1, l2, a2, o2) {
+    const NO = [0, 2, 4, 5, 7, 9, 11];
+    return (o2 * 12 + NO[l2] + a2) - (o1 * 12 + NO[l1] + a1);
+}
+// qualità a partire da numero e semitoni (null se fuori da diminuita..aumentata)
+function t567Quality(number, semis) {
+    const diff = semis - BASE_SEMITONES[number];
+    if (PERFECT_NUMBERS.includes(number)) return { "-1": "d", "0": "p", "1": "a" }[diff] || null;
+    return { "-2": "d", "-1": "m", "0": "M", "1": "a" }[diff] || null;
+}
+// coppia naturale che parte dalla lettera l1: [l1, l2, la superiore e' all'ottava sopra?]
+function t567Pair(number, l1) {
+    const l2 = (l1 + number - 1) % 7;
+    return [l1, l2, (l1 + number - 1) >= 7 ? 1 : 0];
+}
+// percorso sulla tastiera da l1 per "count" tasti bianchi, con le coppie attaccate in arancione
+function t567PathHighlights(l1, count) {
+    const out = [];
+    for (let k = 0; k < count; k++) {
+        const letter = (l1 + k) % 7;
+        const octave = 4 + Math.floor((l1 + k) / 7);
+        const endpoint = k === 0 || k === count - 1;
+        out.push({ letter: letter, acc: 0, octave: octave, label: T567_SOLFEGE[letter], color: endpoint ? "#6366f1" : "#94a3b8" });
+    }
+    for (let k = 0; k < count - 1; k++) {
+        const a = out[k], b = out[k + 1];
+        if ((a.letter === 2 && b.letter === 3) || (a.letter === 6 && b.letter === 0)) { a.color = "#f59e0b"; b.color = "#f59e0b"; }
+    }
+    return out;
+}
+function t567Keyboard(number, l1) {
+    return { type: "keyboard", config: { numWhiteKeys: Math.max(8, l1 + number), baseOctave: 4, highlights: t567PathHighlights(l1, number) } };
+}
+function t567Options(number) {
+    return PERFECT_NUMBERS.includes(number)
+        ? [ { id: "d", label: "Diminuita" }, { id: "p", label: "Perfetta" }, { id: "a", label: "Aumentata (o eccedente)" } ]
+        : [ { id: "d", label: "Diminuita" }, { id: "m", label: "Minore" }, { id: "M", label: "Maggiore" }, { id: "a", label: "Aumentata (o eccedente)" } ];
+}
+
+// domande sulle coppie naturali: order = lettere di partenza; feedbackFn(l1, name, correctId) -> { id: testo }
+function t567NaturalQuestions(number, order, options, feedbackFn) {
+    const Word = T567_WORD[number].charAt(0).toUpperCase() + T567_WORD[number].slice(1);
+    return order.map((l1, i) => {
+        const [, l2, wrap] = t567Pair(number, l1);
+        const name = T567_SOLFEGE[l1] + "-" + T567_SOLFEGE[l2];
+        const correctId = t567Quality(number, t567Semitones(l1, 0, 4, l2, 0, 4 + wrap));
+        return {
+            topic: "naturali",
+            topicLabel: Word.slice(0, -1) + "e naturali",
+            kind: "question",
+            title: Word + " naturale — domanda " + (i + 1) + " di " + order.length,
+            question: "<p>Che qualità ha questa " + T567_WORD[number] + " naturale (senza alterazioni)?</p>",
+            diagram: { type: "interval", note1: { letter: l1, acc: 0, octave: 4 }, note2: { letter: l2, acc: 0, octave: 4 + wrap }, clef: "treble" },
+            options: options,
+            correct: correctId,
+            feedback: feedbackFn(l1, name, correctId),
+            wrongHelpDiagram: t567Keyboard(number, l1)
+        };
+    });
+}
+
+// batteria con le alterazioni: specs = [desc, lettere di partenza, alt. inferiore, alt. superiore, alternata?]
+// per "alternata" (stessa alterazione) si alternano diesis e bemolle, oppure si usa altPattern
+function t567AlteredBattery(number, specs) {
+    const battery = [];
+    specs.forEach((spec, cat) => {
+        const [desc, order, a1, a2, alternate, altPattern] = spec;
+        order.forEach((l1, i) => {
+            const [, l2, wrap] = t567Pair(number, l1);
+            const sign = altPattern ? altPattern[i] : (i % 2 === 0 ? 1 : -1);
+            const A1 = alternate ? sign : a1;
+            const A2 = alternate ? sign : a2;
+            battery.push({ cat: cat, desc: desc, name: t567Name(l1, A1) + "-" + t567Name(l2, A2), l1: l1, a1: A1, l2: l2, a2: A2, o1: 4, o2: 4 + wrap });
+        });
+    });
+    return battery;
+}
+
+function t567AlteredQuestion(number, p, indexInCategory, totalInCategory, shortLabels, sameCat, exceptionNote) {
+    const semis = t567Semitones(p.l1, p.a1, p.o1, p.l2, p.a2, p.o2);
+    const correctId = t567Quality(number, semis);
+    const allOptions = t567Options(number);
+    const isSame = p.cat === sameCat;
+    const word = T567_WORD[number];
+    const natName = T567_SOLFEGE[p.l1] + "-" + T567_SOLFEGE[p.l2];
+    const natQuality = TUTORIAL_QUALITY_LABEL[t567Quality(number, t567Semitones(p.l1, 0, p.o1, p.l2, 0, p.o2))].toLowerCase();
+    const natExtra = (exceptionNote && exceptionNote(p.l1)) || "";
+    return {
+        topic: "cat" + p.cat,
+        topicLabel: shortLabels[p.cat],
+        kind: "question",
+        title: "Esercizio " + (indexInCategory + 1) + " di " + totalInCategory,
+        question: "<p>Questa " + word + " ha: <strong>" + p.desc + "</strong>. Che qualità ha?</p>",
+        diagram: { type: "interval", note1: { letter: p.l1, acc: p.a1, octave: p.o1 }, note2: { letter: p.l2, acc: p.a2, octave: p.o2 }, clef: "treble" },
+        options: allOptions,
+        correct: correctId,
+        feedback: allOptions.reduce((acc, opt) => {
+            if (opt.id === correctId) {
+                acc[opt.id] = isSame
+                    ? "Esatto! Con la stessa alterazione su entrambe le note puoi ignorarle: " + natName + " naturale è " + natQuality + ", e lo resta anche qui."
+                    : "Esatto! " + natName + " naturale è " + natQuality + "; con " + p.desc + " diventa " + TUTORIAL_QUALITY_LABEL[correctId].toLowerCase() + " (" + semis + " semitoni).";
+            } else {
+                acc[opt.id] = isSame
+                    ? "Non è corretto. Il trucco: quando le due note hanno la <strong>stessa</strong> alterazione, puoi ignorarla e trattarle come naturali. " + natName + " naturale è " + natQuality + natExtra + ": questa è la risposta."
+                    : "Non è corretto. Parti dalla " + word + " naturale: " + natName + " è " + natQuality + natExtra + ". Poi fai uno spostamento per ogni alterazione (" + p.desc + "): il risultato è " + TUTORIAL_QUALITY_LABEL[correctId].toLowerCase() + ", non " + TUTORIAL_QUALITY_LABEL[opt.id].toLowerCase() + ".";
+            }
+            return acc;
+        }, {})
+    };
+}
+
+// spiegazione + esercizi, caso per caso
+function t567AlteredSection(number, categories, battery, shortLabels, sameCat, exceptionNote, afterCat) {
+    const steps = [];
+    categories.forEach((cat, catIndex) => {
+        steps.push({
+            kind: "explain",
+            title: cat.title,
+            body: cat.body,
+            bodyAfter: cat.bodyAfter,
+            shiftDemo: cat.shiftDemo,
+            topic: "cat" + catIndex,
+            topicLabel: shortLabels[catIndex]
+        });
+        const questions = battery.filter(p => p.cat === catIndex);
+        questions.forEach((p, i) => steps.push(t567AlteredQuestion(number, p, i, questions.length, shortLabels, sameCat, exceptionNote)));
+        if (afterCat && afterCat[catIndex]) steps.push(afterCat[catIndex]);
+    });
+    return steps;
+}
+
+function t567Note(letter, acc, octave) { return { letter: letter, acc: acc, octave: octave }; }
+function t567Demo(number, l1, natQ, a1, a2, resQ, direction, triggerLabel, heading) {
+    const [, l2, wrap] = t567Pair(number, l1);
+    const d = {
+        naturalNote1: t567Note(l1, 0, 4), naturalNote2: t567Note(l2, 0, 4 + wrap), naturalQuality: natQ,
+        alteredNote1: t567Note(l1, a1, 4), alteredNote2: t567Note(l2, a2, 4 + wrap), resultQuality: resQ,
+        direction: direction, triggerLabel: triggerLabel
+    };
+    if (heading) d.heading = heading;
+    return d;
+}
+
+const T567_SCALE_MM = "<div style='text-align:center; font-weight:800; font-size:1.15rem; margin:16px 0; color:#e2e8f0;'>Diminuita &nbsp;⟵&nbsp; Minore &nbsp;⟵&nbsp; <span class='hl'>Maggiore</span> &nbsp;⟶&nbsp; Aumentata (o eccedente)</div>";
+const T567_SCALE_P = "<div style='text-align:center; font-weight:800; font-size:1.15rem; margin:16px 0; color:#e2e8f0;'>Diminuita &nbsp;⟵&nbsp; <span class='hl'>Perfetta</span> &nbsp;⟶&nbsp; Aumentata (o eccedente)</div>";
+const T567_MOVES = "<ul><li><strong>Ti sposti a destra</strong> (si allarga) se: diesis sulla nota superiore, oppure bemolle sulla nota inferiore.</li>" +
+                   "<li><strong>Ti sposti a sinistra</strong> (si stringe) se: bemolle sulla nota superiore, oppure diesis sulla nota inferiore.</li></ul>";
+const T567_NUMBER_RULE = "<p style='text-align:center; font-weight:800; font-size:1.05rem; color:#fde68a; margin:14px 0;'>Per trovare il NUMERO, ignora sempre diesis e bemolli: guarda solo le lettere.</p>";
+
+// ---------- QUINTA ----------
+
+const QUINTA_CATEGORY_SHORT_LABELS = ["Diesis sopra", "Diesis sotto", "Bemolle sopra", "Bemolle sotto", "Stessa alterazione"];
+// lettere di partenza: 0 Do, 1 Re, 2 Mi, 3 Fa, 4 Sol, 5 La, 6 Si (Si-Fa e' l'eccezione)
+const QUINTA_NATURAL_ORDER = [0, 6, 1, 4, 2, 6, 5, 3, 1, 6, 0, 4, 6, 5, 3];
+const QUINTA_CATEGORY_SPECS = [
+    ["diesis sulla nota superiore", [0, 1, 6, 2, 3, 4, 6, 5], 0, 1, false],
+    ["diesis sulla nota inferiore", [0, 1, 2, 3, 4, 5, 1, 3], 1, 0, false],
+    ["bemolle sulla nota superiore", [1, 0, 3, 2, 5, 4, 0, 2], 0, -1, false],
+    ["bemolle sulla nota inferiore", [1, 6, 0, 2, 6, 3, 4, 5], -1, 0, false],
+    ["stessa alterazione su entrambe", [0, 6, 1, 2, 6, 3, 4, 5], 0, 0, true]
+];
+const QUINTA_ALTERED_BATTERY = t567AlteredBattery(5, QUINTA_CATEGORY_SPECS);
+const quintaException = l1 => l1 === 6 ? " (l'eccezione!)" : "";
+
+const QUINTA_ALTERATION_CATEGORIES = [
+    {
+        title: "Caso 1 di 5: diesis sulla nota superiore",
+        body: "<p>Quando la nota <strong>superiore</strong> ha il diesis, l'intervallo si allarga di un semitono. Prima valutiamo la quinta senza alterazioni, poi aggiungiamo il diesis.</p>",
+        bodyAfter: "<div class='trick-box'>💡 Attenzione a Si-Fa: parte da diminuita, quindi allargando arriva a <strong>perfetta</strong> (Si-Fa#), non ad aumentata!</div>",
+        shiftDemo: t567Demo(5, 0, "Perfetta", 0, 1, "Aumentata (o eccedente)", "widen", "Diesis sulla nota superiore → allarga")
+    },
+    {
+        title: "Caso 2 di 5: diesis sulla nota inferiore",
+        body: "<p>Quando è la nota <strong>inferiore</strong> ad avere il diesis, l'intervallo si stringe di un semitono.</p>",
+        bodyAfter: "<div class='trick-box'>⚠️ In questo caso negli esercizi non troverai Si-Fa: è già diminuita, e con un diesis sotto diventerebbe <strong>più che diminuita</strong>, che non tratteremo ora.</div>",
+        shiftDemo: t567Demo(5, 0, "Perfetta", 1, 0, "Diminuita", "narrow", "Diesis sulla nota inferiore → stringe")
+    },
+    {
+        title: "Caso 3 di 5: bemolle sulla nota superiore",
+        body: "<p>Un bemolle sulla nota <strong>superiore</strong> stringe l'intervallo.</p>",
+        bodyAfter: "<div class='trick-box'>⚠️ Anche qui negli esercizi non troverai Si-Fa: con un bemolle sopra diventerebbe <strong>più che diminuita</strong>.</div>",
+        shiftDemo: t567Demo(5, 1, "Perfetta", 0, -1, "Diminuita", "narrow", "Bemolle sulla nota superiore → stringe")
+    },
+    {
+        title: "Caso 4 di 5: bemolle sulla nota inferiore",
+        body: "<p>Un bemolle sulla nota <strong>inferiore</strong> allarga l'intervallo. Guarda cosa succede proprio all'eccezione Si-Fa:</p>",
+        bodyAfter: "<div class='trick-box'>💡 Per tutte le altre quinte naturali (che sono perfette), un bemolle sotto porta invece ad <strong>aumentata (o eccedente)</strong>.</div>",
+        shiftDemo: t567Demo(5, 6, "Diminuita", -1, 0, "Perfetta", "widen", "Bemolle sulla nota inferiore → allarga")
+    },
+    {
+        title: "Caso 5 di 5: la stessa alterazione su entrambe le note",
+        body: "<p>Ultimo caso, il più semplice: se <strong>entrambe</strong> le note hanno lo stesso tipo di alterazione, la distanza non cambia rispetto alla quinta naturale. Puoi ignorare le alterazioni.</p>",
+        shiftDemo: t567Demo(5, 0, "Perfetta", 1, 1, "Perfetta", "same", "Stessa alterazione su entrambe → non cambia nulla")
+    }
+];
+
+function buildQuintaDoubleStep() {
+    return {
+        kind: "explain",
+        title: "E con due alterazioni che spingono nella stessa direzione?",
+        body: "<p>Come per le quarte, anche per le quinte la scala delle qualità è corta: dalla perfetta basta <strong>un solo</strong> spostamento per arrivare a diminuita o aumentata. Quindi due spostamenti nella stessa direzione portano quasi sempre <strong>oltre</strong>:</p>" +
+              "<div style='text-align:center; font-weight:800; font-size:1.02rem; margin:16px 0; color:#e2e8f0; line-height:1.9;'>" +
+              "<span style='color:#38bdf8;'>Più che diminuita</span> ⟵ Diminuita ⟵ <span class='hl'>Perfetta</span> ⟶ Aumentata (o eccedente) ⟶ <span style='color:#fb923c;'>Più che aumentata</span></div>",
+        shiftDemos: [
+            t567Demo(5, 0, "Perfetta", -1, 1, "Più che aumentata", "widen", "Allarga due volte: Perfetta → Aumentata → Più che aumentata", "Diesis sopra e bemolle sotto"),
+            t567Demo(5, 0, "Perfetta", 1, -1, "Più che diminuita", "narrow", "Stringe due volte: Perfetta → Diminuita → Più che diminuita", "Bemolle sopra e diesis sotto"),
+            t567Demo(5, 6, "Diminuita", -1, 1, "Aumentata (o eccedente)", "widen", "Allarga due volte: Diminuita → Perfetta → Aumentata", "L'unica eccezione: Si-Fa")
+        ],
+        bodyAfter: "<p>Si-Fa parte già da diminuita, quindi allargando due volte resta nel campo e arriva ad aumentata. Il procedimento è sempre lo stesso: prima la quinta naturale, poi uno spostamento per ogni alterazione.</p>" +
+              "<div class='trick-box'>😌 Tranquillo: siccome questi casi portano quasi sempre a più che aumentata o più che diminuita, sulle quinte <strong>non</strong> ci saranno esercizi su di loro. I casi più che diminuiti e più che aumentati li affronteremo più avanti nel programma.</div>"
+    };
+}
+
+function buildQuintaSteps() {
+    const steps = [];
+
+    steps.push({
+        kind: "explain",
+        title: "La quinta: cinque lettere",
+        body: "<p>La quinta è l'intervallo che ha <strong>numero 5</strong>: contando le lettere dalla prima nota alla seconda (entrambe comprese) ne trovi <span class='hl'>cinque</span>. Per esempio Do-Re-Mi-Fa-Sol: da Do a Sol è una quinta.</p>" +
+              T567_NUMBER_RULE +
+              "<p>Sul pentagramma si riconosce a colpo d'occhio: le due note sono <strong>riga e riga</strong> (oppure <strong>spazio e spazio</strong>) con <strong>una sola</strong> riga (o spazio) in mezzo.</p>",
+        diagram: { type: "letters", config: { sequence: [0, 1, 2, 3, 4], highlightIndices: [0, 4], endpointIndices: [0, 4] } },
+        diagramCaption: "Do (1) - Re (2) - Mi (3) - Fa (4) - Sol (5): numero 5, una quinta.",
+        diagram2: { type: "interval", note1: { letter: 2, acc: 0, octave: 4 }, note2: { letter: 6, acc: 0, octave: 4 }, clef: "treble" },
+        diagramCaption2: "Mi-Si: prima riga e terza riga, con la seconda riga in mezzo."
+    });
+
+    steps.push({
+        kind: "explain",
+        title: "Come le quarte: niente maggiore e minore!",
+        body: "<p>Anche le quinte, come le quarte, <strong>non possono essere maggiori o minori</strong>: fanno parte della famiglia degli intervalli <span class='hl'>perfetti</span> (unisono, quarta, quinta e ottava).</p>" +
+              "<table class='interval-scheme'><tr><th>Seconde e terze</th></tr><tr><td>Diminuita ⟵ Minore ⟵ Maggiore ⟶ Aumentata (o eccedente)</td></tr></table>" +
+              "<table class='interval-scheme'><tr><th>Quarte e quinte</th></tr><tr><td>Diminuita ⟵ <strong>Perfetta</strong> ⟶ Aumentata (o eccedente)</td></tr></table>" +
+              "<p>La quinta <strong>perfetta</strong> misura 7 semitoni. Un semitono in meno è diminuita (6), uno in più è aumentata (8).</p>"
+    });
+
+    steps.push({
+        kind: "question",
+        title: "Verifichiamo subito",
+        question: "<p>Una quinta può essere maggiore?</p>",
+        options: [ { id: "si", label: "Sì" }, { id: "no", label: "No" } ],
+        correct: "no",
+        feedback: {
+            no: "Esatto! Le quinte sono intervalli perfetti, come le quarte: possono essere diminuite, perfette o aumentate (o eccedenti), ma mai maggiori o minori.",
+            si: "Non è corretto: maggiore e minore valgono per seconde, terze, seste e settime. Le quinte, come le quarte, sono intervalli perfetti: diminuita, perfetta o aumentata (o eccedente)."
+        }
+    });
+
+    steps.push({
+        kind: "explain",
+        title: "Le quinte naturali: il trucco",
+        topic: "naturali",
+        topicLabel: "Quinte naturali",
+        body: "<p>Ora le quinte <strong>naturali</strong>, cioè senza alterazioni. Il trucco somiglia a quello delle quarte:</p>" +
+              "<p style='text-align:center; font-weight:800; font-size:1.05rem; color:#fde68a; margin:14px 0;'>Le quinte <span class='hl'>naturali</span> sono tutte <strong>perfette</strong>, tranne una: <strong>Si-Fa</strong>, che è <strong>diminuita</strong>.</p>" +
+              "<div class='trick-box'>💡 Ti ricorda qualcosa? Nelle quarte l'eccezione era <strong>Fa-Si</strong> (aumentata). Qui sono le stesse due note, ma rovesciate: <strong>Si-Fa</strong> (diminuita).</div>"
+    });
+
+    steps.push({
+        kind: "explain",
+        title: "Perché proprio Si-Fa? La tastiera",
+        topic: "naturali",
+        topicLabel: "Quinte naturali",
+        body: "<p>Ricordi le coppie di tasti bianchi <strong>attaccati</strong>, Mi-Fa e Si-Do? Ogni quinta naturale perfetta ne attraversa esattamente <strong>una</strong>. Si-Fa è l'unica che le attraversa <strong>tutte e due</strong>: per questo è un semitono più stretta delle altre.</p>",
+        diagram: t567Keyboard(5, 6),
+        diagramCaption: "Si-Do-Re-Mi-Fa: in arancione le due coppie attaccate, Si-Do e Mi-Fa. Le attraversa entrambe."
+    });
+
+    steps.push({
+        kind: "explain",
+        title: "Esempio: Do-Sol (perfetta)",
+        topic: "naturali",
+        topicLabel: "Quinte naturali",
+        body: "<p>Da Do a Sol il percorso è Do-Re-Mi-Fa-Sol: attraversa una sola coppia attaccata, Mi-Fa. Quinta <strong>perfetta</strong>.</p>",
+        diagram: { type: "interval", note1: { letter: 0, acc: 0, octave: 4 }, note2: { letter: 4, acc: 0, octave: 4 }, clef: "treble" },
+        diagramCaption: "Do-Sol: quinta perfetta.",
+        diagram2: t567Keyboard(5, 0),
+        diagramCaption2: "Una sola coppia attaccata (Mi-Fa, in arancione): quinta perfetta."
+    });
+
+    steps.push({
+        kind: "explain",
+        title: "Esempio: Si-Fa (diminuita)",
+        topic: "naturali",
+        topicLabel: "Quinte naturali",
+        body: "<p>Da Si a Fa il percorso è Si-Do-Re-Mi-Fa: attraversa sia Si-Do sia Mi-Fa. Quinta <strong>diminuita</strong>.</p>",
+        diagram: { type: "interval", note1: { letter: 6, acc: 0, octave: 4 }, note2: { letter: 3, acc: 0, octave: 5 }, clef: "treble" },
+        diagramCaption: "Si-Fa: quinta diminuita, l'unica eccezione.",
+        diagram2: t567Keyboard(5, 6),
+        diagramCaption2: "Due coppie attaccate (in arancione): un semitono in meno, quinta diminuita."
+    });
+
+    t567NaturalQuestions(5, QUINTA_NATURAL_ORDER, [ { id: "d", label: "Diminuita" }, { id: "p", label: "Perfetta" } ], (l1, name) => l1 === 6 ? {
+        d: "Esatto! Si-Fa è l'unica quinta naturale diminuita: nel percorso Si-Do-Re-Mi-Fa attraversa tutte e due le coppie di tasti attaccati.",
+        p: "Non è corretto: Si-Fa è proprio l'eccezione! È l'unica quinta naturale diminuita. Guarda la tastiera qui sotto: Si-Do-Re-Mi-Fa attraversa tutte e due le coppie attaccate (in arancione)."
+    } : {
+        p: "Esatto! " + name + " è perfetta, come tutte le quinte naturali tranne Si-Fa.",
+        d: "Non è corretto: tutte le quinte naturali sono perfette, tranne una sola, Si-Fa. " + name + " non è Si-Fa, quindi è perfetta. Guarda la tastiera qui sotto: nel percorso c'è una sola coppia di tasti attaccati (in arancione)."
+    }).forEach(q => steps.push(q));
+
+    steps.push({
+        kind: "explain",
+        title: "Ora applica le alterazioni",
+        body: "<p>Ottimo, ora sai riconoscere le quinte naturali! Con le alterazioni si procede come per le quarte: si parte dalla qualità naturale e ci si sposta lungo la scala delle qualità.</p>" +
+              T567_SCALE_P + T567_MOVES +
+              "<p>Ricorda di partire sempre dalla quinta naturale: quasi sempre perfetta, ma <strong>Si-Fa parte da diminuita</strong>! Vediamo un caso alla volta.</p>"
+    });
+
+    t567AlteredSection(5, QUINTA_ALTERATION_CATEGORIES, QUINTA_ALTERED_BATTERY, QUINTA_CATEGORY_SHORT_LABELS, 4, quintaException, { 3: buildQuintaDoubleStep() })
+        .forEach(s => steps.push(s));
+
+    return steps;
+}
+
+// ---------- SESTA e SETTIMA: categorie comuni (7 casi, come seconde e terze) ----------
+
+const T67_CATEGORY_SHORT_LABELS = [
+    "Diesis sopra", "Diesis sotto", "Bemolle sopra", "Bemolle sotto",
+    "Diesis sopra + bemolle sotto", "Bemolle sopra + diesis sotto", "Stessa alterazione"
+];
+function t67Categories(number, demos) {
+    return [
+        { title: "Caso 1 di 7: diesis sulla nota superiore", body: "<p>Quando la nota <strong>superiore</strong> ha il diesis, l'intervallo si allarga di un semitono. Prima valutiamo la " + T567_WORD[number] + " senza alterazioni, poi aggiungiamo il diesis.</p>", shiftDemo: demos[0] },
+        { title: "Caso 2 di 7: diesis sulla nota inferiore", body: "<p>Quando invece è la nota <strong>inferiore</strong> ad avere il diesis, l'intervallo si stringe di un semitono.</p>", shiftDemo: demos[1] },
+        { title: "Caso 3 di 7: bemolle sulla nota superiore", body: "<p>Un bemolle funziona al contrario di un diesis. Sulla nota <strong>superiore</strong>, il bemolle stringe l'intervallo.</p>", shiftDemo: demos[2] },
+        { title: "Caso 4 di 7: bemolle sulla nota inferiore", body: "<p>Sulla nota <strong>inferiore</strong> invece, il bemolle allarga l'intervallo.</p>", shiftDemo: demos[3] },
+        { title: "Caso 5 di 7: diesis sopra e bemolle sotto", body: "<p>Quando <strong>entrambe</strong> le note sono alterate, applichi gli spostamenti uno dopo l'altro. Diesis sopra e bemolle sotto allargano entrambi.</p>", shiftDemo: demos[4] },
+        { title: "Caso 6 di 7: bemolle sopra e diesis sotto", body: "<p>Al contrario, bemolle sopra e diesis sotto stringono entrambi.</p>", shiftDemo: demos[5] },
+        { title: "Caso 7 di 7: la stessa alterazione su entrambe le note", body: "<p>Ultimo caso, il più semplice: se <strong>entrambe</strong> le note hanno lo stesso tipo di alterazione, la distanza tra loro non cambia rispetto alla coppia naturale.</p>", shiftDemo: demos[6] }
+    ];
+}
+
+// ---------- SESTA ----------
+// seste naturali: minori se partono da Mi, La, Si (2, 5, 6); maggiori le altre
+
+const SESTA_NATURAL_ORDER = [0, 2, 1, 5, 6, 3, 4, 2, 0, 5, 1, 6, 3, 2, 4];
+const SESTA_CATEGORY_SPECS = [
+    ["diesis sulla nota superiore", [0, 2, 1, 5, 3, 6, 4, 2], 0, 1, false],
+    ["diesis sulla nota inferiore", [0, 2, 1, 5, 3, 6, 4, 0], 1, 0, false],
+    ["bemolle sulla nota superiore", [1, 2, 0, 5, 4, 6, 3, 1], 0, -1, false],
+    ["bemolle sulla nota inferiore", [1, 2, 0, 5, 4, 6, 3, 2], -1, 0, false],
+    ["diesis sopra e bemolle sotto", [2, 5, 6, 2, 5, 6, 2, 5], -1, 1, false],
+    ["bemolle sopra e diesis sotto", [0, 1, 3, 4, 0, 1, 3, 4], 1, -1, false],
+    ["stessa alterazione su entrambe", [0, 1, 2, 3, 4, 5, 6, 0], 0, 0, true, [1, -1, 1, 1, -1, -1, -1, -1]]
+];
+const SESTA_ALTERED_BATTERY = t567AlteredBattery(6, SESTA_CATEGORY_SPECS);
+const SESTA_ALTERATION_CATEGORIES = t67Categories(6, [
+    t567Demo(6, 0, "Maggiore", 0, 1, "Aumentata (o eccedente)", "widen", "Diesis sulla nota superiore → allarga"),
+    t567Demo(6, 0, "Maggiore", 1, 0, "Minore", "narrow", "Diesis sulla nota inferiore → stringe"),
+    t567Demo(6, 2, "Minore", 0, -1, "Diminuita", "narrow", "Bemolle sulla nota superiore → stringe"),
+    t567Demo(6, 2, "Minore", -1, 0, "Maggiore", "widen", "Bemolle sulla nota inferiore → allarga"),
+    t567Demo(6, 2, "Minore", -1, 1, "Aumentata (o eccedente)", "widen", "Bemolle sotto + diesis sopra → allarga due volte"),
+    t567Demo(6, 0, "Maggiore", 1, -1, "Diminuita", "narrow", "Diesis sotto + bemolle sopra → stringe due volte"),
+    t567Demo(6, 0, "Maggiore", 1, 1, "Maggiore", "same", "Stessa alterazione su entrambe → non cambia nulla")
+]);
+const SESTA_PIU_CHE_DEMOS = [
+    t567Demo(6, 0, "Maggiore", -1, 1, "Più che aumentata", "widen", "Bemolle sotto + diesis sopra → allarga due volte: Maggiore → Aumentata → Più che aumentata", "Esempio 1: si allarga oltre l'aumentata"),
+    t567Demo(6, 2, "Minore", 1, -1, "Più che diminuita", "narrow", "Diesis sotto + bemolle sopra → stringe due volte: Minore → Diminuita → Più che diminuita", "Esempio 2: si stringe oltre la diminuita")
+];
+const sestaStartsMinor = l1 => l1 === 2 || l1 === 5 || l1 === 6;
+
+function buildSestaSteps() {
+    const steps = [];
+
+    steps.push({
+        kind: "explain",
+        title: "La sesta: sei lettere",
+        body: "<p>La sesta è l'intervallo che ha <strong>numero 6</strong>: contando le lettere dalla prima nota alla seconda (entrambe comprese) ne trovi <span class='hl'>sei</span>. Per esempio Do-Re-Mi-Fa-Sol-La: da Do a La è una sesta.</p>" +
+              T567_NUMBER_RULE +
+              "<p>Sul pentagramma: una nota è su una <strong>riga</strong> e l'altra in uno <strong>spazio</strong> (o il contrario), con <strong>due</strong> righe in mezzo.</p>",
+        diagram: { type: "letters", config: { sequence: [0, 1, 2, 3, 4, 5], highlightIndices: [0, 5], endpointIndices: [0, 5] } },
+        diagramCaption: "Do (1) - Re - Mi - Fa - Sol - La (6): numero 6, una sesta.",
+        diagram2: { type: "interval", note1: { letter: 0, acc: 0, octave: 4 }, note2: { letter: 5, acc: 0, octave: 4 }, clef: "treble" },
+        diagramCaption2: "Do-La: Do sulla riga aggiunta, La nel secondo spazio. In mezzo, due righe (Mi e Sol)."
+    });
+
+    steps.push({
+        kind: "explain",
+        title: "Si torna a maggiore e minore",
+        body: "<p>Dopo quarte e quinte, con le seste si torna alla famiglia di seconde e terze: le seste possono essere <strong>maggiori</strong> o <strong>minori</strong>, mai perfette.</p>" +
+              "<table class='interval-scheme'><tr><th>Seconde, terze, seste e settime</th></tr><tr><td>Diminuita ⟵ Minore ⟵ <strong>Maggiore</strong> ⟶ Aumentata (o eccedente)</td></tr></table>" +
+              "<table class='interval-scheme'><tr><th>Unisono, quarte, quinte e ottave</th></tr><tr><td>Diminuita ⟵ <strong>Perfetta</strong> ⟶ Aumentata (o eccedente)</td></tr></table>" +
+              "<p>La sesta <strong>maggiore</strong> misura 9 semitoni, la <strong>minore</strong> 8.</p>"
+    });
+
+    steps.push({
+        kind: "question",
+        title: "Verifichiamo subito",
+        question: "<p>Una sesta può essere perfetta?</p>",
+        options: [ { id: "si", label: "Sì" }, { id: "no", label: "No" } ],
+        correct: "no",
+        feedback: {
+            no: "Esatto! Perfette sono solo unisono, quarta, quinta e ottava. Le seste possono essere diminuite, minori, maggiori o aumentate (o eccedenti).",
+            si: "Non è corretto: perfette sono solo unisono, quarta, quinta e ottava. Le seste, come seconde e terze, sono maggiori o minori (oppure diminuite o aumentate)."
+        }
+    });
+
+    steps.push({
+        kind: "explain",
+        title: "Le seste naturali: il trucco",
+        topic: "naturali",
+        topicLabel: "Seste naturali",
+        body: "<p>Ora le seste <strong>naturali</strong>. Guarda il percorso sulla tastiera e conta le coppie di tasti bianchi <strong>attaccati</strong> (Mi-Fa e Si-Do) che attraversa:</p>" +
+              "<ul><li>ne attraversa <strong>una sola</strong> → sesta <strong>maggiore</strong>;</li>" +
+              "<li>le attraversa <strong>tutte e due</strong> → sesta <strong>minore</strong>.</li></ul>" +
+              "<p style='text-align:center; font-weight:800; font-size:1.05rem; color:#fde68a; margin:14px 0;'>In pratica: le seste <span class='hl'>naturali</span> che partono da <strong>Mi</strong>, <strong>La</strong> o <strong>Si</strong> sono <strong>minori</strong>. Tutte le altre sono <strong>maggiori</strong>.</p>" +
+              "<div class='trick-box'>💡 Trucco in più: rovescia le note! Do-La (sesta) diventa La-Do (terza). La terza La-Do è minore, e la sesta Do-La è il contrario: maggiore. Sesta e terza rovesciata hanno sempre qualità opposte.</div>"
+    });
+
+    steps.push({
+        kind: "explain",
+        title: "Esempio: Do-La (maggiore)",
+        topic: "naturali",
+        topicLabel: "Seste naturali",
+        body: "<p>Da Do a La il percorso è Do-Re-Mi-Fa-Sol-La: attraversa una sola coppia attaccata, Mi-Fa. Sesta <strong>maggiore</strong>.</p>",
+        diagram: { type: "interval", note1: { letter: 0, acc: 0, octave: 4 }, note2: { letter: 5, acc: 0, octave: 4 }, clef: "treble" },
+        diagramCaption: "Do-La: sesta maggiore.",
+        diagram2: t567Keyboard(6, 0),
+        diagramCaption2: "Una sola coppia attaccata (Mi-Fa, in arancione): sesta maggiore."
+    });
+
+    steps.push({
+        kind: "explain",
+        title: "Esempio: Mi-Do (minore)",
+        topic: "naturali",
+        topicLabel: "Seste naturali",
+        body: "<p>Da Mi a Do il percorso è Mi-Fa-Sol-La-Si-Do: attraversa sia Mi-Fa sia Si-Do. Sesta <strong>minore</strong>.</p>",
+        diagram: { type: "interval", note1: { letter: 2, acc: 0, octave: 4 }, note2: { letter: 0, acc: 0, octave: 5 }, clef: "treble" },
+        diagramCaption: "Mi-Do: sesta minore, parte da Mi.",
+        diagram2: t567Keyboard(6, 2),
+        diagramCaption2: "Due coppie attaccate (in arancione): sesta minore."
+    });
+
+    t567NaturalQuestions(6, SESTA_NATURAL_ORDER, [ { id: "M", label: "Maggiore" }, { id: "m", label: "Minore" } ], (l1, name) => sestaStartsMinor(l1) ? {
+        m: "Esatto! " + name + " parte da " + T567_SOLFEGE[l1] + ": attraversa tutte e due le coppie di tasti attaccati, quindi è minore.",
+        M: "Non è corretto: " + name + " parte da " + T567_SOLFEGE[l1] + ", e le seste naturali che partono da Mi, La o Si sono minori. Guarda la tastiera qui sotto: il percorso attraversa tutte e due le coppie attaccate (in arancione)."
+    } : {
+        M: "Esatto! " + name + " non parte da Mi, La o Si: nel percorso c'è una sola coppia di tasti attaccati, quindi è maggiore.",
+        m: "Non è corretto: minori sono solo le seste naturali che partono da Mi, La o Si. " + name + " parte da " + T567_SOLFEGE[l1] + ": guarda la tastiera qui sotto, c'è una sola coppia attaccata (in arancione), quindi è maggiore."
+    }).forEach(q => steps.push(q));
+
+    steps.push({
+        kind: "explain",
+        title: "Ora applica le alterazioni",
+        body: "<p>Ottimo, ora sai riconoscere le seste naturali! Con le alterazioni si procede esattamente come per seconde e terze: si parte dalla qualità naturale e ci si sposta lungo la scala.</p>" +
+              T567_SCALE_MM + T567_MOVES +
+              "<p>Se ci sono alterazioni su <strong>entrambe</strong> le note, applichi gli spostamenti uno dopo l'altro. Vediamo un caso alla volta.</p>"
+    });
+
+    t567AlteredSection(6, SESTA_ALTERATION_CATEGORIES, SESTA_ALTERED_BATTERY, T67_CATEGORY_SHORT_LABELS, 6, null, {
+        5: buildPiuCheStep("sesta", SESTA_PIU_CHE_DEMOS, "")
+    }).forEach(s => steps.push(s));
+
+    return steps;
+}
+
+// ---------- SETTIMA ----------
+// settime naturali: maggiori solo Do-Si e Fa-Mi (0, 3); le altre minori
+
+const SETTIMA_NATURAL_ORDER = [0, 1, 2, 3, 4, 0, 5, 6, 3, 1, 0, 4, 2, 3, 5];
+const SETTIMA_CATEGORY_SPECS = [
+    ["diesis sulla nota superiore", [1, 0, 2, 3, 4, 5, 6, 2], 0, 1, false],
+    ["diesis sulla nota inferiore", [0, 1, 2, 3, 4, 5, 6, 3], 1, 0, false],
+    ["bemolle sulla nota superiore", [0, 1, 2, 3, 4, 5, 6, 0], 0, -1, false],
+    ["bemolle sulla nota inferiore", [1, 0, 2, 3, 4, 5, 6, 1], -1, 0, false],
+    ["diesis sopra e bemolle sotto", [1, 2, 4, 5, 1, 2, 4, 5], -1, 1, false],
+    ["bemolle sopra e diesis sotto", [0, 3, 0, 3, 0, 3, 0, 3], 1, -1, false],
+    ["stessa alterazione su entrambe", [0, 1, 2, 3, 4, 5, 6, 0], 0, 0, true, [1, -1, -1, 1, 1, -1, -1, -1]]
+];
+const SETTIMA_ALTERED_BATTERY = t567AlteredBattery(7, SETTIMA_CATEGORY_SPECS);
+const SETTIMA_ALTERATION_CATEGORIES = t67Categories(7, [
+    t567Demo(7, 1, "Minore", 0, 1, "Maggiore", "widen", "Diesis sulla nota superiore → allarga"),
+    t567Demo(7, 0, "Maggiore", 1, 0, "Minore", "narrow", "Diesis sulla nota inferiore → stringe"),
+    t567Demo(7, 0, "Maggiore", 0, -1, "Minore", "narrow", "Bemolle sulla nota superiore → stringe"),
+    t567Demo(7, 1, "Minore", -1, 0, "Maggiore", "widen", "Bemolle sulla nota inferiore → allarga"),
+    t567Demo(7, 1, "Minore", -1, 1, "Aumentata (o eccedente)", "widen", "Bemolle sotto + diesis sopra → allarga due volte"),
+    t567Demo(7, 0, "Maggiore", 1, -1, "Diminuita", "narrow", "Diesis sotto + bemolle sopra → stringe due volte"),
+    t567Demo(7, 0, "Maggiore", 1, 1, "Maggiore", "same", "Stessa alterazione su entrambe → non cambia nulla")
+]);
+const SETTIMA_PIU_CHE_DEMOS = [
+    t567Demo(7, 0, "Maggiore", -1, 1, "Più che aumentata", "widen", "Bemolle sotto + diesis sopra → allarga due volte: Maggiore → Aumentata → Più che aumentata", "Esempio 1: si allarga oltre l'aumentata"),
+    t567Demo(7, 1, "Minore", 1, -1, "Più che diminuita", "narrow", "Diesis sotto + bemolle sopra → stringe due volte: Minore → Diminuita → Più che diminuita", "Esempio 2: si stringe oltre la diminuita")
+];
+const settimaIsMajor = l1 => l1 === 0 || l1 === 3;
+
+function buildSettimaSteps() {
+    const steps = [];
+
+    steps.push({
+        kind: "explain",
+        title: "La settima: sette lettere",
+        body: "<p>La settima è l'intervallo che ha <strong>numero 7</strong>: contando le lettere dalla prima nota alla seconda (entrambe comprese) ne trovi <span class='hl'>sette</span>. Per esempio da Do a Si: Do-Re-Mi-Fa-Sol-La-Si.</p>" +
+              T567_NUMBER_RULE +
+              "<p>Sul pentagramma: come la quinta, le note sono <strong>riga e riga</strong> (o <strong>spazio e spazio</strong>), ma più lontane: in mezzo ci sono <strong>due</strong> righe (o due spazi).</p>",
+        diagram: { type: "letters", config: { sequence: [0, 1, 2, 3, 4, 5, 6], highlightIndices: [0, 6], endpointIndices: [0, 6] } },
+        diagramCaption: "Do (1) - Re - Mi - Fa - Sol - La - Si (7): numero 7, una settima.",
+        diagram2: { type: "interval", note1: { letter: 0, acc: 0, octave: 4 }, note2: { letter: 6, acc: 0, octave: 4 }, clef: "treble" },
+        diagramCaption2: "Do-Si: Do sulla riga aggiunta, Si sulla terza riga. In mezzo, due righe (Mi e Sol)."
+    });
+
+    steps.push({
+        kind: "explain",
+        title: "Maggiore e minore, come le seste",
+        body: "<p>Le settime appartengono alla stessa famiglia di seconde, terze e seste: possono essere <strong>maggiori</strong> o <strong>minori</strong>, mai perfette.</p>" +
+              "<table class='interval-scheme'><tr><th>Seconde, terze, seste e settime</th></tr><tr><td>Diminuita ⟵ Minore ⟵ <strong>Maggiore</strong> ⟶ Aumentata (o eccedente)</td></tr></table>" +
+              "<p>La settima <strong>maggiore</strong> misura 11 semitoni (le manca un solo semitono per arrivare all'ottava), la <strong>minore</strong> 10.</p>"
+    });
+
+    steps.push({
+        kind: "question",
+        title: "Verifichiamo subito",
+        question: "<p>Una settima può essere perfetta?</p>",
+        options: [ { id: "si", label: "Sì" }, { id: "no", label: "No" } ],
+        correct: "no",
+        feedback: {
+            no: "Esatto! Perfette sono solo unisono, quarta, quinta e ottava. Le settime possono essere diminuite, minori, maggiori o aumentate (o eccedenti).",
+            si: "Non è corretto: perfette sono solo unisono, quarta, quinta e ottava. Le settime, come seconde, terze e seste, sono maggiori o minori (oppure diminuite o aumentate)."
+        }
+    });
+
+    steps.push({
+        kind: "explain",
+        title: "Le settime naturali: il trucco",
+        topic: "naturali",
+        topicLabel: "Settime naturali",
+        body: "<p>Ora le settime <strong>naturali</strong>. Il percorso di una settima è così lungo che quasi sempre attraversa <strong>tutte e due</strong> le coppie di tasti attaccati (Mi-Fa e Si-Do): per questo quasi tutte sono <strong>minori</strong>.</p>" +
+              "<p style='text-align:center; font-weight:800; font-size:1.05rem; color:#fde68a; margin:14px 0;'>Le settime <span class='hl'>naturali</span> sono tutte <strong>minori</strong>, tranne due: <strong>Do-Si</strong> e <strong>Fa-Mi</strong>, che sono <strong>maggiori</strong>.</p>" +
+              "<div class='trick-box'>💡 Come ricordarle? Sono le due eccezioni delle seconde, <strong>Si-Do</strong> e <strong>Mi-Fa</strong>, rovesciate: Do-Si e Fa-Mi. Infatti da Si a Do e da Mi a Fa manca un solo semitono per arrivare all'ottava.</div>"
+    });
+
+    steps.push({
+        kind: "explain",
+        title: "Esempio: Do-Si (maggiore)",
+        topic: "naturali",
+        topicLabel: "Settime naturali",
+        body: "<p>Da Do a Si il percorso è Do-Re-Mi-Fa-Sol-La-Si: attraversa solo Mi-Fa, e si ferma prima di Si-Do. Settima <strong>maggiore</strong>.</p>",
+        diagram: { type: "interval", note1: { letter: 0, acc: 0, octave: 4 }, note2: { letter: 6, acc: 0, octave: 4 }, clef: "treble" },
+        diagramCaption: "Do-Si: settima maggiore.",
+        diagram2: t567Keyboard(7, 0),
+        diagramCaption2: "Una sola coppia attaccata (Mi-Fa, in arancione): settima maggiore."
+    });
+
+    steps.push({
+        kind: "explain",
+        title: "Esempio: Re-Do (minore)",
+        topic: "naturali",
+        topicLabel: "Settime naturali",
+        body: "<p>Da Re a Do il percorso è Re-Mi-Fa-Sol-La-Si-Do: attraversa sia Mi-Fa sia Si-Do. Settima <strong>minore</strong>.</p>",
+        diagram: { type: "interval", note1: { letter: 1, acc: 0, octave: 4 }, note2: { letter: 0, acc: 0, octave: 5 }, clef: "treble" },
+        diagramCaption: "Re-Do: settima minore.",
+        diagram2: t567Keyboard(7, 1),
+        diagramCaption2: "Due coppie attaccate (in arancione): settima minore."
+    });
+
+    t567NaturalQuestions(7, SETTIMA_NATURAL_ORDER, [ { id: "M", label: "Maggiore" }, { id: "m", label: "Minore" } ], (l1, name) => settimaIsMajor(l1) ? {
+        M: "Esatto! " + name + " è una delle due settime naturali maggiori (Do-Si e Fa-Mi): nel percorso c'è una sola coppia di tasti attaccati.",
+        m: "Non è corretto: " + name + " è proprio una delle due eccezioni maggiori, Do-Si e Fa-Mi. Guarda la tastiera qui sotto: il percorso attraversa una sola coppia attaccata (in arancione)."
+    } : {
+        m: "Esatto! " + name + " attraversa tutte e due le coppie attaccate: è minore, come tutte le settime naturali tranne Do-Si e Fa-Mi.",
+        M: "Non è corretto: le uniche settime naturali maggiori sono Do-Si e Fa-Mi. " + name + " non è tra queste: guarda la tastiera qui sotto, attraversa tutte e due le coppie attaccate (in arancione), quindi è minore."
+    }).forEach(q => steps.push(q));
+
+    steps.push({
+        kind: "explain",
+        title: "Ora applica le alterazioni",
+        body: "<p>Ottimo, ora sai riconoscere le settime naturali! Con le alterazioni si procede come sempre: si parte dalla qualità naturale e ci si sposta lungo la scala.</p>" +
+              T567_SCALE_MM + T567_MOVES +
+              "<p>Se ci sono alterazioni su <strong>entrambe</strong> le note, applichi gli spostamenti uno dopo l'altro. Vediamo un caso alla volta.</p>"
+    });
+
+    t567AlteredSection(7, SETTIMA_ALTERATION_CATEGORIES, SETTIMA_ALTERED_BATTERY, T67_CATEGORY_SHORT_LABELS, 6, null, {
+        5: buildPiuCheStep("settima", SETTIMA_PIU_CHE_DEMOS,
+            "<p>Curiosità: la settima <strong>aumentata</strong> Do-Si# suona come un'ottava (Si# è lo stesso tasto di Do), e la settima <strong>diminuita</strong> Do#-Sib suona come una sesta maggiore (Do#-La#). Stesso suono, nome diverso: il nome dipende dalle lettere!</p>")
+    }).forEach(s => steps.push(s));
+
+    return steps;
+}
+
 const TUTORIALS = {
 
 1: { // UNISONO
@@ -3479,6 +4066,18 @@ const TUTORIALS = {
 
 4: { // QUARTA
     steps: buildQuartaSteps()
+},
+
+5: { // QUINTA
+    steps: buildQuintaSteps()
+},
+
+6: { // SESTA
+    steps: buildSestaSteps()
+},
+
+7: { // SETTIMA
+    steps: buildSettimaSteps()
 }
 
 };
