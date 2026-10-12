@@ -355,6 +355,20 @@ h1 {
     #gameOver .final-stats { grid-template-columns: repeat(auto-fit, minmax(120px, 1fr)); }
 }
 </style>
+<link rel="stylesheet" href="telefono.css?v=1">
+<style id="telefono-gioco">
+/* TELEFONO IN VERTICALE: ritocchi solo per questo gioco (le regole comuni sono in telefono.css) */
+@media (max-width: 620px) and (orientation: portrait) {
+.staff-row { margin-bottom: 8px; }
+    .staff-card { min-height: 0; width: 100%; padding: 6px;
+        height: clamp(130px, calc(100vh - 440px), 280px); height: clamp(130px, calc(100dvh - 440px), 280px); }
+    .staff-inner { height: 100%; }
+    #staffInner svg { height: 100% !important; width: auto !important; max-width: 100%; }
+    /* quattro risposte: due per riga, grandi */
+    #answerRow { display: grid; grid-template-columns: 1fr 1fr; gap: 7px; }
+    #answerRow .choice-btn { padding: 15px 4px; font-size: 0.95rem; }
+}
+</style>
 <!-- per i motori di ricerca e la condivisione -->
 <link rel="canonical" href="https://musicascuole.it/nomina-triade.html">
 <meta property="og:type" content="website">
@@ -431,7 +445,7 @@ h1 {
 
     <div class="staff-row" id="staffRow">
         <div class="staff-card">
-            <div class="staff-inner" id="staffInner"></div>
+            <div class="staff-inner" id="staffInner" data-ritaglia-tel="-30 175"></div>
             <div class="confetti-layer" id="confettiLayer"></div>
         </div>
     </div>

@@ -271,6 +271,29 @@ h1 { margin: 0; font-family: "Sora", "Inter", Arial, sans-serif; font-size: 2rem
     .overlay-card { max-height: calc((100vh - 40px) / var(--zoom, 1)); overflow-y: auto; }
 }
 </style>
+<link rel="stylesheet" href="telefono.css?v=1">
+<style id="telefono-gioco">
+/* TELEFONO IN VERTICALE: ritocchi solo per questo gioco (le regole comuni sono in telefono.css) */
+@media (max-width: 620px) and (orientation: portrait) {
+.menu-screen .hero-badge { display: none; }
+    .staff-wrap { margin-bottom: 8px; padding: 6px; min-height: 0;
+        height: clamp(110px, calc(100vh - 520px), 260px); height: clamp(110px, calc(100dvh - 520px), 260px); }
+    #staffContainer { height: 100%; display: flex; justify-content: center; }
+    #staffContainer svg { height: 100% !important; width: auto !important; max-width: 100%; }
+    /* risposte: qualità tre per riga, posizioni tutte su una riga */
+    #qualityRow .choice-btn { flex: 1 1 calc(33.3% - 5px); padding: 9px 1px; font-size: 0.68rem; letter-spacing: -0.2px; white-space: nowrap; }
+    #qualityRow:has(> .choice-btn:nth-child(2):last-child) .choice-btn { padding: 14px 4px; font-size: 0.9rem; }
+    #positionRow { flex-wrap: nowrap; }
+    #positionRow .choice-btn { flex: 1 1 0; padding: 9px 1px; font-size: 0.66rem; }
+    .staff-placeholder { font-size: 0.85rem; }
+    .staff-placeholder .staff-placeholder-emoji { font-size: 1.6rem; margin-bottom: 2px; }
+    .next-button { margin-top: 0; }
+    .staff-wrap { height: clamp(80px, calc(100vh - 590px), 240px); height: clamp(80px, calc(100dvh - 590px), 240px); }
+    /* "Avanti" compare solo quando serve, al posto di "Invia": un pulsante solo, una riga in meno */
+    .next-button:disabled { display: none; }
+    .game:has(.next-button:not(:disabled)) .submit-button { display: none; }
+}
+</style>
 <!-- per i motori di ricerca e la condivisione -->
 <link rel="canonical" href="https://musicascuole.it/ascolta-accordi.html">
 <meta property="og:type" content="website">
@@ -358,7 +381,7 @@ h1 { margin: 0; font-family: "Sora", "Inter", Arial, sans-serif; font-size: 2rem
     <div class="zona-rigo">
     <div class="staff-wrap">
         <div class="staff-placeholder" id="staffPlaceholder"><span class="staff-placeholder-emoji">🎧</span>Ascolta e indovina</div>
-        <div id="staffContainer" style="display: none;"></div>
+        <div id="staffContainer" data-ritaglia-tel="-20 165" style="display: none;"></div>
     </div>
 
     <div class="listen-controls">
