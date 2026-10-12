@@ -14,7 +14,8 @@ Raccoglie il metodo messo a punto con Cristiano nell'ottobre 2026 (branch `migli
   schermo enorme è sbagliato. Pentagrammi, pulsanti e testi devono essere grandi e leggibili da lontano.
   (La prima passata, fatta solo per "non scorrere", è stata bocciata proprio per questo.)
 - **Migliorare, non ridisegnare.** Stessi colori, caratteri, schede, stile del sito. Niente redesign.
-- **Il telefono non cambia.** Né in verticale né girato in orizzontale.
+- **Telefono in verticale: anche lì tutto in una schermata**, per quanto possibile (vedi punto 9).
+  Il lavoro per PC/LIM non deve cambiare il telefono, e viceversa. **Telefono in orizzontale: si lascia com'è.**
 - **Stabilità.** La schermata non deve cambiare dimensione mentre si gioca (fra una domanda e l'altra,
   fra un passo e l'altro del tutorial, quando si apre un'opzione).
 - **Si lavora a piccoli passi**: vedi il punto 7.
@@ -31,9 +32,13 @@ Giochi che restano come sono, per scelta di Cristiano: **Imita il ritmo**, **Le 
 | `tuo` | 1920×915 | schermo di Cristiano / LIM |
 | `pc` | 1366×657 | PC portatile piccolo |
 | `portatile` | 1536×730 | portatile medio |
-| telefono | 390×844 e 932×430 | verticale e orizzontale |
+| `tel360` | 360×640 | Android piccolo (verticale) |
+| `tel390` | 390×664 | iPhone **con le barre del browser** (verticale) |
+| `tel412` | 412×780 | Android grande (verticale) |
+| orizzontale | 932×430 | telefono girato: non si adatta, deve solo restare com'era |
 
-Sono le misure **reali** della finestra (tolte barre del browser e di Windows).
+Sono le misure **reali** della finestra (tolte barre del browser e di Windows). Sul telefono non usare
+390×844: è lo schermo intero, ma nel browser le barre si mangiano circa 180 px.
 
 ---
 
@@ -205,3 +210,59 @@ Passi:
 - [ ] `telefono.py`: IDENTICO in verticale e orizzontale
 - [ ] Nessun errore JS, nessuna richiesta esterna
 - [ ] Commit in italiano sul branch, schermate a Cristiano, attesa dell'ok
+
+---
+
+## 9. Telefono in verticale (ottobre 2026, branch `telefono-una-schermata`)
+
+Obiettivo: la partita (e il tutorial) stanno in una schermata su `tel360`, `tel390`, `tel412`, senza
+pulsanti che escono dai lati. Modelli: `acuto-o-grave.html`, `figure-ritmiche.html`.
+
+### Dove si scrive
+Un blocco in fondo allo `<style>`, **dopo** quello per PC/LIM:
+```css
+@media (max-width: 620px) and (orientation: portrait) { ... }
+```
+`orientation: portrait` lascia fuori il telefono girato. Le regole vecchie `@media (max-width: 640px)` del
+gioco restano: il blocco nuovo viene dopo e le corregge.
+
+### La disposizione tipo
+- `body { padding: 6px 10px 8px; min-height: 0; }`; casetta più piccola in alto a sinistra
+  (`top: 8px; left: 8px; 38×38`).
+- **Statistiche: una riga di cinque caselline** (etichetta ~0.5rem, numero ~0.95rem), accanto alla casetta
+  (`padding-left: 42px` se stanno in cima). Attenzione: se il contenitore aveva `flex: 0 0 190px` (colonna su
+  PC), in verticale diventa un'**altezza** di 190 px: rimettere `flex: 0 0 auto`.
+- **Titolo su una riga** (~1.2rem). **Sottotitolo nascosto** se ripete la consegna (Cristiano è d'accordo).
+- **Livello compatto**: intestazione, barra di 8 px, scritte piccole.
+- **Pentagramma/figura**: riquadro che segue l'altezza visibile del telefono, così sui telefoni lunghi è più grande:
+  `height: clamp(130px, calc(100vh - 480px), 260px); height: clamp(130px, calc(100dvh - 480px), 260px);`
+  (prima riga per i browser vecchi, `dvh` = altezza visibile vera, senza barre). Il numero (480) è
+  "tutto il resto della schermata": si regola gioco per gioco.
+- **Risposte**: mai una riga più larga dello schermo. Affiancate (`flex: 1 1 0`) se sono 2–3, altrimenti
+  tre per riga (`flex: 1 1 calc(33.3% - 6px)`, `flex-wrap: wrap`, `white-space: normal`).
+  Con quattro risposte, due per riga: `.answers:has(> .answer:nth-child(4):last-child) .answer { flex-basis: calc(50% - 6px); }`
+- Pulsanti di fondo (Menu, Termina, Ricomincia) più piccoli (`padding: 8px 12px; font-size: 0.78rem`).
+- Tutorial: titolo su una riga (`white-space: nowrap`, ~1rem), pannello della lezione compatto, "palco" con
+  altezza minima che segue lo schermo; nei passi con lo schema sotto: domanda piccola, risposte tutte su
+  una riga, schema basso (righe da ~30 px).
+- Pannelli/tabelle opzionali (es. tabella di riferimento): accanto alla figura, non sotto
+  (`.staff-row:has(.legend-card.show) .staff-card { flex: 0 0 34%; }`).
+
+### La rete di sicurezza
+`adatta-schermo.js` sul telefono in verticale: se la schermata sporge di poco la rimpicciolisce (mai sotto
+l'85%); se sporge di più lascia scorrere a grandezza normale. Non è un modo per non fare il layout: serve
+solo per i telefoni più piccoli e per qualche passo lungo del tutorial.
+
+### Come si prova
+- `python3 _sviluppo/prove/stati.py <pagina> <cartella> <prefisso> <azioni.json> telefono` → tre telefoni veri
+  (tocco, alta densità). Tutti gli stati a 0, schermate guardate.
+- Tutorial: percorrere **tutti** i passi (se il gioco ha una funzione tipo `goToTutStep(i)` / `vaiA(i)`,
+  chiamarla per ogni passo e misurare `document.documentElement.scrollHeight - innerHeight`).
+- Provare anche le opzioni che aggiungono pannelli (tabella, schema) e le finestre.
+- Su PC/LIM ricontrollare che non sia cambiato nulla (zoom e scorrimento come prima).
+
+### Errori già visti sul telefono
+- Righe di pulsanti con `flex-wrap: nowrap` e larghezze fisse: escono dallo schermo ai lati (Figure ritmiche).
+- Caselle delle statistiche con etichetta e numero affiancati: il numero viene tagliato.
+- Misurare con 390×844: sembra che stia tutto, poi sul telefono vero (barre del browser) non sta.
+
