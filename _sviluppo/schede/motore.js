@@ -272,14 +272,16 @@
     const n = o.misure.length;
     const testa0 = (o.chiave && !o.unaLinea ? 36 : 6) + (o.tempo ? 22 : 0);
     const resto = (W - 2 - testa0) / n;
-    let x = 0; const out = { note: [], staves: [], wrap, sc, ctx };
+    let x = 0, contaNote = 0; const out = { note: [], staves: [], wrap, sc, ctx };
     o.misure.forEach((m, i) => {
       const w = resto + (i === 0 ? testa0 : 0);
       const st = new VF.Stave(x, o.sopra * 10, w, { space_above_staff_ln: 0, space_below_staff_ln: 0 });
       if (i === 0 && o.chiave && !o.unaLinea) st.addClef("treble");
       if (i === 0 && o.tempo) st.addTimeSignature(o.tempo);
       st.setBegBarType(VF.Barline.type.NONE);
-      if (i === n - 1 && o.fine) st.setEndBarType(VF.Barline.type.END);
+      if (i === 0 && o.ritornello) st.setBegBarType(VF.Barline.type.REPEAT_BEGIN);
+      if (i === n - 1 && o.ritornello) st.setEndBarType(VF.Barline.type.REPEAT_END);
+      else if (i === n - 1 && o.fine) st.setEndBarType(VF.Barline.type.END);
       else if (o.senzaStanghette) st.setEndBarType(VF.Barline.type.NONE);
       if (o.unaLinea) { st.setConfigForLines([0, 1, 2, 3, 4].map(k => ({ visible: k === 2 }))); st.setEndBarType(VF.Barline.type.NONE); }
       st.setStyle({ strokeStyle: "#222", fillStyle: "#222" });
@@ -294,7 +296,9 @@
         for (let k = 0; k < t.punti; k++) VF.Dot.buildAndAttach([sn], { all: true });
         if (o.colori && t.n && !t.pausa) sn.setKeyStyle(0, { fillStyle: COLORI[t.n.l], strokeStyle: scuro(COLORI[t.n.l], 0.55) });
         if (o.stile === "grigio") sn.setStyle({ fillStyle: "#b9bdc8", strokeStyle: "#b9bdc8" });
-        sn._tok = t; return sn;
+        sn._tok = t; sn._indice = contaNote++;
+        if (o.nascondi && o.nascondi.includes(sn._indice)) sn.setStyle(stato.sol ? { fillStyle: "#c00", strokeStyle: "#c00" } : { fillStyle: "transparent", strokeStyle: "transparent" });
+        return sn;
       });
       if (notes.length) {
         const beams = VF.Beam.generateBeams(notes.filter(s => !s._tok.pausa), { stem_direction: o.unaLinea || o.gambiSu ? 1 : undefined, maintain_stem_directions: !!(o.unaLinea || o.gambiSu) });

@@ -273,3 +273,65 @@
 
   Object.assign(M, { disegno, figura, cuoreVuoto, collega, sceltaImmagini, ascoltoScelta, simbolo });
 })(window);
+
+/* ---- tastiera, dado da montare, stanghette e caselle nelle battute ---- */
+(function (global) {
+  "use strict";
+  const S = global.Schede, M = global.Modelli, { el, COLORI, NOMI, nota } = S;
+
+  /* tastiera disegnata: da/a (es. "c4","c5"); opz: larg (mm), alto (mm), nomi, colori, numeri {key: "1"}, segna [key] */
+  function tastiera(cont, da, a, opz) {
+    opz = Object.assign({ larg: 120, alto: 40, nomi: false, colori: false, numeri: {}, segna: [], neri: [] }, opz);
+    const ORD = ["c", "d", "e", "f", "g", "a", "b"];
+    const n0 = nota(da), n1 = nota(a);
+    const bianchi = [];
+    for (let o = n0.o; o <= n1.o; o++) ORD.forEach(l => { const k = l + o; const p = nota(k).passo; if (p >= n0.passo && p <= n1.passo) bianchi.push(k); });
+    const W = opz.larg, H = opz.alto, w = W / bianchi.length;
+    let s = "";
+    bianchi.forEach((k, i) => {
+      const l = k[0];
+      const f = opz.colori && S.col() ? COLORI[l] : (opz.segna.includes(k) ? "#d1d5db" : "#fff");
+      s += `<rect x="${i * w}" y="0" width="${w}" height="${H}" fill="${f}" stroke="#222" stroke-width="0.35"/>`;
+      if (opz.nomi) s += `<text x="${i * w + w / 2}" y="${H - 3}" text-anchor="middle" font-family="Fredoka" font-size="${Math.min(5, w * 0.42)}" font-weight="600">${NOMI[l]}</text>`;
+      if (opz.numeri[k]) s += `<text x="${i * w + w / 2}" y="${H - 5.6}" text-anchor="middle" font-family="Fredoka" font-size="5" font-weight="600" fill="#c00">${opz.numeri[k]}</text>`;
+      if (opz.caselle) s += `<rect x="${i * w + w / 2 - 3.6}" y="${H - 11}" width="7.2" height="7.2" rx="1" fill="#fff" stroke="#888" stroke-width="0.3"/>`;
+    });
+    bianchi.forEach((k, i) => {
+      if (i === bianchi.length - 1 || !["c", "d", "f", "g", "a"].includes(k[0])) return;
+      const kn = k[0] + "#" + k.slice(1);
+      s += `<rect x="${(i + 1) * w - w * 0.3}" y="0" width="${w * 0.6}" height="${H * 0.6}" fill="${opz.segna.includes(kn) ? "#888" : "#222"}" stroke="#222" stroke-width="0.3" rx="0.6"/>`;
+    });
+    const d = el("div", { html: `<svg viewBox="-0.5 -0.5 ${W + 1} ${H + 1}" style="width:${W}mm;height:${H}mm;display:block">${s}</svg>` });
+    cont.appendChild(d); return { el: d, bianchi, w };
+  }
+
+  /* dado da ritagliare: sviluppo a croce; facce: 6 funzioni (div) */
+  function dado(cont, lato, facce) {
+    const L = lato;
+    const pos = [[1, 0], [0, 1], [1, 1], [2, 1], [1, 2], [1, 3]];
+    const box = el("div", { style: { position: "relative", width: (3 * L + 16) + "mm", height: (4 * L) + "mm" } });
+    const alette = el("div", { html: `<svg viewBox="0 0 ${3 * L + 16} ${4 * L}" style="position:absolute;inset:0;width:100%;height:100%">` +
+      `<path d="M${8 + 0} ${L} l-6 4 v${L - 8} l6 4 M${8 + 3 * L} ${L} l6 4 v${L - 8} l-6 4 M${8} ${L} l4 -6 h${L - 8} l4 6 M${8 + 2 * L} ${L} l4 -6 h${L - 8} l4 6 M${8 + L} ${4 * L} l-6 -4 v${-L + 8} l6 -4 M${8 + 2 * L} ${4 * L} l6 -4 v${-L + 8} l-6 -4" fill="none" stroke="#999" stroke-width="0.35" stroke-dasharray="1.5 1"/></svg>` });
+    box.appendChild(alette);
+    pos.forEach(([cx, cy], i) => {
+      const f = el("div", { style: { position: "absolute", left: (8 + cx * L) + "mm", top: (cy * L) + "mm", width: L + "mm", height: L + "mm",
+        border: ".4mm solid #444", display: "flex", alignItems: "center", justifyContent: "center", background: "#fff" } });
+      box.appendChild(f); facce[i](f);
+    });
+    cont.appendChild(box); return box;
+  }
+
+  /* figura ritmica isolata (senza pentagramma) */
+  function figuraSola(cont, tipo, larg, spazio, stile) {
+    const conRigo = tipo === "r1" || tipo === "r2";
+    const P = S.pentagramma(cont, { larg: M.mm(larg), spazio: M.mm(spazio), linee: conRigo ? "grigie" : "nessuna", sopra: conRigo ? 1.2 : 3.6, sotto: conRigo ? 1.2 : 0.6 });
+    const cx = P.W / 2;
+    if (tipo === "88") S.coppiaCrome(P, cx - 9, cx + 9, 2, 2, stile);
+    else if (["r4", "r2", "r1", "r8"].includes(tipo)) S.pausa(P, cx, tipo[1], stile === "traccia" ? S.GRIGIO_FANTASMA : null);
+    else if (tipo === "2." || tipo === "4.") { S.figura(P, cx - 4, 2, tipo[0], stile, true); P.add("circle", { cx: cx + 6, cy: P.y(3), r: 1.6, fill: "#111" }); }
+    else S.figura(P, cx - 3, 2, tipo, stile, true);
+    return P;
+  }
+
+  Object.assign(M, { tastiera, dado, figuraSola });
+})(window);
