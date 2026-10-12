@@ -307,11 +307,6 @@ semicrome (facoltative), forma musicale, strumenti dell'orchestra, raccordo con 
 - 4ª: *Costruttore di battute*, *Dettato ritmico*, *Brani propedeutici*, *Tastiera*.
 - 5ª: *Primi brani*, *Dettato melodico*, *Test d'ingresso*.
 
-### Stato (ottobre 2026)
-Prima versione di tutte le schede del percorso fatta nel ramo `schede-primaria`, cartella `_sviluppo/schede/`
-(istruzioni in `_sviluppo/schede/LEGGIMI.md`): 6 fascicoli (materiali + classi 1ª–5ª), a colori, in bianco e nero e soluzioni.
-Da decidere: dove pubblicarle sul sito e i crediti delle illustrazioni OpenMoji in `crediti.html`.
-
 ### Il generatore di schede
 Molte schede sono "a stampo" e conviene generarle invece di disegnarle una per una: grafia (2G-02…2G-11,
 3G-01…3G-04), scrivi il nome, disegna la nota, colora con la legenda, inserisci le stanghette, completa la
