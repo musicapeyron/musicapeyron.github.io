@@ -854,6 +854,26 @@ body.mode-tutorial #trophyButton {
     .game > .toolbar { grid-area: toolbar; justify-content: flex-end; margin: 16px 0 0; }
 }
 </style>
+<link rel="stylesheet" href="telefono.css?v=1">
+<style id="telefono-gioco">
+/* TELEFONO IN VERTICALE: ritocchi solo per questo gioco (le regole comuni sono in telefono.css) */
+@media (max-width: 620px) and (orientation: portrait) {
+/* pentagramma ritagliato, riquadro che segue lo schermo */
+    .staff-row { margin-bottom: 8px; padding-bottom: 0; flex-direction: column; gap: 6px; overflow: visible; }
+    .staff-card { flex: 0 0 auto; width: 100%; min-height: 0; padding: 6px;
+        height: clamp(130px, calc(100vh - 420px), 190px); height: clamp(130px, calc(100dvh - 420px), 190px); }
+    .staff-inner { height: 100%; }
+    #staffInner svg { height: 100% !important; width: auto !important; max-width: 100%; }
+    /* schema delle note aperto: sotto, basso; il pentagramma della domanda si accorcia */
+    .reference-card { min-height: 0; padding: 4px 6px; height: 96px; }
+    .reference-inner, .reference-inner svg { height: 100% !important; width: auto !important; max-width: 100%; }
+    .staff-row:has(.reference-card.show) .staff-card { height: clamp(110px, calc(100dvh - 520px), 240px); }
+    /* le note su una sola riga, grandi */
+    .answers { flex-wrap: nowrap; gap: 4px; margin-bottom: 6px; }
+    .answer { flex: 1 1 0; width: auto; min-width: 0; padding: 20px 0; font-size: 1rem; border-radius: 12px; }
+    .tutorial-progress { margin: 0 0 6px; }
+}
+</style>
 <!-- per i motori di ricerca e la condivisione -->
 <link rel="canonical" href="https://musicascuole.it/leggi-la-nota.html">
 <meta property="og:type" content="website">
@@ -976,7 +996,7 @@ body.mode-tutorial #trophyButton {
 
     <div class="staff-row" id="staffRow">
         <div class="staff-card">
-            <div class="staff-inner" id="staffInner"></div>
+            <div class="staff-inner" id="staffInner" data-ritaglia-tel="5 172"></div>
             <div class="confetti-layer" id="confettiLayer"></div>
         </div>
         <div class="reference-card" id="referenceCard">
