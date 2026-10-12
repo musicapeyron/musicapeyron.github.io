@@ -289,6 +289,22 @@
   @media (max-width: 360px) { .livelli-bar button { font-size: calc(11 * var(--u)); padding: calc(5 * var(--u)) calc(8 * var(--u)); } }
   .livelli-bar button.active { background: #EAF2FF; color: #0f172a; border-color: #EAF2FF; }
 
+  /* Consigliato per la primaria: card larga verde, sopra il Test d'ingresso */
+  #primariaWrap { margin-bottom: calc(12 * var(--u)); }
+  #primariaWrap .card-primaria {
+    display: grid; grid-template-columns: auto 1fr auto; grid-template-rows: auto auto; column-gap: calc(14 * var(--u));
+    align-items: center; min-height: 0; padding: calc(14 * var(--u)) calc(18 * var(--u));
+    background: linear-gradient(135deg, rgba(34,197,94,0.42), rgba(132,204,22,0.24));
+    border: 1px solid rgba(74,222,128,0.8);
+  }
+  #primariaWrap .card-primaria:hover { border-color: #86efac; filter: brightness(1.08); }
+  #primariaWrap .card-primaria .top-row { grid-row: 1 / span 2; margin: 0; }
+  #primariaWrap .card-primaria .top-row .label { display: none; }
+  #primariaWrap .card-primaria .icon { width: calc(34 * var(--u)); height: calc(34 * var(--u)); font-size: calc(16 * var(--u)); background: rgba(20,83,45,0.55); }
+  #primariaWrap .card-primaria h2 { grid-column: 2; margin: 0; font-size: calc(15.5 * var(--u)); }
+  #primariaWrap .card-primaria p { grid-column: 2; margin: calc(2 * var(--u)) 0 0; }
+  #primariaWrap .card-primaria .livelli { grid-column: 3; grid-row: 1 / span 2; margin: 0; }
+
   /* Test d'ingresso: card a parte, larga e di un altro colore */
   #testWrap { margin-bottom: calc(18 * var(--u)); }
   #testWrap .card-test {
@@ -539,6 +555,7 @@
   </div>
 
   <div class="livelli-bar" id="livelliBar" aria-label="Per chi è"></div>
+  <div id="primariaWrap"></div>
   <div id="testWrap"></div>
 
   <section class="group group-base">
@@ -563,6 +580,17 @@
      - avanzati: da "Nomina gli Intervalli" in poi
      (i giochi sono nella pagina giochi.html) */
 
+
+  /* "Consigliato per la primaria": card verde larga, in cima */
+  const primaria =
+  {
+      title: "Consigliato per la primaria",
+      icon: '<svg class="ico" viewBox="0 0 48 48" aria-hidden="true"><use href="icone.svg#ic-quaderno"/></svg>',
+      label: "Primaria",
+      desc: "Il quaderno di musica dalla prima alla quinta: schede da stampare, a colori e in bianco e nero.",
+      livelli: ["P"],
+      url: "primaria.html"
+  };
 
   /* il Test d'ingresso ha una card tutta sua, sopra le sezioni */
   const test =
@@ -834,6 +862,7 @@
       grid.appendChild(empty);
     }
   }
+  document.getElementById('primariaWrap').appendChild(creaCard(primaria, 'card-primaria'));
   document.getElementById('testWrap').appendChild(creaCard(test, 'card-test'));
   fillGrid('grid-base', base, false);
   fillGrid('grid-avanzati', avanzati, true);

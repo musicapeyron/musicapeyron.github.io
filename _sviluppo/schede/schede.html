@@ -2,29 +2,36 @@
 <html lang="it">
 <head>
 <meta charset="utf-8">
-<title>Schede per la primaria — musicascuole.it</title>
+<title>Schede per la primaria — generatore dei PDF</title>
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <link rel="stylesheet" href="../../fonts/caratteri.css">
-<link rel="stylesheet" href="schede.css">
+<link rel="stylesheet" href="../../primaria/schede.css">
+<style>
+  html, body { margin: 0; padding: 0; }
+  body { background: #d9dce3; }
+  @media screen { #volume .pagina { margin: 8mm auto; box-shadow: 0 2px 10px rgba(0,0,0,.25); } }
+  @media print { body { background: #fff; } }
+</style>
 <script src="../../vexflow.js"></script>
 <script src="../../motore-schemi.js"></script>
-<script src="motore.js"></script>
-<script src="modelli.js"></script>
-<script src="classe1.js"></script>
-<script src="classe2.js"></script>
-<script src="classe3.js"></script>
-<script src="classe4.js"></script>
-<script src="classe5.js"></script>
-<script src="materiali.js"></script>
+<script src="../../primaria/motore.js"></script>
+<script src="../../primaria/modelli.js"></script>
+<script src="../../primaria/classe1.js"></script>
+<script src="../../primaria/classe2.js"></script>
+<script src="../../primaria/classe3.js"></script>
+<script src="../../primaria/classe4.js"></script>
+<script src="../../primaria/classe5.js"></script>
+<script src="../../primaria/materiali.js"></script>
 </head>
 <body>
 <!--
-  Uso: schede.html?classe=2&modo=col   (modo: col = a colori, bn = bianco e nero)
+  Generatore dei PDF delle schede (il motore è in primaria/, usato anche dalla pagina musica-completa.html).
+  Uso: schede.html?classe=2&modo=col   (modo: col = a colori, bn = bianco e nero; classe 0 = materiali)
        &sol=1      solo le soluzioni
        &solo=2G-09 una sola scheda (per le prove)
   I PDF si generano con: python3 _sviluppo/schede/genera_pdf.py
 -->
-<div id="volume"></div>
+<div id="volume" class="quaderno"></div>
 <script>Schede.avvia();</script>
 </body>
 </html>

@@ -120,7 +120,7 @@
     corpo.classList.add("alto"); corpo.appendChild(g);
     for (let i = 0; i < colonne * righe; i++) {
       const c = el("div", { class: "carta" });
-      if (!opz.senzaForbici && i === 0) c.appendChild(el("img", { class: "taglia", src: `img/${S.stato.modo}/forbici.svg` }));
+      if (!opz.senzaForbici && i === 0) c.appendChild(el("img", { class: "taglia", src: `${S.BASE}img/${S.stato.modo}/forbici.svg` }));
       g.appendChild(c); riempi(c, i);
     }
     return g;
@@ -347,7 +347,7 @@
   async function brano(cont, numero, opz) {
     opz = Object.assign({ interna: 560, colori: false, nomi: false, titolo: true, perRiga: 4, schema: false }, opz);
     const nn = String(numero).padStart(2, "0");
-    const testo = await (await fetch(`../../media/brani-propedeutici/brano${nn}.musicxml`)).text();
+    const testo = await (await fetch(`${S.RADICE}media/brani-propedeutici/brano${nn}.musicxml`)).text();
     const b = MS().leggiMusicXML(testo);
     if (opz.battute) b.battute = b.battute.slice(0, opz.battute);
     if (opz.titolo) cont.appendChild(el("div", { style: { fontSize: "17pt", fontWeight: 600, textAlign: "center", color: "var(--inch)" } }, b.titoloBreve || b.titolo));

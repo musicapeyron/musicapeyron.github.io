@@ -1,0 +1,92 @@
+/* Schede da stampare per la primaria — impaginazione A4.
+   Tutte le regole valgono solo dentro .quaderno (le pagine del sito hanno i loro stili). */
+@page { size: A4; margin: 0; }
+
+.quaderno {
+  --do: #E21C48; --re: #F99D1C; --mi: #FFF428; --fa: #BED958; --sol: #009C95; --la: #5E50A1; --si: #CF3E96;
+  --inch: #1f2a5c;          /* inchiostro dei titoli */
+  --tinta: #eef2fb;         /* fondo leggero dei riquadri */
+  --bordo: #c9d1ea;
+  --grigio: #8a8f9c;
+  --testo: #1b1d24;
+  font-family: 'Fredoka', 'Inter', sans-serif; color: var(--testo);
+  -webkit-print-color-adjust: exact; print-color-adjust: exact;
+}
+.quaderno.bn {
+  --inch: #000; --tinta: #fff; --bordo: #9a9a9a; --grigio: #777; --testo: #000;
+}
+.quaderno, .quaderno * { box-sizing: border-box; }
+
+.quaderno .pagina {
+  width: 210mm; height: 297mm; position: relative; overflow: hidden; background: #fff;
+  padding: 11mm 13mm 10mm; display: flex; flex-direction: column;
+  page-break-after: always; break-after: page;
+  font-family: 'Fredoka', 'Inter', sans-serif; color: var(--testo); text-align: left; line-height: normal;
+}
+
+/* ---- testata ---- */
+.quaderno .testata { display: flex; align-items: center; gap: 3mm; font-size: 10.5pt; }
+.quaderno .area { display: inline-flex; align-items: center; gap: 1.6mm; padding: .8mm 3.2mm .8mm 1.4mm;
+  border: .45mm solid var(--bordo); border-radius: 99mm; color: var(--inch); font-weight: 500; }
+.quaderno .area img { width: 6.5mm; height: 6.5mm; }
+.quaderno .nome { margin-left: auto; color: var(--grigio); font-size: 10pt; white-space: nowrap; }
+.quaderno .nome span { display: inline-block; border-bottom: .3mm solid var(--grigio); width: 52mm; margin-left: 1.5mm; }
+.quaderno .codice { font-weight: 600; color: var(--inch); border: .45mm solid var(--inch); border-radius: 2mm; padding: .4mm 2mm; }
+.quaderno .titolo { font-size: 23pt; font-weight: 600; color: var(--inch); margin: 3.2mm 0 1.6mm; line-height: 1.1; }
+.quaderno .consegna { display: flex; align-items: center; gap: 2.5mm; font-size: 14pt; line-height: 1.25;
+  background: var(--tinta); border: .35mm solid var(--bordo); border-radius: 3mm; padding: 2mm 3.5mm; }
+.quaderno .consegna img { width: 9mm; height: 9mm; flex: none; }
+.quaderno .maiuscolo .titolo, .quaderno .maiuscolo .consegna, .quaderno .maiuscolo .maiu, .quaderno .maiuscolo .corpo { text-transform: uppercase; }
+
+/* ---- corpo ---- */
+.quaderno .corpo { flex: 1; position: relative; display: flex; flex-direction: column; justify-content: space-evenly;
+  margin-top: 3mm; min-height: 0; }
+.quaderno .corpo.alto { justify-content: flex-start; gap: 4mm; }
+
+/* ---- piede ---- */
+.quaderno .piede { display: flex; align-items: center; justify-content: space-between; font-size: 8.5pt; color: var(--grigio);
+  border-top: .3mm solid var(--bordo); padding-top: 1.6mm; margin-top: 2mm; font-family: 'Inter', sans-serif; }
+.quaderno .piede .num { font-family: 'Fredoka'; font-size: 11pt; color: var(--inch); font-weight: 600; }
+
+/* ---- elementi comuni ---- */
+.quaderno .riga { display: flex; align-items: center; gap: 4mm; }
+.quaderno .riquadro { border: .4mm solid var(--bordo); border-radius: 3mm; padding: 3mm 4mm; }
+.quaderno .tinta { background: var(--tinta); }
+.quaderno .centro { text-align: center; }
+.quaderno .piccolo { font-size: 11pt; color: var(--grigio); }
+.quaderno .testo { font-size: 14pt; line-height: 1.35; }
+.quaderno .img { display: inline-block; flex: none; }
+.quaderno .img img { width: 100%; height: 100%; display: block; }
+.quaderno .box-risposta { display: inline-block; border: .4mm solid var(--grigio); border-radius: 2mm; min-width: 16mm; height: 11mm;
+  text-align: center; font-size: 16pt; line-height: 11mm; color: #c00; font-weight: 600; }
+.quaderno.bn .box-risposta { color: #000; }
+.quaderno .linea-risposta { display: inline-block; border-bottom: .4mm solid var(--grigio); min-width: 18mm; text-align: center;
+  font-size: 15pt; color: #c00; font-weight: 600; height: 9mm; line-height: 9mm; }
+.quaderno.bn .linea-risposta { color: #000; }
+.quaderno .sol { color: #c00; font-weight: 600; }
+.quaderno.bn .sol { color: #000; text-decoration: underline; }
+
+.quaderno .legenda { display: flex; justify-content: center; flex-wrap: wrap; gap: 3mm 5mm; font-size: 14pt; }
+.quaderno .legenda .voce { display: inline-flex; align-items: center; gap: 1.8mm; }
+.quaderno .pallino { display: block; width: 8mm; height: 8mm; border-radius: 50%; border: .45mm solid #333; }
+
+.quaderno .griglia { display: grid; gap: 4mm; }
+.quaderno .griglia > * { min-width: 0; }
+.quaderno .carta { border: .45mm dashed var(--grigio); border-radius: 3mm; display: flex; flex-direction: column;
+  align-items: center; justify-content: center; position: relative; overflow: hidden; }
+.quaderno .taglia { position: absolute; top: 1mm; left: 1.5mm; width: 4mm; opacity: .6; }
+
+/* pentagrammi: le sovrimpressioni HTML */
+.quaderno .penta { position: relative; }
+.quaderno .penta svg { display: block; overflow: visible; }
+.quaderno .sopra { position: absolute; transform: translate(-50%, -50%); white-space: nowrap; }
+
+/* ---- copertina e indice ---- */
+.quaderno .copertina { justify-content: center; align-items: center; text-align: center; }
+.quaderno .copertina .grande { font-size: 40pt; font-weight: 600; color: var(--inch); line-height: 1.05; }
+.quaderno .copertina .classe { font-size: 70pt; font-weight: 700; color: var(--inch); }
+.quaderno .indice { columns: 2; column-gap: 8mm; font-size: 10.5pt; line-height: 1.5; }
+.quaderno .indice div { break-inside: avoid; display: flex; gap: 2mm; }
+.quaderno .indice .cod { font-weight: 600; color: var(--inch); width: 13mm; flex: none; }
+.quaderno .indice .pg { margin-left: auto; color: var(--grigio); }
+.quaderno .indice h3 { font-size: 12pt; margin: 2mm 0 .5mm; color: var(--inch); break-after: avoid; }

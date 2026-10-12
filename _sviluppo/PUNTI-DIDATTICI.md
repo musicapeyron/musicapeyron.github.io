@@ -237,7 +237,8 @@ Scarta la nota — carte da stampare (`carte-scarta-la-nota.html`). Ottobre 2026
 
 ## Schede da stampare per la primaria (il mio quaderno di musica)
 
-**Dove:** per ora solo nel ramo `schede-primaria`, cartella `_sviluppo/schede/` (PDF in `_sviluppo/schede/pdf/`). Ottobre 2026.
+**Dove:** home → «Consigliato per la primaria» → Musica completa (`musica-completa.html`); PDF in `media/primaria/`.
+Per ora nel ramo `schede-primaria`. Ottobre 2026.
 Sei fascicoli: materiali per tutti gli anni e classi dalla 1ª alla 5ª, ognuno a colori, in bianco e nero e con le soluzioni.
 
 ### Concetti
@@ -262,6 +263,10 @@ Sei fascicoli: materiali per tutti gli anni e classi dalla 1ª alla 5ª, ognuno 
 - **Collegate al sito:** brani e diteggiature del flauto presi dai *Brani propedeutici* e dal motore degli spartiti; rimandi ai giochi
   (Riconosci lo strumento, Test d'ingresso).
 - Molti giochi da ritagliare (memory, domino, tombola, dadi del ritmo, gioco dell'oca, quiz a squadre), diplomi e schede «Ora so…».
+
+- **Pagina del sito per la LIM:** le schede si sfogliano per classe e per argomento (pallini viola), si ingrandiscono una alla volta
+  con le frecce, si passa da colori a bianco e nero e si accendono le **soluzioni** per correggere insieme.
+  Si può stampare una sola scheda o tutto un argomento, senza aprire il PDF.
 
 ### Come usarle in classe
 - Ogni segno nuovo si mostra prima alla LIM (gesto in grande), poi si ripassa sul tratteggio, infine si scrive a mano libera.

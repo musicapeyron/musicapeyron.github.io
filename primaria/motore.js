@@ -11,6 +11,9 @@
 (function (global) {
   "use strict";
   const VF = global.Vex.Flow;
+  /* percorsi: la cartella di questo file (primaria/) e la radice del sito, qualunque sia la pagina che lo carica */
+  const BASE = ((document.currentScript && document.currentScript.src) || location.href).replace(/[^/]*$/, "");
+  const RADICE = new URL("../", BASE).href;
   const NS = "http://www.w3.org/2000/svg";
   const MM = 96 / 25.4;                       // pixel per millimetro
   const LARGHEZZA = Math.round(184 * MM);     // larghezza utile della pagina in pixel
@@ -48,7 +51,7 @@
   function img(nome, mm, extra) {
     const d = el("span", Object.assign({ class: "img" }, extra || {}));
     d.style.width = mm + "mm"; d.style.height = mm + "mm";
-    d.appendChild(el("img", { src: `img/${stato.modo}/${nome}.svg`, alt: "" }));
+    d.appendChild(el("img", { src: `${BASE}img/${stato.modo}/${nome}.svg`, alt: "" }));
     return d;
   }
   /* numeri casuali ripetibili: la stessa scheda esce sempre uguale (e le soluzioni coincidono) */
@@ -161,6 +164,8 @@
   const TESTA = { rx: 6.3, ry: 4.6 };
   function testa(P, x, passo, stile, colore) {
     const y = P.y(passo);
+    if (!col() && colore && Object.values(COLORI).includes(colore)) colore = undefined;   // bianco e nero: niente colori delle note
+    if (stile === "colore" && !colore) stile = "piena";
     tagli(P, x, passo, stile === "traccia");
     const base = { cx: x, cy: y, rx: TESTA.rx, ry: TESTA.ry, transform: `rotate(-22 ${x} ${y})` };
     if (stile === "traccia") return P.add("ellipse", Object.assign(base, { fill: "none", stroke: GRIGIO_TRACCIA, "stroke-width": 1.05, "stroke-dasharray": "2.1 1.7" }));
@@ -347,7 +352,7 @@
   /* ---------------- pagine ---------------- */
   function nuovaPagina(classi) {
     const pg = el("div", { class: "pagina" + (stato.classe === 1 ? " maiuscolo" : "") + (classi ? " " + classi : "") });
-    document.getElementById("volume").appendChild(pg);
+    (stato.dest || document.getElementById("volume")).appendChild(pg);
     stato.pagine++;
     return pg;
   }
@@ -441,7 +446,7 @@
     stato.modo = q.get("modo") === "bn" ? "bn" : "col";
     stato.sol = q.get("sol") === "1";
     stato.solo = q.get("solo");
-    document.body.classList.toggle("bn", stato.modo === "bn");
+    document.getElementById("volume").classList.toggle("bn", stato.modo === "bn");
     try { await document.fonts.load("600 20px Fredoka"); await document.fonts.load("400 20px Fredoka"); } catch (e) { }
     let elenco = stato.schede[stato.classe].slice();
     if (stato.solo) elenco = elenco.filter(s => stato.solo.split(",").includes(s.codice));
@@ -468,9 +473,24 @@
     global.PRONTO = true;
   }
 
+  /* disegna una sola scheda dentro "dest" (la pagina del sito usa questa).
+     o: { classe, modo: "col"|"bn", sol: bool, pagina: numero della prima pagina (come nel PDF) } */
+  async function disegnaScheda(s, dest, o) {
+    stato.classe = o.classe; stato.modo = o.modo === "bn" ? "bn" : "col"; stato.sol = !!o.sol;
+    stato.dest = dest; stato.pagine = (o.pagina || 1) - 1; stato.corpi = [];
+    const api = { altraPagina: (parte) => paginaScheda(s, parte), rnd: caso(s.codice), sol: stato.sol, col: col() };
+    try { await s.disegna(paginaScheda(s), api); }
+    catch (e) { console.error("Errore nella scheda " + s.codice, e); }
+    stato.corpi.forEach(c => adatta(c, s.codice));
+    stato.dest = null;
+  }
+  /* argomento di una scheda (per l'indice a pallini): nome dell'area, o quello scritto nella scheda */
+  const argomento = s => s.argomento || (AREE[s.codice[1]] || AREE.M)[0];
+
   global.Schede = {
     stato, el, sv, img, caso, nota, nomeDi, COLORI, NOMI, LETTERE, ORDINE, MM, LARGHEZZA,
     pentagramma, glifo, disegnaChiave, partenza, numeretto, testa, tagli, gambo, figura, coppiaCrome, pausa, pausaTraccia,
-    stanghetta, scritta, battute, valore, token, scheda, titoloClasse, avvia, col, scuro, GRIGIO_TRACCIA, GRIGIO_FANTASMA
+    stanghetta, scritta, battute, valore, token, scheda, titoloClasse, avvia, col, scuro, GRIGIO_TRACCIA, GRIGIO_FANTASMA,
+    disegnaScheda, argomento, AREE, BASE, RADICE
   };
 })(window);
