@@ -169,6 +169,7 @@
   <symbol id="i-ripeti" viewBox="0 0 24 24"><path d="M19 12 A7 7 0 1 1 16.5 6.6" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round"/><path d="M14.5 3.5 L18 6.8 L14 9" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/></symbol>
   <symbol id="i-chiudi" viewBox="0 0 24 24"><path d="M6 6 L18 18 M18 6 L6 18" stroke="currentColor" stroke-width="2.8" stroke-linecap="round"/></symbol>
   <symbol id="i-libero" viewBox="0 0 24 24"><path d="M3 17 C6 6, 9 20, 13 10 S 19 6, 21 12" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"/></symbol>
+  <symbol id="i-segmento" viewBox="0 0 24 24"><path d="M5 18 L19 6" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"/><circle cx="5" cy="18" r="2.6" fill="currentColor"/><circle cx="19" cy="6" r="2.6" fill="currentColor"/></symbol>
   <symbol id="i-guidato" viewBox="0 0 24 24"><path d="M3 14 Q7 6 11 13 T21 11" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"/><path d="M3 20 H21 M17 17 L21 20 L17 23" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" opacity=".7"/></symbol>
   <symbol id="i-forme" viewBox="0 0 24 24"><path d="M2 12 L5 6 L8 12 L11 6 L14 12" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/><path d="M14 12 Q16 4 18 12 T22 12" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"/><path d="M2 19 H22" stroke="currentColor" stroke-width="1.4" stroke-dasharray="2 2"/></symbol>
   <symbol id="i-tempo" viewBox="0 0 24 24"><path d="M4 16 C8 4 14 4 20 16" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"/><circle cx="12" cy="18" r="3.6" fill="none" stroke="currentColor" stroke-width="1.8"/><path d="M12 16.4 V18 L13.3 18.8" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></symbol>
@@ -222,12 +223,13 @@
   <!-- ======== attrezzi ======== -->
   <nav class="attrezzi" aria-label="Modalità e strumenti">
     <button class="attr attivo" data-modo="libero" title="Disegno libero a tempo (1)"><svg><use href="#i-libero"/></svg>Libero</button>
-    <button class="attr" data-modo="guidato" title="Guidato: la linea avanza col tempo, tu muovi su e giù (2)"><svg><use href="#i-guidato"/></svg>Guidato</button>
-    <button class="attr" data-modo="forme" title="Forme a tempo: onde, zig-zag, riccioli… sui battiti (3)"><svg><use href="#i-forme"/></svg>Forme</button>
-    <button class="attr" data-modo="tempo" title="Disegna da fermo, poi dai il tempo (4)"><svg><use href="#i-tempo"/></svg>Poi tempo</button>
+    <button class="attr" data-modo="segmento" title="Segmento: linea dritta come in Paint (2)"><svg><use href="#i-segmento"/></svg>Segmento</button>
+    <button class="attr" data-modo="guidato" title="Guidato: la linea avanza col tempo, tu muovi su e giù (3)"><svg><use href="#i-guidato"/></svg>Guidato</button>
+    <button class="attr" data-modo="forme" title="Forme a tempo: onde, zig-zag, riccioli… sui battiti (4)"><svg><use href="#i-forme"/></svg>Forme</button>
+    <button class="attr" data-modo="tempo" title="Disegna da fermo, poi dai il tempo (5)"><svg><use href="#i-tempo"/></svg>Poi tempo</button>
     <hr>
-    <button class="attr" data-modo="seleziona" title="Seleziona e sposta (5)"><svg><use href="#i-seleziona"/></svg>Sposta</button>
-    <button class="attr" data-modo="gomma" title="Cancella una linea (6)"><svg><use href="#i-gomma"/></svg>Gomma</button>
+    <button class="attr" data-modo="seleziona" title="Seleziona e sposta (6)"><svg><use href="#i-seleziona"/></svg>Sposta</button>
+    <button class="attr" data-modo="gomma" title="Cancella una linea (7)"><svg><use href="#i-gomma"/></svg>Gomma</button>
     <hr>
     <div class="colori" id="colori"></div>
     <hr>
@@ -352,7 +354,8 @@
   <p>Apri un file audio o video dal computer (o trascinalo sul foglio), oppure scegli un brano di esempio. Il file non lascia il tuo computer. Usa registrazioni che puoi usare in classe: musica di pubblico dominio o con licenza libera.</p>
   <h3>2 · Le modalità di disegno</h3>
   <ul>
-    <li><b>Libero</b>: premi play, tieni premuto il mouse e disegna dove vuoi. Se la musica è ferma, parte da sola quando cominci a disegnare.</li>
+    <li><b>Libero</b>: premi play, tieni premuto il mouse e disegna dove vuoi. Se la musica è ferma, parte da sola quando cominci a disegnare. Con <kbd>Maiusc</kbd> premuto la linea viene dritta.</li>
+    <li><b>Segmento</b>: come in Paint. Premi dove comincia, trascina e lascia dove finisce: la linea dritta si colora dal momento in cui premi a quello in cui lasci. Con <kbd>Maiusc</kbd> resta orizzontale, verticale o a 45°. Se parti dalla fine della linea di prima la continui: così fai zig-zag, scalini e linee spigolose a tempo.</li>
     <li><b>Guidato</b>: la linea avanza da sola da sinistra a destra col tempo, tu muovi il mouse solo su e giù. Ogni pagina dura i battiti (o i secondi) che scegli; quando finisce ne comincia un'altra da sola. Alza il mouse per lasciare un vuoto.</li>
     <li><b>Forme</b>: come Guidato, ma la linea fa da sola onde, zig-zag, archi, riccioli, scalini o greche, perfettamente a tempo sui battiti. Tu decidi solo l'altezza e quando cominciare e smettere. Servono i battiti (vedi sotto).</li>
     <li><b>Poi tempo</b>: a musica ferma disegni con calma le linee che vuoi. Poi premi play e, per ogni linea, tieni premuto il mouse (o il tasto <kbd>T</kbd>) per tutto il tempo in cui deve colorarsi.</li>
@@ -369,7 +372,7 @@
   <h3>Tasti</h3>
   <table>
     <tr><td><kbd>Spazio</kbd></td><td>play / pausa</td></tr>
-    <tr><td><kbd>1</kbd>…<kbd>6</kbd></td><td>modalità e strumenti</td></tr>
+    <tr><td><kbd>1</kbd>…<kbd>7</kbd></td><td>modalità e strumenti</td></tr>
     <tr><td><kbd>Ctrl</kbd>+<kbd>Z</kbd> / <kbd>Ctrl</kbd>+<kbd>Y</kbd></td><td>annulla / rifai</td></tr>
     <tr><td><kbd>N</kbd>, <kbd>PagSu</kbd> / <kbd>PagGiù</kbd></td><td>pagina nuova, pagina precedente / successiva</td></tr>
     <tr><td><kbd>Canc</kbd>, <kbd>Ctrl</kbd>+<kbd>D</kbd>, frecce</td><td>elimina, duplica, sposta la linea scelta</td></tr>

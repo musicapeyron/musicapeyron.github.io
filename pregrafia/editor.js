@@ -28,6 +28,7 @@
   };
   const MODI = {
     libero:    ["Disegno libero", "<b>Premi play</b> (o comincia a disegnare) e traccia le linee tenendo premuto il mouse mentre la musica suona. Ogni punto si ricorda il suo momento."],
+    segmento:  ["Segmento", "Come in Paint: <b>premi</b> dove comincia, trascina e <b>lascia</b> dove finisce. Si colora dal momento in cui premi a quello in cui lasci. <b>Maiusc</b>: orizzontale, verticale o a 45°. Parti dalla fine della linea di prima per continuarla (zig-zag, scalini)."],
     guidato:   ["Guidato", "La penna va da sola da sinistra a destra col tempo: tu muovi solo <b>su e giù</b> tenendo premuto. Alza il mouse per lasciare un vuoto. Le pagine cambiano da sole."],
     forme:     ["Forme a tempo", "Scegli una forma: la penna la disegna da sola, precisa sui battiti. Tu decidi <b>l'altezza</b> con il mouse e quando cominciare e smettere."],
     tempo:     ["Disegna, poi dai il tempo", "A musica <b>ferma</b> disegna con calma. Poi premi play e, per ogni linea, tieni premuto il mouse (o <b>T</b>) mentre deve colorarsi. Se ripassi la linea con il mouse, segue anche la tua velocità."],
@@ -498,6 +499,52 @@
     P.push([r4(p[0]), r4(p[1]), t == null ? null : r3(t)]);
     disegno.quando = performance.now();
   }
+  /* segmento: linea dritta come in Paint; se parte dalla fine della linea di prima, la continua */
+  function iniziaSegmento(p, senzaTempo) {
+    const conTempo = !senzaTempo && !!brano;
+    if (!senzaTempo && !brano && !avvisatoSenzaBrano) { avvisatoSenzaBrano = true; avviso("Senza brano la linea non ha tempo: potrai darglielo con «Poi tempo».", true); }
+    salvaStorico();
+    if (conTempo && media.paused) play();
+    const t = conTempo ? r3(tempoMano()) : null;
+    let tr = null;
+    const vicino = 16;
+    for (let i = pagCorr().tratti.length - 1; i >= 0; i--) {
+      const x = pagCorr().tratti[i], u = x.punti[x.punti.length - 1];
+      if (!u || (u[2] == null) !== (t == null) || (t != null && u[2] > t + 0.05)) continue;
+      if (Math.hypot((u[0] - p[0]) * G.tW, (u[1] - p[1]) * G.tH) < vicino) { tr = x; break; }
+    }
+    let nuovo = false;
+    const prima = tr ? tr.punti.length : 0;
+    if (tr) { const u = tr.punti[tr.punti.length - 1]; p = [u[0], u[1]]; if (t != null && t - u[2] > 0.02) tr.punti.push([u[0], u[1], t]); }
+    else { tr = nuovoTratto(); pagCorr().tratti.push(tr); tr.punti.push([r4(p[0]), r4(p[1]), t]); nuovo = true; }
+    tr.punti.push([r4(p[0]), r4(p[1]), t]);
+    disegno = { tr, conTempo, segmento: true, nuovo, prima, ancora: tr.punti.length - 2, quando: performance.now() };
+    if (!nuovo) ui.sel = null;
+  }
+  function aggiornaSegmento(p) {
+    const P = disegno.tr.punti, a = P[disegno.ancora], b = P[P.length - 1];
+    let x = p[0], y = p[1];
+    if (ui.maiusc) {
+      const dx = (x - a[0]) * G.tW, dy = (y - a[1]) * G.tH, ang = Math.round(Math.atan2(dy, dx) / (Math.PI / 4)) * (Math.PI / 4), l = Math.hypot(dx, dy);
+      const lx = Math.cos(ang) * l, ly = Math.sin(ang) * l;
+      x = a[0] + (Math.abs(lx) < 1e-6 ? 0 : lx / G.tW); y = a[1] + (Math.abs(ly) < 1e-6 ? 0 : ly / G.tH);
+    }
+    b[0] = r4(limita(x, 0, 1)); b[1] = r4(limita(y, 0, 1));
+    if (disegno.conTempo) b[2] = r3(Math.max(a[2], tempoMano()));
+  }
+  function finisciSegmento() {
+    const d = disegno, P = d.tr.punti, a = P[d.ancora], b = P[P.length - 1];
+    const corto = Math.hypot((b[0] - a[0]) * G.tW, (b[1] - a[1]) * G.tH) < 4;
+    if (corto) P.length = d.prima;
+    if (!corto && d.conTempo && ui.calamita && listaBattiti()) {
+      let ta = battitoVicino(a[2]), tb = battitoVicino(b[2]);
+      if (tb <= ta) tb = tempoBattito(Math.round(posBattito(ta)) + 1);
+      a[2] = r3(ta); b[2] = r3(tb);
+      for (let i = 1; i < P.length; i++) if (P[i][2] < P[i - 1][2]) P[i - 1][2] = P[i][2];
+    }
+    if (corto) { if (!P.length) { const pag = pagCorr().tratti; pag.splice(pag.indexOf(d.tr), 1); } if (storico.length) storico.pop(); aggiornaAnnulla(); }
+    disegno = null; modificato();
+  }
   function iniziaGuidato(p) {
     if (!brano) { avviso("Prima apri un brano: in questa modalità la linea segue la musica."); return; }
     if (!listaBattiti() && (ui.modo === "forme" || $("unitaPag").value === "battiti")) {
@@ -539,6 +586,7 @@
   }
   function finisciDisegno() {
     if (!disegno) return;
+    if (disegno.segmento) { finisciSegmento(); return; }
     const P = disegno.tr.punti;
     if (disegno.guidato && P.length && P[P.length - 1][2] - P[0][2] < 0.1) P.length = 0;
     const ok = chiudiTratto(disegno.tr);
@@ -1011,6 +1059,7 @@
       tickMetronomo(t);
       if (disegno && performance.now() - (disegno.barre || 0) > 400) { disegno.barre = performance.now(); sporcoOnda = true; }
       if (disegno && disegno.guidato) avanzaGuidato();
+      else if (disegno && disegno.segmento) { if (disegno.conTempo) aggiornaSegmento(ui.mouse); }
       else if (disegno && disegno.conTempo && performance.now() - disegno.quando > 100) aggiungiPunto(ui.mouse);
       if (!disegno && !assegna) seguiPagina(t);
       seguiVista(t);
@@ -1263,17 +1312,19 @@
     try { tela.setPointerCapture(e.pointerId); } catch (er) { /* niente */ }
     const p = posMouse(e); ui.mouse = p; chiudiMenu();
     switch (ui.modo) {
-      case "libero": iniziaLibero(p); break;
+      case "libero": e.shiftKey ? iniziaSegmento(p) : iniziaLibero(p); break;
+      case "segmento": iniziaSegmento(p); break;
       case "guidato": case "forme": iniziaGuidato(p); break;
-      case "tempo": if (!media.paused) iniziaAssegna(p, "mouse"); else iniziaLibero(p, true); break;
+      case "tempo": if (!media.paused) iniziaAssegna(p, "mouse"); else if (e.shiftKey) iniziaSegmento(p, true); else iniziaLibero(p, true); break;
       case "seleziona": selezionaA(p); break;
       case "gomma": salvaStorico(); gommaAttiva = { tolte: 0 }; gommaA(p); break;
     }
     richiedi();
   });
   tela.addEventListener("pointermove", e => {
-    const p = posMouse(e); ui.mouse = p;
-    if (disegno && !disegno.guidato) {
+    const p = posMouse(e); ui.mouse = p; ui.maiusc = e.shiftKey;
+    if (disegno && disegno.segmento) aggiornaSegmento(p);
+    else if (disegno && !disegno.guidato) {
       const ev = e.getCoalescedEvents ? e.getCoalescedEvents() : [e];
       (ev.length ? ev : [e]).forEach(x => aggiungiPunto(posMouse(x)));
     } else if (assegna && assegna.come === "mouse") seguiAssegna(p);
@@ -1503,7 +1554,7 @@
     if (k === "m" || k === "M") { toggleMetronomo(); return; }
     if (k === "p" || k === "P") { apriPresenta(); return; }
     if (k === "n" || k === "N") { nuovaPagina(); return; }
-    if (k >= "1" && k <= "6") { impostaModo(["libero", "guidato", "forme", "tempo", "seleziona", "gomma"][+k - 1]); return; }
+    if (k >= "1" && k <= "7") { impostaModo(["libero", "segmento", "guidato", "forme", "tempo", "seleziona", "gomma"][+k - 1]); return; }
     if (k === "PageUp") { e.preventDefault(); virtuale = null; vai(ui.pagina - 1); return; }
     if (k === "PageDown") { e.preventDefault(); virtuale = null; vai(ui.pagina + 1); return; }
     if (k === "Home") { e.preventDefault(); vaiA(0, true); return; }
@@ -1518,7 +1569,9 @@
       } else if (k === "ArrowLeft" || k === "ArrowRight") vaiA(tempoOra() + (k === "ArrowLeft" ? -2 : 2), true);
     }
   });
-  document.addEventListener("keyup", e => { if ((e.key === "t" || e.key === "T") && assegna && assegna.come === "tasto") finisciAssegna(); });
+  document.addEventListener("keydown", e => { if (e.key === "Shift") { ui.maiusc = true; if (disegno && disegno.segmento) { aggiornaSegmento(ui.mouse); richiedi(); } } });
+  document.addEventListener("keyup", e => {
+    if (e.key === "Shift") { ui.maiusc = false; if (disegno && disegno.segmento) { aggiornaSegmento(ui.mouse); richiedi(); } } if ((e.key === "t" || e.key === "T") && assegna && assegna.come === "tasto") finisciAssegna(); });
 
   /* ---------------- avvio ---------------- */
   costruisci();
