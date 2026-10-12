@@ -664,6 +664,17 @@ body.colori-note .vf-notehead[data-nota="si"] path { fill: #CF3E96; }
 
 .mode-button.tutorial { background: linear-gradient(135deg, #22c55e, #15803d); }
 .mode-button.training-1 { background: linear-gradient(135deg, #0ea5e9, #0369a1); }
+.mode-button.training-2 { background: linear-gradient(135deg, #14b8a6, #0f766e); }
+/* titoletti dei gruppi nei menu (tutorial e verifica) */
+.menu-section-title {
+    font-size: 0.72rem; font-weight: 700; letter-spacing: 0.5px; text-transform: uppercase;
+    color: #a5b4fc; margin: 24px 0 0; text-align: left;
+}
+.mode-grid.dopo-titolo { margin-top: 10px; }
+.mode-grid.due-colonne { display: grid; grid-template-columns: 1fr 1fr; }
+.menu-scelta-note { margin-top: 10px; }
+#tagliOptionsGroup .options-group-title { margin-top: 16px; }
+.menu-scelta-note .options-choice { font-size: 0.9rem; padding: 14px 8px; }
 .mode-button.verifica { background: linear-gradient(135deg, #ec4899, #a21caf); }
 .mode-button.clef-treble { background: linear-gradient(135deg, #6366f1, #4338ca); }
 .mode-button.clef-bass { background: linear-gradient(135deg, #0ea5e9, #0369a1); }
@@ -877,6 +888,10 @@ body.mode-tutorial #trophyButton {
             <span class="mode-button-title">📘 Allenamento</span>
             <span class="mode-button-desc">Fai pratica con calma, un livello alla volta</span>
         </button>
+        <button class="mode-button training-2" id="tagliTrainingButton">
+            <span class="mode-button-title">📗 Allenamento sui tagli</span>
+            <span class="mode-button-desc">Solo le note sotto e sopra il pentagramma</span>
+        </button>
         <hr class="mode-divider">
         <button class="mode-button verifica" id="verificaButton">
             <span class="mode-button-title">📝 Verifica</span>
@@ -890,11 +905,18 @@ body.mode-tutorial #trophyButton {
 <div class="menu-screen" id="tutorialMenuScreen" style="display: none;">
 
     <h1>🎓 Tutorial</h1>
-    <p class="subtitle">Scegli quale chiave vuoi imparare a leggere.</p>
+    <p class="subtitle">Scegli che cosa vuoi imparare e la chiave.</p>
 
-    <div class="mode-grid">
+    <div class="menu-section-title">Le prime note</div>
+    <div class="mode-grid dopo-titolo due-colonne">
         <button class="mode-button clef-treble" id="tutorialTrebleButton">🎼 Chiave di violino</button>
         <button class="mode-button clef-bass" id="tutorialBassButton">🎼 Chiave di basso</button>
+    </div>
+
+    <div class="menu-section-title">Le note con i tagli addizionali</div>
+    <div class="mode-grid dopo-titolo due-colonne">
+        <button class="mode-button clef-treble" id="tutorialTagliTrebleButton">🎼 Chiave di violino</button>
+        <button class="mode-button clef-bass" id="tutorialTagliBassButton">🎼 Chiave di basso</button>
     </div>
 
     <button class="back-button" id="tutorialBackButton">← Indietro</button>
@@ -905,9 +927,16 @@ body.mode-tutorial #trophyButton {
 <div class="menu-screen" id="verificaMenuScreen" style="display: none;">
 
     <h1>📝 Verifica</h1>
-    <p class="subtitle">Scegli la chiave con cui vuoi essere valutato.</p>
+    <p class="subtitle">Scegli le note e la chiave con cui vuoi essere valutato.</p>
 
-    <div class="mode-grid">
+    <div class="menu-section-title">Note</div>
+    <div class="options-pair menu-scelta-note">
+        <button class="options-choice active" id="verificaRigoButton">Solo nel pentagramma</button>
+        <button class="options-choice" id="verificaTagliButton">Anche con i tagli addizionali</button>
+    </div>
+
+    <div class="menu-section-title">Chiave</div>
+    <div class="mode-grid dopo-titolo">
         <button class="mode-button clef-treble" id="verificaTrebleButton">🎼 Chiave di violino</button>
         <button class="mode-button clef-bass" id="verificaBassButton">🎼 Chiave di basso</button>
         <button class="mode-button clef-mixed" id="verificaMixedButton">🔀 Mista</button>
@@ -1011,6 +1040,14 @@ body.mode-tutorial #trophyButton {
             <button class="options-choice active" id="trebleClefButton" data-clef="treble">Chiave di violino</button>
             <button class="options-choice" id="bassClefButton" data-clef="bass">Chiave di basso</button>
         </div>
+    </div>
+
+    <div id="tagliOptionsGroup">
+        <div class="options-group-title">Note</div>
+        <label class="options-toggle-row">
+            <span>Note con i tagli addizionali</span>
+            <input type="checkbox" id="tagliToggle">
+        </label>
     </div>
 
     <div class="options-group-title">Aiuto</div>
@@ -1139,7 +1176,7 @@ function pitchForPosition(position, clefName) {
 // 0 (tre tagli sotto il rigo). Il nome resta sempre uno dei 7
 // pulsanti: cambia solo l'ottava (e, cambiando chiave, anche
 // il nome) in cui la nota compare.
-const levelIntroductions = [
+const LEVELS_COMPLETI = [
     [8, 9, 10],   // livello 1: si parte da qui
     [11],          // livello 2
     [7],           // livello 3
@@ -1159,7 +1196,36 @@ const levelIntroductions = [
     [0]            // livello 17: tre tagli sotto il rigo
 ];
 
-const totalLevels = levelIntroductions.length;
+/*
+   Insiemi di livelli, scelti in base alla modalità:
+   - RIGO: solo le note del pentagramma (con lo spazio appena
+     sotto e appena sopra), senza tagli addizionali;
+   - COMPLETI: come sopra, poi i tagli (dal livello 9);
+   - VERIFICA_TAGLI: i tagli compaiono fin dal primo livello,
+     mescolati alle note del rigo;
+   - TAGLI: allenamento solo sulle note con i tagli, sotto e
+     sopra il rigo (con lo spazio vicino per orientarsi).
+*/
+const LEVELS_RIGO = LEVELS_COMPLETI.filter(l => l.every(p => p >= 5 && p <= 15));
+const LEVELS_VERIFICA_TAGLI = [
+    [8, 9, 10, 4], [11, 16], [7], [12], [6], [5], [13], [3],
+    [14], [17], [15], [2], [18], [1], [0]
+];
+const LEVELS_TAGLI = [
+    [5, 4],    // Re e Do sotto il rigo (Do centrale in violino)
+    [3],       // Si sotto il primo taglio
+    [15, 16],  // Sol e La sopra il rigo
+    [17],      // Si sopra il primo taglio
+    [2],       // due tagli sotto
+    [18],      // due tagli sopra
+    [1],       // sotto il secondo taglio
+    [0]        // tre tagli sotto
+];
+// domande minime per livello nell'allenamento sui tagli (i primi livelli hanno poche note)
+const TAGLI_MIN_DOMANDE = 8;
+
+let levelIntroductions = LEVELS_RIGO;
+let totalLevels = levelIntroductions.length;
 
 let clef = "treble"; // "treble" (violino) oppure "bass" (basso)
 
@@ -1168,6 +1234,17 @@ let clef = "treble"; // "treble" (violino) oppure "bass" (basso)
 // nota (modalità mista, solo in verifica)
 let appMode = "training";
 let verificaClefChoice = null; // "treble" | "bass" | "mixed" (solo in verifica)
+let trainingKind = "normale";  // "normale" | "tagli" (allenamento sui tagli addizionali)
+let verificaTagli = false;     // verifica anche sulle note con i tagli
+let opzioneTagli = false;      // rotellina: "Note con i tagli addizionali" (allenamento normale)
+
+// sceglie i livelli giusti per la partita che sta per iniziare
+function scegliLivelli() {
+    if (appMode === "verifica") levelIntroductions = verificaTagli ? LEVELS_VERIFICA_TAGLI : LEVELS_RIGO;
+    else if (trainingKind === "tagli") levelIntroductions = LEVELS_TAGLI;
+    else levelIntroductions = opzioneTagli ? LEVELS_COMPLETI : LEVELS_RIGO;
+    totalLevels = levelIntroductions.length;
+}
 
 /*
    Restituisce la chiave da usare per la PROSSIMA domanda:
@@ -1242,6 +1319,28 @@ let loopEnd = 1;
    note con cui l'allenamento comincia.
 */
 const TUTORIAL_POSITIONS = [8, 9, 10, 11, 7, 12, 6];
+
+/*
+   Percorsi del tutorial, a fasi. Ogni fase parte da note già
+   conosciute (anchors, ripassate insieme alle nuove) e ne
+   introduce di nuove una alla volta. Il percorso "tagli"
+   scende sotto il rigo partendo dal Mi (prima riga) e sale
+   sopra partendo dal Re (quarto spazio), fino a due tagli;
+   alla fine un ripasso mescola tutte le note con i tagli.
+*/
+const TUTORIAL_PLANS = {
+    base: { phases: [ { anchors: [], positions: TUTORIAL_POSITIONS } ], finalMix: null },
+    tagli: {
+        phases: [
+            { anchors: [6], positions: [5, 4, 3, 2] },
+            { anchors: [12], positions: [13, 14, 15, 16, 17, 18] }
+        ],
+        finalMix: [2, 3, 4, 16, 17, 18]
+    }
+};
+let tutorialKind = "base";
+let tutorialPhase = 0;
+let tutorialLearned = 0;
 
 let tutorialClefChoice = null;
 let tutorialSessionId = 0;
@@ -1323,6 +1422,15 @@ const tutorialBassButton = document.getElementById("tutorialBassButton");
 const tutorialBackButton = document.getElementById("tutorialBackButton");
 const tutorialProgress = document.getElementById("tutorialProgress");
 const clefOptionsGroup = document.getElementById("clefOptionsGroup");
+const tagliOptionsGroup = document.getElementById("tagliOptionsGroup");
+const tagliToggle = document.getElementById("tagliToggle");
+const tagliTrainingButton = document.getElementById("tagliTrainingButton");
+const tutorialTagliTrebleButton = document.getElementById("tutorialTagliTrebleButton");
+const tutorialTagliBassButton = document.getElementById("tutorialTagliBassButton");
+const verificaRigoButton = document.getElementById("verificaRigoButton");
+const verificaTagliButton = document.getElementById("verificaTagliButton");
+const gameSubtitle = gameContainer.querySelector(".subtitle");
+const SOTTOTITOLO_GIOCO = gameSubtitle.textContent;
 const homeMenuButtons = document.querySelectorAll(".home-menu-button");
 const timerDisplay = document.getElementById("timerDisplay");
 const finalTime = document.getElementById("finalTime");
@@ -1726,7 +1834,18 @@ function shuffle(array) {
    davvero a questo livello, nemmeno in modalità mista.
 */
 function generateLevelSequence() {
-    levelSequence = shuffle(pool).map(position => {
+    let ordine = shuffle(pool);
+    // allenamento sui tagli: almeno TAGLI_MIN_DOMANDE domande, ripetendo
+    // le note (mai la stessa due volte di fila)
+    if (appMode === "training" && trainingKind === "tagli" && pool.length > 1) {
+        while (ordine.length < TAGLI_MIN_DOMANDE) {
+            const giro = shuffle(pool);
+            if (giro[0] === ordine[ordine.length - 1]) [giro[0], giro[1]] = [giro[1], giro[0]];
+            ordine = ordine.concat(giro);
+        }
+        ordine = ordine.slice(0, Math.max(pool.length, TAGLI_MIN_DOMANDE));
+    }
+    levelSequence = ordine.map(position => {
         const questionClef = pickQuestionClef();
         const { name, key } = pitchForPosition(position, questionClef);
         return { position, name, key, clefUsed: questionClef };
@@ -2056,6 +2175,12 @@ function showFinalScreen() {
 
     resultTitle.textContent = isTutorial ? "Tutorial completato" : "Partita conclusa";
     resultSubtitle.textContent = "Ecco il tuo riepilogo.";
+    if (appMode === "verifica") {
+        const nomeChiave = { treble: "Chiave di violino", bass: "Chiave di basso", mixed: "Chiave mista" }[verificaClefChoice] || "";
+        resultSubtitle.textContent = nomeChiave + " · " + (verificaTagli ? "anche note con i tagli addizionali" : "solo note nel pentagramma");
+    } else if (appMode === "training" && trainingKind === "tagli") {
+        resultSubtitle.textContent = "Allenamento sui tagli addizionali: ecco il tuo riepilogo.";
+    }
     finalLevel.textContent = level + " / " + totalLevels;
     finalAccuracy.textContent = accuracy + "%";
     finalCorrect.textContent = correct;
@@ -2119,6 +2244,8 @@ function newGame() {
     levelErrorCounts = {};
     questionsShownCount = 0;
     schemaUsedCount = 0;
+    scegliLivelli();
+    if (loopEnd > totalLevels) { loopActive = false; loopStart = 1; loopEnd = 1; }
     gameOver.classList.remove("show");
     startTimer();
     startLevel();
@@ -2136,7 +2263,7 @@ playAgainButton.addEventListener("click", () => {
     if (appMode === "verifica") {
         finalHomeConfirmOverlay.classList.add("show");
     } else if (appMode === "tutorial") {
-        startTutorial(tutorialClefChoice);
+        startTutorial(tutorialClefChoice, tutorialKind);
     } else {
         newGame();
     }
@@ -2342,10 +2469,17 @@ function goHome() {
    e tre gli allenamenti sono identici (sempre chiave di
    violino, come prima); li differenzieremo in seguito.
 */
-function startTraining() {
+function startTraining(kind) {
     appMode = "training";
+    trainingKind = kind === "tagli" ? "tagli" : "normale";
     verificaClefChoice = null;
     clef = "treble";
+
+    // l'opzione dei tagli serve solo all'allenamento normale
+    tagliOptionsGroup.style.display = trainingKind === "tagli" ? "none" : "";
+    gameSubtitle.textContent = trainingKind === "tagli"
+        ? "Leggi le note con i tagli addizionali, sotto e sopra il pentagramma."
+        : SOTTOTITOLO_GIOCO;
 
     document.body.classList.remove("mode-verifica", "mode-tutorial");
     document.body.classList.add("mode-training");
@@ -2383,9 +2517,11 @@ function startVerifica(choice) {
     document.body.classList.remove("mode-training", "mode-tutorial");
     document.body.classList.add("mode-verifica");
 
-    // in verifica la chiave è decisa dal menu, non più
-    // modificabile a piacere dal pannello opzioni
+    // in verifica la chiave (e le note) sono decise dal menu,
+    // non più modificabili a piacere dal pannello opzioni
     clefOptionsGroup.style.display = "none";
+    tagliOptionsGroup.style.display = "none";
+    gameSubtitle.textContent = SOTTOTITOLO_GIOCO;
 
     homeMenuButtons.forEach(btn => btn.classList.remove("visible"));
 
@@ -2411,13 +2547,14 @@ function startVerifica(choice) {
 
 function renderTutorialDots() {
     tutorialProgress.innerHTML = "";
-    TUTORIAL_POSITIONS.forEach((position, i) => {
+    const totale = TUTORIAL_PLANS[tutorialKind].phases.reduce((n, f) => n + f.positions.length, 0);
+    for (let i = 0; i < totale; i++) {
         const dot = document.createElement("span");
         dot.className = "tutorial-dot";
-        if (i < tutorialUnlocked.length) dot.classList.add("filled");
-        else if (i === tutorialUnlocked.length) dot.classList.add("current");
+        if (i < tutorialLearned) dot.classList.add("filled");
+        else if (i === tutorialLearned) dot.classList.add("current");
         tutorialProgress.appendChild(dot);
-    });
+    }
 }
 
 // mostra la nota e prepara i pulsanti visibili per questo
@@ -2651,7 +2788,9 @@ function buildJumpWalk(sortedPositions, count) {
     return sequence;
 }
 
-function buildReviewSequence(unlockedPositions) {
+// leggero = true nel tutorial sui tagli (più note nuove): una sola
+// salita e discesa e il cammino per grado congiunto, senza i salti
+function buildReviewSequence(unlockedPositions, leggero) {
     const n = unlockedPositions.length;
 
     if (n === 2) {
@@ -2664,7 +2803,7 @@ function buildReviewSequence(unlockedPositions) {
     const sorted = [...unlockedPositions].sort((a, b) => a - b);
     const ascending = sorted;
     const descending = [...sorted].reverse();
-    const passes = n === 4 ? 2 : 1;
+    const passes = (n === 4 && !leggero) ? 2 : 1;
 
     let sequence = [];
     for (let p = 0; p < passes; p++) {
@@ -2672,14 +2811,14 @@ function buildReviewSequence(unlockedPositions) {
     }
 
     sequence = sequence.concat(buildStepwiseWalk(sorted, 10));
-    sequence = sequence.concat(buildJumpWalk(sorted, 10));
+    if (!leggero) sequence = sequence.concat(buildJumpWalk(sorted, 10));
 
     return sequence;
 }
 
 function tutorialRunMixRound(session, onDone) {
     tutorialSetButtons(tutorialUnlocked);
-    const queue = buildReviewSequence(tutorialUnlocked);
+    const queue = buildReviewSequence(tutorialUnlocked, tutorialKind === "tagli");
     let i = 0;
 
     function next() {
@@ -2698,18 +2837,44 @@ function tutorialRunMixRound(session, onDone) {
 function tutorialAdvance(session) {
     if (session !== tutorialSessionId) return;
 
-    if (tutorialIndex >= TUTORIAL_POSITIONS.length) {
+    const plan = TUTORIAL_PLANS[tutorialKind];
+    const phase = plan.phases[tutorialPhase];
+
+    if (tutorialIndex >= phase.positions.length) {
+        tutorialPhase++;
+        tutorialIndex = 0;
+        if (tutorialPhase < plan.phases.length) {
+            // nuova fase: si riparte dalle sue note già conosciute
+            tutorialUnlocked = plan.phases[tutorialPhase].anchors.slice();
+            tutorialAdvance(session);
+            return;
+        }
+        if (plan.finalMix) {
+            // ripasso finale: tutte le note nuove, mescolate
+            tutorialUnlocked = plan.finalMix.slice();
+            tutorialSetButtons(tutorialUnlocked);
+            const queue = buildRandomReviewSequence(tutorialUnlocked, 12);
+            let i = 0;
+            const next = () => {
+                if (session !== tutorialSessionId) return;
+                if (i >= queue.length) { tutorialFinish(); return; }
+                tutorialRunPractice(session, queue[i++], next);
+            };
+            next();
+            return;
+        }
         tutorialFinish();
         return;
     }
 
-    const newPosition = TUTORIAL_POSITIONS[tutorialIndex];
+    const newPosition = phase.positions[tutorialIndex];
     tutorialSetButtons(tutorialUnlocked.concat([newPosition]));
 
     tutorialRunDemo(session, newPosition, () => {
         tutorialRunPractice(session, newPosition, () => {
             tutorialUnlocked.push(newPosition);
             tutorialIndex++;
+            tutorialLearned++;
             renderTutorialDots();
 
             if (tutorialUnlocked.length >= 2) {
@@ -2731,8 +2896,9 @@ function tutorialFinish() {
     }, 1200);
 }
 
-function startTutorial(clefChoice) {
+function startTutorial(clefChoice, kind) {
     appMode = "tutorial";
+    tutorialKind = kind === "tagli" ? "tagli" : "base";
     tutorialClefChoice = clefChoice;
     clef = clefChoice;
     verificaClefChoice = null;
@@ -2741,12 +2907,16 @@ function startTutorial(clefChoice) {
     document.body.classList.add("mode-tutorial");
 
     clefOptionsGroup.style.display = "none";
+    tagliOptionsGroup.style.display = "none";
+    gameSubtitle.textContent = SOTTOTITOLO_GIOCO;
     restartButton.style.display = "none";
     homeMenuButtons.forEach(btn => btn.classList.add("visible"));
 
     tutorialSessionId++;
     const session = tutorialSessionId;
-    tutorialUnlocked = [];
+    tutorialPhase = 0;
+    tutorialLearned = 0;
+    tutorialUnlocked = TUTORIAL_PLANS[tutorialKind].phases[0].anchors.slice();
     tutorialIndex = 0;
     tutorialAwaitingAnswer = false;
 
@@ -2766,12 +2936,40 @@ function startTutorial(clefChoice) {
     tutorialAdvance(session);
 }
 
-trainingButton.addEventListener("click", startTraining);
+trainingButton.addEventListener("click", () => startTraining("normale"));
+tagliTrainingButton.addEventListener("click", () => startTraining("tagli"));
+
+/* opzione "Note con i tagli addizionali" (allenamento normale): spenta di base,
+   la scelta si ricorda su questo dispositivo; cambiandola si ricomincia */
+function applicaOpzioneTagli(acceso) {
+    opzioneTagli = acceso;
+    tagliToggle.checked = acceso;
+}
+try { applicaOpzioneTagli(localStorage.getItem("leggiNota.tagli") === "1"); } catch (e) { applicaOpzioneTagli(false); }
+tagliToggle.addEventListener("change", () => {
+    applicaOpzioneTagli(tagliToggle.checked);
+    try { localStorage.setItem("leggiNota.tagli", tagliToggle.checked ? "1" : "0"); } catch (e) {}
+    if (appMode === "training" && trainingKind === "normale") {
+        loopActive = false; loopStart = 1; loopEnd = 1;
+        newGame();
+    }
+});
+
+/* verifica: scelta delle note (solo pentagramma / anche tagli) */
+function scegliNoteVerifica(conTagli) {
+    verificaTagli = conTagli;
+    verificaRigoButton.classList.toggle("active", !conTagli);
+    verificaTagliButton.classList.toggle("active", conTagli);
+}
+verificaRigoButton.addEventListener("click", () => scegliNoteVerifica(false));
+verificaTagliButton.addEventListener("click", () => scegliNoteVerifica(true));
 
 tutorialButton.addEventListener("click", () => showScreen("tutorialMenu"));
 tutorialBackButton.addEventListener("click", () => showScreen("home"));
 tutorialTrebleButton.addEventListener("click", () => startTutorial("treble"));
 tutorialBassButton.addEventListener("click", () => startTutorial("bass"));
+tutorialTagliTrebleButton.addEventListener("click", () => startTutorial("treble", "tagli"));
+tutorialTagliBassButton.addEventListener("click", () => startTutorial("bass", "tagli"));
 
 verificaButton.addEventListener("click", () => showScreen("verificaMenu"));
 verificaBackButton.addEventListener("click", () => showScreen("home"));

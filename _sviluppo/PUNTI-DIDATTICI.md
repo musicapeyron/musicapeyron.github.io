@@ -127,3 +127,41 @@ Schema di ogni voce: dove si trova · concetti · punti di forza · come usarlo 
 - Con quarte e quinte i casi con due alterazioni opposte sono solo spiegati (portano quasi sempre a «più che»),
   con l'eccezione che invece resta nel campo (Fa#-Sib diminuita, Sib-Fa# aumentata).
 - Pulsanti senza effetto luminoso; nessun microfono, nessun dato raccolto.
+
+---
+
+## Leggi la nota
+
+**Dove:** Giochi → Leggi la nota (`leggi-la-nota.html`). Note con i tagli addizionali: ottobre 2026.
+
+### Concetti
+- Lettura delle note in chiave di violino e di basso: la stessa posizione sul rigo cambia nome con la chiave.
+- Note nel pentagramma, poi **note con i tagli addizionali** (fino a tre tagli sotto e due sopra).
+- Stesso nome in ottave diverse (es. il Do centrale e il Do sopra il rigo).
+
+### Punti di forza
+- **Tutorial senza testo**: ogni nota nuova prima si vede «premere da sola» (dimostrazione), poi si riconosce da soli,
+  poi si ripassa insieme alle altre (salendo, scendendo, per grado congiunto, a salti). Sbagliare non blocca:
+  si riaccende il pulsante giusto.
+- **Due tutorial**: «Le prime note» (7 note dentro il rigo) e «Le note con i tagli addizionali», che parte da note
+  già conosciute (il Mi della prima riga per scendere, il Re del quarto spazio per salire) e aggiunge una nota alla
+  volta fino a due tagli, sotto e sopra; alla fine un ripasso con tutte le note con i tagli mescolate
+  (stessi nomi in ottave diverse: La, Si, Do sotto e sopra).
+- **Allenamento a livelli**: una nota nuova per livello, per grado congiunto. Opzione nella rotellina
+  «Note con i tagli addizionali»: spenta = solo note del rigo (9 livelli), accesa = si prosegue con i tagli (17 livelli).
+- **Allenamento sui tagli**: solo le note sotto e sopra il rigo (con lo spazio vicino per orientarsi), 8 livelli,
+  almeno 8 domande per livello.
+- **Verifica** con scelta delle note (solo pentagramma / anche con i tagli, che compaiono già dal primo livello)
+  e della chiave (violino, basso, mista); nel riepilogo compaiono le scelte fatte, così il docente le vede.
+- Il suono della nota giusta fa sentire l'altezza reale: utile per collegare posizione e suono.
+- Schema di riferimento facoltativo con tutte le note e i nomi; il riepilogo dice per quante note è stato usato.
+
+### Come usarlo in classe
+- Alla LIM: tutorial «Le prime note», poi l'allenamento; più avanti il tutorial sui tagli e il suo allenamento.
+- Verifica: il docente sceglie prima note e chiave; voto mostrato solo se sufficiente.
+
+### Scelte fatte (e perché)
+- Di base l'allenamento resta sulle note del rigo: i tagli si aggiungono quando il docente lo decide.
+- Nel tutorial sui tagli i ripassi sono più corti (una salita e discesa e il cammino per grado congiunto):
+  le note nuove sono 10 e il tutorial dura così quanto il primo.
+- Nessun microfono, nessun dato raccolto; le opzioni si ricordano solo sul dispositivo.
