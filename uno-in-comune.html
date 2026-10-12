@@ -58,6 +58,8 @@
   /* larghezza del contenuto, non della finestra: così adatta-schermo.js sa
      quanto spazio avanza e può ingrandire il gioco sulla LIM */
   .schermata.attiva { display: block; width: max-content; max-width: 100%; margin: 0 auto; }
+  /* il menu ha griglie a larghezza piena: max-content lo farebbe sbordare */
+  #schermataMenu.attiva { width: 100%; }
 
   /* ---------- menu ---------- */
   #schermataMenu { max-width: 760px; margin: 0 auto; }
@@ -69,6 +71,8 @@
     border-left: 3px solid #7FD8E4;
   }
   .opzioni { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; }
+  .opzioni.due { grid-template-columns: repeat(2, 1fr); }
+  .opzioni.quattro { grid-template-columns: repeat(4, 1fr); }
   #gr-giocatori { grid-template-columns: repeat(4, 1fr); }
   .opz {
     font-family: inherit; font-size: 0.92rem; font-weight: 600;
@@ -281,6 +285,11 @@
     h1 { font-size: 1.15rem; margin-top: 34px; }
     .sottotitolo { font-size: 0.75rem; margin-bottom: 8px; }
     .scelta { margin-bottom: 9px; }
+    /* due colonne per tutti i gruppi (anche quelli che su schermo grande ne
+       hanno tre o quattro): con una colonna sola il menu non ci starebbe,
+       con tre i pulsanti uscirebbero di lato */
+    .opzioni, .opzioni.due, .opzioni.quattro { grid-template-columns: repeat(2, 1fr); gap: 6px; }
+    #gr-giocatori { grid-template-columns: repeat(4, 1fr); }
     .opz { padding: 8px 6px; font-size: 0.82rem; }
     .opz .sotto { display: none; }
     .site-home-button { top: 8px; left: 8px; width: 36px; height: 36px; font-size: 15px; }
@@ -336,10 +345,30 @@
 
     <div class="scelta">
       <h2>Difficoltà</h2>
-      <div class="opzioni" id="gr-difficolta">
+      <div class="opzioni quattro" id="gr-difficolta">
+        <button type="button" class="opz" data-v="2">Molto facile<span class="sotto">3 simboli per carta</span></button>
         <button type="button" class="opz" data-v="3">Facile<span class="sotto">4 simboli per carta</span></button>
         <button type="button" class="opz" data-v="5">Medio<span class="sotto">6 simboli per carta</span></button>
         <button type="button" class="opz" data-v="7">Difficile<span class="sotto">8 simboli per carta</span></button>
+      </div>
+    </div>
+  </div>
+
+  <!-- compare solo quando in gioco ci sono le note -->
+  <div class="scelte-riga" id="scelteNote" hidden>
+    <div class="scelta">
+      <h2>Chiave</h2>
+      <div class="opzioni" id="gr-chiavi">
+        <button type="button" class="opz" data-v="violino">Violino</button>
+        <button type="button" class="opz" data-v="basso">Basso</button>
+        <button type="button" class="opz" data-v="entrambe">Tutte e due</button>
+      </div>
+    </div>
+    <div class="scelta">
+      <h2>Tagli addizionali</h2>
+      <div class="opzioni due" id="gr-tagli">
+        <button type="button" class="opz" data-v="no">Senza<span class="sotto">solo note vicine al rigo</span></button>
+        <button type="button" class="opz" data-v="si">Con i tagli<span class="sotto">anche sopra e sotto</span></button>
       </div>
     </div>
   </div>
@@ -415,7 +444,9 @@
   const U = window.UnoInComune;
 
   /* ================= scelte ================= */
-  const scelte = { simboli: "segni", ordine: 3, giocatori: 1 };
+  const scelte = { simboli: "segni", ordine: 3, giocatori: 1, chiavi: "entrambe", tagli: true };
+  // le scelte sulle note servono solo quando in gioco ci sono le note
+  function opzioniNote() { return { chiavi: scelte.chiavi, tagli: scelte.tagli }; }
   const CARTE_PARTITA = 10;
   const NOMI = ["Giocatore 1", "Giocatore 2", "Giocatore 3", "Giocatore 4"];
   const NOMI_CORTI = ["Gioc. 1", "Gioc. 2", "Gioc. 3", "Gioc. 4"];
@@ -423,29 +454,51 @@
   function serve(ordine) { return ordine * ordine + ordine + 1; }
 
   function aggiornaMenu() {
-    [["gr-simboli", "simboli"], ["gr-difficolta", "ordine"], ["gr-giocatori", "giocatori"]].forEach(([id, campo]) => {
+    // le scelte sulle note si vedono solo se in gioco ci sono le note
+    const conNote = (scelte.simboli !== "segni");
+    document.getElementById("scelteNote").hidden = !conNote;
+
+    const disponibili = U.simboliDisponibili(scelte.simboli, opzioniNote());
+
+    // i livelli che chiedono più simboli di quanti ce ne sono si spengono;
+    // se quello scelto non è più possibile, si scende al più alto che si può
+    const possibili = [];
+    document.getElementById("gr-difficolta").querySelectorAll(".opz").forEach(b => {
+      const n = +b.dataset.v;
+      const troppo = serve(n) > disponibili;
+      b.disabled = troppo;
+      if (!troppo) possibili.push(n);
+    });
+    if (possibili.indexOf(scelte.ordine) === -1) {
+      scelte.ordine = possibili.length ? possibili[possibili.length - 1] : 2;
+    }
+
+    [["gr-simboli", "simboli"], ["gr-difficolta", "ordine"], ["gr-giocatori", "giocatori"],
+     ["gr-chiavi", "chiavi"]].forEach(([id, campo]) => {
       document.getElementById(id).querySelectorAll(".opz").forEach(b => {
         b.setAttribute("aria-pressed", String(b.dataset.v) === String(scelte[campo]) ? "true" : "false");
       });
     });
-    // con le sole note i simboli diversi sono 34: non bastano per il difficile
-    const disponibili = U.simboliDisponibili(scelte.simboli);
-    let messaggio = "";
-    document.getElementById("gr-difficolta").querySelectorAll(".opz").forEach(b => {
-      const troppo = serve(+b.dataset.v) > disponibili;
-      b.disabled = troppo;
-      if (troppo && +b.dataset.v === scelte.ordine) { scelte.ordine = 5; }
+    document.getElementById("gr-tagli").querySelectorAll(".opz").forEach(b => {
+      b.setAttribute("aria-pressed", (b.dataset.v === "si") === scelte.tagli ? "true" : "false");
     });
-    if (scelte.simboli === "note") {
-      messaggio = "Con le sole note il livello difficile non c'è: servirebbero 57 note diverse.";
+
+    let messaggio = "";
+    if (conNote) {
+      const nomeChiave = { violino: "in chiave di violino", basso: "in chiave di basso", entrambe: "nelle due chiavi" }[scelte.chiavi];
+      const quante = U.quanteNote(opzioniNote());
+      messaggio = quante + " note diverse " + nomeChiave +
+        (scelte.tagli ? ", tagli addizionali compresi." : ", solo vicino al rigo.");
+      const spento = [...document.getElementById("gr-difficolta").querySelectorAll(".opz")].find(b => b.disabled);
+      if (spento) {
+        messaggio += " Per il livello " + spento.childNodes[0].textContent.toLowerCase() +
+          " ne servirebbero " + serve(+spento.dataset.v) + ".";
+      }
     }
     if (scelte.giocatori > 2 && telefonoVerticale()) {
       messaggio = "In tre o quattro si gioca molto meglio sulla LIM, sul computer o su un tablet.";
     }
     document.getElementById("avviso").textContent = messaggio;
-    document.getElementById("gr-difficolta").querySelectorAll(".opz").forEach(b => {
-      b.setAttribute("aria-pressed", String(b.dataset.v) === String(scelte.ordine) ? "true" : "false");
-    });
   }
 
   function collega(id, campo, numerico) {
@@ -460,6 +513,10 @@
   collega("gr-simboli", "simboli", false);
   collega("gr-difficolta", "ordine", true);
   collega("gr-giocatori", "giocatori", true);
+  collega("gr-chiavi", "chiavi", false);
+  document.getElementById("gr-tagli").querySelectorAll(".opz").forEach(b => {
+    b.addEventListener("click", () => { scelte.tagli = (b.dataset.v === "si"); aggiornaMenu(); });
+  });
 
   /* ================= schermate ================= */
   function mostra(id) {
@@ -556,7 +613,7 @@
   function nuovaPartita() {
     const n = scelte.ordine;
     const mazzo = U.costruisciMazzo(n).map((simboli, id) => ({ id: id, simboli: simboli }));
-    const simboli = U.simboliPerPartita(scelte.simboli, serve(n));
+    const simboli = U.simboliPerPartita(scelte.simboli, serve(n), opzioniNote());
     stato = {
       mazzo: mazzo, simboli: simboli,
       giocatori: Array.from({ length: scelte.giocatori }, (_, i) => ({ nome: NOMI[i], punti: 0, bloccato: false })),

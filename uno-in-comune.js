@@ -173,15 +173,37 @@
     };
   }
 
-  function elencoNote() {
-    // prima le note centrali (le più usate), poi gli estremi
-    const vioCentro = serie("c/4", 13).map(k => nota("treble", k));
-    const basCentro = serie("c/3", 13).map(k => nota("bass", k));
-    const vioEstremi = serie("a/3", 2).map(k => nota("treble", k))
-      .concat(serie("b/5", 2).map(k => nota("treble", k)));
-    const basEstremi = serie("c/2", 2).map(k => nota("bass", k))
-      .concat(serie("b/4", 2).map(k => nota("bass", k)));
-    return vioCentro.concat(basCentro, vioEstremi, basEstremi);   // 34
+  /* Quali note, divise per chiave e secondo i tagli addizionali.
+     Senza tagli si arriva appena fuori dal rigo, dove la nota si legge ancora
+     senza linee aggiuntive: in violino dal RE sotto il rigo al SOL sopra, in
+     basso dal FA sotto al SI sopra. Le altre richiedono un taglio. */
+  const NOTE = {
+    violino: {
+      rigo:  serie("d/4", 11),                              // RE4 -> SOL5
+      tagli: ["c/4", "b/3", "a/3", "a/5", "b/5", "c/6"]      // sotto e sopra
+    },
+    basso: {
+      rigo:  serie("f/2", 11),                              // FA2 -> SI3
+      tagli: ["e/2", "d/2", "c/2", "c/4", "d/4", "e/4"]
+    }
+  };
+
+  /**
+   * @param {string} chiavi  "violino" | "basso" | "entrambe"
+   * @param {boolean} tagli  se includere le note con i tagli addizionali
+   */
+  function elencoNote(chiavi, tagli) {
+    chiavi = chiavi || "entrambe";
+    const vio = (chiavi !== "basso"), bas = (chiavi !== "violino");
+    // prima quelle dentro al rigo (si leggono subito), poi quelle con i tagli
+    let out = [];
+    if (vio) out = out.concat(NOTE.violino.rigo.map(k => nota("treble", k)));
+    if (bas) out = out.concat(NOTE.basso.rigo.map(k => nota("bass", k)));
+    if (tagli) {
+      if (vio) out = out.concat(NOTE.violino.tagli.map(k => nota("treble", k)));
+      if (bas) out = out.concat(NOTE.basso.tagli.map(k => nota("bass", k)));
+    }
+    return out;
   }
 
   /* ================= colori =================
@@ -317,8 +339,9 @@
   }
 
   /* ================= elenco dei simboli per una partita ================= */
-  function simboliPerPartita(insieme, quanti) {
-    const note = elencoNote();
+  function simboliPerPartita(insieme, quanti, opz) {
+    opz = opz || {};
+    const note = elencoNote(opz.chiavi, opz.tagli);
     let scelti;
     if (insieme === "note") scelti = note.slice(0, quanti);
     else if (insieme === "segni") scelti = SEGNI.slice(0, quanti);
@@ -340,10 +363,13 @@
   }
 
   // quanti simboli diversi riesce a dare un insieme
-  function simboliDisponibili(insieme) {
-    if (insieme === "note") return elencoNote().length;              // 34
+  function simboliDisponibili(insieme, opz) {
+    opz = opz || {};
+    const n = elencoNote(opz.chiavi, opz.tagli).length;
+    if (insieme === "note") return n;
     if (insieme === "segni") return SEGNI.length;                    // 57
-    return SEGNI.length + elencoNote().length;
+    // nei misti si prende metà e metà, quindi comanda il gruppo più piccolo
+    return Math.min(SEGNI.length, n) * 2;
   }
 
   /* ================= disposizione dei simboli nella carta =================
@@ -361,11 +387,12 @@
 
   // anelli: quanti simboli su ogni cerchio, e a che distanza dal centro
   const ANELLI = {
+    3: [{ n: 3, r: 0.52 }],
     4: [{ n: 1, r: 0 }, { n: 3, r: 0.62 }],
     6: [{ n: 1, r: 0 }, { n: 5, r: 0.64 }],
     8: [{ n: 3, r: 0.33 }, { n: 5, r: 0.70 }]
   };
-  const MISURA = { 4: 0.37, 6: 0.31, 8: 0.26 };
+  const MISURA = { 3: 0.42, 4: 0.37, 6: 0.31, 8: 0.26 };
   const ROTAZIONE_MAX = 14;   // gradi: oltre, i simboli musicali sembrano scritti male
 
   function disposizione(idCarta, quanti) {
@@ -394,6 +421,7 @@
 
   global.UnoInComune = {
     SOLFEGGIO: SOLFEGGIO,
+    quanteNote: (opz) => elencoNote((opz||{}).chiavi, (opz||{}).tagli).length,
     costruisciMazzo: costruisciMazzo,
     simboliPerPartita: simboliPerPartita,
     simboliDisponibili: simboliDisponibili,

@@ -246,8 +246,10 @@ Motore del mazzo e dei simboli: `uno-in-comune.js`.
   corrispondenti, alterazioni, dinamiche (p, f, mf, mp, pp, ff), articolazioni (accento,
   staccato, tenuto, staccatissimo, marcato), indicazioni di tempo, corona, respiro,
   abbellimenti, arcate, pedale, segno e coda.
-- **Lettura delle note sul pentagramma** in chiave di violino e di basso (set "Note"),
-  dove il simbolo da riconoscere è la posizione della nota sul rigo.
+- **Lettura delle note sul pentagramma** (set "Note"), dove il simbolo da riconoscere è
+  la posizione della nota sul rigo. Si sceglie la **chiave** (violino, basso o tutte e
+  due) e se includere le **note con i tagli addizionali**: sono quattro gradini di
+  difficoltà musicale indipendenti dal livello del gioco.
 - Il segno resta legato al suono: quando il simbolo trovato è una nota, il gioco **suona
   la sua altezza vera**.
 
@@ -271,8 +273,9 @@ Motore del mazzo e dei simboli: `uno-in-comune.js`.
 - **Si gioca in due, tre o quattro sullo stesso schermo**, alla LIM: è uno dei pochi
   giochi del sito davvero competitivi in tempo reale, e funziona come riempitivo di
   cinque minuti a fine ora.
-- **Tre livelli veri**, non cosmetici: 4, 6 o 8 simboli per carta, cioè 13, 31 o 57
-  segni musicali diversi in gioco. Il livello difficile mette in gioco anche coppie
+- **Quattro livelli veri**, non cosmetici: 3, 4, 6 o 8 simboli per carta, cioè 7, 13, 31
+  o 57 segni musicali diversi in gioco. Il più basso serve per cominciare e per la
+  primaria: tre soli pentagrammi per carta, grandi e leggibilissimi. Il livello difficile mette in gioco anche coppie
   ravvicinate (semiminima e semiminima puntata, croma e due crome) che obbligano a
   guardare il dettaglio.
 - **Da solo si gioca a tempo**: il cronometro dà un obiettivo personale da migliorare,
@@ -307,8 +310,14 @@ e matematica (una carta per ogni retta del piano, un simbolo per ogni punto).
   giocatore successivo: così la regola resta una sola e non serve scegliere a chi darlo.
   Da soli non lo prende nessuno, e l'errore finisce comunque nelle statistiche.
 - **Partita di 10 carte**: dura due o tre minuti, sta in un intervallo di lezione.
-- **Niente livello difficile con le sole note**: servirebbero 57 note diverse e si
-  arriverebbe a estensioni che in seconda media non si leggono ancora.
+- **Le estensioni delle note seguono il rigo, non un'ottava comoda**: senza tagli si
+  arriva fin dove la nota si legge senza linee aggiuntive (in violino dal RE sotto il rigo
+  al SOL sopra, in basso dal FA al SI), e sono 11 note per chiave. Con i tagli se ne
+  aggiungono sei per chiave, tre sotto e tre sopra.
+- **I livelli che chiederebbero più simboli di quanti ce ne sono si spengono da soli**, e
+  il messaggio dice quante note ci sono e quante ne servirebbero: con una chiave sola e
+  senza tagli si gioca al livello più basso, con tutte e due le chiavi e i tagli si arriva
+  al medio. Il difficile resta solo per i segni musicali, che sono 57.
 - I simboli piccolissimi (il punto dello staccato) restano piccoli come nella scrittura
   vera, ma l'area da toccare è grande: la grafica è corretta e il tocco resta comodo.
 - **I simboli sono inclinati al massimo di 14 gradi**, non girati a caso come nel gioco
