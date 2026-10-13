@@ -70,6 +70,10 @@ Ogni reel è un solo file. Per uno nuovo si copia **`reels/_modello.json`** (un 
   d'ascolto lo schermo si muove e si capisce anche senza audio. Nel file del reel basta
   `"suoni": {"clip", "da", "tocco", "distanza"}`: gli istanti si ricavano dall'audio registrato
   (`distanza` = secondi fissi tra i due suoni quando nel gioco si sovrappongono; Acuto o grave: 1.9).
+- **Titoli "adesivo"** (tipo `titolo`): da usare al posto di `label` per i titoli sopra i giochi (scelta di Cristiano:
+  le etichette semplici sono «anonime e piatte»). Scritta grande su un riquadro colorato inclinato che entra con un
+  rimbalzo, sottotitolo evidenziato in giallo; `|` va a capo. Emoji sì, ma solo quelle comuni (🎤 🚀 🎶): alcune
+  (🪜 🎼) nel browser delle riprese non si vedono.
 - **L'aula con la LIM** (tipo `classe` in `grafiche.html`): un'aula vista dal fondo, con la LIM sul muro, la cattedra,
   la finestra e i banchi con le sedie vuote. **Nessuna persona disegnata** (scelta di Cristiano).
   Si usa come sfondo di un pezzo `incorniciata` con gli stessi `x, y, w, h` della LIM (di serie 130, 480, 820, 461);
@@ -186,6 +190,10 @@ trascinando le carte (`data-reel-su`); Doppio si legge dallo schermo.
 
 Nel reel il gioco si chiama **«Rap con le note!»** (scelta di Cristiano). Cinque riprese: telefono in orizzontale con solo
 i nomi (ascendenti), nomi + pentagramma (discendenti), solo pentagramma (salita e discesa); LIM in aula; PC 1366x768.
+Versione di ottobre 2026 (39 s): «L'alfabeto musicale a ritmo di rap! GRATIS» · «Si apre e si gioca!» · Rap con le note! ·
+passo dopo passo (nomi → nomi + pentagramma → solo pentagramma) · sequenze ascendenti e discendenti · una, due, quattro
+note per battito (riprese `rap_x2` e `rap_x4`, col pulsante ♫2 / ♬4 del gioco) · arpeggi e progressioni per terze e
+quinte, propedeutica al solfeggio parlato · la LIM in aula · «Mandalo a chi insegna con te».
 Novità: il tipo **`pila`** (tre schermi orizzontali uno sopra l'altro, ritagliati sulla fila di carte, con un'etichetta
 per riga) per far vedere a colpo d'occhio la progressione e le sequenze; il suono è quello della prima riga.
 Le carte si accendono circa 11 s dopo il via (banner e conto alla rovescia): i tagli partono da `via+11`.

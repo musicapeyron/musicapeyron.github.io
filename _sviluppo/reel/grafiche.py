@@ -15,13 +15,16 @@ Una schermata già disegnata con gli stessi parametri non si ridisegna
 
 Tipi (parametro t):
   card       sfondo pieno nel colore di una nota (c=do..si), righe l="riga1|riga2", sottotitolo s
-  hook       apertura trasparente: a / g / b (di serie "Giochi musicali / GRATIS / per la tua classe");
+  hook       apertura trasparente: a / g / b (di serie "Giochi musicali / GRATIS / per la tua classe"); fondo=1 mette
+             la pastiglia gialla (g) in fondo, dopo a e b;
              con n e f anche le bolle dei suoni (vedi sfida)
   sfida      giochi d'ascolto: bolle "1" e "2" che si accendono quando suonano i due suoni (n=istanti,
              es. n=0.4,2.3), poi la domanda q; tutto sparisce all'istante f (il tocco della risposta).
              Nel file del reel basta "suoni": {"clip", "da", "tocco"}: reel.py ricava n e f dall'audio registrato
              ("distanza": secondi fissi tra i due suoni, se nel gioco si sovrappongono: Acuto o grave 1.9)
              ("distanza": secondi fissi tra i due suoni, se nel gioco si sovrappongono: Acuto o grave 1.9)
+  titolo     titolo "adesivo", più vivace di label: l grande su riquadro colorato (c) inclinato, s evidenziato in giallo,
+             top = altezza (di serie 250)
   label      etichetta del gioco in alto (l, colore c) e frase sotto (s, all'altezza sy);
              fascia=1 (altezza fh) mette una fascia scura dietro, se sotto c'è già del testo
   bg         sfondo del sito con cornice: k=phone (arrotondata) o k=lim, rettangolo x,y,w,h

@@ -64,6 +64,14 @@ html,body{width:1080px;height:1920px;overflow:hidden;background:transparent;font
 @keyframes via{to{opacity:0;transform:translateY(-30px)}}
 .domanda{position:absolute;left:0;right:0;top:1195px;text-align:center;font-weight:800;font-size:46px;color:#fff;opacity:0;
  text-shadow:0 4px 18px rgba(0,0,0,.6)}
+/* titolo "adesivo": scritta grande su un riquadro colorato inclinato, sottotitolo evidenziato in giallo */
+.tt{position:absolute;left:50px;right:50px;top:var(--top,250px);display:flex;flex-direction:column;align-items:center;gap:22px}
+.tt .ttb{font-weight:800;font-size:92px;line-height:1.03;text-align:center;letter-spacing:-.03em;padding:16px 38px 24px;border-radius:32px;
+ white-space:nowrap;box-shadow:0 10px 0 rgba(0,0,0,.28),0 26px 50px rgba(0,0,0,.45);transform:rotate(-3deg)}
+.tt .tts{font-weight:800;font-size:50px;color:#17133f;background:#FFF428;padding:10px 28px 14px;border-radius:18px;white-space:nowrap;
+ box-shadow:0 8px 0 #c9bf12,0 18px 36px rgba(0,0,0,.35);transform:rotate(2deg)}
+@keyframes adesivo{0%{opacity:0;transform:scale(.3) rotate(-14deg)}55%{opacity:1;transform:scale(1.12) rotate(2deg)}75%{transform:scale(.96) rotate(-4deg)}100%{opacity:1;transform:scale(1) rotate(-3deg)}}
+@keyframes adesivo2{0%{opacity:0;transform:translateY(40px) rotate(8deg)}60%{opacity:1;transform:translateY(-6px) rotate(0deg)}100%{opacity:1;transform:rotate(2deg)}}
 </style></head><body><div id="root"></div>
 <script>
 const P=new URLSearchParams(location.hash.slice(1));const R=document.getElementById('root');const t=P.get('t');
@@ -98,13 +106,20 @@ function bolle(){ // usate dall'apertura (hook) e dal tipo "sfida"
     `<div class="domanda" style="animation:fade .3s ${n[1]+0.9}s forwards${f?`,via .25s ${f-0.1}s forwards`:''}">${q}</div>`;
 }
 if(t==='sfida'){ R.innerHTML=bolle(); }
+if(t==='titolo'){ // titolo "adesivo" (l = titolo, s = sottotitolo in giallo, c = colore, top = altezza)
+  const c=P.get('c')||'sol', fg=darkText[c]?'#17133f':'#fff';
+  R.innerHTML=`<div class="tt" style="--top:${P.get('top')||250}px">
+    <div class="ttb" style="background:${C[c]};color:${fg};opacity:0;animation:adesivo .55s cubic-bezier(.2,.8,.2,1) .05s forwards">${P.get('l').split('|').join('<br>')}</div>
+    ${P.get('s')?`<div class="tts" style="opacity:0;animation:adesivo2 .45s ease-out .35s forwards">${P.get('s')}</div>`:''}</div>`;
+  R.querySelectorAll('.tt .ttb,.tt .tts').forEach(e=>{const big=e.classList.contains('ttb');let fs=big?92:50;
+    while(e.scrollWidth>(big?960:940)&&fs>(big?48:30)){fs-=2;e.style.fontSize=fs+'px'}});
+}
 if(t==='hook'){
   // testi cambiabili: a (sopra), g (nella pastiglia gialla), b (sotto); se una riga è troppo larga si rimpicciolisce
   const A=P.get('a')||'Giochi musicali', G=P.get('g')||'GRATIS', B=P.get('b')||'per la tua classe';
   R.innerHTML=`<div class="band fade" style="animation-duration:.2s"></div><div class="hook">
-   <div class="a pop" ${d(0)}>${A}</div>
-   <div class="g pop" ${d(.18)}>${G}</div>
-   <div class="a pop" ${d(.36)}>${B}</div></div>`+bolle();
+   ${P.get('fondo') ? `<div class="a pop" ${d(0)}>${A}</div><div class="a pop" ${d(.18)}>${B}</div><div class="g pop" ${d(.4)}>${G}</div>`
+     : `<div class="a pop" ${d(0)}>${A}</div><div class="g pop" ${d(.18)}>${G}</div><div class="a pop" ${d(.36)}>${B}</div>`}</div>`+bolle();
   R.querySelectorAll('.hook .a').forEach(e=>{let fs=84;e.style.whiteSpace='nowrap';
     while(e.scrollWidth>920&&fs>50){fs-=2;e.style.fontSize=fs+'px'}});
   R.querySelectorAll('.hook .g').forEach(e=>{let fs=170;e.style.whiteSpace='nowrap';
@@ -177,7 +192,7 @@ if(t==='pila'){ // più schermi orizzontali uno sopra l'altro: cornici e etichet
   const ls=(P.get('l')||'').split('|'), cs=(P.get('c')||'do|mi|sol').split('|');
   R.innerHTML=`<div class="navy"></div>`+ys.map((y,i)=>
     `<div class="frame" style="left:${x}px;top:${y}px;width:${w}px;height:${h}px;background:#000;border-radius:22px"></div>`+
-    (ls[i]?`<div class="label" style="position:absolute;left:${x+10}px;top:${y-74}px;font-size:38px;padding:10px 28px;z-index:2"><i style="background:${C[cs[i]]||cs[i]}"></i>${ls[i]}</div>`:'')
+    (ls[i]?`<div style="position:absolute;left:${x+6}px;top:${y-72}px;font-weight:800;font-size:42px;padding:8px 28px 12px;border-radius:16px;z-index:2;background:${C[cs[i]]||cs[i]};color:${darkText[cs[i]]?'#17133f':'#fff'};box-shadow:0 6px 0 rgba(0,0,0,.28);transform:rotate(-1.5deg)">${ls[i]}</div>`:'')
   ).join('');
 }
 if(t==='copertina'){
