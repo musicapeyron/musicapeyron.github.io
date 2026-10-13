@@ -98,6 +98,8 @@ Ogni reel è un solo file. Per uno nuovo si copia **`reels/_modello.json`** (un 
 - **Logo**: ripreso dall'immagine di anteprima della home (`media/condivisione.jpg`): scritta bianca + pastiglie do re mi fa sol la si.
 - Riprese **come da un vero telefono** (non solo la misura dello schermo): il sito è fatto per PC, telefono e LIM. Formato **misto**: quasi tutto da telefono, più una scena sulla LIM incorniciata.
 - Niente volti né voci di alunni; **nei disegni nessuna persona** (l'aula ha solo banchi e sedie).
+- **Niente schermate ripetitive**: ogni schermata deve aggiungere qualcosa; se un titolo ripete quello che la schermata
+  prima o dopo dice già, si toglie o si uniscono i testi (scelta di Cristiano, ottobre 2026).
 - **GRATIS sempre all'inizio**, in grande, nel testo d'apertura.
 - **Mai citare i voti** (né nei testi, né nella didascalia, né nelle schermate dei giochi: la registrazione si
   ferma prima delle schermate finali che mostrano un voto).

@@ -398,12 +398,6 @@
    "dur": 3.0
   },
   {
-   "name": "tt_rap",
-   "hash": "t=titolo&c=sol&l=Rap%20con%20le%20note%21%20%F0%9F%8E%A4&s=Do%20re%20mi%20fa%20sol%20la%20si%E2%80%A6%20a%20tempo%21",
-   "dur": 3.0,
-   "alpha": true
-  },
-  {
    "name": "pila1",
    "hash": "t=pila&y=540%2C860%2C1180&h=250&l=1%20%C2%B7%20I%20nomi|2%20%C2%B7%20Nomi%20e%20pentagramma|3%20%C2%B7%20Solo%20pentagramma&c=do|mi|sol",
    "dur": 0.04
@@ -426,18 +420,13 @@
    "alpha": true
   },
   {
-   "name": "card_arp",
-   "hash": "t=card&c=si&l=Arpeggi|e%20progressioni&s=Per%20terze%2C%20quarte%2C%20quinte%20e%20altro%21%20Propedeutica%20al%20solfeggio%20parlato.&tel=1",
-   "dur": 3.0
-  },
-  {
    "name": "pila3",
-   "hash": "t=pila&y=540%2C860%2C1180&h=250&l=Arpeggi|Per%20terze|Per%20quinte&c=si|sol|do",
+   "hash": "t=pila&y=610%2C910%2C1210&h=240&l=Arpeggi|Per%20terze|Per%20quinte&c=si|sol|do",
    "dur": 0.04
   },
   {
    "name": "tt_pila3",
-   "hash": "t=titolo&c=si&l=Verso%20il%20solfeggio%20parlato",
+   "hash": "t=titolo&c=si&l=Arpeggi%20e%20progressioni%21&s=Terze%2C%20quarte%2C%20quinte%20e%20altro%3A|propedeutica%20al%20solfeggio%20parlato",
    "dur": 4.5,
    "alpha": true
   },
@@ -496,19 +485,6 @@
     "tablet": "brani",
     "telefono": "index"
    }
-  },
-  {
-   "tipo": "incorniciata",
-   "clip": "rap_nomi_su",
-   "da": "via+11",
-   "a": "via+14",
-   "grafica": "tt_rap",
-   "sfondo": "bg_tel",
-   "x": 40,
-   "y": 700,
-   "w": 1000,
-   "h": 563,
-   "angoli": 30
   },
   {
    "tipo": "pila",
@@ -597,24 +573,15 @@
    ]
   },
   {
-   "tipo": "schermata",
-   "grafica": "card_arp",
-   "dispositivi": {
-    "lim": "bona",
-    "tablet": "solfeggio",
-    "telefono": "scale"
-   }
-  },
-  {
    "tipo": "pila",
    "sfondo": "pila3",
    "grafica": "tt_pila3",
    "y": [
-    540,
-    860,
-    1180
+    610,
+    910,
+    1210
    ],
-   "h": 250,
+   "h": 240,
    "righe": [
     {
      "clip": "rap_arpeggi",

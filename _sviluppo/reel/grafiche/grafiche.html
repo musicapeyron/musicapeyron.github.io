@@ -110,7 +110,7 @@ if(t==='titolo'){ // titolo "adesivo" (l = titolo, s = sottotitolo in giallo, c 
   const c=P.get('c')||'sol', fg=darkText[c]?'#17133f':'#fff';
   R.innerHTML=`<div class="tt" style="--top:${P.get('top')||250}px">
     <div class="ttb" style="background:${C[c]};color:${fg};opacity:0;animation:adesivo .55s cubic-bezier(.2,.8,.2,1) .05s forwards">${P.get('l').split('|').join('<br>')}</div>
-    ${P.get('s')?`<div class="tts" style="opacity:0;animation:adesivo2 .45s ease-out .35s forwards">${P.get('s')}</div>`:''}</div>`;
+    ${P.get('s')?`<div class="tts" style="opacity:0;animation:adesivo2 .45s ease-out .35s forwards;text-align:center">${P.get('s').split('|').join('<br>')}</div>`:''}</div>`;
   R.querySelectorAll('.tt .ttb,.tt .tts').forEach(e=>{const big=e.classList.contains('ttb');let fs=big?92:50;
     while(e.scrollWidth>(big?960:940)&&fs>(big?48:30)){fs-=2;e.style.fontSize=fs+'px'}});
 }
