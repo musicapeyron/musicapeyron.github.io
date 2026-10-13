@@ -232,3 +232,99 @@ Scarta la nota — carte da stampare (`carte-scarta-la-nota.html`). Ottobre 2026
 - Con triadi e settime le carte tornano invece in mano: altrimenti sbagliare apposta converrebbe
   (ci si libererebbe di tre carte al prezzo di una pescata).
 - Niente dorsi da stampare: su cartoncino opaco non servono, e il doppio lato complica la stampa.
+
+---
+
+## Doppio (simboli musicali)
+
+**Dove:** Giochi → Doppio (`doppio.html`). Ottobre 2026.
+Motore del mazzo e dei simboli: `doppio.js`.
+
+### Concetti
+- **Riconoscimento rapido dei segni musicali**: chiavi (violino, basso, do), figure
+  (semibreve, minima, semiminima, croma, semicroma, due crome, figure puntate), pause
+  corrispondenti, alterazioni, dinamiche (p, f, mf, mp, pp, ff), articolazioni (accento,
+  staccato, tenuto, staccatissimo, marcato), indicazioni di tempo, corona, respiro,
+  abbellimenti, arcate, pedale, segno e coda.
+- **Lettura delle note sul pentagramma** (set "Note"), dove il simbolo da riconoscere è
+  la posizione della nota sul rigo. Si sceglie la **chiave** (violino, basso o tutte e
+  due) e se includere le **note con i tagli addizionali**: sono quattro gradini di
+  difficoltà musicale indipendenti dal livello del gioco.
+- Il segno resta legato al suono: quando il simbolo trovato è una nota, il gioco **suona
+  la sua altezza vera**.
+
+### Punti di forza
+- **Riconoscimento, non ragionamento:** il simbolo va identificato in un paio di secondi.
+  È un allenamento diverso da tutti gli altri giochi del sito, che chiedono di pensare:
+  qui si costruisce l'automatismo, cioè quello che serve davvero leggendo uno spartito.
+- **Trovarlo non basta: bisogna saperlo nominare.** Appena un giocatore trova il simbolo
+  il gioco si ferma e gli chiede, dalla sua parte dello schermo, **come si chiama**, fra
+  quattro possibilità. Il punto si prende solo rispondendo bene; se sbaglia va
+  all'avversario. È la parte che trasforma un gioco di rapidità in un esercizio di
+  vocabolario musicale: le risposte sbagliate proposte vengono dalla **stessa famiglia**
+  del simbolo (fra le pause, fra le dinamiche, fra le articolazioni), quindi bisogna
+  distinguere davvero, non tirare a indovinare.
+- **Statistiche come negli altri giochi** (risposte, giuste, errori, accuratezza), sempre
+  visibili durante la partita: contano sia i simboli toccati sia le risposte al quiz. Con
+  più giocatori sono della classe nel suo insieme, utili al docente per capire dove si
+  sbaglia.
+- **Il simbolo cambia molto di misura** da una carta all'altra, ed è un po' inclinato: si
+  impara a riconoscere la *forma*, non una figurina memorizzata in una grandezza.
+- **Si gioca in due, tre o quattro sullo stesso schermo**, alla LIM: è uno dei pochi
+  giochi del sito davvero competitivi in tempo reale, e funziona come riempitivo di
+  cinque minuti a fine ora.
+- **Quattro livelli veri**, non cosmetici: 3, 4, 6 o 8 simboli per carta, cioè 7, 13, 31
+  o 57 segni musicali diversi in gioco. Il più basso serve per cominciare e per la
+  primaria: tre soli pentagrammi per carta, grandi e leggibilissimi. Il livello difficile mette in gioco anche coppie
+  ravvicinate (semiminima e semiminima puntata, croma e due crome) che obbligano a
+  guardare il dettaglio.
+- **Da solo si gioca a tempo**: il cronometro dà un obiettivo personale da migliorare,
+  utile quando un ragazzo finisce prima degli altri.
+- Nessun microfono, nessuna fotocamera, nessun dato raccolto.
+
+### Perché il mazzo funziona (la matematica dietro)
+Il mazzo non è casuale: è un **piano proiettivo finito** di ordine n (n primo), che ha
+n²+n+1 carte, n+1 simboli per carta e n²+n+1 simboli diversi, e garantisce che **due
+carte qualsiasi abbiano esattamente un simbolo in comune**. È lo stesso principio del
+gioco commerciale Dobble. Si può raccontare alla classe: è un bell'aggancio fra musica
+e matematica (una carta per ogni retta del piano, un simbolo per ogni punto).
+
+### Come usarlo in classe
+- Alla LIM in due squadre: un rappresentante per squadra al tocco, gli altri guardano.
+- Come ripasso prima di una verifica sui segni musicali: livello medio, set "Segni".
+- Per la lettura delle note: set "Note", livello facile (solo chiave di violino) e poi
+  medio (si aggiunge la chiave di basso).
+- Il tutorial "Come si gioca" (6 passi, con una prova finale da fare davvero) basta per
+  partire senza spiegazioni.
+
+### Scelte fatte (e perché)
+- **Una carta per giocatore attorno a quella centrale**, non la pila comune: sullo stesso
+  schermo serve che ognuno abbia la sua zona da toccare. In due sul telefono la carta di
+  chi sta dall'altro lato è capovolta, così si gioca uno di fronte all'altro.
+- **Chi sbaglia resta fermo poco più di un secondo**: scoraggia il toccare a caso senza
+  bloccare la partita.
+- **Il quiz compare dalla parte di chi ha trovato il simbolo** e il gioco resta fermo
+  finché non risponde: sulla LIM gli altri vedono la domanda ma non possono rubare il
+  turno. Sul telefono, se la carta è capovolta, lo è anche la domanda.
+- **Se il quiz va male il punto va all'avversario.** Con più di due giocatori va al
+  giocatore successivo: così la regola resta una sola e non serve scegliere a chi darlo.
+  Da soli non lo prende nessuno, e l'errore finisce comunque nelle statistiche.
+- **Partita di 10 carte**: dura due o tre minuti, sta in un intervallo di lezione.
+- **Le estensioni delle note seguono il rigo, non un'ottava comoda**: senza tagli si
+  arriva fin dove la nota si legge senza linee aggiuntive (in violino dal RE sotto il rigo
+  al SOL sopra, in basso dal FA al SI), e sono 11 note per chiave. Con i tagli se ne
+  aggiungono sei per chiave, tre sotto e tre sopra.
+- **I livelli che chiederebbero più simboli di quanti ce ne sono si spengono da soli**, e
+  il messaggio dice quante note ci sono e quante ne servirebbero: con una chiave sola e
+  senza tagli si gioca al livello più basso, con tutte e due le chiavi e i tagli si arriva
+  al medio. Il difficile resta solo per i segni musicali, che sono 57.
+- I simboli piccolissimi (il punto dello staccato) restano piccoli come nella scrittura
+  vera, ma l'area da toccare è grande: la grafica è corretta e il tocco resta comodo.
+- **I simboli sono inclinati al massimo di 14 gradi**, non girati a caso come nel gioco
+  commerciale: lì sono gufi e fiocchi di neve, dove l'orientamento non significa niente,
+  mentre una semiminima molto inclinata sembra scritta male (il gambo esce storto) e in
+  classe si memorizzerebbe una forma sbagliata. Entro quei gradi si vede il movimento e la
+  figura resta leggibile come sullo spartito; il resto della difficoltà lo dà la grandezza.
+- **Le figure musicali le disegna VexFlow**, non il nostro codice: gambi (sempre a destra
+  della testa, lunghi tre spazi e mezzo), code e travature seguono così le regole
+  tipografiche vere invece di essere assemblate a occhio.
