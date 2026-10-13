@@ -185,18 +185,18 @@
   {
    "name": "hook",
    "hash": "t=hook&a=Giochi%20musicali&g=GRATIS&b=niente%20registrazione",
-   "dur": 3.4,
+   "dur": 3.0,
    "alpha": true
   },
   {
    "name": "card1",
    "hash": "t=card&c=do&l=Si%20apre|e%20si%20gioca.&s=Per%20la%20primaria%3A%20LIM%2C%20PC%20e%20telefono.&tel=1",
-   "dur": 2.4
+   "dur": 3.0
   },
   {
    "name": "lab_rap",
    "hash": "t=label&c=sol&l=Rap%20con%20le%20note%21&s=L%27alfabeto%20musicale%20a%20ritmo&sy=1330",
-   "dur": 3.5,
+   "dur": 3.0,
    "alpha": true
   },
   {
@@ -213,7 +213,7 @@
   {
    "name": "card2",
    "hash": "t=card&c=fa&l=Su%2C%20gi%C3%B9|e%20su%20e%20gi%C3%B9%21&s=Sequenze%20ascendenti%2C%20discendenti%20e%20tutte%20e%20due.&tel=1",
-   "dur": 2.2
+   "dur": 3.0
   },
   {
    "name": "pila2",
@@ -223,7 +223,7 @@
   {
    "name": "lab_pila2",
    "hash": "t=label&c=fa&l=L%27alfabeto%20musicale%20in%20sequenza",
-   "dur": 4.0,
+   "dur": 4.5,
    "alpha": true
   },
   {
@@ -234,7 +234,7 @@
   {
    "name": "lab_lim",
    "hash": "t=label&c=si&l=Sulla%20LIM&s=Tutta%20la%20classe%20a%20ritmo&sy=392",
-   "dur": 3.5,
+   "dur": 3.0,
    "alpha": true
   },
   {
@@ -251,12 +251,12 @@
   {
    "name": "card3",
    "hash": "t=card&c=la&l=Mandalo|a%20chi%20insegna|con%20te.&s=Un%20progetto%20collaborativo%3A%20scrivici%20le%20tue%20idee%21&tel=1",
-   "dur": 2.6
+   "dur": 3.0
   },
   {
    "name": "end",
    "hash": "t=end",
-   "dur": 3.2
+   "dur": 3.0
   }
  ],
  "scaletta": [
@@ -264,7 +264,7 @@
    "tipo": "incorniciata",
    "clip": "rap_nomi_su",
    "da": "via+15",
-   "a": "via+18.4",
+   "a": "via+18",
    "grafica": "hook",
    "sfondo": "bg_tel",
    "x": 40,
@@ -286,7 +286,7 @@
    "tipo": "incorniciata",
    "clip": "rap_nomi_su",
    "da": "via+11",
-   "a": "via+14.5",
+   "a": "via+14",
    "grafica": "lab_rap",
    "sfondo": "bg_tel",
    "x": 40,
@@ -349,19 +349,19 @@
     {
      "clip": "rap_nomi_su",
      "da": "via+16.5",
-     "a": "via+20.5",
+     "a": "via+21",
      "filtro": ",crop=1920:480:0:300"
     },
     {
      "clip": "rap_misto_giu",
      "da": "via+16.5",
-     "a": "via+20.5",
+     "a": "via+21",
      "filtro": ",crop=1920:480:0:300"
     },
     {
      "clip": "rap_penta_su_giu",
      "da": "via+16.5",
-     "a": "via+20.5",
+     "a": "via+21",
      "filtro": ",crop=1920:480:0:300"
     }
    ]
@@ -370,7 +370,7 @@
    "tipo": "incorniciata",
    "clip": "rap_lim",
    "da": "via+11",
-   "a": "via+14.5",
+   "a": "via+14",
    "sfondo": "classe",
    "grafica": "lab_lim",
    "x": 130,
@@ -410,12 +410,11 @@
   "colore": "sol"
  },
  "audio": {
-  "file": "media/brani-propedeutici/brano10-completo.mp3",
+  "file": "_sviluppo/reel/libreria/basi/rap-con-le-note.mp3",
   "da": 0,
-  "volume": 0.8,
-  "gioco": true,
-  "sotto": 0,
-  "credito": "Musica: la base rap del gioco e la base di «Su in alto» (Brani propedeutici) – musicascuole.it"
+  "volume": 1.0,
+  "battito": 0.75,
+  "credito": "Musica: la base di Rap con le note! – musicascuole.it"
  },
  "varianti": {
   "B": {
@@ -424,7 +423,7 @@
     {
      "name": "hook",
      "hash": "t=hook&a=Do%20re%20mi%20fa%20sol%20la%20si%E2%80%A6&g=GRATIS&b=a%20ritmo%20di%20rap%21",
-     "dur": 3.4,
+     "dur": 3.0,
      "alpha": true
     }
    ]
@@ -440,5 +439,6 @@
    "LIM"
   ],
   "alt": "Il gioco Rap con le note! di musicascuole.it: carte colorate con i nomi delle note che si accendono a tempo, tre schermi uno sopra l'altro con i nomi, i nomi e il pentagramma e solo il pentagramma, il gioco su una LIM in un'aula disegnata con i banchi e su un PC."
- }
+ },
+ "nota_audio": "la base del gioco (estratta dalla pagina in libreria/basi/) suona per tutto il reel; i tagli durano un numero esatto di battiti e le riprese sono agganciate al battito"
 }

@@ -189,6 +189,15 @@ i nomi (ascendenti), nomi + pentagramma (discendenti), solo pentagramma (salita 
 Novità: il tipo **`pila`** (tre schermi orizzontali uno sopra l'altro, ritagliati sulla fila di carte, con un'etichetta
 per riga) per far vedere a colpo d'occhio la progressione e le sequenze; il suono è quello della prima riga.
 Le carte si accendono circa 11 s dopo il via (banner e conto alla rovescia): i tagli partono da `via+11`.
+**Musica**: la base del gioco suona per tutto il reel (scelta di Cristiano). È dentro la pagina (`BEAT_MP3`, codificata):
+estratta in `libreria/basi/rap-con-le-note.mp3` (54 s, 80 battiti al minuto, un battito ogni 0,75 s).
+
+## Tagli a tempo di musica
+
+Con `"audio": {"file": "...", "battito": 0.75}` ogni pezzo deve durare un numero esatto di battiti **e di fotogrammi**
+(a 30 fotogrammi al secondo: multipli di 1,5 s, quindi 1,5 / 3 / 4,5 s) e `reel.py` sposta ogni ripresa che ha registrato
+la base (`"audio": true`) di meno di un battito, così nel gioco le carte si accendono sul battito della musica del reel.
+Serve che la musica del reel sia la stessa base del gioco.
 
 ### `_modello` (circa 13 s, con audio)
 

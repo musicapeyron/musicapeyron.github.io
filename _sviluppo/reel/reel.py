@@ -128,6 +128,38 @@ def con_suoni(schermate):
     return fuori
 
 
+def inizio_suono(clip):
+    """Istante (s) in cui nella clip registrata parte il suono del gioco (la base)."""
+    import re
+    r = subprocess.run(["ffmpeg", "-i", str(L / "clip" / f"{clip}.wav"), "-af", "silencedetect=n=-45dB:d=0.3",
+                        "-f", "null", "-"], capture_output=True, text=True)
+    m = re.search(r"silence_end: ([\d.]+)", r.stderr)
+    return float(m[1]) if m else 0.0
+
+
+def sincronizza(d):
+    """Tagli a tempo di musica ("audio": {"battito": 0.75, "da": 0}): ogni ripresa che ha registrato la base del gioco
+    viene spostata di meno di un battito, così le sue carte si accendono sul battito della base che suona sotto il reel.
+    Serve che la base del reel sia la stessa del gioco (es. libreria/basi/rap-con-le-note.mp3)."""
+    a = d.get("audio") or {}
+    B = a.get("battito")
+    if not B: return
+    durate = {x["name"]: round(x["dur"] * 30) / 30 for x in d["schermate"]}
+    T = 0.0
+    for p in d["scaletta"]:
+        if p["tipo"] == "schermata":
+            T += durate[p["grafica"]]; continue
+        righe = p["righe"] if p["tipo"] == "pila" else [p]
+        lun = None
+        for r in righe:
+            da, fine, vel = monta.tempo(r["da"], r["clip"]), monta.tempo(r["a"], r["clip"]), r.get("vel", 1.0)
+            if lun is None: lun = round((fine - da) / vel * 30) / 30
+            if (L / "clip" / f"{r['clip']}.wav").exists() and vel == 1.0:
+                k = ((T + a.get("da", 0)) - (da - inizio_suono(r["clip"]))) % B
+                r["da"], r["a"] = round(da + k, 3), round(fine + k, 3)
+        T += lun
+
+
 def copertina(d, cart):
     """Aggiunge alle schermate quella della copertina, con un fotogramma della clip scelta."""
     c = d.get("copertina")
@@ -275,6 +307,7 @@ def main():
     os.chdir(SITO)
 
     clip(d, rifai)
+    sincronizza(d)
     libreria(sorted({(n, dsp) for p in d["scaletta"] for dsp, n in p.get("dispositivi", {}).items()}))
     print("Schermate…")
     cop = copertina(d, cart)
