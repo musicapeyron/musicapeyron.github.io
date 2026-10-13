@@ -10,3 +10,4 @@ Una riga per reel pubblicato. I numeri si prendono dagli Insights del reel **dop
 | | `leggi-la-nota` | Leggi le note GRATIS per la tua classe | 29 s | base brano 21 | | | | | | | variante B pronta ("Che nota è?") |
 | | `acuto-o-grave` | Acuto o grave? GRATIS – Ascolta e indovina | 26 s | suono del gioco + base "Su in alto" | | | | | | | variante B pronta |
 | | `primaria` | Giochi musicali GRATIS per la PRIMARIA | 33 s | suoni dei giochi + base brano 21 | | | | | | | 6 giochi; variante B pronta |
+| | `rappa-le-note` | Giochi musicali GRATIS – niente registrazione (Rap con le note!) | 32 s | base rap del gioco + «Su in alto» | | | | | | | tre schermi impilati; variante B pronta |

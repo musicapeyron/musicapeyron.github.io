@@ -167,6 +167,7 @@ def audio(d, segmenti, muto, finale):
     ins, filtri, uscite, finestre = [], [], [], []
     if a.get("gioco"):
         for i, p in enumerate(d["scaletta"]):
+            if p.get("tipo") == "pila": p = {**p["righe"][0], "vol": p.get("vol", 1)}   # suono della prima riga
             wav = L / "clip" / f"{p.get('clip')}.wav"
             if not p.get("clip") or p.get("muto") or not wav.exists(): continue
             t1, t2 = monta.tempo(p["da"], p["clip"]), monta.tempo(p["a"], p["clip"])

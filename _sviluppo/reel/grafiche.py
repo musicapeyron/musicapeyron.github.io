@@ -26,6 +26,8 @@ Tipi (parametro t):
              fascia=1 (altezza fh) mette una fascia scura dietro, se sotto c'è già del testo
   bg         sfondo del sito con cornice: k=phone (arrotondata) o k=lim, rettangolo x,y,w,h
   end        chiusura: musicascuole.it, note colorate, frase, info@musicascuole.it
+  pila       più schermi orizzontali uno sopra l'altro: cornici alle altezze y=430,760,1090 (alte h, larghe w da x),
+             etichette l="1 · I nomi|2 · …" nei colori c="do|mi|sol" (le clip le mette monta.py, tipo "pila")
   copertina  titolo l="riga1|riga2", sottotitolo s, colore c, immagine img (fotogramma) in un telefono
              (r=0.6 ne mostra solo il 60% in alto, più grande);
              tutto dentro il riquadro centrale 1080x1440 che si vede nella griglia del profilo

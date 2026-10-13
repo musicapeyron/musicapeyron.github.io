@@ -1,0 +1,444 @@
+{
+ "titolo": "Rap con le note! L'alfabeto musicale a ritmo, per la primaria (ottobre 2026)",
+ "nota": "nel reel il gioco si chiama «Rap con le note!» (scelta di Cristiano)",
+ "clip": {
+  "rap_nomi_su": {
+   "pagina": "rap-con-le-note.html",
+   "dispositivo": "telefono-orizzontale",
+   "audio": true,
+   "prima": [],
+   "passi": [
+    {
+     "attendi": 400
+    },
+    {
+     "centra": ".level-card[data-level=\"0\"]"
+    },
+    {
+     "attendi": 300
+    },
+    {
+     "tocca": ".level-card[data-level=\"0\"]"
+    },
+    {
+     "segna": "via"
+    },
+    {
+     "attendi": 24000
+    }
+   ],
+   "nota": "solo i nomi, sequenze ascendenti"
+  },
+  "rap_misto_giu": {
+   "pagina": "rap-con-le-note.html",
+   "dispositivo": "telefono-orizzontale",
+   "audio": true,
+   "prima": [
+    {
+     "clic": "#staffToggle"
+    },
+    {
+     "attendi": 300
+    }
+   ],
+   "passi": [
+    {
+     "attendi": 400
+    },
+    {
+     "centra": ".level-card[data-level=\"1\"]"
+    },
+    {
+     "attendi": 300
+    },
+    {
+     "tocca": ".level-card[data-level=\"1\"]"
+    },
+    {
+     "segna": "via"
+    },
+    {
+     "attendi": 24000
+    }
+   ],
+   "nota": "nomi + pentagramma, sequenze discendenti"
+  },
+  "rap_penta_su_giu": {
+   "pagina": "rap-con-le-note.html",
+   "dispositivo": "telefono-orizzontale",
+   "audio": true,
+   "prima": [
+    {
+     "clic": "#staffToggle"
+    },
+    {
+     "attendi": 300
+    },
+    {
+     "clic": "input[name=staffnames][value=\"0\"]"
+    },
+    {
+     "attendi": 300
+    }
+   ],
+   "passi": [
+    {
+     "attendi": 400
+    },
+    {
+     "centra": ".level-card[data-level=\"2\"]"
+    },
+    {
+     "attendi": 300
+    },
+    {
+     "tocca": ".level-card[data-level=\"2\"]"
+    },
+    {
+     "segna": "via"
+    },
+    {
+     "attendi": 24000
+    }
+   ],
+   "nota": "solo pentagramma, salita e discesa"
+  },
+  "rap_lim": {
+   "pagina": "rap-con-le-note.html",
+   "dispositivo": "lim",
+   "audio": true,
+   "prima": [
+    {
+     "clic": "#staffToggle"
+    },
+    {
+     "attendi": 300
+    }
+   ],
+   "passi": [
+    {
+     "attendi": 400
+    },
+    {
+     "centra": ".level-card[data-level=\"0\"]"
+    },
+    {
+     "attendi": 300
+    },
+    {
+     "tocca": ".level-card[data-level=\"0\"]"
+    },
+    {
+     "segna": "via"
+    },
+    {
+     "attendi": 24000
+    }
+   ],
+   "schermo": [
+    1280,
+    720
+   ],
+   "densita": 1.5,
+   "nota": "LIM: nomi + pentagramma, ascendenti"
+  },
+  "rap_pc": {
+   "pagina": "rap-con-le-note.html",
+   "dispositivo": "lim",
+   "audio": true,
+   "prima": [],
+   "passi": [
+    {
+     "attendi": 400
+    },
+    {
+     "centra": ".level-card[data-level=\"2\"]"
+    },
+    {
+     "attendi": 300
+    },
+    {
+     "tocca": ".level-card[data-level=\"2\"]"
+    },
+    {
+     "segna": "via"
+    },
+    {
+     "attendi": 24000
+    }
+   ],
+   "schermo": [
+    1366,
+    768
+   ],
+   "densita": 1.4055,
+   "nota": "PC 1366x768: solo nomi, salita e discesa"
+  }
+ },
+ "ricerca": "Applicata GUIDA-REEL.md: apertura col gioco già in movimento e GRATIS + niente registrazione; un'idea sola (Rap con le note!) mostrata nei suoi aspetti: tre schermi uno sopra l'altro per far vedere a colpo d'occhio la progressione (nomi, nomi + pentagramma, solo pentagramma) e le sequenze (su, giù, su e giù); suono vero del gioco (la base rap); LIM in aula, PC e telefono; invito a mandarlo a chi insegna con te; variante B.",
+ "schermate": [
+  {
+   "name": "bg_tel",
+   "hash": "t=bg&k=phone&x=40&y=700&w=1000&h=563",
+   "dur": 0.04
+  },
+  {
+   "name": "hook",
+   "hash": "t=hook&a=Giochi%20musicali&g=GRATIS&b=niente%20registrazione",
+   "dur": 3.4,
+   "alpha": true
+  },
+  {
+   "name": "card1",
+   "hash": "t=card&c=do&l=Si%20apre|e%20si%20gioca.&s=Per%20la%20primaria%3A%20LIM%2C%20PC%20e%20telefono.&tel=1",
+   "dur": 2.4
+  },
+  {
+   "name": "lab_rap",
+   "hash": "t=label&c=sol&l=Rap%20con%20le%20note%21&s=L%27alfabeto%20musicale%20a%20ritmo&sy=1330",
+   "dur": 3.5,
+   "alpha": true
+  },
+  {
+   "name": "pila1",
+   "hash": "t=pila&y=430%2C760%2C1090&h=250&l=1%20%C2%B7%20I%20nomi|2%20%C2%B7%20Nomi%20e%20pentagramma|3%20%C2%B7%20Solo%20pentagramma&c=do|mi|sol",
+   "dur": 0.04
+  },
+  {
+   "name": "lab_pila1",
+   "hash": "t=label&c=re&l=Passo%20dopo%20passo",
+   "dur": 4.5,
+   "alpha": true
+  },
+  {
+   "name": "card2",
+   "hash": "t=card&c=fa&l=Su%2C%20gi%C3%B9|e%20su%20e%20gi%C3%B9%21&s=Sequenze%20ascendenti%2C%20discendenti%20e%20tutte%20e%20due.&tel=1",
+   "dur": 2.2
+  },
+  {
+   "name": "pila2",
+   "hash": "t=pila&y=430%2C760%2C1090&h=250&l=%E2%86%91%20Salgono|%E2%86%93%20Scendono|%E2%86%95%20Salgono%20e%20scendono&c=re|la|si",
+   "dur": 0.04
+  },
+  {
+   "name": "lab_pila2",
+   "hash": "t=label&c=fa&l=L%27alfabeto%20musicale%20in%20sequenza",
+   "dur": 4.0,
+   "alpha": true
+  },
+  {
+   "name": "classe",
+   "hash": "t=classe&x=130&y=480&w=820&h=461",
+   "dur": 0.04
+  },
+  {
+   "name": "lab_lim",
+   "hash": "t=label&c=si&l=Sulla%20LIM&s=Tutta%20la%20classe%20a%20ritmo&sy=392",
+   "dur": 3.5,
+   "alpha": true
+  },
+  {
+   "name": "bg_pc",
+   "hash": "t=bg&k=lim&x=60&y=690&w=960&h=540",
+   "dur": 0.04
+  },
+  {
+   "name": "lab_pc",
+   "hash": "t=label&c=do&l=Anche%20sul%20PC&s=E%20sul%20telefono%2C%20in%20orizzontale&sy=1330",
+   "dur": 3.0,
+   "alpha": true
+  },
+  {
+   "name": "card3",
+   "hash": "t=card&c=la&l=Mandalo|a%20chi%20insegna|con%20te.&s=Un%20progetto%20collaborativo%3A%20scrivici%20le%20tue%20idee%21&tel=1",
+   "dur": 2.6
+  },
+  {
+   "name": "end",
+   "hash": "t=end",
+   "dur": 3.2
+  }
+ ],
+ "scaletta": [
+  {
+   "tipo": "incorniciata",
+   "clip": "rap_nomi_su",
+   "da": "via+15",
+   "a": "via+18.4",
+   "grafica": "hook",
+   "sfondo": "bg_tel",
+   "x": 40,
+   "y": 700,
+   "w": 1000,
+   "h": 563,
+   "angoli": 30
+  },
+  {
+   "tipo": "schermata",
+   "grafica": "card1",
+   "dispositivi": {
+    "lim": "memory",
+    "tablet": "brani",
+    "telefono": "index"
+   }
+  },
+  {
+   "tipo": "incorniciata",
+   "clip": "rap_nomi_su",
+   "da": "via+11",
+   "a": "via+14.5",
+   "grafica": "lab_rap",
+   "sfondo": "bg_tel",
+   "x": 40,
+   "y": 700,
+   "w": 1000,
+   "h": 563,
+   "angoli": 30
+  },
+  {
+   "tipo": "pila",
+   "sfondo": "pila1",
+   "grafica": "lab_pila1",
+   "y": [
+    430,
+    760,
+    1090
+   ],
+   "h": 250,
+   "righe": [
+    {
+     "clip": "rap_nomi_su",
+     "da": "via+11.5",
+     "a": "via+16",
+     "filtro": ",crop=1920:480:0:300"
+    },
+    {
+     "clip": "rap_misto_giu",
+     "da": "via+11.5",
+     "a": "via+16",
+     "filtro": ",crop=1920:480:0:300"
+    },
+    {
+     "clip": "rap_penta_su_giu",
+     "da": "via+11.5",
+     "a": "via+16",
+     "filtro": ",crop=1920:480:0:300"
+    }
+   ]
+  },
+  {
+   "tipo": "schermata",
+   "grafica": "card2",
+   "dispositivi": {
+    "lim": "solfeggio",
+    "tablet": "scale",
+    "telefono": "storia"
+   }
+  },
+  {
+   "tipo": "pila",
+   "sfondo": "pila2",
+   "grafica": "lab_pila2",
+   "y": [
+    430,
+    760,
+    1090
+   ],
+   "h": 250,
+   "righe": [
+    {
+     "clip": "rap_nomi_su",
+     "da": "via+16.5",
+     "a": "via+20.5",
+     "filtro": ",crop=1920:480:0:300"
+    },
+    {
+     "clip": "rap_misto_giu",
+     "da": "via+16.5",
+     "a": "via+20.5",
+     "filtro": ",crop=1920:480:0:300"
+    },
+    {
+     "clip": "rap_penta_su_giu",
+     "da": "via+16.5",
+     "a": "via+20.5",
+     "filtro": ",crop=1920:480:0:300"
+    }
+   ]
+  },
+  {
+   "tipo": "incorniciata",
+   "clip": "rap_lim",
+   "da": "via+11",
+   "a": "via+14.5",
+   "sfondo": "classe",
+   "grafica": "lab_lim",
+   "x": 130,
+   "y": 480,
+   "w": 820,
+   "h": 461
+  },
+  {
+   "tipo": "incorniciata",
+   "clip": "rap_pc",
+   "da": "via+12",
+   "a": "via+15",
+   "sfondo": "bg_pc",
+   "grafica": "lab_pc",
+   "x": 60,
+   "y": 690,
+   "w": 960,
+   "h": 540
+  },
+  {
+   "tipo": "schermata",
+   "grafica": "card3",
+   "dispositivi": {
+    "lim": "barocco",
+    "tablet": "bona",
+    "telefono": "memory"
+   }
+  },
+  {
+   "tipo": "schermata",
+   "grafica": "end"
+  }
+ ],
+ "copertina": {
+  "titolo": "Rap con|le note!",
+  "sottotitolo": "L'alfabeto musicale a ritmo, gratis",
+  "colore": "sol"
+ },
+ "audio": {
+  "file": "media/brani-propedeutici/brano10-completo.mp3",
+  "da": 0,
+  "volume": 0.8,
+  "gioco": true,
+  "sotto": 0,
+  "credito": "Musica: la base rap del gioco e la base di «Su in alto» (Brani propedeutici) – musicascuole.it"
+ },
+ "varianti": {
+  "B": {
+   "nota": "apertura diversa, da provare come Trial Reel (servono 1000 follower)",
+   "schermate": [
+    {
+     "name": "hook",
+     "hash": "t=hook&a=Do%20re%20mi%20fa%20sol%20la%20si%E2%80%A6&g=GRATIS&b=a%20ritmo%20di%20rap%21",
+     "dur": 3.4,
+     "alpha": true
+    }
+   ]
+  }
+ },
+ "didascalia": {
+  "testo": "Maestre, l'alfabeto musicale si impara a ritmo di rap! 🎤 Rap con le note!, gratis per la scuola primaria.\nLe carte si accendono a tempo e la classe recita le note: do re mi fa sol la si do.\nPasso dopo passo: prima solo i nomi, poi nomi e pentagramma, poi solo il pentagramma.\nSequenze che salgono, che scendono… e tutte e due! Una nota per battito, poi due, poi quattro.\nSulla LIM, sul PC e sul telefono. Niente registrazione, niente login, nessun dato raccolto: si apre e si gioca.\n\n📩 Mandalo alle colleghe che insegnano musica!",
+  "hashtag": [
+   "maestre",
+   "scuolaprimaria",
+   "maestreitaliane",
+   "educazionemusicale",
+   "LIM"
+  ],
+  "alt": "Il gioco Rap con le note! di musicascuole.it: carte colorate con i nomi delle note che si accendono a tempo, tre schermi uno sopra l'altro con i nomi, i nomi e il pentagramma e solo il pentagramma, il gioco su una LIM in un'aula disegnata con i banchi e su un PC."
+ }
+}

@@ -132,6 +132,25 @@ def schermata_dispositivi(out, nome, dispositivi, inizio=0.8, ritardo=0.12):
         f"-filter_complex \"{';'.join(f)}\" -map [o] -t {dur:.3f} {ENC} {SEG}/{out}.mp4")
 
 
+def pila(out, righe, sfondo, etichetta, x, ys, w, h, angoli=22):
+    """Più clip orizzontali una sopra l'altra (per confrontare modalità diverse dello stesso gioco).
+    righe: [{"clip", "da", "a", "vel", "filtro"}]; tutte durano quanto la prima."""
+    a0, b0 = tempo(righe[0]["da"], righe[0]["clip"]), tempo(righe[0]["a"], righe[0]["clip"])
+    dur = (b0 - a0) / righe[0].get("vel", 1.0)
+    m = Image.new("L", (w, h), 0)
+    ImageDraw.Draw(m).rounded_rectangle([0, 0, w - 1, h - 1], radius=angoli, fill=255)
+    mp = L / f"maschera_{w}x{h}_{angoli}.png"; m.save(mp)
+    ins = [f"-loop 1 -i {GR}/{sfondo}/0000.png", seq(etichetta), f"-loop 1 -i {mp}"]
+    f = ["[2:v]format=gray,split=" + str(len(righe)) + "".join(f"[mk{i}]" for i in range(len(righe))), "[0:v]format=rgba[b0]"]
+    for i, r in enumerate(righe):
+        a = tempo(r["da"], r["clip"]); vel = r.get("vel", 1.0)
+        ins.append(f"-i {CLIP}/{r['clip']}.mp4")
+        f += [f"[{3+i}:v]{taglio(a, a + dur * vel, vel)}{r.get('filtro', '')},scale={w}:{h},setsar=1,format=rgba[c{i}]",
+              f"[c{i}][mk{i}]alphamerge[m{i}]", f"[b{i}][m{i}]overlay={x}:{ys[i]}[b{i+1}]"]
+    f.append(f"[b{len(righe)}][1:v]overlay=0:0:eof_action=pass,format=yuv420p[o]")
+    run(f"ffmpeg -y -loglevel error {' '.join(ins)} -filter_complex \"{';'.join(f)}\" -map [o] -t {dur:.3f} {ENC} {SEG}/{out}.mp4")
+
+
 def incorniciata(out, clip, a, b, sfondo, etichetta, x, y, w, h, angoli=0, vel=1.0, filtro=""):
     """Clip orizzontale (telefono girato o LIM) dentro una cornice sullo sfondo del sito.
     `filtro` permette ritagli e panoramiche, es. ",crop=1200:700:'min(720,225*t)':200"."""
@@ -169,12 +188,16 @@ def pezzo(n, p):
       intera        {"clip", "da", "a", "grafica": etichetta, "vel": 1.3}  clip verticale a schermo intero
       incorniciata  {"clip", "da", "a", "sfondo": "bg_lim", "grafica", "x", "y", "w", "h", "angoli", "vel", "filtro"}
                     (per la LIM in un'aula: sfondo disegnato con t=classe, stessi x, y, w, h)
+      pila          {"righe": [{"clip", "da", "a", "vel", "filtro"}, ...], "sfondo": grafica t=pila, "grafica", "y": [...], "h"}
+                    più clip orizzontali una sopra l'altra; il suono (se c'è) è quello della prima riga
     "vel" accelera (1.3 = 30% più veloce); "filtro" sono filtri ffmpeg in più (ritagli, panoramiche)."""
     out = f"{n:02d}_{p['tipo']}"
     if p["tipo"] == "schermata":
         if p.get("dispositivi"):
             return schermata_dispositivi(out, p["grafica"], p["dispositivi"], p.get("inizio", 0.8))
         return schermata(out, p["grafica"])
+    if p["tipo"] == "pila":
+        return pila(out, p["righe"], p["sfondo"], p["grafica"], p.get("x", 40), p["y"], p.get("w", 1000), p["h"])
     a, b = tempo(p["da"], p["clip"]), tempo(p["a"], p["clip"])
     if p["tipo"] == "apertura":
         apertura(out, p["clip"], a, b, p["grafica"], p.get("scosta", 200), p.get("taglia", 0))

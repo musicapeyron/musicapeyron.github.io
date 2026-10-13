@@ -182,6 +182,14 @@ Doppio è registrato nella difficoltà più semplice, che nel reel non si nomina
 chiuso nella pagina: Scarta usa un aggancio (`AGGANCI` in `registra.py`, solo durante la registrazione) e si gioca
 trascinando le carte (`data-reel-su`); Doppio si legge dallo schermo.
 
+### `rappa-le-note` (ottobre 2026, 32 s, con la base rap del gioco e variante B)
+
+Nel reel il gioco si chiama **«Rap con le note!»** (scelta di Cristiano). Cinque riprese: telefono in orizzontale con solo
+i nomi (ascendenti), nomi + pentagramma (discendenti), solo pentagramma (salita e discesa); LIM in aula; PC 1366x768.
+Novità: il tipo **`pila`** (tre schermi orizzontali uno sopra l'altro, ritagliati sulla fila di carte, con un'etichetta
+per riga) per far vedere a colpo d'occhio la progressione e le sequenze; il suono è quello della prima riga.
+Le carte si accendono circa 11 s dopo il via (banner e conto alla rovescia): i tagli partono da `via+11`.
+
 ### `_modello` (circa 13 s, con audio)
 
 Leggi la nota con la base di "Su in alto" (Brani propedeutici): è il punto di partenza per i reel nuovi.

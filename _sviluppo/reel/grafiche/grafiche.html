@@ -172,6 +172,14 @@ if(t==='classe'){
    ${file.map(([b,s,ps])=>ps.map(px=>banco(px,b,s)).join('')).join('')}
   </svg>`;
 }
+if(t==='pila'){ // più schermi orizzontali uno sopra l'altro: cornici e etichette (monta.py ci mette le clip)
+  const ys=P.get('y').split(',').map(Number), h=+P.get('h'), x=+(P.get('x')||40), w=+(P.get('w')||1000);
+  const ls=(P.get('l')||'').split('|'), cs=(P.get('c')||'do|mi|sol').split('|');
+  R.innerHTML=`<div class="navy"></div>`+ys.map((y,i)=>
+    `<div class="frame" style="left:${x}px;top:${y}px;width:${w}px;height:${h}px;background:#000;border-radius:22px"></div>`+
+    (ls[i]?`<div class="label" style="position:absolute;left:${x+10}px;top:${y-74}px;font-size:38px;padding:10px 28px;z-index:2"><i style="background:${C[cs[i]]||cs[i]}"></i>${ls[i]}</div>`:'')
+  ).join('');
+}
 if(t==='copertina'){
   const c=P.get('c')||'mi', notes=['do','re','mi','fa','sol','la','si'], img=P.get('img');
   R.innerHTML=`<div class="navy"></div><div class="cop">

@@ -232,7 +232,7 @@ async def lim(p, pagina, w=1920, h=1080, dsf=1, audio=False, aggiunte=None):
     await inietta(ctx, pagina, aggiunte)
     pg = await ctx.new_page(); await pg.goto(U + pagina); await pg.wait_for_timeout(1200)
     await pg.evaluate(TAP_JS)
-    return b, pg, (int(w * dsf), int(h * dsf))
+    return b, pg, (2 * round(w * dsf / 2), 2 * round(h * dsf / 2))   # misure pari (le vuole ffmpeg)
 
 
 # porta i pulsanti di risposta al 74% dello schermo: sotto resta la zona
