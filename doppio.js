@@ -1,5 +1,5 @@
 /* =====================================================================
-   UNO IN COMUNE — motore del gioco
+   DOPPIO — motore del gioco
    Due carte qualsiasi del mazzo hanno sempre ESATTAMENTE un simbolo in
    comune. Non è un caso fortunato: il mazzo è un "piano proiettivo
    finito" di ordine n (n primo), che ha n²+n+1 carte, n+1 simboli per
@@ -419,7 +419,7 @@
     return { posti: posti, misura: MISURA[quanti] || MISURA[6] };
   }
 
-  global.UnoInComune = {
+  global.Doppio = {
     SOLFEGGIO: SOLFEGGIO,
     quanteNote: (opz) => elencoNote((opz||{}).chiavi, (opz||{}).tagli).length,
     costruisciMazzo: costruisciMazzo,

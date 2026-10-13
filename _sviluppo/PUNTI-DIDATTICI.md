@@ -235,10 +235,10 @@ Scarta la nota — carte da stampare (`carte-scarta-la-nota.html`). Ottobre 2026
 
 ---
 
-## Uno in comune (simboli musicali)
+## Doppio (simboli musicali)
 
-**Dove:** Giochi → Uno in comune (`uno-in-comune.html`). Ottobre 2026.
-Motore del mazzo e dei simboli: `uno-in-comune.js`.
+**Dove:** Giochi → Doppio (`doppio.html`). Ottobre 2026.
+Motore del mazzo e dei simboli: `doppio.js`.
 
 ### Concetti
 - **Riconoscimento rapido dei segni musicali**: chiavi (violino, basso, do), figure
