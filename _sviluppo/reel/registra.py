@@ -40,6 +40,15 @@ TAP_JS = """
  document.documentElement.appendChild(st);
  window.__tap = (x,y) => { const d=document.createElement('div'); d.className='__tap'; d.style.left=x+'px'; d.style.top=y+'px';
    document.body.appendChild(d); setTimeout(()=>d.remove(),700); };
+ // dito che resta appoggiato durante un trascinamento
+ const st2 = document.createElement('style');
+ st2.textContent = `.__dito{position:fixed;width:54px;height:54px;margin:-27px 0 0 -27px;border-radius:50%;pointer-events:none;
+ z-index:2147483647;background:rgba(255,255,255,.5);border:3px solid #fff;box-shadow:0 4px 14px rgba(0,0,0,.35)}`;
+ document.documentElement.appendChild(st2);
+ window.__dito = (x,y,acceso) => { let d=document.querySelector('.__dito');
+   if (!acceso) { if (d) d.remove(); return; }
+   if (!d) { d=document.createElement('div'); d.className='__dito'; document.body.appendChild(d); }
+   d.style.left=x+'px'; d.style.top=y+'px'; };
 })();
 """
 PIXEL_UA = ("Mozilla/5.0 (Linux; Android 14; Pixel 7) AppleWebKit/537.36 "
@@ -130,6 +139,18 @@ AUDIO_JS = """
     } catch (e) {}
     return r;
   };
+  // i suoni dei file (new Audio(url).play()) passano da un AudioContext apposta, così si registrano anche loro
+  const play = HTMLMediaElement.prototype.play;
+  HTMLMediaElement.prototype.play = function (...a) {
+    try {
+      if (!this.__reelSrc) {
+        const ctx = window.__reelMediaCtx || (window.__reelMediaCtx = new AudioContext());
+        this.__reelSrc = ctx.createMediaElementSource(this);
+        this.__reelSrc.connect(ctx.destination);
+      }
+    } catch (e) {}
+    return play.apply(this, a);
+  };
 })();
 """
 
@@ -161,12 +182,27 @@ def scrivi_audio(r, tracce):
     print(f"  {r.dir.name}: audio del gioco -> {r.dir.name}.wav")
 
 
-async def telefono(p, pagina, orizzontale=False, audio=False):
+async def inietta(ctx, pagina, aggiunte):
+    """Solo per la registrazione: inserisce del codice nella pagina mentre il browser la carica
+    (il file del sito non cambia). aggiunte = [[testo già nella pagina, codice da mettere subito prima], ...].
+    Serve quando lo stato del gioco è chiuso dentro la pagina e il reel deve sapere qual è la mossa giusta."""
+    if not aggiunte: return
+    async def cambia(route):
+        r = await route.fetch(); testo = await r.text()
+        for dove, codice in aggiunte:
+            if dove not in testo: raise SystemExit(f"Aggancio non trovato in {pagina}: {dove!r} (il gioco è cambiato?)")
+            testo = testo.replace(dove, codice + dove, 1)
+        await route.fulfill(response=r, body=testo)
+    await ctx.route(U + pagina, cambia)
+
+
+async def telefono(p, pagina, orizzontale=False, audio=False, aggiunte=None):
     b = await p.chromium.launch(args=["--autoplay-policy=no-user-gesture-required"])
     vp = {"width": 732, "height": 412} if orizzontale else {"width": 412, "height": 732}
     ctx = await b.new_context(viewport=vp, screen=vp, device_scale_factor=2.625,
                               is_mobile=True, has_touch=True, user_agent=PIXEL_UA)
     if audio: await ctx.add_init_script(AUDIO_JS)
+    await inietta(ctx, pagina, aggiunte)
     pg = await ctx.new_page(); pg._touch = True
     await pg.goto(U + pagina); await pg.wait_for_timeout(1500); await pg.evaluate(TAP_JS)
     return b, pg, ((1920, 1080) if orizzontale else (1080, 1920))
@@ -176,22 +212,24 @@ TABLET_UA = ("Mozilla/5.0 (Linux; Android 14; Pixel Tablet) AppleWebKit/537.36 "
              "(KHTML, like Gecko) Chrome/141.0.0.0 Safari/537.36")
 
 
-async def tablet(p, pagina, audio=False):
+async def tablet(p, pagina, audio=False, aggiunte=None):
     """Tablet in verticale (768x1024, tocco, browser da tablet) -> 1080x1440."""
     b = await p.chromium.launch(args=["--autoplay-policy=no-user-gesture-required"])
     vp = {"width": 768, "height": 1024}
     ctx = await b.new_context(viewport=vp, screen=vp, device_scale_factor=1.40625,
                               is_mobile=True, has_touch=True, user_agent=TABLET_UA)
     if audio: await ctx.add_init_script(AUDIO_JS)
+    await inietta(ctx, pagina, aggiunte)
     pg = await ctx.new_page(); pg._touch = True
     await pg.goto(U + pagina); await pg.wait_for_timeout(1500); await pg.evaluate(TAP_JS)
     return b, pg, (1080, 1440)
 
 
-async def lim(p, pagina, w=1920, h=1080, dsf=1, audio=False):
+async def lim(p, pagina, w=1920, h=1080, dsf=1, audio=False, aggiunte=None):
     b = await p.chromium.launch(args=["--autoplay-policy=no-user-gesture-required"])
     ctx = await b.new_context(viewport={"width": w, "height": h}, device_scale_factor=dsf)
     if audio: await ctx.add_init_script(AUDIO_JS)
+    await inietta(ctx, pagina, aggiunte)
     pg = await ctx.new_page(); await pg.goto(U + pagina); await pg.wait_for_timeout(1200)
     await pg.evaluate(TAP_JS)
     return b, pg, (int(w * dsf), int(h * dsf))
@@ -214,6 +252,45 @@ RISPOSTE = {
     "figure-ritmiche": "document.querySelector(`.answers button[data-key=\"${currentQuestion.key}\"]`)",
     "tastierapianoforte": "document.querySelector(`button.answer[data-note=\"${expectedAnswerForKeyId(currentKey, gameMode)}\"]`)",
     "acuto-o-grave": "answering && !finished && !isPlaying && document.querySelector(`.answers button[data-choice=\"${currentQuestion.correctChoice}\"]`)",
+    # Doppio: il simbolo della mia carta che c'è anche nella carta in mezzo; poi, nella domanda, il suo nome
+    "doppio": """(() => { const q = document.querySelector('.quiz:not([data-fatto])');
+        if (q) return [...q.querySelectorAll('.quiz-risposta')].find(b => b.textContent === window.__reelNome) || null;
+        if (document.querySelector('.quiz')) return null;
+        const c = new Set([...document.querySelectorAll('#portaCentro .simbolo')].map(e => e.dataset.simbolo));
+        const b = [...document.querySelectorAll('#porta0 .simbolo')].find(e => c.has(e.dataset.simbolo));
+        if (b) window.__reelNome = b.getAttribute('aria-label');
+        return b || null; })()""",
+    # Memory (note e strumenti): la prima carta coperta, poi la sua compagna ("sbagliata": un'altra carta);
+    # dopo una coppia di strumenti si chiude la scheda con "Continua"
+    "memory": """(() => { const k = document.getElementById('instContinue');
+        if (k && document.getElementById('instOverlay').classList.contains('show')) return k;
+        if (typeof G === 'undefined' || !G || G.busy || G.dealing) return null;
+        const un = G.cards.filter(c => !c.matched && !c.open);
+        if (G.open.length === 1) { const a = G.open[0];
+            const p = un.find(c => c.pairKey === a.pairKey), x = un.find(c => c.pairKey !== a.pairKey);
+            return p ? [p.el, x && x.el] : null; }
+        return un.length ? un[0].el : null; })()""",
+    # Riconosci lo strumento (Tutorial): lo strumento che suona; dopo la foto, "Avanti"
+    "riconosci-lo-strumento": """(() => { const nx = document.getElementById('revealNext');
+        if (advancePending && nx && nx.offsetParent) return nx;
+        if (!answering || finished || questionStage !== 'instrument' || !currentQuestion) return null;
+        return document.querySelector('#answers .answer[data-id="' + currentQuestion.inst.id + '"]:not(.locked)'); })()""",
+    # Scarta la nota (con l'aggancio): una carta-nota giocabile da trascinare sulla pila; poi il suo nome;
+    # se non c'è niente da giocare, "Passa"
+    "scarta-la-nota": """(() => { const R = window.__reel; if (!R) return null; const s = R.st();
+        if (!s || s.gameOver || s.dealing) return null;
+        if (document.getElementById('colorOverlay').classList.contains('show'))
+            return document.querySelector('#colorOverlay [data-color]');
+        if (s.quizPending) { if (!document.getElementById('quiz').classList.contains('show')) return null;
+            const top = s.discard[s.discard.length - 1];
+            return document.querySelector('#quizButtons .note-btn.' + R.solfa(top.noteName)); }
+        if (R.turno() !== 'you' || document.querySelector('#playerHand .card.dragging')) return null;
+        const mano = s.hands.you;
+        const c = mano.find(c => c.type === 'note' && R.canPlay(c)) || mano.find(c => c.color !== 'black' && R.canPlay(c));
+        if (!c) { const p = document.getElementById('passBtn'); return p && !p.disabled ? p : null; }
+        const el = document.querySelector('#playerHand .card[data-id="' + c.id + '"]');
+        if (el) el.setAttribute('data-reel-su', '#discardSlot');
+        return el; })()""",
     "test-ingresso": """(() => { const k = GAME_ORDER[currentGameIndex];
         if (k==='acuto') return acutoAnswering && document.querySelector('.answers .answer.'+acutoQuestion.correctChoice);
         if (k==='tastiera') return tastieraAnswering && document.querySelector('.answers .answer.'+TASTIERA_CLASSES[tastieraCurrentKey]);
@@ -221,16 +298,61 @@ RISPOSTE = {
         return leggiAnswering && document.querySelector('.answers .answer.'+LEGGI_NOTE_CLASSES[leggiCurrentNote.name]); })()""",
 }
 
+# Agganci (solo durante la registrazione, vedi inietta()): per i giochi che tengono lo stato chiuso
+# dentro la pagina. Ogni voce: [testo già nella pagina, codice da inserire subito prima].
+AGGANCI = {
+    "scarta-la-nota": [["function topDiscard(){",
+        "window.__reel = { st: () => state, canPlay: c => canPlay(c), turno: () => currentPlayer(),"
+        " solfa: l => ({c:'do',d:'re',e:'mi',f:'fa',g:'sol',a:'la',b:'si'})[l] };\n  "]],
+}
+
 # segna il pulsante giusto (data-reel="giusta") e un vicino sbagliato (data-reel="sbagliata")
 SEGNA_RISPOSTA = """(espr) => {
   document.querySelectorAll('[data-reel]').forEach(e => e.removeAttribute('data-reel'));
-  let ok = null; try { ok = eval(espr); } catch (e) { return false; }
+  let ok = null, no = null; try { ok = eval(espr); } catch (e) { return false; }
+  if (Array.isArray(ok)) [ok, no] = ok;          // l'espressione può dare [giusta, sbagliata]
   if (!ok || ok.disabled) return false;
   ok.setAttribute('data-reel', 'giusta');
-  const vicini = [...ok.parentElement.children].filter(e => e !== ok && e.tagName === ok.tagName && !e.disabled && e.getClientRects().length);
-  if (vicini.length) vicini[0].setAttribute('data-reel', 'sbagliata');
+  if (!no) {
+    const vicini = [...ok.parentElement.children].filter(e => e !== ok && e.tagName === ok.tagName && !e.disabled && e.getClientRects().length);
+    no = vicini[0];
+  }
+  if (no) no.setAttribute('data-reel', 'sbagliata');
   return true;
 }"""
+# Un pulsante con data-reel-su="<selettore>" (messo dall'espressione) non si tocca: si trascina lì sopra.
+
+
+async def trascina(page, da, a, passi=18, pausa=16):
+    """Trascina col dito (visibile) dal centro di `da` al centro di `a` (locator)."""
+    await page.evaluate(TAP_JS)
+    b1, b2 = await da.bounding_box(), await a.bounding_box()
+    x1, y1 = b1["x"] + b1["width"] / 2, b1["y"] + b1["height"] / 2
+    x2, y2 = b2["x"] + b2["width"] / 2, b2["y"] + b2["height"] / 2
+    await page.mouse.move(x1, y1); await page.evaluate(f"window.__dito({x1},{y1},true)")
+    await page.mouse.down(); await page.wait_for_timeout(120)
+    for k in range(1, passi + 1):
+        t = k / passi; t = t * t * (3 - 2 * t)           # parte e arriva dolcemente
+        x, y = x1 + (x2 - x1) * t, y1 + (y2 - y1) * t
+        await page.mouse.move(x, y); await page.evaluate(f"window.__dito({x},{y},true)")
+        await page.wait_for_timeout(pausa)
+    await page.mouse.up(); await page.evaluate("window.__dito(0,0,false)")
+
+
+async def cursore(page, sel, da, a, durata):
+    """Muove col dito un cursore (input range) dalla frazione `da` alla frazione `a` della sua larghezza."""
+    await page.evaluate(TAP_JS)
+    b = await page.locator(sel).first.bounding_box()
+    y = b["y"] + b["height"] / 2
+    x1, x2 = b["x"] + b["width"] * da, b["x"] + b["width"] * a
+    passi = max(10, int(durata / 40))
+    await page.mouse.move(x1, y); await page.evaluate(f"window.__dito({x1},{y},true)")
+    await page.mouse.down()
+    for k in range(1, passi + 1):
+        t = k / passi; x = x1 + (x2 - x1) * t
+        await page.mouse.move(x, y); await page.evaluate(f"window.__dito({x},{y},true)")
+        await page.wait_for_timeout(durata / passi)
+    await page.mouse.up(); await page.evaluate("window.__dito(0,0,false)")
 
 
 def bersaglio(pg, b):
@@ -249,22 +371,28 @@ async def esegui(pg, r, passi):
       {"scorri_risposte": ".answers"}          porta quel blocco al 74% dello schermo (sopra i comandi di Instagram)
       {"centra": "testo:Barocco"}              porta un elemento al centro dello schermo
       {"js": "currentGameIndex = 3"}           JavaScript nella pagina
+      {"trascina": "#carta", "su": "#pila"}    trascina col dito (visibile) un elemento su un altro
+      {"cursore": "#pitchSlider", "da": 0.1, "a": 0.9, "durata": 2500}   muove col dito un cursore
       {"rispondi": "leggi-la-nota", "volte": 7, "pausa": 1150, "errori": [3], "segna": "nota"}
           risponde da solo (vedi RISPOSTE); "errori": quali risposte sbagliare (0 = la prima);
-          "segna": prefisso per segnare ogni risposta (nota_0, nota_1...)
+          "segna": prefisso per segnare ogni risposta (nota_0, nota_1...); "attesa": secondi massimi d'attesa
+          tra una risposta e l'altra (di serie 10; di più nei giochi coi turni degli avversari)
     """
     for passo in passi:
         if "rispondi" in passo:
             espr = RISPOSTE[passo["rispondi"]]
             for i in range(passo.get("volte", 5)):
-                for _ in range(100):  # aspetta fino a 10 s che si possa rispondere
+                for _ in range(int(passo.get("attesa", 10) * 10)):  # aspetta (di serie fino a 10 s) che si possa rispondere
                     if await pg.evaluate(SEGNA_RISPOSTA, espr): break
                     await pg.wait_for_timeout(100)
                 else:
                     print("  nessuna risposta possibile, mi fermo"); break
                 quale = "sbagliata" if i in passo.get("errori", []) else "giusta"
                 if r and passo.get("segna"): r.segna(f"{passo['segna']}_{i}")
-                await tap(pg, pg.locator(f'[data-reel="{quale}"]'))
+                el = pg.locator(f'[data-reel="{quale}"]').first
+                su = await el.get_attribute("data-reel-su")
+                if su: await trascina(pg, el, pg.locator(su).first)
+                else: await tap(pg, el)
                 await pg.wait_for_timeout(passo.get("pausa", 1200))
         elif "attendi" in passo: await pg.wait_for_timeout(passo["attendi"])
         elif "tocca" in passo: await tap(pg, bersaglio(pg, passo["tocca"]))
@@ -277,6 +405,9 @@ async def esegui(pg, r, passi):
         elif "centra" in passo:
             await bersaglio(pg, passo["centra"]).evaluate("e=>e.scrollIntoView({block:'center',behavior:'smooth'})")
         elif "js" in passo: await pg.evaluate(passo["js"])
+        elif "trascina" in passo: await trascina(pg, bersaglio(pg, passo["trascina"]), bersaglio(pg, passo["su"]))
+        elif "cursore" in passo:
+            await cursore(pg, passo["cursore"], passo.get("da", 0.1), passo.get("a", 0.9), passo.get("durata", 2000))
         else:
             raise SystemExit(f"Passo sconosciuto: {passo}")
 
@@ -285,16 +416,18 @@ async def clip_a_passi(nome, d):
     """d: {"pagina": "leggi-la-nota.html", "dispositivo": "telefono" | "telefono-orizzontale" | "tablet" | "lim",
            "schermo": [1280, 800], "densita": 1.5   (solo per la LIM, facoltativi),
            "prima": [passi prima di registrare], "passi": [passi registrati],
-           "audio": true   (registra anche il suono del gioco -> lavoro/clip/<clip>.wav)}"""
+           "audio": true   (registra anche il suono del gioco -> lavoro/clip/<clip>.wav),
+           "aggancio": true (inserisce nella pagina l'aggancio di AGGANCI, per i giochi col loro stato chiuso dentro)}"""
     async with async_playwright() as p:
         disp, au = d.get("dispositivo", "telefono"), d.get("audio", False)
+        ag = AGGANCI.get(d["pagina"].removesuffix(".html")) if d.get("aggancio") else None
         if disp == "lim":
             w, h = d.get("schermo", [1920, 1080])
-            b, pg, (W, H) = await lim(p, d["pagina"], w, h, d.get("densita", 1), audio=au)
+            b, pg, (W, H) = await lim(p, d["pagina"], w, h, d.get("densita", 1), audio=au, aggiunte=ag)
         elif disp == "tablet":
-            b, pg, (W, H) = await tablet(p, d["pagina"], audio=au)
+            b, pg, (W, H) = await tablet(p, d["pagina"], audio=au, aggiunte=ag)
         else:
-            b, pg, (W, H) = await telefono(p, d["pagina"], orizzontale=(disp == "telefono-orizzontale"), audio=au)
+            b, pg, (W, H) = await telefono(p, d["pagina"], orizzontale=(disp == "telefono-orizzontale"), audio=au, aggiunte=ag)
         await esegui(pg, None, d.get("prima", []))
         await pg.evaluate(TAP_JS)
         r = Rec(pg, nome, W, H); await r.start(); await pg.wait_for_timeout(400)

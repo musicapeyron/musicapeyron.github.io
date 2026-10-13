@@ -174,6 +174,14 @@ Il primo fatto applicando `GUIDA-REEL.md`.
 - La schermata iniziale del gioco non si mostra: sotto "Verifica" c'è scritto "scopri il tuo voto".
 - Variante B: "Quale suono è più acuto? GRATIS – Alza il volume 🔊".
 
+### `primaria` (ottobre 2026, 33 s, con i suoni dei giochi e variante B)
+
+Doppio (in apertura, sotto «Giochi musicali GRATIS per la PRIMARIA»), Memory delle note, Riconosci lo strumento,
+Le qualità del suono, Scarta la nota sulla LIM in aula (solo chiave di violino), Memory degli strumenti.
+Doppio è registrato nella difficoltà più semplice, che nel reel non si nomina. Scarta la nota e Doppio tengono lo stato
+chiuso nella pagina: Scarta usa un aggancio (`AGGANCI` in `registra.py`, solo durante la registrazione) e si gioca
+trascinando le carte (`data-reel-su`); Doppio si legge dallo schermo.
+
 ### `_modello` (circa 13 s, con audio)
 
 Leggi la nota con la base di "Su in alto" (Brani propedeutici): è il punto di partenza per i reel nuovi.

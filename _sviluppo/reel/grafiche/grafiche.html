@@ -133,6 +133,7 @@ if(t==='classe'){
   // mette la clip), i banchi con le sedie vuote (nessuna persona), la cattedra, la finestra.
   // Serve a far capire quanto è grande il gioco sulla LIM. Di serie x=130 y=480 w=820 h=461 (16:9).
   const x=+(P.get('x')||130), y=+(P.get('y')||480), w=+(P.get('w')||820), h=+(P.get('h')||461);
+  const ox=Math.min(1030, x+w+40);   // orologio sul muro a destra della LIM, fuori dalla frase sotto l'etichetta
   // banco biposto con due sedie vuote, visti dal fondo dell'aula (s = scala: più vicino, più grande)
   const sedia=(cx,b,s)=>`<rect x="${cx-50*s}" y="${b-30*s}" width="${100*s}" height="${16*s}" rx="${5*s}" fill="#3a3f5c"/>`+
       `<rect x="${cx-46*s}" y="${b-14*s}" width="${8*s}" height="${62*s}" fill="#2e3250"/><rect x="${cx+38*s}" y="${b-14*s}" width="${8*s}" height="${62*s}" fill="#2e3250"/>`+
@@ -163,9 +164,9 @@ if(t==='classe'){
    <rect x="${x}" y="${y}" width="${w}" height="${h}" fill="#000"/>
    <rect x="${x+w*.18}" y="${y+h+18}" width="${w*.64}" height="18" rx="6" fill="#c9c6d8"/>
    <rect x="${x+w*.3}" y="${y+h+12}" width="40" height="8" rx="3" fill="#E21C48"/><rect x="${x+w*.3+50}" y="${y+h+12}" width="40" height="8" rx="3" fill="#009C95"/>
-   <circle cx="${x+w-30}" cy="${y-92}" r="40" fill="#f4f2fb" stroke="#d6d2ea" stroke-width="6"/>
-   <line x1="${x+w-30}" y1="${y-92}" x2="${x+w-30}" y2="${y-118}" stroke="#2a2440" stroke-width="5" stroke-linecap="round"/>
-   <line x1="${x+w-30}" y1="${y-92}" x2="${x+w-12}" y2="${y-84}" stroke="#2a2440" stroke-width="5" stroke-linecap="round"/>
+   <circle cx="${ox}" cy="${y-92}" r="40" fill="#f4f2fb" stroke="#d6d2ea" stroke-width="6"/>
+   <line x1="${ox}" y1="${y-92}" x2="${ox}" y2="${y-118}" stroke="#2a2440" stroke-width="5" stroke-linecap="round"/>
+   <line x1="${ox}" y1="${y-92}" x2="${ox+18}" y2="${y-84}" stroke="#2a2440" stroke-width="5" stroke-linecap="round"/>
    <rect x="660" y="1048" width="380" height="26" rx="5" fill="#c99e73"/><rect x="672" y="1074" width="356" height="110" fill="#8f6542"/>
    <rect x="760" y="1004" width="120" height="44" rx="4" fill="#2b2b3a"/><rect x="742" y="1044" width="156" height="8" rx="3" fill="#51516a"/>
    ${file.map(([b,s,ps])=>ps.map(px=>banco(px,b,s)).join('')).join('')}

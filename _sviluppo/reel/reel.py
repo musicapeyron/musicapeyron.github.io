@@ -158,7 +158,7 @@ def audio(d, segmenti, muto, finale):
       - la base del sito ("audio": file, da, volume, credito), con dissolvenza alla fine;
       - con "gioco": true, il suono registrato dei giochi (clip con "audio": true) sotto i loro pezzi,
         alla velocità del pezzo; la base lì si abbassa a "sotto" (di serie 0: tace, per sentire bene il gioco).
-    Un pezzo con "muto": true non porta il suono del suo gioco."""
+    Un pezzo con "muto": true non porta il suono del suo gioco; "vol": 3 lo alza (per i giochi che suonano piano)."""
     a = d.get("audio") or {}
     segs = sorted(Path(segmenti).glob("[0-9]*.mp4"))
     durs = [durata(f) for f in segs]
@@ -173,7 +173,8 @@ def audio(d, segmenti, muto, finale):
             k = n_in = len(ins) // 2 + 1; ins += ["-i", str(wav)]
             ms = int(round(inizi[i] * 1000))
             filtri.append(f"[{k}:a]atrim={t1:.3f}:{t2:.3f},asetpts=PTS-STARTPTS{atempo(p.get('vel', 1))},"
-                          f"afade=t=in:d=0.04,afade=t=out:st={max(0, durs[i]-0.08):.3f}:d=0.08,adelay={ms}:all=1[g{i}]")
+                          f"afade=t=in:d=0.04,afade=t=out:st={max(0, durs[i]-0.08):.3f}:d=0.08,volume={p.get('vol', 1)},"
+                          f"adelay={ms}:all=1[g{i}]")
             uscite.append(f"[g{i}]"); finestre.append((inizi[i], inizi[i] + durs[i]))
     if a.get("file"):
         k = len([x for x in ins if x == "-i"]) + 1; ins += ["-ss", str(a.get("da", 0)), "-i", str(SITO / a["file"])]

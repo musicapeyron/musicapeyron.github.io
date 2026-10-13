@@ -35,11 +35,13 @@ def seq(nome): return f"-framerate 30 -i {GR}/{nome}/%04d.png"
 def taglio(a, b, vel=1.0): return f"trim={a}:{b},setpts=(PTS-STARTPTS)/{vel},fps=30"
 
 
-def apertura(out, clip, a, b, overlay, scosta=200):
+def apertura(out, clip, a, b, overlay, scosta=200, taglia=0):
     """Clip da telefono a schermo intero, spostata in basso di `scosta` px
-    per lasciare spazio al testo d'apertura, con la grafica sopra."""
+    per lasciare spazio al testo d'apertura, con la grafica sopra.
+    `taglia`: px tolti in cima alla clip (titolo e statistiche del gioco), così sotto il testo
+    si vede subito la parte viva del gioco."""
     run(f"ffmpeg -y -loglevel error -i {CLIP}/{clip}.mp4 {seq(overlay)} -f lavfi -i color=c=0x0f0d2a:s=1080x1920:r=30 "
-        f"-filter_complex \"[0:v]{taglio(a,b)},scale=1080:1920,setsar=1,crop=1080:{1920-scosta}:0:0[v];"
+        f"-filter_complex \"[0:v]{taglio(a,b)},scale=1080:1920,setsar=1,crop=1080:{min(1920-scosta, 1920-taglia)}:0:{taglia}[v];"
         f"[2:v][v]overlay=0:{scosta}[b];[b][1:v]overlay=0:0:eof_action=pass,format=yuv420p[o]\" "
         f"-map [o] -t {b-a:.3f} {ENC} {SEG}/{out}.mp4")
 
@@ -162,7 +164,8 @@ def pezzo(n, p):
       schermata     {"grafica": "card1"}   con "dispositivi": {"lim": "storia", "tablet": "brani", "telefono": "index"}
                     (nomi di libreria/scorrimenti.json) aggiunge LIM, tablet e telefono che scorrono pagine
                     del sito; la card va disegnata con tel=1 (testi in alto, spazio libero sotto)
-      apertura      {"clip", "da", "a", "grafica": "hook", "scosta": 200}  clip a schermo intero spostata in basso, testo sopra
+      apertura      {"clip", "da", "a", "grafica": "hook", "scosta": 200, "taglia": 0}  clip a schermo intero spostata
+                    in basso di scosta, senza i primi `taglia` px (titolo e statistiche del gioco), testo sopra
       intera        {"clip", "da", "a", "grafica": etichetta, "vel": 1.3}  clip verticale a schermo intero
       incorniciata  {"clip", "da", "a", "sfondo": "bg_lim", "grafica", "x", "y", "w", "h", "angoli", "vel", "filtro"}
                     (per la LIM in un'aula: sfondo disegnato con t=classe, stessi x, y, w, h)
@@ -174,7 +177,7 @@ def pezzo(n, p):
         return schermata(out, p["grafica"])
     a, b = tempo(p["da"], p["clip"]), tempo(p["a"], p["clip"])
     if p["tipo"] == "apertura":
-        apertura(out, p["clip"], a, b, p["grafica"], p.get("scosta", 200))
+        apertura(out, p["clip"], a, b, p["grafica"], p.get("scosta", 200), p.get("taglia", 0))
     elif p["tipo"] == "intera":
         intera(out, p["clip"], a, b, p.get("grafica"), p.get("vel", 1.0))
     elif p["tipo"] == "incorniciata":

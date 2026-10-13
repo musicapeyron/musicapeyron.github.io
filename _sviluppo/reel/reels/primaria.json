@@ -1,0 +1,477 @@
+{
+ "titolo": "Giochi musicali per la primaria: Doppio, Memory, Riconosci lo strumento, Le qualità del suono, Scarta la nota (ottobre 2026)",
+ "clip": {
+  "doppio_tel": {
+   "pagina": "doppio.html",
+   "dispositivo": "telefono",
+   "nota": "difficoltà più semplice (3 simboli per carta), segni musicali, 1 giocatore; nel reel non si nomina la difficoltà",
+   "passi": [
+    {
+     "attendi": 400
+    },
+    {
+     "clic": "#gr-difficolta [data-v=\"2\"]"
+    },
+    {
+     "attendi": 500
+    },
+    {
+     "segna": "menu"
+    },
+    {
+     "tocca": "#btnGioca"
+    },
+    {
+     "segna": "via"
+    },
+    {
+     "attendi": 900
+    },
+    {
+     "rispondi": "doppio",
+     "volte": 10,
+     "pausa": 950,
+     "segna": "r"
+    },
+    {
+     "attendi": 800
+    }
+   ]
+  },
+  "memory_note_tel": {
+   "pagina": "memory-note.html",
+   "dispositivo": "telefono",
+   "audio": true,
+   "passi": [
+    {
+     "attendi": 400
+    },
+    {
+     "tocca": "#startButton"
+    },
+    {
+     "segna": "via"
+    },
+    {
+     "attendi": 1600
+    },
+    {
+     "rispondi": "memory",
+     "volte": 12,
+     "pausa": 700,
+     "errori": [
+      1
+     ],
+     "segna": "r"
+    },
+    {
+     "attendi": 800
+    }
+   ]
+  },
+  "riconosci_tel": {
+   "pagina": "riconosci-lo-strumento.html",
+   "dispositivo": "telefono",
+   "audio": true,
+   "passi": [
+    {
+     "attendi": 400
+    },
+    {
+     "tocca": "#trainingButton"
+    },
+    {
+     "segna": "via"
+    },
+    {
+     "attendi": 2600
+    },
+    {
+     "rispondi": "riconosci-lo-strumento",
+     "volte": 6,
+     "pausa": 2600,
+     "segna": "r"
+    },
+    {
+     "attendi": 600
+    }
+   ]
+  },
+  "suono_tel": {
+   "pagina": "qualita-del-suono.html",
+   "dispositivo": "telefono",
+   "audio": true,
+   "passi": [
+    {
+     "attendi": 400
+    },
+    {
+     "tocca": ".mode-button.m-pitch"
+    },
+    {
+     "segna": "altezza"
+    },
+    {
+     "attendi": 900
+    },
+    {
+     "tocca": "#pitchPlay"
+    },
+    {
+     "attendi": 500
+    },
+    {
+     "segna": "cursore"
+    },
+    {
+     "cursore": "#pitchSlider",
+     "da": 0.08,
+     "a": 0.92,
+     "durata": 3200
+    },
+    {
+     "attendi": 700
+    },
+    {
+     "tocca": "#pitchPlay"
+    },
+    {
+     "attendi": 300
+    },
+    {
+     "tocca": "#homeButton"
+    },
+    {
+     "attendi": 800
+    },
+    {
+     "tocca": ".mode-button.m-timbre"
+    },
+    {
+     "segna": "timbro"
+    },
+    {
+     "attendi": 900
+    },
+    {
+     "tocca": "#timbrePlay"
+    },
+    {
+     "attendi": 900
+    },
+    {
+     "tocca": "[data-wave=\"triangle\"]"
+    },
+    {
+     "attendi": 900
+    },
+    {
+     "tocca": "[data-wave=\"sawtooth\"]"
+    },
+    {
+     "attendi": 900
+    },
+    {
+     "tocca": "[data-wave=\"square\"]"
+    },
+    {
+     "attendi": 900
+    },
+    {
+     "tocca": "#timbrePlay"
+    },
+    {
+     "attendi": 400
+    }
+   ]
+  },
+  "scarta_lim": {
+   "pagina": "scarta-la-nota.html",
+   "dispositivo": "lim",
+   "audio": true,
+   "aggancio": true,
+   "nota": "solo chiave di violino (Opzioni > Solo violino); LIM a 1280x720 così il tavolo riempie lo schermo",
+   "prima": [
+    {
+     "clic": "#optionsBtn"
+    },
+    {
+     "attendi": 500
+    },
+    {
+     "clic": "#clefOptions [data-clef=\"treble\"]"
+    },
+    {
+     "attendi": 300
+    },
+    {
+     "clic": "#optionsBackBtn"
+    },
+    {
+     "attendi": 500
+    }
+   ],
+   "passi": [
+    {
+     "attendi": 400
+    },
+    {
+     "tocca": "#startBtn"
+    },
+    {
+     "segna": "via"
+    },
+    {
+     "attendi": 3500
+    },
+    {
+     "rispondi": "scarta-la-nota",
+     "volte": 8,
+     "pausa": 900,
+     "attesa": 25,
+     "segna": "r"
+    },
+    {
+     "attendi": 800
+    }
+   ],
+   "schermo": [
+    1280,
+    720
+   ],
+   "densita": 1.5
+  },
+  "memory_strum_tel": {
+   "pagina": "memory-strumenti.html",
+   "dispositivo": "telefono",
+   "audio": true,
+   "passi": [
+    {
+     "attendi": 400
+    },
+    {
+     "tocca": "#startButton"
+    },
+    {
+     "segna": "via"
+    },
+    {
+     "attendi": 1600
+    },
+    {
+     "rispondi": "memory",
+     "volte": 8,
+     "pausa": 1100,
+     "segna": "r"
+    },
+    {
+     "attendi": 800
+    }
+   ]
+  }
+ },
+ "ricerca": "Applicata GUIDA-REEL.md: apertura col gioco già in movimento e «Giochi musicali GRATIS per la PRIMARIA», subito dopo «Niente registrazione»; ritmo veloce (un gioco ogni 3 s circa) adatto alla primaria; suono vero dei giochi (strumenti, note, onda), con la base sotto; schermate colorate con LIM, tablet e telefono; una scena sulla LIM nell'aula; invito a mandarlo a chi insegna con te; parole cercate in didascalia, 5 hashtag, testo alternativo; variante B.",
+ "schermate": [
+  {
+   "name": "hook",
+   "hash": "t=hook&a=Giochi%20musicali&g=GRATIS&b=per%20la%20PRIMARIA",
+   "dur": 3.4,
+   "alpha": true
+  },
+  {
+   "name": "card1",
+   "hash": "t=card&c=do&l=Niente|registrazione.|Niente%20login.&s=Si%20apre%20e%20si%20gioca.&tel=1",
+   "dur": 2.4
+  },
+  {
+   "name": "lab_doppio",
+   "hash": "t=label&c=re&l=Doppio%3A%20trova%20il%20simbolo%20uguale&fascia=1",
+   "dur": 2.4,
+   "alpha": true
+  },
+  {
+   "name": "lab_memnote",
+   "hash": "t=label&c=mi&l=Memory%20delle%20note&fascia=1",
+   "dur": 3.3,
+   "alpha": true
+  },
+  {
+   "name": "lab_riconosci",
+   "hash": "t=label&c=fa&l=Chi%20sta%20suonando%3F&fascia=1",
+   "dur": 3.4,
+   "alpha": true
+  },
+  {
+   "name": "card2",
+   "hash": "t=card&c=sol&l=Sulla%20LIM%2C|sul%20PC|e%20sul%20telefono.&s=Nessun%20dato%20raccolto%2C%20niente%20pubblicit%C3%A0.&tel=1",
+   "dur": 2.4
+  },
+  {
+   "name": "lab_suono",
+   "hash": "t=label&c=la&l=Fai%20vedere%20il%20suono%21&fascia=1",
+   "dur": 3.2,
+   "alpha": true
+  },
+  {
+   "name": "classe",
+   "hash": "t=classe&x=130&y=480&w=820&h=461",
+   "dur": 0.04
+  },
+  {
+   "name": "lab_scarta",
+   "hash": "t=label&c=si&l=Scarta%20la%20nota&s=Contro%20Bach%2C%20Mozart%20e%20Beethoven&sy=392",
+   "dur": 3.5,
+   "alpha": true
+  },
+  {
+   "name": "lab_memstrum",
+   "hash": "t=label&c=do&l=Memory%20degli%20strumenti&fascia=1",
+   "dur": 3.1,
+   "alpha": true
+  },
+  {
+   "name": "card3",
+   "hash": "t=card&c=la&l=Mandalo|a%20chi%20insegna|con%20te.&s=Un%20progetto%20collaborativo%3A%20scrivici%20le%20tue%20idee%21&tel=1",
+   "dur": 2.6
+  },
+  {
+   "name": "end",
+   "hash": "t=end",
+   "dur": 3.2
+  }
+ ],
+ "scaletta": [
+  {
+   "tipo": "apertura",
+   "clip": "doppio_tel",
+   "da": "r_0-1.0",
+   "a": "r_1+1.1",
+   "grafica": "hook",
+   "scosta": 560,
+   "taglia": 330
+  },
+  {
+   "tipo": "schermata",
+   "grafica": "card1",
+   "dispositivi": {
+    "lim": "index",
+    "tablet": "brani",
+    "telefono": "memory"
+   }
+  },
+  {
+   "tipo": "intera",
+   "clip": "doppio_tel",
+   "da": "r_2-0.5",
+   "a": "r_3+1.0",
+   "grafica": "lab_doppio",
+   "vel": 1.15
+  },
+  {
+   "tipo": "intera",
+   "clip": "memory_note_tel",
+   "da": "r_2-0.3",
+   "a": "r_5+0.8",
+   "grafica": "lab_memnote",
+   "vel": 1.3
+  },
+  {
+   "tipo": "intera",
+   "clip": "riconosci_tel",
+   "da": "via+0.9",
+   "a": "r_0+1.5",
+   "grafica": "lab_riconosci"
+  },
+  {
+   "tipo": "schermata",
+   "grafica": "card2",
+   "dispositivi": {
+    "lim": "suono",
+    "tablet": "solfeggio",
+    "telefono": "storia"
+   }
+  },
+  {
+   "tipo": "intera",
+   "clip": "suono_tel",
+   "da": "cursore-0.3",
+   "a": "cursore+3.5",
+   "grafica": "lab_suono",
+   "vel": 1.2,
+   "vol": 3.5
+  },
+  {
+   "tipo": "incorniciata",
+   "clip": "scarta_lim",
+   "da": "r_1-0.35",
+   "a": "r_2+1.2",
+   "grafica": "lab_scarta",
+   "vel": 1.1,
+   "sfondo": "classe",
+   "x": 130,
+   "y": 480,
+   "w": 820,
+   "h": 461
+  },
+  {
+   "tipo": "intera",
+   "clip": "memory_strum_tel",
+   "da": "r_0-0.3",
+   "a": "r_1+1.7",
+   "grafica": "lab_memstrum"
+  },
+  {
+   "tipo": "schermata",
+   "grafica": "card3",
+   "dispositivi": {
+    "lim": "barocco",
+    "tablet": "scale",
+    "telefono": "index"
+   }
+  },
+  {
+   "tipo": "schermata",
+   "grafica": "end"
+  }
+ ],
+ "copertina": {
+  "titolo": "Giochi musicali|per la primaria",
+  "sottotitolo": "Gratis, senza registrazione",
+  "colore": "mi",
+  "clip": "riconosci_tel",
+  "istante": "r_0+1.2",
+  "ritaglio": 0.78
+ },
+ "audio": {
+  "file": "media/brani-propedeutici/brano21-completo.mp3",
+  "da": 16,
+  "volume": 0.8,
+  "gioco": true,
+  "sotto": 0.25,
+  "credito": "Musica: base del brano 21 dei Brani propedeutici – musicascuole.it, CC BY-SA 3.0. Suoni degli strumenti e del pianoforte: elenco completo nei crediti del sito"
+ },
+ "varianti": {
+  "B": {
+   "nota": "apertura diversa, da provare come Trial Reel (servono 1000 follower)",
+   "schermate": [
+    {
+     "name": "hook",
+     "hash": "t=hook&a=Musica%20alla%20primaria%3F&g=GRATIS&b=6%20giochi%20pronti%20per%20la%20LIM",
+     "dur": 3.4,
+     "alpha": true
+    }
+   ]
+  }
+ },
+ "didascalia": {
+  "testo": "Giochi musicali gratis per la scuola primaria 🎶\n🃏 Doppio: trova il simbolo musicale uguale\n🎹 Memory delle note e memory degli strumenti, con i loro suoni\n🎻 Riconosci lo strumento: ascolti e poi lo vedi\n🌊 Le qualità del suono: fai vedere l'onda mentre il suono sale\n🎴 Scarta la nota: a carte contro Bach, Mozart e Beethoven\nPer la LIM, il PC e il telefono. Niente registrazione, niente login, nessun dato raccolto.\n\n📩 Mandalo a chi insegna con te!",
+  "hashtag": [
+   "scuolaprimaria",
+   "maestre",
+   "educazionemusicale",
+   "musicaascuola",
+   "LIM"
+  ],
+  "alt": "Sei giochi musicali di musicascuole.it: Doppio con i simboli musicali, il memory delle note, Riconosci lo strumento con la foto della tromba, l'onda del suono che cambia, Scarta la nota su una LIM in un'aula disegnata con i banchi, e il memory degli strumenti con la scheda del clarinetto."
+ }
+}
