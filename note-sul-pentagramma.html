@@ -159,6 +159,9 @@ svg { -webkit-tap-highlight-color: transparent; user-select: none; -webkit-user-
 .nota.compare { animation: compare .45s ease-out; }
 @keyframes compare { from { opacity: 0; } to { opacity: 1; } }
 .nota.luce .testa { filter: drop-shadow(0 0 9px #fff) drop-shadow(0 0 4px #fff); }
+/* «salto» a tempo: la nota si ingrandisce un poco e torna com'era (al posto della luce, più sicuro per gli occhi) */
+.pop { transform-box: fill-box; transform-origin: 50% 70%; animation: pop .22s ease-out; }
+@keyframes pop { 0% { transform: scale(1); } 40% { transform: scale(1.22); } 100% { transform: scale(1); } }
 .nota.tenue { opacity: .45; }
 .nome { font-family: 'Manrope', sans-serif; font-weight: 800; font-size: 25px; fill: #EAF2FF; text-anchor: middle; transition: opacity .3s, fill .3s;
   paint-order: stroke; stroke: #172036; stroke-width: 6px; stroke-linejoin: round; }
@@ -208,6 +211,7 @@ body.colori .chip.c-fa rect { stroke: var(--fa); } body.colori .chip.c-sol rect 
 
 @media (prefers-reduced-motion: reduce) {
   .rigo.disegna .riga, .taglio.nuovo, .nota.compare, .cartellino.lampo { animation: none !important; }
+  .pop { animation-duration: .3s; }
   .anello.via { animation: none; }
 }
 
@@ -1283,12 +1287,8 @@ PASSI.push({
     metro.avvia((k, prog) => {
       const perMov = sud ? 2 : 1, i = k % (2 * n * perMov);
       if (prog) return (i % (n * perMov) === 0) ? 2 : (i % perMov === 0 ? 1 : 0);
-      const ultimo = k === 2 * n * perMov - 1;
-      if (!(sud && i % 2)) {                       // sicurezza: con la suddivisione la luce cambia solo a ogni movimento
-        mov.forEach(m => m.classList.remove("luce")); conte.forEach(c => c.classList.remove("batte"));
-        [i, sud ? i + 1 : -1].forEach(j => { if (mov[j]) { mov[j].classList.add("luce"); conte[j].classList.add("batte"); } });
-      }
-      if (ultimo) dopo(60000 / metro.bpm / perMov, () => { mov.forEach(m => m.classList.remove("luce")); conte.forEach(c => c.classList.remove("batte")); });
+      // a tempo la nota e il suo numero «saltano» (si ingrandiscono e tornano): nessuna luce che lampeggia
+      [mov[i], conte[i]].forEach(e => { if (!e) return; e.classList.remove("pop"); void e.getBBox(); e.classList.add("pop"); });
       return null;
     }, 2 * n * (sud ? 2 : 1), sud);
     cart(`<b>${n}/4</b> <span class="piccolo">· si legge «${["", "", "due", "tre", "quattro"][n]} quarti»</span>`);

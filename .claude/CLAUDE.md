@@ -42,6 +42,10 @@ Pubblicato con GitHub Pages sul dominio **musicascuole.it**. Si parla in italian
   Solo pubblico dominio o licenze libere (Wikimedia Commons, Met Open Access), con crediti nella pagina.
   Strumenti: foto dell'oggetto intero; brani: iconografia d'epoca.
 
+## Epilessia fotosensibile: niente luci rapide
+Mai più di 2 accensioni al secondo nella stessa zona, niente rosso pieno su zone grandi, ciò che va a tempo veloce
+«salta» invece di accendersi. Regole e modo di misurare in `_sviluppo/GUIDA-INTERFACCE-GIOCHI.md` (punto 4.6).
+
 ## Telefoni: non devono scaldarsi
 Regole complete in `_sviluppo/LEGGIMI.md` (sezione "Risparmio energetico"). In breve: niente
 `background-attachment: fixed`, `mix-blend-mode` a tutto schermo, `backdrop-filter` su cose che scorrono,

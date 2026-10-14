@@ -133,6 +133,20 @@ diverso dagli altri. Lo sfondo lo dà `comune.css`.
   riscriverli da un output letto; cercare con `grep -n` e fare sostituzioni mirate che verificano
   (con `assert`) che il testo da sostituire esista una volta sola.
 
+### 4.6 Sicurezza per chi soffre di epilessia fotosensibile
+Ottobre 2026, dopo il controllo delle lezioni «Gli elementi del pentagramma» e «Le alterazioni».
+- **Mai più di 2 accensioni al secondo** nella stessa zona (il limite delle linee guida è 3: si sta sotto).
+  Le file di note, scale, tasti che si accendono uno dopo l'altro: almeno **0,55 s** fra un'accensione e l'altra.
+- **Niente lampi di rosso saturo su zone grandi** (un tasto intero, uno sfondo): i tasti premuti e le zone grandi
+  prendono un colore **chiaro**, mescolato col bianco (funzione `pastello()` in `alterazioni.html`).
+- **Ciò che va a tempo veloce** (metronomo, suddivisioni, crome) **non si accende: «salta»**, cioè si ingrandisce
+  un poco e torna com'era (classe `.pop` in `note-sul-pentagramma.html`). Il movimento piccolo non è un lampo.
+- Lampi di sfondo (es. il riquadro che si schiarisce quando cambia il testo): leggeri (al massimo +7% di bianco)
+  e **non più di uno ogni 1,5 s**.
+- Niente onde veloci di luce (tanti elementi che si accendono in rapida sequenza): meglio tutti insieme, una volta.
+- Si misura: un `MutationObserver` sulle classi delle cose che si accendono, durante il caso peggiore
+  (metronomo al massimo, sequenze più lunghe), conta le accensioni in ogni secondo (accensioni insieme = una).
+
 ---
 
 ## 5. Come si prova (sempre, prima di mostrare)
@@ -212,6 +226,7 @@ Passi:
       tutorial passo per passo, pentagrammi ritagliati (`data-ritaglia-tel`)
 - [ ] `telefono.py <commit prima>`: telefono in **orizzontale** IDENTICO
 - [ ] Nessun errore JS, nessuna richiesta esterna
+- [ ] Luci e lampi: al massimo 2 accensioni al secondo, niente rosso pieno su zone grandi, a tempo veloce si «salta» (punto 4.6)
 - [ ] Commit in italiano sul branch, schermate a Cristiano, attesa dell'ok
 
 ---
