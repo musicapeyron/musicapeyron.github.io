@@ -600,23 +600,33 @@ function svgFig(x, y, fig, punti = 0, o = {}) {
   return vfFigura({ x, y, fig, punti, pausa: o.pausa, k: o.k || K, cls: o.cls, p: 4, gambo: 1, puntoCls: o.puntoCls });
 }
 
-/* ---------- suono tenuto (dura quanto la figura) e colpi del metronomo, che si fermano cambiando passo ---------- */
+/* ---------- suono: il pianoforte di «Leggi la nota» (fondamentale + armoniche che si smorzano, filtro che si scurisce).
+   La nota dura quanto la figura: alla fine si «chiude» come quando si alza il dito dal tasto. ---------- */
 let VOCI = [];
+const MI = 64;                                    // il MI della 1ª riga (ottava del do centrale): la nota delle lezioni sul ritmo
 function suonaTenuto(midi, quando, dur) {
   const ac = audio(); if (!ac) return;
-  const t = ac.currentTime + 0.03 + quando, f = 440 * Math.pow(2, (midi - 69) / 12), fine = t + Math.max(0.12, dur - 0.06);
-  const g = ac.createGain(), fl = ac.createBiquadFilter(); fl.type = "lowpass"; fl.frequency.value = 2600;
-  g.gain.setValueAtTime(0.0001, t); g.gain.exponentialRampToValueAtTime(0.34, t + 0.02);
-  g.gain.exponentialRampToValueAtTime(0.22, t + 0.18); g.gain.setValueAtTime(0.22, fine); g.gain.exponentialRampToValueAtTime(0.0001, fine + 0.08);
-  const os = [[1, "triangle", 1], [2, "sine", 0.18]].map(([m, tipo, v]) => { const o = ac.createOscillator(), gg = ac.createGain(); o.type = tipo; o.frequency.value = f * m; gg.gain.value = v; o.connect(gg); gg.connect(g); o.start(t); o.stop(fine + 0.12); return o; });
-  g.connect(fl); fl.connect(master); VOCI.push({ g, os }); riposo(quando + dur + 0.2);
+  const t = ac.currentTime + 0.03 + quando, f = 440 * Math.pow(2, (midi - 69) / 12), fine = t + Math.max(0.15, dur - 0.05);
+  const lungo = Math.max(1.9, dur * 1.15);
+  const fl = ac.createBiquadFilter(); fl.type = "lowpass"; fl.Q.value = 0.6;
+  fl.frequency.setValueAtTime(6500, t); fl.frequency.exponentialRampToValueAtTime(800, t + lungo);
+  const chiudi = ac.createGain(); chiudi.gain.setValueAtTime(1, t); chiudi.gain.setTargetAtTime(0.0001, fine, 0.04);
+  fl.connect(chiudi); chiudi.connect(master);
+  const os = [[1, 0.5, 1], [2, 0.24, 0.8], [3, 0.14, 0.6], [4, 0.08, 0.45], [6, 0.04, 0.3]].map(([m, v, d]) => {
+    const o = ac.createOscillator(), g = ac.createGain(); o.type = "sine"; o.frequency.value = f * m;
+    g.gain.setValueAtTime(0.0001, t); g.gain.exponentialRampToValueAtTime(v, t + 0.01); g.gain.exponentialRampToValueAtTime(0.0001, t + lungo * d);
+    o.connect(g); g.connect(fl); o.start(t); o.stop(Math.min(t + lungo * d, fine + 0.3) + 0.05); return o;
+  });
+  VOCI.push({ g: chiudi, os }); riposo(quando + dur + 0.4);
 }
+/* il metronomo: un «tic» morbido di legno, un po' più acuto sul primo movimento */
 function colpoMetro(forte, quando) {
   const ac = audio(); if (!ac) return;
-  const t = ac.currentTime + 0.03 + quando, o = ac.createOscillator(), g = ac.createGain();
-  o.type = "square"; o.frequency.value = forte ? 1760 : 1320;
-  g.gain.setValueAtTime(forte ? 0.12 : 0.07, t); g.gain.exponentialRampToValueAtTime(0.0005, t + 0.05);
-  o.connect(g); g.connect(master); o.start(t); o.stop(t + 0.06); VOCI.push({ g, os: [o] }); riposo(quando + 0.2);
+  const t = ac.currentTime + 0.03 + quando, o = ac.createOscillator(), g = ac.createGain(), fl = ac.createBiquadFilter();
+  o.type = "sine"; o.frequency.setValueAtTime(forte ? 1500 : 1150, t); o.frequency.exponentialRampToValueAtTime(forte ? 900 : 700, t + 0.04);
+  fl.type = "bandpass"; fl.frequency.value = forte ? 1300 : 1000; fl.Q.value = 1.2;
+  g.gain.setValueAtTime(0.0001, t); g.gain.exponentialRampToValueAtTime(forte ? 0.22 : 0.13, t + 0.003); g.gain.exponentialRampToValueAtTime(0.0001, t + 0.06);
+  o.connect(fl); fl.connect(g); g.connect(master); o.start(t); o.stop(t + 0.08); VOCI.push({ g, os: [o] }); riposo(quando + 0.2);
 }
 function zittisci() {
   if (AC) VOCI.forEach(v => { try { v.g.gain.cancelScheduledValues(AC.currentTime); v.g.gain.setTargetAtTime(0.0001, AC.currentTime, 0.02); v.os.forEach(o => o.stop(AC.currentTime + 0.08)); } catch (e) { } });
@@ -631,7 +641,7 @@ function salta(el) { if (!el) return; el.classList.remove("pop"); void el.getBou
    o: { x0, x1, num (movimenti per battuta), barre (y), conta (y) } */
 function Battute(r, eventi, o) {
   const B = { r, ev: [], o };
-  let t = 0; eventi.forEach(e => { const d = valore(e.fig, e.punti || 0); B.ev.push({ ...e, p: e.p === undefined ? 2 : e.p, t, d }); t += d; });
+  let t = 0; eventi.forEach(e => { const d = valore(e.fig, e.punti || 0); B.ev.push({ ...e, p: e.p === undefined ? 0 : e.p, t, d }); t += d; });   // di base il MI (1ª riga)
   B.tot = t; B.nb = Math.ceil(t / o.num - 1e-9);
   B.mw = (o.x1 - o.x0) / B.nb; B.padL = Math.min(46, B.mw * 0.16); B.padR = Math.min(26, B.mw * 0.08);
   B.x = tt => { const m = Math.min(B.nb - 1, Math.floor(tt / o.num + 1e-9)), dt = tt - m * o.num; return o.x0 + m * B.mw + B.padL + dt * (B.mw - B.padL - B.padR) / o.num; };
@@ -699,9 +709,9 @@ function ascoltaBattute(B, bpm = 72, fine) {
 
 /* righe della «scala dei valori»: figura, nome, barra lunga quanto dura */
 function svgRigaValore(y, fig, punti, o = {}) {
-  const U = o.U || 100, X = o.xb || 420, k = 2.3;
+  const U = o.U || 100, X = o.xb || 420, k = o.k || 1.9;
   let s = `<g class="riga-val ${o.cls || ""}" data-fig="${fig}" data-punti="${punti}"${o.pausa ? ' data-pausa="1"' : ""}>`;
-  s += `<rect class="colpo" x="20" y="${y - 40}" width="960" height="70"/>`;
+  s += `<rect class="colpo" x="20" y="${y - 36}" width="960" height="72"/>`;
   s += svgFig(o.xf || 95, o.pausa ? y - 6 : y + 8, fig, punti, { k, gambo: 2.6, pausa: o.pausa, cls: "fig-riga" });
   s += `<text class="nome-fig" x="${o.xn || 160}" y="${y + 16}">${nomeFig(fig, punti, o.pausa)}</text>`;
   let parti = [BASE_VAL[fig]]; for (let i = 1; i <= punti; i++) parti.push(parti[i - 1] / 2);
@@ -718,7 +728,7 @@ function ascoltaFigura(g, fig, punti, pausa, bpm = 72) {
   const sec = 60 / bpm, d = valore(fig, punti), att = 0.3;
   const ri = g.querySelector(".riempi"); ri.style.transition = "none"; ri.style.transform = "scaleX(0)"; void ri.getBoundingClientRect();
   for (let b = 0; b < Math.max(1, Math.ceil(d - 1e-9)); b++) colpoMetro(b === 0, att + b * sec);
-  if (!pausa) suonaTenuto(67, att, d * sec);
+  if (!pausa) suonaTenuto(MI, att, d * sec);
   dopo(att * 1000, () => { salta(g.querySelector(".fig-riga")); ri.style.transition = `transform ${d * sec}s linear`; ri.style.transform = "scaleX(1)"; });
   dopo((att + d * sec + 0.6) * 1000, () => { ri.style.transition = "transform .4s"; ri.style.transform = "scaleX(0)"; });
   cart(`<b>${nomeFig(fig, punti, pausa)}</b> <span class="piccolo">· ${punti ? somma(fig, punti) : num(d)} ${d === 1 ? "movimento" : "movimenti"}</span>`);
@@ -777,7 +787,7 @@ function vfDisegna(g, spec) {
   if (chiave) st.addClef(chiave === "basso" ? "bass" : "treble");
   if (spec.tempo) st.addTimeSignature(spec.tempo);
   st.setContext(ctx).draw();
-  const eventi = spec.tipo === "fig" ? [Object.assign({ p: spec.pausa ? undefined : 2 }, spec)] : (spec.ev || []);
+  const eventi = spec.tipo === "fig" ? [Object.assign({ p: spec.pausa ? undefined : 2 }, spec, { cls: "" })] : (spec.ev || []);
   const note = eventi.map(e => vfNota(e, chiave || "violino"));
   const out = { note: [] };
   if (note.length) {
@@ -802,11 +812,13 @@ function vfDisegna(g, spec) {
     const yRif = spec.pausa ? 60 : 60;          // riga centrale del pentagramma invisibile
     tx = spec.x - k * out.note[0].x; ty = spec.y - k * yRif;
   } else { tx = spec.x0; ty = spec.yb - 80 * k; }
+  // il gruppo esterno porta posizione e grandezza; quello interno (.vfr) si può far «saltare» senza spostare niente
+  const fuori = document.createElementNS("http://www.w3.org/2000/svg", "g");
+  fuori.setAttribute("transform", `translate(${tx.toFixed(2)} ${ty.toFixed(2)}) scale(${k})`);
   const dentro = document.createElementNS("http://www.w3.org/2000/svg", "g");
   dentro.setAttribute("class", "vfr" + (spec.cls ? " " + spec.cls : ""));
-  dentro.setAttribute("transform", `translate(${tx.toFixed(2)} ${ty.toFixed(2)}) scale(${k})`);
   while (svgVF.firstChild) dentro.appendChild(svgVF.firstChild);
-  g.appendChild(dentro); div.remove();
+  fuori.appendChild(dentro); g.appendChild(fuori); div.remove();
   // classi nostre: chiave, tempo, note (con il colore del nome), punti
   const ch = dentro.querySelector(".vf-clef"); if (ch) ch.classList.add("chiave-vf");
   const tm = dentro.querySelector(".vf-timesignature"); if (tm) { tm.classList.add("tempo-vf"); const p = tm.querySelectorAll("path"); if (p[0]) p[0].classList.add("cifra-su"); if (p[1]) p[1].classList.add("cifra-giu"); }
@@ -847,11 +859,11 @@ PASSI.push({
   quaderno: "<p>Semibreve <b>4</b> · minima <b>2</b> · semiminima <b>1</b> · croma <b>½</b> · semicroma <b>¼</b></p>",
   crea() {
     let s = "";
-    ["w", "h", "q", "8", "16"].forEach((f, i) => s += svgRigaValore(70 + i * 72, f, 0, { U: 100, xn: 150, xb: 430 }));
-    s += `<g class="vela nascosto meta">` + [0, 1, 2, 3].map(i => `<text class="etic" x="930" y="${70 + i * 72 + 52}" text-anchor="middle" fill="#FBBF24">metà ↓</text>`).join("") + `</g>`;
-    s += `<g class="vela nascosto pause-col">` + ["w", "h", "q", "8", "16"].map((f, i) => svgFig(340, 70 + i * 72 - 6, f, 0, { k: 2.3, pausa: true })).join("") +
-      `<text class="etic" x="340" y="28" text-anchor="middle">PAUSA</text></g>`;
-    svg(VB, s);
+    const Y = i => 52 + i * 82;
+    ["w", "h", "q", "8", "16"].forEach((f, i) => s += svgRigaValore(Y(i), f, 0, { U: 100, xn: 150, xb: 430 }));
+    s += `<g class="vela nascosto meta">` + [0, 1, 2, 3].map(i => `<text class="etic" x="930" y="${Y(i) + 48}" text-anchor="middle" fill="#FBBF24">metà ↓</text>`).join("") + `</g>`;
+    s += `<g class="vela nascosto pause-col">` + ["w", "h", "q", "8", "16"].map((f, i) => svgFig(340, Y(i) - 4, f, 0, { k: 1.9, pausa: true })).join("") + `</g>`;
+    svg("0 0 1000 430", s);
     qa(".riga-val").forEach(g => g.addEventListener("click", () => ascoltaFigura(g, g.dataset.fig, +g.dataset.punti, false)));
     strumenti([
       { t: "⏸ Mostra le pause", id: "btnPause", fn: el => { const on = !el.classList.contains("on"); el.classList.toggle("on", on); mostra(q1(".pause-col"), on); cart(on ? "Ogni figura ha la sua <b>pausa</b>, che dura lo stesso" : "Le figure", false); } },
@@ -868,7 +880,7 @@ PASSI.push({
 /* ---------- 2. Il punto di valore ---------- */
 function palcoPunto(fig, punti, U = 130) {
   const r = R(60, 340, 260, "violino");
-  let s = svgRigo(r, { spazi: true }) + vfRigo({ x0: r.x0, x1: r.x1, yb: r.yb, ev: [{ fig, punti, p: 2, cls: "fig-grande", puntoCls: "punto-big vela nascosto" }], xs: [235] });
+  let s = svgRigo(r, { spazi: true }) + vfRigo({ x0: r.x0, x1: r.x1, yb: r.yb, ev: [{ fig, punti, p: 0, cls: "fig-grande", puntoCls: "punto-big vela nascosto" }], xs: [235] });
   // barre: valore della nota, poi i pezzi dei punti
   let parti = [BASE_VAL[fig]]; for (let k = 1; k <= punti; k++) parti.push(parti[k - 1] / 2);
   let x = 420; const y = 150;
@@ -897,14 +909,14 @@ PASSI.push({
   confronta() {
     fermaTutto(); const sec = 60 / 72, a = 0.3;
     [0, 1, 2, 3, 4, 5].forEach(b => colpoMetro(b === 0 || b === 3, a + b * sec));
-    suonaTenuto(67, a, 2 * sec); mostraPunti(0); cart("Minima: <b>2</b> movimenti", false);
+    suonaTenuto(MI, a, 2 * sec); mostraPunti(0); cart("Minima: <b>2</b> movimenti", false);
     dopo((a + 3 * sec) * 1000, () => { mostraPunti(1, true); cart("Minima col punto: <b>3</b> movimenti", false); });
-    suonaTenuto(67, a + 3 * sec, 3 * sec);
+    suonaTenuto(MI, a + 3 * sec, 3 * sec);
     dopo(a * 1000, () => salta(q1(".fig-grande"))); dopo((a + 3 * sec) * 1000, () => salta(q1(".fig-grande")));
   },
   fase(f, anim) {
-    fermaTutto(); mostraPunti(f >= 1 ? 1 : 0, anim); mostra(q1(".uguale"), f >= 1);
-    if (f === 0) { qa(".punto-big").forEach(p => mostra(p)); if (anim) salta(q1(".punto-big")); }
+    // la minima col punto vale 3 fin dall'inizio: il punto e il suo pezzo di barra si vedono sempre
+    fermaTutto(); mostraPunti(1, anim && f === 0); mostra(q1(".uguale"), true);
     cart(["Il punto dopo la nota", "+ la metà: 2 + 1", "Minima col punto = 3 movimenti"][f], anim);
     ascoltaNelTesto(this);
   }
@@ -921,7 +933,7 @@ PASSI.push({
   quaderno: "<p>Semibreve col punto <b>6</b> · minima col punto <b>3</b> · semiminima col punto <b>1½</b> · croma col punto <b>¾</b></p>",
   crea() {
     let s = "";
-    ["w", "h", "q", "8"].forEach((f, i) => s += svgRigaValore(80 + i * 86, f, 1, { U: 70, xn: 150, xb: 470 }));
+    ["w", "h", "q", "8"].forEach((f, i) => s += svgRigaValore(62 + i * 98, f, 1, { U: 70, xn: 150, xb: 470 }));
     svg(VB, s);
     qa(".riga-val").forEach(g => g.addEventListener("click", () => this.tocca(g)));
     strumenti([{ suggerimento: "Tocca una figura col punto" }]);
@@ -951,7 +963,7 @@ PASSI.push({
   quaderno: "<p>Pausa di minima col punto = <b>3</b> movimenti di silenzio; pausa di semiminima col punto = <b>1½</b>.</p>",
   crea() {
     let s = `<g class="scena-righe">`;
-    ["h", "q"].forEach((f, i) => s += svgRigaValore(110 + i * 110, f, 1, { U: 100, pausa: true, xn: 150, xb: 430 }));
+    ["h", "q"].forEach((f, i) => s += svgRigaValore(130 + i * 120, f, 1, { U: 90, pausa: true, xn: 150, xb: 540 }));
     s += `</g><g class="scena-battuta"></g>`;
     svg(VB, s);
     qa(".riga-val").forEach(g => g.addEventListener("click", () => ascoltaFigura(g, g.dataset.fig, 1, true)));
@@ -984,14 +996,15 @@ PASSI.push({
   crea() { this.fig = "h"; svg(VB, palcoPunto("h", 2, 120)); strumenti([{ suggerimento: "Ogni punto vale la metà di quello prima" }]); },
   semiminima() {
     fermaTutto(); svg(VB, palcoPunto("q", 2, 200)); mostraPunti(2); mostra(q1(".uguale"));
-    const sec = 60 / 72, a = 0.3; [0, 1].forEach(b => colpoMetro(b === 0, a + b * sec)); suonaTenuto(67, a, 1.75 * sec);
+    const sec = 60 / 72, a = 0.3; [0, 1].forEach(b => colpoMetro(b === 0, a + b * sec)); suonaTenuto(MI, a, 1.75 * sec);
     const ri = q1(".barra.grande .riempi"); dopo(a * 1000, () => { salta(q1(".fig-grande")); ri.style.transition = `transform ${1.75 * sec}s linear`; ri.style.transform = "scaleX(1)"; });
     cart("Semiminima col doppio punto: <b>1¾</b>", false);
   },
   fase(f, anim) {
     fermaTutto(); svg(VB, palcoPunto(f === 2 ? "q" : "h", 2, f === 2 ? 200 : 120));
-    if (f === 0) { mostraPunti(0); qa(".punto-big").forEach((p, i) => dopo(300 + i * 700, () => { mostra(p); salta(p); })); }
-    if (f >= 1) { mostraPunti(1); dopo(anim ? 700 : 0, () => { mostraPunti(2, anim); mostra(q1(".uguale")); }); }
+    // si vede subito il valore giusto (minima col doppio punto = 3½); i punti saltano uno dopo l'altro
+    mostraPunti(2); mostra(q1(".uguale"));
+    if (anim) qa(".punto-big").forEach((p, i) => dopo(300 + i * 700, () => salta(p)));
     cart(["Due punti", "Il secondo punto: metà del primo", "Semiminima col doppio punto = 1¾"][f], anim);
     ascoltaNelTesto(this);
   }
@@ -1020,7 +1033,7 @@ PASSI.push({
   ascolta() {
     fermaTutto(); const sec = 60 / 72, a = 0.3, d = valore(this.fig, this.np);
     for (let b = 0; b < Math.max(1, Math.ceil(d - 1e-9)); b++) colpoMetro(b === 0, a + b * sec);
-    suonaTenuto(67, a, d * sec);
+    suonaTenuto(MI, a, d * sec);
     const ri = q1(".barra.grande .riempi"); ri.style.transition = "none"; ri.style.transform = "scaleX(0)"; void ri.getBoundingClientRect();
     dopo(a * 1000, () => { salta(q1(".fig-grande")); ri.style.transition = `transform ${d * sec}s linear`; ri.style.transform = "scaleX(1)"; });
     dopo((a + d * sec + 0.6) * 1000, () => { ri.style.transition = "transform .4s"; ri.style.transform = "scaleX(0)"; });

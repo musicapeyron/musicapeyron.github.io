@@ -24,23 +24,33 @@ function svgFig(x, y, fig, punti = 0, o = {}) {
   return vfFigura({ x, y, fig, punti, pausa: o.pausa, k: o.k || K, cls: o.cls, p: 4, gambo: 1, puntoCls: o.puntoCls });
 }
 
-/* ---------- suono tenuto (dura quanto la figura) e colpi del metronomo, che si fermano cambiando passo ---------- */
+/* ---------- suono: il pianoforte di «Leggi la nota» (fondamentale + armoniche che si smorzano, filtro che si scurisce).
+   La nota dura quanto la figura: alla fine si «chiude» come quando si alza il dito dal tasto. ---------- */
 let VOCI = [];
+const MI = 64;                                    // il MI della 1ª riga (ottava del do centrale): la nota delle lezioni sul ritmo
 function suonaTenuto(midi, quando, dur) {
   const ac = audio(); if (!ac) return;
-  const t = ac.currentTime + 0.03 + quando, f = 440 * Math.pow(2, (midi - 69) / 12), fine = t + Math.max(0.12, dur - 0.06);
-  const g = ac.createGain(), fl = ac.createBiquadFilter(); fl.type = "lowpass"; fl.frequency.value = 2600;
-  g.gain.setValueAtTime(0.0001, t); g.gain.exponentialRampToValueAtTime(0.34, t + 0.02);
-  g.gain.exponentialRampToValueAtTime(0.22, t + 0.18); g.gain.setValueAtTime(0.22, fine); g.gain.exponentialRampToValueAtTime(0.0001, fine + 0.08);
-  const os = [[1, "triangle", 1], [2, "sine", 0.18]].map(([m, tipo, v]) => { const o = ac.createOscillator(), gg = ac.createGain(); o.type = tipo; o.frequency.value = f * m; gg.gain.value = v; o.connect(gg); gg.connect(g); o.start(t); o.stop(fine + 0.12); return o; });
-  g.connect(fl); fl.connect(master); VOCI.push({ g, os }); riposo(quando + dur + 0.2);
+  const t = ac.currentTime + 0.03 + quando, f = 440 * Math.pow(2, (midi - 69) / 12), fine = t + Math.max(0.15, dur - 0.05);
+  const lungo = Math.max(1.9, dur * 1.15);
+  const fl = ac.createBiquadFilter(); fl.type = "lowpass"; fl.Q.value = 0.6;
+  fl.frequency.setValueAtTime(6500, t); fl.frequency.exponentialRampToValueAtTime(800, t + lungo);
+  const chiudi = ac.createGain(); chiudi.gain.setValueAtTime(1, t); chiudi.gain.setTargetAtTime(0.0001, fine, 0.04);
+  fl.connect(chiudi); chiudi.connect(master);
+  const os = [[1, 0.5, 1], [2, 0.24, 0.8], [3, 0.14, 0.6], [4, 0.08, 0.45], [6, 0.04, 0.3]].map(([m, v, d]) => {
+    const o = ac.createOscillator(), g = ac.createGain(); o.type = "sine"; o.frequency.value = f * m;
+    g.gain.setValueAtTime(0.0001, t); g.gain.exponentialRampToValueAtTime(v, t + 0.01); g.gain.exponentialRampToValueAtTime(0.0001, t + lungo * d);
+    o.connect(g); g.connect(fl); o.start(t); o.stop(Math.min(t + lungo * d, fine + 0.3) + 0.05); return o;
+  });
+  VOCI.push({ g: chiudi, os }); riposo(quando + dur + 0.4);
 }
+/* il metronomo: un «tic» morbido di legno, un po' più acuto sul primo movimento */
 function colpoMetro(forte, quando) {
   const ac = audio(); if (!ac) return;
-  const t = ac.currentTime + 0.03 + quando, o = ac.createOscillator(), g = ac.createGain();
-  o.type = "square"; o.frequency.value = forte ? 1760 : 1320;
-  g.gain.setValueAtTime(forte ? 0.12 : 0.07, t); g.gain.exponentialRampToValueAtTime(0.0005, t + 0.05);
-  o.connect(g); g.connect(master); o.start(t); o.stop(t + 0.06); VOCI.push({ g, os: [o] }); riposo(quando + 0.2);
+  const t = ac.currentTime + 0.03 + quando, o = ac.createOscillator(), g = ac.createGain(), fl = ac.createBiquadFilter();
+  o.type = "sine"; o.frequency.setValueAtTime(forte ? 1500 : 1150, t); o.frequency.exponentialRampToValueAtTime(forte ? 900 : 700, t + 0.04);
+  fl.type = "bandpass"; fl.frequency.value = forte ? 1300 : 1000; fl.Q.value = 1.2;
+  g.gain.setValueAtTime(0.0001, t); g.gain.exponentialRampToValueAtTime(forte ? 0.22 : 0.13, t + 0.003); g.gain.exponentialRampToValueAtTime(0.0001, t + 0.06);
+  o.connect(fl); fl.connect(g); g.connect(master); o.start(t); o.stop(t + 0.08); VOCI.push({ g, os: [o] }); riposo(quando + 0.2);
 }
 function zittisci() {
   if (AC) VOCI.forEach(v => { try { v.g.gain.cancelScheduledValues(AC.currentTime); v.g.gain.setTargetAtTime(0.0001, AC.currentTime, 0.02); v.os.forEach(o => o.stop(AC.currentTime + 0.08)); } catch (e) { } });
@@ -55,7 +65,7 @@ function salta(el) { if (!el) return; el.classList.remove("pop"); void el.getBou
    o: { x0, x1, num (movimenti per battuta), barre (y), conta (y) } */
 function Battute(r, eventi, o) {
   const B = { r, ev: [], o };
-  let t = 0; eventi.forEach(e => { const d = valore(e.fig, e.punti || 0); B.ev.push({ ...e, p: e.p === undefined ? 2 : e.p, t, d }); t += d; });
+  let t = 0; eventi.forEach(e => { const d = valore(e.fig, e.punti || 0); B.ev.push({ ...e, p: e.p === undefined ? 0 : e.p, t, d }); t += d; });   // di base il MI (1ª riga)
   B.tot = t; B.nb = Math.ceil(t / o.num - 1e-9);
   B.mw = (o.x1 - o.x0) / B.nb; B.padL = Math.min(46, B.mw * 0.16); B.padR = Math.min(26, B.mw * 0.08);
   B.x = tt => { const m = Math.min(B.nb - 1, Math.floor(tt / o.num + 1e-9)), dt = tt - m * o.num; return o.x0 + m * B.mw + B.padL + dt * (B.mw - B.padL - B.padR) / o.num; };
@@ -123,9 +133,9 @@ function ascoltaBattute(B, bpm = 72, fine) {
 
 /* righe della «scala dei valori»: figura, nome, barra lunga quanto dura */
 function svgRigaValore(y, fig, punti, o = {}) {
-  const U = o.U || 100, X = o.xb || 420, k = 2.3;
+  const U = o.U || 100, X = o.xb || 420, k = o.k || 1.9;
   let s = `<g class="riga-val ${o.cls || ""}" data-fig="${fig}" data-punti="${punti}"${o.pausa ? ' data-pausa="1"' : ""}>`;
-  s += `<rect class="colpo" x="20" y="${y - 40}" width="960" height="70"/>`;
+  s += `<rect class="colpo" x="20" y="${y - 36}" width="960" height="72"/>`;
   s += svgFig(o.xf || 95, o.pausa ? y - 6 : y + 8, fig, punti, { k, gambo: 2.6, pausa: o.pausa, cls: "fig-riga" });
   s += `<text class="nome-fig" x="${o.xn || 160}" y="${y + 16}">${nomeFig(fig, punti, o.pausa)}</text>`;
   let parti = [BASE_VAL[fig]]; for (let i = 1; i <= punti; i++) parti.push(parti[i - 1] / 2);
@@ -142,7 +152,7 @@ function ascoltaFigura(g, fig, punti, pausa, bpm = 72) {
   const sec = 60 / bpm, d = valore(fig, punti), att = 0.3;
   const ri = g.querySelector(".riempi"); ri.style.transition = "none"; ri.style.transform = "scaleX(0)"; void ri.getBoundingClientRect();
   for (let b = 0; b < Math.max(1, Math.ceil(d - 1e-9)); b++) colpoMetro(b === 0, att + b * sec);
-  if (!pausa) suonaTenuto(67, att, d * sec);
+  if (!pausa) suonaTenuto(MI, att, d * sec);
   dopo(att * 1000, () => { salta(g.querySelector(".fig-riga")); ri.style.transition = `transform ${d * sec}s linear`; ri.style.transform = "scaleX(1)"; });
   dopo((att + d * sec + 0.6) * 1000, () => { ri.style.transition = "transform .4s"; ri.style.transform = "scaleX(0)"; });
   cart(`<b>${nomeFig(fig, punti, pausa)}</b> <span class="piccolo">· ${punti ? somma(fig, punti) : num(d)} ${d === 1 ? "movimento" : "movimenti"}</span>`);

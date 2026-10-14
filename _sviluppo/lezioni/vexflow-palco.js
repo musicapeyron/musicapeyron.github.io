@@ -46,7 +46,7 @@ function vfDisegna(g, spec) {
   if (chiave) st.addClef(chiave === "basso" ? "bass" : "treble");
   if (spec.tempo) st.addTimeSignature(spec.tempo);
   st.setContext(ctx).draw();
-  const eventi = spec.tipo === "fig" ? [Object.assign({ p: spec.pausa ? undefined : 2 }, spec)] : (spec.ev || []);
+  const eventi = spec.tipo === "fig" ? [Object.assign({ p: spec.pausa ? undefined : 2 }, spec, { cls: "" })] : (spec.ev || []);
   const note = eventi.map(e => vfNota(e, chiave || "violino"));
   const out = { note: [] };
   if (note.length) {
@@ -71,11 +71,13 @@ function vfDisegna(g, spec) {
     const yRif = spec.pausa ? 60 : 60;          // riga centrale del pentagramma invisibile
     tx = spec.x - k * out.note[0].x; ty = spec.y - k * yRif;
   } else { tx = spec.x0; ty = spec.yb - 80 * k; }
+  // il gruppo esterno porta posizione e grandezza; quello interno (.vfr) si può far «saltare» senza spostare niente
+  const fuori = document.createElementNS("http://www.w3.org/2000/svg", "g");
+  fuori.setAttribute("transform", `translate(${tx.toFixed(2)} ${ty.toFixed(2)}) scale(${k})`);
   const dentro = document.createElementNS("http://www.w3.org/2000/svg", "g");
   dentro.setAttribute("class", "vfr" + (spec.cls ? " " + spec.cls : ""));
-  dentro.setAttribute("transform", `translate(${tx.toFixed(2)} ${ty.toFixed(2)}) scale(${k})`);
   while (svgVF.firstChild) dentro.appendChild(svgVF.firstChild);
-  g.appendChild(dentro); div.remove();
+  fuori.appendChild(dentro); g.appendChild(fuori); div.remove();
   // classi nostre: chiave, tempo, note (con il colore del nome), punti
   const ch = dentro.querySelector(".vf-clef"); if (ch) ch.classList.add("chiave-vf");
   const tm = dentro.querySelector(".vf-timesignature"); if (tm) { tm.classList.add("tempo-vf"); const p = tm.querySelectorAll("path"); if (p[0]) p[0].classList.add("cifra-su"); if (p[1]) p[1].classList.add("cifra-giu"); }

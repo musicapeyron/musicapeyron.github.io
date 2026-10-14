@@ -19,11 +19,11 @@ PASSI.push({
   quaderno: "<p>Semibreve <b>4</b> · minima <b>2</b> · semiminima <b>1</b> · croma <b>½</b> · semicroma <b>¼</b></p>",
   crea() {
     let s = "";
-    ["w", "h", "q", "8", "16"].forEach((f, i) => s += svgRigaValore(70 + i * 72, f, 0, { U: 100, xn: 150, xb: 430 }));
-    s += `<g class="vela nascosto meta">` + [0, 1, 2, 3].map(i => `<text class="etic" x="930" y="${70 + i * 72 + 52}" text-anchor="middle" fill="#FBBF24">metà ↓</text>`).join("") + `</g>`;
-    s += `<g class="vela nascosto pause-col">` + ["w", "h", "q", "8", "16"].map((f, i) => svgFig(340, 70 + i * 72 - 6, f, 0, { k: 2.3, pausa: true })).join("") +
-      `<text class="etic" x="340" y="28" text-anchor="middle">PAUSA</text></g>`;
-    svg(VB, s);
+    const Y = i => 52 + i * 82;
+    ["w", "h", "q", "8", "16"].forEach((f, i) => s += svgRigaValore(Y(i), f, 0, { U: 100, xn: 150, xb: 430 }));
+    s += `<g class="vela nascosto meta">` + [0, 1, 2, 3].map(i => `<text class="etic" x="930" y="${Y(i) + 48}" text-anchor="middle" fill="#FBBF24">metà ↓</text>`).join("") + `</g>`;
+    s += `<g class="vela nascosto pause-col">` + ["w", "h", "q", "8", "16"].map((f, i) => svgFig(340, Y(i) - 4, f, 0, { k: 1.9, pausa: true })).join("") + `</g>`;
+    svg("0 0 1000 430", s);
     qa(".riga-val").forEach(g => g.addEventListener("click", () => ascoltaFigura(g, g.dataset.fig, +g.dataset.punti, false)));
     strumenti([
       { t: "⏸ Mostra le pause", id: "btnPause", fn: el => { const on = !el.classList.contains("on"); el.classList.toggle("on", on); mostra(q1(".pause-col"), on); cart(on ? "Ogni figura ha la sua <b>pausa</b>, che dura lo stesso" : "Le figure", false); } },
@@ -40,7 +40,7 @@ PASSI.push({
 /* ---------- 2. Il punto di valore ---------- */
 function palcoPunto(fig, punti, U = 130) {
   const r = R(60, 340, 260, "violino");
-  let s = svgRigo(r, { spazi: true }) + vfRigo({ x0: r.x0, x1: r.x1, yb: r.yb, ev: [{ fig, punti, p: 2, cls: "fig-grande", puntoCls: "punto-big vela nascosto" }], xs: [235] });
+  let s = svgRigo(r, { spazi: true }) + vfRigo({ x0: r.x0, x1: r.x1, yb: r.yb, ev: [{ fig, punti, p: 0, cls: "fig-grande", puntoCls: "punto-big vela nascosto" }], xs: [235] });
   // barre: valore della nota, poi i pezzi dei punti
   let parti = [BASE_VAL[fig]]; for (let k = 1; k <= punti; k++) parti.push(parti[k - 1] / 2);
   let x = 420; const y = 150;
@@ -69,14 +69,14 @@ PASSI.push({
   confronta() {
     fermaTutto(); const sec = 60 / 72, a = 0.3;
     [0, 1, 2, 3, 4, 5].forEach(b => colpoMetro(b === 0 || b === 3, a + b * sec));
-    suonaTenuto(67, a, 2 * sec); mostraPunti(0); cart("Minima: <b>2</b> movimenti", false);
+    suonaTenuto(MI, a, 2 * sec); mostraPunti(0); cart("Minima: <b>2</b> movimenti", false);
     dopo((a + 3 * sec) * 1000, () => { mostraPunti(1, true); cart("Minima col punto: <b>3</b> movimenti", false); });
-    suonaTenuto(67, a + 3 * sec, 3 * sec);
+    suonaTenuto(MI, a + 3 * sec, 3 * sec);
     dopo(a * 1000, () => salta(q1(".fig-grande"))); dopo((a + 3 * sec) * 1000, () => salta(q1(".fig-grande")));
   },
   fase(f, anim) {
-    fermaTutto(); mostraPunti(f >= 1 ? 1 : 0, anim); mostra(q1(".uguale"), f >= 1);
-    if (f === 0) { qa(".punto-big").forEach(p => mostra(p)); if (anim) salta(q1(".punto-big")); }
+    // la minima col punto vale 3 fin dall'inizio: il punto e il suo pezzo di barra si vedono sempre
+    fermaTutto(); mostraPunti(1, anim && f === 0); mostra(q1(".uguale"), true);
     cart(["Il punto dopo la nota", "+ la metà: 2 + 1", "Minima col punto = 3 movimenti"][f], anim);
     ascoltaNelTesto(this);
   }
@@ -93,7 +93,7 @@ PASSI.push({
   quaderno: "<p>Semibreve col punto <b>6</b> · minima col punto <b>3</b> · semiminima col punto <b>1½</b> · croma col punto <b>¾</b></p>",
   crea() {
     let s = "";
-    ["w", "h", "q", "8"].forEach((f, i) => s += svgRigaValore(80 + i * 86, f, 1, { U: 70, xn: 150, xb: 470 }));
+    ["w", "h", "q", "8"].forEach((f, i) => s += svgRigaValore(62 + i * 98, f, 1, { U: 70, xn: 150, xb: 470 }));
     svg(VB, s);
     qa(".riga-val").forEach(g => g.addEventListener("click", () => this.tocca(g)));
     strumenti([{ suggerimento: "Tocca una figura col punto" }]);
@@ -123,7 +123,7 @@ PASSI.push({
   quaderno: "<p>Pausa di minima col punto = <b>3</b> movimenti di silenzio; pausa di semiminima col punto = <b>1½</b>.</p>",
   crea() {
     let s = `<g class="scena-righe">`;
-    ["h", "q"].forEach((f, i) => s += svgRigaValore(110 + i * 110, f, 1, { U: 100, pausa: true, xn: 150, xb: 430 }));
+    ["h", "q"].forEach((f, i) => s += svgRigaValore(130 + i * 120, f, 1, { U: 90, pausa: true, xn: 150, xb: 540 }));
     s += `</g><g class="scena-battuta"></g>`;
     svg(VB, s);
     qa(".riga-val").forEach(g => g.addEventListener("click", () => ascoltaFigura(g, g.dataset.fig, 1, true)));
@@ -156,14 +156,15 @@ PASSI.push({
   crea() { this.fig = "h"; svg(VB, palcoPunto("h", 2, 120)); strumenti([{ suggerimento: "Ogni punto vale la metà di quello prima" }]); },
   semiminima() {
     fermaTutto(); svg(VB, palcoPunto("q", 2, 200)); mostraPunti(2); mostra(q1(".uguale"));
-    const sec = 60 / 72, a = 0.3; [0, 1].forEach(b => colpoMetro(b === 0, a + b * sec)); suonaTenuto(67, a, 1.75 * sec);
+    const sec = 60 / 72, a = 0.3; [0, 1].forEach(b => colpoMetro(b === 0, a + b * sec)); suonaTenuto(MI, a, 1.75 * sec);
     const ri = q1(".barra.grande .riempi"); dopo(a * 1000, () => { salta(q1(".fig-grande")); ri.style.transition = `transform ${1.75 * sec}s linear`; ri.style.transform = "scaleX(1)"; });
     cart("Semiminima col doppio punto: <b>1¾</b>", false);
   },
   fase(f, anim) {
     fermaTutto(); svg(VB, palcoPunto(f === 2 ? "q" : "h", 2, f === 2 ? 200 : 120));
-    if (f === 0) { mostraPunti(0); qa(".punto-big").forEach((p, i) => dopo(300 + i * 700, () => { mostra(p); salta(p); })); }
-    if (f >= 1) { mostraPunti(1); dopo(anim ? 700 : 0, () => { mostraPunti(2, anim); mostra(q1(".uguale")); }); }
+    // si vede subito il valore giusto (minima col doppio punto = 3½); i punti saltano uno dopo l'altro
+    mostraPunti(2); mostra(q1(".uguale"));
+    if (anim) qa(".punto-big").forEach((p, i) => dopo(300 + i * 700, () => salta(p)));
     cart(["Due punti", "Il secondo punto: metà del primo", "Semiminima col doppio punto = 1¾"][f], anim);
     ascoltaNelTesto(this);
   }
@@ -192,7 +193,7 @@ PASSI.push({
   ascolta() {
     fermaTutto(); const sec = 60 / 72, a = 0.3, d = valore(this.fig, this.np);
     for (let b = 0; b < Math.max(1, Math.ceil(d - 1e-9)); b++) colpoMetro(b === 0, a + b * sec);
-    suonaTenuto(67, a, d * sec);
+    suonaTenuto(MI, a, d * sec);
     const ri = q1(".barra.grande .riempi"); ri.style.transition = "none"; ri.style.transform = "scaleX(0)"; void ri.getBoundingClientRect();
     dopo(a * 1000, () => { salta(q1(".fig-grande")); ri.style.transition = `transform ${d * sec}s linear`; ri.style.transform = "scaleX(1)"; });
     dopo((a + d * sec + 0.6) * 1000, () => { ri.style.transition = "transform .4s"; ri.style.transform = "scaleX(0)"; });
