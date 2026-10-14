@@ -189,6 +189,20 @@ h1 {
     line-height: 0;
 }
 
+/* SCHEMA PIANOFORTE (opzione della rotellina): due ottave, sotto il pentagramma */
+.staff-row { flex-wrap: wrap; }
+.piano-card {
+    flex: 0 0 100%;
+    margin: 12px 0 0;
+    padding: 8px 10px 6px;
+    background: linear-gradient(180deg, #fdfaf3, #f2e9d8);
+    border-radius: 14px;
+    box-shadow: 0 1px 0 rgba(255,255,255,0.4) inset, 0 10px 24px rgba(0,0,0,0.3);
+    line-height: 0;
+}
+.piano-card.hidden { display: none; }
+.piano-card svg { width: 100%; height: auto; display: block; }
+
 .staff-inner {
     display: flex;
     justify-content: center;
@@ -891,6 +905,10 @@ h1 {
     .staff-row { grid-area: staff; margin: 20px 0 0; align-self: start; }
     .staff-card { min-height: 0; padding: 18px; }
     #staffInner svg { width: 420px !important; height: auto !important; }
+    .piano-card { margin-top: 14px; padding: 10px 12px 8px; }
+    /* con lo schema pianoforte il pentagramma perde lo spazio vuoto sopra e sotto
+       (stessa fascia del telefono, y 30-185: ci stanno tutte le note del gioco) */
+    #gameContainer.con-pianoforte #staffInner svg { margin: -42px 0 -105px; }
     .answer-section { grid-area: answers; max-width: none; margin: 20px 0 6px; align-self: end; }
     .answer-section-title { font-size: 0.8rem; margin-bottom: 10px; }
     .choice-row { display: grid; gap: 10px; margin-bottom: 20px; }
@@ -1121,6 +1139,7 @@ h1 {
             <div class="staff-inner" id="staffInner" data-ritaglia-tel="30 155"></div>
             <div class="confetti-layer" id="confettiLayer"></div>
         </div>
+        <div class="piano-card hidden" id="pianoCard" aria-label="Schema del pianoforte, due ottave"></div>
     </div>
     </div>
 
@@ -1170,6 +1189,7 @@ h1 {
     <div id="helpOptionsGroup">
         <div class="options-group-title">Serve una mano?</div>
         <button class="options-choice options-full" id="helpOpenButton">❓ Aiuto</button>
+        <button class="options-choice options-full" id="pianoToggle" style="margin-top: 8px;">🎹 Mostra schema pianoforte</button>
     </div>
 </div>
 
@@ -1543,6 +1563,8 @@ function applyModeRestrictions() {
     finishButton.style.display = isVerifica ? "none" : "";
     restartButton.style.display = isVerifica ? "none" : "";
     helpOptionsGroup.style.display = isVerifica ? "none" : "";
+    pianoCard.classList.toggle("hidden", isVerifica || !mostraPianoforte);
+    gameContainer.classList.toggle("con-pianoforte", !isVerifica && mostraPianoforte);
 }
 const helpPickerOverlay = document.getElementById("helpPickerOverlay");
 const helpPickerRow = document.getElementById("helpPickerRow");
@@ -4946,6 +4968,49 @@ function setClef(newClef) {
 }
 trebleClefButton.addEventListener("click", () => { bumpButton(trebleClefButton); setClef("treble"); });
 bassClefButton.addEventListener("click", () => { bumpButton(bassClefButton); setClef("bass"); });
+
+/* =========================================================
+   SCHEMA PIANOFORTE: due ottave (Do-Si, Do-Si, Do) con il nome
+   sui tasti bianchi, nei colori delle note. Serve per contare
+   toni e semitoni; non segna le note della domanda.
+   Si attiva dalla rotellina (non in verifica); la scelta si
+   ricorda su questo dispositivo.
+   ========================================================= */
+const pianoCard = document.getElementById("pianoCard");
+const pianoToggle = document.getElementById("pianoToggle");
+let mostraPianoforte = false;
+function disegnaPianoforte() {
+    const NOMI = ["Do", "Re", "Mi", "Fa", "Sol", "La", "Si"];
+    const COLORI = ["#E21C48", "#F99D1C", "#FFF428", "#BED958", "#009C95", "#5E50A1", "#CF3E96"];
+    const TESTO = ["#fff", "#1f2937", "#1f2937", "#1f2937", "#fff", "#fff", "#fff"];
+    const W = 30, H = 104, BW = 18, BH = 64, N = 15;
+    let svg = '<svg viewBox="0 0 ' + (N * W + 2) + ' ' + (H + 2) + '" xmlns="http://www.w3.org/2000/svg" role="img">';
+    for (let i = 0; i < N; i++) {
+        const l = i % 7, x = i * W + 1;
+        svg += '<rect x="' + x + '" y="1" width="' + (W - 1) + '" height="' + H + '" rx="3" fill="#fffdf7" stroke="#3b3226" stroke-width="1.2"/>';
+        svg += '<rect x="' + (x + 3) + '" y="' + (H - 23) + '" width="' + (W - 7) + '" height="20" rx="4" fill="' + COLORI[l] + '"/>';
+        svg += '<text x="' + (x + (W - 1) / 2) + '" y="' + (H - 8) + '" text-anchor="middle" font-family="Sora, Arial, sans-serif" font-size="12.5" font-weight="800" fill="' + TESTO[l] + '">' + NOMI[l] + '</text>';
+    }
+    for (let i = 0; i < N - 1; i++) {
+        const l = i % 7;
+        if (l === 2 || l === 6) continue; // niente tasto nero dopo Mi e dopo Si
+        svg += '<rect x="' + ((i + 1) * W + 1 - BW / 2) + '" y="1" width="' + BW + '" height="' + BH + '" rx="2" fill="#241f1a" stroke="#000" stroke-width="1"/>';
+    }
+    pianoCard.innerHTML = svg + '</svg>';
+}
+function setMostraPianoforte(acceso) {
+    mostraPianoforte = acceso;
+    pianoToggle.classList.toggle("active", acceso);
+    if (acceso && !pianoCard.firstChild) disegnaPianoforte();
+    pianoCard.classList.toggle("hidden", !acceso || mode === "verifica");
+    gameContainer.classList.toggle("con-pianoforte", acceso && mode !== "verifica");
+}
+pianoToggle.addEventListener("click", () => {
+    bumpButton(pianoToggle);
+    setMostraPianoforte(!mostraPianoforte);
+    try { localStorage.setItem("nominaIntervalli.pianoforte", mostraPianoforte ? "1" : "0"); } catch (e) {}
+});
+try { setMostraPianoforte(localStorage.getItem("nominaIntervalli.pianoforte") === "1"); } catch (e) { setMostraPianoforte(false); }
 
 function setSubmitButtonMode(enabled) {
     useSubmitButton = enabled;

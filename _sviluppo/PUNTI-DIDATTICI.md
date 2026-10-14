@@ -113,6 +113,8 @@ Schema di ogni voce: dove si trova · concetti · punti di forza · come usarlo 
   un errore resta un errore anche se poi si corregge; voto = 10 × precisione, arrotondato al mezzo voto
   (6 al 60%), mostrato solo dalla sufficienza; statistiche per tipo di intervallo; conferma prima di tornare al menu.
 - Prima si sceglie il **numero**, poi la **qualità** (pulsanti in quest'ordine in tutte le modalità).
+- **Schema pianoforte** (rotellina, non in verifica): due ottave con i nomi sui tasti bianchi nei colori delle note,
+  sotto il pentagramma, per contare toni e semitoni da soli. Non segna le note della domanda.
 
 ### Come usarlo in classe
 - Alla LIM: un tutorial per lezione (seconde, terze… settime), la classe vota la risposta prima di premerla.
