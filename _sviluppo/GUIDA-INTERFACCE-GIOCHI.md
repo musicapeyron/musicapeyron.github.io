@@ -147,6 +147,21 @@ Ottobre 2026, dopo il controllo delle lezioni «Gli elementi del pentagramma» e
 - Si misura: un `MutationObserver` sulle classi delle cose che si accendono, durante il caso peggiore
   (metronomo al massimo, sequenze più lunghe), conta le accensioni in ogni secondo (accensioni insieme = una).
 
+### 4.7 Le lezioni interattive e VexFlow (ottobre 2026)
+Le quattro lezioni (`note-sul-pentagramma`, `alterazioni`, `punto-di-valore`, `legatura-di-valore`) disegnano la musica con
+**VexFlow** attraverso `lezioni-vexflow.js` (sorgente in `_sviluppo/lezioni/vexflow-palco.js`; dopo una modifica si ricopia
+e si cambia il `?v=` nelle quattro pagine). Regole:
+- **Le righe del pentagramma restano della pagina** (`svgRigo`): VexFlow disegna con le righe invisibili esattamente sopra,
+  così righe e spazi si possono illuminare e toccare.
+- **Il contenitore di ogni nota è della pagina** (`<g class="nota c-sol" data-p data-x>` con l'area da toccare e i tagli):
+  VexFlow disegna dentro solo testa, gambo e alterazione (`svgNota`, `svgChiave`, `svgTempo` hanno ancora quei nomi).
+  I tagli addizionali di VexFlow si tolgono: li disegna la pagina, che li può animare.
+- Le battute col ritmo (`vfRigo`) hanno note a distanza **proporzionale alla durata**, per allinearle alle barre della durata.
+- Mai far «saltare» (`.pop`) un gruppo che ha l'attributo `transform`: si rompe. Il disegno sta in un gruppo interno `.vfr`.
+- Ciò che VexFlow disegna male (curve di portamento fra note vicine) lo disegna la pagina, con la stessa forma.
+- Prove: oltre a `stati.py`, script che toccano ogni pulsante e controllano il risultato (suoni, valori, legature):
+  le sole schermate non bastano.
+
 ---
 
 ## 5. Come si prova (sempre, prima di mostrare)

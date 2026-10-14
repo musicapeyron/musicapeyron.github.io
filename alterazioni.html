@@ -10,6 +10,9 @@
 <meta name="description" content="Lezione interattiva per la LIM: tono e semitono sulla tastiera, diesis, bemolle, bequadro, doppio diesis e doppio bemolle, e come si alterano le note su pianoforte, chitarra, violino e violoncello.">
 <link rel="stylesheet" href="fonts/caratteri.css">
 <link rel="stylesheet" href="comune.css">
+<!-- VexFlow (nel sito, nessun servizio esterno) disegna la musica del palco -->
+<script src="vexflow.js"></script>
+<script src="lezioni-vexflow.js?v=1"></script>
 <style>
 /* =========================================================
    Le alterazioni — lezione interattiva a passi (stesso motore di note-sul-pentagramma.html).
@@ -260,6 +263,23 @@ body.colori .nome-corda.c-sol, body.colori .nome-guida.c-sol { fill: #2DD4BF; } 
   .def-alt .sim { font-size: 22px; } .def-alt b { font-size: 13px; }
 }
 
+
+/* ---------- la musica la disegna VexFlow (lezioni-vexflow.js): qui i colori e le luci ---------- */
+.vfr path { fill: #EAF2FF; stroke: none; }
+.vfr .vf-stem path { fill: none !important; stroke: #EAF2FF; stroke-width: 1.3; }
+.nota .vf-notehead path { transition: fill .3s; }
+body.colori .nota.c-do .vf-notehead path:not(.glifo-alt) { fill: var(--do); }
+body.colori .nota.c-re .vf-notehead path:not(.glifo-alt) { fill: var(--re); }
+body.colori .nota.c-mi .vf-notehead path:not(.glifo-alt) { fill: var(--mi); }
+body.colori .nota.c-fa .vf-notehead path:not(.glifo-alt) { fill: var(--fa); }
+body.colori .nota.c-sol .vf-notehead path:not(.glifo-alt) { fill: var(--sol); }
+body.colori .nota.c-la .vf-notehead path:not(.glifo-alt) { fill: var(--la); }
+body.colori .nota.c-si .vf-notehead path:not(.glifo-alt) { fill: var(--si); }
+body.colori .nota.c-la .vf-notehead path:not(.glifo-alt), body.colori .nota.c-sol .vf-notehead path:not(.glifo-alt) { stroke: rgba(234,242,255,0.55); stroke-width: .5; }
+.nota.luce .vf-notehead { filter: drop-shadow(0 0 9px #fff) drop-shadow(0 0 4px #fff); }
+.gambo-evid .vf-stem path { stroke: #FDE047; stroke-width: 2; filter: drop-shadow(0 0 6px #FDE047); }
+.vfr .glifo-alt.evid { fill: var(--luce, #FDE047) !important; }
+
 @media (prefers-reduced-motion: reduce) {
   .corda.vibra { animation: none; }
   .rigo.disegna .riga, .taglio.nuovo, .nota.compare, .cartellino.lampo { animation: none !important; }
@@ -455,12 +475,10 @@ function svgRigo(r, o = {}) {
   return s + "</g>";
 }
 function svgChiave(r, x, cls = "") {
-  return `<g class="chiave ${cls}" transform="translate(${x} ${r.y(4)}) scale(${K})"><path class="glifo" d="${r.chiave === "basso" ? GLIFI.bass : GLIFI.treble}"/></g>`;
+  return `<g class="chiave ${cls}">` + vfSlot({ tipo: "chiave", x, yb: r.yb, chiave: r.chiave }) + `</g>`;
 }
 function svgTempo(r, x, su, giu, cls = "") {
-  return `<g class="tempo ${cls}" transform="translate(${x} ${r.y(4)})">` +
-    `<g class="cifra su" transform="translate(0 ${-S}) scale(${K})"><path class="glifo" d="${GLIFI["t" + su]}"/></g>` +
-    `<g class="cifra giu" transform="translate(0 ${S}) scale(${K})"><path class="glifo" d="${GLIFI["t" + giu]}"/></g></g>`;
+  return `<g class="tempo ${cls}">` + vfSlot({ tipo: "tempo", x, yb: r.yb, su, giu }) + `</g>`;
 }
 function svgTagli(r, x, p, cls = "") {
   let s = "";
@@ -475,11 +493,9 @@ function svgNota(r, x, p, o = {}) {
   let s = `<g class="nota ${o.cls || ""} ${info && o.colore !== false ? "c-" + info.nome : ""}" data-p="${p}" data-x="${x}"${o.attr || ""}>`;
   s += `<rect class="colpo" x="${x - 30}" y="${y - 22}" width="60" height="44"/>`;
   if (!o.senzaTagli) s += svgTagli(r, x, p, o.tagliCls || "");
-  s += `<path class="testa" d="${GLIFI[forma]}" transform="translate(${x} ${y}) scale(${K})"/>`;
-  // il gambo c'è sempre: sotto la 3ª riga va su, a destra; dalla 3ª riga in su va giù, a sinistra
-  const g = o.gambo === undefined ? (p >= 4 ? -1 : 1) : o.gambo;
-  if (g === 1) s += `<line class="gambo" x1="${x + 5.25 * K}" x2="${x + 5.25 * K}" y1="${y - 2}" y2="${y - 3.5 * S}"/>`;
-  if (g === -1) s += `<line class="gambo" x1="${x - 5.25 * K}" x2="${x - 5.25 * K}" y1="${y + 2}" y2="${y + 3.5 * S}"/>`;
+  // testa, gambo (e alterazione) li disegna VexFlow; il gambo c'è sempre:
+  // sotto la 3ª riga va su, a destra; dalla 3ª riga in su va giù, a sinistra
+  s += vfSlot({ tipo: "nota", x, p, yb: r.yb, chiave: r.chiave, forma, gambo: o.gambo, acc: o.acc });
   return s + "</g>";
 }
 function svgNome(x, y, nome, cls = "", attr = "") {
@@ -488,7 +504,9 @@ function svgNome(x, y, nome, cls = "", attr = "") {
 function svgNum(x, y, n, cls = "", luce = "") {
   return `<g class="num-cerchio ${cls}" style="${luce ? "--luce:" + luce : ""}"><circle cx="${x}" cy="${y}" r="15"/><text x="${x}" y="${y + 1}">${n}</text></g>`;
 }
-function svg(vb, contenuto) { PALCO.innerHTML = `<svg viewBox="${vb}" preserveAspectRatio="xMidYMid meet" aria-hidden="true">${contenuto}</svg>`; }
+function svg(vb, contenuto) { PALCO.innerHTML = `<svg viewBox="${vb}" preserveAspectRatio="xMidYMid meet" aria-hidden="true">${contenuto}</svg>`; vfRiempi(); }
+// tutto ciò che entra nel palco (anche note aggiunte dopo) viene disegnato da VexFlow
+new MutationObserver(() => vfRiempi()).observe(PALCO, { childList: true, subtree: true });
 function mini(forma, gambo) {                     // piccola figura per i testi (minima, semiminima, croma)
   const t = forma === "tonda" ? 0 : 1;
   let s = `<svg class="mini" viewBox="-9 -42 26 50" width="15" height="29"><path d="${GLIFI[forma === "croma" ? "nera" : forma]}"/>`;
@@ -603,14 +621,7 @@ function nomiTasto(m) {
 function nomeTastoHTML(m) { return nomiTasto(m).map(n => `<b style="color:${coloreTesto(n.nome)}">${NA(n.nome, n.a)}</b>`).join(" <span class=\"piccolo\">=</span> "); }
 
 /* nota con alterazione sul pentagramma */
-function svgNotaA(r, x, p, a, o = {}) {
-  let s = svgNota(r, x, p, o);
-  if (a) {
-    const w = ALT_LARGO[a] * K, gx = x - 5.97 * K - 7 - w;
-    s = s.replace(/<\/g>$/, `<path class="glifo-alt" d="${GLIFI.alt[a]}" transform="translate(${gx} ${r.y(p)}) scale(${K})"/></g>`);
-  }
-  return s;
-}
+function svgNotaA(r, x, p, a, o = {}) { return svgNota(r, x, p, Object.assign({}, o, { acc: a || undefined })); }   // l'alterazione la mette VexFlow
 // versione semplice e affidabile: tutto il nome come testo + il simbolo disegnato subito dopo
 function svgEtichetta(x, y, nome, a, cls = "", attr = "", px = 25) {
   const k = px / 25, wt = MAIU(nome).length * px * 0.66, wa = a ? ALT_LARGO[a] * 1.5 * k + 3 : 0, x0 = x - (wt + wa) / 2;

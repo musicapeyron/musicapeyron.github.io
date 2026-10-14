@@ -15,7 +15,10 @@ function vfKey(p, chiave = "violino") { const n = nota(chiave, p); return LETTER
 function vfRigo(spec) { const id = "vf" + (++VFN); VFSPEC[id] = Object.assign({ tipo: "rigo" }, spec); return `<g class="vf-slot" id="${id}"></g>`; }
 function vfFigura(spec) { const id = "vf" + (++VFN); VFSPEC[id] = Object.assign({ tipo: "fig" }, spec); return `<g class="vf-slot" id="${id}"></g>`; }
 function vfRiempi(radice = PALCO) {
-  radice.querySelectorAll(".vf-slot:not([data-fatto])").forEach(g => { g.dataset.fatto = 1; vfDisegna(g, VFSPEC[g.id]); });
+  radice.querySelectorAll(".vf-slot:not([data-fatto])").forEach(g => {
+    g.dataset.fatto = 1; const s = VFSPEC[g.id]; if (!s) return;
+    if (s.tipo === "nota" || s.tipo === "chiave" || s.tipo === "tempo") vfSingolo(g, s); else vfDisegna(g, s);
+  });
 }
 
 /* una nota VexFlow da un evento { fig, punti, pausa, p, acc } */
@@ -105,4 +108,52 @@ function vfDisegna(g, spec) {
   dentro.querySelectorAll(".vf-curve").forEach(x => x.classList.add("legatura-vf", "portamento-vf"));
   spec.out = out;
   g.dispatchEvent(new CustomEvent("vf-pronto", { detail: out }));
+}
+
+/* ================= un solo elemento disegnato da VexFlow: una nota, una chiave, un'indicazione di tempo =================
+   Per le lezioni dove ogni nota è un oggetto a sé (si tocca, si accende, compare, ha il suo nome):
+   il contenitore resta della pagina (<g class="nota c-sol" data-p data-x> con l'area da toccare e i tagli),
+   VexFlow disegna solo testa, gambo e alterazione. I tagli li disegna la pagina (si possono animare).
+   spec: { tipo: "nota", x, p, yb, chiave, forma, gambo, acc } · { tipo: "chiave", x, yb, chiave } · { tipo: "tempo", x, yb, su, giu } */
+function vfSlot(spec) { const id = "vf" + (++VFN); VFSPEC[id] = spec; return `<g class="vf-slot" id="${id}"></g>`; }
+const DUR_FORMA = { nera: "q", bianca: "h", tonda: "w" };
+function vfSingolo(g, spec) {
+  const k = spec.k || K;
+  const div = document.createElement("div"); div.style.cssText = "position:absolute;left:-9999px;top:0;visibility:hidden";
+  document.body.appendChild(div);
+  const ren = new VF.Renderer(div, VF.Renderer.Backends.SVG); ren.resize(400, 300);
+  const ctx = ren.getContext();
+  const st = new VF.Stave(0, 0, 300, { space_above_staff_ln: 4 });
+  st.setConfigForLines([0, 1, 2, 3, 4].map(() => ({ visible: false })));
+  st.setBegBarType(VF.Barline.type.NONE); st.setEndBarType(VF.Barline.type.NONE);
+  const chiave = spec.chiave === "basso" ? "bass" : "treble";
+  if (spec.tipo === "chiave") st.addClef(chiave);
+  if (spec.tipo === "tempo") st.addTimeSignature(spec.su + "/" + spec.giu);
+  st.setContext(ctx).draw();
+  let xRif = 0;                                   // il punto del disegno (in unità VexFlow) che va messo in spec.x
+  if (spec.tipo === "nota") {
+    const p = spec.p, opz = { keys: [vfKey(p, spec.chiave === "basso" ? "basso" : "violino")], duration: DUR_FORMA[spec.forma || "nera"], clef: chiave, auto_stem: false };
+    opz.stem_direction = spec.gambo === undefined ? (p >= 4 ? -1 : 1) : (spec.gambo || 1);
+    const n = new VF.StaveNote(opz);
+    if (spec.acc) n.addModifier(new VF.Accidental(spec.acc), 0);
+    const voce = new VF.Voice({ num_beats: 4, beat_value: 4 }).setMode(VF.Voice.Mode.SOFT); voce.addTickables([n]);
+    new VF.Formatter().joinVoices([voce]).format([voce], 200);
+    n.setStave(st); voce.draw(ctx, st); xRif = centroNota(n);
+    const el = div.querySelector("#vf-" + n.getAttribute("id"));
+    // i tagli di VexFlow si tolgono (li disegna la pagina); l'alterazione prende la sua classe
+    [...el.children].filter(c => c.tagName === "path").forEach(c => c.remove());
+    el.querySelectorAll(".vf-notehead path").forEach(pa => { const b = pa.getBBox(); if (b.height > 16) pa.classList.add("glifo-alt"); });
+    if (spec.gambo === 0) el.querySelectorAll(".vf-stem").forEach(s => s.remove());
+  }
+  const grp = div.querySelector(spec.tipo === "chiave" ? ".vf-clef" : spec.tipo === "tempo" ? ".vf-timesignature" : ".vf-stavenote");
+  if (spec.tipo !== "nota") xRif = grp.getBBox().x;  // chiave e tempo: si allinea il bordo sinistro
+  grp.querySelectorAll("path").forEach((pa, i) => {
+    if (spec.tipo === "chiave") pa.classList.add("glifo");
+    if (spec.tipo === "tempo") pa.classList.add("glifo", "cifra", i === 0 ? "su" : "giu");
+  });
+  const fuori = document.createElementNS("http://www.w3.org/2000/svg", "g");
+  fuori.setAttribute("transform", `translate(${(spec.x - k * xRif).toFixed(2)} ${(spec.yb - 80 * k).toFixed(2)}) scale(${k})`);
+  const dentro = document.createElementNS("http://www.w3.org/2000/svg", "g");
+  dentro.setAttribute("class", "vfr vf-" + spec.tipo);
+  dentro.appendChild(grp); fuori.appendChild(dentro); g.appendChild(fuori); div.remove();
 }

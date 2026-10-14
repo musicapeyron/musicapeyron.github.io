@@ -7,7 +7,7 @@ D = os.path.dirname(os.path.abspath(__file__)) + "/"
 SITO = os.path.abspath(D + "../..") + "/"
 import json,re
 src=open(SITO+'note-sul-pentagramma.html',encoding='utf-8').read()
-motore=open(D+'ritmo-motore.js',encoding='utf-8').read()+'\n'+open(D+'vexflow-palco.js',encoding='utf-8').read()
+motore=open(D+'ritmo-motore.js',encoding='utf-8').read()   # VexFlow: vexflow.js e lezioni-vexflow.js, già caricati dalla pagina di partenza
 rg=json.load(open(D+'ritmo-glifi.json'))
 CSS=open(D+'ritmo.css',encoding='utf-8').read()
 def costruisci(passi_file, out, titolo, h1, desc):
@@ -29,9 +29,6 @@ def costruisci(passi_file, out, titolo, h1, desc):
     rep("   Le note sul pentagramma — lezione interattiva a passi.",f"   {h1} — lezione interattiva a passi (stesso motore di note-sul-pentagramma.html;\n   si rigenera con _sviluppo/lezioni/costruisci.py a partire dai file in _sviluppo/lezioni/).")
     rep("function fermaTutto() { TIMER.forEach(clearTimeout); TIMER = []; metro.ferma(); cancelAnimationFrame(ANIMA); }",
         "function fermaTutto() { TIMER.forEach(clearTimeout); TIMER = []; metro.ferma(); cancelAnimationFrame(ANIMA); if (typeof zittisci === \"function\") zittisci(); }")
-    rep('<link rel="stylesheet" href="comune.css">','<link rel="stylesheet" href="comune.css">\n<!-- VexFlow (nel sito, nessun servizio esterno): disegna la musica nel palco -->\n<script src="vexflow.js"></script>')
-    rep('function svg(vb, contenuto) { PALCO.innerHTML = `<svg viewBox="${vb}" preserveAspectRatio="xMidYMid meet" aria-hidden="true">${contenuto}</svg>`; }',
-        'function svg(vb, contenuto) { PALCO.innerHTML = `<svg viewBox="${vb}" preserveAspectRatio="xMidYMid meet" aria-hidden="true">${contenuto}</svg>`; if (typeof vfRiempi === "function") vfRiempi(); }')
     rep("@media (prefers-reduced-motion: reduce) {", CSS+"\n@media (prefers-reduced-motion: reduce) {\n  .cresce { transition: none; }")
     open(SITO+out,'w',encoding='utf-8').write(t); print(out,len(t))
 import sys
