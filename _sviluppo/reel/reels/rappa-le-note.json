@@ -1,669 +1,696 @@
 {
- "titolo": "Rap con le note! L'alfabeto musicale a ritmo, per la primaria (ottobre 2026)",
- "nota": "nel reel il gioco si chiama «Rap con le note!» (scelta di Cristiano)",
- "clip": {
-  "rap_nomi_su": {
-   "pagina": "rap-con-le-note.html",
-   "dispositivo": "telefono-orizzontale",
-   "audio": true,
-   "prima": [],
-   "passi": [
-    {
-     "attendi": 400
+  "titolo": "Rap con le note! L'alfabeto musicale a ritmo, per la primaria (ottobre 2026)",
+  "nota": "nel reel il gioco si chiama «Rap con le note!» (scelta di Cristiano)",
+  "clip": {
+    "rap_nomi_su": {
+      "pagina": "rap-con-le-note.html",
+      "dispositivo": "telefono-orizzontale",
+      "audio": true,
+      "prima": [],
+      "passi": [
+        {
+          "attendi": 400
+        },
+        {
+          "centra": ".level-card[data-level=\"0\"]"
+        },
+        {
+          "attendi": 300
+        },
+        {
+          "tocca": ".level-card[data-level=\"0\"]"
+        },
+        {
+          "segna": "via"
+        },
+        {
+          "attendi": 24000
+        }
+      ],
+      "nota": "solo i nomi, sequenze ascendenti"
     },
-    {
-     "centra": ".level-card[data-level=\"0\"]"
+    "rap_misto_giu": {
+      "pagina": "rap-con-le-note.html",
+      "dispositivo": "telefono-orizzontale",
+      "audio": true,
+      "prima": [
+        {
+          "clic": "#staffToggle"
+        },
+        {
+          "attendi": 300
+        }
+      ],
+      "passi": [
+        {
+          "attendi": 400
+        },
+        {
+          "centra": ".level-card[data-level=\"1\"]"
+        },
+        {
+          "attendi": 300
+        },
+        {
+          "tocca": ".level-card[data-level=\"1\"]"
+        },
+        {
+          "segna": "via"
+        },
+        {
+          "attendi": 24000
+        }
+      ],
+      "nota": "nomi + pentagramma, sequenze discendenti"
     },
-    {
-     "attendi": 300
+    "rap_penta_su_giu": {
+      "pagina": "rap-con-le-note.html",
+      "dispositivo": "telefono-orizzontale",
+      "audio": true,
+      "prima": [
+        {
+          "clic": "#staffToggle"
+        },
+        {
+          "attendi": 300
+        },
+        {
+          "clic": "input[name=staffnames][value=\"0\"]"
+        },
+        {
+          "attendi": 300
+        }
+      ],
+      "passi": [
+        {
+          "attendi": 400
+        },
+        {
+          "centra": ".level-card[data-level=\"2\"]"
+        },
+        {
+          "attendi": 300
+        },
+        {
+          "tocca": ".level-card[data-level=\"2\"]"
+        },
+        {
+          "segna": "via"
+        },
+        {
+          "attendi": 24000
+        }
+      ],
+      "nota": "solo pentagramma, salita e discesa"
     },
-    {
-     "tocca": ".level-card[data-level=\"0\"]"
+    "rap_lim": {
+      "pagina": "rap-con-le-note.html",
+      "dispositivo": "lim",
+      "audio": true,
+      "prima": [
+        {
+          "clic": "#staffToggle"
+        },
+        {
+          "attendi": 300
+        }
+      ],
+      "passi": [
+        {
+          "attendi": 400
+        },
+        {
+          "centra": ".level-card[data-level=\"0\"]"
+        },
+        {
+          "attendi": 300
+        },
+        {
+          "tocca": ".level-card[data-level=\"0\"]"
+        },
+        {
+          "segna": "via"
+        },
+        {
+          "attendi": 24000
+        }
+      ],
+      "schermo": [
+        1280,
+        720
+      ],
+      "densita": 1.5,
+      "nota": "LIM: nomi + pentagramma, ascendenti"
     },
-    {
-     "segna": "via"
+    "rap_pc": {
+      "pagina": "rap-con-le-note.html",
+      "dispositivo": "lim",
+      "audio": true,
+      "prima": [],
+      "passi": [
+        {
+          "attendi": 400
+        },
+        {
+          "centra": ".level-card[data-level=\"2\"]"
+        },
+        {
+          "attendi": 300
+        },
+        {
+          "tocca": ".level-card[data-level=\"2\"]"
+        },
+        {
+          "segna": "via"
+        },
+        {
+          "attendi": 24000
+        }
+      ],
+      "schermo": [
+        1366,
+        768
+      ],
+      "densita": 1.4055,
+      "nota": "PC 1366x768: solo nomi, salita e discesa"
     },
-    {
-     "attendi": 24000
+    "rap_arpeggi": {
+      "pagina": "rap-con-le-note.html",
+      "dispositivo": "telefono-orizzontale",
+      "audio": true,
+      "prima": [
+        {
+          "clic": "#typePick"
+        },
+        {
+          "attendi": 500
+        },
+        {
+          "clic": ".type-choice[data-type=\"arpeggi\"]"
+        },
+        {
+          "attendi": 400
+        },
+        {
+          "js": "document.getElementById('typeOverlay').classList.remove('show')"
+        },
+        {
+          "attendi": 300
+        }
+      ],
+      "passi": [
+        {
+          "attendi": 400
+        },
+        {
+          "centra": ".level-card[data-level=\"0\"]"
+        },
+        {
+          "attendi": 300
+        },
+        {
+          "tocca": ".level-card[data-level=\"0\"]"
+        },
+        {
+          "segna": "via"
+        },
+        {
+          "attendi": 19000
+        }
+      ],
+      "nota": "arpeggi, ascendenti"
+    },
+    "rap_terze": {
+      "pagina": "rap-con-le-note.html",
+      "dispositivo": "telefono-orizzontale",
+      "audio": true,
+      "prima": [
+        {
+          "clic": "#typePick"
+        },
+        {
+          "attendi": 500
+        },
+        {
+          "clic": ".type-choice[data-type=\"terze\"]"
+        },
+        {
+          "attendi": 400
+        },
+        {
+          "js": "document.getElementById('typeOverlay').classList.remove('show')"
+        },
+        {
+          "attendi": 300
+        }
+      ],
+      "passi": [
+        {
+          "attendi": 400
+        },
+        {
+          "centra": ".level-card[data-level=\"0\"]"
+        },
+        {
+          "attendi": 300
+        },
+        {
+          "tocca": ".level-card[data-level=\"0\"]"
+        },
+        {
+          "segna": "via"
+        },
+        {
+          "attendi": 19000
+        }
+      ],
+      "nota": "progressione per terze, ascendente"
+    },
+    "rap_quinte": {
+      "pagina": "rap-con-le-note.html",
+      "dispositivo": "telefono-orizzontale",
+      "audio": true,
+      "prima": [
+        {
+          "clic": "#typePick"
+        },
+        {
+          "attendi": 500
+        },
+        {
+          "clic": ".type-choice[data-type=\"quinte\"]"
+        },
+        {
+          "attendi": 400
+        },
+        {
+          "js": "document.getElementById('typeOverlay').classList.remove('show')"
+        },
+        {
+          "attendi": 300
+        }
+      ],
+      "passi": [
+        {
+          "attendi": 400
+        },
+        {
+          "centra": ".level-card[data-level=\"0\"]"
+        },
+        {
+          "attendi": 300
+        },
+        {
+          "tocca": ".level-card[data-level=\"0\"]"
+        },
+        {
+          "segna": "via"
+        },
+        {
+          "attendi": 19000
+        }
+      ],
+      "nota": "progressione per quinte, ascendente"
+    },
+    "rap_x2": {
+      "pagina": "rap-con-le-note.html",
+      "dispositivo": "telefono-orizzontale",
+      "audio": true,
+      "prima": [],
+      "nota": "solo i nomi, ascendenti, saltando con il pulsante del gioco a due note per battito",
+      "passi": [
+        {
+          "attendi": 400
+        },
+        {
+          "centra": ".level-card[data-level=\"0\"]"
+        },
+        {
+          "attendi": 300
+        },
+        {
+          "tocca": ".level-card[data-level=\"0\"]"
+        },
+        {
+          "attendi": 2500
+        },
+        {
+          "tocca": ".phase-btn[data-pass=\"1\"]"
+        },
+        {
+          "segna": "via"
+        },
+        {
+          "attendi": 20000
+        }
+      ]
+    },
+    "rap_x4": {
+      "pagina": "rap-con-le-note.html",
+      "dispositivo": "telefono-orizzontale",
+      "audio": true,
+      "prima": [],
+      "nota": "solo i nomi, ascendenti, saltando con il pulsante del gioco a quattro note per battito",
+      "passi": [
+        {
+          "attendi": 400
+        },
+        {
+          "centra": ".level-card[data-level=\"0\"]"
+        },
+        {
+          "attendi": 300
+        },
+        {
+          "tocca": ".level-card[data-level=\"0\"]"
+        },
+        {
+          "attendi": 2500
+        },
+        {
+          "tocca": ".phase-btn[data-pass=\"2\"]"
+        },
+        {
+          "segna": "via"
+        },
+        {
+          "attendi": 20000
+        }
+      ]
+    },
+    "rap_nomi_giu": {
+      "pagina": "rap-con-le-note.html",
+      "dispositivo": "telefono-orizzontale",
+      "audio": true,
+      "prima": [],
+      "passi": [
+        {
+          "attendi": 400
+        },
+        {
+          "centra": ".level-card[data-level=\"1\"]"
+        },
+        {
+          "attendi": 300
+        },
+        {
+          "tocca": ".level-card[data-level=\"1\"]"
+        },
+        {
+          "segna": "via"
+        },
+        {
+          "attendi": 24000
+        }
+      ],
+      "nota": "solo i nomi, sequenze discendenti"
     }
-   ],
-   "nota": "solo i nomi, sequenze ascendenti"
   },
-  "rap_misto_giu": {
-   "pagina": "rap-con-le-note.html",
-   "dispositivo": "telefono-orizzontale",
-   "audio": true,
-   "prima": [
+  "ricerca": "Applicata GUIDA-REEL.md: apertura col gioco già in movimento e GRATIS + niente registrazione; un'idea sola (Rap con le note!) mostrata nei suoi aspetti: tre schermi uno sopra l'altro per far vedere a colpo d'occhio la progressione (nomi, nomi + pentagramma, solo pentagramma) e le sequenze (su, giù, su e giù); suono vero del gioco (la base rap); LIM in aula, PC e telefono; invito a mandarlo a chi insegna con te; variante B.",
+  "schermate": [
     {
-     "clic": "#staffToggle"
+      "name": "bg_tel",
+      "hash": "t=bg&k=phone&x=40&y=700&w=1000&h=563",
+      "dur": 0.04
     },
     {
-     "attendi": 300
+      "name": "hook",
+      "hash": "t=hook&a=L%27alfabeto%20musicale&b=a%20ritmo%20di%20rap%21&g=GRATIS&fondo=1",
+      "dur": 3.0,
+      "alpha": true
+    },
+    {
+      "name": "card1",
+      "hash": "t=card&c=do&l=Si%20apre|e%20si%20gioca%21&s=Niente%20registrazione.%20Su%20LIM%2C%20PC%20e%20telefono.&tel=1",
+      "dur": 3.0
+    },
+    {
+      "name": "pila1",
+      "hash": "t=pila&y=540%2C860%2C1180&h=250&l=1%20%C2%B7%20I%20nomi|2%20%C2%B7%20Nomi%20e%20pentagramma|3%20%C2%B7%20Solo%20pentagramma&c=do|mi|sol",
+      "dur": 0.04
+    },
+    {
+      "name": "tt_pila1",
+      "hash": "t=titolo&c=re&l=Passo%20dopo%20passo",
+      "dur": 4.5,
+      "alpha": true
+    },
+    {
+      "name": "pila2",
+      "hash": "t=pila&y=600%2C1000&h=250&l=%E2%86%91%20Ascendenti|%E2%86%93%20Discendenti&c=re|la",
+      "dur": 0.04
+    },
+    {
+      "name": "tt_pila2",
+      "hash": "t=titolo&c=la&l=Sequenze|ascendenti%20e%20discendenti%21",
+      "dur": 4.5,
+      "alpha": true
+    },
+    {
+      "name": "pila3",
+      "hash": "t=pila&y=610%2C910%2C1210&h=240&l=Arpeggi|Per%20terze|Per%20quinte&c=si|sol|do",
+      "dur": 0.04
+    },
+    {
+      "name": "tt_pila3",
+      "hash": "t=titolo&c=si&l=Arpeggi%20e%20progressioni%21&s=Terze%2C%20quarte%2C%20quinte%20e%20altro%3A|propedeutica%20al%20solfeggio%20parlato",
+      "dur": 4.5,
+      "alpha": true
+    },
+    {
+      "name": "classe",
+      "hash": "t=classe&x=130&y=480&w=820&h=461",
+      "dur": 0.04
+    },
+    {
+      "name": "tt_lim",
+      "hash": "t=titolo&c=mi&l=Tutta%20la%20classe%20a%20ritmo%21%20%F0%9F%8E%B6",
+      "dur": 3.0,
+      "alpha": true
+    },
+    {
+      "name": "card3",
+      "hash": "t=card&c=la&l=Mandalo|a%20chi%20insegna|con%20te.&s=Un%20progetto%20collaborativo%3A%20scrivici%20le%20tue%20idee%21&tel=1",
+      "dur": 3.0
+    },
+    {
+      "name": "end",
+      "hash": "t=end",
+      "dur": 3.0
+    },
+    {
+      "name": "pila_bt",
+      "hash": "t=pila&y=610%2C910%2C1210&h=240&l=%E2%99%A9%20Una%20nota%20per%20battito|%E2%99%AB%20Due%20note%20per%20battito|%E2%99%AC%20Quattro%20note%20per%20battito&c=do|mi|sol",
+      "dur": 0.04
+    },
+    {
+      "name": "tt_bt",
+      "hash": "t=titolo&c=do&l=Una%2C%20due%2C%20quattro|note%20per%20battito%21%20%F0%9F%9A%80",
+      "dur": 4.5,
+      "alpha": true
     }
-   ],
-   "passi": [
-    {
-     "attendi": 400
-    },
-    {
-     "centra": ".level-card[data-level=\"1\"]"
-    },
-    {
-     "attendi": 300
-    },
-    {
-     "tocca": ".level-card[data-level=\"1\"]"
-    },
-    {
-     "segna": "via"
-    },
-    {
-     "attendi": 24000
-    }
-   ],
-   "nota": "nomi + pentagramma, sequenze discendenti"
-  },
-  "rap_penta_su_giu": {
-   "pagina": "rap-con-le-note.html",
-   "dispositivo": "telefono-orizzontale",
-   "audio": true,
-   "prima": [
-    {
-     "clic": "#staffToggle"
-    },
-    {
-     "attendi": 300
-    },
-    {
-     "clic": "input[name=staffnames][value=\"0\"]"
-    },
-    {
-     "attendi": 300
-    }
-   ],
-   "passi": [
-    {
-     "attendi": 400
-    },
-    {
-     "centra": ".level-card[data-level=\"2\"]"
-    },
-    {
-     "attendi": 300
-    },
-    {
-     "tocca": ".level-card[data-level=\"2\"]"
-    },
-    {
-     "segna": "via"
-    },
-    {
-     "attendi": 24000
-    }
-   ],
-   "nota": "solo pentagramma, salita e discesa"
-  },
-  "rap_lim": {
-   "pagina": "rap-con-le-note.html",
-   "dispositivo": "lim",
-   "audio": true,
-   "prima": [
-    {
-     "clic": "#staffToggle"
-    },
-    {
-     "attendi": 300
-    }
-   ],
-   "passi": [
-    {
-     "attendi": 400
-    },
-    {
-     "centra": ".level-card[data-level=\"0\"]"
-    },
-    {
-     "attendi": 300
-    },
-    {
-     "tocca": ".level-card[data-level=\"0\"]"
-    },
-    {
-     "segna": "via"
-    },
-    {
-     "attendi": 24000
-    }
-   ],
-   "schermo": [
-    1280,
-    720
-   ],
-   "densita": 1.5,
-   "nota": "LIM: nomi + pentagramma, ascendenti"
-  },
-  "rap_pc": {
-   "pagina": "rap-con-le-note.html",
-   "dispositivo": "lim",
-   "audio": true,
-   "prima": [],
-   "passi": [
-    {
-     "attendi": 400
-    },
-    {
-     "centra": ".level-card[data-level=\"2\"]"
-    },
-    {
-     "attendi": 300
-    },
-    {
-     "tocca": ".level-card[data-level=\"2\"]"
-    },
-    {
-     "segna": "via"
-    },
-    {
-     "attendi": 24000
-    }
-   ],
-   "schermo": [
-    1366,
-    768
-   ],
-   "densita": 1.4055,
-   "nota": "PC 1366x768: solo nomi, salita e discesa"
-  },
-  "rap_arpeggi": {
-   "pagina": "rap-con-le-note.html",
-   "dispositivo": "telefono-orizzontale",
-   "audio": true,
-   "prima": [
-    {
-     "clic": "#typePick"
-    },
-    {
-     "attendi": 500
-    },
-    {
-     "clic": ".type-choice[data-type=\"arpeggi\"]"
-    },
-    {
-     "attendi": 400
-    },
-    {
-     "js": "document.getElementById('typeOverlay').classList.remove('show')"
-    },
-    {
-     "attendi": 300
-    }
-   ],
-   "passi": [
-    {
-     "attendi": 400
-    },
-    {
-     "centra": ".level-card[data-level=\"0\"]"
-    },
-    {
-     "attendi": 300
-    },
-    {
-     "tocca": ".level-card[data-level=\"0\"]"
-    },
-    {
-     "segna": "via"
-    },
-    {
-     "attendi": 19000
-    }
-   ],
-   "nota": "arpeggi, ascendenti"
-  },
-  "rap_terze": {
-   "pagina": "rap-con-le-note.html",
-   "dispositivo": "telefono-orizzontale",
-   "audio": true,
-   "prima": [
-    {
-     "clic": "#typePick"
-    },
-    {
-     "attendi": 500
-    },
-    {
-     "clic": ".type-choice[data-type=\"terze\"]"
-    },
-    {
-     "attendi": 400
-    },
-    {
-     "js": "document.getElementById('typeOverlay').classList.remove('show')"
-    },
-    {
-     "attendi": 300
-    }
-   ],
-   "passi": [
-    {
-     "attendi": 400
-    },
-    {
-     "centra": ".level-card[data-level=\"0\"]"
-    },
-    {
-     "attendi": 300
-    },
-    {
-     "tocca": ".level-card[data-level=\"0\"]"
-    },
-    {
-     "segna": "via"
-    },
-    {
-     "attendi": 19000
-    }
-   ],
-   "nota": "progressione per terze, ascendente"
-  },
-  "rap_quinte": {
-   "pagina": "rap-con-le-note.html",
-   "dispositivo": "telefono-orizzontale",
-   "audio": true,
-   "prima": [
-    {
-     "clic": "#typePick"
-    },
-    {
-     "attendi": 500
-    },
-    {
-     "clic": ".type-choice[data-type=\"quinte\"]"
-    },
-    {
-     "attendi": 400
-    },
-    {
-     "js": "document.getElementById('typeOverlay').classList.remove('show')"
-    },
-    {
-     "attendi": 300
-    }
-   ],
-   "passi": [
-    {
-     "attendi": 400
-    },
-    {
-     "centra": ".level-card[data-level=\"0\"]"
-    },
-    {
-     "attendi": 300
-    },
-    {
-     "tocca": ".level-card[data-level=\"0\"]"
-    },
-    {
-     "segna": "via"
-    },
-    {
-     "attendi": 19000
-    }
-   ],
-   "nota": "progressione per quinte, ascendente"
-  },
-  "rap_x2": {
-   "pagina": "rap-con-le-note.html",
-   "dispositivo": "telefono-orizzontale",
-   "audio": true,
-   "prima": [],
-   "nota": "solo i nomi, ascendenti, saltando con il pulsante del gioco a due note per battito",
-   "passi": [
-    {
-     "attendi": 400
-    },
-    {
-     "centra": ".level-card[data-level=\"0\"]"
-    },
-    {
-     "attendi": 300
-    },
-    {
-     "tocca": ".level-card[data-level=\"0\"]"
-    },
-    {
-     "attendi": 2500
-    },
-    {
-     "tocca": ".phase-btn[data-pass=\"1\"]"
-    },
-    {
-     "segna": "via"
-    },
-    {
-     "attendi": 20000
-    }
-   ]
-  },
-  "rap_x4": {
-   "pagina": "rap-con-le-note.html",
-   "dispositivo": "telefono-orizzontale",
-   "audio": true,
-   "prima": [],
-   "nota": "solo i nomi, ascendenti, saltando con il pulsante del gioco a quattro note per battito",
-   "passi": [
-    {
-     "attendi": 400
-    },
-    {
-     "centra": ".level-card[data-level=\"0\"]"
-    },
-    {
-     "attendi": 300
-    },
-    {
-     "tocca": ".level-card[data-level=\"0\"]"
-    },
-    {
-     "attendi": 2500
-    },
-    {
-     "tocca": ".phase-btn[data-pass=\"2\"]"
-    },
-    {
-     "segna": "via"
-    },
-    {
-     "attendi": 20000
-    }
-   ]
-  }
- },
- "ricerca": "Applicata GUIDA-REEL.md: apertura col gioco già in movimento e GRATIS + niente registrazione; un'idea sola (Rap con le note!) mostrata nei suoi aspetti: tre schermi uno sopra l'altro per far vedere a colpo d'occhio la progressione (nomi, nomi + pentagramma, solo pentagramma) e le sequenze (su, giù, su e giù); suono vero del gioco (la base rap); LIM in aula, PC e telefono; invito a mandarlo a chi insegna con te; variante B.",
- "schermate": [
-  {
-   "name": "bg_tel",
-   "hash": "t=bg&k=phone&x=40&y=700&w=1000&h=563",
-   "dur": 0.04
-  },
-  {
-   "name": "hook",
-   "hash": "t=hook&a=L%27alfabeto%20musicale&b=a%20ritmo%20di%20rap%21&g=GRATIS&fondo=1",
-   "dur": 3.0,
-   "alpha": true
-  },
-  {
-   "name": "card1",
-   "hash": "t=card&c=do&l=Si%20apre|e%20si%20gioca%21&s=Niente%20registrazione.%20Su%20LIM%2C%20PC%20e%20telefono.&tel=1",
-   "dur": 3.0
-  },
-  {
-   "name": "pila1",
-   "hash": "t=pila&y=540%2C860%2C1180&h=250&l=1%20%C2%B7%20I%20nomi|2%20%C2%B7%20Nomi%20e%20pentagramma|3%20%C2%B7%20Solo%20pentagramma&c=do|mi|sol",
-   "dur": 0.04
-  },
-  {
-   "name": "tt_pila1",
-   "hash": "t=titolo&c=re&l=Passo%20dopo%20passo",
-   "dur": 4.5,
-   "alpha": true
-  },
-  {
-   "name": "pila2",
-   "hash": "t=pila&y=600%2C1000&h=250&l=%E2%86%91%20Ascendenti|%E2%86%93%20Discendenti&c=re|la",
-   "dur": 0.04
-  },
-  {
-   "name": "tt_pila2",
-   "hash": "t=titolo&c=la&l=Sequenze|ascendenti%20e%20discendenti%21",
-   "dur": 4.5,
-   "alpha": true
-  },
-  {
-   "name": "pila3",
-   "hash": "t=pila&y=610%2C910%2C1210&h=240&l=Arpeggi|Per%20terze|Per%20quinte&c=si|sol|do",
-   "dur": 0.04
-  },
-  {
-   "name": "tt_pila3",
-   "hash": "t=titolo&c=si&l=Arpeggi%20e%20progressioni%21&s=Terze%2C%20quarte%2C%20quinte%20e%20altro%3A|propedeutica%20al%20solfeggio%20parlato",
-   "dur": 4.5,
-   "alpha": true
-  },
-  {
-   "name": "classe",
-   "hash": "t=classe&x=130&y=480&w=820&h=461",
-   "dur": 0.04
-  },
-  {
-   "name": "tt_lim",
-   "hash": "t=titolo&c=mi&l=Tutta%20la%20classe%20a%20ritmo%21%20%F0%9F%8E%B6",
-   "dur": 3.0,
-   "alpha": true
-  },
-  {
-   "name": "card3",
-   "hash": "t=card&c=la&l=Mandalo|a%20chi%20insegna|con%20te.&s=Un%20progetto%20collaborativo%3A%20scrivici%20le%20tue%20idee%21&tel=1",
-   "dur": 3.0
-  },
-  {
-   "name": "end",
-   "hash": "t=end",
-   "dur": 3.0
-  },
-  {
-   "name": "pila_bt",
-   "hash": "t=pila&y=610%2C910%2C1210&h=240&l=%E2%99%A9%20Una%20nota%20per%20battito|%E2%99%AB%20Due%20note%20per%20battito|%E2%99%AC%20Quattro%20note%20per%20battito&c=do|mi|sol",
-   "dur": 0.04
-  },
-  {
-   "name": "tt_bt",
-   "hash": "t=titolo&c=do&l=Una%2C%20due%2C%20quattro|note%20per%20battito%21%20%F0%9F%9A%80",
-   "dur": 4.5,
-   "alpha": true
-  }
- ],
- "scaletta": [
-  {
-   "tipo": "incorniciata",
-   "clip": "rap_nomi_su",
-   "da": "via+15",
-   "a": "via+18",
-   "grafica": "hook",
-   "sfondo": "bg_tel",
-   "x": 40,
-   "y": 700,
-   "w": 1000,
-   "h": 563,
-   "angoli": 30
-  },
-  {
-   "tipo": "schermata",
-   "grafica": "card1",
-   "dispositivi": {
-    "lim": "memory",
-    "tablet": "brani",
-    "telefono": "index"
-   }
-  },
-  {
-   "tipo": "pila",
-   "sfondo": "pila1",
-   "grafica": "tt_pila1",
-   "y": [
-    540,
-    860,
-    1180
-   ],
-   "h": 250,
-   "righe": [
-    {
-     "clip": "rap_nomi_su",
-     "da": "via+11.5",
-     "a": "via+16",
-     "filtro": ",crop=1920:480:0:300"
-    },
-    {
-     "clip": "rap_misto_giu",
-     "da": "via+11.5",
-     "a": "via+16",
-     "filtro": ",crop=1920:480:0:300"
-    },
-    {
-     "clip": "rap_penta_su_giu",
-     "da": "via+11.5",
-     "a": "via+16",
-     "filtro": ",crop=1920:480:0:300"
-    }
-   ]
-  },
-  {
-   "tipo": "pila",
-   "sfondo": "pila2",
-   "grafica": "tt_pila2",
-   "y": [
-    600,
-    1000
-   ],
-   "h": 250,
-   "righe": [
-    {
-     "clip": "rap_nomi_su",
-     "da": "via+16.5",
-     "a": "via+21",
-     "filtro": ",crop=1920:480:0:300"
-    },
-    {
-     "clip": "rap_misto_giu",
-     "da": "via+16.5",
-     "a": "via+21",
-     "filtro": ",crop=1920:480:0:300"
-    }
-   ]
-  },
-  {
-   "tipo": "pila",
-   "sfondo": "pila_bt",
-   "grafica": "tt_bt",
-   "y": [
-    610,
-    910,
-    1210
-   ],
-   "h": 240,
-   "righe": [
-    {
-     "clip": "rap_nomi_su",
-     "da": "via+11.5",
-     "a": "via+16",
-     "filtro": ",crop=1920:480:0:300"
-    },
-    {
-     "clip": "rap_x2",
-     "da": "via+10",
-     "a": "via+14.5",
-     "filtro": ",crop=1920:480:0:300"
-    },
-    {
-     "clip": "rap_x4",
-     "da": "via+10",
-     "a": "via+14.5",
-     "filtro": ",crop=1920:480:0:300"
-    }
-   ]
-  },
-  {
-   "tipo": "pila",
-   "sfondo": "pila3",
-   "grafica": "tt_pila3",
-   "y": [
-    610,
-    910,
-    1210
-   ],
-   "h": 240,
-   "righe": [
-    {
-     "clip": "rap_arpeggi",
-     "da": "via+10",
-     "a": "via+14.5",
-     "filtro": ",crop=1920:480:0:300"
-    },
-    {
-     "clip": "rap_terze",
-     "da": "via+10",
-     "a": "via+14.5",
-     "filtro": ",crop=1920:480:0:300"
-    },
-    {
-     "clip": "rap_quinte",
-     "da": "via+10",
-     "a": "via+14.5",
-     "filtro": ",crop=1920:480:0:300"
-    }
-   ]
-  },
-  {
-   "tipo": "incorniciata",
-   "clip": "rap_lim",
-   "da": "via+11",
-   "a": "via+14",
-   "sfondo": "classe",
-   "grafica": "tt_lim",
-   "x": 130,
-   "y": 480,
-   "w": 820,
-   "h": 461
-  },
-  {
-   "tipo": "schermata",
-   "grafica": "card3",
-   "dispositivi": {
-    "lim": "barocco",
-    "tablet": "bona",
-    "telefono": "memory"
-   }
-  },
-  {
-   "tipo": "schermata",
-   "grafica": "end"
-  }
- ],
- "copertina": {
-  "titolo": "Rap con|le note!",
-  "sottotitolo": "L'alfabeto musicale a ritmo, gratis",
-  "colore": "sol"
- },
- "audio": {
-  "file": "_sviluppo/reel/libreria/basi/rap-con-le-note.mp3",
-  "da": 0,
-  "volume": 1.0,
-  "battito": 0.75,
-  "credito": "Musica: la base di Rap con le note! – musicascuole.it"
- },
- "varianti": {
-  "B": {
-   "nota": "apertura diversa, da provare come Trial Reel (servono 1000 follower)",
-   "schermate": [
-    {
-     "name": "hook",
-     "hash": "t=hook&a=Do%20re%20mi%20fa%20sol%20la%20si%E2%80%A6&g=GRATIS&b=a%20ritmo%20di%20rap%21",
-     "dur": 3.0,
-     "alpha": true
-    }
-   ]
-  }
- },
- "didascalia": {
-  "testo": "Maestre, l'alfabeto musicale si impara a ritmo di rap! 🎤 Rap con le note!, gratis per la scuola primaria.\nLe carte si accendono a tempo e la classe recita le note: do re mi fa sol la si do.\nPasso dopo passo: prima solo i nomi, poi nomi e pentagramma, poi solo il pentagramma.\nSequenze ascendenti e discendenti: una nota per battito, poi due, poi quattro.\nE poi arpeggi e progressioni per terze, quarte, quinte e altro: la propedeutica al solfeggio parlato.\nSulla LIM, sul PC e sul telefono. Niente registrazione, niente login, nessun dato raccolto: si apre e si gioca.\n\n📩 Mandalo alle colleghe che insegnano musica!",
-  "hashtag": [
-   "maestre",
-   "scuolaprimaria",
-   "maestreitaliane",
-   "educazionemusicale",
-   "LIM"
   ],
-  "alt": "Il gioco Rap con le note! di musicascuole.it: carte colorate con i nomi delle note che si accendono a tempo, schermi uno sopra l'altro con i nomi, i nomi e il pentagramma e solo il pentagramma, le sequenze ascendenti e discendenti, gli arpeggi e le progressioni per terze e per quinte, e il gioco su una LIM in un'aula disegnata con i banchi."
- },
- "nota_audio": "la base del gioco (estratta dalla pagina in libreria/basi/) suona per tutto il reel; i tagli durano un numero esatto di battiti e le riprese sono agganciate al battito"
+  "scaletta": [
+    {
+      "tipo": "incorniciata",
+      "clip": "rap_nomi_su",
+      "da": "via+15",
+      "a": "via+18",
+      "grafica": "hook",
+      "sfondo": "bg_tel",
+      "x": 40,
+      "y": 700,
+      "w": 1000,
+      "h": 563,
+      "angoli": 30
+    },
+    {
+      "tipo": "schermata",
+      "grafica": "card1",
+      "dispositivi": {
+        "lim": "memory",
+        "tablet": "brani",
+        "telefono": "index"
+      }
+    },
+    {
+      "tipo": "pila",
+      "sfondo": "pila1",
+      "grafica": "tt_pila1",
+      "y": [
+        540,
+        860,
+        1180
+      ],
+      "h": 250,
+      "righe": [
+        {
+          "clip": "rap_nomi_su",
+          "da": "via+11.5",
+          "a": "via+16",
+          "filtro": ",crop=1920:480:0:300"
+        },
+        {
+          "clip": "rap_misto_giu",
+          "da": "via+11.5",
+          "a": "via+16",
+          "filtro": ",crop=1920:480:0:300"
+        },
+        {
+          "clip": "rap_penta_su_giu",
+          "da": "via+11.5",
+          "a": "via+16",
+          "filtro": ",crop=1920:480:0:300"
+        }
+      ]
+    },
+    {
+      "tipo": "pila",
+      "sfondo": "pila2",
+      "grafica": "tt_pila2",
+      "y": [
+        600,
+        1000
+      ],
+      "h": 250,
+      "righe": [
+        {
+          "clip": "rap_nomi_su",
+          "da": "via+9.5",
+          "a": "via+14",
+          "filtro": ",crop=1920:480:0:300"
+        },
+        {
+          "clip": "rap_nomi_giu",
+          "da": "via+9.5",
+          "a": "via+14",
+          "filtro": ",crop=1920:480:0:300"
+        }
+      ]
+    },
+    {
+      "tipo": "pila",
+      "sfondo": "pila_bt",
+      "grafica": "tt_bt",
+      "y": [
+        610,
+        910,
+        1210
+      ],
+      "h": 240,
+      "righe": [
+        {
+          "clip": "rap_nomi_su",
+          "da": "via+11.5",
+          "a": "via+16",
+          "filtro": ",crop=1920:480:0:300"
+        },
+        {
+          "clip": "rap_x2",
+          "da": "via+10",
+          "a": "via+14.5",
+          "filtro": ",crop=1920:480:0:300"
+        },
+        {
+          "clip": "rap_x4",
+          "da": "via+10",
+          "a": "via+14.5",
+          "filtro": ",crop=1920:480:0:300"
+        }
+      ]
+    },
+    {
+      "tipo": "pila",
+      "sfondo": "pila3",
+      "grafica": "tt_pila3",
+      "y": [
+        610,
+        910,
+        1210
+      ],
+      "h": 240,
+      "righe": [
+        {
+          "clip": "rap_arpeggi",
+          "da": "via+10",
+          "a": "via+14.5",
+          "filtro": ",crop=1920:480:0:300"
+        },
+        {
+          "clip": "rap_terze",
+          "da": "via+10",
+          "a": "via+14.5",
+          "filtro": ",crop=1920:480:0:300"
+        },
+        {
+          "clip": "rap_quinte",
+          "da": "via+10",
+          "a": "via+14.5",
+          "filtro": ",crop=1920:480:0:300"
+        }
+      ]
+    },
+    {
+      "tipo": "incorniciata",
+      "clip": "rap_lim",
+      "da": "via+11",
+      "a": "via+14",
+      "sfondo": "classe",
+      "grafica": "tt_lim",
+      "x": 130,
+      "y": 480,
+      "w": 820,
+      "h": 461
+    },
+    {
+      "tipo": "schermata",
+      "grafica": "card3",
+      "dispositivi": {
+        "lim": "barocco",
+        "tablet": "bona",
+        "telefono": "memory"
+      }
+    },
+    {
+      "tipo": "schermata",
+      "grafica": "end"
+    }
+  ],
+  "copertina": {
+    "titolo": "Rap con|le note!",
+    "sottotitolo": "L'alfabeto musicale a ritmo, gratis",
+    "colore": "sol"
+  },
+  "audio": {
+    "file": "_sviluppo/reel/libreria/basi/rap-con-le-note.mp3",
+    "da": 0,
+    "volume": 1.0,
+    "battito": 0.75,
+    "credito": "Musica: la base di Rap con le note! – musicascuole.it"
+  },
+  "varianti": {
+    "B": {
+      "nota": "apertura diversa, da provare come Trial Reel (servono 1000 follower)",
+      "schermate": [
+        {
+          "name": "hook",
+          "hash": "t=hook&a=Do%20re%20mi%20fa%20sol%20la%20si%E2%80%A6&g=GRATIS&b=a%20ritmo%20di%20rap%21",
+          "dur": 3.0,
+          "alpha": true
+        }
+      ]
+    }
+  },
+  "didascalia": {
+    "testo": "Maestre, l'alfabeto musicale si impara a ritmo di rap! 🎤 Rap con le note!, gratis per la scuola primaria.\nLe carte si accendono a tempo e la classe recita le note: do re mi fa sol la si do.\nPasso dopo passo: prima solo i nomi, poi nomi e pentagramma, poi solo il pentagramma.\nSequenze ascendenti e discendenti: una nota per battito, poi due, poi quattro.\nE poi arpeggi e progressioni per terze, quarte, quinte e altro: la propedeutica al solfeggio parlato.\nSulla LIM, sul PC e sul telefono. Niente registrazione, niente login, nessun dato raccolto: si apre e si gioca.\n\n📩 Mandalo alle colleghe che insegnano musica!",
+    "hashtag": [
+      "maestre",
+      "scuolaprimaria",
+      "maestreitaliane",
+      "educazionemusicale",
+      "LIM"
+    ],
+    "alt": "Il gioco Rap con le note! di musicascuole.it: carte colorate con i nomi delle note che si accendono a tempo, schermi uno sopra l'altro con i nomi, i nomi e il pentagramma e solo il pentagramma, le sequenze ascendenti e discendenti, gli arpeggi e le progressioni per terze e per quinte, e il gioco su una LIM in un'aula disegnata con i banchi."
+  },
+  "nota_audio": "la base del gioco (estratta dalla pagina in libreria/basi/) suona per tutto il reel; i tagli durano un numero esatto di battiti e le riprese sono agganciate al battito"
 }
