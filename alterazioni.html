@@ -71,7 +71,7 @@ button { font-family: inherit; }
 .cartellino .c-in { line-height: 1.2; }
 .cartellino .mini { margin: 0 2px; }
 .cartellino.lampo { animation: lampo .5s ease-out; }
-@keyframes lampo { from { background: rgba(255,255,255,0.14); } to { background: transparent; } }
+@keyframes lampo { from { background: rgba(255,255,255,0.07); } to { background: transparent; } }
 .palco { position: relative; min-height: 0; }
 .palco > svg { position: absolute; inset: 0; width: 100%; height: 100%; display: block; }
 .strumenti { display: flex; flex-wrap: wrap; align-items: center; justify-content: center; gap: 8px; padding: 10px 12px 12px; min-height: 66px; }
@@ -218,7 +218,7 @@ body.colori .chip.c-fa rect { stroke: var(--fa); } body.colori .chip.c-sol rect 
 .tasto.bianco { fill: #F1F5F9; stroke: #0f172a; stroke-width: 2; }
 .tasto.bianco.premuto { fill: var(--luce, #FDE047); }
 .tasto.nero { fill: #0b1020; stroke: #64748B; stroke-width: 2; }
-.tasto.nero.premuto { fill: var(--luce, #FDE047); stroke: #fff; }
+.tasto.nero.premuto { fill: var(--luce, #FDE68A); stroke: #fff; }
 .nome-tasto { font-family: 'Manrope', sans-serif; font-weight: 800; fill: #1e293b; text-anchor: middle; pointer-events: none; }
 .striscia { fill: #94A3B8; pointer-events: none; }
 body.colori .striscia.c-do { fill: var(--do); } body.colori .striscia.c-re { fill: var(--re); } body.colori .striscia.c-mi { fill: #EAB308; }
@@ -526,7 +526,8 @@ function anello(el) { if (!el) return; el.classList.remove("via"); void el.getBo
 const CART = $("#cartellino");
 function cart(html, lampo = true) {
   CART.innerHTML = `<div class="c-in">${html}</div>`;
-  if (lampo) { CART.classList.remove("lampo"); void CART.offsetWidth; CART.classList.add("lampo"); }
+  // sicurezza (fotosensibilità): al massimo un lampo leggero ogni 1,5 secondi
+  if (lampo && Date.now() - (cart.ultimo || 0) > 1500) { cart.ultimo = Date.now(); CART.classList.remove("lampo"); void CART.offsetWidth; CART.classList.add("lampo"); }
 }
 function cartNota(chiave, p, extra = "") {
   const n = nota(chiave, p);
@@ -560,6 +561,7 @@ function segna(gruppoId, el) { document.querySelectorAll("#" + gruppoId + " .btn
 
 /* suona e illumina una fila di note una dopo l'altra */
 function suonaFila(note, chiave, ms = 520, fine) {
+  ms = Math.max(ms, 550);                         // sicurezza: mai più di due accensioni al secondo
   note.forEach((el, i) => dopo(i * ms, () => {
     mostra(el, true, el.classList.contains("nascosta"));
     const p = +el.dataset.p; lampeggia(el);
@@ -630,7 +632,7 @@ function svgTastiera(T, o = {}) {
   let s = `<g class="tastiera">`;
   T.bianchi.forEach((m, i) => {
     const nm = NATURALE[m % 12];
-    s += `<rect class="tasto bianco" data-m="${m}" x="${T.x0 + i * T.kw + 1.5}" y="${T.y0}" width="${T.kw - 3}" height="${T.h}" rx="7" style="--luce:${coloreTesto(nm)}"/>`;
+    s += `<rect class="tasto bianco" data-m="${m}" x="${T.x0 + i * T.kw + 1.5}" y="${T.y0}" width="${T.kw - 3}" height="${T.h}" rx="7" style="--luce:${pastello(coloreTesto(nm))}"/>`;
     s += `<rect class="striscia c-${nm}" data-m="${m}" x="${T.x0 + i * T.kw + 8}" y="${T.y0 + T.h - 12}" width="${T.kw - 16}" height="6" rx="3"/>`;
     if (o.nomi !== false) s += `<text class="nome-tasto c-${nm}" data-m="${m}" x="${T.cx[m]}" y="${T.y0 + T.h - 24}" style="font-size:${Math.min(24, T.kw * 0.36)}px">${MAIU(nm)}</text>`;
   });
@@ -643,9 +645,15 @@ function svgTastiera(T, o = {}) {
   return s + `<g class="archi"></g></g>`;
 }
 const tasto = m => q1(`.tasto[data-m="${m}"]`);
+/* sicurezza (fotosensibilità): il tasto premuto prende un colore chiaro, mescolato col bianco */
+function pastello(c, k = 0.5) {
+  const h = (c || "").trim(); if (!/^#[0-9a-f]{6}$/i.test(h)) return c;
+  const v = [1, 3, 5].map(i => parseInt(h.substr(i, 2), 16)), w = [241, 245, 249];
+  return "#" + v.map((x, i) => Math.round(x * k + w[i] * (1 - k)).toString(16).padStart(2, "0")).join("");
+}
 function premi(m, on = true, colore) {
   const t = tasto(m); if (!t) return;
-  if (colore) t.style.setProperty("--luce", colore);
+  if (colore) t.style.setProperty("--luce", pastello(colore));
   t.classList.toggle("premuto", on);
   if (!t.classList.contains("nero")) { const n = q1(`.nome-tasto[data-m="${m}"]`); if (n) n.classList.toggle("premuto", on); }
 }
@@ -701,8 +709,8 @@ PASSI.push({
   },
   bianchi() {
     fermaTutto(); lascia();
-    this.T.bianchi.forEach((m, i) => dopo(i * 330, () => { lascia(); premi(m); suona(m, 0, .6); cart(nomeTastoHTML(m), false); }));
-    dopo(this.T.bianchi.length * 330 + 200, () => { lascia(); cart("I tasti bianchi: do re mi fa sol la si"); });
+    this.T.bianchi.forEach((m, i) => dopo(i * 520, () => { lascia(); premi(m); suona(m, 0, .6); cart(nomeTastoHTML(m), false); }));
+    dopo(this.T.bianchi.length * 520 + 200, () => { lascia(); cart("I tasti bianchi: do re mi fa sol la si"); });
   },
   neri() {
     fermaTutto(); lascia(); qa(".gruppo-neri").forEach(g => mostra(g));
@@ -754,8 +762,8 @@ PASSI.push({
   },
   cromatica() {
     fermaTutto(); lascia(); togliArchi();
-    for (let m = 60; m <= 72; m++) dopo((m - 60) * 380, () => { lascia(); premi(m, true, "#FDE047"); suona(m, 0, .5); if (m > 60) arco(this.T, m - 1, m, "½", "piccolo-arco"); cart(nomeTastoHTML(m), false); });
-    dopo(13 * 380 + 200, () => { lascia(); cart("Da DO a DO: <b>12 semitoni</b>"); });
+    for (let m = 60; m <= 72; m++) dopo((m - 60) * 520, () => { lascia(); premi(m, true, "#FDE047"); suona(m, 0, .5); if (m > 60) arco(this.T, m - 1, m, "½", "piccolo-arco"); cart(nomeTastoHTML(m), false); });
+    dopo(13 * 520 + 200, () => { lascia(); cart("Da DO a DO: <b>12 semitoni</b>"); });
   },
   mifa() {
     fermaTutto(); lascia(); togliArchi();
@@ -1105,7 +1113,7 @@ PASSI.push({
     fermaTutto(); q1(".dita").innerHTML = ""; qa(".barretta.evid").forEach(b => b.classList.remove("evid"));
     cart(["I tasti della chitarra", "Un tasto = un semitono", "Il bemolle: un tasto indietro"][f], anim);
     if (!anim) return;
-    if (f === 0) for (let n = 1; n <= 12; n++) dopo(n * 120, () => { const b = q1(`.barretta[data-n="${n}"]`); b.classList.add("evid"); dopo(500, () => b.classList.remove("evid")); });
+    if (f === 0) { qa(".barretta").forEach(b => b.classList.add("evid")); dopo(1800, () => qa(".barretta").forEach(b => b.classList.remove("evid"))); }
     if (f === 1) this.doRe();
     if (f === 2) this.siSib();
   }

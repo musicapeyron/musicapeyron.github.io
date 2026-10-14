@@ -71,7 +71,7 @@ button { font-family: inherit; }
 .cartellino .c-in { line-height: 1.2; }
 .cartellino .mini { margin: 0 2px; }
 .cartellino.lampo { animation: lampo .5s ease-out; }
-@keyframes lampo { from { background: rgba(255,255,255,0.14); } to { background: transparent; } }
+@keyframes lampo { from { background: rgba(255,255,255,0.07); } to { background: transparent; } }
 .palco { position: relative; min-height: 0; }
 .palco > svg { position: absolute; inset: 0; width: 100%; height: 100%; display: block; }
 .strumenti { display: flex; flex-wrap: wrap; align-items: center; justify-content: center; gap: 8px; padding: 10px 12px 12px; min-height: 66px; }
@@ -549,7 +549,8 @@ function anello(el) { if (!el) return; el.classList.remove("via"); void el.getBo
 const CART = $("#cartellino");
 function cart(html, lampo = true) {
   CART.innerHTML = `<div class="c-in">${html}</div>`;
-  if (lampo) { CART.classList.remove("lampo"); void CART.offsetWidth; CART.classList.add("lampo"); }
+  // sicurezza (fotosensibilità): al massimo un lampo leggero ogni 1,5 secondi
+  if (lampo && Date.now() - (cart.ultimo || 0) > 1500) { cart.ultimo = Date.now(); CART.classList.remove("lampo"); void CART.offsetWidth; CART.classList.add("lampo"); }
 }
 function cartNota(chiave, p, extra = "") {
   const n = nota(chiave, p);
@@ -583,6 +584,7 @@ function segna(gruppoId, el) { document.querySelectorAll("#" + gruppoId + " .btn
 
 /* suona e illumina una fila di note una dopo l'altra */
 function suonaFila(note, chiave, ms = 520, fine) {
+  ms = Math.max(ms, 550);                         // sicurezza: mai più di due accensioni al secondo
   note.forEach((el, i) => dopo(i * ms, () => {
     mostra(el, true, el.classList.contains("nascosta"));
     const p = +el.dataset.p; lampeggia(el);
@@ -757,7 +759,7 @@ PASSI.push({
     if (!anim) return;
     if (f === 0) ri.forEach((e, i) => dopo(i * 450, () => { mostra(e, true, true); accendiPerNota(+e.dataset.p, "#FDE047"); suona(nota("violino", +e.dataset.p).midi, 0, .7); }));
     if (f === 1) sp.forEach((e, i) => dopo(i * 450, () => { mostra(e, true, true); accendiPerNota(+e.dataset.p, "#38BDF8"); suona(nota("violino", +e.dataset.p).midi, 0, .7); }));
-    if (f === 2) [...ri, ...sp].sort((a, b) => a.dataset.p - b.dataset.p).forEach((e, i) => dopo(i * 380, () => { lampeggia(e); suona(nota("violino", +e.dataset.p).midi, 0, .6); }));
+    if (f === 2) [...ri, ...sp].sort((a, b) => a.dataset.p - b.dataset.p).forEach((e, i) => dopo(i * 550, () => { lampeggia(e); suona(nota("violino", +e.dataset.p).midi, 0, .6); }));
     if (anim && f !== 4) dopo(1800, spegniRighe);
   }
 });
@@ -862,7 +864,7 @@ PASSI.push({
     ]);
   },
   scala() {
-    qa(".chip").forEach((c, i) => dopo(i * 420, () => { c.classList.add("batte"); suona([60, 62, 64, 65, 67, 69, 71, 72][i], 0, .7); dopo(380, () => c.classList.remove("batte")); }));
+    qa(".chip").forEach((c, i) => dopo(i * 550, () => { c.classList.add("batte"); suona([60, 62, 64, 65, 67, 69, 71, 72][i], 0, .7); dopo(380, () => c.classList.remove("batte")); }));
     cart("do · re · mi · fa · sol · la · si · do");
   },
   vai(p) {
@@ -1281,9 +1283,12 @@ PASSI.push({
     metro.avvia((k, prog) => {
       const perMov = sud ? 2 : 1, i = k % (2 * n * perMov);
       if (prog) return (i % (n * perMov) === 0) ? 2 : (i % perMov === 0 ? 1 : 0);
-      mov.forEach(m => m.classList.remove("luce")); conte.forEach(c => c.classList.remove("batte"));
-      if (mov[i]) { mov[i].classList.add("luce"); conte[i].classList.add("batte"); }
-      if (k === 2 * n * perMov - 1) dopo(60000 / metro.bpm / perMov, () => { mov.forEach(m => m.classList.remove("luce")); conte.forEach(c => c.classList.remove("batte")); });
+      const ultimo = k === 2 * n * perMov - 1;
+      if (!(sud && i % 2)) {                       // sicurezza: con la suddivisione la luce cambia solo a ogni movimento
+        mov.forEach(m => m.classList.remove("luce")); conte.forEach(c => c.classList.remove("batte"));
+        [i, sud ? i + 1 : -1].forEach(j => { if (mov[j]) { mov[j].classList.add("luce"); conte[j].classList.add("batte"); } });
+      }
+      if (ultimo) dopo(60000 / metro.bpm / perMov, () => { mov.forEach(m => m.classList.remove("luce")); conte.forEach(c => c.classList.remove("batte")); });
       return null;
     }, 2 * n * (sud ? 2 : 1), sud);
     cart(`<b>${n}/4</b> <span class="piccolo">· si legge «${["", "", "due", "tre", "quattro"][n]} quarti»</span>`);
