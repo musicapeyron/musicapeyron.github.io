@@ -1,0 +1,1331 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Le alterazioni — musicascuole.it</title>
+<link rel="icon" href="favicon.svg" type="image/svg+xml">
+<link rel="icon" href="favicon-32.png" type="image/png" sizes="32x32">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
+<meta name="description" content="Lezione interattiva per la LIM: tono e semitono sulla tastiera, diesis, bemolle, bequadro, doppio diesis e doppio bemolle, e come si alterano le note su pianoforte, chitarra, violino e violoncello.">
+<link rel="stylesheet" href="fonts/caratteri.css">
+<link rel="stylesheet" href="comune.css">
+<style>
+/* =========================================================
+   Le alterazioni — lezione interattiva a passi (stesso motore di note-sul-pentagramma.html).
+   Ogni passo ha delle "fasi": Avanti mostra la fase successiva, poi il passo successivo.
+   I simboli (chiavi, teste, numeri del tempo) sono tracciati di VexFlow salvati qui sotto
+   nella costante GLIFI: la pagina non carica la libreria.
+   ========================================================= */
+* { box-sizing: border-box; }
+html, body { margin: 0; }
+body { min-height: 100vh; font-family: 'Inter', 'Segoe UI', Arial, sans-serif; color: #EAF2FF;
+  -webkit-font-smoothing: antialiased; padding: 36px 14px 12px; position: relative; }
+button { font-family: inherit; }
+
+/* colori dei capitoli */
+:root { --c0: #38BDF8; --c1: #A78BFA; --c2: #FBBF24; --c3: #34D399; --cap: var(--c0);
+  --carta: rgba(30, 41, 59, 0.62); --bordo: rgba(255,255,255,0.12); --tenue: #9FB3CE; }
+
+.casetta { position: fixed; top: 12px; left: 12px; z-index: 40; width: 44px; height: 44px; border-radius: 50%;
+  display: grid; place-items: center; text-decoration: none; font-size: 20px;
+  background: linear-gradient(180deg, rgba(255,255,255,0.14), rgba(255,255,255,0.05)); border: 1px solid rgba(255,255,255,0.18); }
+.casetta:hover { filter: brightness(1.2); }
+
+.lezione { position: relative; z-index: 1; max-width: 1400px; margin: 0 auto; display: flex; flex-direction: column; gap: 10px; }
+
+/* ---------- testata: titolo e indice ---------- */
+.riga-titolo { display: flex; align-items: center; gap: 14px; padding-left: 50px; }
+.riga-titolo h1 { margin: 0; font-family: 'Fredoka', 'Manrope', sans-serif; font-weight: 600; font-size: 28px; line-height: 1.1; }
+.riga-titolo .sopra { font-family: 'Manrope', sans-serif; font-weight: 800; font-size: 11px; letter-spacing: .16em; text-transform: uppercase; color: #FDE7C7; }
+.riga-titolo .spazio-vuoto { flex: 1; }
+.contatore { font-family: 'Manrope', sans-serif; font-weight: 700; color: var(--tenue); font-size: 14px; }
+.interruttore { font-family: 'Manrope', sans-serif; font-weight: 800; font-size: 14px; color: #EAF2FF; cursor: pointer;
+  background: rgba(15,23,42,0.6); border: 1px solid var(--bordo); border-radius: 999px; padding: 7px 14px; }
+.interruttore.attivo { background: #EAF2FF; color: #0f172a; }
+
+.indice { display: flex; gap: 8px; }
+.gruppo { display: flex; flex-direction: column; gap: 4px; min-width: 0; }
+.gruppo .cap { font-family: 'Manrope', sans-serif; font-weight: 800; font-size: 10.5px; letter-spacing: .14em; text-transform: uppercase;
+  color: var(--colore); padding-left: 4px; white-space: nowrap; }
+.gruppo .pillole { display: flex; gap: 3px; }
+.pillola { flex: 1 1 0; min-width: 0; display: flex; align-items: center; gap: 5px; cursor: pointer; text-align: left;
+  padding: 5px 4px 5px 4px; border-radius: 12px; height: 44px; color: #CBD5E1;
+  background: var(--carta); border: 1px solid var(--bordo); border-bottom: 3px solid color-mix(in srgb, var(--colore) 45%, transparent);
+  font-family: 'Manrope', sans-serif; font-weight: 700; font-size: 12px; line-height: 1.12; hyphens: manual; }
+.pillola .n { flex: 0 0 24px; height: 24px; border-radius: 50%; display: grid; place-items: center; font-weight: 800; font-size: 13px;
+  border: 2px solid color-mix(in srgb, var(--colore) 70%, transparent); color: var(--colore); }
+.pillola .t { overflow: hidden; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; }
+.pillola:hover { filter: brightness(1.2); }
+.pillola.vista .n { background: color-mix(in srgb, var(--colore) 22%, transparent); }
+.pillola.attiva { background: var(--colore); color: #0f172a; border-color: var(--colore); }
+.pillola.attiva .n { background: #0f172a; color: var(--colore); border-color: #0f172a; }
+
+/* ---------- corpo: palco (disegno) e spiegazione ---------- */
+.corpo { display: grid; grid-template-columns: 880px 1fr; gap: 14px; }
+.scheda { background: var(--carta); border: 1px solid var(--bordo); border-top: 4px solid var(--cap); border-radius: 18px; }
+.palco-card { display: grid; grid-template-rows: 54px 1fr auto; overflow: hidden; }
+.cartellino { display: flex; align-items: center; justify-content: center; gap: 10px; padding: 0 14px; text-align: center;
+  font-family: 'Manrope', sans-serif; font-weight: 800; font-size: 22px; color: #F8FAFC; border-bottom: 1px solid rgba(255,255,255,0.06); }
+.cartellino .piccolo { font-weight: 600; font-size: 17px; color: var(--tenue); }
+.cartellino .c-in { line-height: 1.2; }
+.cartellino .mini { margin: 0 2px; }
+.cartellino.lampo { animation: lampo .5s ease-out; }
+@keyframes lampo { from { background: rgba(255,255,255,0.14); } to { background: transparent; } }
+.palco { position: relative; min-height: 0; }
+.palco > svg { position: absolute; inset: 0; width: 100%; height: 100%; display: block; }
+.strumenti { display: flex; flex-wrap: wrap; align-items: center; justify-content: center; gap: 8px; padding: 10px 12px 12px; min-height: 66px; }
+.strumenti .suggerimento { color: var(--tenue); font-size: 15px; font-style: italic; }
+.btn { font-family: 'Manrope', sans-serif; font-weight: 800; font-size: 16px; color: #EAF2FF; cursor: pointer;
+  background: rgba(15,23,42,0.7); border: 1px solid rgba(255,255,255,0.2); border-radius: 12px; padding: 10px 16px; line-height: 1.1; }
+.btn:hover { filter: brightness(1.25); }
+.btn:active { filter: brightness(0.9); }
+.btn.forte { background: var(--cap); color: #0f172a; border-color: var(--cap); }
+.btn.on { background: #EAF2FF; color: #0f172a; }
+.btn:disabled { opacity: .35; cursor: default; filter: none; }
+.segmenti { display: inline-flex; border: 1px solid rgba(255,255,255,0.2); border-radius: 12px; overflow: hidden; }
+.segmenti .btn { border: 0; border-radius: 0; border-left: 1px solid rgba(255,255,255,0.15); }
+.segmenti .btn:first-child { border-left: 0; }
+
+.spiega { padding: 16px 22px 18px; display: flex; flex-direction: column; overflow: hidden; }
+.spiega .capitolo { font-family: 'Manrope', sans-serif; font-weight: 800; font-size: 12px; letter-spacing: .14em; text-transform: uppercase; color: var(--cap); }
+.spiega h2 { font-family: 'Fredoka', 'Manrope', sans-serif; font-weight: 600; font-size: 31px; line-height: 1.1; margin: 4px 0 12px; }
+.punti { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 10px; }
+.punti li { font-size: var(--fs, 20px); line-height: 1.38; padding-left: 26px; position: relative; color: #CBD5E1; cursor: pointer; transition: color .3s; }
+.punti li::before { content: ""; position: absolute; left: 4px; top: .58em; width: 10px; height: 10px; border-radius: 50%; background: var(--cap); opacity: .55; }
+.punti li.dopo { display: none; }
+.punti li.ora { color: #fff; }
+.punti li.ora::before { opacity: 1; box-shadow: 0 0 0 4px color-mix(in srgb, var(--cap) 30%, transparent); }
+.punti li b { color: #fff; }
+.quaderno { margin-top: auto; padding: 10px 14px 11px; border-radius: 12px; background: rgba(253, 231, 199, 0.08);
+  border: 1px dashed rgba(253, 231, 199, 0.45); font-size: var(--fq, 15.5px); line-height: 1.4; color: #FDE7C7; }
+.quaderno .tit { font-family: 'Manrope', sans-serif; font-weight: 800; font-size: 11.5px; letter-spacing: .14em; text-transform: uppercase; margin-bottom: 3px; }
+.quaderno p { margin: 3px 0 0; }
+.quaderno[hidden] { display: none; }
+
+/* ---------- piede: frecce e fasi ---------- */
+.piede-lezione { display: grid; grid-template-columns: 200px 1fr 260px; align-items: center; gap: 12px; height: 62px; }
+.nav-btn { justify-self: start; height: 56px; padding: 0 22px; border-radius: 999px; cursor: pointer; font-family: 'Manrope', sans-serif;
+  font-weight: 800; font-size: 18px; color: #EAF2FF; background: rgba(15,23,42,0.7); border: 1px solid rgba(255,255,255,0.18); }
+.avanti { justify-self: end; height: 58px; width: 100%; border-radius: 999px; cursor: pointer; border: 0; font-family: 'Manrope', sans-serif;
+  font-weight: 800; font-size: 22px; color: #0f172a; background: var(--cap); }
+.nav-btn:hover, .avanti:hover { filter: brightness(1.15); }
+.nav-btn:active, .avanti:active { filter: brightness(0.92); }
+.nav-btn:disabled, .avanti:disabled { opacity: .3; cursor: default; filter: none; }
+.fasi { display: flex; justify-content: center; gap: 10px; }
+.fasi button { width: 40px; height: 40px; border-radius: 50%; cursor: pointer; font-family: 'Manrope', sans-serif; font-weight: 800; font-size: 16px;
+  color: #CBD5E1; background: transparent; border: 2px solid rgba(255,255,255,0.25); }
+.fasi button.fatta { border-color: var(--cap); color: var(--cap); }
+.fasi button.ora { background: var(--cap); border-color: var(--cap); color: #0f172a; }
+
+/* ---------- ripasso finale (senza palco) ---------- */
+.lezione.solo-testo .corpo { grid-template-columns: 1fr; }
+.lezione.solo-testo .spiega { display: none; }
+.lezione.solo-testo .palco-card { grid-template-rows: 54px 1fr auto; }
+.ripasso { position: absolute; inset: 0; padding: 12px 16px 6px; display: grid; grid-template-columns: repeat(3, 1fr); grid-auto-rows: 1fr; gap: 9px; }
+.def { background: rgba(15,23,42,0.55); border: 1px solid var(--bordo); border-left: 4px solid var(--colore); border-radius: 12px;
+  padding: 6px 11px; font-size: 14px; line-height: 1.3; color: #CBD5E1; cursor: pointer; text-align: left; font-family: inherit; overflow: hidden; }
+.def:hover { filter: brightness(1.2); }
+.def b { color: #fff; font-family: 'Manrope', sans-serif; font-weight: 800; }
+.def .vai { float: right; color: var(--colore); font-weight: 800; font-family: 'Manrope', sans-serif; font-size: 12.5px; }
+.allenati { display: flex; flex-wrap: wrap; gap: 8px; justify-content: center; align-items: center; }
+.allenati span { color: var(--tenue); font-weight: 700; font-family: 'Manrope', sans-serif; }
+.allenati a { text-decoration: none; }
+
+/* ---------- il disegno ---------- */
+svg { -webkit-tap-highlight-color: transparent; user-select: none; -webkit-user-select: none; }
+.riga { stroke: rgba(234,242,255,0.85); stroke-width: 2.4; stroke-linecap: round; transition: stroke .35s, stroke-width .35s; }
+.riga.accesa { stroke: var(--luce, #FDE047); stroke-width: 6; filter: drop-shadow(0 0 7px var(--luce, #FDE047)); }
+.spazio { fill: var(--luce, #38BDF8); opacity: 0; transition: opacity .35s; }
+.spazio.acceso { opacity: .32; }
+.rigo.disegna .riga { stroke-dasharray: 1000; animation: traccia .8s ease-out both; animation-delay: calc(var(--i) * .16s); }
+@keyframes traccia { from { stroke-dashoffset: 1000; } to { stroke-dashoffset: 0; } }
+.taglio { stroke: rgba(234,242,255,0.9); stroke-width: 2.6; stroke-linecap: round; }
+.taglio.nuovo { stroke-dasharray: 70; animation: traccia2 .6s ease-out both; }
+@keyframes traccia2 { from { stroke-dashoffset: 70; } to { stroke-dashoffset: 0; } }
+.stanghetta { stroke: rgba(234,242,255,0.9); stroke-width: 2.6; transition: stroke .3s; }
+.stanghetta.grossa { stroke-width: 9; }
+.glifo { fill: #EAF2FF; transition: fill .35s, filter .35s; }
+.evid, .evid .glifo, .evid.glifo { fill: var(--luce, #FDE047) !important; filter: drop-shadow(0 0 8px var(--luce, #FDE047)); }
+.stanghetta.evid { stroke: var(--luce, #FDE047); filter: drop-shadow(0 0 8px var(--luce, #FDE047)); }
+.anello { fill: none; stroke: var(--luce, #FDE047); stroke-width: 4; opacity: 0; transform-box: fill-box; transform-origin: center; }
+.anello.via { animation: anello 1.1s ease-out 3; }
+@keyframes anello { 0% { opacity: .95; transform: scale(.6); } 100% { opacity: 0; transform: scale(1.8); } }
+
+.nota .testa { fill: #EAF2FF; transition: fill .3s, opacity .3s; }
+.nota .gambo { stroke: #EAF2FF; stroke-width: 2.4; }
+.nota { transition: opacity .35s; cursor: pointer; }
+.nota.nascosta, .nome.nascosto, .vela.nascosto { opacity: 0; pointer-events: none; }
+.nota.compare { animation: compare .45s ease-out; }
+@keyframes compare { from { opacity: 0; } to { opacity: 1; } }
+.nota.luce .testa { filter: drop-shadow(0 0 9px #fff) drop-shadow(0 0 4px #fff); }
+.nota.tenue { opacity: .45; }
+.nome { font-family: 'Manrope', sans-serif; font-weight: 800; font-size: 25px; fill: #EAF2FF; text-anchor: middle; transition: opacity .3s, fill .3s;
+  paint-order: stroke; stroke: #172036; stroke-width: 6px; stroke-linejoin: round; }
+.nome.coperto { fill: rgba(234,242,255,0.5); }
+.nome { transform-box: fill-box; transform-origin: center; transition: opacity .3s, fill .3s, transform .15s; }
+.nome.luce { transform: scale(1.22); filter: drop-shadow(0 0 7px #fff); }
+.gambo-evid .gambo { stroke: #FDE047; stroke-width: 4; filter: drop-shadow(0 0 6px #FDE047); }
+.mano .tratto { fill: none; stroke: #EAF2FF; stroke-width: 6; stroke-linecap: round; stroke-linejoin: round; }
+.mano .punta { fill: #FBBF24; stroke: #0f172a; stroke-width: 3; }
+.mano .pallino, .mano .puntino { fill: #EAF2FF; }
+.passino circle { fill: #FBBF24; } .passino text { font-family: 'Manrope', sans-serif; font-weight: 800; font-size: 17px; fill: #0f172a; text-anchor: middle; dominant-baseline: central; }
+.chiave { transition: opacity .5s; }
+.etic { font-family: 'Manrope', sans-serif; font-weight: 800; font-size: 19px; fill: #CBD5E1; letter-spacing: .04em;
+  paint-order: stroke; stroke: #172036; stroke-width: 7px; stroke-linejoin: round; }
+.etic.grande { font-size: 24px; }
+.num-cerchio circle { fill: rgba(15,23,42,0.85); stroke: var(--luce, #EAF2FF); stroke-width: 2.5; }
+.num-cerchio text { font-family: 'Manrope', sans-serif; font-weight: 800; font-size: 18px; fill: #EAF2FF; text-anchor: middle; dominant-baseline: central; }
+.num-cerchio { transition: opacity .3s; }
+.vela { transition: opacity .35s; }
+.colpo { fill: transparent; cursor: pointer; }
+.colpo:hover + .ombra, .colpo:hover { fill: rgba(255,255,255,0.06); }
+.freccia { stroke: var(--luce, #FBBF24); stroke-width: 3; fill: none; stroke-linecap: round; stroke-linejoin: round; }
+.cursore { fill: none; stroke: #fff; stroke-width: 3.5; transition: transform .25s ease, opacity .25s; }
+.palla { fill: rgba(234,242,255,0.18); stroke: rgba(234,242,255,0.55); stroke-width: 2.5; transition: fill .08s, stroke .08s; }
+.palla.forte { stroke-width: 4; }
+.palla.batte { fill: var(--luce, #FBBF24); stroke: #fff; }
+.conta { font-family: 'Manrope', sans-serif; font-weight: 800; font-size: 24px; fill: #9FB3CE; text-anchor: middle; transition: fill .08s; }
+.conta.batte { fill: #fff; }
+
+/* colori delle note (attivi di default; si spengono con il pulsante 🎨) */
+body.colori .nota.c-do .testa { fill: var(--do); } body.colori .nome.c-do { fill: var(--do); }
+body.colori .nota.c-re .testa { fill: var(--re); } body.colori .nome.c-re { fill: var(--re); }
+body.colori .nota.c-mi .testa { fill: var(--mi); } body.colori .nome.c-mi { fill: var(--mi); }
+body.colori .nota.c-fa .testa { fill: var(--fa); } body.colori .nome.c-fa { fill: var(--fa); }
+body.colori .nota.c-sol .testa { fill: var(--sol); } body.colori .nome.c-sol { fill: #2DD4BF; }
+body.colori .nota.c-la .testa { fill: var(--la); } body.colori .nome.c-la { fill: #A79BE8; }
+body.colori .nota.c-si .testa { fill: var(--si); } body.colori .nome.c-si { fill: #E879B9; }
+/* le note scure (sol, la) hanno un bordo chiaro per staccarsi dallo sfondo */
+body.colori .nota.c-la .testa, body.colori .nota.c-sol .testa { stroke: rgba(234,242,255,0.55); stroke-width: .5; }
+.chip rect { fill: rgba(15,23,42,0.6); stroke: rgba(255,255,255,0.25); stroke-width: 2; transition: fill .2s; }
+.chip text { font-family: 'Manrope', sans-serif; font-weight: 800; font-size: 24px; text-anchor: middle; dominant-baseline: central; fill: #EAF2FF; }
+.chip.batte rect { fill: rgba(255,255,255,0.22); stroke: #fff; }
+body.colori .chip.c-do rect { stroke: var(--do); } body.colori .chip.c-re rect { stroke: var(--re); } body.colori .chip.c-mi rect { stroke: var(--mi); }
+body.colori .chip.c-fa rect { stroke: var(--fa); } body.colori .chip.c-sol rect { stroke: #2DD4BF; } body.colori .chip.c-la rect { stroke: #A79BE8; } body.colori .chip.c-si rect { stroke: #E879B9; }
+.mini { display: inline-block; vertical-align: middle; }
+.mini path { fill: #EAF2FF; }
+
+
+/* ---------- tastiera, chitarra, archi, simboli ---------- */
+.mini-alt { display: inline-block; vertical-align: -0.28em; margin-left: 1px; }
+.mini-alt path { fill: currentColor; }
+.glifo-alt { fill: #EAF2FF; transition: fill .3s, filter .3s; }
+.tasto { cursor: pointer; transition: fill .12s; }
+.tasto.bianco { fill: #F1F5F9; stroke: #0f172a; stroke-width: 2; }
+.tasto.bianco.premuto { fill: var(--luce, #FDE047); }
+.tasto.nero { fill: #0b1020; stroke: #64748B; stroke-width: 2; }
+.tasto.nero.premuto { fill: var(--luce, #FDE047); stroke: #fff; }
+.nome-tasto { font-family: 'Manrope', sans-serif; font-weight: 800; fill: #1e293b; text-anchor: middle; pointer-events: none; }
+.striscia { fill: #94A3B8; pointer-events: none; }
+body.colori .striscia.c-do { fill: var(--do); } body.colori .striscia.c-re { fill: var(--re); } body.colori .striscia.c-mi { fill: #EAB308; }
+body.colori .striscia.c-fa { fill: #84CC16; } body.colori .striscia.c-sol { fill: var(--sol); } body.colori .striscia.c-la { fill: var(--la); } body.colori .striscia.c-si { fill: var(--si); }
+.nomi-neri { pointer-events: none; }
+.nomi-neri .nome { stroke-width: 4px; }
+.arco path { fill: none; stroke: #7DD3FC; stroke-width: 3.5; stroke-linecap: round; }
+.arco text { font-family: 'Manrope', sans-serif; font-weight: 800; font-size: 22px; fill: #7DD3FC; text-anchor: middle; paint-order: stroke; stroke: #172036; stroke-width: 6px; }
+.arco.piccolo-arco text { font-size: 17px; }
+.arco.tono path { stroke: #34D399; } .arco.tono text { fill: #34D399; font-size: 24px; }
+.arco.rosa path { stroke: #F472B6; } .arco.rosa text { fill: #F472B6; }
+.etichetta-n .glifo-alt { fill: #EAF2FF; }
+body.colori .etichetta-n .glifo-alt.c-do { fill: var(--do); } body.colori .etichetta-n .glifo-alt.c-re { fill: var(--re); } body.colori .etichetta-n .glifo-alt.c-mi { fill: var(--mi); }
+body.colori .etichetta-n .glifo-alt.c-fa { fill: var(--fa); } body.colori .etichetta-n .glifo-alt.c-sol { fill: #2DD4BF; } body.colori .etichetta-n .glifo-alt.c-la { fill: #A79BE8; } body.colori .etichetta-n .glifo-alt.c-si { fill: #E879B9; }
+.barretta { stroke: #CBD5E1; stroke-width: 4; transition: stroke .2s; }
+.barretta.evid { stroke: #FDE047; filter: drop-shadow(0 0 6px #FDE047); }
+.corda { stroke: #E5E7EB; }
+.corda.vibra { animation: vibra .5s ease-out; }
+@keyframes vibra { 0%, 100% { transform: translateY(0); } 20% { transform: translateY(-2px); } 40% { transform: translateY(2px); } 60% { transform: translateY(-1px); } }
+.nome-corda, .num-tasto, .nome-guida { font-family: 'Manrope', sans-serif; font-weight: 800; text-anchor: middle; fill: #CBD5E1; }
+.nome-corda { font-size: 20px; } .num-tasto { font-size: 17px; fill: #9FB3CE; } .nome-guida { font-size: 15px; }
+body.colori .nome-corda.c-do, body.colori .nome-guida.c-do { fill: var(--do); } body.colori .nome-corda.c-re, body.colori .nome-guida.c-re { fill: var(--re); }
+body.colori .nome-corda.c-mi, body.colori .nome-guida.c-mi { fill: var(--mi); } body.colori .nome-corda.c-fa, body.colori .nome-guida.c-fa { fill: var(--fa); }
+body.colori .nome-corda.c-sol, body.colori .nome-guida.c-sol { fill: #2DD4BF; } body.colori .nome-corda.c-la, body.colori .nome-guida.c-la { fill: #A79BE8; } body.colori .nome-corda.c-si, body.colori .nome-guida.c-si { fill: #E879B9; }
+.dito circle { stroke: #0f172a; stroke-width: 3; }
+.dito text { font-family: 'Manrope', sans-serif; font-weight: 800; font-size: 17px; fill: #0f172a; text-anchor: middle; dominant-baseline: central; pointer-events: none; }
+.dito { pointer-events: none; }
+.ca, .cg { cursor: pointer; touch-action: none; }
+.tabella-alt { position: absolute; inset: 0; padding: 12px 18px 6px; display: grid; grid-template-columns: 1fr 1fr; grid-auto-rows: 1fr; gap: 10px; }
+.def-alt { display: grid; grid-template-columns: 70px 190px 1fr; align-items: center; gap: 10px; text-align: left; cursor: pointer; font-family: inherit;
+  background: rgba(15,23,42,0.55); border: 1px solid var(--bordo); border-left: 4px solid var(--c1); border-radius: 12px; padding: 6px 14px; color: #CBD5E1; font-size: 17px; line-height: 1.3; }
+.def-alt:hover { filter: brightness(1.2); }
+.def-alt .sim { font-family: 'Fredoka', sans-serif; font-weight: 600; font-size: 34px; color: #FDE7C7; text-align: center; }
+.def-alt b { font-family: 'Manrope', sans-serif; font-weight: 800; font-size: 20px; color: #fff; }
+.def-alt:nth-child(-n+2) { border-left-color: var(--c0); }
+@media (max-width: 620px) and (orientation: portrait) {
+  .tabella-alt { position: static; grid-template-columns: 1fr; gap: 5px; padding: 8px; grid-auto-rows: auto; }
+  .def-alt { grid-template-columns: 40px 110px 1fr; font-size: 12px; padding: 4px 8px; gap: 6px; }
+  .def-alt .sim { font-size: 22px; } .def-alt b { font-size: 13px; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .corda.vibra { animation: none; }
+  .rigo.disegna .riga, .taglio.nuovo, .nota.compare, .cartellino.lampo { animation: none !important; }
+  .anello.via { animation: none; }
+}
+
+/* ---------- PC e LIM: misure fisse, poi adatta-schermo.js ingrandisce tutto ---------- */
+@media (min-width: 900px) and (min-height: 560px) {
+  body { padding: 36px 16px 10px; min-height: 0; }
+  .lezione { width: 1400px; max-width: none; }
+  .corpo { height: 462px; grid-template-columns: 880px 1fr; }
+}
+
+/* ---------- schermi stretti (non LIM): una colonna, si può scorrere ---------- */
+@media (max-width: 899px), (max-height: 559px) {
+  .corpo { grid-template-columns: 1fr; }
+  .palco { height: 300px; }
+  .indice { flex-wrap: wrap; }
+  .gruppo { flex: 0 0 auto !important; }
+  .pillola { flex: 0 0 auto; }
+  .pillola .t { display: none; }
+}
+</style>
+<style id="telefono-gioco">
+/* TELEFONO IN VERTICALE: tutto in una schermata */
+@media (max-width: 620px) and (orientation: portrait) {
+  body { padding: 30px 8px 6px; }
+  .casetta { top: 6px; left: 6px; width: 36px; height: 36px; font-size: 16px; }
+  .lezione { gap: 6px; }
+  .riga-titolo { padding-left: 34px; gap: 8px; }
+  .riga-titolo h1 { font-size: 17px; }
+  .riga-titolo .sopra, .contatore { display: none; }
+  .interruttore { font-size: 12px; padding: 5px 9px; }
+  .indice { flex-wrap: nowrap; gap: 3px; }
+  .gruppo { flex: initial; }
+  .gruppo .cap { display: none; }
+  .gruppo .pillole { gap: 2px; }
+  .pillola { flex: 0 0 auto; height: auto; padding: 1px; border-radius: 50%; border-bottom-width: 1px; background: transparent; border: 0; }
+  .pillola .t { display: none; }
+  .pillola .n { flex-basis: 24px; width: 24px; height: 24px; font-size: 11px; letter-spacing: -.03em; }
+  .pillola.attiva { background: transparent; }
+  .pillola.attiva .n { background: var(--colore); color: #0f172a; border-color: var(--colore); }
+  .corpo { gap: 6px; display: flex; flex-direction: column; }
+  .palco-card { grid-template-rows: 40px auto auto; border-radius: 14px; }
+  .cartellino { font-size: 15px; padding: 0 8px; }
+  .cartellino .piccolo { font-size: 12.5px; }
+  .palco { height: clamp(150px, calc(100vh - 470px), 250px); height: clamp(150px, calc(100dvh - 470px), 250px); }
+  .strumenti { gap: 5px; padding: 6px 6px 8px; min-height: 0; }
+  .strumenti .suggerimento { font-size: 12px; }
+  .btn { font-size: 12.5px; padding: 7px 9px; border-radius: 10px; }
+  .spiega { padding: 8px 12px 10px; border-radius: 14px; }
+  .spiega .capitolo { display: none; }
+  .spiega h2 { font-size: 19px; margin: 0 0 5px; }
+  .punti { gap: 4px; }
+  .punti li { font-size: 14px; line-height: 1.32; padding-left: 16px; }
+  .punti li:not(.ora) { display: none; }      /* sul telefono si vede solo il punto di adesso */
+  .punti li::before { left: 1px; width: 7px; height: 7px; }
+  .quaderno { margin-top: 6px; font-size: 12px; padding: 6px 9px; }
+  .quaderno .tit { font-size: 9.5px; }
+  .piede-lezione { grid-template-columns: 52px 1fr 120px; height: 46px; gap: 6px; }
+  .nav-btn { height: 42px; padding: 0 14px; font-size: 15px; }
+  .nav-btn .lungo { display: none; }
+  .avanti { height: 44px; font-size: 16px; }
+  .fasi { gap: 5px; }
+  .fasi button { width: 26px; height: 26px; font-size: 12px; }
+  .lezione.solo-testo .palco { height: auto; }
+  .ripasso { position: static; grid-template-columns: 1fr 1fr; gap: 5px; padding: 8px; grid-auto-rows: auto; }
+  .def { font-size: 11px; padding: 5px 7px; }
+}
+</style>
+</head>
+<body class="colori">
+<script src="info-sito.js"></script>
+<a class="casetta" href="index.html" title="Torna al sito" aria-label="Torna al sito">🏠</a>
+
+<div class="lezione" id="lezione">
+  <header class="testa">
+    <div class="riga-titolo">
+      <div>
+        <div class="sopra">Lezione interattiva</div>
+        <h1>Le alterazioni</h1>
+      </div>
+      <div class="spazio-vuoto"></div>
+      <span class="contatore" id="contatore"></span>
+      <button class="interruttore attivo" id="btnColori" title="Note colorate sì / no">🎨 Colori</button>
+    </div>
+    <nav class="indice" id="indice" aria-label="Passi della lezione"></nav>
+  </header>
+
+  <div class="corpo">
+    <section class="scheda palco-card">
+      <div class="cartellino" id="cartellino" aria-live="polite"></div>
+      <div class="palco" id="palco"></div>
+      <div class="strumenti" id="strumenti"></div>
+    </section>
+    <section class="scheda spiega">
+      <div class="capitolo" id="capitolo"></div>
+      <h2 id="titoloPasso"></h2>
+      <ul class="punti" id="punti"></ul>
+      <div class="quaderno" id="quaderno" hidden></div>
+    </section>
+  </div>
+
+  <footer class="piede-lezione">
+    <button class="nav-btn" id="indietro" aria-label="Indietro">◀<span class="lungo"> Indietro</span></button>
+    <div class="fasi" id="fasi"></div>
+    <button class="avanti" id="avanti">Avanti ▶</button>
+  </footer>
+</div>
+
+<script>
+"use strict";
+/* tracciati dei simboli (da VexFlow 4.2.2, licenza MIT): unità = 1/10 di spazio, riga centrale a y = 0 */
+const GLIFI = {"treble":"M15.19 -6.79C15.14 -7.27,15.19 -7.3,15.44 -7.55C19.82 -11.62,23.14 -16.76,23.14 -22.97C23.14 -26.48,22.16 -29.96,20.5 -32.37C19.88 -33.27,18.84 -34.39,18.39 -34.39C17.83 -34.39,16.57 -33.36,15.78 -32.46C12.78 -29.14,11.79 -24.09,11.79 -19.88C11.79 -17.55,12.1 -14.91,12.38 -13.25C12.47 -12.77,12.5 -12.69,12.02 -12.27C6.18 -7.47,0 -1.68,0 6.49C0 13.51,4.8 20.19,14.71 20.19C15.64 20.19,16.71 20.11,17.52 19.94C17.94 19.86,18.03 19.83,18.11 20.31C18.59 23.03,19.21 26.54,19.21 28.45C19.21 34.43,15.16 35.16,12.78 35.16C10.59 35.16,9.55 34.51,9.55 33.98C9.55 33.7,9.91 33.59,10.84 33.28C12.1 32.91,13.54 31.85,13.54 29.49C13.54 27.27,12.13 25.36,9.66 25.36C6.96 25.36,5.34 27.52,5.34 30.02C5.34 32.63,6.91 36.62,13.03 36.62C15.73 36.62,20.98 35.38,20.98 28.53C20.98 26.2,20.25 22.38,19.82 19.86C19.74 19.38,19.77 19.44,20.33 19.18C24.43 17.55,27.12 14.13,27.12 9.55C27.12 4.38,23.33 -0.19,17.38 -0.19C16.34 -0.19,16.34 -0.19,16.2 -0.92M19.01 -28.13C20.33 -28.13,21.43 -27.04,21.43 -24.82C21.43 -20.33,17.58 -16.68,14.41 -13.9C14.12 -13.64,13.96 -13.7,13.87 -14.23C13.7 -15.27,13.62 -16.65,13.62 -17.94C13.62 -24.26,16.54 -28.13,19.01 -28.13M14.6 -0.59C14.71 0.17,14.71 0.14,13.98 0.37C10.45 1.58,8.12 4.78,8.12 8.23C8.12 11.85,10.03 14.44,12.78 15.39C13.11 15.5,13.59 15.62,13.87 15.62C14.18 15.62,14.35 15.42,14.35 15.17C14.35 14.89,14.04 14.77,13.76 14.66C12.05 13.93,10.84 12.19,10.84 10.34C10.84 8.01,12.41 6.29,14.88 5.59C15.53 5.42,15.61 5.48,15.7 5.93L17.72 17.97C17.8 18.42,17.75 18.42,17.16 18.54C16.51 18.65,15.7 18.73,14.88 18.73C7.81 18.73,3.23 14.8,3.23 9.19C3.23 6.8,3.65 3.6,6.99 -0.19C9.44 -2.89,11.29 -4.41,13.17 -5.92C13.59 -6.26,13.68 -6.2,13.76 -5.78M17.38 5.84C17.3 5.34,17.35 5.23,17.83 5.28C21.12 5.56,23.81 8.31,23.81 11.85C23.81 14.41,22.27 16.46,20.02 17.61C19.54 17.83,19.46 17.83,19.38 17.36","bass":"M10.39 -20.59C3.34 -20.59,0.2 -15.45,0.2 -11.57C0.2 -8.34,1.88 -5.56,5.17 -5.56C7.72 -5.56,9.46 -7.33,9.46 -9.83C9.46 -12.41,7.55 -14.04,5.59 -14.04C4.49 -14.04,4.07 -13.76,3.57 -13.76C3.03 -13.76,2.89 -14.07,2.89 -14.49C2.89 -16.09,5.34 -19.07,9.46 -19.07C13.73 -19.07,15.61 -14.86,15.61 -8.51C15.61 2.78,10.02 9.09,0.59 14.46C0.22 14.65,0 14.88,0 15.19C0 15.44,0.17 15.67,0.53 15.67C0.73 15.67,0.96 15.61,1.21 15.47C11.15 10.61,21.68 3.42,21.68 -8.88C21.68 -15.9,17.38 -20.59,10.39 -20.59M25.64 -17.27C24.37 -17.27,23.42 -16.32,23.42 -15.05C23.42 -13.79,24.37 -12.84,25.64 -12.84C26.87 -12.84,27.86 -13.79,27.86 -15.05C27.86 -16.32,26.87 -17.27,25.64 -17.27M25.67 -7.14C24.43 -7.14,23.47 -6.21,23.47 -4.95C23.47 -3.68,24.43 -2.76,25.67 -2.76C26.93 -2.76,27.86 -3.68,27.86 -4.95C27.86 -6.21,26.93 -7.14,25.67 -7.14","nera":"M-2.04 5.05C1.56 5.05,5.97 1.74,5.97 -1.69C5.97 -3.76,4.34 -5.05,2.04 -5.05C-2.4 -5.05,-5.97 -1.77,-5.97 1.69C-5.97 3.79,-4.23 5.05,-2.04 5.05","alt":{"#":"M9.58 -4.77C9.86 -4.89,10.08 -5.22,10.08 -5.45L10.08 -8.34C10.08 -8.54,9.94 -8.65,9.77 -8.65C9.72 -8.65,9.66 -8.65,9.58 -8.62C9.58 -8.62,8.76 -8.28,8.56 -8.26C8.28 -8.26,8 -8.45,8 -8.76L8 -13.7C8 -13.96,7.75 -14.15,7.44 -14.15C7.05 -14.15,6.8 -13.96,6.8 -13.7L6.8 -8.45C6.74 -8.06,6.63 -7.52,6.26 -7.27C5.78 -6.99,4.41 -6.43,3.71 -6.26C3.37 -6.26,3.23 -6.74,3.23 -7.08L3.23 -11.93C3.23 -12.16,2.95 -12.38,2.67 -12.38C2.27 -12.38,2.02 -12.16,2.02 -11.93L2.02 -6.46C2.02 -5.9,1.77 -5.5,1.54 -5.39C1.29 -5.25,0.48 -4.94,0.48 -4.94C0.2 -4.86,0 -4.52,0 -4.3L0 -1.4C0 -1.18,0.11 -1.04,0.36 -1.04L0.45 -1.09C0.48 -1.09,1.09 -1.35,1.4 -1.49L1.46 -1.54C1.77 -1.54,2.02 -1.12,2.02 -0.81L2.02 3.2C2.02 3.65,1.83 4.02,1.57 4.13C1.35 4.21,0.48 4.58,0.48 4.58C0.2 4.66,0 4.97,0 5.22L0 8.09C0 8.34,0.11 8.45,0.36 8.45L0.45 8.42C0.48 8.42,1.04 8.17,1.4 8.06C1.46 8,1.49 8,1.54 8C1.83 8,2.02 8.45,2.02 8.65L2.02 13.62C2.02 13.87,2.27 14.07,2.56 14.07C2.95 14.07,3.23 13.87,3.23 13.62L3.23 8C3.23 7.47,3.43 7.19,3.65 7.1L6.09 6.09C6.09 6.09,6.15 6.09,6.15 6.09L6.23 6.06C6.6 6.06,6.8 6.54,6.8 6.8L6.8 11.85C6.8 12.1,7.05 12.3,7.33 12.3C7.75 12.3,8 12.1,8 11.85L8 6.09C8 5.78,8.17 5.31,8.45 5.17C8.73 5.05,9.58 4.72,9.58 4.72C9.86 4.61,10.08 4.3,10.08 4.04L10.08 1.18C10.08 0.98,9.94 0.84,9.77 0.84C9.72 0.84,9.66 0.84,9.58 0.9L8.54 1.29C8.28 1.29,8 1.04,8 0.56L8 -3.2C8 -3.48,8.2 -4.24,8.54 -4.38M6.8 1.83C6.54 2.64,4.66 3.43,3.71 3.43C3.48 3.43,3.28 3.37,3.23 3.23C3.14 3.06,3.12 2.19,3.12 1.21C3.12 -0.03,3.14 -1.46,3.23 -1.77C3.31 -2.47,5.17 -3.31,6.18 -3.31C6.46 -3.31,6.71 -3.23,6.8 -3.06C6.88 -2.86,6.96 -1.85,6.96 -0.76C6.96 0.34,6.88 1.46,6.8 1.83","b":"M0.48 6.88C0.62 7.05,0.73 7.08,0.84 7.08C0.98 7.08,1.09 6.99,1.09 6.99C2.3 6.32,3.28 5.22,4.3 4.52C7.89 2.02,9.13 -0.45,9.13 -2.3C9.13 -4.6,7.36 -6.06,5.5 -6.18C4.8 -6.18,3.85 -5.87,3.28 -5.5C3.03 -5.31,2.58 -4.94,2.39 -4.94C2.3 -4.94,2.27 -4.94,2.19 -4.97C1.91 -5.08,1.74 -5.39,1.74 -5.67C1.77 -6.54,2.02 -16.26,2.02 -17.07C2.02 -17.52,1.66 -17.75,1.26 -17.75C0.67 -17.75,0.03 -17.35,0 -16.62C0 -16.62,0.17 6.46,0.48 6.88M1.91 3.28C1.91 3.28,1.77 0.84,1.77 -0.76C1.77 -1.4,1.83 -1.91,1.85 -2.05C2.13 -2.86,3.76 -4.04,4.69 -4.04C5.87 -4.04,6.35 -2.7,6.35 -1.69C6.35 0.48,4.49 2.67,2.75 3.76C2.58 3.85,2.47 3.88,2.36 3.88C1.99 3.88,1.91 3.48,1.91 3.28","n":"M5.7 -7.33C5.62 -7.33,5.59 -7.27,5.53 -7.27C5.53 -7.27,2.95 -6.35,1.91 -6.35C1.66 -6.35,1.49 -6.4,1.49 -6.54L1.49 -13.31C1.49 -13.59,1.26 -13.79,1.01 -13.79L0.48 -13.79C0.2 -13.79,0 -13.59,0 -13.31L0 7.53C0 7.75,0.11 7.89,0.36 7.89L0.45 7.83C0.48 7.83,0.56 7.83,0.62 7.81C1.18 7.55,3.43 6.6,4.61 6.6C5.03 6.6,5.31 6.71,5.31 7.05L5.31 13.06C5.31 13.34,5.5 13.53,5.78 13.53L6.32 13.53C6.54 13.53,6.8 13.34,6.8 13.06L6.8 -7.24C6.8 -7.44,6.63 -7.55,6.46 -7.55C6.43 -7.55,6.35 -7.55,6.32 -7.52M1.49 -1.57C1.49 -2.13,3.96 -3.2,4.94 -3.2C5.17 -3.2,5.31 -3.15,5.31 -3.01L5.31 1.18C5.31 1.91,3 2.84,1.99 2.84C1.69 2.84,1.49 2.75,1.49 2.58","##":"M7.69 1.29C7.25 1.04,5.78 0.25,5.78 -0.03C5.78 -0.62,7.1 -1.21,7.69 -1.4C7.72 -1.4,7.75 -1.4,7.81 -1.4L8.06 -1.38C8.54 -1.38,9.29 -1.46,9.72 -1.77C9.91 -1.99,10 -2.58,10 -3.23C10 -4.89,9.86 -5.14,8.2 -5.14C7.47 -5.14,6.74 -5.05,6.54 -4.86C6.4 -4.72,6.35 -4.02,6.35 -3.28C6.15 -2.84,5.5 -1.38,5.03 -1.38C4.44 -1.38,3.79 -2.7,3.65 -3.28C3.65 -3.96,3.51 -4.69,3.31 -4.86C3.14 -5.05,2.5 -5.14,1.85 -5.14C1.18 -5.14,0.45 -5.05,0.2 -4.86C0.08 -4.77,0 -4.07,0 -3.37C0 -2.64,0.08 -1.91,0.2 -1.77C0.48 -1.54,1.21 -1.38,1.91 -1.38C2.05 -1.38,2.19 -1.4,2.3 -1.4C2.75 -1.18,4.21 -0.37,4.21 -0.08C4.21 0.45,2.92 1.09,2.36 1.29L1.94 1.29C1.21 1.29,0.45 1.38,0.2 1.57C0.08 1.69,0 2.39,0 3.12C0 3.85,0.08 4.58,0.2 4.66C0.48 4.89,1.12 5.05,1.83 5.05C2.42 5.05,3.06 4.94,3.31 4.66C3.57 4.44,3.65 3.76,3.65 3.12C3.65 3.06,3.68 3.01,3.71 2.95C3.96 2.39,4.44 1.26,4.97 1.26C5.5 1.26,6.18 2.55,6.35 3.12C6.35 3.85,6.4 4.52,6.54 4.66C6.82 4.89,7.47 5.05,8.17 5.05C9.72 5.05,10 4.66,10 3.2C10 2.5,9.86 1.77,9.72 1.57C9.49 1.38,8.76 1.29,8.09 1.29","bb":"M12.69 -6.09C11.96 -6.09,11.46 -5.81,10.78 -5.45C10.5 -5.31,10.19 -4.94,9.83 -4.94C9.74 -4.94,9.66 -4.94,9.63 -4.97C9.35 -5.05,9.21 -5.34,9.21 -5.67C9.21 -6.52,9.46 -16.26,9.46 -17.02C9.46 -17.47,9.1 -17.66,8.7 -17.66C8.17 -17.66,7.53 -17.3,7.44 -16.62C7.44 -16.62,7.47 -11.09,7.55 -5.45C6.96 -5.87,6.26 -6.09,5.5 -6.09L5.25 -6.09C4.49 -6.09,4.02 -5.81,3.37 -5.45C3.03 -5.31,2.75 -4.94,2.39 -4.94C2.3 -4.94,2.27 -4.94,2.19 -4.97C1.91 -5.05,1.74 -5.34,1.74 -5.67C1.74 -6.52,2.02 -16.26,2.02 -17.02C2.02 -17.47,1.66 -17.66,1.26 -17.66C0.67 -17.66,0.03 -17.3,0 -16.62C0 -16.62,0.2 6.52,0.48 6.88C0.62 7.05,0.73 7.08,0.84 7.08C0.98 7.08,1.09 6.99,1.09 6.99C2.36 6.35,3.37 5.22,4.3 4.52C5.78 3.48,6.91 2.39,7.69 1.4C7.75 4.44,7.83 6.74,7.97 6.88C8.09 7.05,8.2 7.08,8.28 7.08C8.42 7.08,8.54 6.99,8.54 6.99C9.77 6.35,10.75 5.22,11.68 4.58C15.33 2.02,16.62 -0.45,16.62 -2.3C16.62 -4.58,14.83 -6.06,12.94 -6.09M2.7 3.76C2.58 3.85,2.42 3.88,2.36 3.88C2.02 3.88,1.91 3.48,1.91 3.23C1.91 3.23,1.77 0.84,1.77 -0.73C1.77 -1.38,1.83 -1.85,1.85 -2.02C2.11 -2.84,3.76 -4.04,4.72 -4.04C5.95 -4.04,6.35 -2.67,6.35 -1.66C6.35 0.62,4.52 2.64,2.7 3.76M10.14 3.76C10 3.85,9.86 3.88,9.77 3.88C9.46 3.88,9.35 3.48,9.35 3.23C9.35 3.23,9.21 0.45,9.21 -1.09C9.21 -1.54,9.21 -1.91,9.27 -2.02C9.49 -2.84,11.2 -4.04,12.16 -4.04C12.58 -4.04,12.89 -3.93,13.14 -3.65C13.51 -3.15,13.76 -2.47,13.76 -1.66C13.76 0.62,11.96 2.64,10.14 3.76"}};
+
+/* ================= costanti e note ================= */
+const S = 32, H = S / 2, K = S / 10;           // spazio fra due righe, mezzo spazio, scala dei glifi
+const NOMI = ["do", "re", "mi", "fa", "sol", "la", "si"];
+const SEMI = [0, 2, 4, 5, 7, 9, 11];
+const BASE = { violino: 30, basso: 18 };        // nota della 1ª riga: mi (violino), sol (basso), in gradi dal do
+function nota(chiave, p) {                       // p = posizione: 0 = 1ª riga, 1 = 1° spazio, 2 = 2ª riga...
+  const d = BASE[chiave] + p, n = ((d % 7) + 7) % 7, ott = Math.floor(d / 7);
+  return { d, nome: NOMI[n], midi: SEMI[n] + 12 * (ott + 1) };
+}
+const MAIU = s => s.toUpperCase();
+const ord = (n, f) => n + (f ? "ª" : "°");
+function dovE(p) {                               // descrizione della posizione
+  if (p >= 0 && p <= 8) return p % 2 === 0 ? "sulla " + ord(p / 2 + 1, true) + " riga" : "nel " + ord((p + 1) / 2) + " spazio";
+  if (p === -1) return "sotto la 1ª riga";
+  if (p === 9) return "sopra la 5ª riga";
+  if (p < -1) { const t = Math.floor((-p) / 2); return p % 2 === 0 ? "sul " + ord(t) + " taglio sotto" : "sotto il " + ord(t) + " taglio"; }
+  const t = Math.floor((p - 8) / 2); return p % 2 === 0 ? "sul " + ord(t) + " taglio sopra" : "sopra il " + ord(t) + " taglio";
+}
+
+/* ================= suono (solo quando si tocca qualcosa; nessun microfono) ================= */
+let AC = null, master = null, spegniTimer = 0;
+function audio() {
+  if (!AC) {
+    try { AC = new (window.AudioContext || window.webkitAudioContext)(); } catch (e) { return null; }
+    master = AC.createGain(); master.gain.value = 0.55; master.connect(AC.destination);
+  }
+  if (AC.state === "suspended") AC.resume();
+  return AC;
+}
+function riposo(dopoSec) {                       // il contesto audio va in pausa quando tace
+  clearTimeout(spegniTimer);
+  spegniTimer = setTimeout(() => { if (AC && AC.state === "running" && !metro.attivo) AC.suspend(); }, (dopoSec + 0.6) * 1000);
+}
+function suona(midi, quando = 0, dur = 1.1) {
+  const ac = audio(); if (!ac) return;
+  const t = ac.currentTime + 0.03 + quando, f = 440 * Math.pow(2, (midi - 69) / 12);
+  const g = ac.createGain(); g.gain.setValueAtTime(0.0001, t);
+  g.gain.exponentialRampToValueAtTime(0.5, t + 0.012); g.gain.exponentialRampToValueAtTime(0.0008, t + dur);
+  const filtro = ac.createBiquadFilter(); filtro.type = "lowpass"; filtro.frequency.value = Math.min(6000, f * 6);
+  [[1, "triangle", 1], [2, "sine", 0.35], [3, "sine", 0.12]].forEach(([m, tipo, v]) => {
+    const o = ac.createOscillator(), gg = ac.createGain(); o.type = tipo; o.frequency.value = f * m; gg.gain.value = v;
+    o.connect(gg); gg.connect(g); o.start(t); o.stop(t + dur + 0.05);
+  });
+  g.connect(filtro); filtro.connect(master);
+  riposo(quando + dur);
+}
+function clic(forza, quando = 0) {               // colpo del metronomo: 2 = accento, 1 = normale, 0 = suddivisione
+  const ac = audio(); if (!ac) return;
+  const t = ac.currentTime + 0.02 + quando;
+  const o = ac.createOscillator(), g = ac.createGain();
+  o.type = "square"; o.frequency.value = [990, 1320, 1760][forza];
+  const v = [0.07, 0.13, 0.22][forza];
+  g.gain.setValueAtTime(v, t); g.gain.exponentialRampToValueAtTime(0.0005, t + 0.05);
+  o.connect(g); g.connect(master); o.start(t); o.stop(t + 0.06);
+  riposo(quando + 0.1);
+}
+
+/* ================= tempi e animazioni del passo (si fermano cambiando passo) ================= */
+let TIMER = [];
+const dopo = (ms, fn) => { TIMER.push(setTimeout(fn, ms)); };
+let ANIMA = 0;
+function fermaTutto() { TIMER.forEach(clearTimeout); TIMER = []; metro.ferma(); cancelAnimationFrame(ANIMA); }
+
+/* ================= disegno SVG ================= */
+const $ = s => document.querySelector(s);
+const PALCO = $("#palco");
+const qa = s => [...PALCO.querySelectorAll(s)];
+const q1 = s => PALCO.querySelector(s);
+function R(x0, x1, yb, chiave) { return { x0, x1, yb, chiave, y: p => yb - p * H }; }
+
+function svgRigo(r, o = {}) {
+  let s = `<g class="rigo${o.disegna ? " disegna" : ""}">`;
+  if (o.spazi) for (let i = 1; i <= 4; i++) s += `<rect class="spazio" data-spazio="${i}" x="${r.x0}" y="${r.y(2 * i)}" width="${r.x1 - r.x0}" height="${S}"/>`;
+  for (let i = 1; i <= 5; i++) s += `<line class="riga" data-riga="${i}" style="--i:${i - 1}" x1="${r.x0}" x2="${r.x1}" y1="${r.y(2 * (i - 1))}" y2="${r.y(2 * (i - 1))}"/>`;
+  return s + "</g>";
+}
+function svgChiave(r, x, cls = "") {
+  return `<g class="chiave ${cls}" transform="translate(${x} ${r.y(4)}) scale(${K})"><path class="glifo" d="${r.chiave === "basso" ? GLIFI.bass : GLIFI.treble}"/></g>`;
+}
+function svgTempo(r, x, su, giu, cls = "") {
+  return `<g class="tempo ${cls}" transform="translate(${x} ${r.y(4)})">` +
+    `<g class="cifra su" transform="translate(0 ${-S}) scale(${K})"><path class="glifo" d="${GLIFI["t" + su]}"/></g>` +
+    `<g class="cifra giu" transform="translate(0 ${S}) scale(${K})"><path class="glifo" d="${GLIFI["t" + giu]}"/></g></g>`;
+}
+function svgTagli(r, x, p, cls = "") {
+  let s = "";
+  for (let q = -2; q >= p; q -= 2) s += `<line class="taglio ${cls}" x1="${x - 29}" x2="${x + 29}" y1="${r.y(q)}" y2="${r.y(q)}"/>`;
+  for (let q = 10; q <= p; q += 2) s += `<line class="taglio ${cls}" x1="${x - 29}" x2="${x + 29}" y1="${r.y(q)}" y2="${r.y(q)}"/>`;
+  return s;
+}
+/* una nota: testa (con tagli se serve), eventuale gambo; o.colore = mostra il colore del nome */
+function svgNota(r, x, p, o = {}) {
+  const y = r.y(p), info = r.chiave ? nota(r.chiave, p) : null;
+  const forma = o.forma || "nera";
+  let s = `<g class="nota ${o.cls || ""} ${info && o.colore !== false ? "c-" + info.nome : ""}" data-p="${p}" data-x="${x}"${o.attr || ""}>`;
+  s += `<rect class="colpo" x="${x - 30}" y="${y - 22}" width="60" height="44"/>`;
+  if (!o.senzaTagli) s += svgTagli(r, x, p, o.tagliCls || "");
+  s += `<path class="testa" d="${GLIFI[forma]}" transform="translate(${x} ${y}) scale(${K})"/>`;
+  // il gambo c'è sempre: sotto la 3ª riga va su, a destra; dalla 3ª riga in su va giù, a sinistra
+  const g = o.gambo === undefined ? (p >= 4 ? -1 : 1) : o.gambo;
+  if (g === 1) s += `<line class="gambo" x1="${x + 5.25 * K}" x2="${x + 5.25 * K}" y1="${y - 2}" y2="${y - 3.5 * S}"/>`;
+  if (g === -1) s += `<line class="gambo" x1="${x - 5.25 * K}" x2="${x - 5.25 * K}" y1="${y + 2}" y2="${y + 3.5 * S}"/>`;
+  return s + "</g>";
+}
+function svgNome(x, y, nome, cls = "", attr = "") {
+  return `<text class="nome c-${nome} ${cls}" x="${x}" y="${y}"${attr}>${MAIU(nome)}</text>`;
+}
+function svgNum(x, y, n, cls = "", luce = "") {
+  return `<g class="num-cerchio ${cls}" style="${luce ? "--luce:" + luce : ""}"><circle cx="${x}" cy="${y}" r="15"/><text x="${x}" y="${y + 1}">${n}</text></g>`;
+}
+function svg(vb, contenuto) { PALCO.innerHTML = `<svg viewBox="${vb}" preserveAspectRatio="xMidYMid meet" aria-hidden="true">${contenuto}</svg>`; }
+function mini(forma, gambo) {                     // piccola figura per i testi (minima, semiminima, croma)
+  const t = forma === "tonda" ? 0 : 1;
+  let s = `<svg class="mini" viewBox="-9 -42 26 50" width="15" height="29"><path d="${GLIFI[forma === "croma" ? "nera" : forma]}"/>`;
+  if (gambo) s += `<line x1="5.25" x2="5.25" y1="-1" y2="-35" stroke="#EAF2FF" stroke-width="1.6"/>`;
+  if (forma === "croma") s += `<path d="${GLIFI.coda}" transform="translate(5.25 -35)"/>`;
+  return s + "</svg>";
+}
+
+/* luce su un elemento; colore facoltativo */
+function luce(el, on, colore) {
+  if (!el) return;
+  if (colore) el.style.setProperty("--luce", colore);
+  el.classList.toggle(el.classList.contains("spazio") ? "acceso" : "accesa", on);
+}
+const COL = n => getComputedStyle(document.documentElement).getPropertyValue("--" + n).trim();
+function spegniRighe() { qa(".riga.accesa").forEach(e => luce(e, false)); qa(".spazio.acceso").forEach(e => luce(e, false)); }
+function accendiPerNota(p, colore) {             // illumina la riga o lo spazio dove sta la nota
+  spegniRighe();
+  if (p >= 0 && p <= 8) luce(q1(p % 2 === 0 ? `.riga[data-riga="${p / 2 + 1}"]` : `.spazio[data-spazio="${(p + 1) / 2}"]`), true, colore);
+}
+function mostra(el, si = true, anim = false) {
+  if (!el) return;
+  el.classList.toggle(el.classList.contains("nome") ? "nascosto" : el.classList.contains("vela") ? "nascosto" : "nascosta", !si);
+  if (si && anim && el.classList.contains("nota")) { el.classList.remove("compare"); void el.getBBox; el.classList.add("compare"); }
+}
+function lampeggia(el) {
+  if (!el) return;
+  const nomi = el.dataset && el.dataset.x !== undefined ? [...PALCO.querySelectorAll(`.nome[data-x="${el.dataset.x}"]`)] : [];
+  [el, ...nomi].forEach(e => e.classList.add("luce"));
+  dopo(420, () => [el, ...nomi].forEach(e => e.classList.remove("luce")));
+}
+function anello(el) { if (!el) return; el.classList.remove("via"); void el.getBoundingClientRect(); el.classList.add("via"); }
+
+/* cartellino in alto nel palco */
+const CART = $("#cartellino");
+function cart(html, lampo = true) {
+  CART.innerHTML = `<div class="c-in">${html}</div>`;
+  if (lampo) { CART.classList.remove("lampo"); void CART.offsetWidth; CART.classList.add("lampo"); }
+}
+function cartNota(chiave, p, extra = "") {
+  const n = nota(chiave, p);
+  cart(`<span class="nome-c" style="color:${coloreTesto(n.nome)}">${MAIU(n.nome)}</span> <span class="piccolo">· ${dovE(p)}${extra}</span>`);
+}
+function coloreTesto(nome) {
+  if (!document.body.classList.contains("colori")) return "#F8FAFC";
+  return { do: COL("do"), re: COL("re"), mi: COL("mi"), fa: COL("fa"), sol: "#2DD4BF", la: "#A79BE8", si: "#E879B9" }[nome];
+}
+
+/* pulsanti sotto il palco */
+const STRUM = $("#strumenti");
+function strumenti(lista) {
+  STRUM.innerHTML = "";
+  lista.forEach(b => {
+    if (b.suggerimento) { const s = document.createElement("span"); s.className = "suggerimento"; s.textContent = b.suggerimento; STRUM.appendChild(s); return; }
+    if (b.gruppo) {
+      const g = document.createElement("div"); g.className = "segmenti"; if (b.id) g.id = b.id;
+      b.gruppo.forEach(x => g.appendChild(bottone(x))); STRUM.appendChild(g); return;
+    }
+    STRUM.appendChild(bottone(b));
+  });
+}
+function bottone(b) {
+  const el = document.createElement("button");
+  el.className = "btn" + (b.cls ? " " + b.cls : ""); el.innerHTML = b.t; if (b.id) el.id = b.id;
+  if (b.title) el.title = b.title;
+  el.addEventListener("click", () => b.fn(el)); return el;
+}
+function segna(gruppoId, el) { document.querySelectorAll("#" + gruppoId + " .btn").forEach(b => b.classList.toggle("on", b === el)); }
+
+/* suona e illumina una fila di note una dopo l'altra */
+function suonaFila(note, chiave, ms = 520, fine) {
+  note.forEach((el, i) => dopo(i * ms, () => {
+    mostra(el, true, el.classList.contains("nascosta"));
+    const p = +el.dataset.p; lampeggia(el);
+    const nm = PALCO.querySelector(`.nome[data-x="${el.dataset.x}"]`); if (nm) mostra(nm, true);
+    suona(nota(chiave, p).midi, 0, 0.9);
+    accendiPerNota(p, coloreTesto(nota(chiave, p).nome));
+    cartNota(chiave, p);
+  }));
+  dopo(note.length * ms + 200, () => { spegniRighe(); if (fine) fine(); });
+}
+
+const metro = { attivo: false, ferma() {} };
+
+/* ================= alterazioni: nomi, simboli, tastiera, strumenti ================= */
+const ALT = { "": 0, "#": 1, "b": -1, "n": 0, "##": 2, "bb": -2 };
+const ALT_NOME = { "": "", "#": "diesis", "b": "bemolle", "n": "bequadro", "##": "doppio diesis", "bb": "doppio bemolle" };
+const ALT_LARGO = { "#": 10.08, "b": 9.13, "n": 6.8, "##": 10, "bb": 16.62 };
+const NERI = new Set([1, 3, 6, 8, 10]);
+const NATURALE = { 0: "do", 2: "re", 4: "mi", 5: "fa", 7: "sol", 9: "la", 11: "si" };
+const GRADO = { do: 0, re: 1, mi: 2, fa: 3, sol: 4, la: 5, si: 6 };
+const SEMI_N = { do: 0, re: 2, mi: 4, fa: 5, sol: 7, la: 9, si: 11 };
+/* simbolo dentro un testo (HTML) */
+function A(a, h = "1.15em") {
+  const w = ALT_LARGO[a];
+  return `<svg class="mini-alt" viewBox="-1 -19 ${w + 2} 30" style="height:${h};width:calc(${h} * ${((w + 2) / 30).toFixed(3)})" aria-label="${ALT_NOME[a]}"><path d="${GLIFI.alt[a]}"/></svg>`;
+}
+/* nome in un testo: «DO♯» con il simbolo vero */
+function NA(nome, a = "", maiuscolo = true) { return (maiuscolo ? MAIU(nome) : nome) + (a && a !== "n" ? A(a) : a === "n" ? A("n") : ""); }
+/* midi di una nota scritta (nome + alterazione, ottava 4 = quella del do centrale) */
+function midiDi(nome, ott, a = "") { return 12 * (ott + 1) + SEMI_N[nome] + ALT[a]; }
+/* posizione sul pentagramma in chiave di violino (0 = 1ª riga) */
+function posDi(nome, ott) { return ott * 7 + GRADO[nome] - 30; }
+/* i due nomi di un tasto */
+function nomiTasto(m) {
+  const k = ((m % 12) + 12) % 12, ott = Math.floor(m / 12) - 1;
+  if (!NERI.has(k)) return [{ nome: NATURALE[k], a: "", ott }];
+  return [{ nome: NATURALE[k - 1], a: "#", ott }, { nome: NATURALE[k + 1], a: "b", ott }];
+}
+function nomeTastoHTML(m) { return nomiTasto(m).map(n => `<b style="color:${coloreTesto(n.nome)}">${NA(n.nome, n.a)}</b>`).join(" <span class=\"piccolo\">=</span> "); }
+
+/* nota con alterazione sul pentagramma */
+function svgNotaA(r, x, p, a, o = {}) {
+  let s = svgNota(r, x, p, o);
+  if (a) {
+    const w = ALT_LARGO[a] * K, gx = x - 5.97 * K - 7 - w;
+    s = s.replace(/<\/g>$/, `<path class="glifo-alt" d="${GLIFI.alt[a]}" transform="translate(${gx} ${r.y(p)}) scale(${K})"/></g>`);
+  }
+  return s;
+}
+// versione semplice e affidabile: tutto il nome come testo + il simbolo disegnato subito dopo
+function svgEtichetta(x, y, nome, a, cls = "", attr = "", px = 25) {
+  const k = px / 25, wt = MAIU(nome).length * px * 0.66, wa = a ? ALT_LARGO[a] * 1.5 * k + 3 : 0, x0 = x - (wt + wa) / 2;
+  let s = `<g class="etichetta-n ${cls}"${attr}><text class="nome c-${nome}" x="${x0}" y="${y}" style="text-anchor:start;font-size:${px}px">${MAIU(nome)}</text>`;
+  if (a) s += `<path class="glifo-alt c-${nome}" d="${GLIFI.alt[a]}" transform="translate(${x0 + wt + 3} ${y - px * 0.36}) scale(${1.5 * k})"/>`;
+  return s + "</g>";
+}
+
+/* ---------- la tastiera ---------- */
+function Tastiera(x0, y0, w, h, da, a) {
+  const bianchi = []; for (let m = da; m <= a; m++) if (!NERI.has(m % 12)) bianchi.push(m);
+  const kw = w / bianchi.length, kb = kw * 0.6, hb = h * 0.62;
+  const T = { x0, y0, w, h, da, a, kw, kb, hb, bianchi, cx: {} };
+  bianchi.forEach((m, i) => T.cx[m] = x0 + i * kw + kw / 2);
+  for (let m = da; m <= a; m++) if (NERI.has(m % 12)) T.cx[m] = (T.cx[m - 1] + T.cx[m + 1]) / 2;
+  return T;
+}
+function svgTastiera(T, o = {}) {
+  let s = `<g class="tastiera">`;
+  T.bianchi.forEach((m, i) => {
+    const nm = NATURALE[m % 12];
+    s += `<rect class="tasto bianco" data-m="${m}" x="${T.x0 + i * T.kw + 1.5}" y="${T.y0}" width="${T.kw - 3}" height="${T.h}" rx="7" style="--luce:${coloreTesto(nm)}"/>`;
+    s += `<rect class="striscia c-${nm}" data-m="${m}" x="${T.x0 + i * T.kw + 8}" y="${T.y0 + T.h - 12}" width="${T.kw - 16}" height="6" rx="3"/>`;
+    if (o.nomi !== false) s += `<text class="nome-tasto c-${nm}" data-m="${m}" x="${T.cx[m]}" y="${T.y0 + T.h - 24}" style="font-size:${Math.min(24, T.kw * 0.36)}px">${MAIU(nm)}</text>`;
+  });
+  for (let m = T.da; m <= T.a; m++) if (NERI.has(m % 12)) s += `<rect class="tasto nero" data-m="${m}" x="${T.cx[m] - T.kb / 2}" y="${T.y0}" width="${T.kb}" height="${T.hb}" rx="5"/>`;
+  // nomi dei tasti neri (due nomi), nascosti finché non servono
+  for (let m = T.da; m <= T.a; m++) if (NERI.has(m % 12)) {
+    const [d, b] = nomiTasto(m), px = Math.min(18, T.kw * 0.27);
+    s += `<g class="nomi-neri vela nascosto" data-m="${m}">` + svgEtichetta(T.cx[m], T.y0 - 36, d.nome, "#", "", "", px) + svgEtichetta(T.cx[m], T.y0 - 12, b.nome, "b", "", "", px) + `</g>`;
+  }
+  return s + `<g class="archi"></g></g>`;
+}
+const tasto = m => q1(`.tasto[data-m="${m}"]`);
+function premi(m, on = true, colore) {
+  const t = tasto(m); if (!t) return;
+  if (colore) t.style.setProperty("--luce", colore);
+  t.classList.toggle("premuto", on);
+  if (!t.classList.contains("nero")) { const n = q1(`.nome-tasto[data-m="${m}"]`); if (n) n.classList.toggle("premuto", on); }
+}
+function lascia() { qa(".tasto.premuto, .nome-tasto.premuto").forEach(t => t.classList.remove("premuto")); }
+function colpo(m, ms = 380) { premi(m, true); dopo(ms, () => premi(m, false)); }
+function arco(T, m1, m2, testo, cls = "", alto = 0) {
+  const x1 = T.cx[m1], x2 = T.cx[m2], y = T.y0 - 6, hh = 30 + Math.abs(x2 - x1) * 0.18 + alto;
+  q1(".archi").insertAdjacentHTML("beforeend", `<g class="arco ${cls}"><path d="M${x1} ${y} Q${(x1 + x2) / 2} ${y - hh * 2} ${x2} ${y}"/>` +
+    `<text x="${(x1 + x2) / 2}" y="${y - hh - 10}">${testo}</text></g>`);
+}
+function togliArchi() { const g = q1(".archi"); if (g) g.innerHTML = ""; }
+/* collega ogni tasto: si sente, si illumina, dice il suo nome */
+function tastiInterattivi(fn) {
+  qa(".tasto").forEach(t => t.addEventListener("pointerdown", e => { e.preventDefault(); fn(+t.dataset.m); }));
+}
+
+/* ================= i passi ================= */
+const CAPITOLI = [
+  { nome: "Tono e semitono", colore: "var(--c0)" },
+  { nome: "Le alterazioni", colore: "var(--c1)" },
+  { nome: "Negli strumenti", colore: "var(--c2)" },
+  { nome: "Ripasso", colore: "var(--c3)" }
+];
+const VB = "0 0 1000 420";
+const PASSI = [];
+
+/* ---------- 1. La tastiera del pianoforte ---------- */
+PASSI.push({
+  cap: 0, breve: "La tastiera", titolo: "La tastiera del pianoforte",
+  punti: [
+    "I tasti <b>bianchi</b> sono le 7 note: <b>do re mi fa sol la si</b>, poi si ricomincia.",
+    "I tasti <b>neri</b> sono a gruppi di <b>2</b> e di <b>3</b>.",
+    "Il <b>DO</b> è il tasto bianco subito <b>a sinistra dei due</b> tasti neri."
+  ],
+  quaderno: "<p>Sul pianoforte i tasti neri sono a gruppi di <b>2</b> e di <b>3</b>; il <b>DO</b> è subito a sinistra dei due tasti neri.</p>",
+  crea() {
+    const T = this.T = Tastiera(40, 100, 920, 290, 60, 79);
+    let s = svgTastiera(T);
+    // parentesi dei gruppi di tasti neri
+    [[61, 63, "2"], [66, 70, "3"], [73, 75, "2"], [78, 78, ""]].forEach(([a, b, n]) => {
+      if (!n) return;
+      const x1 = T.cx[a] - T.kb / 2, x2 = T.cx[b] + T.kb / 2, y = T.y0 - 14;
+      s += `<g class="vela nascosto gruppo-neri"><path class="freccia" style="--luce:#FBBF24" d="M${x1} ${y + 8} V${y} H${x2} V${y + 8}"/><text class="etic grande" x="${(x1 + x2) / 2}" y="${y - 12}" text-anchor="middle" fill="#FBBF24">${n}</text></g>`;
+    });
+    svg(VB, s);
+    tastiInterattivi(m => { colpo(m); suona(m); cart(nomeTastoHTML(m)); });
+    strumenti([
+      { t: "⬜ Tasti bianchi", fn: () => this.bianchi() },
+      { t: "⬛ Tasti neri", fn: () => this.neri() },
+      { t: "🔎 Trova i DO", fn: () => this.trovaDo() },
+      { suggerimento: "Tocca un tasto" }
+    ]);
+  },
+  bianchi() {
+    fermaTutto(); lascia();
+    this.T.bianchi.forEach((m, i) => dopo(i * 330, () => { lascia(); premi(m); suona(m, 0, .6); cart(nomeTastoHTML(m), false); }));
+    dopo(this.T.bianchi.length * 330 + 200, () => { lascia(); cart("I tasti bianchi: do re mi fa sol la si"); });
+  },
+  neri() {
+    fermaTutto(); lascia(); qa(".gruppo-neri").forEach(g => mostra(g));
+    const gruppi = [[61, 63], [66, 68, 70], [73, 75], [78]];
+    gruppi.forEach((g, i) => dopo(i * 900, () => { lascia(); g.forEach(m => { premi(m, true, "#FBBF24"); suona(m, 0, .7); }); cart(g.length > 1 ? `Un gruppo di <b>${g.length}</b> tasti neri` : "…e si ricomincia", false); }));
+    dopo(gruppi.length * 900 + 200, () => { lascia(); cart("Tasti neri: gruppi di 2 e di 3"); });
+  },
+  trovaDo() {
+    fermaTutto(); lascia(); qa(".gruppo-neri").forEach(g => mostra(g));
+    [61, 63, 73, 75].forEach(m => premi(m, true, "#FBBF24"));
+    dopo(700, () => { [60, 72].forEach(m => { premi(m, true, coloreTesto("do")); }); suona(60); suona(72, .05); cart(`Il <b style="color:${coloreTesto("do")}">DO</b> è a sinistra dei due tasti neri`); });
+  },
+  fase(f, anim) {
+    lascia(); qa(".gruppo-neri").forEach(g => mostra(g, f >= 1));
+    cart(["I tasti bianchi: do re mi fa sol la si", "Tasti neri: gruppi di 2 e di 3", "Dov'è il DO?"][f], anim);
+    if (!anim) return;
+    if (f === 0) this.bianchi();
+    if (f === 1) this.neri();
+    if (f === 2) this.trovaDo();
+  }
+});
+
+/* ---------- 2. Il semitono ---------- */
+PASSI.push({
+  cap: 0, breve: "Il semitono", titolo: "Il semitono",
+  punti: [
+    "Il <b>semitono</b> è la distanza <b>più piccola</b> fra due suoni: da un tasto a quello <b>subito vicino</b>, bianco o nero.",
+    "Di solito fra due tasti bianchi c'è un tasto nero… ma fra <b>MI e FA</b> e fra <b>SI e DO</b> no: lì due tasti bianchi sono già a un <b>semitono</b>.",
+    "Prova tu: tocca un tasto e guarda i suoi vicini a un semitono, sotto e sopra."
+  ],
+  quaderno: "<p><b>Semitono</b>: la distanza più piccola fra due suoni (due tasti vicini del pianoforte).</p>",
+  crea() {
+    const T = this.T = Tastiera(40, 120, 920, 270, 60, 79);
+    svg(VB, svgTastiera(T));
+    tastiInterattivi(m => this.vicini(m));
+    strumenti([
+      { t: "▶ Tutti i semitoni da DO a DO", fn: () => this.cromatica() },
+      { t: "🎯 MI-FA e SI-DO", fn: () => this.mifa() },
+      { suggerimento: "Tocca un tasto" }
+    ]);
+  },
+  vicini(m) {
+    fermaTutto(); lascia(); togliArchi();
+    const T = this.T; premi(m, true, "#FDE047"); suona(m, 0, .8);
+    const sotto = m - 1 >= T.da ? m - 1 : null, sopra = m + 1 <= T.a ? m + 1 : null;
+    if (sotto !== null) dopo(500, () => { premi(sotto, true, "#7DD3FC"); suona(sotto, 0, .7); arco(T, sotto, m, "½"); });
+    if (sopra !== null) dopo(1000, () => { premi(sopra, true, "#7DD3FC"); suona(sopra, 0, .7); arco(T, m, sopra, "½"); });
+    cart(`${nomeTastoHTML(m)} <span class="piccolo">· i vicini a un semitono</span>`);
+  },
+  cromatica() {
+    fermaTutto(); lascia(); togliArchi();
+    for (let m = 60; m <= 72; m++) dopo((m - 60) * 380, () => { lascia(); premi(m, true, "#FDE047"); suona(m, 0, .5); if (m > 60) arco(this.T, m - 1, m, "½", "piccolo-arco"); cart(nomeTastoHTML(m), false); });
+    dopo(13 * 380 + 200, () => { lascia(); cart("Da DO a DO: <b>12 semitoni</b>"); });
+  },
+  mifa() {
+    fermaTutto(); lascia(); togliArchi();
+    [[64, 65], [71, 72]].forEach(([a, b], i) => dopo(i * 1200, () => { premi(a, true, "#F472B6"); premi(b, true, "#F472B6"); arco(this.T, a, b, "½", "rosa"); suona(a, 0, .6); suona(b, .35, .7); }));
+    cart(`<b>MI-FA</b> e <b>SI-DO</b>: un semitono, senza tasto nero in mezzo`);
+  },
+  semitono(a, b, ritardo) {
+    dopo(ritardo, () => { premi(a, true, "#FDE047"); suona(a, 0, .6); });
+    dopo(ritardo + 500, () => { premi(b, true, "#7DD3FC"); suona(b, 0, .7); arco(this.T, a, b, "½"); });
+  },
+  fase(f, anim) {
+    fermaTutto(); lascia(); togliArchi();
+    cart(["Il semitono: due tasti vicini", "MI-FA e SI-DO", "Tocca un tasto"][f], anim);
+    if (f === 0) { this.semitono(60, 61, 200); dopo(1500, () => { lascia(); togliArchi(); }); this.semitono(61, 62, 1700); dopo(2400, () => cart("Due tasti vicini = <b>un semitono</b>")); }
+    if (f === 1) this.mifa();
+    if (f === 2 && anim) this.vicini(67);
+  }
+});
+
+/* ---------- 3. Il tono ---------- */
+PASSI.push({
+  cap: 0, breve: "Il tono", titolo: "Il tono",
+  punti: [
+    "<b>Due semitoni</b> fanno un <b>tono</b>: da DO a RE ci sono due semitoni (DO, tasto nero, RE).",
+    "Nella scala di DO fra le note vicine c'è quasi sempre un <b>tono</b>; solo <b>MI-FA</b> e <b>SI-DO</b> sono <b>semitoni</b>.",
+    "Prova tu: tocca <b>due tasti</b> e scopri quanti semitoni ci sono fra loro."
+  ],
+  quaderno: "<p><b>Tono</b>: la distanza di due semitoni.</p><p>Scala di do: tono · tono · <b>semitono</b> · tono · tono · tono · <b>semitono</b>.</p>",
+  crea() {
+    const T = this.T = Tastiera(40, 120, 920, 270, 60, 79);
+    svg(VB, svgTastiera(T));
+    this.primo = null;
+    tastiInterattivi(m => this.misura(m));
+    strumenti([
+      { t: "▶ Scala di DO: T T S T T T S", fn: () => this.scala() },
+      { t: "🗑️ Ricomincia", fn: () => { this.primo = null; lascia(); togliArchi(); cart("Tocca due tasti"); } },
+      { suggerimento: "Tocca due tasti" }
+    ]);
+  },
+  tonoDoRe() {
+    fermaTutto(); lascia(); togliArchi(); const T = this.T;
+    dopo(100, () => { premi(60, true, "#FDE047"); suona(60, 0, .6); cart(nomeTastoHTML(60), false); });
+    dopo(700, () => { premi(61, true, "#7DD3FC"); suona(61, 0, .6); arco(T, 60, 61, "½", "piccolo-arco"); });
+    dopo(1300, () => { premi(62, true, "#FDE047"); suona(62, 0, .6); arco(T, 61, 62, "½", "piccolo-arco"); });
+    dopo(1900, () => { arco(T, 60, 62, "1 tono", "tono", 30); cart("½ + ½ = <b>un tono</b>"); });
+  },
+  scala() {
+    fermaTutto(); lascia(); togliArchi(); const T = this.T;
+    const sc = [60, 62, 64, 65, 67, 69, 71, 72];
+    sc.forEach((m, i) => dopo(i * 650, () => {
+      premi(m, true, coloreTesto(NATURALE[m % 12])); suona(m, 0, .7);
+      if (i) { const s = m - sc[i - 1] === 1; arco(T, sc[i - 1], m, s ? "S" : "T", s ? "rosa" : "tono"); }
+      cart(sc.slice(1, i + 1).map((x, k) => x - sc[k] === 1 ? "<b style=\"color:#F472B6\">S</b>" : "T").join(" ") || "DO", false);
+    }));
+  },
+  misura(m) {
+    const T = this.T;
+    if (this.primo === null || this.secondo !== undefined) { fermaTutto(); lascia(); togliArchi(); this.primo = m; this.secondo = undefined; premi(m, true, "#FDE047"); suona(m); cart(`${nomeTastoHTML(m)} <span class="piccolo">· ora tocca un altro tasto</span>`); return; }
+    if (m === this.primo) return;
+    this.secondo = m; premi(m, true, "#7DD3FC"); suona(m);
+    const a = Math.min(this.primo, m), b = Math.max(this.primo, m), n = b - a;
+    for (let k = a; k < b; k++) arco(T, k, k + 1, "½", "piccolo-arco");
+    const quanto = n === 1 ? "<b>1 semitono</b>" : n === 2 ? "<b>1 tono</b> (2 semitoni)" : n % 2 === 0 ? `<b>${n} semitoni</b> = ${n / 2} toni` : `<b>${n} semitoni</b>`;
+    cart(`${nomeTastoHTML(a)} → ${nomeTastoHTML(b)}: ${quanto}`);
+  },
+  fase(f, anim) {
+    fermaTutto(); lascia(); togliArchi(); this.primo = null; this.secondo = undefined;
+    cart(["Due semitoni = un tono", "La scala di DO: T T S T T T S", "Tocca due tasti"][f], anim);
+    if (f === 0) this.tonoDoRe();
+    if (f === 1) this.scala();
+  }
+});
+
+/* ---------- 4-7. Le alterazioni: pentagramma a sinistra, tastiera a destra ---------- */
+function palcoAlterazioni() {
+  const r = R(40, 470, 280, "violino"), T = Tastiera(510, 110, 470, 270, 60, 72);
+  return { r, T, s: svgRigo(r, { spazi: true }) + svgChiave(r, 54) + `<g class="note-alt"></g>` + svgTastiera(T) };
+}
+/* scrive sul pentagramma una fila di note [nome, ottava, alterazione, x] */
+function scriviNote(r, lista, cls = "") {
+  q1(".note-alt").innerHTML = lista.map(([nome, ott, a, x], i) => svgNotaA(r, x, posDi(nome, ott), a, { cls: `na nascosta ${cls}`, attr: ` data-i="${i}"` })).join("");
+  return qa(".note-alt .nota");
+}
+/* fa sentire le note una alla volta: nota sul pentagramma + tasto + nome */
+function suonaNote(r, lista, el, ms = 900, cosa) {
+  lista.forEach(([nome, ott, a, x], i) => dopo(i * ms, () => {
+    lascia(); mostra(el[i], true, true); lampeggia(el[i]);
+    const m = midiDi(nome, ott, a); premi(m, true, coloreTesto(nome)); suona(m, 0, .9);
+    accendiPerNota(posDi(nome, ott), coloreTesto(nome));
+    cart(cosa ? cosa(i) : `<b style="color:${coloreTesto(nome)}">${NA(nome, a)}</b> <span class="piccolo">· ${nome}${a ? " " + ALT_NOME[a] : ""}</span>`, false);
+  }));
+}
+
+/* 4. Il diesis */
+PASSI.push({
+  cap: 1, breve: "Il diesis", titolo: "Il diesis",
+  punti: [
+    `Le <b>alterazioni</b> sono segni che cambiano l'altezza di una nota. Il <b>diesis</b> ${A("#")} <b>alza</b> la nota di un <b>semitono</b>.`,
+    "Si scrive <b>prima</b> della nota, sulla <b>stessa riga o spazio</b>. Si legge «fa diesis».",
+    `Se subito sopra non c'è un tasto nero, il diesis porta al tasto <b>bianco</b> vicino: ${NA("mi", "#")} suona come FA, ${NA("si", "#")} come DO.`,
+    "Prova tu: tocca un tasto bianco, lo alzo di un semitono."
+  ],
+  quaderno: `<p><b>Diesis</b> ${A("#")}: alza la nota di un semitono.</p>`,
+  crea() {
+    const P = palcoAlterazioni(); this.r = P.r; this.T = P.T; svg(VB, P.s);
+    tastiInterattivi(m => this.prova(m));
+    strumenti([
+      { t: `▶ FA → ${NA("fa", "#")}`, fn: () => this.esempio("fa") },
+      { t: `▶ MI → ${NA("mi", "#")}`, fn: () => this.esempio("mi") },
+      { suggerimento: "Tocca un tasto bianco" }
+    ]);
+  },
+  esempio(nome, ott = 4) {
+    fermaTutto(); lascia(); togliArchi(); spegniRighe();
+    const L = [[nome, ott, "", 210], [nome, ott, "#", 370]], el = scriviNote(this.r, L);
+    suonaNote(this.r, L, el, 1000);
+    dopo(1000, () => { const a = midiDi(nome, ott), b = a + 1; premi(a, true, coloreTesto(nome)); arco(this.T, a, b, "½"); });
+    if (nome === "mi" || nome === "si") dopo(1700, () => cart(`<b style="color:${coloreTesto(nome)}">${NA(nome, "#")}</b> <span class="piccolo">· suona come il tasto bianco ${nome === "mi" ? "FA" : "DO"}</span>`, false));
+  },
+  prova(m) {
+    if (NERI.has(m % 12)) { fermaTutto(); lascia(); premi(m); suona(m); cart(`${nomeTastoHTML(m)} <span class="piccolo">· tocca un tasto bianco</span>`); return; }
+    const nome = NATURALE[m % 12], ott = Math.floor(m / 12) - 1;
+    if (m + 1 > this.T.a) { fermaTutto(); lascia(); premi(m); suona(m); cart(nomeTastoHTML(m)); return; }
+    this.esempio(nome, ott);
+  },
+  fase(f, anim) {
+    fermaTutto(); lascia(); togliArchi(); spegniRighe(); q1(".note-alt").innerHTML = "";
+    cart(["Il diesis alza di un semitono", "Prima della nota, sulla stessa riga o spazio", `${NA("mi", "#")} e ${NA("si", "#")}`, "Tocca un tasto bianco"][f], anim);
+    if (f === 0 || f === 1) {
+      this.esempio("fa");
+      if (f === 1) dopo(1300, () => { const g = q1('.note-alt .nota[data-i="1"] .glifo-alt'); if (g) g.classList.add("evid"); g && g.style.setProperty("--luce", "#FDE047"); luce(q1('.spazio[data-spazio="1"]'), true, "#FDE047"); cart("Il diesis sta nello <b>stesso spazio</b> della nota", false); });
+    }
+    if (f === 2) { this.esempio("mi"); dopo(2600, () => this.esempio("si")); }
+  }
+});
+
+/* 5. Il bemolle */
+PASSI.push({
+  cap: 1, breve: "Il bemolle", titolo: "Il bemolle",
+  punti: [
+    `Il <b>bemolle</b> ${A("b")} <b>abbassa</b> la nota di un <b>semitono</b>. Anche lui si scrive prima della nota.`,
+    `Ogni tasto nero ha <b>due nomi</b>: il diesis della nota sotto o il bemolle della nota sopra. ${NA("do", "#")} = ${NA("re", "b")}.`,
+    "Prova tu: tocca un tasto bianco, lo abbasso di un semitono."
+  ],
+  quaderno: `<p><b>Bemolle</b> ${A("b")}: abbassa la nota di un semitono.</p>`,
+  crea() {
+    const P = palcoAlterazioni(); this.r = P.r; this.T = P.T; svg(VB, P.s);
+    tastiInterattivi(m => this.prova(m));
+    strumenti([
+      { t: `▶ SI → ${NA("si", "b")}`, fn: () => this.esempio("si") },
+      { t: "👁️ Due nomi", fn: () => this.dueNomi() },
+      { suggerimento: "Tocca un tasto" }
+    ]);
+  },
+  esempio(nome, ott = 4) {
+    fermaTutto(); lascia(); togliArchi(); spegniRighe(); qa(".nomi-neri").forEach(g => mostra(g, false));
+    const L = [[nome, ott, "", 210], [nome, ott, "b", 370]], el = scriviNote(this.r, L);
+    suonaNote(this.r, L, el, 1000);
+    dopo(1000, () => { const a = midiDi(nome, ott), b = a - 1; premi(a, true, coloreTesto(nome)); arco(this.T, b, a, "½"); });
+  },
+  dueNomi() {
+    fermaTutto(); lascia(); togliArchi(); spegniRighe();
+    qa(".nomi-neri").forEach(g => mostra(g));
+    const L = [["do", 4, "#", 210], ["re", 4, "b", 370]], el = scriviNote(this.r, L);
+    el.forEach(e => mostra(e)); premi(61, true, "#FDE047"); suona(61);
+    q1(".note-alt").insertAdjacentHTML("beforeend", `<text class="etic grande" x="290" y="${this.r.y(-1) + 9}" text-anchor="middle">=</text>`);
+    cart(`${NA("do", "#")} = ${NA("re", "b")} <span class="piccolo">· stesso tasto, due nomi</span>`);
+  },
+  prova(m) {
+    if (NERI.has(m % 12)) { fermaTutto(); lascia(); premi(m); suona(m); qa(".nomi-neri").forEach(g => mostra(g, g.dataset.m == m)); cart(nomeTastoHTML(m)); return; }
+    const nome = NATURALE[m % 12], ott = Math.floor(m / 12) - 1;
+    if (m - 1 < this.T.da) { fermaTutto(); lascia(); premi(m); suona(m); cart(nomeTastoHTML(m)); return; }
+    this.esempio(nome, ott);
+  },
+  fase(f, anim) {
+    fermaTutto(); lascia(); togliArchi(); spegniRighe(); q1(".note-alt").innerHTML = ""; qa(".nomi-neri").forEach(g => mostra(g, false));
+    cart(["Il bemolle abbassa di un semitono", "Un tasto nero, due nomi", "Tocca un tasto"][f], anim);
+    if (f === 0) this.esempio("si");
+    if (f === 1) this.dueNomi();
+  }
+});
+
+/* 6. Il bequadro */
+PASSI.push({
+  cap: 1, breve: "Il bequadro", titolo: "Il bequadro",
+  punti: [
+    "Un'alterazione vale per <b>tutta la battuta</b>: anche le note dopo, sulla stessa riga o spazio, restano alterate.",
+    `Il <b>bequadro</b> ${A("n")} <b>riporta</b> la nota alterata al suo stato <b>naturale</b>.`,
+    "La <b>stanghetta</b> cancella le alterazioni: nella battuta dopo le note tornano naturali."
+  ],
+  quaderno: `<p><b>Bequadro</b> ${A("n")}: riporta la nota alterata al suo stato naturale.</p>`,
+  crea() {
+    const P = palcoAlterazioni(); this.r = P.r; this.T = P.T;
+    const r = this.r;
+    P.s += `<line class="stanghetta" x1="408" x2="408" y1="${r.y(8)}" y2="${r.yb}"/>`;
+    svg(VB, P.s);
+    this.L = [["fa", 4, "#", 205], ["fa", 4, "", 285], ["fa", 4, "n", 370], ["fa", 4, "", 448]];
+    this.el = scriviNote(r, this.L);
+    tastiInterattivi(m => { fermaTutto(); lascia(); premi(m); suona(m); cart(nomeTastoHTML(m)); });
+    strumenti([{ t: "▶ Ascolta le quattro note", fn: () => this.ascolta(3) }]);
+  },
+  // cosa suona davvero ogni nota della fila
+  vere: ["#", "#", "", ""],
+  ascolta(fino) {
+    fermaTutto(); lascia(); spegniRighe();
+    const spiega = ["<b>FA" + A("#") + "</b> <span class=\"piccolo\">· fa diesis</span>", "<b>FA" + A("#") + "</b> <span class=\"piccolo\">· ancora diesis: siamo nella stessa battuta</span>",
+      "<b>FA" + A("n") + "</b> <span class=\"piccolo\">· il bequadro lo riporta naturale</span>", "<b>FA</b> <span class=\"piccolo\">· battuta nuova: naturale</span>"];
+    for (let i = 0; i <= fino; i++) dopo(i * 1100, () => {
+      lascia(); const e = this.el[i]; mostra(e, true, e.classList.contains("nascosta")); lampeggia(e);
+      const m = midiDi("fa", 4, this.vere[i]); premi(m, true, coloreTesto("fa")); suona(m, 0, .9);
+      cart(spiega[i], false);
+    });
+  },
+  fase(f, anim) {
+    fermaTutto(); lascia(); spegniRighe();
+    const quante = [1, 2, 3][f];
+    this.el.forEach((e, i) => mostra(e, i <= quante));
+    cart(["L'alterazione vale per tutta la battuta", "Il bequadro: di nuovo naturale", "La stanghetta cancella le alterazioni"][f], anim);
+    if (anim) this.ascolta(quante);
+  }
+});
+
+/* 7. Doppio diesis e doppio bemolle */
+PASSI.push({
+  cap: 1, breve: "Doppio diesis e doppio bemolle", titolo: "Doppio diesis e doppio bemolle",
+  punti: [
+    `Il <b>doppio diesis</b> ${A("##")} alza la nota di <b>due semitoni</b> (un tono): ${NA("fa", "##")} suona come SOL.`,
+    `Il <b>doppio bemolle</b> ${A("bb")} abbassa la nota di <b>due semitoni</b>: ${NA("si", "bb")} suona come LA.`
+  ],
+  quaderno: `<p><b>Doppio diesis</b> ${A("##")}: alza la nota di due semitoni.</p><p><b>Doppio bemolle</b> ${A("bb")}: abbassa la nota di due semitoni.</p>`,
+  crea() {
+    const P = palcoAlterazioni(); this.r = P.r; this.T = P.T; svg(VB, P.s);
+    tastiInterattivi(m => { fermaTutto(); lascia(); premi(m); suona(m); cart(nomeTastoHTML(m)); });
+    strumenti([
+      { t: `▶ FA → ${NA("fa", "#")} → ${NA("fa", "##")}`, fn: () => this.esempio(0) },
+      { t: `▶ SI → ${NA("si", "b")} → ${NA("si", "bb")}`, fn: () => this.esempio(1) }
+    ]);
+  },
+  esempio(k) {
+    fermaTutto(); lascia(); togliArchi(); spegniRighe();
+    const L = k === 0 ? [["fa", 4, "", 170], ["fa", 4, "#", 300], ["fa", 4, "##", 430]] : [["si", 4, "", 170], ["si", 4, "b", 300], ["si", 4, "bb", 430]];
+    const el = scriviNote(this.r, L);
+    suonaNote(this.r, L, el, 1000);
+    const m = L.map(([n, o, a]) => midiDi(n, o, a));
+    dopo(1000, () => arco(this.T, Math.min(m[0], m[1]), Math.max(m[0], m[1]), "½"));
+    dopo(2000, () => { arco(this.T, Math.min(m[1], m[2]), Math.max(m[1], m[2]), "½"); arco(this.T, Math.min(m[0], m[2]), Math.max(m[0], m[2]), "1 tono", "tono", 30); });
+    dopo(2400, () => cart(k === 0 ? `<b>${NA("fa", "##")}</b> <span class="piccolo">· suona come il tasto del SOL</span>` : `<b>${NA("si", "bb")}</b> <span class="piccolo">· suona come il tasto del LA</span>`, false));
+  },
+  fase(f, anim) { fermaTutto(); lascia(); togliArchi(); spegniRighe(); q1(".note-alt").innerHTML = ""; cart(["Doppio diesis: +2 semitoni", "Doppio bemolle: −2 semitoni"][f], anim); this.esempio(f); }
+});
+
+/* ---------- 8. Il pianoforte: ogni tasto e i suoi nomi ---------- */
+PASSI.push({
+  cap: 2, breve: "Il pianoforte", titolo: "Le alterazioni sul pianoforte",
+  punti: [
+    "Sul pianoforte ogni suono ha il suo <b>tasto</b>: le note alterate sono quasi sempre sui tasti <b>neri</b>.",
+    `Tocca un tasto nero: ecco i suoi <b>due nomi</b> e come si scrivono, col diesis ${A("#")} della nota sotto o col bemolle ${A("b")} della nota sopra.`
+  ],
+  quaderno: "",
+  crea() {
+    const r = this.r = R(60, 940, 190, "violino"), T = this.T = Tastiera(40, 300, 920, 210, 60, 83);
+    svg("0 0 1000 520", svgRigo(r) + svgChiave(r, 74) + `<g class="note-alt"></g>` + svgTastiera(T));
+    tastiInterattivi(m => this.tocca(m));
+    this.nomiOn = false;
+    strumenti([
+      { t: "👁️ Nomi sui tasti neri", id: "btnNomiNeri", fn: el => { this.nomiOn = !this.nomiOn; el.classList.toggle("on", this.nomiOn); qa(".nomi-neri").forEach(g => mostra(g, this.nomiOn)); } },
+      { suggerimento: "Tocca un tasto" }
+    ]);
+  },
+  tocca(m) {
+    fermaTutto(); lascia(); premi(m, true, NERI.has(m % 12) ? "#FDE047" : null); suona(m);
+    const nomi = nomiTasto(m), r = this.r;
+    if (nomi.length === 1) q1(".note-alt").innerHTML = svgNotaA(r, 500, posDi(nomi[0].nome, nomi[0].ott), "", { cls: "compare" });
+    else q1(".note-alt").innerHTML = svgNotaA(r, 420, posDi(nomi[0].nome, nomi[0].ott), "#", { cls: "compare" }) +
+      `<text class="etic grande" x="500" y="${r.y(4) + 9}" text-anchor="middle">=</text>` + svgNotaA(r, 620, posDi(nomi[1].nome, nomi[1].ott), "b", { cls: "compare" });
+    cart(nomeTastoHTML(m));
+  },
+  fase(f, anim) {
+    fermaTutto(); lascia(); q1(".note-alt").innerHTML = "";
+    cart(["Ogni suono ha il suo tasto", "Tocca un tasto nero"][f], anim);
+    if (anim) dopo(300, () => this.tocca(f === 0 ? 66 : 70));
+  }
+});
+
+/* ---------- 9. La chitarra ---------- */
+const CORDE_CHITARRA = [64, 59, 55, 50, 45, 40];        // dalla corda più acuta (in alto) alla più grave
+const NOMI_CORDE_CHITARRA = ["mi", "si", "sol", "re", "la", "mi"];
+PASSI.push({
+  cap: 2, breve: "La chitarra", titolo: "Le alterazioni sulla chitarra",
+  punti: [
+    "Sul manico della chitarra ci sono barrette di metallo che lo dividono in <b>tasti</b>.",
+    "Da un tasto al tasto <b>vicino</b> c'è un <b>semitono</b>: due tasti fanno un <b>tono</b>. Per il diesis il dito scende di un tasto verso la cassa.",
+    "Per il <b>bemolle</b> il dito sale di un tasto, verso la paletta. Prova tu: tocca la corda dove vuoi."
+  ],
+  quaderno: "<p>Sulla chitarra ogni <b>tasto</b> è un <b>semitono</b>.</p>",
+  crea() {
+    // posizione dei tasti come su una chitarra vera: sempre più stretti verso la cassa
+    const X0 = 110, L = 1640, pos = n => X0 + L * (1 - Math.pow(2, -n / 12));
+    this.pos = pos; this.yC = i => 92 + i * 46;
+    let s = `<rect x="${X0}" y="70" width="${pos(12.6) - X0}" height="274" rx="6" fill="#3B2A1E" stroke="#6B4F38" stroke-width="2"/>`;
+    s += `<rect x="${X0 - 12}" y="66" width="12" height="282" rx="3" fill="#E7E0D0"/>`;   // capotasto
+    [3, 5, 7, 9].forEach(n => s += `<circle cx="${(pos(n - 1) + pos(n)) / 2}" cy="207" r="9" fill="#C8BBA5" opacity=".75"/>`);
+    s += `<circle cx="${(pos(11) + pos(12)) / 2}" cy="161" r="9" fill="#C8BBA5" opacity=".75"/><circle cx="${(pos(11) + pos(12)) / 2}" cy="253" r="9" fill="#C8BBA5" opacity=".75"/>`;
+    for (let n = 1; n <= 12; n++) s += `<line class="barretta" data-n="${n}" x1="${pos(n)}" x2="${pos(n)}" y1="70" y2="344"/>`;
+    for (let n = 1; n <= 12; n++) s += `<text class="num-tasto" x="${(pos(n - 1) + pos(n)) / 2}" y="378">${n}</text>`;
+    CORDE_CHITARRA.forEach((m, i) => {
+      s += `<line class="corda" data-c="${i}" x1="${X0 - 12}" x2="${pos(12.6)}" y1="${this.yC(i)}" y2="${this.yC(i)}" style="stroke-width:${1.6 + i * 0.55}"/>`;
+      s += `<text class="nome-corda c-${NOMI_CORDE_CHITARRA[i]}" x="${X0 - 34}" y="${this.yC(i) + 7}">${MAIU(NOMI_CORDE_CHITARRA[i])}</text>`;
+    });
+    s += `<g class="dita"></g>`;
+    // zone da toccare: corda × tasto (0 = corda vuota)
+    CORDE_CHITARRA.forEach((m, i) => { for (let n = 0; n <= 12; n++) { const a = n === 0 ? X0 - 70 : pos(n - 1), b = n === 0 ? X0 - 12 : pos(n);
+      s += `<rect class="colpo cg" data-c="${i}" data-n="${n}" x="${a}" y="${this.yC(i) - 23}" width="${b - a}" height="46"/>`; } });
+    svg(VB, s);
+    qa(".cg").forEach(c => c.addEventListener("pointerdown", e => { e.preventDefault(); this.dito(+c.dataset.c, +c.dataset.n, true); }));
+    strumenti([
+      { t: "▶ Corda del LA, tasto dopo tasto", fn: () => this.cromatica() },
+      { t: `▶ DO → ${NA("do", "#")} → RE`, fn: () => this.doRe() },
+      { suggerimento: "Tocca la corda dove vuoi" }
+    ]);
+  },
+  xDito(n) { return n === 0 ? 70 : this.pos(n) - (this.pos(n) - this.pos(n - 1)) * 0.38; },
+  dito(c, n, solo, colore) {
+    const m = CORDE_CHITARRA[c] + n, nomi = nomiTasto(m);
+    if (solo) { fermaTutto(); q1(".dita").innerHTML = ""; }
+    q1(".dita").insertAdjacentHTML("beforeend", `<g class="dito compare"><circle cx="${this.xDito(n)}" cy="${this.yC(c)}" r="17" style="fill:${colore || coloreTesto(nomi[0].nome)}"/>` +
+      `<text x="${this.xDito(n)}" y="${this.yC(c) + 1}">${n || "0"}</text></g>`);
+    const cr = q1(`.corda[data-c="${c}"]`); cr.classList.remove("vibra"); void cr.getBBox(); cr.classList.add("vibra");
+    suona(m, 0, 1.2);
+    cart(`${nomeTastoHTML(m)} <span class="piccolo">· corda ${MAIU(NOMI_CORDE_CHITARRA[c])}, ${n ? n + "° tasto" : "corda vuota"}</span>`);
+  },
+  cromatica() {
+    fermaTutto(); q1(".dita").innerHTML = "";
+    for (let n = 0; n <= 12; n++) dopo(n * 520, () => { q1(".dita").innerHTML = ""; this.dito(4, n, false); });
+  },
+  doRe() {
+    fermaTutto(); q1(".dita").innerHTML = "";
+    [[3, "DO"], [4, "DO#"], [5, "RE"]].forEach(([n], i) => dopo(i * 1000, () => { q1(".dita").innerHTML = ""; this.dito(4, n, false); }));
+    dopo(3000, () => cart(`DO → ${NA("do", "#")} → RE <span class="piccolo">· un tasto = un semitono</span>`, false));
+  },
+  siSib() {
+    fermaTutto(); q1(".dita").innerHTML = "";
+    [[2], [1]].forEach(([n], i) => dopo(i * 1100, () => { q1(".dita").innerHTML = ""; this.dito(4, n, false); }));
+    dopo(2300, () => cart(`SI → ${NA("si", "b")} <span class="piccolo">· un tasto verso la paletta</span>`, false));
+  },
+  fase(f, anim) {
+    fermaTutto(); q1(".dita").innerHTML = ""; qa(".barretta.evid").forEach(b => b.classList.remove("evid"));
+    cart(["I tasti della chitarra", "Un tasto = un semitono", "Il bemolle: un tasto indietro"][f], anim);
+    if (!anim) return;
+    if (f === 0) for (let n = 1; n <= 12; n++) dopo(n * 120, () => { const b = q1(`.barretta[data-n="${n}"]`); b.classList.add("evid"); dopo(500, () => b.classList.remove("evid")); });
+    if (f === 1) this.doRe();
+    if (f === 2) this.siSib();
+  }
+});
+
+/* ---------- 10. Violino e violoncello ---------- */
+const ARCHI = {
+  violino: { corde: [76, 69, 62, 55], nomi: ["mi", "la", "re", "sol"] },
+  violoncello: { corde: [57, 50, 43, 36], nomi: ["la", "re", "sol", "do"] }
+};
+PASSI.push({
+  cap: 2, breve: "Violino e violoncello", titolo: "Le alterazioni su violino e violoncello",
+  punti: [
+    "Violino e violoncello <b>non hanno tasti</b>: il dito si può fermare in <b>qualsiasi punto</b> della corda, e il suono scivola.",
+    "Per un <b>semitono</b> le dita stanno <b>vicine</b> (attaccate); per un <b>tono</b> stanno <b>lontane</b> (staccate).",
+    "Il musicista trova il punto giusto <b>con l'orecchio</b>. Prova tu: trascina il dito sulla corda."
+  ],
+  quaderno: "<p>Negli strumenti ad arco senza tasti: semitono = dita <b>vicine</b>, tono = dita <b>lontane</b>.</p>",
+  crea() {
+    this.str = this.str || "violino";
+    this.X0 = 120; this.L = 1540;
+    this.disegna();
+    strumenti([
+      { gruppo: [["🎻 Violino", "violino"], ["Violoncello", "violoncello"]].map(([t, k]) => ({ t, cls: k === this.str ? "on" : "", fn: el => { segna("gArchi", el); this.str = k; fermaTutto(); this.disegna(); this.fase(this.f || 0, false); } })), id: "gArchi" },
+      { t: "▶ Il dito scivola", fn: () => this.scivola() },
+      { t: "▶ Dita vicine e lontane", fn: () => this.dita() },
+      { suggerimento: "Trascina il dito sulla corda" }
+    ]);
+  },
+  pos(n) { return this.X0 + this.L * (1 - Math.pow(2, -n / 12)); },
+  n(x) { return -12 * Math.log2(1 - (x - this.X0) / this.L); },
+  disegna() {
+    const A_ = ARCHI[this.str], y = i => 120 + i * 60;
+    this.y = y;
+    let s = `<path d="M${this.X0} 92 L${this.pos(13)} 78 L${this.pos(13)} 342 L${this.X0} 328 Z" fill="#1c1917" stroke="#44403C" stroke-width="2"/>`;
+    s += `<rect x="${this.X0 - 14}" y="86" width="14" height="248" rx="3" fill="#E7E0D0"/>`;
+    // tacche dei semitoni (guida), solo sulla seconda corda
+    s += `<g class="guida vela nascosto">`;
+    for (let n = 1; n <= 12; n++) { const nm = nomiTasto(A_.corde[1] + n); s += `<line x1="${this.pos(n)}" x2="${this.pos(n)}" y1="${y(1) + 14}" y2="${y(1) + 24}" stroke="#9FB3CE" stroke-width="2"/>`;
+      if (!NERI.has((A_.corde[1] + n) % 12)) s += `<text class="nome-guida c-${nm[0].nome}" x="${this.pos(n)}" y="${y(1) + 46}">${MAIU(nm[0].nome)}</text>`; }
+    s += `</g>`;
+    A_.corde.forEach((m, i) => {
+      s += `<line class="corda arco-c" data-c="${i}" x1="${this.X0 - 14}" x2="980" y1="${y(i)}" y2="${y(i)}" style="stroke-width:${1.5 + i * 0.7}"/>`;
+      s += `<text class="nome-corda c-${A_.nomi[i]}" x="${this.X0 - 40}" y="${y(i) + 7}">${MAIU(A_.nomi[i])}</text>`;
+    });
+    s += `<text class="etic" x="${this.X0}" y="56">← verso il riccio (suoni più gravi)</text><text class="etic" x="975" y="56" text-anchor="end">verso il ponticello (più acuti) →</text>`;
+    s += `<g class="dita"></g>`;
+    A_.corde.forEach((m, i) => s += `<rect class="colpo ca" data-c="${i}" x="${this.X0}" y="${y(i) - 28}" width="${980 - this.X0}" height="56"/>`);
+    svg(VB, s);
+    // trascinare il dito: suono continuo finché si tiene premuto
+    const sv = PALCO.querySelector("svg");
+    const xSvg = e => { const b = sv.getBoundingClientRect(), k = Math.min(b.width / 1000, b.height / 420); return (e.clientX - b.left - (b.width - 1000 * k) / 2) / k; };
+    qa(".ca").forEach(c => {
+      c.addEventListener("pointerdown", e => { e.preventDefault(); fermaTutto(); try { c.setPointerCapture(e.pointerId); } catch (_) {} this.inizia(+c.dataset.c, xSvg(e)); });
+      c.addEventListener("pointermove", e => { if (this.voce) this.muovi(xSvg(e)); });
+      ["pointerup", "pointercancel", "lostpointercapture"].forEach(t => c.addEventListener(t, () => this.finisci()));
+    });
+  },
+  mettiDito(c, n, num, colore) {
+    const x = this.pos(n) - 6;
+    return `<g class="dito"><circle cx="${x}" cy="${this.y(c)}" r="17" style="fill:${colore}"/><text x="${x}" y="${this.y(c) + 1}">${num}</text></g>`;
+  },
+  inizia(c, x) {
+    const ac = audio(); if (!ac) return;
+    this.c = c;
+    const o = ac.createOscillator(), f = ac.createBiquadFilter(), g = ac.createGain();
+    o.type = "sawtooth"; f.type = "lowpass"; f.frequency.value = 2400; g.gain.value = 0.0001;
+    o.connect(f); f.connect(g); g.connect(master); o.start();
+    g.gain.exponentialRampToValueAtTime(0.16, ac.currentTime + 0.06);
+    this.voce = { o, g }; this.muovi(x);
+  },
+  muovi(x) {
+    const xs = Math.max(this.X0, Math.min(this.pos(13), x)), n = this.n(xs), m0 = ARCHI[this.str].corde[this.c];
+    if (this.voce) this.voce.o.frequency.setTargetAtTime(440 * Math.pow(2, (m0 + n - 69) / 12), AC.currentTime, 0.02);
+    const vicino = Math.round(n), scarto = n - vicino, nm = nomeTastoHTML(m0 + vicino);
+    q1(".dita").innerHTML = `<g class="dito"><circle cx="${xs}" cy="${this.y(this.c)}" r="17" style="fill:#FDE047"/></g>`;
+    const giusto = Math.abs(scarto) < 0.18;
+    cart(`${nm} <span class="piccolo">· ${giusto ? "intonato ✓" : scarto > 0 ? "un po' troppo alto" : "un po' troppo basso"}</span>`, false);
+  },
+  finisci() {
+    if (!this.voce) return;
+    const { o, g } = this.voce; this.voce = null;
+    try { g.gain.setTargetAtTime(0.0001, AC.currentTime, 0.05); o.stop(AC.currentTime + 0.3); } catch (_) {}
+    riposo(0.4);
+  },
+  scivola() {
+    fermaTutto(); q1(".dita").innerHTML = "";
+    this.inizia(1, this.pos(0));
+    const t0 = performance.now(), dur = 3600;
+    const passo = ora => { const k = Math.min(1, (ora - t0) / dur), n = k < .5 ? k * 2 * 7 : (1 - k) * 2 * 7; this.muovi(this.pos(n)); if (k < 1) ANIMA = requestAnimationFrame(passo); else { this.finisci(); cart("Il suono <b>scivola</b>: non ci sono tasti", false); } };
+    ANIMA = requestAnimationFrame(passo);
+  },
+  dita() {
+    fermaTutto(); this.finisci(); const c = 1, m0 = ARCHI[this.str].corde[c];
+    const g = q1(".dita");
+    g.innerHTML = "";
+    dopo(100, () => { g.innerHTML = this.mettiDito(c, 2, 1, "#7DD3FC"); suona(m0 + 2, 0, .8); cart(`1° dito: ${nomeTastoHTML(m0 + 2)}`, false); });
+    dopo(1200, () => { g.innerHTML = this.mettiDito(c, 2, 1, "#7DD3FC") + this.mettiDito(c, 3, 2, "#F472B6"); suona(m0 + 3, 0, .8); cart(`2° dito <b>vicino</b>: ${nomeTastoHTML(m0 + 3)} <span class="piccolo">· semitono</span>`, false); });
+    dopo(2600, () => { g.innerHTML = this.mettiDito(c, 2, 1, "#7DD3FC") + this.mettiDito(c, 4, 2, "#34D399"); suona(m0 + 4, 0, .8); cart(`2° dito <b>lontano</b>: ${nomeTastoHTML(m0 + 4)} <span class="piccolo">· tono</span>`, false); });
+  },
+  fase(f, anim) {
+    this.f = f; fermaTutto(); this.finisci(); q1(".dita").innerHTML = "";
+    mostra(q1(".guida"), f >= 2);
+    cart(["Nessun tasto: il suono scivola", "Dita vicine, dita lontane", "Trova il punto con l'orecchio"][f], anim);
+    if (!anim) return;
+    if (f === 0) this.scivola();
+    if (f === 1) this.dita();
+  }
+});
+
+/* ---------- 11. Ripasso: la tabella da copiare ---------- */
+const TABELLA = [
+  ["#", "Diesis", "Alza la nota di un semitono", 3],
+  ["b", "Bemolle", "Abbassa la nota di un semitono", 4],
+  ["n", "Bequadro", "Riporta la nota alterata al suo stato naturale", 5],
+  ["##", "Doppio diesis", "Alza la nota di due semitoni", 6],
+  ["bb", "Doppio bemolle", "Abbassa la nota di due semitoni", 6]
+];
+PASSI.push({
+  cap: 3, breve: "Sul quaderno", titolo: "Ricapitoliamo", soloTesto: true,
+  punti: ["Le definizioni da copiare sul quaderno. Tocca una riga per tornare al passo."],
+  crea() {
+    const box = document.createElement("div"); box.className = "tabella-alt";
+    box.innerHTML = `<button class="def-alt" data-p="1"><span class="sim">½</span><b>Semitono</b><span>La distanza più piccola fra due suoni: due tasti vicini</span></button>` +
+      `<button class="def-alt" data-p="2"><span class="sim">1</span><b>Tono</b><span>La distanza di due semitoni</span></button>` +
+      TABELLA.map(([a, n, d, p]) => `<button class="def-alt" data-p="${p}"><span class="sim">${A(a, "1.9em")}</span><b>${n}</b><span>${d}</span></button>`).join("");
+    box.querySelectorAll(".def-alt").forEach(b => b.addEventListener("click", () => vai(+b.dataset.p, PASSI[+b.dataset.p].punti.length - 1)));
+    PALCO.innerHTML = ""; PALCO.appendChild(box);
+    STRUM.innerHTML = `<div class="allenati"><span>Ora allenati:</span>
+      <a class="btn" href="tastierapianoforte.html">🎹 Le note sul pianoforte</a><a class="btn" href="leggi-la-nota.html">🎼 Leggi la nota</a>
+      <a class="btn" href="note-sul-pentagramma.html">📖 Gli elementi del pentagramma</a></div>`;
+  },
+  fase() { cart("📒 Da copiare sul quaderno", false); }
+});
+
+/* ================= navigazione ================= */
+let passo = 0, fase = 0;
+const visti = new Set();
+const LEZ = $("#lezione");
+
+(function indice() {
+  const nav = $("#indice");
+  CAPITOLI.forEach((c, ci) => {
+    const g = document.createElement("div"); g.className = "gruppo"; g.style.setProperty("--colore", c.colore);
+    const quanti = PASSI.filter(p => p.cap === ci).length; g.style.flex = quanti + " 1 0";
+    g.innerHTML = `<div class="cap">${c.nome}</div><div class="pillole"></div>`;
+    PASSI.forEach((p, i) => {
+      if (p.cap !== ci) return;
+      const b = document.createElement("button"); b.className = "pillola"; b.dataset.i = i; b.title = (i + 1) + ". " + p.titolo;
+      b.innerHTML = `<span class="n">${i + 1}</span><span class="t">${p.breve}</span>`;
+      b.addEventListener("click", () => vai(i, 0));
+      g.querySelector(".pillole").appendChild(b);
+    });
+    nav.appendChild(g);
+  });
+})();
+
+function vai(i, f = 0, anim = true) {
+  fermaTutto();
+  if (AC && AC.state === "running") riposo(0);
+  const cambia = i !== passo || !PALCO.firstChild;
+  passo = i; fase = f; visti.add(i);
+  const P = PASSI[i];
+  document.documentElement.style.setProperty("--cap", CAPITOLI[P.cap].colore);
+  LEZ.classList.toggle("solo-testo", !!P.soloTesto);
+  if (cambia) {
+    $("#capitolo").textContent = CAPITOLI[P.cap].nome;
+    $("#titoloPasso").textContent = P.titolo;
+    const ul = $("#punti"); ul.innerHTML = "";
+    P.punti.forEach((t, k) => { const li = document.createElement("li"); li.innerHTML = t; li.addEventListener("click", () => vai(passo, k)); ul.appendChild(li); });
+    const qd = $("#quaderno"); qd.innerHTML = P.quaderno ? `<div class="tit">📒 Sul quaderno</div>${P.quaderno}` : "";
+    P.crea();
+  }
+  // punti: già visti, quello di adesso, quelli dopo nascosti
+  [...$("#punti").children].forEach((li, k) => { li.classList.toggle("ora", k === f); li.classList.toggle("dopo", k > f); });
+  $("#quaderno").hidden = !P.quaderno || f < P.punti.length - 1;
+  P.fase(f, anim);
+  // fasi in basso
+  const fs = $("#fasi"); fs.innerHTML = "";
+  if (P.punti.length > 1) P.punti.forEach((_, k) => {
+    const b = document.createElement("button"); b.textContent = k + 1; b.className = k < f ? "fatta" : k === f ? "ora" : "";
+    b.setAttribute("aria-label", "Punto " + (k + 1)); b.addEventListener("click", () => vai(passo, k)); fs.appendChild(b);
+  });
+  document.querySelectorAll(".pillola").forEach(b => { const n = +b.dataset.i; b.classList.toggle("attiva", n === i); b.classList.toggle("vista", visti.has(n) && n !== i); });
+  $("#contatore").textContent = `Passo ${i + 1} di ${PASSI.length}`;
+  $("#indietro").disabled = i === 0 && f === 0;
+  const ultimo = i === PASSI.length - 1 && f === P.punti.length - 1;
+  $("#avanti").disabled = ultimo;
+  $("#avanti").innerHTML = f < P.punti.length - 1 ? "Avanti ▶" : (i < PASSI.length - 1 ? "Passo " + (i + 2) + " ▶" : "Fine");
+  try { history.replaceState(null, "", "#passo-" + (i + 1)); } catch (e) { }
+  adattaTesto();
+}
+// se il testo del passo non sta nella sua scheda, si rimpicciolisce un poco (mai sotto 15 px)
+function adattaTesto() {
+  const sp = $(".spiega"); let fs = 20;
+  sp.style.removeProperty("--fs"); sp.style.removeProperty("--fq");
+  if (getComputedStyle(sp).overflow !== "hidden" || sp.offsetParent === null) return;
+  while (sp.scrollHeight > sp.clientHeight + 1 && fs > 15) { fs -= 0.5; sp.style.setProperty("--fs", fs + "px"); sp.style.setProperty("--fq", (fs * 0.78) + "px"); }
+}
+function avanti() {
+  const P = PASSI[passo];
+  if (fase < P.punti.length - 1) vai(passo, fase + 1);
+  else if (passo < PASSI.length - 1) vai(passo + 1, 0);
+}
+function indietro() {
+  if (fase > 0) vai(passo, fase - 1, false);
+  else if (passo > 0) vai(passo - 1, PASSI[passo - 1].punti.length - 1, false);
+}
+$("#avanti").addEventListener("click", avanti);
+$("#indietro").addEventListener("click", indietro);
+document.addEventListener("keydown", e => {
+  if (e.target.closest("input, textarea")) return;
+  if (["ArrowRight", "PageDown"].includes(e.key)) { e.preventDefault(); avanti(); }
+  if (["ArrowLeft", "PageUp"].includes(e.key)) { e.preventDefault(); indietro(); }
+});
+$("#btnColori").addEventListener("click", e => {
+  const on = document.body.classList.toggle("colori");
+  e.currentTarget.classList.toggle("attivo", on);
+});
+document.addEventListener("visibilitychange", () => { if (document.hidden) { fermaTutto(); if (AC && AC.state === "running") AC.suspend(); } });
+
+if (document.fonts && document.fonts.ready) document.fonts.ready.then(adattaTesto);
+window.addEventListener("resize", () => { cancelAnimationFrame(adattaTesto.t); adattaTesto.t = requestAnimationFrame(adattaTesto); });
+const daIndirizzo = parseInt((location.hash.match(/passo-(\d+)/) || [])[1], 10);
+vai(daIndirizzo >= 1 && daIndirizzo <= PASSI.length ? daIndirizzo - 1 : 0, 0, true);
+</script>
+<script src="adatta-schermo.js" data-schermate="#lezione"></script>
+</body>
+</html>

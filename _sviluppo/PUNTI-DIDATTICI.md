@@ -409,3 +409,48 @@ indicazione di tempo) che prima si spiegavano e si facevano ricopiare sul quader
 - Nel passo sui nomi delle note si scende fino al do sotto il pentagramma anche se i tagli non sono ancora spiegati:
   la scala resta completa e il taglio diventa una curiosità che prepara il passo 6.
 - Le figure (minima, semiminima, croma) compaiono solo come esempi del denominatore: le spiega «Figure ritmiche».
+
+---
+
+## Le alterazioni (lezione interattiva)
+
+**Dove:** home → Suono, note e ritmo, scheda «Le alterazioni», dopo «Figure ritmiche» e prima di «Le note sul pianoforte»
+(`alterazioni.html`). Ottobre 2026. Stesso motore e stesso stile di «Gli elementi del pentagramma».
+Sostituisce il punto 12 del programma (alterazioni, tono e semitono, simboli e definizioni da copiare) e i collegamenti
+agli strumenti virtuali esterni (pianoforte, chitarra, violino, violoncello): ora gli strumenti sono dentro la lezione.
+
+### Concetti
+- La tastiera: tasti bianchi = le 7 note; tasti neri a gruppi di 2 e di 3; il DO a sinistra dei due tasti neri.
+- Semitono (due tasti vicini, bianchi o neri; MI-FA e SI-DO senza tasto nero in mezzo); tono = due semitoni;
+  la scala di do T T S T T T S.
+- Diesis, bemolle, bequadro, doppio diesis, doppio bemolle: cosa fanno, dove si scrivono (prima della nota, sulla stessa
+  riga o spazio), come si leggono; MI♯ = FA e SI♯ = DO; ogni tasto nero ha due nomi (DO♯ = RE♭).
+- L'alterazione vale per tutta la battuta; il bequadro la annulla; la stanghetta la cancella.
+- Negli strumenti: pianoforte (un tasto per ogni suono), chitarra (ogni tasto del manico = un semitono; diesis un tasto
+  verso la cassa, bemolle un tasto verso la paletta), violino e violoncello (niente tasti: dita vicine = semitono,
+  dita lontane = tono, il punto giusto si trova con l'orecchio).
+
+### Punti di forza
+- **Pentagramma e tastiera insieme**: nei passi delle alterazioni la nota scritta e il tasto si accendono nello stesso
+  momento, con l'arco «½» o «1 tono» sopra i tasti: si vede che il segno sposta il suono di un tasto.
+- **Prova tu**: si tocca un tasto bianco e la pagina lo alza (diesis) o lo abbassa (bemolle), scrivendo le due note;
+  nel passo del tono si toccano due tasti qualsiasi e la pagina conta i semitoni; nel passo del semitono un tasto mostra
+  i suoi vicini.
+- **Il bequadro spiegato con la battuta**: quattro note sullo stesso spazio (FA♯, FA, FA♮ | FA) fanno sentire che
+  l'alterazione dura tutta la battuta, che il bequadro la annulla e che dopo la stanghetta si riparte naturali.
+- **Strumenti veri, senza uscire dal sito**: manico di chitarra con i tasti nelle proporzioni reali (si tocca qualsiasi
+  corda e tasto); tastiera del violino e del violoncello dove si **trascina il dito** e il suono scivola, con il nome della
+  nota più vicina e «intonato ✓ / un po' troppo alto / basso»: si capisce perché agli archi serve l'orecchio.
+- **Tabella finale** uguale a quella del programma (simbolo, nome, definizione), più tono e semitono; ogni riga riporta al passo.
+- Colori delle note su tasti (striscia sotto il tasto), nomi e note; nessun microfono, nessun dato raccolto.
+
+### Come usarlo in classe
+- Passi 1–3 alla LIM con la classe che indica i tasti; 4–7 con la tabella da copiare alla fine; 8–10 per collegare
+  i simboli agli strumenti che i ragazzi suonano o vedono suonare.
+- Nel passo 10 chiamare un ragazzo alla LIM a «suonare» il violino trascinando il dito fino a sentire «intonato».
+
+### Scelte fatte (e perché)
+- La regola «l'alterazione vale per tutta la battuta» non era nel programma, ma senza di lei il bequadro non si capisce.
+- Le alterazioni in chiave e le scale sono lasciate ad altri giochi (Ascolta la scala, Identifica la tonalità).
+- Agli archi si lavora sulla seconda corda (LA del violino, RE del violoncello); la guida dei semitoni compare solo
+  nell'ultimo punto, per non suggerire che sul violino ci siano tasti.
