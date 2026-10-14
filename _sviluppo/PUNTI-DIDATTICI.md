@@ -331,3 +331,64 @@ e matematica (una carta per ogni retta del piano, un simbolo per ogni punto).
 - **Le figure musicali le disegna VexFlow**, non il nostro codice: gambi (sempre a destra
   della testa, lunghi tre spazi e mezzo), code e travature seguono così le regole
   tipografiche vere invece di essere assemblate a occhio.
+
+---
+
+## Le note sul pentagramma (lezione interattiva)
+
+**Dove:** home → Suono, note e ritmo, dopo «Rap con le note» (`note-sul-pentagramma.html`). Ottobre 2026.
+Non è un gioco ma una **lezione da condurre alla LIM**: sostituisce gli schemi del programma di prima
+(punti 3, 4 e 6: righe e spazi in chiave di violino e di basso, scale con i tagli, elementi del pentagramma,
+indicazione di tempo) che prima si spiegavano e si facevano ricopiare sul quaderno.
+
+### Concetti
+- Il pentagramma: 5 righe e 4 spazi, contati dal basso verso l'alto. Note sulla riga e nello spazio; in alto acuto, in basso grave.
+- La chiave dà il nome alle note. Chiave di violino (di sol, 2ª riga) e chiave di basso (di fa, 4ª riga, i due puntini).
+- Il nome delle note per gradi congiunti a partire dalla nota della chiave (sol → la, si, do…; sol → fa, mi, re).
+- Righe e spazi nelle due chiavi: violino mi-sol-si-re-fa / fa-la-do-mi; basso sol-si-re-fa-la / la-do-mi-sol.
+- I tagli addizionali; il Do centrale (1° taglio sotto in violino, 1° taglio sopra in basso: stessa nota, stesso suono);
+  cenno al setticlavio. Scale di do con i tagli (violino: do centrale → do due tagli sopra; basso: do due tagli sotto → do centrale).
+- Elementi del pentagramma: chiave, indicazione di tempo, linea di battuta, battuta (misura), doppia stanghetta conclusiva.
+- Ritmo, pulsazione (movimento), metro (pulsazioni a gruppi di 2, 3, 4 con accento sulla prima).
+- Indicazione di tempo: numeratore = unità di misura (quanti movimenti per battuta), denominatore = unità di tempo
+  (quale figura vale un movimento: 2 minima, 4 semiminima, 8 croma); unità di suddivisione (la metà nei tempi semplici).
+
+### Punti di forza
+- **Il docente guida, la pagina mostra.** 13 passi in 4 capitoli (Il pentagramma · Le chiavi e le note · Battute e tempo ·
+  Ripasso). Ogni passo si svela un punto alla volta con **Avanti**: compare una frase breve e insieme succede qualcosa
+  sul pentagramma (le righe si contano accendendosi, la chiave si disegna da sola, la 2ª riga si illumina, le note
+  compaiono una alla volta suonando). È il ritmo di una spiegazione alla lavagna, ma più chiaro e uguale per tutti.
+- **Indice sempre in alto**: si salta a qualsiasi passo (anche per riprendere la lezione la volta dopo o per un ripasso
+  veloce); i numeri in basso fanno tornare a un punto preciso del passo. Funziona anche con le frecce della tastiera
+  e con i telecomandi per presentazioni (pagina su/giù). L'indirizzo ricorda il passo (`#passo-6`): si può aprire direttamente lì.
+- **Tutto si tocca**: righe e spazi dicono il proprio numero; si scrivono note sul pentagramma vuoto e la pagina dice
+  dove sono («nel 3° spazio», «sotto la 1ª riga»); ogni nota si ascolta; ▲/▼ fanno salire e scendere di un gradino dal sol;
+  nel doppio pentagramma si tocca qualsiasi riga o spazio e si legge il nome nella chiave giusta; gli elementi del
+  pentagramma si toccano per vedere la definizione.
+- **Suono e segno insieme**: ogni nota che compare suona alla sua altezza; le scale si vedono e si sentono, ascendenti e discendenti.
+  Pulsazione e indicazione di tempo hanno il metronomo con l'accento sul primo movimento, i movimenti che si accendono
+  e il conteggio (1 2 3 4, poi 1 e 2 e con la suddivisione): la classe può battere o contare insieme.
+- **Quiz senza preparazione**: «Nascondi i nomi» trasforma le note in «?» (righe e spazi in violino e in basso) e gli
+  elementi del pentagramma in zone da indovinare: la classe risponde, il docente tocca per svelare.
+- **Il quaderno resta**: alla fine di ogni passo compare il riquadro «📒 Sul quaderno» con le definizioni di sempre
+  (le stesse del programma); l'ultimo passo, «Sul quaderno», le raccoglie tutte e ogni scheda riporta al passo
+  dove il concetto è spiegato. In fondo, i giochi per allenarsi: Leggi la nota, Recita le note, Figure ritmiche, Costruttore di battute.
+- **Colori delle note** di tutto il sito (di base accesi, si spengono con 🎨 per allenare la lettura senza aiuto).
+- Grande e leggibile da lontano, tutto in una schermata sulla LIM; sul telefono si vede il punto di adesso.
+  Nessun microfono, nessun dato raccolto.
+
+### Come usarlo in classe
+- Prima lezione (punti 3–4 del programma): passi 1–9, con le scale di do in violino e in basso. Dopo: Recita le note, Leggi la nota.
+- Lezione sul tempo (punto 6): passi 10–12. Nel passo 11 la classe batte le mani sulle pulsazioni e accenta la prima; nel 12
+  si cambia 2/4 · 3/4 · 4/4 e si conta ad alta voce.
+- Ripasso o verifica orale: passi 5 e 8 con «Nascondi i nomi», passo 10 con «Nascondi i nomi».
+- Si può fermare su un passo quanto si vuole: nulla avanza da solo.
+
+### Scelte fatte (e perché)
+- Una frase per volta, poche parole, il resto lo fa il disegno: la spiegazione la dà il docente.
+- Le definizioni del riquadro «Sul quaderno» sono quelle che Cristiano faceva già copiare, così il quaderno resta uguale.
+- Prima le note senza chiave (non hanno nome: «serve la chiave!»), poi la chiave: si capisce a cosa serve.
+- Nel passo sugli elementi le battute restano vuote, come nello schema del programma: con le note dentro, i gambi
+  si confondevano con le stanghette.
+- Il setticlavio è solo citato (come nel programma: «non da ricopiare»).
+- Le figure (minima, semiminima, croma) compaiono solo come esempi del denominatore: le spiega «Figure ritmiche».

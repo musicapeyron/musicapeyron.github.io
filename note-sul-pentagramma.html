@@ -1,0 +1,1315 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Le note sul pentagramma — musicascuole.it</title>
+<link rel="icon" href="favicon.svg" type="image/svg+xml">
+<link rel="icon" href="favicon-32.png" type="image/png" sizes="32x32">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
+<meta name="description" content="Lezione interattiva per la LIM: il pentagramma, la chiave di violino e di basso, i tagli addizionali, battute, pulsazione e indicazione di tempo, passo dopo passo.">
+<link rel="stylesheet" href="fonts/caratteri.css">
+<link rel="stylesheet" href="comune.css">
+<style>
+/* =========================================================
+   Le note sul pentagramma — lezione interattiva a passi.
+   Ogni passo ha delle "fasi": Avanti mostra la fase successiva, poi il passo successivo.
+   I simboli (chiavi, teste, numeri del tempo) sono tracciati di VexFlow salvati qui sotto
+   nella costante GLIFI: la pagina non carica la libreria.
+   ========================================================= */
+* { box-sizing: border-box; }
+html, body { margin: 0; }
+body { min-height: 100vh; font-family: 'Inter', 'Segoe UI', Arial, sans-serif; color: #EAF2FF;
+  -webkit-font-smoothing: antialiased; padding: 36px 14px 12px; position: relative; }
+button { font-family: inherit; }
+
+/* colori dei capitoli */
+:root { --c0: #38BDF8; --c1: #A78BFA; --c2: #FBBF24; --c3: #34D399; --cap: var(--c0);
+  --carta: rgba(30, 41, 59, 0.62); --bordo: rgba(255,255,255,0.12); --tenue: #9FB3CE; }
+
+.casetta { position: fixed; top: 12px; left: 12px; z-index: 40; width: 44px; height: 44px; border-radius: 50%;
+  display: grid; place-items: center; text-decoration: none; font-size: 20px;
+  background: linear-gradient(180deg, rgba(255,255,255,0.14), rgba(255,255,255,0.05)); border: 1px solid rgba(255,255,255,0.18); }
+.casetta:hover { filter: brightness(1.2); }
+
+.lezione { position: relative; z-index: 1; max-width: 1400px; margin: 0 auto; display: flex; flex-direction: column; gap: 10px; }
+
+/* ---------- testata: titolo e indice ---------- */
+.riga-titolo { display: flex; align-items: center; gap: 14px; padding-left: 50px; }
+.riga-titolo h1 { margin: 0; font-family: 'Fredoka', 'Manrope', sans-serif; font-weight: 600; font-size: 28px; line-height: 1.1; }
+.riga-titolo .sopra { font-family: 'Manrope', sans-serif; font-weight: 800; font-size: 11px; letter-spacing: .16em; text-transform: uppercase; color: #FDE7C7; }
+.riga-titolo .spazio-vuoto { flex: 1; }
+.contatore { font-family: 'Manrope', sans-serif; font-weight: 700; color: var(--tenue); font-size: 14px; }
+.interruttore { font-family: 'Manrope', sans-serif; font-weight: 800; font-size: 14px; color: #EAF2FF; cursor: pointer;
+  background: rgba(15,23,42,0.6); border: 1px solid var(--bordo); border-radius: 999px; padding: 7px 14px; }
+.interruttore.attivo { background: #EAF2FF; color: #0f172a; }
+
+.indice { display: flex; gap: 8px; }
+.gruppo { display: flex; flex-direction: column; gap: 4px; min-width: 0; }
+.gruppo .cap { font-family: 'Manrope', sans-serif; font-weight: 800; font-size: 10.5px; letter-spacing: .14em; text-transform: uppercase;
+  color: var(--colore); padding-left: 4px; white-space: nowrap; }
+.gruppo .pillole { display: flex; gap: 3px; }
+.pillola { flex: 1 1 0; min-width: 0; display: flex; align-items: center; gap: 5px; cursor: pointer; text-align: left;
+  padding: 5px 4px 5px 4px; border-radius: 12px; height: 44px; color: #CBD5E1;
+  background: var(--carta); border: 1px solid var(--bordo); border-bottom: 3px solid color-mix(in srgb, var(--colore) 45%, transparent);
+  font-family: 'Manrope', sans-serif; font-weight: 700; font-size: 12px; line-height: 1.12; hyphens: manual; }
+.pillola .n { flex: 0 0 24px; height: 24px; border-radius: 50%; display: grid; place-items: center; font-weight: 800; font-size: 13px;
+  border: 2px solid color-mix(in srgb, var(--colore) 70%, transparent); color: var(--colore); }
+.pillola .t { overflow: hidden; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; }
+.pillola:hover { filter: brightness(1.2); }
+.pillola.vista .n { background: color-mix(in srgb, var(--colore) 22%, transparent); }
+.pillola.attiva { background: var(--colore); color: #0f172a; border-color: var(--colore); }
+.pillola.attiva .n { background: #0f172a; color: var(--colore); border-color: #0f172a; }
+
+/* ---------- corpo: palco (disegno) e spiegazione ---------- */
+.corpo { display: grid; grid-template-columns: 880px 1fr; gap: 14px; }
+.scheda { background: var(--carta); border: 1px solid var(--bordo); border-top: 4px solid var(--cap); border-radius: 18px; }
+.palco-card { display: grid; grid-template-rows: 54px 1fr auto; overflow: hidden; }
+.cartellino { display: flex; align-items: center; justify-content: center; gap: 10px; padding: 0 14px; text-align: center;
+  font-family: 'Manrope', sans-serif; font-weight: 800; font-size: 22px; color: #F8FAFC; border-bottom: 1px solid rgba(255,255,255,0.06); }
+.cartellino .piccolo { font-weight: 600; font-size: 17px; color: var(--tenue); }
+.cartellino.lampo { animation: lampo .5s ease-out; }
+@keyframes lampo { from { background: rgba(255,255,255,0.14); } to { background: transparent; } }
+.palco { position: relative; min-height: 0; }
+.palco > svg { position: absolute; inset: 0; width: 100%; height: 100%; display: block; }
+.strumenti { display: flex; flex-wrap: wrap; align-items: center; justify-content: center; gap: 8px; padding: 10px 12px 12px; min-height: 66px; }
+.strumenti .suggerimento { color: var(--tenue); font-size: 15px; font-style: italic; }
+.btn { font-family: 'Manrope', sans-serif; font-weight: 800; font-size: 16px; color: #EAF2FF; cursor: pointer;
+  background: rgba(15,23,42,0.7); border: 1px solid rgba(255,255,255,0.2); border-radius: 12px; padding: 10px 16px; line-height: 1.1; }
+.btn:hover { filter: brightness(1.25); }
+.btn:active { filter: brightness(0.9); }
+.btn.forte { background: var(--cap); color: #0f172a; border-color: var(--cap); }
+.btn.on { background: #EAF2FF; color: #0f172a; }
+.btn:disabled { opacity: .35; cursor: default; filter: none; }
+.segmenti { display: inline-flex; border: 1px solid rgba(255,255,255,0.2); border-radius: 12px; overflow: hidden; }
+.segmenti .btn { border: 0; border-radius: 0; border-left: 1px solid rgba(255,255,255,0.15); }
+.segmenti .btn:first-child { border-left: 0; }
+
+.spiega { padding: 16px 22px 18px; display: flex; flex-direction: column; overflow: hidden; }
+.spiega .capitolo { font-family: 'Manrope', sans-serif; font-weight: 800; font-size: 12px; letter-spacing: .14em; text-transform: uppercase; color: var(--cap); }
+.spiega h2 { font-family: 'Fredoka', 'Manrope', sans-serif; font-weight: 600; font-size: 31px; line-height: 1.1; margin: 4px 0 12px; }
+.punti { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 10px; }
+.punti li { font-size: var(--fs, 20px); line-height: 1.38; padding-left: 26px; position: relative; color: #CBD5E1; cursor: pointer; transition: color .3s; }
+.punti li::before { content: ""; position: absolute; left: 4px; top: .58em; width: 10px; height: 10px; border-radius: 50%; background: var(--cap); opacity: .55; }
+.punti li.dopo { display: none; }
+.punti li.ora { color: #fff; }
+.punti li.ora::before { opacity: 1; box-shadow: 0 0 0 4px color-mix(in srgb, var(--cap) 30%, transparent); }
+.punti li b { color: #fff; }
+.quaderno { margin-top: auto; padding: 10px 14px 11px; border-radius: 12px; background: rgba(253, 231, 199, 0.08);
+  border: 1px dashed rgba(253, 231, 199, 0.45); font-size: var(--fq, 15.5px); line-height: 1.4; color: #FDE7C7; }
+.quaderno .tit { font-family: 'Manrope', sans-serif; font-weight: 800; font-size: 11.5px; letter-spacing: .14em; text-transform: uppercase; margin-bottom: 3px; }
+.quaderno p { margin: 3px 0 0; }
+.quaderno[hidden] { display: none; }
+
+/* ---------- piede: frecce e fasi ---------- */
+.piede-lezione { display: grid; grid-template-columns: 200px 1fr 260px; align-items: center; gap: 12px; height: 62px; }
+.nav-btn { justify-self: start; height: 56px; padding: 0 22px; border-radius: 999px; cursor: pointer; font-family: 'Manrope', sans-serif;
+  font-weight: 800; font-size: 18px; color: #EAF2FF; background: rgba(15,23,42,0.7); border: 1px solid rgba(255,255,255,0.18); }
+.avanti { justify-self: end; height: 58px; width: 100%; border-radius: 999px; cursor: pointer; border: 0; font-family: 'Manrope', sans-serif;
+  font-weight: 800; font-size: 22px; color: #0f172a; background: var(--cap); }
+.nav-btn:hover, .avanti:hover { filter: brightness(1.15); }
+.nav-btn:active, .avanti:active { filter: brightness(0.92); }
+.nav-btn:disabled, .avanti:disabled { opacity: .3; cursor: default; filter: none; }
+.fasi { display: flex; justify-content: center; gap: 10px; }
+.fasi button { width: 40px; height: 40px; border-radius: 50%; cursor: pointer; font-family: 'Manrope', sans-serif; font-weight: 800; font-size: 16px;
+  color: #CBD5E1; background: transparent; border: 2px solid rgba(255,255,255,0.25); }
+.fasi button.fatta { border-color: var(--cap); color: var(--cap); }
+.fasi button.ora { background: var(--cap); border-color: var(--cap); color: #0f172a; }
+
+/* ---------- ripasso finale (senza palco) ---------- */
+.lezione.solo-testo .corpo { grid-template-columns: 1fr; }
+.lezione.solo-testo .spiega { display: none; }
+.lezione.solo-testo .palco-card { grid-template-rows: 54px 1fr auto; }
+.ripasso { position: absolute; inset: 0; padding: 12px 16px 6px; display: grid; grid-template-columns: repeat(3, 1fr); grid-auto-rows: 1fr; gap: 9px; }
+.def { background: rgba(15,23,42,0.55); border: 1px solid var(--bordo); border-left: 4px solid var(--colore); border-radius: 12px;
+  padding: 7px 12px; font-size: 14.5px; line-height: 1.32; color: #CBD5E1; cursor: pointer; text-align: left; font-family: inherit; overflow: hidden; }
+.def:hover { filter: brightness(1.2); }
+.def b { color: #fff; font-family: 'Manrope', sans-serif; font-weight: 800; }
+.def .vai { float: right; color: var(--colore); font-weight: 800; font-family: 'Manrope', sans-serif; font-size: 12.5px; }
+.allenati { display: flex; flex-wrap: wrap; gap: 8px; justify-content: center; align-items: center; }
+.allenati span { color: var(--tenue); font-weight: 700; font-family: 'Manrope', sans-serif; }
+.allenati a { text-decoration: none; }
+
+/* ---------- il disegno ---------- */
+svg { -webkit-tap-highlight-color: transparent; user-select: none; -webkit-user-select: none; }
+.riga { stroke: rgba(234,242,255,0.85); stroke-width: 2.4; stroke-linecap: round; transition: stroke .35s, stroke-width .35s; }
+.riga.accesa { stroke: var(--luce, #FDE047); stroke-width: 6; filter: drop-shadow(0 0 7px var(--luce, #FDE047)); }
+.spazio { fill: var(--luce, #38BDF8); opacity: 0; transition: opacity .35s; }
+.spazio.acceso { opacity: .32; }
+.rigo.disegna .riga { stroke-dasharray: 1000; animation: traccia .8s ease-out both; animation-delay: calc(var(--i) * .16s); }
+@keyframes traccia { from { stroke-dashoffset: 1000; } to { stroke-dashoffset: 0; } }
+.taglio { stroke: rgba(234,242,255,0.9); stroke-width: 2.6; stroke-linecap: round; }
+.taglio.nuovo { stroke-dasharray: 70; animation: traccia2 .6s ease-out both; }
+@keyframes traccia2 { from { stroke-dashoffset: 70; } to { stroke-dashoffset: 0; } }
+.stanghetta { stroke: rgba(234,242,255,0.9); stroke-width: 2.6; transition: stroke .3s; }
+.stanghetta.grossa { stroke-width: 9; }
+.glifo { fill: #EAF2FF; transition: fill .35s, filter .35s; }
+.chiave.disegna path { fill: transparent; stroke: #EAF2FF; stroke-width: .5; stroke-dasharray: var(--l); stroke-dashoffset: var(--l);
+  animation: tracciaChiave 1.8s ease-in-out forwards, riempi .5s 1.6s forwards; }
+@keyframes tracciaChiave { to { stroke-dashoffset: 0; } }
+@keyframes riempi { to { fill: #EAF2FF; stroke-width: 0; } }
+.evid, .evid .glifo, .evid.glifo { fill: var(--luce, #FDE047) !important; filter: drop-shadow(0 0 8px var(--luce, #FDE047)); }
+.stanghetta.evid { stroke: var(--luce, #FDE047); filter: drop-shadow(0 0 8px var(--luce, #FDE047)); }
+.anello { fill: none; stroke: var(--luce, #FDE047); stroke-width: 4; opacity: 0; transform-box: fill-box; transform-origin: center; }
+.anello.via { animation: anello 1.1s ease-out 3; }
+@keyframes anello { 0% { opacity: .95; transform: scale(.6); } 100% { opacity: 0; transform: scale(1.8); } }
+
+.nota .testa { fill: #EAF2FF; transition: fill .3s, opacity .3s; }
+.nota .gambo { stroke: #EAF2FF; stroke-width: 2.4; }
+.nota { transition: opacity .35s; cursor: pointer; }
+.nota.nascosta, .nome.nascosto, .vela.nascosto { opacity: 0; pointer-events: none; }
+.nota.compare { animation: compare .45s ease-out; }
+@keyframes compare { from { opacity: 0; } to { opacity: 1; } }
+.nota.luce .testa { filter: drop-shadow(0 0 9px #fff) drop-shadow(0 0 4px #fff); }
+.nota.tenue { opacity: .45; }
+.nome { font-family: 'Manrope', sans-serif; font-weight: 800; font-size: 25px; fill: #EAF2FF; text-anchor: middle; transition: opacity .3s, fill .3s;
+  paint-order: stroke; stroke: #172036; stroke-width: 6px; stroke-linejoin: round; }
+.nome.coperto { fill: rgba(234,242,255,0.5); }
+.etic { font-family: 'Manrope', sans-serif; font-weight: 800; font-size: 19px; fill: #CBD5E1; letter-spacing: .04em;
+  paint-order: stroke; stroke: #172036; stroke-width: 7px; stroke-linejoin: round; }
+.etic.grande { font-size: 24px; }
+.num-cerchio circle { fill: rgba(15,23,42,0.85); stroke: var(--luce, #EAF2FF); stroke-width: 2.5; }
+.num-cerchio text { font-family: 'Manrope', sans-serif; font-weight: 800; font-size: 18px; fill: #EAF2FF; text-anchor: middle; dominant-baseline: central; }
+.num-cerchio { transition: opacity .3s; }
+.vela { transition: opacity .35s; }
+.colpo { fill: transparent; cursor: pointer; }
+.colpo:hover + .ombra, .colpo:hover { fill: rgba(255,255,255,0.06); }
+.freccia { stroke: var(--luce, #FBBF24); stroke-width: 3; fill: none; stroke-linecap: round; stroke-linejoin: round; }
+.cursore { fill: none; stroke: #fff; stroke-width: 3.5; transition: transform .25s ease, opacity .25s; }
+.palla { fill: rgba(234,242,255,0.18); stroke: rgba(234,242,255,0.55); stroke-width: 2.5; transition: fill .08s, stroke .08s; }
+.palla.forte { stroke-width: 4; }
+.palla.batte { fill: var(--luce, #FBBF24); stroke: #fff; }
+.conta { font-family: 'Manrope', sans-serif; font-weight: 800; font-size: 24px; fill: #9FB3CE; text-anchor: middle; transition: fill .08s; }
+.conta.batte { fill: #fff; }
+
+/* colori delle note (attivi di default; si spengono con il pulsante 🎨) */
+body.colori .nota.c-do .testa { fill: var(--do); } body.colori .nome.c-do { fill: var(--do); }
+body.colori .nota.c-re .testa { fill: var(--re); } body.colori .nome.c-re { fill: var(--re); }
+body.colori .nota.c-mi .testa { fill: var(--mi); } body.colori .nome.c-mi { fill: var(--mi); }
+body.colori .nota.c-fa .testa { fill: var(--fa); } body.colori .nome.c-fa { fill: var(--fa); }
+body.colori .nota.c-sol .testa { fill: var(--sol); } body.colori .nome.c-sol { fill: #2DD4BF; }
+body.colori .nota.c-la .testa { fill: var(--la); } body.colori .nome.c-la { fill: #A79BE8; }
+body.colori .nota.c-si .testa { fill: var(--si); } body.colori .nome.c-si { fill: #E879B9; }
+/* le note scure (sol, la) hanno un bordo chiaro per staccarsi dallo sfondo */
+body.colori .nota.c-la .testa, body.colori .nota.c-sol .testa { stroke: rgba(234,242,255,0.55); stroke-width: .5; }
+.chip rect { fill: rgba(15,23,42,0.6); stroke: rgba(255,255,255,0.25); stroke-width: 2; transition: fill .2s; }
+.chip text { font-family: 'Manrope', sans-serif; font-weight: 800; font-size: 24px; text-anchor: middle; dominant-baseline: central; fill: #EAF2FF; }
+.chip.batte rect { fill: rgba(255,255,255,0.22); stroke: #fff; }
+body.colori .chip.c-do rect { stroke: var(--do); } body.colori .chip.c-re rect { stroke: var(--re); } body.colori .chip.c-mi rect { stroke: var(--mi); }
+body.colori .chip.c-fa rect { stroke: var(--fa); } body.colori .chip.c-sol rect { stroke: #2DD4BF; } body.colori .chip.c-la rect { stroke: #A79BE8; } body.colori .chip.c-si rect { stroke: #E879B9; }
+.mini { display: inline-block; vertical-align: middle; }
+.mini path { fill: #EAF2FF; }
+
+@media (prefers-reduced-motion: reduce) {
+  .rigo.disegna .riga, .taglio.nuovo, .chiave.disegna path, .nota.compare, .cartellino.lampo { animation: none !important; }
+  .chiave.disegna path { fill: #EAF2FF; stroke-width: 0; }
+  .anello.via { animation: none; }
+}
+
+/* ---------- PC e LIM: misure fisse, poi adatta-schermo.js ingrandisce tutto ---------- */
+@media (min-width: 900px) and (min-height: 560px) {
+  body { padding: 36px 16px 10px; min-height: 0; }
+  .lezione { width: 1400px; max-width: none; }
+  .corpo { height: 462px; grid-template-columns: 880px 1fr; }
+}
+
+/* ---------- schermi stretti (non LIM): una colonna, si può scorrere ---------- */
+@media (max-width: 899px), (max-height: 559px) {
+  .corpo { grid-template-columns: 1fr; }
+  .palco { height: 300px; }
+  .indice { flex-wrap: wrap; }
+  .gruppo { flex: 0 0 auto !important; }
+  .pillola { flex: 0 0 auto; }
+  .pillola .t { display: none; }
+}
+</style>
+<style id="telefono-gioco">
+/* TELEFONO IN VERTICALE: tutto in una schermata */
+@media (max-width: 620px) and (orientation: portrait) {
+  body { padding: 30px 8px 6px; }
+  .casetta { top: 6px; left: 6px; width: 36px; height: 36px; font-size: 16px; }
+  .lezione { gap: 6px; }
+  .riga-titolo { padding-left: 34px; gap: 8px; }
+  .riga-titolo h1 { font-size: 17px; }
+  .riga-titolo .sopra, .contatore { display: none; }
+  .interruttore { font-size: 12px; padding: 5px 9px; }
+  .indice { flex-wrap: nowrap; gap: 3px; }
+  .gruppo { flex: initial; }
+  .gruppo .cap { display: none; }
+  .gruppo .pillole { gap: 2px; }
+  .pillola { flex: 0 0 auto; height: auto; padding: 1px; border-radius: 50%; border-bottom-width: 1px; background: transparent; border: 0; }
+  .pillola .t { display: none; }
+  .pillola .n { flex-basis: 24px; width: 24px; height: 24px; font-size: 11px; letter-spacing: -.03em; }
+  .pillola.attiva { background: transparent; }
+  .pillola.attiva .n { background: var(--colore); color: #0f172a; border-color: var(--colore); }
+  .corpo { gap: 6px; display: flex; flex-direction: column; }
+  .palco-card { grid-template-rows: 40px auto auto; border-radius: 14px; }
+  .cartellino { font-size: 15px; padding: 0 8px; }
+  .cartellino .piccolo { font-size: 12.5px; }
+  .palco { height: clamp(150px, calc(100vh - 470px), 250px); height: clamp(150px, calc(100dvh - 470px), 250px); }
+  .strumenti { gap: 5px; padding: 6px 6px 8px; min-height: 0; }
+  .strumenti .suggerimento { font-size: 12px; }
+  .btn { font-size: 12.5px; padding: 7px 9px; border-radius: 10px; }
+  .spiega { padding: 8px 12px 10px; border-radius: 14px; }
+  .spiega .capitolo { display: none; }
+  .spiega h2 { font-size: 19px; margin: 0 0 5px; }
+  .punti { gap: 4px; }
+  .punti li { font-size: 14px; line-height: 1.32; padding-left: 16px; }
+  .punti li:not(.ora) { display: none; }      /* sul telefono si vede solo il punto di adesso */
+  .punti li::before { left: 1px; width: 7px; height: 7px; }
+  .quaderno { margin-top: 6px; font-size: 12px; padding: 6px 9px; }
+  .quaderno .tit { font-size: 9.5px; }
+  .piede-lezione { grid-template-columns: 52px 1fr 120px; height: 46px; gap: 6px; }
+  .nav-btn { height: 42px; padding: 0 14px; font-size: 15px; }
+  .nav-btn .lungo { display: none; }
+  .avanti { height: 44px; font-size: 16px; }
+  .fasi { gap: 5px; }
+  .fasi button { width: 26px; height: 26px; font-size: 12px; }
+  .lezione.solo-testo .palco { height: auto; }
+  .ripasso { position: static; grid-template-columns: 1fr 1fr; gap: 5px; padding: 8px; grid-auto-rows: auto; }
+  .def { font-size: 11px; padding: 5px 7px; }
+}
+</style>
+</head>
+<body class="colori">
+<script src="info-sito.js"></script>
+<a class="casetta" href="index.html" title="Torna al sito" aria-label="Torna al sito">🏠</a>
+
+<div class="lezione" id="lezione">
+  <header class="testa">
+    <div class="riga-titolo">
+      <div>
+        <div class="sopra">Lezione interattiva</div>
+        <h1>Le note sul pentagramma</h1>
+      </div>
+      <div class="spazio-vuoto"></div>
+      <span class="contatore" id="contatore"></span>
+      <button class="interruttore attivo" id="btnColori" title="Note colorate sì / no">🎨 Colori</button>
+    </div>
+    <nav class="indice" id="indice" aria-label="Passi della lezione"></nav>
+  </header>
+
+  <div class="corpo">
+    <section class="scheda palco-card">
+      <div class="cartellino" id="cartellino" aria-live="polite"></div>
+      <div class="palco" id="palco"></div>
+      <div class="strumenti" id="strumenti"></div>
+    </section>
+    <section class="scheda spiega">
+      <div class="capitolo" id="capitolo"></div>
+      <h2 id="titoloPasso"></h2>
+      <ul class="punti" id="punti"></ul>
+      <div class="quaderno" id="quaderno" hidden></div>
+    </section>
+  </div>
+
+  <footer class="piede-lezione">
+    <button class="nav-btn" id="indietro" aria-label="Indietro">◀<span class="lungo"> Indietro</span></button>
+    <div class="fasi" id="fasi"></div>
+    <button class="avanti" id="avanti">Avanti ▶</button>
+  </footer>
+</div>
+
+<script>
+"use strict";
+/* tracciati dei simboli (da VexFlow 4.2.2, licenza MIT): unità = 1/10 di spazio, riga centrale a y = 0 */
+const GLIFI = {"treble":"M15.19 -6.79C15.14 -7.27,15.19 -7.3,15.44 -7.55C19.82 -11.62,23.14 -16.76,23.14 -22.97C23.14 -26.48,22.16 -29.96,20.5 -32.37C19.88 -33.27,18.84 -34.39,18.39 -34.39C17.83 -34.39,16.57 -33.36,15.78 -32.46C12.78 -29.14,11.79 -24.09,11.79 -19.88C11.79 -17.55,12.1 -14.91,12.38 -13.25C12.47 -12.77,12.5 -12.69,12.02 -12.27C6.18 -7.47,0 -1.68,0 6.49C0 13.51,4.8 20.19,14.71 20.19C15.64 20.19,16.71 20.11,17.52 19.94C17.94 19.86,18.03 19.83,18.11 20.31C18.59 23.03,19.21 26.54,19.21 28.45C19.21 34.43,15.16 35.16,12.78 35.16C10.59 35.16,9.55 34.51,9.55 33.98C9.55 33.7,9.91 33.59,10.84 33.28C12.1 32.91,13.54 31.85,13.54 29.49C13.54 27.27,12.13 25.36,9.66 25.36C6.96 25.36,5.34 27.52,5.34 30.02C5.34 32.63,6.91 36.62,13.03 36.62C15.73 36.62,20.98 35.38,20.98 28.53C20.98 26.2,20.25 22.38,19.82 19.86C19.74 19.38,19.77 19.44,20.33 19.18C24.43 17.55,27.12 14.13,27.12 9.55C27.12 4.38,23.33 -0.19,17.38 -0.19C16.34 -0.19,16.34 -0.19,16.2 -0.92M19.01 -28.13C20.33 -28.13,21.43 -27.04,21.43 -24.82C21.43 -20.33,17.58 -16.68,14.41 -13.9C14.12 -13.64,13.96 -13.7,13.87 -14.23C13.7 -15.27,13.62 -16.65,13.62 -17.94C13.62 -24.26,16.54 -28.13,19.01 -28.13M14.6 -0.59C14.71 0.17,14.71 0.14,13.98 0.37C10.45 1.58,8.12 4.78,8.12 8.23C8.12 11.85,10.03 14.44,12.78 15.39C13.11 15.5,13.59 15.62,13.87 15.62C14.18 15.62,14.35 15.42,14.35 15.17C14.35 14.89,14.04 14.77,13.76 14.66C12.05 13.93,10.84 12.19,10.84 10.34C10.84 8.01,12.41 6.29,14.88 5.59C15.53 5.42,15.61 5.48,15.7 5.93L17.72 17.97C17.8 18.42,17.75 18.42,17.16 18.54C16.51 18.65,15.7 18.73,14.88 18.73C7.81 18.73,3.23 14.8,3.23 9.19C3.23 6.8,3.65 3.6,6.99 -0.19C9.44 -2.89,11.29 -4.41,13.17 -5.92C13.59 -6.26,13.68 -6.2,13.76 -5.78M17.38 5.84C17.3 5.34,17.35 5.23,17.83 5.28C21.12 5.56,23.81 8.31,23.81 11.85C23.81 14.41,22.27 16.46,20.02 17.61C19.54 17.83,19.46 17.83,19.38 17.36","bass":"M10.39 -20.59C3.34 -20.59,0.2 -15.45,0.2 -11.57C0.2 -8.34,1.88 -5.56,5.17 -5.56C7.72 -5.56,9.46 -7.33,9.46 -9.83C9.46 -12.41,7.55 -14.04,5.59 -14.04C4.49 -14.04,4.07 -13.76,3.57 -13.76C3.03 -13.76,2.89 -14.07,2.89 -14.49C2.89 -16.09,5.34 -19.07,9.46 -19.07C13.73 -19.07,15.61 -14.86,15.61 -8.51C15.61 2.78,10.02 9.09,0.59 14.46C0.22 14.65,0 14.88,0 15.19C0 15.44,0.17 15.67,0.53 15.67C0.73 15.67,0.96 15.61,1.21 15.47C11.15 10.61,21.68 3.42,21.68 -8.88C21.68 -15.9,17.38 -20.59,10.39 -20.59M25.64 -17.27C24.37 -17.27,23.42 -16.32,23.42 -15.05C23.42 -13.79,24.37 -12.84,25.64 -12.84C26.87 -12.84,27.86 -13.79,27.86 -15.05C27.86 -16.32,26.87 -17.27,25.64 -17.27M25.67 -7.14C24.43 -7.14,23.47 -6.21,23.47 -4.95C23.47 -3.68,24.43 -2.76,25.67 -2.76C26.93 -2.76,27.86 -3.68,27.86 -4.95C27.86 -6.21,26.93 -7.14,25.67 -7.14","t2":"M16.2 3.68C16.2 3.2,16.01 3.12,15.73 3.12C15.39 3.12,15.28 3.28,15.19 3.57L15.16 3.59C14.74 4.6,14.43 5.39,13.59 5.39C13.37 5.39,13.17 5.34,12.89 5.25C12.36 5.05,12.07 5.03,11.68 4.8C10.87 4.49,8.96 3.85,7.3 3.85C6.8 3.85,6.26 3.93,5.81 4.07C6.71 2.64,10.14 1.4,11.04 1.18C13.87 0.39,16.4 -0.76,16.4 -4.13C16.4 -8.42,12.21 -10.28,8.45 -10.28C5.62 -10.28,3.12 -10.02,1.12 -7.72C0.45 -6.88,0 -5.87,0 -4.77C0 -4.21,0.11 -3.65,0.37 -3.03C0.96 -1.77,2.22 -0.81,3.68 -0.81C6.15 -0.81,6.52 -3.37,6.52 -4.38C6.52 -6.8,3.71 -6.91,3.71 -7.72C3.79 -8.28,4.52 -9.27,6.91 -9.27C10.5 -9.27,10.56 -6.54,10.56 -5.39C10.56 -1.69,7.53 1.09,4.61 2.86C2.39 4.3,0.81 6.26,0.11 8.9L0.08 9.01C0.08 9.55,0.53 10.39,1.12 10.39C2.02 10.39,2.5 7.92,4.89 7.92C6.52 7.92,7.11 10.11,10.7 10.11C12.44 10.11,15.56 9.94,16.2 3.68","t3":"M7.81 -10.02C7.75 -10.02,7.72 -10.02,7.64 -10.02L7.36 -10.08C7.3 -10.08,7.24 -10.08,7.19 -10.08C3.71 -10.08,0.22 -7.75,0.22 -5.62C0.22 -4.3,1.01 -2.5,3.51 -2.36L3.71 -2.36C5.5 -2.36,6.37 -3.65,6.37 -4.97L6.37 -5.31C6.26 -6.8,5.25 -6.88,5.05 -6.96C4.86 -7.05,4.24 -6.96,4.24 -7.52L4.24 -7.69C4.32 -8.37,5.59 -8.7,5.93 -8.7C9.38 -8.7,9.69 -6.54,9.69 -5.59L9.69 -5.31C9.69 -2.3,7.3 -1.12,4.77 -1.01C4.35 -0.98,3.79 -0.76,3.79 -0.34C3.79 0.17,4.49 0.17,4.8 0.17C9.46 0.17,9.83 3.31,9.83 3.85C9.83 8.12,7.64 8.62,6.74 8.62C6.6 8.62,6.43 8.56,6.37 8.56C6.07 8.54,5.28 8.54,5.25 7.92L5.25 7.72C5.25 6.82,6.15 6.23,6.18 5.05C6.18 3.37,5 2.13,3.26 2.13C3.12 2.13,2.98 2.13,2.84 2.19C2.13 2.3,1.38 2.7,0.87 3.23C0.2 3.85,0 4.8,0 5.7C0.08 8.84,2.95 10.08,6.91 10.14L7.27 10.14C11.29 10.14,15.39 8.09,15.39 4.52L15.39 4.24C15.33 3.06,15.02 2.3,14.27 1.4C14.01 1.09,13.7 0.81,13.31 0.56L12.44 0.08L11.12 -0.28C10.92 -0.34,10.78 -0.34,10.7 -0.48C10.67 -0.56,10.67 -0.62,10.67 -0.67C10.67 -0.84,10.7 -1.01,10.84 -1.04C11.29 -1.18,11.71 -1.21,12.07 -1.4C13.7 -2.19,14.55 -3.23,14.55 -5.08C14.55 -8.82,9.49 -9.91,7.81 -10.02","t4":"M13.82 3.01L13.82 -5.67C13.82 -5.98,13.79 -6.35,13.34 -6.35C12.97 -6.35,12.78 -6.26,12.52 -5.98L8.68 -1.35C8.54 -1.12,8.31 -0.9,8.31 -0.39L8.31 3.01L2.86 3.01C6.09 0.25,12.58 -8.93,12.69 -9.44L12.72 -9.55C12.72 -9.91,12.44 -10.14,12.13 -10.14C11.77 -10.14,10.11 -10.08,9.38 -10.08C8.65 -10.08,6.82 -10.14,6.52 -10.14C6.15 -10.14,5.59 -10.02,5.59 -9.38C5.59 -4.38,1.6 1.26,0.39 2.95L0.17 3.28C0.17 3.28,0.17 3.31,0.17 3.31L0.11 3.37C0.03 3.57,0 3.71,0 3.85C0 4.24,0.31 4.52,0.81 4.52L8.31 4.52L8.31 7.08C8.31 8.17,7.44 8.48,6.71 8.48C6.07 8.48,5.79 8.84,5.79 9.27C5.79 9.66,5.93 10.11,6.54 10.11L15.16 10.11C15.56 10.11,15.98 9.83,15.98 9.27C15.98 8.7,15.47 8.45,15.08 8.45C14.69 8.45,13.82 8.2,13.82 6.91L13.82 4.52L16.76 4.52C17.18 4.52,17.38 4.24,17.38 3.76C17.38 3.28,17.21 3.01,16.76 3.01","nera":"M-2.04 5.05C1.56 5.05,5.97 1.74,5.97 -1.69C5.97 -3.76,4.34 -5.05,2.04 -5.05C-2.4 -5.05,-5.97 -1.77,-5.97 1.69C-5.97 3.79,-4.23 5.05,-2.04 5.05","bianca":"M-2.04 5.05C4.62 5.05,5.97 -0.37,5.97 -1.69C5.97 -3.76,4.31 -5.05,1.95 -5.05C-4.06 -5.05,-5.97 -0.39,-5.97 1.69C-5.97 3.85,-4.28 5.05,-2.04 5.05M-2.93 3.51C-3.78 3.51,-4.28 3.06,-4.56 2.58C-4.67 2.36,-4.79 2.05,-4.79 1.77C-4.79 -0.2,1.08 -3.4,2.96 -3.4C3.75 -3.4,4.17 -3.03,4.48 -2.55C4.59 -2.3,4.7 -2.05,4.7 -1.77C4.7 -0.03,-1 3.51,-2.93 3.51","tonda":"M0.2 -5.05C-5.17 -5.05,-8.54 -2.84,-8.54 -0.08C-8.54 2.64,-6.23 5.05,-0.2 5.05C6.43 5.05,8.54 2.75,8.54 -0.08C8.54 -2.95,3.96 -5.05,0.2 -5.05M-4.04 -2.55C-3.59 -3.96,-2.11 -4.16,-0.84 -4.16C1.94 -4.16,4.16 -1.18,4.16 1.26C4.16 2.5,3.62 3.65,2.3 3.96C1.91 4.07,1.46 4.13,1.04 4.13C-0.42 4.13,-1.91 3.15,-2.75 2.02C-3.57 1.09,-4.16 -0.28,-4.16 -1.57C-4.16 -1.91,-4.13 -2.22,-4.04 -2.55","coda":"M8.88 26.95C8.88 26.95,9.92 23.11,9.92 19.94C9.92 14.88,7.81 10.13,5.29 6.09C3.21 2.89,1.52 -0.59,0.88 -4.47C0.74 -5.11,0.43 -5.36,0.01 -5.36C-0.41 -5.36,-0.75 -5.25,-0.75 -4.75L-0.75 4.91C1.92 5.39,5.76 10.89,7.22 14.32C7.81 15.7,8.18 18,8.18 20.38C8.18 22.21,7.9 24.12,7.22 25.94C7.14 26.17,7.08 26.37,7.08 26.53C7.08 27.18,7.51 27.55,7.73 27.71C7.98 27.88,8.68 27.63,8.88 26.95"};
+
+/* ================= costanti e note ================= */
+const S = 32, H = S / 2, K = S / 10;           // spazio fra due righe, mezzo spazio, scala dei glifi
+const NOMI = ["do", "re", "mi", "fa", "sol", "la", "si"];
+const SEMI = [0, 2, 4, 5, 7, 9, 11];
+const BASE = { violino: 30, basso: 18 };        // nota della 1ª riga: mi (violino), sol (basso), in gradi dal do
+function nota(chiave, p) {                       // p = posizione: 0 = 1ª riga, 1 = 1° spazio, 2 = 2ª riga...
+  const d = BASE[chiave] + p, n = ((d % 7) + 7) % 7, ott = Math.floor(d / 7);
+  return { d, nome: NOMI[n], midi: SEMI[n] + 12 * (ott + 1) };
+}
+const MAIU = s => s.toUpperCase();
+const ord = (n, f) => n + (f ? "ª" : "°");
+function dovE(p) {                               // descrizione della posizione
+  if (p >= 0 && p <= 8) return p % 2 === 0 ? "sulla " + ord(p / 2 + 1, true) + " riga" : "nel " + ord((p + 1) / 2) + " spazio";
+  if (p === -1) return "sotto la 1ª riga";
+  if (p === 9) return "sopra la 5ª riga";
+  if (p < -1) { const t = Math.floor((-p) / 2); return p % 2 === 0 ? "sul " + ord(t) + " taglio sotto" : "sotto il " + ord(t) + " taglio"; }
+  const t = Math.floor((p - 8) / 2); return p % 2 === 0 ? "sul " + ord(t) + " taglio sopra" : "sopra il " + ord(t) + " taglio";
+}
+
+/* ================= suono (solo quando si tocca qualcosa; nessun microfono) ================= */
+let AC = null, master = null, spegniTimer = 0;
+function audio() {
+  if (!AC) {
+    try { AC = new (window.AudioContext || window.webkitAudioContext)(); } catch (e) { return null; }
+    master = AC.createGain(); master.gain.value = 0.55; master.connect(AC.destination);
+  }
+  if (AC.state === "suspended") AC.resume();
+  return AC;
+}
+function riposo(dopoSec) {                       // il contesto audio va in pausa quando tace
+  clearTimeout(spegniTimer);
+  spegniTimer = setTimeout(() => { if (AC && AC.state === "running" && !metro.attivo) AC.suspend(); }, (dopoSec + 0.6) * 1000);
+}
+function suona(midi, quando = 0, dur = 1.1) {
+  const ac = audio(); if (!ac) return;
+  const t = ac.currentTime + 0.03 + quando, f = 440 * Math.pow(2, (midi - 69) / 12);
+  const g = ac.createGain(); g.gain.setValueAtTime(0.0001, t);
+  g.gain.exponentialRampToValueAtTime(0.5, t + 0.012); g.gain.exponentialRampToValueAtTime(0.0008, t + dur);
+  const filtro = ac.createBiquadFilter(); filtro.type = "lowpass"; filtro.frequency.value = Math.min(6000, f * 6);
+  [[1, "triangle", 1], [2, "sine", 0.35], [3, "sine", 0.12]].forEach(([m, tipo, v]) => {
+    const o = ac.createOscillator(), gg = ac.createGain(); o.type = tipo; o.frequency.value = f * m; gg.gain.value = v;
+    o.connect(gg); gg.connect(g); o.start(t); o.stop(t + dur + 0.05);
+  });
+  g.connect(filtro); filtro.connect(master);
+  riposo(quando + dur);
+}
+function clic(forza, quando = 0) {               // colpo del metronomo: 2 = accento, 1 = normale, 0 = suddivisione
+  const ac = audio(); if (!ac) return;
+  const t = ac.currentTime + 0.02 + quando;
+  const o = ac.createOscillator(), g = ac.createGain();
+  o.type = "square"; o.frequency.value = [990, 1320, 1760][forza];
+  const v = [0.07, 0.13, 0.22][forza];
+  g.gain.setValueAtTime(v, t); g.gain.exponentialRampToValueAtTime(0.0005, t + 0.05);
+  o.connect(g); g.connect(master); o.start(t); o.stop(t + 0.06);
+  riposo(quando + 0.1);
+}
+
+/* ================= tempi e animazioni del passo (si fermano cambiando passo) ================= */
+let TIMER = [];
+const dopo = (ms, fn) => { TIMER.push(setTimeout(fn, ms)); };
+function fermaTutto() { TIMER.forEach(clearTimeout); TIMER = []; metro.ferma(); }
+
+/* ================= disegno SVG ================= */
+const $ = s => document.querySelector(s);
+const PALCO = $("#palco");
+const qa = s => [...PALCO.querySelectorAll(s)];
+const q1 = s => PALCO.querySelector(s);
+function R(x0, x1, yb, chiave) { return { x0, x1, yb, chiave, y: p => yb - p * H }; }
+
+function svgRigo(r, o = {}) {
+  let s = `<g class="rigo${o.disegna ? " disegna" : ""}">`;
+  if (o.spazi) for (let i = 1; i <= 4; i++) s += `<rect class="spazio" data-spazio="${i}" x="${r.x0}" y="${r.y(2 * i)}" width="${r.x1 - r.x0}" height="${S}"/>`;
+  for (let i = 1; i <= 5; i++) s += `<line class="riga" data-riga="${i}" style="--i:${i - 1}" x1="${r.x0}" x2="${r.x1}" y1="${r.y(2 * (i - 1))}" y2="${r.y(2 * (i - 1))}"/>`;
+  return s + "</g>";
+}
+function svgChiave(r, x, cls = "") {
+  return `<g class="chiave ${cls}" transform="translate(${x} ${r.y(4)}) scale(${K})"><path class="glifo" d="${r.chiave === "basso" ? GLIFI.bass : GLIFI.treble}"/></g>`;
+}
+function svgTempo(r, x, su, giu, cls = "") {
+  return `<g class="tempo ${cls}" transform="translate(${x} ${r.y(4)})">` +
+    `<g class="cifra su" transform="translate(0 ${-S}) scale(${K})"><path class="glifo" d="${GLIFI["t" + su]}"/></g>` +
+    `<g class="cifra giu" transform="translate(0 ${S}) scale(${K})"><path class="glifo" d="${GLIFI["t" + giu]}"/></g></g>`;
+}
+function svgTagli(r, x, p, cls = "") {
+  let s = "";
+  for (let q = -2; q >= p; q -= 2) s += `<line class="taglio ${cls}" x1="${x - 29}" x2="${x + 29}" y1="${r.y(q)}" y2="${r.y(q)}"/>`;
+  for (let q = 10; q <= p; q += 2) s += `<line class="taglio ${cls}" x1="${x - 29}" x2="${x + 29}" y1="${r.y(q)}" y2="${r.y(q)}"/>`;
+  return s;
+}
+/* una nota: testa (con tagli se serve), eventuale gambo; o.colore = mostra il colore del nome */
+function svgNota(r, x, p, o = {}) {
+  const y = r.y(p), info = r.chiave ? nota(r.chiave, p) : null;
+  const forma = o.forma || "nera";
+  let s = `<g class="nota ${o.cls || ""} ${info && o.colore !== false ? "c-" + info.nome : ""}" data-p="${p}" data-x="${x}"${o.attr || ""}>`;
+  s += `<rect class="colpo" x="${x - 30}" y="${y - 22}" width="60" height="44"/>`;
+  if (!o.senzaTagli) s += svgTagli(r, x, p, o.tagliCls || "");
+  s += `<path class="testa" d="${GLIFI[forma]}" transform="translate(${x} ${y}) scale(${K})"/>`;
+  if (o.gambo === 1) s += `<line class="gambo" x1="${x + 5.25 * K}" x2="${x + 5.25 * K}" y1="${y - 2}" y2="${y - 3.5 * S}"/>`;
+  if (o.gambo === -1) s += `<line class="gambo" x1="${x - 5.25 * K}" x2="${x - 5.25 * K}" y1="${y + 2}" y2="${y + 3.5 * S}"/>`;
+  return s + "</g>";
+}
+function svgNome(x, y, nome, cls = "", attr = "") {
+  return `<text class="nome c-${nome} ${cls}" x="${x}" y="${y}"${attr}>${MAIU(nome)}</text>`;
+}
+function svgNum(x, y, n, cls = "", luce = "") {
+  return `<g class="num-cerchio ${cls}" style="${luce ? "--luce:" + luce : ""}"><circle cx="${x}" cy="${y}" r="15"/><text x="${x}" y="${y + 1}">${n}</text></g>`;
+}
+function svg(vb, contenuto) { PALCO.innerHTML = `<svg viewBox="${vb}" preserveAspectRatio="xMidYMid meet" aria-hidden="true">${contenuto}</svg>`; }
+function mini(forma, gambo) {                     // piccola figura per i testi (minima, semiminima, croma)
+  const t = forma === "tonda" ? 0 : 1;
+  let s = `<svg class="mini" viewBox="-9 -42 26 50" width="15" height="29"><path d="${GLIFI[forma === "croma" ? "nera" : forma]}"/>`;
+  if (gambo) s += `<line x1="5.25" x2="5.25" y1="-1" y2="-35" stroke="#EAF2FF" stroke-width="1.6"/>`;
+  if (forma === "croma") s += `<path d="${GLIFI.coda}" transform="translate(5.25 -35)"/>`;
+  return s + "</svg>";
+}
+
+/* luce su un elemento; colore facoltativo */
+function luce(el, on, colore) {
+  if (!el) return;
+  if (colore) el.style.setProperty("--luce", colore);
+  el.classList.toggle(el.classList.contains("spazio") ? "acceso" : "accesa", on);
+}
+const COL = n => getComputedStyle(document.documentElement).getPropertyValue("--" + n).trim();
+function spegniRighe() { qa(".riga.accesa").forEach(e => luce(e, false)); qa(".spazio.acceso").forEach(e => luce(e, false)); }
+function accendiPerNota(p, colore) {             // illumina la riga o lo spazio dove sta la nota
+  spegniRighe();
+  if (p >= 0 && p <= 8) luce(q1(p % 2 === 0 ? `.riga[data-riga="${p / 2 + 1}"]` : `.spazio[data-spazio="${(p + 1) / 2}"]`), true, colore);
+}
+function mostra(el, si = true, anim = false) {
+  if (!el) return;
+  el.classList.toggle(el.classList.contains("nome") ? "nascosto" : el.classList.contains("vela") ? "nascosto" : "nascosta", !si);
+  if (si && anim && el.classList.contains("nota")) { el.classList.remove("compare"); void el.getBBox; el.classList.add("compare"); }
+}
+function lampeggia(el) { if (!el) return; el.classList.add("luce"); dopo(380, () => el.classList.remove("luce")); }
+function anello(el) { if (!el) return; el.classList.remove("via"); void el.getBoundingClientRect(); el.classList.add("via"); }
+
+/* cartellino in alto nel palco */
+const CART = $("#cartellino");
+function cart(html, lampo = true) {
+  CART.innerHTML = html;
+  if (lampo) { CART.classList.remove("lampo"); void CART.offsetWidth; CART.classList.add("lampo"); }
+}
+function cartNota(chiave, p, extra = "") {
+  const n = nota(chiave, p);
+  cart(`<span class="nome-c" style="color:${coloreTesto(n.nome)}">${MAIU(n.nome)}</span> <span class="piccolo">· ${dovE(p)}${extra}</span>`);
+}
+function coloreTesto(nome) {
+  if (!document.body.classList.contains("colori")) return "#F8FAFC";
+  return { do: COL("do"), re: COL("re"), mi: COL("mi"), fa: COL("fa"), sol: "#2DD4BF", la: "#A79BE8", si: "#E879B9" }[nome];
+}
+
+/* pulsanti sotto il palco */
+const STRUM = $("#strumenti");
+function strumenti(lista) {
+  STRUM.innerHTML = "";
+  lista.forEach(b => {
+    if (b.suggerimento) { const s = document.createElement("span"); s.className = "suggerimento"; s.textContent = b.suggerimento; STRUM.appendChild(s); return; }
+    if (b.gruppo) {
+      const g = document.createElement("div"); g.className = "segmenti"; if (b.id) g.id = b.id;
+      b.gruppo.forEach(x => g.appendChild(bottone(x))); STRUM.appendChild(g); return;
+    }
+    STRUM.appendChild(bottone(b));
+  });
+}
+function bottone(b) {
+  const el = document.createElement("button");
+  el.className = "btn" + (b.cls ? " " + b.cls : ""); el.innerHTML = b.t; if (b.id) el.id = b.id;
+  if (b.title) el.title = b.title;
+  el.addEventListener("click", () => b.fn(el)); return el;
+}
+function segna(gruppoId, el) { document.querySelectorAll("#" + gruppoId + " .btn").forEach(b => b.classList.toggle("on", b === el)); }
+
+/* suona e illumina una fila di note una dopo l'altra */
+function suonaFila(note, chiave, ms = 520, fine) {
+  note.forEach((el, i) => dopo(i * ms, () => {
+    mostra(el, true, el.classList.contains("nascosta"));
+    const p = +el.dataset.p; lampeggia(el);
+    const nm = PALCO.querySelector(`.nome[data-x="${el.dataset.x}"]`); if (nm) mostra(nm, true);
+    suona(nota(chiave, p).midi, 0, 0.9);
+    accendiPerNota(p, coloreTesto(nota(chiave, p).nome));
+    cartNota(chiave, p);
+  }));
+  dopo(note.length * ms + 200, () => { spegniRighe(); if (fine) fine(); });
+}
+
+/* ================= metronomo (passi 11 e 12) ================= */
+const metro = {
+  attivo: false, bpm: 84, prossimo: 0, n: 0, giro: 0, onBattito: null, quanti: Infinity,
+  avvia(onBattito, quanti = Infinity, sudd = false) {
+    const ac = audio(); if (!ac) return;
+    this.ferma(); this.attivo = true; this.onBattito = onBattito; this.n = 0; this.quanti = quanti; this.sudd = sudd;
+    this.prossimo = ac.currentTime + 0.12;
+    const tick = () => {
+      if (!this.attivo) return;
+      const passo = 60 / this.bpm / (this.sudd ? 2 : 1);
+      while (this.prossimo < AC.currentTime + 0.12) {
+        if (this.n >= this.quanti) { const fra = (this.prossimo - AC.currentTime) * 1000; this.attivo = false; setTimeout(() => this.onFine && this.onFine(), Math.max(0, fra)); riposo(0.3); return; }
+        const k = this.n, quando = this.prossimo - AC.currentTime;
+        const forza = this.onBattito(k, true);        // il passo decide la forza del colpo (2, 1, 0)
+        if (forza !== null) clic(forza, Math.max(0, quando - 0.02));
+        setTimeout(() => { if (this.attivo || k === this.quanti - 1) this.onBattito(k, false); }, Math.max(0, quando * 1000));
+        this.prossimo += passo; this.n++;
+      }
+      this.giro = setTimeout(tick, 25);
+    };
+    tick();
+  },
+  ferma() { this.attivo = false; clearTimeout(this.giro); this.onFine = null; }
+};
+
+/* ================= i passi ================= */
+const CAPITOLI = [
+  { nome: "Il pentagramma", colore: "var(--c0)" },
+  { nome: "Le chiavi e le note", colore: "var(--c1)" },
+  { nome: "Battute e tempo", colore: "var(--c2)" },
+  { nome: "Ripasso", colore: "var(--c3)" }
+];
+const VB = "0 0 1000 420";
+const PASSI = [];
+
+/* ---------- 1. Il pentagramma ---------- */
+PASSI.push({
+  cap: 0, breve: "Il penta\u00ADgramma", titolo: "Il pentagramma",
+  punti: [
+    "La musica si scrive sul <b>pentagramma</b>: <b>5 righe</b> orizzontali. «Penta» vuol dire <b>cinque</b>.",
+    "Le righe si contano <b>dal basso verso l'alto</b>: dalla 1ª alla 5ª.",
+    "Fra le righe ci sono <b>4 spazi</b>, contati anche loro dal basso."
+  ],
+  quaderno: "<p><b>Pentagramma</b>: 5 righe e 4 spazi, che si contano dal basso verso l'alto.</p>",
+  crea() {
+    const r = this.r = R(110, 890, 270, null);
+    let s = svgRigo(r, { spazi: true });
+    for (let i = 1; i <= 5; i++) s += svgNum(70, r.y(2 * (i - 1)), i, "n-riga vela nascosto", "#FDE047");
+    for (let i = 1; i <= 4; i++) s += svgNum(930, r.y(2 * i - 1), i, "n-spazio vela nascosto", "#38BDF8");
+    s += `<text class="etic vela nascosto e-righe" x="70" y="${r.y(8) - 40}" text-anchor="middle">RIGHE</text>`;
+    s += `<text class="etic vela nascosto e-spazi" x="930" y="${r.y(8) - 40}" text-anchor="middle">SPAZI</text>`;
+    for (let p = 0; p <= 8; p++) s += `<rect class="colpo" data-p="${p}" x="${r.x0}" y="${r.y(p) - H / 2 - (p % 2 ? 5 : 0)}" width="${r.x1 - r.x0}" height="${H + (p % 2 ? 10 : 0)}"/>`;
+    svg(VB, s);
+    qa(".colpo").forEach(c => c.addEventListener("click", () => this.tocca(+c.dataset.p)));
+    strumenti([
+      { t: "🔢 Conta le righe", fn: () => this.contaRighe() },
+      { t: "🔢 Conta gli spazi", fn: () => this.contaSpazi() },
+      { t: "⬛ Spegni", fn: () => { spegniRighe(); cart(this.cartBase(), false); } },
+      { suggerimento: "Tocca una riga o uno spazio" }
+    ]);
+  },
+  cartBase() { return "5 righe · 4 spazi"; },
+  tocca(p) {
+    spegniRighe();
+    if (p % 2 === 0) { const i = p / 2 + 1; luce(q1(`.riga[data-riga="${i}"]`), true, "#FDE047"); mostra(q1(`.n-riga:nth-of-type(${i})`)); cart(`${ord(i, true)} riga`); }
+    else { const i = (p + 1) / 2; luce(q1(`.spazio[data-spazio="${i}"]`), true, "#38BDF8"); cart(`${ord(i)} spazio`); }
+    suona(64 + [0, 1, 3, 5, 7, 8, 10, 12, 13][p], 0, 0.5);
+  },
+  contaRighe() {
+    fermaTutto(); spegniRighe(); mostra(q1(".e-righe"));
+    const num = qa(".n-riga");
+    for (let i = 1; i <= 5; i++) dopo((i - 1) * 650, () => {
+      spegniRighe(); luce(q1(`.riga[data-riga="${i}"]`), true, "#FDE047"); mostra(num[i - 1]); cart(`${ord(i, true)} riga`);
+      suona(64 + [0, 3, 7, 10, 13][i - 1], 0, 0.5);
+    });
+    dopo(5 * 650 + 300, () => { spegniRighe(); cart("Le righe sono <b>5</b>"); });
+  },
+  contaSpazi() {
+    fermaTutto(); spegniRighe(); mostra(q1(".e-spazi"));
+    const num = qa(".n-spazio");
+    for (let i = 1; i <= 4; i++) dopo((i - 1) * 650, () => {
+      spegniRighe(); luce(q1(`.spazio[data-spazio="${i}"]`), true, "#38BDF8"); mostra(num[i - 1]); cart(`${ord(i)} spazio`);
+      suona(64 + [1, 5, 8, 12][i - 1], 0, 0.5);
+    });
+    dopo(4 * 650 + 300, () => { spegniRighe(); cart("Gli spazi sono <b>4</b>"); });
+  },
+  fase(f, anim) {
+    qa(".n-riga, .e-righe").forEach(e => mostra(e, f >= 1));
+    qa(".n-spazio, .e-spazi").forEach(e => mostra(e, f >= 2));
+    cart(this.cartBase(), false);
+    if (!anim) return;
+    if (f === 0) { const g = q1(".rigo"); g.classList.remove("disegna"); void g.getBBox(); g.classList.add("disegna"); cart("Il pentagramma"); }
+    if (f === 1) { qa(".n-riga").forEach(e => mostra(e, false)); this.contaRighe(); }
+    if (f === 2) { qa(".n-spazio").forEach(e => mostra(e, false)); this.contaSpazi(); }
+  }
+});
+
+/* ---------- 2. Note sulle righe e negli spazi ---------- */
+PASSI.push({
+  cap: 0, breve: "Righe e spazi", titolo: "Le note sulle righe e negli spazi",
+  punti: [
+    "Una nota si può scrivere <b>sulla riga</b>: la riga la taglia a metà.",
+    "Oppure <b>nello spazio</b>: la nota sta fra due righe.",
+    "Più la nota è <b>in alto</b>, più il suono è <b>acuto</b>. Più è in basso, più è <b>grave</b>.",
+    "Ma come si chiamano queste note? Senza la <b>chiave</b> non lo sappiamo!"
+  ],
+  quaderno: "<p>Le note si scrivono <b>sulle righe</b> o <b>negli spazi</b>. In alto = suono <b>acuto</b>, in basso = suono <b>grave</b>.</p>",
+  crea() {
+    const r = this.r = R(140, 860, 260, null);
+    this.mie = 0;
+    let s = svgRigo(r, { spazi: true });
+    s += `<g class="demo">`;
+    [[2, 230], [4, 310], [6, 390]].forEach(([p, x]) => s += svgNota(r, x, p, { cls: "nascosta d-riga" }));
+    [[1, 520], [3, 600], [5, 680]].forEach(([p, x]) => s += svgNota(r, x, p, { cls: "nascosta d-spazio" }));
+    s += `<text class="etic grande vela nascosto e-riga" x="310" y="${r.yb + 70}" text-anchor="middle">SULLA RIGA</text>`;
+    s += `<text class="etic grande vela nascosto e-spazio" x="600" y="${r.yb + 70}" text-anchor="middle">NELLO SPAZIO</text>`;
+    s += `</g>`;
+    // freccia acuto / grave
+    s += `<g class="vela nascosto freccia-ag" style="--luce:#FBBF24"><path class="freccia" d="M925 ${r.y(8) - 10} V${r.y(0) + 10} M913 ${r.y(8) + 4} L925 ${r.y(8) - 10} L937 ${r.y(8) + 4}"/>` +
+      `<text class="etic" x="925" y="${r.y(8) - 26}" text-anchor="middle" fill="#FBBF24">ACUTO</text><text class="etic" x="925" y="${r.y(0) + 40}" text-anchor="middle">GRAVE</text></g>`;
+    s += `<text class="vela nascosto domanda" x="80" y="${r.y(4) + 40}" text-anchor="middle" font-family="Fredoka" font-weight="600" font-size="120" fill="#FBBF24">?</text>`;
+    s += `<g class="mie"></g>`;
+    for (let p = -1; p <= 9; p++) s += `<rect class="colpo tocca" data-p="${p}" x="${r.x0}" y="${r.y(p) - H / 2}" width="${r.x1 - r.x0}" height="${H}"/>`;
+    svg(VB, s);
+    qa(".colpo.tocca").forEach(c => c.addEventListener("click", () => this.metti(+c.dataset.p)));
+    strumenti([{ suggerimento: "Tocca il pentagramma per scrivere una nota" }, { t: "🗑️ Cancella", fn: () => this.cancella() }]);
+  },
+  metti(p) {
+    const r = this.r;
+    if (this.mie === 0) mostra(q1(".demo"), false), q1(".demo").style.display = "none";
+    if (this.mie >= 8) { q1(".mie").innerHTML = ""; this.mie = 0; }
+    const x = 210 + this.mie * 82; this.mie++;
+    q1(".mie").insertAdjacentHTML("beforeend", svgNota({ ...r, chiave: null, y: r.y }, x, p, { cls: "compare" }));
+    accendiPerNota(p, "#FDE047");
+    cart(`La nota è <b>${dovE(p)}</b>`);
+    suona(nota("violino", p).midi, 0, 0.9);
+  },
+  cancella() { q1(".mie").innerHTML = ""; this.mie = 0; spegniRighe(); const d = q1(".demo"); d.style.display = ""; this.fase(this.f, false); },
+  fase(f, anim) {
+    this.f = f;
+    const ri = qa(".d-riga"), sp = qa(".d-spazio");
+    ri.forEach(e => mostra(e, true)); mostra(q1(".e-riga"), true);
+    sp.forEach(e => mostra(e, f >= 1)); mostra(q1(".e-spazio"), f >= 1);
+    mostra(q1(".freccia-ag"), f >= 2); mostra(q1(".domanda"), f >= 3);
+    spegniRighe();
+    cart(["Sulla riga", "Nello spazio", "In alto acuto, in basso grave", "Che nota è? Serve la chiave!"][f], anim);
+    if (!anim) return;
+    if (f === 0) ri.forEach((e, i) => dopo(i * 450, () => { mostra(e, true, true); accendiPerNota(+e.dataset.p, "#FDE047"); suona(nota("violino", +e.dataset.p).midi, 0, .7); }));
+    if (f === 1) sp.forEach((e, i) => dopo(i * 450, () => { mostra(e, true, true); accendiPerNota(+e.dataset.p, "#38BDF8"); suona(nota("violino", +e.dataset.p).midi, 0, .7); }));
+    if (f === 2) [...ri, ...sp].sort((a, b) => a.dataset.p - b.dataset.p).forEach((e, i) => dopo(i * 380, () => { lampeggia(e); suona(nota("violino", +e.dataset.p).midi, 0, .6); }));
+    if (anim && f !== 3) dopo(1800, spegniRighe);
+  }
+});
+
+/* ---------- 3. La chiave di violino ---------- */
+function passoChiave(tipo) {
+  const vio = tipo === "violino";
+  const pRiga = vio ? 2 : 6, nomeN = vio ? "sol" : "fa";
+  return {
+    cap: 1, breve: vio ? "Chiave di violino" : "Chiave di basso", titolo: vio ? "La chiave di violino" : "La chiave di basso",
+    punti: vio ? [
+      "All'inizio del pentagramma si scrive la <b>chiave</b>: dice il <b>nome</b> delle note.",
+      "La chiave di violino si chiama anche <b>chiave di sol</b>: il suo ricciolo gira attorno alla <b>2ª riga</b>.",
+      "Così sappiamo che sulla 2ª riga c'è il <b>SOL</b>.",
+      "È la chiave dei suoni <b>acuti</b>: voci, flauto, violino, mano destra del pianoforte."
+    ] : [
+      "Per i suoni <b>gravi</b> si usa la <b>chiave di basso</b>: violoncello, contrabbasso, fagotto, mano sinistra del pianoforte.",
+      "Si chiama anche <b>chiave di fa</b>: parte dalla <b>4ª riga</b> e i due <b>puntini</b> la abbracciano.",
+      "Così sappiamo che sulla 4ª riga c'è il <b>FA</b>."
+    ],
+    quaderno: vio
+      ? "<p><b>Chiave</b>: serve a indicare l'altezza delle note sul pentagramma.</p><p><b>Chiave di violino</b> (o di sol): il SOL è sulla 2ª riga.</p>"
+      : "<p><b>Chiave di basso</b> (o di fa): il FA è sulla 4ª riga.</p>",
+    crea() {
+      const r = this.r = R(70, 930, 260, tipo);
+      let s = svgRigo(r) + svgChiave(r, 84, "c-chiave");
+      // centro del ricciolo (violino) o dei due puntini (basso)
+      if (vio) s += `<circle class="anello a1" style="--luce:${COL("sol")}" cx="${84 + 17 * K}" cy="${r.y(2)}" r="26"/>`;
+      else s += `<circle class="anello a1" style="--luce:${COL("fa")}" cx="${84 + 25.6 * K}" cy="${r.y(7)}" r="13"/><circle class="anello a2" style="--luce:${COL("fa")}" cx="${84 + 25.6 * K}" cy="${r.y(5)}" r="13"/>`;
+      s += `<text class="etic grande vela nascosto e-riga" x="250" y="${r.y(pRiga) + 9}" fill="${coloreTesto(nomeN)}">${ord(vio ? 2 : 4, true)} RIGA</text>`;
+      s += svgNota(r, 560, pRiga, { cls: "nascosta n-chiave" }) + svgNome(560, r.yb + 92, nomeN, "nascosto", ` data-x="560"`);
+      svg(VB, s);
+      q1(".n-chiave").addEventListener("click", () => this.suonaNota());
+      strumenti([
+        { t: "✏️ Disegna la chiave", fn: () => this.disegna() },
+        { t: `🔊 Ascolta il ${nomeN}`, fn: () => { mostra(q1(".n-chiave"), true); mostra(q1(".nome")); this.suonaNota(); } },
+        { t: vio ? "🎯 Dov'è la 2ª riga?" : "🎯 Dov'è la 4ª riga?", fn: () => this.riga() }
+      ]);
+    },
+    disegna() {
+      const g = q1(".c-chiave"), p = g.querySelector("path");
+      g.style.setProperty("--l", Math.ceil(p.getTotalLength()) + 1);
+      g.classList.remove("disegna"); void g.getBBox(); g.classList.add("disegna");
+      cart(vio ? "Chiave di violino (o di sol)" : "Chiave di basso (o di fa)");
+    },
+    riga() {
+      luce(q1(`.riga[data-riga="${vio ? 2 : 4}"]`), true, COL(nomeN));
+      mostra(q1(".e-riga")); anello(q1(".a1")); anello(q1(".a2"));
+      cart(vio ? "Il ricciolo gira attorno alla <b>2ª riga</b>" : "I puntini abbracciano la <b>4ª riga</b>");
+    },
+    suonaNota() { const n = q1(".n-chiave"); lampeggia(n); suona(nota(tipo, pRiga).midi); cartNota(tipo, pRiga); },
+    fase(f, anim) {
+      spegniRighe();
+      mostra(q1(".e-riga"), f >= 1); mostra(q1(".n-chiave"), f >= 2); mostra(q1(".nome"), f >= 2);
+      if (f >= 1) luce(q1(`.riga[data-riga="${vio ? 2 : 4}"]`), true, COL(nomeN));
+      cart(f === 0 ? (vio ? "Chiave di violino (o di sol)" : "Chiave di basso (o di fa)") : f === 1 ? (vio ? "Il ricciolo gira attorno alla <b>2ª riga</b>" : "I puntini abbracciano la <b>4ª riga</b>")
+        : `Sulla ${vio ? "2ª" : "4ª"} riga c'è il <b style="color:${coloreTesto(nomeN)}">${MAIU(nomeN)}</b>`, anim);
+      if (!anim) return;
+      if (f === 0) this.disegna();
+      if (f === 1) this.riga();
+      if (f === 2) { mostra(q1(".n-chiave"), true, true); this.suonaNota(); }
+    }
+  };
+}
+PASSI.push(passoChiave("violino"));
+
+/* ---------- 4. Il nome delle note ---------- */
+PASSI.push({
+  cap: 1, breve: "Nomi delle note", titolo: "Dal sol alle altre note",
+  punti: [
+    "Le note vanno in fila come nella scala: <b>do re mi fa sol la si</b>, poi di nuovo <b>do</b>.",
+    "Dal SOL si sale un gradino alla volta (riga, spazio, riga…): <b>la, si, do, re…</b>",
+    "Scendendo dal SOL si trovano <b>fa, mi, re</b>."
+  ],
+  quaderno: "<p>Ogni gradino (da una riga allo spazio vicino, o viceversa) è la <b>nota successiva</b> della scala.</p>",
+  crea() {
+    const r = this.r = R(70, 950, 300, "violino");
+    let s = "";
+    // la fila della scala in alto
+    ["do", "re", "mi", "fa", "sol", "la", "si", "do"].forEach((n, i) => {
+      const x = 190 + i * 92;
+      s += `<g class="chip c-${n}" data-i="${i}"><rect x="${x - 40}" y="22" width="80" height="44" rx="12"/><text x="${x}" y="45">${n}</text></g>`;
+    });
+    s += svgRigo(r) + svgChiave(r, 84);
+    for (let p = -1; p <= 9; p++) {
+      const x = 205 + (p + 1) * 70;
+      s += svgNota(r, x, p, { cls: "nascosta scala-n" }) + svgNome(x, r.yb + 74, nota("violino", p).nome, "nascosto", ` data-x="${x}" style="font-size:22px"`);
+    }
+    s += `<circle class="cursore" r="30" cx="0" cy="0" style="opacity:0"/>`;
+    svg(VB, s);
+    this.cur = 2;
+    qa(".scala-n").forEach(n => n.addEventListener("click", () => this.vai(+n.dataset.p)));
+    qa(".chip").forEach((c, i) => c.addEventListener("click", () => { c.classList.add("batte"); dopo(300, () => c.classList.remove("batte")); suona([60, 62, 64, 65, 67, 69, 71, 72][i], 0, .8); }));
+    strumenti([
+      { t: "🎵 Canta la scala", fn: () => this.scala() },
+      { t: "▼ Scendi", fn: () => this.vai(this.cur - 1) },
+      { t: "▲ Sali", fn: () => this.vai(this.cur + 1) },
+      { t: "↺ Torna al sol", fn: () => this.vai(2) }
+    ]);
+  },
+  scala() {
+    qa(".chip").forEach((c, i) => dopo(i * 420, () => { c.classList.add("batte"); suona([60, 62, 64, 65, 67, 69, 71, 72][i], 0, .7); dopo(380, () => c.classList.remove("batte")); }));
+    cart("do · re · mi · fa · sol · la · si · do");
+  },
+  vai(p) {
+    if (p < -1 || p > 9) return;
+    this.cur = p;
+    const n = q1(`.scala-n[data-p="${p}"]`);
+    mostra(n, true, n.classList.contains("nascosta"));
+    mostra(q1(`.nome[data-x="${n.dataset.x}"]`), true);
+    const c = q1(".cursore"); c.style.opacity = 1; c.setAttribute("cx", n.dataset.x); c.setAttribute("cy", this.r.y(p));
+    lampeggia(n); suona(nota("violino", p).midi); accendiPerNota(p, coloreTesto(nota("violino", p).nome)); cartNota("violino", p);
+  },
+  fase(f, anim) {
+    const note = qa(".scala-n");
+    note.forEach(n => { const p = +n.dataset.p, vis = f >= 1 && (p === 2 || p > 2 || f >= 2); mostra(n, vis); mostra(q1(`.nome[data-x="${n.dataset.x}"]`), vis); });
+    q1(".cursore").style.opacity = 0; spegniRighe();
+    cart(["La scala: do re mi fa sol la si do", "Dal SOL si sale…", "…e si scende"][f], anim);
+    if (!anim) return;
+    if (f === 0) this.scala();
+    if (f === 1) { note.filter(n => +n.dataset.p > 2).forEach(n => { mostra(n, false); mostra(q1(`.nome[data-x="${n.dataset.x}"]`), false); }); suonaFila(note.filter(n => +n.dataset.p >= 2), "violino", 560); }
+    if (f === 2) { note.filter(n => +n.dataset.p < 2).forEach(n => { mostra(n, false); mostra(q1(`.nome[data-x="${n.dataset.x}"]`), false); }); suonaFila(note.filter(n => +n.dataset.p <= 2).reverse(), "violino", 560); }
+  }
+});
+
+/* ---------- 5. e 8. Righe e spazi in una chiave ---------- */
+function passoRigheSpazi(tipo) {
+  const vio = tipo === "violino";
+  const righe = [0, 2, 4, 6, 8], spazi = [1, 3, 5, 7];
+  const nomi = ps => ps.map(p => nota(tipo, p).nome).join(" · ");
+  return {
+    cap: 1, breve: vio ? "Note in violino" : "Note in basso",
+    titolo: vio ? "Righe e spazi in chiave di violino" : "Righe e spazi in chiave di basso",
+    punti: [
+      `Le note <b>sulle righe</b>: <b>${MAIU(nomi(righe))}</b>.`,
+      `Le note <b>negli spazi</b>: <b>${MAIU(nomi(spazi))}</b>.`,
+      vio ? "Un trucco: da una riga alla riga sopra si <b>salta una nota</b>, quella che sta nello spazio in mezzo."
+        : "Attenzione: le stesse posizioni della chiave di violino qui hanno <b>nomi diversi</b>!"
+    ].concat(vio ? [] : ["Anche in chiave di basso si possono aggiungere i <b>tagli</b>: ascolta la scala dal do grave al do centrale."]),
+    quaderno: `<p><b>Chiave di ${tipo}</b> · righe: ${nomi(righe)} · spazi: ${nomi(spazi)}</p>`,
+    crea() {
+      const r = this.r = R(70, 950, 270, tipo);
+      let s = svgRigo(r, { spazi: true }) + svgChiave(r, 84);
+      s += `<g class="demo">`;
+      s += `<text class="etic grande" x="350" y="${r.y(8) - 46}" text-anchor="middle">RIGHE</text><text class="etic grande" x="760" y="${r.y(8) - 46}" text-anchor="middle">SPAZI</text>`;
+      s += `<line x1="580" x2="580" y1="${r.y(10)}" y2="${r.y(-2)}" stroke="rgba(255,255,255,0.25)" stroke-width="2" stroke-dasharray="6 6"/>`;
+      righe.forEach((p, i) => { const x = 210 + i * 70; s += svgNota(r, x, p, { cls: "nascosta g-righe" }) + svgNome(x, r.yb + 64, nota(tipo, p).nome, "nascosto", ` data-x="${x}"`); });
+      spazi.forEach((p, i) => { const x = 655 + i * 75; s += svgNota(r, x, p, { cls: "nascosta g-spazi" }) + svgNome(x, r.yb + 64, nota(tipo, p).nome, "nascosto", ` data-x="${x}"`); });
+      // le note saltate (trucco)
+      [1, 3, 5, 7].forEach((p, i) => { const x = 245 + i * 70; s += `<text class="nome vela nascosto saltata" x="${x}" y="${r.yb + 100}" style="font-size:18px;opacity:.75">(${nota(tipo, p).nome})</text>`; });
+      [2, 4, 6].forEach((p, i) => { const x = 692 + i * 75; s += `<text class="nome vela nascosto saltata" x="${x}" y="${r.yb + 100}" style="font-size:18px;opacity:.75">(${nota(tipo, p).nome})</text>`; });
+      s += `</g><g class="scala-g"></g>`;
+      svg(VB, s);
+      qa(".demo .nota").forEach(n => n.addEventListener("click", () => this.tocca(n)));
+      this.nomiOn = true;
+      const lista = [
+        { t: "🔊 Righe", fn: () => { this.demo(); suonaFila(qa(".g-righe"), tipo, 600); } },
+        { t: "🔊 Spazi", fn: () => { this.demo(); suonaFila(qa(".g-spazi"), tipo, 600); } },
+        { t: "🙈 Nascondi i nomi", id: "btnNomi", fn: el => this.nomi(el) }
+      ];
+      if (!vio) lista.push({ t: "▶ Scala ascendente", fn: () => this.scala(false) }, { t: "◀ Discendente", fn: () => this.scala(true) });
+      strumenti(lista);
+    },
+    demo() { fermaTutto(); q1(".demo").style.display = ""; q1(".scala-g").innerHTML = ""; },
+    tocca(n) {
+      const p = +n.dataset.p, nm = q1(`.demo .nome[data-x="${n.dataset.x}"]`);
+      nm.classList.remove("coperto"); nm.textContent = MAIU(nota(tipo, p).nome); mostra(nm, true);
+      lampeggia(n); suona(nota(tipo, p).midi); accendiPerNota(p, coloreTesto(nota(tipo, p).nome)); cartNota(tipo, p);
+    },
+    nomi(el) {
+      this.nomiOn = !this.nomiOn;
+      qa(".demo .nome:not(.saltata)").forEach(t => { const p = +q1(`.demo .nota[data-x="${t.dataset.x}"]`).dataset.p;
+        t.textContent = this.nomiOn ? MAIU(nota(tipo, p).nome) : "?"; t.classList.toggle("coperto", !this.nomiOn); });
+      el.innerHTML = this.nomiOn ? "🙈 Nascondi i nomi" : "👁️ Mostra i nomi"; el.classList.toggle("on", !this.nomiOn);
+      cart(this.nomiOn ? "Nomi visibili" : "Che nota è? <span class=\"piccolo\">Tocca una nota per scoprirla</span>");
+    },
+    scala(giu) {
+      this.demo(); q1(".demo").style.display = "none";
+      const r = this.r; let s = "";
+      for (let p = -4; p <= 10; p++) { const x = 175 + (p + 4) * 53; s += svgNota(r, x, p, { cls: "nascosta" }) + svgNome(x, r.yb + 108, nota(tipo, p).nome, "nascosto", ` data-x="${x}" style="font-size:19px"`); }
+      q1(".scala-g").innerHTML = s;
+      const note = qa(".scala-g .nota"); note.forEach(n => n.addEventListener("click", () => { lampeggia(n); suona(nota(tipo, +n.dataset.p).midi); cartNota(tipo, +n.dataset.p); }));
+      if (giu) note.forEach(n => { mostra(n, true); mostra(q1(`.scala-g .nome[data-x="${n.dataset.x}"]`), true); });
+      suonaFila(giu ? note.reverse() : note, tipo, 430);
+    },
+    fase(f, anim) {
+      this.demo();
+      if (!this.nomiOn) this.nomi($("#btnNomi"));
+      qa(".g-righe").forEach(n => { mostra(n, true); mostra(q1(`.demo .nome[data-x="${n.dataset.x}"]`), true); });
+      qa(".g-spazi").forEach(n => { mostra(n, f >= 1); mostra(q1(`.demo .nome[data-x="${n.dataset.x}"]`), f >= 1); });
+      qa(".saltata").forEach(t => mostra(t, vio && f >= 2));
+      spegniRighe();
+      cart(["Sulle righe: " + MAIU(nomi(righe)), "Negli spazi: " + MAIU(nomi(spazi)), vio ? "Sulle righe si salta una nota" : "Attenzione ai nomi!", "La scala in chiave di basso"][f], anim);
+      if (!anim) return;
+      if (f === 0) { qa(".g-righe").forEach(n => { mostra(n, false); mostra(q1(`.demo .nome[data-x="${n.dataset.x}"]`), false); }); suonaFila(qa(".g-righe"), tipo, 650); }
+      if (f === 1) { qa(".g-spazi").forEach(n => { mostra(n, false); mostra(q1(`.demo .nome[data-x="${n.dataset.x}"]`), false); }); suonaFila(qa(".g-spazi"), tipo, 650); }
+      if (f === 2 && vio) qa(".saltata").forEach((t, i) => dopo(i * 300, () => { t.classList.remove("nascosto"); }));
+      if (f === 3) this.scala(false);
+    }
+  };
+}
+PASSI.push(passoRigheSpazi("violino"));
+
+/* ---------- 6. I tagli addizionali ---------- */
+PASSI.push({
+  cap: 1, breve: "Tagli addizio\u00ADnali", titolo: "I tagli addizionali",
+  punti: [
+    "Alcune note sono troppo <b>acute</b> o troppo <b>gravi</b> per stare dentro il pentagramma.",
+    "Per loro si aggiungono piccole righe, solo dove serve: i <b>tagli addizionali</b>.",
+    "Il <b>DO centrale</b> sta sul <b>1° taglio sotto</b> il pentagramma.",
+    "Sopra: il <b>LA</b> sul 1° taglio, il <b>SI</b> sopra il 1° taglio, il <b>DO</b> sul 2° taglio."
+  ],
+  quaderno: "<p><b>Tagli addizionali</b>: piccole righe aggiunte sopra o sotto il pentagramma, per le note troppo acute o troppo gravi.</p>",
+  crea() {
+    const r = this.r = R(70, 950, 280, "violino");
+    let s = svgRigo(r) + svgChiave(r, 84);
+    s += `<g class="demo">`;
+    s += svgNota(r, 330, -2, { cls: "t-do", tagliCls: "t-taglio" }) + svgNome(330, r.yb + 92, "do", "nascosto n-do", ` data-x="330"`);
+    s += svgNota(r, 600, 10, { cls: "t-la", tagliCls: "t-taglio" }) + svgNome(600, r.y(14), "la", "nascosto n-la", ` data-x="600"`);
+    s += svgNota(r, 700, 11, { cls: "nascosta t-si" }) + svgNome(700, r.y(14), "si", "nascosto n-si", ` data-x="700"`);
+    s += svgNota(r, 800, 12, { cls: "nascosta t-do2" }) + svgNome(800, r.y(15) + 4, "do", "nascosto n-do2", ` data-x="800"`);
+    s += `<text class="etic vela nascosto e-do" x="330" y="${r.yb + 126}" text-anchor="middle">DO CENTRALE · 1° TAGLIO SOTTO</text>`;
+    s += `</g><g class="scala-g"></g>`;
+    svg(VB, s);
+    qa(".demo .nota").forEach(n => n.addEventListener("click", () => { lampeggia(n); suona(nota("violino", +n.dataset.p).midi); cartNota("violino", +n.dataset.p, +n.dataset.p === -2 ? " (do centrale)" : ""); mostra(q1(`.demo .nome[data-x="${n.dataset.x}"]`)); }));
+    strumenti([
+      { t: "▶ Scala ascendente", fn: () => this.scala(false) },
+      { t: "◀ Scala discendente", fn: () => this.scala(true) },
+      { t: "↺ Esempio", fn: () => this.fase(this.f, false) }
+    ]);
+  },
+  scala(giu) {
+    fermaTutto(); q1(".demo").style.display = "none";
+    const r = this.r; let s = "";
+    for (let p = -2; p <= 12; p++) { const x = 180 + (p + 2) * 53; s += svgNota(r, x, p, { cls: "nascosta" }) + svgNome(x, r.yb + 92, nota("violino", p).nome, "nascosto", ` data-x="${x}" style="font-size:19px"`); }
+    q1(".scala-g").innerHTML = s;
+    const note = qa(".scala-g .nota");
+    note.forEach(n => n.addEventListener("click", () => { lampeggia(n); suona(nota("violino", +n.dataset.p).midi); cartNota("violino", +n.dataset.p); }));
+    if (giu) note.forEach(n => { mostra(n, true); mostra(q1(`.scala-g .nome[data-x="${n.dataset.x}"]`), true); });
+    suonaFila(giu ? note.reverse() : note, "violino", 430);
+  },
+  fase(f, anim) {
+    fermaTutto(); this.f = f; q1(".demo").style.display = ""; q1(".scala-g").innerHTML = "";
+    qa(".t-taglio").forEach(t => { t.style.opacity = f >= 1 ? 1 : 0; t.classList.remove("nuovo"); });
+    mostra(q1(".n-do"), f >= 2); mostra(q1(".e-do"), f >= 2);
+    [".t-si", ".t-do2"].forEach(c => mostra(q1(c), f >= 3));
+    [".n-la", ".n-si", ".n-do2"].forEach(c => mostra(q1(c), f >= 3));
+    q1(".t-do").classList.toggle("tenue", f === 0); q1(".t-la").classList.toggle("tenue", f === 0);
+    cart(["Queste note stanno fuori dal pentagramma…", "…allora si aggiungono i <b>tagli</b>", "<b style=\"color:" + coloreTesto("do") + "\">DO</b> centrale <span class=\"piccolo\">· 1° taglio sotto</span>", "LA · SI · DO sopra il pentagramma"][f], anim);
+    if (!anim) return;
+    if (f === 0) [q1(".t-do"), q1(".t-la")].forEach((n, i) => dopo(i * 600, () => { lampeggia(n); suona(nota("violino", +n.dataset.p).midi, 0, .8); }));
+    if (f === 1) qa(".t-taglio").forEach(t => { t.classList.add("nuovo"); });
+    if (f === 2) { const n = q1(".t-do"); lampeggia(n); suona(60); }
+    if (f === 3) suonaFila([q1(".t-la"), q1(".t-si"), q1(".t-do2")], "violino", 600);
+  }
+});
+
+/* ---------- 7. La chiave di basso, 8. le sue note ---------- */
+PASSI.push(passoChiave("basso"));
+PASSI.push(passoRigheSpazi("basso"));
+
+/* ---------- 9. Violino e basso insieme ---------- */
+PASSI.push({
+  cap: 1, breve: "Le due chiavi", titolo: "Violino e basso insieme",
+  punti: [
+    "Il pianoforte legge <b>due pentagrammi</b> insieme: chiave di violino per la <b>mano destra</b>, chiave di basso per la <b>sinistra</b>.",
+    "Il <b>DO centrale</b> sta in mezzo: sul 1° taglio <b>sotto</b> in chiave di violino e sul 1° taglio <b>sopra</b> in chiave di basso. È la <b>stessa nota</b>!",
+    "Le chiavi in tutto sono sette (il <b>setticlavio</b>): noi useremo queste due."
+  ],
+  quaderno: "<p>Il <b>DO centrale</b>: 1° taglio sotto in chiave di violino, 1° taglio sopra in chiave di basso.</p>",
+  crea() {
+    const v = this.v = R(130, 860, 196, "violino"), b = this.b = R(130, 860, 436, "basso");
+    let s = svgRigo(v) + svgRigo(b) + svgChiave(v, 142) + svgChiave(b, 142);
+    s += `<line class="stanghetta" x1="130" x2="130" y1="${v.y(8)}" y2="${b.yb}"/>`;
+    // graffa
+    const y1 = v.y(8), y2 = b.yb, m = (y1 + y2) / 2;
+    s += `<path d="M118 ${y1} C92 ${y1 + 30}, 112 ${m - 40}, 92 ${m} C112 ${m + 40}, 92 ${y2 - 30}, 118 ${y2} C100 ${y2 - 34}, 120 ${m + 40}, 100 ${m} C120 ${m - 40}, 100 ${y1 + 34}, 118 ${y1} Z" fill="#EAF2FF"/>`;
+    s += `<text class="etic" x="880" y="${v.y(4) - 6}">MANO</text><text class="etic" x="880" y="${v.y(4) + 18}">DESTRA</text>`;
+    s += `<text class="etic" x="880" y="${b.y(4) - 6}">MANO</text><text class="etic" x="880" y="${b.y(4) + 18}">SINISTRA</text>`;
+    s += `<g class="vela nascosto centrale">` + svgNota(v, 470, -2, { cls: "dc dc-v" }) + svgNota(b, 470, 10, { cls: "dc dc-b" }) +
+      `<text class="etic grande" x="520" y="${(v.y(-2) + b.y(10)) / 2 + 8}" fill="${coloreTesto("do")}">= DO CENTRALE</text></g>`;
+    s += `<g class="mie"></g>`;
+    for (let p = -3; p <= 12; p++) s += `<rect class="colpo tocca" data-r="v" data-p="${p}" x="200" y="${v.y(p) - H / 2}" width="640" height="${H}"/>`;
+    for (let p = -4; p <= 9; p++) s += `<rect class="colpo tocca" data-r="b" data-p="${p}" x="200" y="${b.y(p) - H / 2}" width="640" height="${H}"/>`;
+    svg("0 -22 1000 548", s);
+    qa(".colpo.tocca").forEach(c => c.addEventListener("click", () => this.tocca(c.dataset.r, +c.dataset.p)));
+    qa(".dc").forEach(n => n.addEventListener("click", () => this.centrale()));
+    strumenti([
+      { t: "🔊 Do centrale", fn: () => this.centrale() },
+      { t: "▶ Tutti i DO, dal grave all'acuto", fn: () => this.tuttiDo() },
+      { suggerimento: "Tocca una riga o uno spazio" }
+    ]);
+  },
+  tocca(rr, p) {
+    const r = rr === "v" ? this.v : this.b, chiave = rr === "v" ? "violino" : "basso";
+    q1(".mie").innerHTML = svgNota(r, 660, p, { cls: "compare" }) + svgNome(740, r.y(p) + 9, nota(chiave, p).nome, "", ` text-anchor="start" style="text-anchor:start"`);
+    suona(nota(chiave, p).midi); cartNota(chiave, p, ` <span class="piccolo">in chiave di ${chiave}</span>`);
+  },
+  centrale() {
+    mostra(q1(".centrale")); qa(".dc").forEach(lampeggia); suona(60);
+    cart(`<b style="color:${coloreTesto("do")}">DO</b> centrale <span class="piccolo">· stessa nota, stesso suono</span>`);
+  },
+  tuttiDo() {
+    fermaTutto();
+    const passi = [["b", -4], ["b", 3], ["v", -2], ["v", 5], ["v", 12]];
+    passi.forEach(([rr, p], i) => dopo(i * 700, () => this.tocca(rr, p)));
+  },
+  fase(f, anim) {
+    q1(".mie").innerHTML = ""; mostra(q1(".centrale"), f >= 1);
+    cart(["Due pentagrammi insieme", "Il DO centrale", "Il setticlavio: sette chiavi"][f], anim);
+    if (anim && f === 1) this.centrale();
+  }
+});
+
+/* ---------- 10. Gli elementi del pentagramma ---------- */
+const ELEMENTI = [
+  { id: "chiave", nome: "CHIAVE", def: "serve a indicare l'altezza delle note sul pentagramma", colore: "#F472B6" },
+  { id: "tempo", nome: "INDICAZIONE DI TEMPO", def: "dice come sono organizzati i ritmi nelle battute", colore: "#FBBF24" },
+  { id: "linea", nome: "LINEA DI BATTUTA", def: "divide il brano in parti di uguale durata", colore: "#38BDF8" },
+  { id: "battuta", nome: "BATTUTA (O MISURA)", def: "lo spazio fra due stanghette", colore: "#34D399" },
+  { id: "doppia", nome: "DOPPIA STANGHETTA CONCLUSIVA", def: "indica la fine del brano", colore: "#A78BFA" }
+];
+PASSI.push({
+  cap: 2, breve: "Gli elementi", titolo: "Gli elementi del pentagramma",
+  punti: [
+    "La <b>chiave</b>: l'altezza delle note.",
+    "L'<b>indicazione di tempo</b>: come sono organizzati i ritmi.",
+    "La <b>linea di battuta</b> (stanghetta): divide il brano in parti <b>uguali</b>.",
+    "La <b>battuta</b> (misura): lo spazio fra due stanghette.",
+    "La <b>doppia stanghetta conclusiva</b>: la <b>fine</b> del brano."
+  ],
+  quaderno: "<p><b>Linea di battuta</b> (o stanghetta): linea verticale che suddivide il brano in sezioni di uguale durata, chiamate battute o misure.</p>" +
+    "<p><b>Battuta</b>: lo spazio compreso tra due stanghette; organizza il ritmo e le note in parti uguali.</p>" +
+    "<p><b>Doppia stanghetta conclusiva</b>: indica la fine di un brano o una netta transizione formale.</p>",
+  crea() {
+    const r = this.r = R(60, 950, 250, "violino");
+    const X = { b1: 380, b2: 570, b3: 760, fine: 940 };
+    let s = svgRigo(r);
+    s += `<g class="el el-chiave" style="--luce:${ELEMENTI[0].colore}">${svgChiave(r, 74)}</g>`;
+    s += `<g class="el el-tempo" style="--luce:${ELEMENTI[1].colore}">${svgTempo(r, 178, 4, 4)}</g>`;
+    s += `<g class="el el-linea" style="--luce:${ELEMENTI[2].colore}"><line class="stanghetta" x1="${X.b1}" x2="${X.b1}" y1="${r.y(8)}" y2="${r.yb}"/><line class="stanghetta" x1="${X.b2}" x2="${X.b2}" y1="${r.y(8)}" y2="${r.yb}"/><line class="stanghetta" x1="${X.b3}" x2="${X.b3}" y1="${r.y(8)}" y2="${r.yb}"/></g>`;
+    s += `<g class="el el-doppia" style="--luce:${ELEMENTI[4].colore}"><line class="stanghetta" x1="${X.fine - 16}" x2="${X.fine - 16}" y1="${r.y(8)}" y2="${r.yb}"/><line class="stanghetta grossa" x1="${X.fine - 3}" x2="${X.fine - 3}" y1="${r.y(8) + 1}" y2="${r.yb - 1}"/></g>`;
+    s += `<g class="el el-battuta vela" style="--luce:${ELEMENTI[3].colore}"><rect x="${X.b1 + 4}" y="${r.y(8)}" width="${X.b2 - X.b1 - 8}" height="${4 * S}" fill="${ELEMENTI[3].colore}" opacity="0"/>` +
+      `<path class="freccia" d="M${X.b1} ${r.y(8) - 30} V${r.y(8) - 46} H${X.b2} V${r.y(8) - 30}"/></g>`;
+    // etichette
+    const et = (i, x, y, ancora, fx, fy) => `<g class="vela nascosto et et-${ELEMENTI[i].id}"><text class="etic" x="${x}" y="${y}" text-anchor="${ancora}" fill="${ELEMENTI[i].colore}">${ELEMENTI[i].nome}</text>` +
+      (fx !== undefined ? `<path class="freccia" style="--luce:${ELEMENTI[i].colore}" d="M${fx} ${fy} L${x === fx ? fx : fx} ${y - 24}"/>` : "") + `</g>`;
+    s += et(0, 100, r.yb + 96, "middle", 100, r.yb + 50);
+    s += et(1, 246, r.yb + 136, "start", 200, r.yb + 14);
+    s += et(2, X.b2, r.yb + 96, "middle", X.b2, r.yb + 14);
+    s += `<g class="vela nascosto et et-battuta"><text class="etic" x="${(X.b1 + X.b2) / 2}" y="${r.y(8) - 58}" text-anchor="middle" fill="${ELEMENTI[3].colore}">${ELEMENTI[3].nome}</text></g>`;
+    s += `<g class="vela nascosto et et-doppia"><text class="etic" x="${X.fine}" y="${r.yb + 96}" text-anchor="end" fill="${ELEMENTI[4].colore}">DOPPIA STANGHETTA</text><text class="etic" x="${X.fine}" y="${r.yb + 120}" text-anchor="end" fill="${ELEMENTI[4].colore}">CONCLUSIVA</text><path class="freccia" style="--luce:${ELEMENTI[4].colore}" d="M${X.fine - 8} ${r.yb + 14} V${r.yb + 70}"/></g>`;
+    // zone da toccare
+    s += `<rect class="colpo" data-el="0" x="64" y="${r.y(12)}" width="100" height="${8 * S}"/>`;
+    s += `<rect class="colpo" data-el="1" x="170" y="${r.y(8)}" width="62" height="${4 * S}"/>`;
+    [X.b1, X.b2, X.b3].forEach(x => s += `<rect class="colpo" data-el="2" x="${x - 16}" y="${r.y(8) - 4}" width="32" height="${4 * S + 8}"/>`);
+    s += `<rect class="colpo" data-el="3" x="${X.b1 + 18}" y="${r.y(8) - 70}" width="${X.b2 - X.b1 - 36}" height="${4 * S + 70}"/>`;
+    s += `<rect class="colpo" data-el="4" x="${X.fine - 34}" y="${r.y(8) - 4}" width="44" height="${4 * S + 8}"/>`;
+    svg(VB, s);
+    qa(".colpo").forEach(c => c.addEventListener("click", () => this.scegli(+c.dataset.el, true)));
+    this.nomiOn = true;
+    strumenti([
+      { t: "📋 Tutti i nomi", fn: () => { this.nomiOn = true; this.tutti(); } },
+      { t: "🙈 Nascondi i nomi", fn: () => { this.nomiOn = false; qa(".et").forEach(e => mostra(e, false)); this.evid(-1); cart("Che cos'è? <span class=\"piccolo\">Tocca un elemento</span>"); } }
+    ]);
+  },
+  evid(i) {
+    ELEMENTI.forEach((e, k) => {
+      const g = q1(".el-" + e.id);
+      g.querySelectorAll(".glifo, .stanghetta").forEach(x => x.classList.toggle("evid", k === i));
+      if (e.id === "battuta") { g.querySelector("rect").setAttribute("opacity", k === i ? .2 : 0); g.querySelector(".freccia").style.opacity = k === i || this.f >= 3 ? 1 : 0; }
+    });
+  },
+  scegli(i, tocco) {
+    const e = ELEMENTI[i];
+    this.evid(i); mostra(q1(".et-" + e.id));
+    cart(`<span style="color:${e.colore}">${e.nome.charAt(0) + e.nome.slice(1).toLowerCase()}</span> <span class="piccolo">· ${e.def}</span>`);
+  },
+  tutti() { ELEMENTI.forEach(e => mostra(q1(".et-" + e.id))); this.evid(-1); q1(".el-battuta .freccia").style.opacity = 1; cart("Gli elementi del pentagramma"); },
+  fase(f, anim) {
+    this.f = f;
+    ELEMENTI.forEach((e, k) => mostra(q1(".et-" + e.id), k <= f));
+    this.scegli(f);
+  }
+});
+
+/* ---------- 11. Ritmo, pulsazione e metro ---------- */
+PASSI.push({
+  cap: 2, breve: "Pulsazione e metro", titolo: "Ritmo, pulsazione e metro",
+  punti: [
+    "Il <b>ritmo</b> è fatto di eventi che si ripetono con <b>cadenza regolare</b> nel tempo.",
+    "La <b>pulsazione</b> (o movimento) è il battito regolare, come quello del cuore: è l'unità che compone la battuta.",
+    "Il <b>metro</b> è come si raggruppano le pulsazioni: a <b>2</b>, a <b>3</b> o a <b>4</b>. La prima di ogni gruppo è più <b>forte</b>."
+  ],
+  quaderno: "<p><b>Ritmo</b>: successione di eventi con cadenza regolare che si ripete nel tempo.</p><p><b>Pulsazione</b>: unità ritmica primaria che compone la battuta.</p><p><b>Metro</b>: come sono organizzate le pulsazioni.</p>",
+  crea() {
+    this.n = this.n || 4;
+    this.disegna();
+    strumenti([
+      { t: "▶ Avvia", id: "btnVia", cls: "forte", fn: () => this.via() },
+      { gruppo: [2, 3, 4].map(n => ({ t: "a " + n, cls: n === this.n ? "on" : "", fn: el => { segna("gMetro", el); this.n = n; const era = metro.attivo; metro.ferma(); this.disegna(); this.fase(this.f, false); if (era) this.via(true); } })), id: "gMetro" },
+      { gruppo: [["🐢 Lento", 60], ["Medio", 84], ["🐇 Veloce", 112]].map(([t, b]) => ({ t, cls: b === metro.bpm ? "on" : "", fn: el => { segna("gVel", el); metro.bpm = b; } })), id: "gVel" }
+    ]);
+  },
+  disegna() {
+    const n = this.n, larg = 840 / 4; let s = "";
+    for (let m = 0; m < 4; m++) {
+      for (let j = 0; j < n; j++) {
+        const x = 80 + m * larg + (j + 0.5) * larg / n, k = m * n + j;
+        s += `<circle class="palla${j === 0 ? " primo" : ""}" data-k="${k}" cx="${x}" cy="210" r="${j === 0 ? 30 : 24}" style="--luce:${j === 0 ? "#FBBF24" : "#7DD3FC"}"/>`;
+        s += `<text class="conta vela" data-k="${k}" x="${x}" y="290">${j + 1}</text>`;
+      }
+      if (m > 0) s += `<line class="stanghetta vela sbarra" x1="${80 + m * larg}" x2="${80 + m * larg}" y1="150" y2="270"/>`;
+    }
+    s += `<text class="etic vela nascosto e-forte" x="${80 + larg / n / 2}" y="140" text-anchor="middle" fill="#FBBF24">FORTE</text>`;
+    s += `<text class="etic vela nascosto e-batt" x="${80 + larg * 1.5}" y="370" text-anchor="middle" fill="#34D399">UNA BATTUTA</text>`;
+    s += `<path class="freccia vela nascosto e-batt2" style="--luce:#34D399" d="M${80 + larg + 8} 330 V344 H${80 + 2 * larg - 8} V330"/>`;
+    svg(VB, s);
+    qa(".palla").forEach(p => p.addEventListener("click", () => { p.classList.add("batte"); clic(this.f >= 2 && p.classList.contains("primo") ? 2 : 1); dopo(160, () => p.classList.remove("batte")); }));
+  },
+  via(continua) {
+    if (metro.attivo && !continua) { metro.ferma(); $("#btnVia").innerHTML = "▶ Avvia"; qa(".batte").forEach(e => e.classList.remove("batte")); return; }
+    $("#btnVia").innerHTML = "■ Ferma";
+    const tot = 4 * this.n, palle = qa(".palla"), conte = qa(".conta");
+    metro.avvia((k, prog) => {
+      const i = k % tot, primo = i % this.n === 0;
+      if (prog) return this.f >= 2 ? (primo ? 2 : 1) : 1;
+      palle.forEach(p => p.classList.remove("batte")); conte.forEach(c => c.classList.remove("batte"));
+      palle[i].classList.add("batte"); if (this.f >= 2) conte[i].classList.add("batte");
+      if (this.f >= 2) cart(`<span style="font-size:30px">${(i % this.n) + 1}</span> <span class="piccolo">metro a ${this.n}</span>`, false);
+      return null;
+    });
+  },
+  fase(f, anim) {
+    this.f = f;
+    const g = f >= 2;
+    qa(".palla").forEach(p => { const primo = p.classList.contains("primo"); p.setAttribute("r", g && primo ? 30 : 24); p.classList.toggle("forte", g && primo); p.style.setProperty("--luce", g && primo ? "#FBBF24" : "#7DD3FC"); });
+    qa(".conta").forEach(c => mostra(c, g)); qa(".sbarra").forEach(c => mostra(c, g));
+    [".e-forte", ".e-batt", ".e-batt2"].forEach(c => mostra(q1(c), g));
+    const gm = $("#gMetro"); if (gm) gm.style.display = g ? "" : "none";
+    cart(["Ritmo: eventi regolari nel tempo <span class=\"piccolo\">· premi ▶</span>", "Pulsazione: il battito regolare", `Metro: pulsazioni a gruppi di ${this.n}`][f], anim);
+  }
+});
+
+/* ---------- 12. L'indicazione di tempo ---------- */
+const FIGURA = { 2: "minima", 4: "semiminima", 8: "croma" };
+PASSI.push({
+  cap: 2, breve: "Il tempo (4/4)", titolo: "L'indicazione di tempo",
+  punti: [
+    "All'inizio del brano si scrive l'<b>indicazione di tempo</b>, come una <b>frazione</b> (ma senza la linea).",
+    "Il numero <b>sopra</b> (unità di misura) dice <b>quanti movimenti</b> ci sono in ogni battuta.",
+    "Il numero <b>sotto</b> (unità di tempo) dice <b>quale figura</b> vale un movimento: 4 = semiminima.",
+    "Ogni movimento si può dividere in parti più brevi: è l'<b>unità di suddivisione</b> (di solito la metà: due crome)."
+  ],
+  quaderno: "<p><b>Numeratore</b> (sopra): quanti movimenti ci sono in ogni misura (2, 3 o 4). <b>Denominatore</b> (sotto): la figura che fa da unità di tempo (4 = semiminima, 8 = croma).</p>" +
+    "<p><b>Unità di suddivisione</b>: l'ulteriore frazionamento del movimento in parti più brevi, di solito la metà nei tempi semplici.</p>",
+  crea() {
+    this.n = this.n || 4; this.sudd = false;
+    this.disegna();
+    strumenti([
+      { gruppo: [2, 3, 4].map(n => ({ t: n + "/4", cls: n === this.n ? "on" : "", fn: el => { segna("gTempo", el); this.n = n; fermaTutto(); this.disegna(); this.fase(this.f, false); } })), id: "gTempo" },
+      { t: "▶ Ascolta e conta", id: "btnConta", cls: "forte", fn: () => this.conta() },
+      { t: "✂️ Suddivisione", id: "btnSudd", fn: el => { this.sudd = !this.sudd; el.classList.toggle("on", this.sudd); fermaTutto(); this.disegna(); this.fase(this.f, false); } }
+    ]);
+  },
+  disegna() {
+    const r = this.r = R(60, 950, 250, "violino"), n = this.n;
+    let s = svgRigo(r) + svgChiave(r, 74) + svgTempo(r, 178, n, 4, "ts");
+    const A = 246, B = 585, C = 950;
+    s += `<line class="stanghetta" x1="${B}" x2="${B}" y1="${r.y(8)}" y2="${r.yb}"/>`;
+    s += `<line class="stanghetta" x1="${C - 16}" x2="${C - 16}" y1="${r.y(8)}" y2="${r.yb}"/><line class="stanghetta grossa" x1="${C - 3}" x2="${C - 3}" y1="${r.y(8) + 1}" y2="${r.yb - 1}"/>`;
+    let k = 0;
+    [[A, B], [B, C - 16]].forEach(([a, z]) => {
+      const w = (z - a) / n;
+      for (let j = 0; j < n; j++) {
+        const x = a + (j + 0.5) * w;
+        if (!this.sudd) {
+          s += svgNota(r, x, 2, { gambo: 1, cls: "mov", attr: ` data-k="${k}"` });
+          s += `<text class="conta vela nascosto c-mov" data-k="${k}" x="${x}" y="${r.yb + 64}">${j + 1}</text>`; k++;
+        } else {
+          const x1 = x - w / 4, x2 = x + w / 4, yt = r.y(2) - 3.5 * S;
+          s += svgNota(r, x1, 2, { gambo: 1, cls: "mov", attr: ` data-k="${k}"` }) + svgNota(r, x2, 2, { gambo: 1, cls: "mov", attr: ` data-k="${k + 1}"` });
+          s += `<polygon points="${x1 + 5.25 * K - 1.2},${yt} ${x2 + 5.25 * K + 1.2},${yt} ${x2 + 5.25 * K + 1.2},${yt + 13} ${x1 + 5.25 * K - 1.2},${yt + 13}" fill="#EAF2FF"/>`;
+          s += `<text class="conta vela nascosto c-mov" data-k="${k}" x="${x1}" y="${r.yb + 64}">${j + 1}</text><text class="conta vela nascosto c-mov" data-k="${k + 1}" x="${x2}" y="${r.yb + 64}" style="font-size:20px">e</text>`;
+          k += 2;
+        }
+      }
+    });
+    // richiami: unità di misura (sopra) e unità di tempo (sotto)
+    s += `<g class="vela nascosto r-su"><path class="freccia" style="--luce:#F87171" d="M201 ${r.y(8) - 8} C201 ${r.y(8) - 62}, 240 ${r.y(8) - 76}, 270 ${r.y(8) - 76}"/>` +
+      `<text class="etic" x="280" y="${r.y(8) - 69}" fill="#F87171">UNITÀ DI MISURA → quanti movimenti in ogni battuta</text></g>`;
+    s += `<g class="vela nascosto r-giu"><path class="freccia" style="--luce:#F87171" d="M201 ${r.yb + 8} C201 ${r.yb + 72}, 240 ${r.yb + 104}, 270 ${r.yb + 104}"/>` +
+      `<text class="etic" x="280" y="${r.yb + 111}" fill="#F87171">UNITÀ DI TEMPO → quale figura vale un movimento</text></g>`;
+    s += `<rect class="colpo" data-c="su" x="170" y="${r.y(8)}" width="62" height="${2 * S}"/><rect class="colpo" data-c="giu" x="170" y="${r.y(4)}" width="62" height="${2 * S}"/>`;
+    svg(VB, s);
+    qa(".colpo").forEach(c => c.addEventListener("click", () => this.cifra(c.dataset.c)));
+    qa(".mov").forEach(m => m.addEventListener("click", () => { lampeggia(m); clic(1); }));
+  },
+  cifra(c) {
+    qa(".ts .cifra").forEach(g => g.querySelector(".glifo").classList.toggle("evid", g.classList.contains(c)));
+    q1(".ts").style.setProperty("--luce", "#F87171");
+    if (c === "su") { mostra(q1(".r-su")); qa(".c-mov").forEach(e => mostra(e)); cart(`Sopra: <b>${this.n}</b> <span class="piccolo">· ${this.n} movimenti in ogni battuta</span>`); }
+    else { mostra(q1(".r-giu")); cart(`Sotto: <b>4</b> = ${mini("nera", true)} semiminima <span class="piccolo">· (2 = ${mini("bianca", true)} minima · 8 = ${mini("croma", true)} croma)</span>`); }
+  },
+  conta() {
+    fermaTutto();
+    const mov = qa(".mov"), conte = qa(".c-mov"), n = this.n, sud = this.sudd;
+    conte.forEach(e => mostra(e));
+    metro.onFine = null;
+    metro.avvia((k, prog) => {
+      const perMov = sud ? 2 : 1, i = k % (2 * n * perMov);
+      if (prog) return (i % (n * perMov) === 0) ? 2 : (i % perMov === 0 ? 1 : 0);
+      mov.forEach(m => m.classList.remove("luce")); conte.forEach(c => c.classList.remove("batte"));
+      if (mov[i]) { mov[i].classList.add("luce"); conte[i].classList.add("batte"); }
+      if (k === 2 * n * perMov - 1) dopo(60000 / metro.bpm / perMov, () => { mov.forEach(m => m.classList.remove("luce")); conte.forEach(c => c.classList.remove("batte")); });
+      return null;
+    }, 2 * n * (sud ? 2 : 1), sud);
+    cart(`<b>${n}/4</b> <span class="piccolo">· si legge «${["", "", "due", "tre", "quattro"][n]} quarti»</span>`);
+  },
+  fase(f, anim) {
+    this.f = f;
+    if (f === 3 && !this.sudd && anim) { this.sudd = true; $("#btnSudd").classList.add("on"); this.disegna(); }
+    if (f < 3 && this.sudd && anim) { this.sudd = false; $("#btnSudd").classList.remove("on"); this.disegna(); }
+    mostra(q1(".r-su"), f >= 1); mostra(q1(".r-giu"), f >= 2);
+    qa(".c-mov").forEach(e => mostra(e, f >= 1 || this.sudd));
+    qa(".ts .glifo").forEach(g => g.classList.remove("evid"));
+    if (f === 0) { qa(".ts .glifo").forEach(g => g.classList.add("evid")); q1(".ts").style.setProperty("--luce", "#FBBF24"); cart(`<b>${this.n}/4</b> <span class="piccolo">· si legge «${["", "", "due", "tre", "quattro"][this.n]} quarti»</span>`, anim); }
+    if (f === 1) this.cifra("su");
+    if (f === 2) this.cifra("giu");
+    if (f === 3) cart("Suddivisione: ogni movimento diviso in due <span class=\"piccolo\">· 1 e 2 e…</span>", anim);
+    if (anim && f === 3) this.conta();
+  }
+});
+
+/* ---------- 13. Ripasso: tutto da copiare sul quaderno ---------- */
+const DEFINIZIONI = [
+  [0, "Pentagramma", "5 righe e 4 spazi, che si contano dal basso verso l'alto."],
+  [2, "Chiave", "serve a indicare l'altezza delle note sul pentagramma."],
+  [2, "Chiave di violino (o di sol)", "il SOL è sulla 2ª riga. Righe: mi sol si re fa. Spazi: fa la do mi."],
+  [6, "Chiave di basso (o di fa)", "il FA è sulla 4ª riga. Righe: sol si re fa la. Spazi: la do mi sol."],
+  [5, "Tagli addizionali", "piccole righe aggiunte sopra o sotto il pentagramma, per le note troppo acute o troppo gravi."],
+  [8, "Do centrale", "1° taglio sotto in chiave di violino, 1° taglio sopra in chiave di basso."],
+  [9, "Linea di battuta (o stanghetta)", "linea verticale che suddivide il brano in sezioni di uguale durata, chiamate battute o misure."],
+  [9, "Battuta (o misura)", "lo spazio compreso tra due stanghette; organizza il ritmo e le note in parti uguali."],
+  [9, "Doppia stanghetta conclusiva", "indica la fine di un brano o una netta transizione formale."],
+  [10, "Ritmo · Pulsazione · Metro", "eventi regolari nel tempo · unità ritmica che compone la battuta · come sono organizzate le pulsazioni."],
+  [11, "Indicazione di tempo", "sopra: quanti movimenti in ogni misura; sotto: la figura che vale un movimento (4 = semiminima)."],
+  [11, "Unità di suddivisione", "il movimento diviso in parti più brevi, di solito la metà nei tempi semplici."]
+];
+PASSI.push({
+  cap: 3, breve: "Sul quaderno", titolo: "Ricapitoliamo", soloTesto: true,
+  punti: ["Tutte le definizioni da copiare sul quaderno. Tocca una scheda per tornare al passo."],
+  crea() {
+    const box = document.createElement("div"); box.className = "ripasso";
+    DEFINIZIONI.forEach(([passo, t, d]) => {
+      const b = document.createElement("button"); b.className = "def";
+      b.style.setProperty("--colore", CAPITOLI[PASSI[passo].cap].colore);
+      b.innerHTML = `<span class="vai">${passo + 1} →</span><b>${t}</b>: ${d}`;
+      b.addEventListener("click", () => vai(passo, PASSI[passo].punti.length - 1));
+      box.appendChild(b);
+    });
+    PALCO.innerHTML = ""; PALCO.appendChild(box);
+    STRUM.innerHTML = `<div class="allenati"><span>Ora allenati:</span>
+      <a class="btn" href="leggi-la-nota.html">🎼 Leggi la nota</a><a class="btn" href="recita-le-note.html">🗣️ Recita le note</a>
+      <a class="btn" href="figure-ritmiche.html">♩ Figure ritmiche</a><a class="btn" href="costruttore-di-battute.html">🧱 Costruttore di battute</a></div>`;
+  },
+  fase() { cart("📒 Da copiare sul quaderno", false); }
+});
+
+/* ================= navigazione ================= */
+let passo = 0, fase = 0;
+const visti = new Set();
+const LEZ = $("#lezione");
+
+(function indice() {
+  const nav = $("#indice");
+  CAPITOLI.forEach((c, ci) => {
+    const g = document.createElement("div"); g.className = "gruppo"; g.style.setProperty("--colore", c.colore);
+    const quanti = PASSI.filter(p => p.cap === ci).length; g.style.flex = quanti + " 1 0";
+    g.innerHTML = `<div class="cap">${c.nome}</div><div class="pillole"></div>`;
+    PASSI.forEach((p, i) => {
+      if (p.cap !== ci) return;
+      const b = document.createElement("button"); b.className = "pillola"; b.dataset.i = i; b.title = (i + 1) + ". " + p.titolo;
+      b.innerHTML = `<span class="n">${i + 1}</span><span class="t">${p.breve}</span>`;
+      b.addEventListener("click", () => vai(i, 0));
+      g.querySelector(".pillole").appendChild(b);
+    });
+    nav.appendChild(g);
+  });
+})();
+
+function vai(i, f = 0, anim = true) {
+  fermaTutto();
+  if (AC && AC.state === "running") riposo(0);
+  const cambia = i !== passo || !PALCO.firstChild;
+  passo = i; fase = f; visti.add(i);
+  const P = PASSI[i];
+  document.documentElement.style.setProperty("--cap", CAPITOLI[P.cap].colore);
+  LEZ.classList.toggle("solo-testo", !!P.soloTesto);
+  if (cambia) {
+    $("#capitolo").textContent = CAPITOLI[P.cap].nome;
+    $("#titoloPasso").textContent = P.titolo;
+    const ul = $("#punti"); ul.innerHTML = "";
+    P.punti.forEach((t, k) => { const li = document.createElement("li"); li.innerHTML = t; li.addEventListener("click", () => vai(passo, k)); ul.appendChild(li); });
+    const qd = $("#quaderno"); qd.innerHTML = P.quaderno ? `<div class="tit">📒 Sul quaderno</div>${P.quaderno}` : "";
+    P.crea();
+  }
+  // punti: già visti, quello di adesso, quelli dopo nascosti
+  [...$("#punti").children].forEach((li, k) => { li.classList.toggle("ora", k === f); li.classList.toggle("dopo", k > f); });
+  $("#quaderno").hidden = !P.quaderno || f < P.punti.length - 1;
+  P.fase(f, anim);
+  // fasi in basso
+  const fs = $("#fasi"); fs.innerHTML = "";
+  if (P.punti.length > 1) P.punti.forEach((_, k) => {
+    const b = document.createElement("button"); b.textContent = k + 1; b.className = k < f ? "fatta" : k === f ? "ora" : "";
+    b.setAttribute("aria-label", "Punto " + (k + 1)); b.addEventListener("click", () => vai(passo, k)); fs.appendChild(b);
+  });
+  document.querySelectorAll(".pillola").forEach(b => { const n = +b.dataset.i; b.classList.toggle("attiva", n === i); b.classList.toggle("vista", visti.has(n) && n !== i); });
+  $("#contatore").textContent = `Passo ${i + 1} di ${PASSI.length}`;
+  $("#indietro").disabled = i === 0 && f === 0;
+  const ultimo = i === PASSI.length - 1 && f === P.punti.length - 1;
+  $("#avanti").disabled = ultimo;
+  $("#avanti").innerHTML = f < P.punti.length - 1 ? "Avanti ▶" : (i < PASSI.length - 1 ? "Passo " + (i + 2) + " ▶" : "Fine");
+  try { history.replaceState(null, "", "#passo-" + (i + 1)); } catch (e) { }
+  adattaTesto();
+}
+// se il testo del passo non sta nella sua scheda, si rimpicciolisce un poco (mai sotto 15 px)
+function adattaTesto() {
+  const sp = $(".spiega"); let fs = 20;
+  sp.style.removeProperty("--fs"); sp.style.removeProperty("--fq");
+  if (getComputedStyle(sp).overflow !== "hidden" || sp.offsetParent === null) return;
+  while (sp.scrollHeight > sp.clientHeight + 1 && fs > 15) { fs -= 0.5; sp.style.setProperty("--fs", fs + "px"); sp.style.setProperty("--fq", (fs * 0.78) + "px"); }
+}
+function avanti() {
+  const P = PASSI[passo];
+  if (fase < P.punti.length - 1) vai(passo, fase + 1);
+  else if (passo < PASSI.length - 1) vai(passo + 1, 0);
+}
+function indietro() {
+  if (fase > 0) vai(passo, fase - 1, false);
+  else if (passo > 0) vai(passo - 1, PASSI[passo - 1].punti.length - 1, false);
+}
+$("#avanti").addEventListener("click", avanti);
+$("#indietro").addEventListener("click", indietro);
+document.addEventListener("keydown", e => {
+  if (e.target.closest("input, textarea")) return;
+  if (["ArrowRight", "PageDown"].includes(e.key)) { e.preventDefault(); avanti(); }
+  if (["ArrowLeft", "PageUp"].includes(e.key)) { e.preventDefault(); indietro(); }
+});
+$("#btnColori").addEventListener("click", e => {
+  const on = document.body.classList.toggle("colori");
+  e.currentTarget.classList.toggle("attivo", on);
+});
+document.addEventListener("visibilitychange", () => { if (document.hidden) { fermaTutto(); if (AC && AC.state === "running") AC.suspend(); } });
+
+if (document.fonts && document.fonts.ready) document.fonts.ready.then(adattaTesto);
+window.addEventListener("resize", () => { cancelAnimationFrame(adattaTesto.t); adattaTesto.t = requestAnimationFrame(adattaTesto); });
+const daIndirizzo = parseInt((location.hash.match(/passo-(\d+)/) || [])[1], 10);
+vai(daIndirizzo >= 1 && daIndirizzo <= PASSI.length ? daIndirizzo - 1 : 0, 0, true);
+</script>
+<script src="adatta-schermo.js" data-schermate="#lezione"></script>
+</body>
+</html>
