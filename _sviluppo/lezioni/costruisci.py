@@ -6,8 +6,8 @@ import os
 D = os.path.dirname(os.path.abspath(__file__)) + "/"
 SITO = os.path.abspath(D + "../..") + "/"
 import json,re
-src=open('/home/claude/musicapeyron.github.io/note-sul-pentagramma.html',encoding='utf-8').read()
-motore=open(D+'ritmo-motore.js',encoding='utf-8').read()
+src=open(SITO+'note-sul-pentagramma.html',encoding='utf-8').read()
+motore=open(D+'ritmo-motore.js',encoding='utf-8').read()+'\n'+open(D+'vexflow-palco.js',encoding='utf-8').read()
 rg=json.load(open(D+'ritmo-glifi.json'))
 CSS=open(D+'ritmo.css',encoding='utf-8').read()
 def costruisci(passi_file, out, titolo, h1, desc):
@@ -29,9 +29,14 @@ def costruisci(passi_file, out, titolo, h1, desc):
     rep("   Le note sul pentagramma — lezione interattiva a passi.",f"   {h1} — lezione interattiva a passi (stesso motore di note-sul-pentagramma.html;\n   si rigenera con _sviluppo/lezioni/costruisci.py a partire dai file in _sviluppo/lezioni/).")
     rep("function fermaTutto() { TIMER.forEach(clearTimeout); TIMER = []; metro.ferma(); cancelAnimationFrame(ANIMA); }",
         "function fermaTutto() { TIMER.forEach(clearTimeout); TIMER = []; metro.ferma(); cancelAnimationFrame(ANIMA); if (typeof zittisci === \"function\") zittisci(); }")
+    rep('<link rel="stylesheet" href="comune.css">','<link rel="stylesheet" href="comune.css">\n<!-- VexFlow (nel sito, nessun servizio esterno): disegna la musica nel palco -->\n<script src="vexflow.js"></script>')
+    rep('function svg(vb, contenuto) { PALCO.innerHTML = `<svg viewBox="${vb}" preserveAspectRatio="xMidYMid meet" aria-hidden="true">${contenuto}</svg>`; }',
+        'function svg(vb, contenuto) { PALCO.innerHTML = `<svg viewBox="${vb}" preserveAspectRatio="xMidYMid meet" aria-hidden="true">${contenuto}</svg>`; if (typeof vfRiempi === "function") vfRiempi(); }')
     rep("@media (prefers-reduced-motion: reduce) {", CSS+"\n@media (prefers-reduced-motion: reduce) {\n  .cresce { transition: none; }")
     open(SITO+out,'w',encoding='utf-8').write(t); print(out,len(t))
-costruisci('passi-punto.js','punto-di-valore.html','Il punto di valore','Il punto di valore',
+import sys
+SOLO = sys.argv[1:]
+if not SOLO or 'punto' in SOLO: costruisci('passi-punto.js','punto-di-valore.html','Il punto di valore','Il punto di valore',
   "Lezione interattiva per la LIM: il punto di valore e il doppio punto, sulle note e sulle pause, con le barre della durata, l'ascolto e le battute di esempio.")
-costruisci('passi-legatura.js','legatura-di-valore.html','La legatura di valore','La legatura di valore',
+if not SOLO or 'legatura' in SOLO: costruisci('passi-legatura.js','legatura-di-valore.html','La legatura di valore','La legatura di valore',
   "Lezione interattiva per la LIM: la legatura di valore, i valori che si sommano, la legatura oltre la stanghetta, legatura o punto, legatura di valore o di portamento.")

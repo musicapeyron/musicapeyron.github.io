@@ -19,24 +19,9 @@ function nomeFig(fig, punti = 0, pausa = false) {
   return (pausa ? NOME_PAUSA[fig] : NOME_FIG[fig]) + (punti === 1 ? " col punto" : punti === 2 ? " col doppio punto" : "");
 }
 
-/* una figura disegnata (nota o pausa); k = scala dei glifi; y = centro della testa (o riga centrale per le pause) */
+/* una figura da sola (nota o pausa), disegnata da VexFlow; x, y = centro della testa (o riga centrale per le pause) */
 function svgFig(x, y, fig, punti = 0, o = {}) {
-  const k = o.k || K, sp = 10 * k, pausa = o.pausa, gl = fig === "w" ? "tonda" : fig === "h" ? "bianca" : "nera";
-  let s = `<g class="fig ${o.cls || ""}"${o.attr || ""}>`;
-  if (pausa) {
-    const dy = fig === "w" ? -sp : 0;          // la pausa di semibreve pende dalla 4ª riga
-    s += `<path class="glifo" d="${GLIFI.r[fig]}" transform="translate(${x} ${y + dy}) scale(${k})"/>`;
-  } else {
-    s += `<path class="testa" d="${GLIFI[gl]}" transform="translate(${x} ${y}) scale(${k})"/>`;
-    if (fig !== "w" && !o.senzaGambo) {
-      const gx = x + 5.25 * k, top = y - (o.gambo || 3.5) * sp;
-      s += `<line class="gambo" x1="${gx}" x2="${gx}" y1="${y - 2}" y2="${top}"/>`;
-      if ((fig === "8" || fig === "16") && !o.trave) s += `<path class="glifo" d="${GLIFI[fig === "8" ? "coda8" : "coda16"]}" transform="translate(${gx} ${top}) scale(${k})"/>`;
-    }
-  }
-  const largo = fig === "w" ? 8.5 : 6;
-  for (let i = 0; i < punti; i++) s += `<circle class="punto${o.puntoCls ? " " + o.puntoCls : ""}" data-i="${i}" cx="${x + largo * k + 10 + i * 0.9 * sp}" cy="${y - (o.puntoSu ? sp / 2 : 0)}" r="${0.36 * sp}"/>`;
-  return s + "</g>";
+  return vfFigura({ x, y, fig, punti, pausa: o.pausa, k: o.k || K, cls: o.cls, p: 4, gambo: 1, puntoCls: o.puntoCls });
 }
 
 /* ---------- suono tenuto (dura quanto la figura) e colpi del metronomo, che si fermano cambiando passo ---------- */
@@ -85,29 +70,16 @@ function svgBattute(B, opz = {}) {
     else if (!o.senzaFine) s += `<line class="stanghetta" x1="${x - 12}" x2="${x - 12}" y1="${r.y(8)}" y2="${r.yb}"/><line class="stanghetta grossa" x1="${x - 1}" x2="${x - 1}" y1="${r.y(8) + 1}" y2="${r.yb - 1}"/>`;
     else s += `<line class="stanghetta" x1="${x}" x2="${x}" y1="${r.y(8)}" y2="${r.yb}"/>`;
   }
-  ev.forEach((e, i) => {
-    const x = B.x(e.t) + 18, y = r.y(e.p);
-    e.xn = x;
-    const nm = e.pausa ? "" : nota("violino", e.p).nome;
-    s += `<g class="ev${e.pausa ? "" : " nota c-" + nm}" data-i="${i}">` + svgTagli(r, x, e.p) +
-      svgFig(x, e.pausa ? r.y(4) : y, e.fig, e.punti || 0, { pausa: e.pausa, trave: e.trave || (i > 0 && ev[i - 1].trave), puntoSu: !e.pausa && e.p % 2 === 0, puntoCls: "punto-ev" }) + `</g>`;
-  });
-  // travature (coppie unite)
-  ev.forEach((e, i) => {
-    if (!e.trave || !ev[i + 1]) return;
-    const a = e, b = ev[i + 1], xa = a.xn + 5.25 * K, xb = b.xn + 5.25 * K, top = r.y(2) - 3.5 * S;
-    s += `<polygon class="trave" points="${xa - 1.2},${top} ${xb + 1.2},${top} ${xb + 1.2},${top + 12} ${xa - 1.2},${top + 12}"/>`;
-    if (b.fig === "16") s += `<polygon class="trave" points="${xb - 22},${top + 20} ${xb + 1.2},${top + 20} ${xb + 1.2},${top + 31} ${xb - 22},${top + 31}"/>`;
-    if (a.fig === "16") s += `<polygon class="trave" points="${xa - 1.2},${top + 20} ${xa + 22},${top + 20} ${xa + 22},${top + 31} ${xa - 1.2},${top + 31}"/>`;
-  });
-  // legature (sotto le teste, perché i gambi vanno in su)
-  ev.forEach((e, i) => { if (e.lega && ev[i + 1]) s += svgLegatura(e.xn + 14, ev[i + 1].xn - 14, r.y(e.p) + 22, "leg-" + i); });
+  ev.forEach(e => e.xn = B.x(e.t) + 18);
+  // chiave e indicazione di tempo (se richieste) + note: tutto VexFlow, sopra le nostre righe
+  s += vfRigo({ x0: opz.rx0 !== undefined ? opz.rx0 : r.x0, x1: r.x1, yb: r.yb, chiave: opz.chiave === false ? null : "violino", tempo: opz.tempo || null,
+    ev: ev.map(e => ({ fig: e.fig, punti: e.punti, pausa: e.pausa, p: e.p, lega: e.lega, trave: e.trave, acc: e.acc, puntoCls: "punto-ev" })), xs: ev.map(e => e.xn), i0: opz.i0 || 0, cls: opz.cls });
   // barre della durata e numeri del conteggio
   if (o.barre) ev.forEach((e, i) => {
     const xa = B.x(e.t), xb = B.x(e.t + e.d) - 5, base = valore(e.fig, 0);
     let parti = [base]; for (let k = 1; k <= (e.punti || 0); k++) parti.push(parti[k - 1] / 2);
     let tt = e.t;
-    s += `<g class="barra${e.pausa ? " silenzio" : ""}" data-i="${i}">`;
+    s += `<g class="barra${e.pausa ? " silenzio" : ""}" data-i="${(opz.i0 || 0) + i}">`;
     parti.forEach((v, k) => { const a = B.x(tt), b = Math.min(B.x(tt + v) - (k === parti.length - 1 ? 5 : 1), xb);
       s += `<rect class="pezzo pz${k}" x="${a}" y="${o.barre}" width="${Math.max(4, b - a)}" height="26" rx="6"/>`; tt += v; });
     s += `<rect class="riempi" x="${xa}" y="${o.barre}" width="${Math.max(4, xb - xa)}" height="26" rx="6"/>`;

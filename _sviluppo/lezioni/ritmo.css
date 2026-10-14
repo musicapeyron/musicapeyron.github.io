@@ -31,3 +31,18 @@
 .ripasso-grande .def { font-size: 17px; padding: 10px 16px; }
 @media (max-width: 620px) and (orientation: portrait) { .ripasso-grande { grid-template-columns: 1fr; } .ripasso-grande .def { font-size: 12px; padding: 6px 9px; } }
 
+
+/* ---------- musica disegnata da VexFlow (le righe del pentagramma restano nostre) ---------- */
+.vfr path { fill: #EAF2FF; stroke: none; }
+.vfr .vf-stem path, .vfr path[fill="none"] { fill: none !important; stroke: #EAF2FF; stroke-width: 1.3; }
+.vfr .vf-stavetie path, .vfr .vf-beam path, .vfr .vf-curve path { fill: #EAF2FF; }
+body.colori .vfr .nota.c-do .vf-notehead path:not(.punto) { fill: var(--do); }
+body.colori .vfr .nota.c-re .vf-notehead path:not(.punto) { fill: var(--re); }
+body.colori .vfr .nota.c-mi .vf-notehead path:not(.punto) { fill: var(--mi); }
+body.colori .vfr .nota.c-fa .vf-notehead path:not(.punto) { fill: var(--fa); }
+body.colori .vfr .nota.c-sol .vf-notehead path:not(.punto) { fill: var(--sol); }
+body.colori .vfr .nota.c-la .vf-notehead path:not(.punto) { fill: var(--la); }
+body.colori .vfr .nota.c-si .vf-notehead path:not(.punto) { fill: var(--si); }
+.vfr .ev { cursor: pointer; }
+.vfr .ev.pop, .vfr.pop { transform-box: fill-box; transform-origin: 50% 70%; animation: pop .22s ease-out; }
+.vfr .punto { transition: opacity .3s; }

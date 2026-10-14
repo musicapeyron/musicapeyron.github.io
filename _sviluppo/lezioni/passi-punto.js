@@ -40,8 +40,7 @@ PASSI.push({
 /* ---------- 2. Il punto di valore ---------- */
 function palcoPunto(fig, punti, U = 130) {
   const r = R(60, 340, 260, "violino");
-  let s = svgRigo(r) + svgChiave(r, 74);
-  s += `<g class="nota c-sol fig-grande">` + svgFig(230, r.y(2), fig, punti, { puntoSu: true, puntoCls: "punto-big vela nascosto" }) + `</g>`;
+  let s = svgRigo(r, { spazi: true }) + vfRigo({ x0: r.x0, x1: r.x1, yb: r.yb, ev: [{ fig, punti, p: 2, cls: "fig-grande", puntoCls: "punto-big vela nascosto" }], xs: [235] });
   // barre: valore della nota, poi i pezzi dei punti
   let parti = [BASE_VAL[fig]]; for (let k = 1; k <= punti; k++) parti.push(parti[k - 1] / 2);
   let x = 420; const y = 150;
@@ -138,7 +137,7 @@ PASSI.push({
     if (f === 1) {
       const r = R(60, 940, 210, "violino");
       this.B = Battute(r, [{ fig: "q" }, { fig: "h", punti: 1, pausa: true }], { x0: 250, x1: 930, num: 4, barre: 280, conta: 360 });
-      g.innerHTML = svgRigo(r) + svgChiave(r, 74) + svgTempo(r, 178, 4, 4) + svgBattute(this.B);
+      g.innerHTML = svgRigo(r) + svgBattute(this.B, { tempo: "4/4" }); vfRiempi();
     }
     cart(["Anche le pause col punto", "1 + 3 = 4 movimenti"][f], anim);
     ascoltaNelTesto(this);
@@ -217,7 +216,7 @@ PASSI.push({
   fase(f, anim) {
     fermaTutto(); const E = ESEMPI_PUNTO[f], r = R(60, 940, 200, "violino");
     this.B = Battute(r, E.ev, { x0: 250, x1: 930, num: E.num, barre: 270, conta: 350 });
-    q1(".scena").innerHTML = svgRigo(r) + svgChiave(r, 74) + svgTempo(r, 178, E.num, 4) + svgBattute(this.B);
+    q1(".scena").innerHTML = svgRigo(r) + svgBattute(this.B, { tempo: E.num + "/4" }); vfRiempi();
     cart(`<b>${E.num}/4</b> <span class="piccolo">· esempio ${f + 1} di ${ESEMPI_PUNTO.length}</span>`, anim);
     ascoltaNelTesto(this);
   }
