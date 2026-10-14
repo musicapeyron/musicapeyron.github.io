@@ -97,6 +97,9 @@ button { font-family: inherit; }
 .punti li.ora { color: #fff; }
 .punti li.ora::before { opacity: 1; box-shadow: 0 0 0 4px color-mix(in srgb, var(--cap) 30%, transparent); }
 .punti li b { color: #fff; }
+.ascolta-in { font-family: 'Manrope', sans-serif; font-weight: 800; font-size: .85em; color: #0f172a; background: var(--cap); border: 0;
+  border-radius: 999px; padding: 3px 12px; margin-left: 4px; cursor: pointer; vertical-align: 1px; }
+.ascolta-in:hover { filter: brightness(1.15); }
 .quaderno { margin-top: auto; padding: 10px 14px 11px; border-radius: 12px; background: rgba(253, 231, 199, 0.08);
   border: 1px dashed rgba(253, 231, 199, 0.45); font-size: var(--fq, 15.5px); line-height: 1.4; color: #FDE7C7; }
 .quaderno .tit { font-family: 'Manrope', sans-serif; font-weight: 800; font-size: 11.5px; letter-spacing: .14em; text-transform: uppercase; margin-bottom: 3px; }
@@ -433,7 +436,10 @@ function clic(forza, quando = 0) {               // colpo del metronomo: 2 = acc
 let TIMER = [];
 const dopo = (ms, fn) => { TIMER.push(setTimeout(fn, ms)); };
 let ANIMA = 0;
-function fermaTutto() { TIMER.forEach(clearTimeout); TIMER = []; metro.ferma(); cancelAnimationFrame(ANIMA); }
+function fermaTutto() {
+  TIMER.forEach(clearTimeout); TIMER = []; metro.ferma(); cancelAnimationFrame(ANIMA);
+  if (typeof PASSI !== "undefined") PASSI.forEach(p => p.finisci && p.finisci(true));   // il suono continuo del violino si ferma sempre
+}
 
 /* ================= disegno SVG ================= */
 const $ = s => document.querySelector(s);
@@ -1113,8 +1119,8 @@ const ARCHI = {
 PASSI.push({
   cap: 2, breve: "Violino e violoncello", titolo: "Le alterazioni su violino e violoncello",
   punti: [
-    "Violino e violoncello <b>non hanno tasti</b>: il dito si può fermare in <b>qualsiasi punto</b> della corda, e il suono scivola.",
-    "Per un <b>semitono</b> le dita stanno <b>vicine</b> (attaccate); per un <b>tono</b> stanno <b>lontane</b> (staccate).",
+    "Violino e violoncello <b>non hanno tasti</b>: il dito si può fermare in <b>qualsiasi punto</b> della corda, e il suono scivola. <button class=\"ascolta-in\" data-az=\"scivola\">▶ Ascolta</button>",
+    "Per un <b>semitono</b> le dita stanno <b>vicine</b> (attaccate); per un <b>tono</b> stanno <b>lontane</b> (staccate). <button class=\"ascolta-in\" data-az=\"dita\">▶ Ascolta</button>",
     "Il musicista trova il punto giusto <b>con l'orecchio</b>. Prova tu: trascina il dito sulla corda."
   ],
   quaderno: "<p>Negli strumenti ad arco senza tasti: semitono = dita <b>vicine</b>, tono = dita <b>lontane</b>.</p>",
@@ -1174,14 +1180,20 @@ PASSI.push({
   muovi(x) {
     const xs = Math.max(this.X0, Math.min(this.pos(13), x)), n = this.n(xs), m0 = ARCHI[this.str].corde[this.c];
     if (this.voce) this.voce.o.frequency.setTargetAtTime(440 * Math.pow(2, (m0 + n - 69) / 12), AC.currentTime, 0.02);
-    const vicino = Math.round(n), scarto = n - vicino, nm = nomeTastoHTML(m0 + vicino);
+    this.ultimo = n;
     q1(".dita").innerHTML = `<g class="dito"><circle cx="${xs}" cy="${this.y(this.c)}" r="17" style="fill:#FDE047"/></g>`;
-    const giusto = Math.abs(scarto) < 0.18;
-    cart(`${nm} <span class="piccolo">· ${giusto ? "intonato ✓" : scarto > 0 ? "un po' troppo alto" : "un po' troppo basso"}</span>`, false);
   },
-  finisci() {
+  // quando il dito si ferma: la nota più vicina e se è intonata
+  dove() {
+    if (this.ultimo === undefined) return;
+    const m0 = ARCHI[this.str].corde[this.c], n = this.ultimo, vicino = Math.round(n), scarto = n - vicino;
+    const giusto = Math.abs(scarto) < 0.18;
+    cart(`${nomeTastoHTML(m0 + vicino)} <span class="piccolo">· ${giusto ? "intonato ✓" : scarto > 0 ? "un po' troppo alto" : "un po' troppo basso"}</span>`, false);
+  },
+  finisci(zitto) {
     if (!this.voce) return;
     const { o, g } = this.voce; this.voce = null;
+    if (!zitto) this.dove();
     try { g.gain.setTargetAtTime(0.0001, AC.currentTime, 0.05); o.stop(AC.currentTime + 0.3); } catch (_) {}
     riposo(0.4);
   },
@@ -1189,11 +1201,11 @@ PASSI.push({
     fermaTutto(); q1(".dita").innerHTML = "";
     this.inizia(1, this.pos(0));
     const t0 = performance.now(), dur = 3600;
-    const passo = ora => { const k = Math.min(1, (ora - t0) / dur), n = k < .5 ? k * 2 * 7 : (1 - k) * 2 * 7; this.muovi(this.pos(n)); if (k < 1) ANIMA = requestAnimationFrame(passo); else { this.finisci(); cart("Il suono <b>scivola</b>: non ci sono tasti", false); } };
+    const passo = ora => { const k = Math.min(1, (ora - t0) / dur), n = k < .5 ? k * 2 * 7 : (1 - k) * 2 * 7; this.muovi(this.pos(n)); if (k < 1) ANIMA = requestAnimationFrame(passo); else { this.finisci(true); q1(".dita").innerHTML = ""; } };
     ANIMA = requestAnimationFrame(passo);
   },
   dita() {
-    fermaTutto(); this.finisci(); const c = 1, m0 = ARCHI[this.str].corde[c];
+    fermaTutto(); const c = 1, m0 = ARCHI[this.str].corde[c];
     const g = q1(".dita");
     g.innerHTML = "";
     dopo(100, () => { g.innerHTML = this.mettiDito(c, 2, 1, "#7DD3FC"); suona(m0 + 2, 0, .8); cart(`1° dito: ${nomeTastoHTML(m0 + 2)}`, false); });
@@ -1201,12 +1213,11 @@ PASSI.push({
     dopo(2600, () => { g.innerHTML = this.mettiDito(c, 2, 1, "#7DD3FC") + this.mettiDito(c, 4, 2, "#34D399"); suona(m0 + 4, 0, .8); cart(`2° dito <b>lontano</b>: ${nomeTastoHTML(m0 + 4)} <span class="piccolo">· tono</span>`, false); });
   },
   fase(f, anim) {
-    this.f = f; fermaTutto(); this.finisci(); q1(".dita").innerHTML = "";
+    this.f = f; fermaTutto(); q1(".dita").innerHTML = "";
     mostra(q1(".guida"), f >= 2);
     cart(["Nessun tasto: il suono scivola", "Dita vicine, dita lontane", "Trova il punto con l'orecchio"][f], anim);
-    if (!anim) return;
-    if (f === 0) this.scivola();
-    if (f === 1) this.dita();
+    // il suono parte solo con «Ascolta», alla fine del testo
+    document.querySelectorAll("#punti .ascolta-in").forEach(b => b.onclick = e => { e.stopPropagation(); this[b.dataset.az](); });
   }
 });
 

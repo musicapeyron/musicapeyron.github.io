@@ -440,7 +440,9 @@ agli strumenti virtuali esterni (pianoforte, chitarra, violino, violoncello): or
   l'alterazione dura tutta la battuta, che il bequadro la annulla e che dopo la stanghetta si riparte naturali.
 - **Strumenti veri, senza uscire dal sito**: manico di chitarra con i tasti nelle proporzioni reali (si tocca qualsiasi
   corda e tasto); tastiera del violino e del violoncello dove si **trascina il dito** e il suono scivola, con il nome della
-  nota più vicina e «intonato ✓ / un po' troppo alto / basso»: si capisce perché agli archi serve l'orecchio.
+  nota più vicina e «intonato ✓ / un po' troppo alto / basso» quando il dito si ferma (mentre scorre non compaiono scritte):
+  si capisce perché agli archi serve l'orecchio. In questo passo il suono non parte da solo: c'è «▶ Ascolta» alla fine
+  della frase, così il docente sceglie quando farlo sentire.
 - **Tabella finale** uguale a quella del programma (simbolo, nome, definizione), più tono e semitono; ogni riga riporta al passo.
 - Colori delle note su tasti (striscia sotto il tasto), nomi e note; nessun microfono, nessun dato raccolto.
 
