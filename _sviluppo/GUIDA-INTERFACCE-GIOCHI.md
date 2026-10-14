@@ -159,6 +159,10 @@ e si cambia il `?v=` nelle quattro pagine). Regole:
 - Le battute col ritmo (`vfRigo`) hanno note a distanza **proporzionale alla durata**, per allinearle alle barre della durata.
 - Mai far «saltare» (`.pop`) un gruppo che ha l'attributo `transform`: si rompe. Il disegno sta in un gruppo interno `.vfr`.
 - Ciò che VexFlow disegna male (curve di portamento fra note vicine) lo disegna la pagina, con la stessa forma.
+- **Il palco è un foglio bianco con l'inchiostro nero**, come uno spartito (cartellino e pulsanti restano scuri).
+  Sul bianco: teste colorate con un sottile bordo nero (il MI giallo si vede), nomi delle note con colori un po' più
+  scuri, righe accese più spesse, luce delle note arancione; niente segni neri sul pentagramma che sembrino musica
+  (es. un «=» fra due battute sembra una pausa: va sopra il pentagramma).
 - Prove: oltre a `stati.py`, script che toccano ogni pulsante e controllano il risultato (suoni, valori, legature):
   le sole schermate non bastano.
 

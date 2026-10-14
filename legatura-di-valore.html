@@ -230,6 +230,39 @@ body.colori .nota.c-la .vf-notehead path:not(.glifo-alt), body.colori .nota.c-so
 .gambo-evid .vf-stem path { stroke: #FDE047; stroke-width: 2; filter: drop-shadow(0 0 6px #FDE047); }
 .vfr .glifo-alt.evid { fill: var(--luce, #FDE047) !important; }
 
+/* ---------- IL FOGLIO: il palco è bianco con l'inchiostro nero, come uno spartito vero ----------
+   (il cartellino sopra e i pulsanti sotto restano scuri come il resto del sito) */
+.palco { background: #FFFFFF; margin: 0 12px; border-radius: 12px; box-shadow: inset 0 0 0 1px rgba(15,23,42,0.08); }
+.lezione.solo-testo .palco { background: transparent; margin: 0; box-shadow: none; }
+.palco .riga, .palco .taglio, .palco .stanghetta { stroke: #1F2937; }
+.palco .riga.accesa { stroke: var(--luce, #F59E0B); stroke-width: 9; filter: saturate(1.5) brightness(.88); }
+.palco .spazio.acceso { opacity: .42; }
+.palco .glifo, .palco .vfr path, .palco .glifo-alt { fill: #111827; }
+.palco .vfr .vf-stem path { stroke: #111827; }
+.palco .evid, .palco .evid .glifo, .palco .evid.glifo, .palco .vfr .evid { fill: var(--luce, #F59E0B) !important; filter: saturate(1.5) brightness(.85) drop-shadow(0 0 3px rgba(0,0,0,.25)); }
+/* teste colorate: un sottile bordo nero, così anche il MI giallo si vede sul bianco */
+body.colori .palco .nota[class*="c-"] .vf-notehead path:not(.glifo-alt) { stroke: #111827; stroke-width: .9; }
+.palco .nota.luce .vf-notehead { filter: drop-shadow(0 0 5px #F59E0B) drop-shadow(0 0 2px #F59E0B); }
+.palco .gambo-evid .vf-stem path { stroke: #E11D48; stroke-width: 2.2; filter: none; }
+/* nomi delle note: colori un po' più scuri, con un alone bianco */
+.palco .nome { fill: #111827; stroke: #FFFFFF; }
+.palco .nome.coperto { fill: #94A3B8; }
+body.colori .palco .nome.c-do { fill: #D0103A; } body.colori .palco .nome.c-re { fill: #D97706; } body.colori .palco .nome.c-mi { fill: #A88A00; }
+body.colori .palco .nome.c-fa { fill: #4D7C0F; } body.colori .palco .nome.c-sol { fill: #00807A; } body.colori .palco .nome.c-la { fill: #5E50A1; } body.colori .palco .nome.c-si { fill: #B8327F; }
+/* scritte, frecce e numeri del disegno */
+.palco .etic { fill: #334155; stroke: #FFFFFF; }
+.palco .etic[fill], .palco text[fill], .palco .freccia, .palco .esito { filter: saturate(1.4) brightness(.78); }
+.palco [fill="#EAF2FF"] { fill: #111827; }
+.palco [stroke="rgba(255,255,255,0.25)"] { stroke: rgba(15,23,42,0.3); }
+.palco .cursore { stroke: #111827; }
+.palco .colpo:hover { fill: rgba(15,23,42,0.04); }
+.palco .mano .tratto { stroke: #111827; }
+.palco .mano .pallino, .palco .mano .puntino { fill: #111827; }
+.palco .palla { fill: #E2E8F0; stroke: #64748B; }
+.palco .palla.batte { stroke: #111827; }
+.palco .conta { fill: #64748B; } .palco .conta.batte { fill: #111827; }
+.palco .chip rect { fill: #1E293B; }
+
 
 /* ---------- ritmo: figure, barre della durata, legature ---------- */
 .fig .glifo { fill: #EAF2FF; }
@@ -280,6 +313,18 @@ body.colori .vfr .nota.c-si .vf-notehead path:not(.punto) { fill: var(--si); }
 .vfr .punto { transition: opacity .3s; }
 .legatura-vf.appare { animation: appare .9s ease-out both; }
 @keyframes appare { from { opacity: 0; } to { opacity: 1; } }
+
+/* foglio bianco: figure, barre e numeri */
+.palco .punto { fill: #111827; }
+.palco .nome-fig { fill: #111827; }
+.palco .val-riga, .palco .uguale { fill: #1E293B; }
+.palco .conta-n { fill: #475569; }
+.palco .barra .riempi { fill: rgba(15,23,42,0.28); }
+.palco .barra.silenzio .pezzo { fill: rgba(148,163,184,0.18); stroke: #64748B; }
+.palco .barra.silenzio .pz1 { fill: rgba(251,191,36,0.3); stroke: #B45309; }
+.palco .barra.silenzio .val-barra { fill: #334155; }
+.palco .riga-val.scelta .nome-fig { fill: #B45309; }
+.palco .legatura-vf path { fill: #111827; }
 
 @media (prefers-reduced-motion: reduce) {
   .cresce { transition: none; }
@@ -898,7 +943,7 @@ PASSI.push({
     this.B2 = Battute(r, [{ fig: "h", punti: 1 }], { x0: 620, x1: 930, num: 3, barre: 270, conta: 350 });
     // ogni lato ha le sue note, barre e numeri dentro un gruppo, così si può far suonare da solo
     q1(".scena").innerHTML = svgRigo(r, { spazi: true }) + `<g class="lato1">${svgBattute(this.B1, { tempo: "3/4" })}</g><g class="lato2">${svgBattute(this.B2, { chiave: false })}</g>` +
-      `<text class="uguale" x="590" y="${r.y(4) + 12}" text-anchor="middle">=</text>` +
+      `<text class="uguale" x="590" y="${r.y(8) - 40}" text-anchor="middle">=</text>` +
       `<text class="etic" x="405" y="${r.y(8) - 50}" text-anchor="middle">CON LA LEGATURA</text><text class="etic" x="775" y="${r.y(8) - 50}" text-anchor="middle">COL PUNTO</text>`;
     vfRiempi();
   },

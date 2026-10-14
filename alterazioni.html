@@ -280,6 +280,51 @@ body.colori .nota.c-la .vf-notehead path:not(.glifo-alt), body.colori .nota.c-so
 .gambo-evid .vf-stem path { stroke: #FDE047; stroke-width: 2; filter: drop-shadow(0 0 6px #FDE047); }
 .vfr .glifo-alt.evid { fill: var(--luce, #FDE047) !important; }
 
+/* ---------- IL FOGLIO: il palco è bianco con l'inchiostro nero, come uno spartito vero ----------
+   (il cartellino sopra e i pulsanti sotto restano scuri come il resto del sito) */
+.palco { background: #FFFFFF; margin: 0 12px; border-radius: 12px; box-shadow: inset 0 0 0 1px rgba(15,23,42,0.08); }
+.lezione.solo-testo .palco { background: transparent; margin: 0; box-shadow: none; }
+.palco .riga, .palco .taglio, .palco .stanghetta { stroke: #1F2937; }
+.palco .riga.accesa { stroke: var(--luce, #F59E0B); stroke-width: 9; filter: saturate(1.5) brightness(.88); }
+.palco .spazio.acceso { opacity: .42; }
+.palco .glifo, .palco .vfr path, .palco .glifo-alt { fill: #111827; }
+.palco .vfr .vf-stem path { stroke: #111827; }
+.palco .evid, .palco .evid .glifo, .palco .evid.glifo, .palco .vfr .evid { fill: var(--luce, #F59E0B) !important; filter: saturate(1.5) brightness(.85) drop-shadow(0 0 3px rgba(0,0,0,.25)); }
+/* teste colorate: un sottile bordo nero, così anche il MI giallo si vede sul bianco */
+body.colori .palco .nota[class*="c-"] .vf-notehead path:not(.glifo-alt) { stroke: #111827; stroke-width: .9; }
+.palco .nota.luce .vf-notehead { filter: drop-shadow(0 0 5px #F59E0B) drop-shadow(0 0 2px #F59E0B); }
+.palco .gambo-evid .vf-stem path { stroke: #E11D48; stroke-width: 2.2; filter: none; }
+/* nomi delle note: colori un po' più scuri, con un alone bianco */
+.palco .nome { fill: #111827; stroke: #FFFFFF; }
+.palco .nome.coperto { fill: #94A3B8; }
+body.colori .palco .nome.c-do { fill: #D0103A; } body.colori .palco .nome.c-re { fill: #D97706; } body.colori .palco .nome.c-mi { fill: #A88A00; }
+body.colori .palco .nome.c-fa { fill: #4D7C0F; } body.colori .palco .nome.c-sol { fill: #00807A; } body.colori .palco .nome.c-la { fill: #5E50A1; } body.colori .palco .nome.c-si { fill: #B8327F; }
+/* scritte, frecce e numeri del disegno */
+.palco .etic { fill: #334155; stroke: #FFFFFF; }
+.palco .etic[fill], .palco text[fill], .palco .freccia, .palco .esito { filter: saturate(1.4) brightness(.78); }
+.palco [fill="#EAF2FF"] { fill: #111827; }
+.palco [stroke="rgba(255,255,255,0.25)"] { stroke: rgba(15,23,42,0.3); }
+.palco .cursore { stroke: #111827; }
+.palco .colpo:hover { fill: rgba(15,23,42,0.04); }
+.palco .mano .tratto { stroke: #111827; }
+.palco .mano .pallino, .palco .mano .puntino { fill: #111827; }
+.palco .palla { fill: #E2E8F0; stroke: #64748B; }
+.palco .palla.batte { stroke: #111827; }
+.palco .conta { fill: #64748B; } .palco .conta.batte { fill: #111827; }
+.palco .chip rect { fill: #1E293B; }
+/* foglio: tastiera, archi, chitarra e violino */
+.palco .tasto.bianco { stroke: #1F2937; }
+.palco .arco path { stroke: #0284C7; } .palco .arco text { fill: #0369A1; stroke: #FFFFFF; }
+.palco .arco.tono path { stroke: #059669; } .palco .arco.tono text { fill: #047857; }
+.palco .arco.rosa path { stroke: #DB2777; } .palco .arco.rosa text { fill: #BE185D; }
+.palco .etichetta-n .glifo-alt { fill: #111827; }
+body.colori .palco .etichetta-n .glifo-alt.c-do { fill: #D0103A; } body.colori .palco .etichetta-n .glifo-alt.c-re { fill: #D97706; } body.colori .palco .etichetta-n .glifo-alt.c-mi { fill: #A88A00; }
+body.colori .palco .etichetta-n .glifo-alt.c-fa { fill: #4D7C0F; } body.colori .palco .etichetta-n .glifo-alt.c-sol { fill: #00807A; } body.colori .palco .etichetta-n .glifo-alt.c-la { fill: #5E50A1; } body.colori .palco .etichetta-n .glifo-alt.c-si { fill: #B8327F; }
+.palco .nome-corda, .palco .num-tasto { fill: #334155; }
+body.colori .palco .nome-corda.c-do { fill: #D0103A; } body.colori .palco .nome-corda.c-re { fill: #D97706; } body.colori .palco .nome-corda.c-mi { fill: #A88A00; }
+body.colori .palco .nome-corda.c-fa { fill: #4D7C0F; } body.colori .palco .nome-corda.c-sol { fill: #00807A; } body.colori .palco .nome-corda.c-la { fill: #5E50A1; } body.colori .palco .nome-corda.c-si { fill: #B8327F; }
+.palco .corda { stroke: #D6D3D1; }
+
 @media (prefers-reduced-motion: reduce) {
   .corda.vibra { animation: none; }
   .rigo.disegna .riga, .taglio.nuovo, .nota.compare, .cartellino.lampo { animation: none !important; }

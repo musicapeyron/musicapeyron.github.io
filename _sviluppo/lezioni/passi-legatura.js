@@ -125,7 +125,7 @@ PASSI.push({
     this.B2 = Battute(r, [{ fig: "h", punti: 1 }], { x0: 620, x1: 930, num: 3, barre: 270, conta: 350 });
     // ogni lato ha le sue note, barre e numeri dentro un gruppo, così si può far suonare da solo
     q1(".scena").innerHTML = svgRigo(r, { spazi: true }) + `<g class="lato1">${svgBattute(this.B1, { tempo: "3/4" })}</g><g class="lato2">${svgBattute(this.B2, { chiave: false })}</g>` +
-      `<text class="uguale" x="590" y="${r.y(4) + 12}" text-anchor="middle">=</text>` +
+      `<text class="uguale" x="590" y="${r.y(8) - 40}" text-anchor="middle">=</text>` +
       `<text class="etic" x="405" y="${r.y(8) - 50}" text-anchor="middle">CON LA LEGATURA</text><text class="etic" x="775" y="${r.y(8) - 50}" text-anchor="middle">COL PUNTO</text>`;
     vfRiempi();
   },

@@ -48,3 +48,15 @@ body.colori .vfr .nota.c-si .vf-notehead path:not(.punto) { fill: var(--si); }
 .vfr .punto { transition: opacity .3s; }
 .legatura-vf.appare { animation: appare .9s ease-out both; }
 @keyframes appare { from { opacity: 0; } to { opacity: 1; } }
+
+/* foglio bianco: figure, barre e numeri */
+.palco .punto { fill: #111827; }
+.palco .nome-fig { fill: #111827; }
+.palco .val-riga, .palco .uguale { fill: #1E293B; }
+.palco .conta-n { fill: #475569; }
+.palco .barra .riempi { fill: rgba(15,23,42,0.28); }
+.palco .barra.silenzio .pezzo { fill: rgba(148,163,184,0.18); stroke: #64748B; }
+.palco .barra.silenzio .pz1 { fill: rgba(251,191,36,0.3); stroke: #B45309; }
+.palco .barra.silenzio .val-barra { fill: #334155; }
+.palco .riga-val.scelta .nome-fig { fill: #B45309; }
+.palco .legatura-vf path { fill: #111827; }
