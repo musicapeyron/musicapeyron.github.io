@@ -456,6 +456,8 @@ agli strumenti virtuali esterni (pianoforte, chitarra, violino, violoncello): or
 - Le alterazioni in chiave e le scale sono lasciate ad altri giochi (Ascolta la scala, Identifica la tonalità).
 - Agli archi si lavora sulla seconda corda (LA del violino, RE del violoncello); la guida dei semitoni compare solo
   nell'ultimo punto, per non suggerire che sul violino ci siano tasti.
+- Violino e violoncello suonano con campioni veri e dolci (VSCO 2 CE, CC0), uno per corda, che durano quanto
+  si tiene il dito sulla corda: si sente bene che il suono **scivola** senza scalini, a differenza della chitarra.
 
 ---
 
@@ -484,6 +486,8 @@ da copiare). Stesso motore e stile delle altre lezioni; i sorgenti sono in `_svi
 - Passi 1–5 alla LIM; il passo 6 con la classe che propone figure e punti; il 7 battuta per battuta, poi da copiare sul quaderno.
 
 ### Scelte fatte (e perché)
+- Nel primo passo ogni pausa sta su un piccolo pentagramma: senza righe la pausa di semibreve (appesa alla 4ª riga)
+  e quella di minima (appoggiata sulla 3ª) sembrano uguali.
 - La musica (chiave, tempo, note, pause, punti, travature, legature) la disegna **VexFlow**, come negli spartiti veri:
   i punti cadono nello spazio giusto anche sulle note sulla riga, le pause e le travature spezzate sono quelle corrette.
   Le righe del pentagramma restano disegnate dalla pagina, così si possono ancora illuminare e toccare.

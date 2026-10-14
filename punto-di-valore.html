@@ -325,6 +325,8 @@ body.colori .vfr .nota.c-si .vf-notehead path:not(.punto) { fill: var(--si); }
 .palco .barra.silenzio .val-barra { fill: #334155; }
 .palco .riga-val.scelta .nome-fig { fill: #B45309; }
 .palco .legatura-vf path { fill: #111827; }
+.rigo-mini line { stroke: rgba(234,242,255,0.85); stroke-width: 1.8; }
+.palco .rigo-mini line { stroke: #1F2937; }
 
 @media (prefers-reduced-motion: reduce) {
   .cresce { transition: none; }
@@ -840,7 +842,11 @@ PASSI.push({
     const Y = i => 52 + i * 82;
     ["w", "h", "q", "8", "16"].forEach((f, i) => s += svgRigaValore(Y(i), f, 0, { U: 100, xn: 150, xb: 430 }));
     s += `<g class="vela nascosto meta">` + [0, 1, 2, 3].map(i => `<text class="etic" x="930" y="${Y(i) + 48}" text-anchor="middle" fill="#FBBF24">metà ↓</text>`).join("") + `</g>`;
-    s += `<g class="vela nascosto pause-col">` + ["w", "h", "q", "8", "16"].map((f, i) => svgFig(340, Y(i) - 4, f, 0, { k: 1.9, pausa: true })).join("") + `</g>`;
+    // ogni pausa sul suo pezzetto di pentagramma: senza righe la pausa di semibreve (appesa alla 4ª riga)
+    // e quella di minima (appoggiata sulla 3ª) sembrerebbero uguali
+    const kp = 1.3, XP = 368, rigoMini = y => `<g class="rigo-mini">` + [-2, -1, 0, 1, 2].map(j => `<line x1="${XP - 44}" x2="${XP + 44}" y1="${y + j * 10 * kp}" y2="${y + j * 10 * kp}"/>`).join("") +
+      [XP - 44, XP + 44].map(x => `<line class="bordo" x1="${x}" x2="${x}" y1="${y - 20 * kp}" y2="${y + 20 * kp}"/>`).join("") + `</g>`;
+    s += `<g class="vela nascosto pause-col">` + ["w", "h", "q", "8", "16"].map((f, i) => rigoMini(Y(i) - 4) + svgFig(XP, Y(i) - 4, f, 0, { k: kp, pausa: true })).join("") + `</g>`;
     svg("0 0 1000 430", s);
     qa(".riga-val").forEach(g => g.addEventListener("click", () => ascoltaFigura(g, g.dataset.fig, +g.dataset.punti, false)));
     strumenti([

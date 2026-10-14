@@ -1,0 +1,70 @@
+{
+ "violino": [
+  {
+   "file": "media/suoni/archi/violino-0.wav",
+   "midi": 81,
+   "loop": [
+    0.65,
+    1.8
+   ]
+  },
+  {
+   "file": "media/suoni/archi/violino-1.wav",
+   "midi": 76,
+   "loop": [
+    1.55,
+    2.7
+   ]
+  },
+  {
+   "file": "media/suoni/archi/violino-2.wav",
+   "midi": 67,
+   "loop": [
+    1.45,
+    2.6
+   ]
+  },
+  {
+   "file": "media/suoni/archi/violino-3.wav",
+   "midi": 60,
+   "loop": [
+    1.5,
+    2.65
+   ]
+  }
+ ],
+ "violoncello": [
+  {
+   "file": "media/suoni/archi/violoncello-0.wav",
+   "midi": 64,
+   "loop": [
+    1.5,
+    2.65
+   ]
+  },
+  {
+   "file": "media/suoni/archi/violoncello-1.wav",
+   "midi": 57,
+   "loop": [
+    1.55,
+    2.7
+   ]
+  },
+  {
+   "file": "media/suoni/archi/violoncello-2.wav",
+   "midi": 50,
+   "loop": [
+    1.1,
+    2.25
+   ]
+  },
+  {
+   "file": "media/suoni/archi/violoncello-3.wav",
+   "midi": 43,
+   "loop": [
+    0.7,
+    1.85
+   ]
+  }
+ ]
+}

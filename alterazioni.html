@@ -471,8 +471,69 @@ function audio() {
 }
 function riposo(dopoSec) {                       // il contesto audio va in pausa quando tace
   clearTimeout(spegniTimer);
-  spegniTimer = setTimeout(() => { if (AC && AC.state === "running" && !metro.attivo) AC.suspend(); }, (dopoSec + 0.6) * 1000);
+  spegniTimer = setTimeout(() => { if (AC && AC.state === "running" && !metro.attivo && !VOCI_ARCO.size) AC.suspend(); }, (dopoSec + 0.6) * 1000);
 }
+
+/* violino e violoncello (passo 10): campioni veri (VSCO 2 CE, CC0) con un anello, così la nota dura quanto il dito.
+   Si scaricano solo quando si arriva al passo; finché non sono pronti suona una voce sintetica morbida. */
+const VOCI_ARCO = new Set();
+const CAMPIONI_ARCHI = { meta: null, buf: null, attesa: null };
+function caricaArchi() {
+  if (CAMPIONI_ARCHI.attesa) return CAMPIONI_ARCHI.attesa;
+  const decodifica = ab => new Promise((ok, ko) => {
+    const Off = window.OfflineAudioContext || window.webkitOfflineAudioContext;
+    const ctx = Off ? new Off(1, 1, 44100) : audio();
+    ctx.decodeAudioData(ab, ok, ko);
+  });
+  CAMPIONI_ARCHI.attesa = fetch("media/suoni/archi/archi.json").then(r => r.json()).then(meta =>
+    Promise.all(Object.keys(meta).map(s => Promise.all(meta[s].map(c => fetch(c.file).then(r => r.arrayBuffer()).then(decodifica))).then(b => [s, b])))
+      .then(lista => { CAMPIONI_ARCHI.meta = meta; CAMPIONI_ARCHI.buf = Object.fromEntries(lista); })
+  ).catch(() => { CAMPIONI_ARCHI.buf = null; });
+  return CAMPIONI_ARCHI.attesa;
+}
+let RIVERBERO = null;
+function riverbero(ac) {                         // una piccola sala: rende il suono più dolce
+  if (RIVERBERO) return RIVERBERO;
+  const n = Math.floor(ac.sampleRate * 1.3), ir = ac.createBuffer(2, n, ac.sampleRate);
+  for (let ch = 0; ch < 2; ch++) { const d = ir.getChannelData(ch); let lp = 0;
+    for (let i = 0; i < n; i++) { lp += 0.35 * ((Math.random() * 2 - 1) - lp); d[i] = lp * Math.pow(1 - i / n, 2.6); } }
+  const cv = ac.createConvolver(), wet = ac.createGain();
+  cv.buffer = ir; wet.gain.value = 0.32; cv.connect(wet); wet.connect(master);
+  return (RIVERBERO = cv);
+}
+// una nota d'arco tenuta: intona(midi) la sposta (il dito scivola), ferma() la chiude con dolcezza
+function voceArco(str, c, midi) {
+  const ac = audio(); if (!ac) return null;
+  clearTimeout(spegniTimer);
+  const t = ac.currentTime + 0.02, g = ac.createGain(), rv = riverbero(ac);
+  const B = CAMPIONI_ARCHI.buf && CAMPIONI_ARCHI.buf[str], M = B && CAMPIONI_ARCHI.meta[str][c];
+  let src, vib = null, voce;
+  g.gain.setValueAtTime(0, t);
+  if (M) {
+    src = ac.createBufferSource(); src.buffer = B[c]; src.loop = true; src.loopStart = M.loop[0]; src.loopEnd = M.loop[1];
+    src.playbackRate.value = Math.pow(2, (midi - M.midi) / 12);
+    src.connect(g); g.gain.linearRampToValueAtTime(1.5, t + 0.14);
+    voce = { intona: m => src.playbackRate.setTargetAtTime(Math.pow(2, (m - M.midi) / 12), ac.currentTime, 0.02) };
+  } else {                                        // riserva: corda sintetica morbida con un po' di vibrato
+    const hz = m => 440 * Math.pow(2, (m - 69) / 12);
+    src = ac.createOscillator(); src.type = "sawtooth"; src.frequency.value = hz(midi);
+    const f = ac.createBiquadFilter(); f.type = "lowpass"; f.frequency.value = str === "violino" ? 1700 : 900; f.Q.value = 0.4;
+    vib = ac.createOscillator(); const vg = ac.createGain(); vib.frequency.value = 5.2; vg.gain.value = 18;   // ±18 centesimi
+    vib.connect(vg); vg.connect(src.detune); vib.start(t);
+    src.connect(f); f.connect(g); g.gain.linearRampToValueAtTime(0.12, t + 0.16);
+    voce = { intona: m => src.frequency.setTargetAtTime(hz(m), ac.currentTime, 0.02) };
+  }
+  g.connect(master); g.connect(rv); src.start(t);
+  voce.ferma = () => {
+    if (voce.chiusa) return; voce.chiusa = true;
+    const tf = Math.max(ac.currentTime, t + 0.05);
+    try { g.gain.cancelScheduledValues(tf); g.gain.setTargetAtTime(0, tf, 0.07); src.stop(tf + 0.6); if (vib) vib.stop(tf + 0.6); } catch (_) {}
+    setTimeout(() => { VOCI_ARCO.delete(voce); riposo(1.2); }, (tf - ac.currentTime + 0.6) * 1000);
+  };
+  VOCI_ARCO.add(voce);
+  return voce;
+}
+function zittisciArchi() { VOCI_ARCO.forEach(v => v.ferma()); }
 function suona(midi, quando = 0, dur = 1.1) {
   const ac = audio(); if (!ac) return;
   const t = ac.currentTime + 0.03 + quando, f = 440 * Math.pow(2, (midi - 69) / 12);
@@ -1191,6 +1252,7 @@ PASSI.push({
   crea() {
     this.str = this.str || "violino";
     this.X0 = 120; this.L = 1540;
+    caricaArchi();
     this.disegna();
     strumenti([
       { gruppo: [["🎻 Violino", "violino"], ["Violoncello", "violoncello"]].map(([t, k]) => ({ t, cls: k === this.str ? "on" : "", fn: el => { segna("gArchi", el); this.str = k; fermaTutto(); this.disegna(); this.fase(this.f || 0, false); } })), id: "gArchi" },
@@ -1233,17 +1295,14 @@ PASSI.push({
     return `<g class="dito"><circle cx="${x}" cy="${this.y(c)}" r="17" style="fill:${colore}"/><text x="${x}" y="${this.y(c) + 1}">${num}</text></g>`;
   },
   inizia(c, x) {
-    const ac = audio(); if (!ac) return;
     this.c = c;
-    const o = ac.createOscillator(), f = ac.createBiquadFilter(), g = ac.createGain();
-    o.type = "sawtooth"; f.type = "lowpass"; f.frequency.value = 2400; g.gain.value = 0.0001;
-    o.connect(f); f.connect(g); g.connect(master); o.start();
-    g.gain.exponentialRampToValueAtTime(0.16, ac.currentTime + 0.06);
-    this.voce = { o, g }; this.muovi(x);
+    const xs = Math.max(this.X0, Math.min(this.pos(13), x));
+    this.voce = voceArco(this.str, c, ARCHI[this.str].corde[c] + this.n(xs));
+    this.muovi(x);
   },
   muovi(x) {
     const xs = Math.max(this.X0, Math.min(this.pos(13), x)), n = this.n(xs), m0 = ARCHI[this.str].corde[this.c];
-    if (this.voce) this.voce.o.frequency.setTargetAtTime(440 * Math.pow(2, (m0 + n - 69) / 12), AC.currentTime, 0.02);
+    if (this.voce) this.voce.intona(m0 + n);
     this.ultimo = n;
     q1(".dita").innerHTML = `<g class="dito"><circle cx="${xs}" cy="${this.y(this.c)}" r="17" style="fill:#FDE047"/></g>`;
   },
@@ -1255,26 +1314,36 @@ PASSI.push({
     cart(`${nomeTastoHTML(m0 + vicino)} <span class="piccolo">· ${giusto ? "intonato ✓" : scarto > 0 ? "un po' troppo alto" : "un po' troppo basso"}</span>`, false);
   },
   finisci(zitto) {
+    this.turno = (this.turno || 0) + 1;            // un «Ascolta» in attesa dei campioni non parte più
+    zittisciArchi();
     if (!this.voce) return;
-    const { o, g } = this.voce; this.voce = null;
+    this.voce = null;
     if (!zitto) this.dove();
-    try { g.gain.setTargetAtTime(0.0001, AC.currentTime, 0.05); o.stop(AC.currentTime + 0.3); } catch (_) {}
-    riposo(0.4);
+  },
+  // i campioni arrivano dopo un attimo: «Ascolta» li aspetta (al massimo 3 secondi), poi parte
+  pronto(fn) {
+    const mio = this.turno = (this.turno || 0) + 1;
+    Promise.race([caricaArchi(), new Promise(ok => setTimeout(ok, 3000))]).then(() => { if (mio === this.turno) fn(); });
   },
   scivola() {
     fermaTutto(); q1(".dita").innerHTML = "";
-    this.inizia(1, this.pos(0));
-    const t0 = performance.now(), dur = 3600;
-    const passo = ora => { const k = Math.min(1, (ora - t0) / dur), n = k < .5 ? k * 2 * 7 : (1 - k) * 2 * 7; this.muovi(this.pos(n)); if (k < 1) ANIMA = requestAnimationFrame(passo); else { this.finisci(true); q1(".dita").innerHTML = ""; } };
-    ANIMA = requestAnimationFrame(passo);
+    this.pronto(() => {
+      this.inizia(1, this.pos(0));
+      const t0 = performance.now(), dur = 3600;
+      const passo = ora => { const k = Math.min(1, (ora - t0) / dur), n = k < .5 ? k * 2 * 7 : (1 - k) * 2 * 7; this.muovi(this.pos(n)); if (k < 1) ANIMA = requestAnimationFrame(passo); else { this.finisci(true); q1(".dita").innerHTML = ""; } };
+      ANIMA = requestAnimationFrame(passo);
+    });
   },
   dita() {
     fermaTutto(); const c = 1, m0 = ARCHI[this.str].corde[c];
     const g = q1(".dita");
     g.innerHTML = "";
-    dopo(100, () => { g.innerHTML = this.mettiDito(c, 2, 1, "#7DD3FC"); suona(m0 + 2, 0, .8); cart(`1° dito: ${nomeTastoHTML(m0 + 2)}`, false); });
-    dopo(1200, () => { g.innerHTML = this.mettiDito(c, 2, 1, "#7DD3FC") + this.mettiDito(c, 3, 2, "#F472B6"); suona(m0 + 3, 0, .8); cart(`2° dito <b>vicino</b>: ${nomeTastoHTML(m0 + 3)} <span class="piccolo">· semitono</span>`, false); });
-    dopo(2600, () => { g.innerHTML = this.mettiDito(c, 2, 1, "#7DD3FC") + this.mettiDito(c, 4, 2, "#34D399"); suona(m0 + 4, 0, .8); cart(`2° dito <b>lontano</b>: ${nomeTastoHTML(m0 + 4)} <span class="piccolo">· tono</span>`, false); });
+    const nota = (n, ms) => { const v = voceArco(this.str, c, m0 + n); if (v) dopo(ms, () => v.ferma()); };
+    this.pronto(() => {
+      dopo(100, () => { g.innerHTML = this.mettiDito(c, 2, 1, "#7DD3FC"); nota(2, 950); cart(`1° dito: ${nomeTastoHTML(m0 + 2)}`, false); });
+      dopo(1200, () => { g.innerHTML = this.mettiDito(c, 2, 1, "#7DD3FC") + this.mettiDito(c, 3, 2, "#F472B6"); nota(3, 1150); cart(`2° dito <b>vicino</b>: ${nomeTastoHTML(m0 + 3)} <span class="piccolo">· semitono</span>`, false); });
+      dopo(2600, () => { g.innerHTML = this.mettiDito(c, 2, 1, "#7DD3FC") + this.mettiDito(c, 4, 2, "#34D399"); nota(4, 1300); cart(`2° dito <b>lontano</b>: ${nomeTastoHTML(m0 + 4)} <span class="piccolo">· tono</span>`, false); });
+    });
   },
   fase(f, anim) {
     this.f = f; fermaTutto(); q1(".dita").innerHTML = "";
