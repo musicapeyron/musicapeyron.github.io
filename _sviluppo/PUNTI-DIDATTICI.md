@@ -115,6 +115,7 @@ Schema di ogni voce: dove si trova · concetti · punti di forza · come usarlo 
 - Prima si sceglie il **numero**, poi la **qualità** (pulsanti in quest'ordine in tutte le modalità).
 - **Schema pianoforte** (rotellina, non in verifica): due ottave con i nomi sui tasti bianchi nei colori delle note,
   sotto il pentagramma, per contare toni e semitoni da soli. Non segna le note della domanda.
+  Nomi e colori si possono spegnere (es. tastiera «muta» per far orientare sui tasti neri).
 
 ### Come usarlo in classe
 - Alla LIM: un tutorial per lezione (seconde, terze… settime), la classe vota la risposta prima di premerla.

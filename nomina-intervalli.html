@@ -201,6 +201,9 @@ h1 {
     line-height: 0;
 }
 .piano-card.hidden { display: none; }
+/* sotto-opzioni della tastiera: si vedono solo con la tastiera accesa */
+.piano-sotto-opzioni { margin-top: 8px; }
+.piano-sotto-opzioni.hidden { display: none; }
 .piano-card svg { width: 100%; height: auto; display: block; }
 
 .staff-inner {
@@ -1190,6 +1193,10 @@ h1 {
         <div class="options-group-title">Serve una mano?</div>
         <button class="options-choice options-full" id="helpOpenButton">❓ Aiuto</button>
         <button class="options-choice options-full" id="pianoToggle" style="margin-top: 8px;">🎹 Mostra schema pianoforte</button>
+        <div class="options-pair piano-sotto-opzioni" id="pianoSubOptions">
+            <button class="options-choice active" id="pianoNomiToggle">🔤 Nomi delle note</button>
+            <button class="options-choice active" id="pianoColoriToggle">🎨 Colori</button>
+        </div>
     </div>
 </div>
 
@@ -4979,6 +4986,11 @@ bassClefButton.addEventListener("click", () => { bumpButton(bassClefButton); set
 const pianoCard = document.getElementById("pianoCard");
 const pianoToggle = document.getElementById("pianoToggle");
 let mostraPianoforte = false;
+let pianoNomi = true;    // nomi delle note sui tasti bianchi
+let pianoColori = true;  // colori delle note (etichette o strisce)
+const pianoSubOptions = document.getElementById("pianoSubOptions");
+const pianoNomiToggle = document.getElementById("pianoNomiToggle");
+const pianoColoriToggle = document.getElementById("pianoColoriToggle");
 function disegnaPianoforte() {
     const NOMI = ["Do", "Re", "Mi", "Fa", "Sol", "La", "Si"];
     const COLORI = ["#E21C48", "#F99D1C", "#FFF428", "#BED958", "#009C95", "#5E50A1", "#CF3E96"];
@@ -4988,8 +5000,15 @@ function disegnaPianoforte() {
     for (let i = 0; i < N; i++) {
         const l = i % 7, x = i * W + 1;
         svg += '<rect x="' + x + '" y="1" width="' + (W - 1) + '" height="' + H + '" rx="3" fill="#fffdf7" stroke="#3b3226" stroke-width="1.2"/>';
-        svg += '<rect x="' + (x + 3) + '" y="' + (H - 23) + '" width="' + (W - 7) + '" height="20" rx="4" fill="' + COLORI[l] + '"/>';
-        svg += '<text x="' + (x + (W - 1) / 2) + '" y="' + (H - 8) + '" text-anchor="middle" font-family="Sora, Arial, sans-serif" font-size="12.5" font-weight="800" fill="' + TESTO[l] + '">' + NOMI[l] + '</text>';
+        // colori: etichetta colorata (con il nome) o, senza nomi, una striscia colorata
+        if (pianoColori) {
+            svg += pianoNomi
+                ? '<rect x="' + (x + 3) + '" y="' + (H - 23) + '" width="' + (W - 7) + '" height="20" rx="4" fill="' + COLORI[l] + '"/>'
+                : '<rect x="' + (x + 3) + '" y="' + (H - 14) + '" width="' + (W - 7) + '" height="10" rx="3" fill="' + COLORI[l] + '"/>';
+        }
+        if (pianoNomi) {
+            svg += '<text x="' + (x + (W - 1) / 2) + '" y="' + (H - 8) + '" text-anchor="middle" font-family="Sora, Arial, sans-serif" font-size="12.5" font-weight="800" fill="' + (pianoColori ? TESTO[l] : "#1f2937") + '">' + NOMI[l] + '</text>';
+        }
     }
     for (let i = 0; i < N - 1; i++) {
         const l = i % 7;
@@ -5001,6 +5020,7 @@ function disegnaPianoforte() {
 function setMostraPianoforte(acceso) {
     mostraPianoforte = acceso;
     pianoToggle.classList.toggle("active", acceso);
+    pianoSubOptions.classList.toggle("hidden", !acceso);
     if (acceso && !pianoCard.firstChild) disegnaPianoforte();
     pianoCard.classList.toggle("hidden", !acceso || mode === "verifica");
     gameContainer.classList.toggle("con-pianoforte", acceso && mode !== "verifica");
@@ -5010,6 +5030,28 @@ pianoToggle.addEventListener("click", () => {
     setMostraPianoforte(!mostraPianoforte);
     try { localStorage.setItem("nominaIntervalli.pianoforte", mostraPianoforte ? "1" : "0"); } catch (e) {}
 });
+function setPianoNomiColori(nomi, colori) {
+    pianoNomi = nomi;
+    pianoColori = colori;
+    pianoNomiToggle.classList.toggle("active", nomi);
+    pianoColoriToggle.classList.toggle("active", colori);
+    disegnaPianoforte();
+}
+pianoNomiToggle.addEventListener("click", () => {
+    bumpButton(pianoNomiToggle);
+    setPianoNomiColori(!pianoNomi, pianoColori);
+    try { localStorage.setItem("nominaIntervalli.pianoforteNomi", pianoNomi ? "1" : "0"); } catch (e) {}
+});
+pianoColoriToggle.addEventListener("click", () => {
+    bumpButton(pianoColoriToggle);
+    setPianoNomiColori(pianoNomi, !pianoColori);
+    try { localStorage.setItem("nominaIntervalli.pianoforteColori", pianoColori ? "1" : "0"); } catch (e) {}
+});
+// nomi e colori accesi di base; le scelte si ricordano su questo dispositivo
+try {
+    setPianoNomiColori(localStorage.getItem("nominaIntervalli.pianoforteNomi") !== "0",
+                       localStorage.getItem("nominaIntervalli.pianoforteColori") !== "0");
+} catch (e) { setPianoNomiColori(true, true); }
 try { setMostraPianoforte(localStorage.getItem("nominaIntervalli.pianoforte") === "1"); } catch (e) { setMostraPianoforte(false); }
 
 function setSubmitButtonMode(enabled) {
