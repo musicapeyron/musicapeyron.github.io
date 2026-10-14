@@ -336,17 +336,22 @@ e matematica (una carta per ogni retta del piano, un simbolo per ogni punto).
 
 ## Le note sul pentagramma (lezione interattiva)
 
-**Dove:** home → Suono, note e ritmo, dopo «Rap con le note» (`note-sul-pentagramma.html`). Ottobre 2026.
+**Dove:** home → Suono, note e ritmo, scheda «Gli elementi del pentagramma», dopo «Rap con le note» (`note-sul-pentagramma.html`). Ottobre 2026.
 Non è un gioco ma una **lezione da condurre alla LIM**: sostituisce gli schemi del programma di prima
 (punti 3, 4 e 6: righe e spazi in chiave di violino e di basso, scale con i tagli, elementi del pentagramma,
 indicazione di tempo) che prima si spiegavano e si facevano ricopiare sul quaderno.
 
 ### Concetti
 - Il pentagramma: 5 righe e 4 spazi, contati dal basso verso l'alto. Note sulla riga e nello spazio; in alto acuto, in basso grave.
+- Testa e gambo della nota: sotto la 3ª riga il gambo va su, a destra; dalla 3ª riga in su va giù, a sinistra
+  (in chiave di violino dal SI, in chiave di basso dal RE). Tutte le note della lezione hanno il gambo, sempre secondo la regola.
 - La chiave dà il nome alle note. Chiave di violino (di sol, 2ª riga) e chiave di basso (di fa, 4ª riga, i due puntini).
-- Il nome delle note per gradi congiunti a partire dalla nota della chiave (sol → la, si, do…; sol → fa, mi, re).
+  Come si disegnano a mano: violino = punta sulla 2ª riga, mezza chiocciola, su oltre la 5ª riga, il nodo, giù sotto il pentagramma;
+  basso = punta sulla 4ª riga, mezza chiocciola, giù, i due puntini sopra e sotto la 4ª riga.
+- Il nome delle note per gradi congiunti a partire dalla nota della chiave (sol → la, si, do…; sol → fa, mi, re, fino al do
+  del 1° taglio, anticipando i tagli).
 - Righe e spazi nelle due chiavi: violino mi-sol-si-re-fa / fa-la-do-mi; basso sol-si-re-fa-la / la-do-mi-sol.
-- I tagli addizionali; il Do centrale (1° taglio sotto in violino, 1° taglio sopra in basso: stessa nota, stesso suono);
+- I tagli addizionali; il Do centrale come ponte fra le due chiavi (1° taglio sotto il violino e insieme 1° taglio sopra il basso);
   cenno al setticlavio. Scale di do con i tagli (violino: do centrale → do due tagli sopra; basso: do due tagli sotto → do centrale).
 - Elementi del pentagramma: chiave, indicazione di tempo, linea di battuta, battuta (misura), doppia stanghetta conclusiva.
 - Ritmo, pulsazione (movimento), metro (pulsazioni a gruppi di 2, 3, 4 con accento sulla prima).
@@ -356,14 +361,22 @@ indicazione di tempo) che prima si spiegavano e si facevano ricopiare sul quader
 ### Punti di forza
 - **Il docente guida, la pagina mostra.** 13 passi in 4 capitoli (Il pentagramma · Le chiavi e le note · Battute e tempo ·
   Ripasso). Ogni passo si svela un punto alla volta con **Avanti**: compare una frase breve e insieme succede qualcosa
-  sul pentagramma (le righe si contano accendendosi, la chiave si disegna da sola, la 2ª riga si illumina, le note
+  sul pentagramma (le righe si contano accendendosi, la chiave si disegna come a mano, la 2ª riga si illumina, le note
   compaiono una alla volta suonando). È il ritmo di una spiegazione alla lavagna, ma più chiaro e uguale per tutti.
+- **Le chiavi si disegnano come con la matita**: una punta luminosa traccia la chiave nell'ordine giusto, partendo dalla riga
+  della chiave (2ª per il violino, 4ª per il basso). Nel punto «Come si disegna» va piano, sopra la chiave stampata in trasparenza,
+  e lascia sul disegno i numeri dei passi; in alto si legge cosa fa la matita in quel momento. Si può ripetere quante volte si vuole
+  («Piano, passo passo»): la classe ripete il gesto in aria o sul quaderno.
+- **Il gambo si vede sempre e si spiega**: nel passo 2 compaiono le scritte TESTA e GAMBO, la 3ª riga si illumina e si accendono
+  prima i gambi in su (a destra), poi quelli in giù (a sinistra); quando si scrive una nota toccando il pentagramma, la pagina dice
+  anche dove va il suo gambo. Nei passi delle due chiavi la regola si ripete con il nome della 3ª riga (SI in violino, RE in basso).
 - **Indice sempre in alto**: si salta a qualsiasi passo (anche per riprendere la lezione la volta dopo o per un ripasso
   veloce); i numeri in basso fanno tornare a un punto preciso del passo. Funziona anche con le frecce della tastiera
   e con i telecomandi per presentazioni (pagina su/giù). L'indirizzo ricorda il passo (`#passo-6`): si può aprire direttamente lì.
 - **Tutto si tocca**: righe e spazi dicono il proprio numero; si scrivono note sul pentagramma vuoto e la pagina dice
   dove sono («nel 3° spazio», «sotto la 1ª riga»); ogni nota si ascolta; ▲/▼ fanno salire e scendere di un gradino dal sol;
-  nel doppio pentagramma si tocca qualsiasi riga o spazio e si legge il nome nella chiave giusta; gli elementi del
+  nel doppio pentagramma si tocca qualsiasi riga o spazio e si legge il nome nella chiave giusta; quando una nota si illumina,
+  si illumina anche il suo nome; gli elementi del
   pentagramma si toccano per vedere la definizione.
 - **Suono e segno insieme**: ogni nota che compare suona alla sua altezza; le scale si vedono e si sentono, ascendenti e discendenti.
   Pulsazione e indicazione di tempo hanno il metronomo con l'accento sul primo movimento, i movimenti che si accendono
@@ -391,4 +404,8 @@ indicazione di tempo) che prima si spiegavano e si facevano ricopiare sul quader
 - Nel passo sugli elementi le battute restano vuote, come nello schema del programma: con le note dentro, i gambi
   si confondevano con le stanghette.
 - Il setticlavio è solo citato (come nel programma: «non da ricopiare»).
+- Nel doppio pentagramma i due righi sono a due spazi di distanza, così il taglio del Do centrale sta proprio in mezzo
+  e se ne vede **uno solo**, che fa da ponte: mostrarne due (uno per chiave) confondeva.
+- Nel passo sui nomi delle note si scende fino al do sotto il pentagramma anche se i tagli non sono ancora spiegati:
+  la scala resta completa e il taglio diventa una curiosità che prepara il passo 6.
 - Le figure (minima, semiminima, croma) compaiono solo come esempi del denominatore: le spiega «Figure ritmiche».

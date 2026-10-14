@@ -68,6 +68,8 @@ button { font-family: inherit; }
 .cartellino { display: flex; align-items: center; justify-content: center; gap: 10px; padding: 0 14px; text-align: center;
   font-family: 'Manrope', sans-serif; font-weight: 800; font-size: 22px; color: #F8FAFC; border-bottom: 1px solid rgba(255,255,255,0.06); }
 .cartellino .piccolo { font-weight: 600; font-size: 17px; color: var(--tenue); }
+.cartellino .c-in { line-height: 1.2; }
+.cartellino .mini { margin: 0 2px; }
 .cartellino.lampo { animation: lampo .5s ease-out; }
 @keyframes lampo { from { background: rgba(255,255,255,0.14); } to { background: transparent; } }
 .palco { position: relative; min-height: 0; }
@@ -122,7 +124,7 @@ button { font-family: inherit; }
 .lezione.solo-testo .palco-card { grid-template-rows: 54px 1fr auto; }
 .ripasso { position: absolute; inset: 0; padding: 12px 16px 6px; display: grid; grid-template-columns: repeat(3, 1fr); grid-auto-rows: 1fr; gap: 9px; }
 .def { background: rgba(15,23,42,0.55); border: 1px solid var(--bordo); border-left: 4px solid var(--colore); border-radius: 12px;
-  padding: 7px 12px; font-size: 14.5px; line-height: 1.32; color: #CBD5E1; cursor: pointer; text-align: left; font-family: inherit; overflow: hidden; }
+  padding: 6px 11px; font-size: 14px; line-height: 1.3; color: #CBD5E1; cursor: pointer; text-align: left; font-family: inherit; overflow: hidden; }
 .def:hover { filter: brightness(1.2); }
 .def b { color: #fff; font-family: 'Manrope', sans-serif; font-weight: 800; }
 .def .vai { float: right; color: var(--colore); font-weight: 800; font-family: 'Manrope', sans-serif; font-size: 12.5px; }
@@ -144,10 +146,6 @@ svg { -webkit-tap-highlight-color: transparent; user-select: none; -webkit-user-
 .stanghetta { stroke: rgba(234,242,255,0.9); stroke-width: 2.6; transition: stroke .3s; }
 .stanghetta.grossa { stroke-width: 9; }
 .glifo { fill: #EAF2FF; transition: fill .35s, filter .35s; }
-.chiave.disegna path { fill: transparent; stroke: #EAF2FF; stroke-width: .5; stroke-dasharray: var(--l); stroke-dashoffset: var(--l);
-  animation: tracciaChiave 1.8s ease-in-out forwards, riempi .5s 1.6s forwards; }
-@keyframes tracciaChiave { to { stroke-dashoffset: 0; } }
-@keyframes riempi { to { fill: #EAF2FF; stroke-width: 0; } }
 .evid, .evid .glifo, .evid.glifo { fill: var(--luce, #FDE047) !important; filter: drop-shadow(0 0 8px var(--luce, #FDE047)); }
 .stanghetta.evid { stroke: var(--luce, #FDE047); filter: drop-shadow(0 0 8px var(--luce, #FDE047)); }
 .anello { fill: none; stroke: var(--luce, #FDE047); stroke-width: 4; opacity: 0; transform-box: fill-box; transform-origin: center; }
@@ -165,6 +163,14 @@ svg { -webkit-tap-highlight-color: transparent; user-select: none; -webkit-user-
 .nome { font-family: 'Manrope', sans-serif; font-weight: 800; font-size: 25px; fill: #EAF2FF; text-anchor: middle; transition: opacity .3s, fill .3s;
   paint-order: stroke; stroke: #172036; stroke-width: 6px; stroke-linejoin: round; }
 .nome.coperto { fill: rgba(234,242,255,0.5); }
+.nome { transform-box: fill-box; transform-origin: center; transition: opacity .3s, fill .3s, transform .15s; }
+.nome.luce { transform: scale(1.22); filter: drop-shadow(0 0 7px #fff); }
+.gambo-evid .gambo { stroke: #FDE047; stroke-width: 4; filter: drop-shadow(0 0 6px #FDE047); }
+.mano .tratto { fill: none; stroke: #EAF2FF; stroke-width: 6; stroke-linecap: round; stroke-linejoin: round; }
+.mano .punta { fill: #FBBF24; stroke: #0f172a; stroke-width: 3; }
+.mano .pallino, .mano .puntino { fill: #EAF2FF; }
+.passino circle { fill: #FBBF24; } .passino text { font-family: 'Manrope', sans-serif; font-weight: 800; font-size: 17px; fill: #0f172a; text-anchor: middle; dominant-baseline: central; }
+.chiave { transition: opacity .5s; }
 .etic { font-family: 'Manrope', sans-serif; font-weight: 800; font-size: 19px; fill: #CBD5E1; letter-spacing: .04em;
   paint-order: stroke; stroke: #172036; stroke-width: 7px; stroke-linejoin: round; }
 .etic.grande { font-size: 24px; }
@@ -201,8 +207,7 @@ body.colori .chip.c-fa rect { stroke: var(--fa); } body.colori .chip.c-sol rect 
 .mini path { fill: #EAF2FF; }
 
 @media (prefers-reduced-motion: reduce) {
-  .rigo.disegna .riga, .taglio.nuovo, .chiave.disegna path, .nota.compare, .cartellino.lampo { animation: none !important; }
-  .chiave.disegna path { fill: #EAF2FF; stroke-width: 0; }
+  .rigo.disegna .riga, .taglio.nuovo, .nota.compare, .cartellino.lampo { animation: none !important; }
   .anello.via { animation: none; }
 }
 
@@ -375,7 +380,89 @@ function clic(forza, quando = 0) {               // colpo del metronomo: 2 = acc
 /* ================= tempi e animazioni del passo (si fermano cambiando passo) ================= */
 let TIMER = [];
 const dopo = (ms, fn) => { TIMER.push(setTimeout(fn, ms)); };
-function fermaTutto() { TIMER.forEach(clearTimeout); TIMER = []; metro.ferma(); }
+let ANIMA = 0;
+function fermaTutto() { TIMER.forEach(clearTimeout); TIMER = []; metro.ferma(); cancelAnimationFrame(ANIMA); }
+
+/* ===== le chiavi disegnate come a mano: punti in spazi, a partire dalla riga della chiave ===== */
+const MANO = {
+  violino: { riga: 2, punti: [[1.35, 0], [1.0, -0.35], [1.25, -0.85], [1.85, -0.95], [2.55, -0.55], [2.65, 0.15], [2.3, 0.75], [1.55, 0.95], [0.65, 0.8], [0.15, 0.25],
+    [0.15, -0.45], [0.75, -1.3], [1.6, -2.1], [2.15, -2.95], [2.25, -3.75], [1.85, -4.35], [1.4, -4.1], [1.2, -3.2], [1.3, -2.0], [1.5, -0.6], [1.68, 0.6], [1.85, 1.5],
+    [1.88, 2.15], [1.55, 2.58], [1.05, 2.5], [0.85, 2.05], [1.15, 1.9]],
+    // da quale punto parte ogni passo (indice nei punti) e cosa dice
+    passi: [[0, "Punta della matita sulla <b>2ª riga</b>", [1.35, 0]], [1, "<b>Mezza chiocciola</b> attorno alla 2ª riga", [3.25, 0.35]], [10, "<b>Su</b>, oltre la 5ª riga", [0.1, -1.9]],
+      [15, "Il <b>nodo</b>", [2.85, -3.9]], [18, "<b>Giù</b>, sotto il pentagramma", [2.55, 2.0]]] },
+  basso: { riga: 6, punti: [[0.45, 0], [0.25, -0.45], [0.55, -0.88], [1.1, -1.0], [1.7, -0.75], [2.0, -0.05], [1.85, 0.85], [1.35, 1.65], [0.6, 2.25], [0.0, 2.55]],
+    passi: [[0, "Punta della matita sulla <b>4ª riga</b>", [-0.4, -0.65]], [1, "<b>Mezza chiocciola</b>", [1.1, -1.7]], [5, "<b>Giù</b>, verso la 1ª riga", [1.55, 2.35]],
+      [9, "I <b>due puntini</b>, sopra e sotto la 4ª riga", [3.3, 0]]],
+    puntini: [[2.55, -0.5], [2.55, 0.5]] }
+};
+function curva(pts) {                            // linea morbida che passa per tutti i punti
+  let d = `M${pts[0][0].toFixed(1)} ${pts[0][1].toFixed(1)}`;
+  const P = [pts[0], ...pts, pts[pts.length - 1]];
+  for (let i = 1; i < P.length - 2; i++) {
+    const [a, b, c, e] = [P[i - 1], P[i], P[i + 1], P[i + 2]];
+    d += ` C${(b[0] + (c[0] - a[0]) / 6).toFixed(1)} ${(b[1] + (c[1] - a[1]) / 6).toFixed(1)} ${(c[0] - (e[0] - b[0]) / 6).toFixed(1)} ${(c[1] - (e[1] - b[1]) / 6).toFixed(1)} ${c[0].toFixed(1)} ${c[1].toFixed(1)}`;
+  }
+  return d;
+}
+function svgMano(r, x, tipo) {
+  const m = MANO[tipo], pts = m.punti.map(([u, v]) => [x + u * S, r.y(m.riga) + v * S]);
+  let s = `<g class="mano" data-x0="${x}" data-y0="${r.y(m.riga)}" style="opacity:0"><path class="tratto" d="${curva(pts)}"/>`;
+  if (tipo === "basso") s += `<circle class="pallino" cx="${pts[0][0]}" cy="${pts[0][1]}" r="${0.3 * S}" style="opacity:0"/>` +
+    m.puntini.map(([u, v]) => `<circle class="puntino" cx="${x + u * S}" cy="${r.y(m.riga) + v * S}" r="${0.17 * S}" style="opacity:0"/>`).join("");
+  s += `<g class="passini"></g><circle class="punta" r="9" cx="${pts[0][0]}" cy="${pts[0][1]}" style="opacity:0"/></g>`;
+  return s;
+}
+/* disegna la chiave con la matita; lento = con i passi numerati, che restano sul disegno */
+function disegnaAMano(tipo, lento, fine) {
+  fermaTutto();
+  const m = MANO[tipo], g = q1(".mano"), path = g.querySelector(".tratto"), punta = g.querySelector(".punta"), stampata = q1(".c-chiave");
+  const riduci = matchMedia("(prefers-reduced-motion: reduce)").matches;
+  const L = path.getTotalLength();
+  // a che punto della linea comincia ogni passo
+  const pts = path.getAttribute("d");
+  const tmp = document.createElementNS("http://www.w3.org/2000/svg", "path"); g.appendChild(tmp);
+  const parti = m.passi.map(([k]) => {
+    if (k === 0) return 0;
+    const seg = pts.split(" C").slice(0, k + 1).join(" C"); tmp.setAttribute("d", seg); return tmp.getTotalLength() / L;
+  });
+  tmp.remove();
+  g.querySelector(".passini").innerHTML = "";
+  g.querySelectorAll(".pallino, .puntino").forEach(c => c.style.opacity = 0);
+  g.style.opacity = 1; stampata.style.opacity = lento ? 0.18 : 0;
+  path.style.strokeDasharray = L; path.style.strokeDashoffset = L;
+  const durata = (lento ? 7000 : 2800) * (tipo === "basso" ? 0.7 : 1);
+  const finale = () => {
+    path.style.strokeDashoffset = 0; punta.style.opacity = 0;
+    g.querySelectorAll(".pallino, .puntino").forEach(c => c.style.opacity = 1);
+    if (!lento) { dopo(500, () => { stampata.style.opacity = 1; g.style.opacity = 0; }); }
+    if (fine) fine();
+  };
+  if (riduci) { finale(); stampata.style.opacity = 1; return; }
+  let passo = -1, t0 = 0;
+  const vai = ora => {
+    if (!t0) t0 = ora;
+    const f = Math.min(1, (ora - t0) / durata);
+    // i puntini del basso arrivano dopo la linea: la linea occupa l'85% del tempo
+    const fl = tipo === "basso" ? Math.min(1, f / 0.85) : f;
+    path.style.strokeDashoffset = L * (1 - fl);
+    const pt = path.getPointAtLength(L * fl); punta.setAttribute("cx", pt.x); punta.setAttribute("cy", pt.y); punta.style.opacity = fl < 1 ? 1 : 0;
+    if (tipo === "basso") g.querySelector(".pallino").style.opacity = 1;
+    let k = parti.length - 1; while (k > 0 && fl < parti[k]) k--;
+    if (tipo === "basso" && f >= 0.88) k = m.passi.length - 1;
+    if (k !== passo) {
+      passo = k;
+      cart(`<span class="piccolo">${k + 1}</span> ${m.passi[k][1]}`, false);
+      if (lento) {
+        const [u, v] = m.passi[k][2], px = g.dataset.x0 * 1 + u * S, py = g.dataset.y0 * 1 + v * S;
+        g.querySelector(".passini").insertAdjacentHTML("beforeend", `<g class="passino"><circle cx="${px}" cy="${py}" r="15"/><text x="${px}" y="${py + 1}">${k + 1}</text></g>`);
+      }
+    }
+    if (tipo === "basso") g.querySelectorAll(".puntino").forEach((c, i) => c.style.opacity = f >= 0.9 + i * 0.05 ? 1 : 0);
+    if (f < 1) ANIMA = requestAnimationFrame(vai); else finale();
+  };
+  ANIMA = requestAnimationFrame(vai);
+}
 
 /* ================= disegno SVG ================= */
 const $ = s => document.querySelector(s);
@@ -412,8 +499,10 @@ function svgNota(r, x, p, o = {}) {
   s += `<rect class="colpo" x="${x - 30}" y="${y - 22}" width="60" height="44"/>`;
   if (!o.senzaTagli) s += svgTagli(r, x, p, o.tagliCls || "");
   s += `<path class="testa" d="${GLIFI[forma]}" transform="translate(${x} ${y}) scale(${K})"/>`;
-  if (o.gambo === 1) s += `<line class="gambo" x1="${x + 5.25 * K}" x2="${x + 5.25 * K}" y1="${y - 2}" y2="${y - 3.5 * S}"/>`;
-  if (o.gambo === -1) s += `<line class="gambo" x1="${x - 5.25 * K}" x2="${x - 5.25 * K}" y1="${y + 2}" y2="${y + 3.5 * S}"/>`;
+  // il gambo c'è sempre: sotto la 3ª riga va su, a destra; dalla 3ª riga in su va giù, a sinistra
+  const g = o.gambo === undefined ? (p >= 4 ? -1 : 1) : o.gambo;
+  if (g === 1) s += `<line class="gambo" x1="${x + 5.25 * K}" x2="${x + 5.25 * K}" y1="${y - 2}" y2="${y - 3.5 * S}"/>`;
+  if (g === -1) s += `<line class="gambo" x1="${x - 5.25 * K}" x2="${x - 5.25 * K}" y1="${y + 2}" y2="${y + 3.5 * S}"/>`;
   return s + "</g>";
 }
 function svgNome(x, y, nome, cls = "", attr = "") {
@@ -448,13 +537,18 @@ function mostra(el, si = true, anim = false) {
   el.classList.toggle(el.classList.contains("nome") ? "nascosto" : el.classList.contains("vela") ? "nascosto" : "nascosta", !si);
   if (si && anim && el.classList.contains("nota")) { el.classList.remove("compare"); void el.getBBox; el.classList.add("compare"); }
 }
-function lampeggia(el) { if (!el) return; el.classList.add("luce"); dopo(380, () => el.classList.remove("luce")); }
+function lampeggia(el) {
+  if (!el) return;
+  const nomi = el.dataset && el.dataset.x !== undefined ? [...PALCO.querySelectorAll(`.nome[data-x="${el.dataset.x}"]`)] : [];
+  [el, ...nomi].forEach(e => e.classList.add("luce"));
+  dopo(420, () => [el, ...nomi].forEach(e => e.classList.remove("luce")));
+}
 function anello(el) { if (!el) return; el.classList.remove("via"); void el.getBoundingClientRect(); el.classList.add("via"); }
 
 /* cartellino in alto nel palco */
 const CART = $("#cartellino");
 function cart(html, lampo = true) {
-  CART.innerHTML = html;
+  CART.innerHTML = `<div class="c-in">${html}</div>`;
   if (lampo) { CART.classList.remove("lampo"); void CART.offsetWidth; CART.classList.add("lampo"); }
 }
 function cartNota(chiave, p, extra = "") {
@@ -604,9 +698,11 @@ PASSI.push({
     "Una nota si può scrivere <b>sulla riga</b>: la riga la taglia a metà.",
     "Oppure <b>nello spazio</b>: la nota sta fra due righe.",
     "Più la nota è <b>in alto</b>, più il suono è <b>acuto</b>. Più è in basso, più è <b>grave</b>.",
+    "La nota ha una <b>testa</b> e un <b>gambo</b>. Sotto la 3ª riga il gambo va <b>su, a destra</b>; dalla <b>3ª riga</b> in su va <b>giù, a sinistra</b>.",
     "Ma come si chiamano queste note? Senza la <b>chiave</b> non lo sappiamo!"
   ],
-  quaderno: "<p>Le note si scrivono <b>sulle righe</b> o <b>negli spazi</b>. In alto = suono <b>acuto</b>, in basso = suono <b>grave</b>.</p>",
+  quaderno: "<p>Le note si scrivono <b>sulle righe</b> o <b>negli spazi</b>. In alto = suono <b>acuto</b>, in basso = suono <b>grave</b>.</p>" +
+    "<p><b>Gambo</b>: sotto la 3ª riga va su, a destra della testa; dalla 3ª riga in su va giù, a sinistra.</p>",
   crea() {
     const r = this.r = R(140, 860, 260, null);
     this.mie = 0;
@@ -616,6 +712,9 @@ PASSI.push({
     [[1, 520], [3, 600], [5, 680]].forEach(([p, x]) => s += svgNota(r, x, p, { cls: "nascosta d-spazio" }));
     s += `<text class="etic grande vela nascosto e-riga" x="310" y="${r.yb + 70}" text-anchor="middle">SULLA RIGA</text>`;
     s += `<text class="etic grande vela nascosto e-spazio" x="600" y="${r.yb + 70}" text-anchor="middle">NELLO SPAZIO</text>`;
+    // testa e gambo (sulla nota della 2ª riga, gambo in su a destra)
+    s += `<g class="vela nascosto e-gambo" style="--luce:#FDE047"><text class="etic grande" x="196" y="${r.y(2) + 9}" text-anchor="end" fill="#FDE047">TESTA</text>` +
+      `<text class="etic grande" x="${230 + 5.25 * K + 12}" y="${r.y(2) - 3.5 * S + 6}" fill="#FDE047">GAMBO</text></g>`;
     s += `</g>`;
     // freccia acuto / grave
     s += `<g class="vela nascosto freccia-ag" style="--luce:#FBBF24"><path class="freccia" d="M925 ${r.y(8) - 10} V${r.y(0) + 10} M913 ${r.y(8) + 4} L925 ${r.y(8) - 10} L937 ${r.y(8) + 4}"/>` +
@@ -634,7 +733,7 @@ PASSI.push({
     const x = 210 + this.mie * 82; this.mie++;
     q1(".mie").insertAdjacentHTML("beforeend", svgNota({ ...r, chiave: null, y: r.y }, x, p, { cls: "compare" }));
     accendiPerNota(p, "#FDE047");
-    cart(`La nota è <b>${dovE(p)}</b>`);
+    cart(`La nota è <b>${dovE(p)}</b> <span class="piccolo">· gambo ${p >= 4 ? "giù, a sinistra" : "su, a destra"}</span>`);
     suona(nota("violino", p).midi, 0, 0.9);
   },
   cancella() { q1(".mie").innerHTML = ""; this.mie = 0; spegniRighe(); const d = q1(".demo"); d.style.display = ""; this.fase(this.f, false); },
@@ -643,14 +742,23 @@ PASSI.push({
     const ri = qa(".d-riga"), sp = qa(".d-spazio");
     ri.forEach(e => mostra(e, true)); mostra(q1(".e-riga"), true);
     sp.forEach(e => mostra(e, f >= 1)); mostra(q1(".e-spazio"), f >= 1);
-    mostra(q1(".freccia-ag"), f >= 2); mostra(q1(".domanda"), f >= 3);
+    mostra(q1(".freccia-ag"), f >= 2); mostra(q1(".domanda"), f >= 4); mostra(q1(".e-gambo"), f === 3);
+    [...ri, ...sp].forEach(e => e.classList.remove("gambo-evid"));
     spegniRighe();
-    cart(["Sulla riga", "Nello spazio", "In alto acuto, in basso grave", "Che nota è? Serve la chiave!"][f], anim);
+    cart(["Sulla riga", "Nello spazio", "In alto acuto, in basso grave", "Testa e gambo", "Che nota è? Serve la chiave!"][f], anim);
+    if (f === 3) {
+      luce(q1('.riga[data-riga="3"]'), true, "#FDE047");
+      const su = [...ri, ...sp].filter(e => +e.dataset.p < 4), giu = [...ri, ...sp].filter(e => +e.dataset.p >= 4);
+      const mostraGruppo = (g, testo) => { [...ri, ...sp].forEach(e => e.classList.toggle("gambo-evid", g.includes(e))); cart(testo, false); };
+      mostraGruppo(su, "Sotto la 3ª riga: gambo <b>su, a destra</b>");
+      dopo(2200, () => mostraGruppo(giu, "Dalla 3ª riga in su: gambo <b>giù, a sinistra</b>"));
+      return;
+    }
     if (!anim) return;
     if (f === 0) ri.forEach((e, i) => dopo(i * 450, () => { mostra(e, true, true); accendiPerNota(+e.dataset.p, "#FDE047"); suona(nota("violino", +e.dataset.p).midi, 0, .7); }));
     if (f === 1) sp.forEach((e, i) => dopo(i * 450, () => { mostra(e, true, true); accendiPerNota(+e.dataset.p, "#38BDF8"); suona(nota("violino", +e.dataset.p).midi, 0, .7); }));
     if (f === 2) [...ri, ...sp].sort((a, b) => a.dataset.p - b.dataset.p).forEach((e, i) => dopo(i * 380, () => { lampeggia(e); suona(nota("violino", +e.dataset.p).midi, 0, .6); }));
-    if (anim && f !== 3) dopo(1800, spegniRighe);
+    if (anim && f !== 4) dopo(1800, spegniRighe);
   }
 });
 
@@ -658,16 +766,19 @@ PASSI.push({
 function passoChiave(tipo) {
   const vio = tipo === "violino";
   const pRiga = vio ? 2 : 6, nomeN = vio ? "sol" : "fa";
+  const FN = 3;                                   // fase in cui compare la nota della chiave
   return {
     cap: 1, breve: vio ? "Chiave di violino" : "Chiave di basso", titolo: vio ? "La chiave di violino" : "La chiave di basso",
     punti: vio ? [
       "All'inizio del pentagramma si scrive la <b>chiave</b>: dice il <b>nome</b> delle note.",
       "La chiave di violino si chiama anche <b>chiave di sol</b>: il suo ricciolo gira attorno alla <b>2ª riga</b>.",
+      "Come si disegna: <b>1</b> punta della matita sulla 2ª riga · <b>2</b> mezza chiocciola · <b>3</b> su, oltre la 5ª riga · <b>4</b> il nodo · <b>5</b> giù, sotto il pentagramma.",
       "Così sappiamo che sulla 2ª riga c'è il <b>SOL</b>.",
       "È la chiave dei suoni <b>acuti</b>: voci, flauto, violino, mano destra del pianoforte."
     ] : [
       "Per i suoni <b>gravi</b> si usa la <b>chiave di basso</b>: violoncello, contrabbasso, fagotto, mano sinistra del pianoforte.",
       "Si chiama anche <b>chiave di fa</b>: parte dalla <b>4ª riga</b> e i due <b>puntini</b> la abbracciano.",
+      "Come si disegna: <b>1</b> punta della matita sulla 4ª riga · <b>2</b> mezza chiocciola · <b>3</b> giù · <b>4</b> i due puntini, sopra e sotto la 4ª riga.",
       "Così sappiamo che sulla 4ª riga c'è il <b>FA</b>."
     ],
     quaderno: vio
@@ -675,7 +786,7 @@ function passoChiave(tipo) {
       : "<p><b>Chiave di basso</b> (o di fa): il FA è sulla 4ª riga.</p>",
     crea() {
       const r = this.r = R(70, 930, 260, tipo);
-      let s = svgRigo(r) + svgChiave(r, 84, "c-chiave");
+      let s = svgRigo(r) + svgChiave(r, 84, "c-chiave") + svgMano(r, 84, tipo);
       // centro del ricciolo (violino) o dei due puntini (basso)
       if (vio) s += `<circle class="anello a1" style="--luce:${COL("sol")}" cx="${84 + 17 * K}" cy="${r.y(2)}" r="26"/>`;
       else s += `<circle class="anello a1" style="--luce:${COL("fa")}" cx="${84 + 25.6 * K}" cy="${r.y(7)}" r="13"/><circle class="anello a2" style="--luce:${COL("fa")}" cx="${84 + 25.6 * K}" cy="${r.y(5)}" r="13"/>`;
@@ -684,17 +795,14 @@ function passoChiave(tipo) {
       svg(VB, s);
       q1(".n-chiave").addEventListener("click", () => this.suonaNota());
       strumenti([
-        { t: "✏️ Disegna la chiave", fn: () => this.disegna() },
+        { t: "✏️ Disegna la chiave", fn: () => this.disegna(false) },
+        { t: "🐢 Piano, passo passo", fn: () => this.disegna(true) },
         { t: `🔊 Ascolta il ${nomeN}`, fn: () => { mostra(q1(".n-chiave"), true); mostra(q1(".nome")); this.suonaNota(); } },
-        { t: vio ? "🎯 Dov'è la 2ª riga?" : "🎯 Dov'è la 4ª riga?", fn: () => this.riga() }
+        { t: vio ? "🎯 2ª riga" : "🎯 4ª riga", fn: () => this.riga() }
       ]);
     },
-    disegna() {
-      const g = q1(".c-chiave"), p = g.querySelector("path");
-      g.style.setProperty("--l", Math.ceil(p.getTotalLength()) + 1);
-      g.classList.remove("disegna"); void g.getBBox(); g.classList.add("disegna");
-      cart(vio ? "Chiave di violino (o di sol)" : "Chiave di basso (o di fa)");
-    },
+    nomeChiave() { return vio ? "Chiave di violino (o di sol)" : "Chiave di basso (o di fa)"; },
+    disegna(lento) { disegnaAMano(tipo, lento, () => { if (!lento) cart(this.nomeChiave(), false); }); },
     riga() {
       luce(q1(`.riga[data-riga="${vio ? 2 : 4}"]`), true, COL(nomeN));
       mostra(q1(".e-riga")); anello(q1(".a1")); anello(q1(".a2"));
@@ -703,14 +811,17 @@ function passoChiave(tipo) {
     suonaNota() { const n = q1(".n-chiave"); lampeggia(n); suona(nota(tipo, pRiga).midi); cartNota(tipo, pRiga); },
     fase(f, anim) {
       spegniRighe();
-      mostra(q1(".e-riga"), f >= 1); mostra(q1(".n-chiave"), f >= 2); mostra(q1(".nome"), f >= 2);
-      if (f >= 1) luce(q1(`.riga[data-riga="${vio ? 2 : 4}"]`), true, COL(nomeN));
-      cart(f === 0 ? (vio ? "Chiave di violino (o di sol)" : "Chiave di basso (o di fa)") : f === 1 ? (vio ? "Il ricciolo gira attorno alla <b>2ª riga</b>" : "I puntini abbracciano la <b>4ª riga</b>")
-        : `Sulla ${vio ? "2ª" : "4ª"} riga c'è il <b style="color:${coloreTesto(nomeN)}">${MAIU(nomeN)}</b>`, anim);
+      q1(".mano").style.opacity = 0; q1(".c-chiave").style.opacity = 1;
+      mostra(q1(".e-riga"), f === 1 || f >= FN); mostra(q1(".n-chiave"), f >= FN); mostra(q1(".nome"), f >= FN);
+      if (f === 1 || f >= FN) luce(q1(`.riga[data-riga="${vio ? 2 : 4}"]`), true, COL(nomeN));
+      if (f === 2) luce(q1(`.riga[data-riga="${vio ? 2 : 4}"]`), true, COL(nomeN));
+      cart(f === 0 ? this.nomeChiave() : f === 1 ? (vio ? "Il ricciolo gira attorno alla <b>2ª riga</b>" : "I puntini abbracciano la <b>4ª riga</b>")
+        : f === 2 ? "Come si disegna" : `Sulla ${vio ? "2ª" : "4ª"} riga c'è il <b style="color:${coloreTesto(nomeN)}">${MAIU(nomeN)}</b>`, anim);
+      if (f === 2) { this.disegna(true); return; }
       if (!anim) return;
-      if (f === 0) this.disegna();
+      if (f === 0) this.disegna(false);
       if (f === 1) this.riga();
-      if (f === 2) { mostra(q1(".n-chiave"), true, true); this.suonaNota(); }
+      if (f === FN) { mostra(q1(".n-chiave"), true, true); this.suonaNota(); }
     }
   };
 }
@@ -722,7 +833,7 @@ PASSI.push({
   punti: [
     "Le note vanno in fila come nella scala: <b>do re mi fa sol la si</b>, poi di nuovo <b>do</b>.",
     "Dal SOL si sale un gradino alla volta (riga, spazio, riga…): <b>la, si, do, re…</b>",
-    "Scendendo dal SOL si trovano <b>fa, mi, re</b>."
+    "Scendendo dal SOL si trovano <b>fa, mi, re</b> e infine <b>do</b>, che sta su una piccola riga in più (la vedremo presto)."
   ],
   quaderno: "<p>Ogni gradino (da una riga allo spazio vicino, o viceversa) è la <b>nota successiva</b> della scala.</p>",
   crea() {
@@ -734,8 +845,8 @@ PASSI.push({
       s += `<g class="chip c-${n}" data-i="${i}"><rect x="${x - 40}" y="22" width="80" height="44" rx="12"/><text x="${x}" y="45">${n}</text></g>`;
     });
     s += svgRigo(r) + svgChiave(r, 84);
-    for (let p = -1; p <= 9; p++) {
-      const x = 205 + (p + 1) * 70;
+    for (let p = -2; p <= 9; p++) {
+      const x = 190 + (p + 2) * 64;
       s += svgNota(r, x, p, { cls: "nascosta scala-n" }) + svgNome(x, r.yb + 74, nota("violino", p).nome, "nascosto", ` data-x="${x}" style="font-size:22px"`);
     }
     s += `<circle class="cursore" r="30" cx="0" cy="0" style="opacity:0"/>`;
@@ -755,7 +866,7 @@ PASSI.push({
     cart("do · re · mi · fa · sol · la · si · do");
   },
   vai(p) {
-    if (p < -1 || p > 9) return;
+    if (p < -2 || p > 9) return;
     this.cur = p;
     const n = q1(`.scala-n[data-p="${p}"]`);
     mostra(n, true, n.classList.contains("nascosta"));
@@ -787,20 +898,22 @@ function passoRigheSpazi(tipo) {
       `Le note <b>sulle righe</b>: <b>${MAIU(nomi(righe))}</b>.`,
       `Le note <b>negli spazi</b>: <b>${MAIU(nomi(spazi))}</b>.`,
       vio ? "Un trucco: da una riga alla riga sopra si <b>salta una nota</b>, quella che sta nello spazio in mezzo."
-        : "Attenzione: le stesse posizioni della chiave di violino qui hanno <b>nomi diversi</b>!"
+        : "Attenzione: le stesse posizioni della chiave di violino qui hanno <b>nomi diversi</b>!",
+      vio ? "Il gambo: dal <b>SI</b> (3ª riga) in su va <b>giù, a sinistra</b>; sotto il SI va <b>su, a destra</b>."
+        : "Il gambo: qui la 3ª riga è il <b>RE</b>. Dal RE in su il gambo va <b>giù, a sinistra</b>; sotto, <b>su, a destra</b>."
     ].concat(vio ? [] : ["Anche in chiave di basso si possono aggiungere i <b>tagli</b>: ascolta la scala dal do grave al do centrale."]),
-    quaderno: `<p><b>Chiave di ${tipo}</b> · righe: ${nomi(righe)} · spazi: ${nomi(spazi)}</p>`,
+    quaderno: `<p><b>Chiave di ${tipo}</b> · righe: ${nomi(righe)} · spazi: ${nomi(spazi)}</p><p>Gambo giù, a sinistra, dal <b>${vio ? "SI" : "RE"}</b> (3ª riga) in su.</p>`,
     crea() {
       const r = this.r = R(70, 950, 270, tipo);
       let s = svgRigo(r, { spazi: true }) + svgChiave(r, 84);
       s += `<g class="demo">`;
       s += `<text class="etic grande" x="350" y="${r.y(8) - 46}" text-anchor="middle">RIGHE</text><text class="etic grande" x="760" y="${r.y(8) - 46}" text-anchor="middle">SPAZI</text>`;
       s += `<line x1="580" x2="580" y1="${r.y(10)}" y2="${r.y(-2)}" stroke="rgba(255,255,255,0.25)" stroke-width="2" stroke-dasharray="6 6"/>`;
-      righe.forEach((p, i) => { const x = 210 + i * 70; s += svgNota(r, x, p, { cls: "nascosta g-righe" }) + svgNome(x, r.yb + 64, nota(tipo, p).nome, "nascosto", ` data-x="${x}"`); });
-      spazi.forEach((p, i) => { const x = 655 + i * 75; s += svgNota(r, x, p, { cls: "nascosta g-spazi" }) + svgNome(x, r.yb + 64, nota(tipo, p).nome, "nascosto", ` data-x="${x}"`); });
+      righe.forEach((p, i) => { const x = 210 + i * 70; s += svgNota(r, x, p, { cls: "nascosta g-righe" }) + svgNome(x, r.yb + 72, nota(tipo, p).nome, "nascosto", ` data-x="${x}"`); });
+      spazi.forEach((p, i) => { const x = 655 + i * 75; s += svgNota(r, x, p, { cls: "nascosta g-spazi" }) + svgNome(x, r.yb + 72, nota(tipo, p).nome, "nascosto", ` data-x="${x}"`); });
       // le note saltate (trucco)
-      [1, 3, 5, 7].forEach((p, i) => { const x = 245 + i * 70; s += `<text class="nome vela nascosto saltata" x="${x}" y="${r.yb + 100}" style="font-size:18px;opacity:.75">(${nota(tipo, p).nome})</text>`; });
-      [2, 4, 6].forEach((p, i) => { const x = 692 + i * 75; s += `<text class="nome vela nascosto saltata" x="${x}" y="${r.yb + 100}" style="font-size:18px;opacity:.75">(${nota(tipo, p).nome})</text>`; });
+      [1, 3, 5, 7].forEach((p, i) => { const x = 245 + i * 70; s += `<text class="nome vela nascosto saltata" x="${x}" y="${r.yb + 104}" style="font-size:18px;fill-opacity:.7">(${nota(tipo, p).nome})</text>`; });
+      [2, 4, 6].forEach((p, i) => { const x = 692 + i * 75; s += `<text class="nome vela nascosto saltata" x="${x}" y="${r.yb + 104}" style="font-size:18px;fill-opacity:.7">(${nota(tipo, p).nome})</text>`; });
       s += `</g><g class="scala-g"></g>`;
       svg(VB, s);
       qa(".demo .nota").forEach(n => n.addEventListener("click", () => this.tocca(n)));
@@ -841,13 +954,19 @@ function passoRigheSpazi(tipo) {
       qa(".g-righe").forEach(n => { mostra(n, true); mostra(q1(`.demo .nome[data-x="${n.dataset.x}"]`), true); });
       qa(".g-spazi").forEach(n => { mostra(n, f >= 1); mostra(q1(`.demo .nome[data-x="${n.dataset.x}"]`), f >= 1); });
       qa(".saltata").forEach(t => mostra(t, vio && f >= 2));
+      qa(".demo .nota").forEach(n => n.classList.remove("gambo-evid"));
       spegniRighe();
-      cart(["Sulle righe: " + MAIU(nomi(righe)), "Negli spazi: " + MAIU(nomi(spazi)), vio ? "Sulle righe si salta una nota" : "Attenzione ai nomi!", "La scala in chiave di basso"][f], anim);
+      cart(["Sulle righe: " + MAIU(nomi(righe)), "Negli spazi: " + MAIU(nomi(spazi)), vio ? "Sulle righe si salta una nota" : "Attenzione ai nomi!",
+        `Dal <b>${vio ? "SI" : "RE"}</b> in su: gambo giù, a sinistra`, "La scala in chiave di basso"][f], anim);
+      if (f === 3) {
+        luce(q1('.riga[data-riga="3"]'), true, coloreTesto(nota(tipo, 4).nome));
+        qa(".demo .nota").filter(n => +n.dataset.p >= 4).forEach(n => n.classList.add("gambo-evid"));
+      }
       if (!anim) return;
       if (f === 0) { qa(".g-righe").forEach(n => { mostra(n, false); mostra(q1(`.demo .nome[data-x="${n.dataset.x}"]`), false); }); suonaFila(qa(".g-righe"), tipo, 650); }
       if (f === 1) { qa(".g-spazi").forEach(n => { mostra(n, false); mostra(q1(`.demo .nome[data-x="${n.dataset.x}"]`), false); }); suonaFila(qa(".g-spazi"), tipo, 650); }
       if (f === 2 && vio) qa(".saltata").forEach((t, i) => dopo(i * 300, () => { t.classList.remove("nascosto"); }));
-      if (f === 3) this.scala(false);
+      if (f === 4) this.scala(false);
     }
   };
 }
@@ -916,12 +1035,12 @@ PASSI.push({
   cap: 1, breve: "Le due chiavi", titolo: "Violino e basso insieme",
   punti: [
     "Il pianoforte legge <b>due pentagrammi</b> insieme: chiave di violino per la <b>mano destra</b>, chiave di basso per la <b>sinistra</b>.",
-    "Il <b>DO centrale</b> sta in mezzo: sul 1° taglio <b>sotto</b> in chiave di violino e sul 1° taglio <b>sopra</b> in chiave di basso. È la <b>stessa nota</b>!",
+    "Il <b>DO centrale</b> fa da <b>ponte</b> fra le due chiavi: è il 1° taglio <b>sotto</b> la chiave di violino e, insieme, il 1° taglio <b>sopra</b> la chiave di basso.",
     "Le chiavi in tutto sono sette (il <b>setticlavio</b>): noi useremo queste due."
   ],
-  quaderno: "<p>Il <b>DO centrale</b>: 1° taglio sotto in chiave di violino, 1° taglio sopra in chiave di basso.</p>",
+  quaderno: "<p>Il <b>DO centrale</b> fa da ponte: 1° taglio sotto la chiave di violino, 1° taglio sopra la chiave di basso.</p>",
   crea() {
-    const v = this.v = R(130, 860, 196, "violino"), b = this.b = R(130, 860, 436, "basso");
+    const v = this.v = R(130, 860, 196, "violino"), b = this.b = R(130, 860, 388, "basso");   // due spazi fra i pentagrammi: il taglio del do centrale è in mezzo
     let s = svgRigo(v) + svgRigo(b) + svgChiave(v, 142) + svgChiave(b, 142);
     s += `<line class="stanghetta" x1="130" x2="130" y1="${v.y(8)}" y2="${b.yb}"/>`;
     // graffa
@@ -929,12 +1048,12 @@ PASSI.push({
     s += `<path d="M118 ${y1} C92 ${y1 + 30}, 112 ${m - 40}, 92 ${m} C112 ${m + 40}, 92 ${y2 - 30}, 118 ${y2} C100 ${y2 - 34}, 120 ${m + 40}, 100 ${m} C120 ${m - 40}, 100 ${y1 + 34}, 118 ${y1} Z" fill="#EAF2FF"/>`;
     s += `<text class="etic" x="880" y="${v.y(4) - 6}">MANO</text><text class="etic" x="880" y="${v.y(4) + 18}">DESTRA</text>`;
     s += `<text class="etic" x="880" y="${b.y(4) - 6}">MANO</text><text class="etic" x="880" y="${b.y(4) + 18}">SINISTRA</text>`;
-    s += `<g class="vela nascosto centrale">` + svgNota(v, 470, -2, { cls: "dc dc-v" }) + svgNota(b, 470, 10, { cls: "dc dc-b" }) +
-      `<text class="etic grande" x="520" y="${(v.y(-2) + b.y(10)) / 2 + 8}" fill="${coloreTesto("do")}">= DO CENTRALE</text></g>`;
+    s += `<g class="vela nascosto centrale">` + svgNota(v, 470, -2, { cls: "dc" }) +
+      `<text class="etic grande" x="${470 + 5.25 * K + 34}" y="${v.y(-2) + 9}" fill="${coloreTesto("do")}">DO CENTRALE</text></g>`;
     s += `<g class="mie"></g>`;
-    for (let p = -3; p <= 12; p++) s += `<rect class="colpo tocca" data-r="v" data-p="${p}" x="200" y="${v.y(p) - H / 2}" width="640" height="${H}"/>`;
+    for (let p = -2; p <= 12; p++) s += `<rect class="colpo tocca" data-r="v" data-p="${p}" x="200" y="${v.y(p) - H / 2}" width="640" height="${H}"/>`;
     for (let p = -4; p <= 9; p++) s += `<rect class="colpo tocca" data-r="b" data-p="${p}" x="200" y="${b.y(p) - H / 2}" width="640" height="${H}"/>`;
-    svg("0 -22 1000 548", s);
+    svg("0 -20 1000 495", s);
     qa(".colpo.tocca").forEach(c => c.addEventListener("click", () => this.tocca(c.dataset.r, +c.dataset.p)));
     qa(".dc").forEach(n => n.addEventListener("click", () => this.centrale()));
     strumenti([
@@ -950,7 +1069,7 @@ PASSI.push({
   },
   centrale() {
     mostra(q1(".centrale")); qa(".dc").forEach(lampeggia); suona(60);
-    cart(`<b style="color:${coloreTesto("do")}">DO</b> centrale <span class="piccolo">· stessa nota, stesso suono</span>`);
+    cart(`<b style="color:${coloreTesto("do")}">DO</b> centrale <span class="piccolo">· il ponte fra violino e basso</span>`);
   },
   tuttiDo() {
     fermaTutto();
@@ -1187,16 +1306,17 @@ PASSI.push({
 /* ---------- 13. Ripasso: tutto da copiare sul quaderno ---------- */
 const DEFINIZIONI = [
   [0, "Pentagramma", "5 righe e 4 spazi, che si contano dal basso verso l'alto."],
+  [1, "Gambo", "sotto la 3ª riga va su, a destra; dalla 3ª riga in su va giù, a sinistra."],
   [2, "Chiave", "serve a indicare l'altezza delle note sul pentagramma."],
   [2, "Chiave di violino (o di sol)", "il SOL è sulla 2ª riga. Righe: mi sol si re fa. Spazi: fa la do mi."],
   [6, "Chiave di basso (o di fa)", "il FA è sulla 4ª riga. Righe: sol si re fa la. Spazi: la do mi sol."],
   [5, "Tagli addizionali", "piccole righe aggiunte sopra o sotto il pentagramma, per le note troppo acute o troppo gravi."],
-  [8, "Do centrale", "1° taglio sotto in chiave di violino, 1° taglio sopra in chiave di basso."],
-  [9, "Linea di battuta (o stanghetta)", "linea verticale che suddivide il brano in sezioni di uguale durata, chiamate battute o misure."],
+  [8, "Do centrale", "il ponte fra le due chiavi: 1° taglio sotto il violino, 1° taglio sopra il basso."],
+  [9, "Linea di battuta (o stanghetta)", "linea verticale che divide il brano in battute (o misure) di uguale durata."],
   [9, "Battuta (o misura)", "lo spazio compreso tra due stanghette; organizza il ritmo e le note in parti uguali."],
   [9, "Doppia stanghetta conclusiva", "indica la fine di un brano o una netta transizione formale."],
-  [10, "Ritmo · Pulsazione · Metro", "eventi regolari nel tempo · unità ritmica che compone la battuta · come sono organizzate le pulsazioni."],
-  [11, "Indicazione di tempo", "sopra: quanti movimenti in ogni misura; sotto: la figura che vale un movimento (4 = semiminima)."],
+  [10, "Ritmo · Pulsazione · Metro", "eventi regolari nel tempo · l'unità della battuta · come si raggruppano le pulsazioni."],
+  [11, "Indicazione di tempo", "sopra: quanti movimenti per misura; sotto: la figura di un movimento (4 = semiminima)."],
   [11, "Unità di suddivisione", "il movimento diviso in parti più brevi, di solito la metà nei tempi semplici."]
 ];
 PASSI.push({
