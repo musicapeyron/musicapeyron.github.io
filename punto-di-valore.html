@@ -600,33 +600,47 @@ function svgFig(x, y, fig, punti = 0, o = {}) {
   return vfFigura({ x, y, fig, punti, pausa: o.pausa, k: o.k || K, cls: o.cls, p: 4, gambo: 1, puntoCls: o.puntoCls });
 }
 
-/* ---------- suono: il pianoforte di «Leggi la nota» (fondamentale + armoniche che si smorzano, filtro che si scurisce).
-   La nota dura quanto la figura: alla fine si «chiude» come quando si alza il dito dal tasto. ---------- */
+/* ---------- suono: un violino vero (VSCO 2, licenza CC0) che tiene il MI per tutta la durata della figura, senza calare;
+   il metronomo è il legnetto della «Lettura ritmica» (VCSL, CC0). I file sono nel sito, si caricano all'apertura.
+   Finché non sono pronti (o se mancano) suona un violino sintetico, anche lui senza decadimento. ---------- */
 let VOCI = [];
 const MI = 64;                                    // il MI della 1ª riga (ottava del do centrale): la nota delle lezioni sul ritmo
+const CAMPIONI = { violino: { url: "media/suoni/violino/E4.mp3", midi: 64 }, legno: { url: "media/suoni/ritmo/legnetto.mp3" } };
+Object.values(CAMPIONI).forEach(c => { try { c.dati = fetch(c.url).then(r => r.ok ? r.arrayBuffer() : null).catch(() => null); } catch (e) { c.dati = Promise.resolve(null); } });
+function campione(nome) {                         // l'AudioBuffer, se già pronto
+  const c = CAMPIONI[nome]; if (c.buf || c.decodifica || !AC) return c.buf;
+  c.decodifica = c.dati.then(ab => ab ? new Promise(ok => AC.decodeAudioData(ab.slice(0), ok, () => ok(null))) : null).then(b => { c.buf = b; });
+  return null;
+}
+function prepara() { if (audio()) { campione("violino"); campione("legno"); } }
+document.addEventListener("pointerdown", prepara, { once: true });
 function suonaTenuto(midi, quando, dur) {
   const ac = audio(); if (!ac) return;
-  const t = ac.currentTime + 0.03 + quando, f = 440 * Math.pow(2, (midi - 69) / 12), fine = t + Math.max(0.15, dur - 0.05);
-  const lungo = Math.max(1.9, dur * 1.15);
-  const fl = ac.createBiquadFilter(); fl.type = "lowpass"; fl.Q.value = 0.6;
-  fl.frequency.setValueAtTime(6500, t); fl.frequency.exponentialRampToValueAtTime(800, t + lungo);
-  const chiudi = ac.createGain(); chiudi.gain.setValueAtTime(1, t); chiudi.gain.setTargetAtTime(0.0001, fine, 0.04);
-  fl.connect(chiudi); chiudi.connect(master);
-  const os = [[1, 0.5, 1], [2, 0.24, 0.8], [3, 0.14, 0.6], [4, 0.08, 0.45], [6, 0.04, 0.3]].map(([m, v, d]) => {
-    const o = ac.createOscillator(), g = ac.createGain(); o.type = "sine"; o.frequency.value = f * m;
-    g.gain.setValueAtTime(0.0001, t); g.gain.exponentialRampToValueAtTime(v, t + 0.01); g.gain.exponentialRampToValueAtTime(0.0001, t + lungo * d);
-    o.connect(g); g.connect(fl); o.start(t); o.stop(Math.min(t + lungo * d, fine + 0.3) + 0.05); return o;
-  });
+  const t = ac.currentTime + 0.03 + quando, fine = t + Math.max(0.15, dur - 0.04);
+  const chiudi = ac.createGain(); chiudi.gain.setValueAtTime(0.0001, t); chiudi.gain.exponentialRampToValueAtTime(1, t + 0.03);
+  chiudi.gain.setValueAtTime(1, fine); chiudi.gain.setTargetAtTime(0.0001, fine, 0.035); chiudi.connect(master);
+  const buf = campione("violino"); let os;
+  if (buf) {
+    const s = ac.createBufferSource(); s.buffer = buf; s.playbackRate.value = Math.pow(2, (midi - CAMPIONI.violino.midi) / 12);
+    const g = ac.createGain(); g.gain.value = 1.6; s.connect(g); g.connect(chiudi); s.start(t); s.stop(fine + 0.3); os = [s];
+  } else {
+    // violino sintetico (dente di sega filtrato, con un leggero vibrato): suona uguale dall'inizio alla fine
+    const f = 440 * Math.pow(2, (midi - 69) / 12), o = ac.createOscillator(), fl = ac.createBiquadFilter(), g = ac.createGain(), lfo = ac.createOscillator(), lg = ac.createGain();
+    o.type = "sawtooth"; o.frequency.value = f; fl.type = "lowpass"; fl.frequency.value = f * 5; fl.Q.value = 0.7; g.gain.value = 0.14;
+    lfo.frequency.value = 5.5; lg.gain.value = f * 0.004; lfo.connect(lg); lg.connect(o.frequency);
+    o.connect(fl); fl.connect(g); g.connect(chiudi); o.start(t); lfo.start(t); o.stop(fine + 0.3); lfo.stop(fine + 0.3); os = [o, lfo];
+  }
   VOCI.push({ g: chiudi, os }); riposo(quando + dur + 0.4);
 }
-/* il metronomo: un «tic» morbido di legno, un po' più acuto sul primo movimento */
+/* il metronomo: il legnetto, più forte sul primo movimento */
 function colpoMetro(forte, quando) {
   const ac = audio(); if (!ac) return;
-  const t = ac.currentTime + 0.03 + quando, o = ac.createOscillator(), g = ac.createGain(), fl = ac.createBiquadFilter();
-  o.type = "sine"; o.frequency.setValueAtTime(forte ? 1500 : 1150, t); o.frequency.exponentialRampToValueAtTime(forte ? 900 : 700, t + 0.04);
-  fl.type = "bandpass"; fl.frequency.value = forte ? 1300 : 1000; fl.Q.value = 1.2;
-  g.gain.setValueAtTime(0.0001, t); g.gain.exponentialRampToValueAtTime(forte ? 0.22 : 0.13, t + 0.003); g.gain.exponentialRampToValueAtTime(0.0001, t + 0.06);
-  o.connect(fl); fl.connect(g); g.connect(master); o.start(t); o.stop(t + 0.08); VOCI.push({ g, os: [o] }); riposo(quando + 0.2);
+  const t = ac.currentTime + 0.03 + quando, g = ac.createGain(); g.gain.value = forte ? 0.9 : 0.5; g.connect(master);
+  const buf = campione("legno"); let o;
+  if (buf) { o = ac.createBufferSource(); o.buffer = buf; o.playbackRate.value = forte ? 1.12 : 1; o.connect(g); o.start(t); }
+  else { o = ac.createOscillator(); const e = ac.createGain(); o.type = "sine"; o.frequency.setValueAtTime(forte ? 1500 : 1150, t); o.frequency.exponentialRampToValueAtTime(700, t + 0.04);
+    e.gain.setValueAtTime(0.0001, t); e.gain.exponentialRampToValueAtTime(0.3, t + 0.003); e.gain.exponentialRampToValueAtTime(0.0001, t + 0.06); o.connect(e); e.connect(g); o.start(t); o.stop(t + 0.08); }
+  VOCI.push({ g, os: [o] }); riposo(quando + 0.3);
 }
 function zittisci() {
   if (AC) VOCI.forEach(v => { try { v.g.gain.cancelScheduledValues(AC.currentTime); v.g.gain.setTargetAtTime(0.0001, AC.currentTime, 0.02); v.os.forEach(o => o.stop(AC.currentTime + 0.08)); } catch (e) { } });
