@@ -159,6 +159,8 @@
 
   /* ---------- tavolo di gioco ---------- */
   #schermataGioco { --carta: 220px; }
+  .titolo-lato { display: none; }
+  .bottoni-gioco { margin-top: 12px; }
   .riga-stato {
     display: flex; align-items: center; justify-content: center; gap: 18px;
     margin-bottom: 8px; font-size: 0.9rem; color: #9FB3CE;
@@ -244,7 +246,74 @@
     .scelte-riga { display: grid; grid-template-columns: 1fr 1fr; gap: 10px 26px; }
     .opz { font-size: 1.02rem; padding: 14px 10px; }
     .opz .sotto { font-size: 0.8rem; }
+    /* ---------- partita su PC e LIM ----------
+       Con 1, 3 e 4 giocatori titolo, statistiche e Menù stanno in una colonna
+       stretta a sinistra e tutto il resto dello schermo è per le carte: così
+       i cerchi diventano molto più grandi di quando stavano in croce.
+       Con 2 giocatori resta la disposizione a croce, che va già bene. */
     #schermataGioco { --carta: 300px; }
+
+    #schermataGioco[data-colonna].attiva {
+      display: grid;
+      grid-template-columns: 250px 1fr;
+      grid-template-rows: auto auto auto 1fr;
+      grid-template-areas:
+        "titolo  tavolo"
+        "stato   tavolo"
+        "stats   tavolo"
+        "bottoni tavolo";
+      column-gap: 24px;
+      align-items: start;
+    }
+    #schermataGioco[data-colonna] .titolo-lato {
+      display: block; grid-area: titolo; margin: 0 0 10px;
+      font-family: 'Manrope', sans-serif; font-weight: 800; font-size: 1.8rem;
+      /* la casetta sta in alto a sinistra: il titolo le si mette accanto */
+      padding-left: 50px; line-height: 40px; min-height: 40px;
+    }
+    #schermataGioco[data-colonna] .riga-stato {
+      grid-area: stato; flex-direction: column; align-items: flex-start;
+      gap: 2px; margin: 0 0 12px;
+    }
+    #schermataGioco[data-colonna] .stats {
+      grid-area: stats; grid-template-columns: 1fr 1fr; max-width: none; margin: 0;
+    }
+    #schermataGioco[data-colonna] .bottoni-gioco { grid-area: bottoni; margin-top: 16px; justify-content: flex-start; }
+    #schermataGioco[data-colonna] .tavolo { grid-area: tavolo; align-self: center; }
+    /* il titolo grande della pagina sparisce: c'è quello nella colonna */
+    body:has(#schermataGioco[data-colonna].attiva) > h1,
+    body:has(#schermataGioco[data-colonna].attiva) > .sottotitolo { display: none; }
+
+    /* Le carte stanno in una griglia con colonne dichiarate, non in un flex
+       che va a capo: la schermata è larga quanto il suo contenuto e in quel
+       caso il "va a capo" non scatterebbe, mettendo tutte le carte in fila. */
+    #schermataGioco[data-colonna] .posto { grid-column: auto; grid-row: auto; }
+    #schermataGioco[data-colonna] .tavolo {
+      display: grid; justify-content: center; align-content: center; gap: 12px 22px;
+    }
+    #schermataGioco[data-colonna] .posto.centro { grid-row: 1; justify-self: center; }
+    /* qui i giocatori sono tutti in riga dalla stessa parte: nessuna carta
+       va girata (il capovolgimento serve solo al telefono, in due) */
+    #schermataGioco[data-colonna] .posto.capovolto { flex-direction: column; }
+    #schermataGioco[data-colonna] .posto.capovolto .carta,
+    #schermataGioco[data-colonna] .posto.capovolto .etichetta,
+    #schermataGioco[data-colonna] .posto.capovolto .quiz { transform: none; }
+    #schermataGioco[data-colonna] .posto.capovolto .quiz {
+      position: absolute; left: 50%; top: 50%; transform: translate(-50%, -50%);
+    }
+
+    /* un giocatore: le due carte affiancate, grandi quanto si può */
+    #schermataGioco[data-giocatori="1"] { --carta: 400px; }
+    #schermataGioco[data-giocatori="1"] .tavolo { grid-template-columns: repeat(2, var(--carta)); gap: 34px; }
+    #schermataGioco[data-giocatori="1"] .posto.centro { grid-column: 1; }
+
+    /* tre o quattro: la carta in mezzo sopra, le altre in riga sotto */
+    #schermataGioco[data-giocatori="3"] { --carta: 310px; }
+    #schermataGioco[data-giocatori="4"] { --carta: 285px; }
+    #schermataGioco[data-giocatori="3"] .tavolo { grid-template-columns: repeat(3, var(--carta)); }
+    #schermataGioco[data-giocatori="4"] .tavolo { grid-template-columns: repeat(4, var(--carta)); }
+    #schermataGioco[data-giocatori="3"] .posto.centro,
+    #schermataGioco[data-giocatori="4"] .posto.centro { grid-column: 1 / -1; }
     .stats { max-width: 560px; gap: 10px; }
     .stat { padding: 12px 8px 11px; }
     .stat-label { font-size: 0.66rem; }
@@ -393,6 +462,8 @@
 
 <!-- ============ GIOCO ============ -->
 <div class="schermata" id="schermataGioco">
+  <!-- il titolo si vede solo nella disposizione a colonna (PC e LIM) -->
+  <h2 class="titolo-lato">Doppio</h2>
   <div class="riga-stato">
     <span>Carta <b id="numCarta">1</b> di <b id="totCarte">10</b></span>
     <span id="boxTempo" hidden>Tempo <b id="tempo">0,0 s</b></span>
@@ -404,7 +475,7 @@
     <div class="stat acc"><span class="stat-label">Accuratezza</span><span class="stat-value" id="stAcc">—</span></div>
   </div>
   <div class="tavolo" id="tavolo"></div>
-  <div class="bottoni" style="margin-top:12px">
+  <div class="bottoni bottoni-gioco">
     <button type="button" class="pulsantone secondario" id="btnMenu">Menù</button>
   </div>
 </div>
@@ -657,6 +728,12 @@
     // quante carte ci sono in tutto: sul telefono decide quanto possono essere
     // grandi, perché stanno una sotto l'altra
     t.dataset.carte = stato.giocatori.length + 1;
+    // su PC e LIM: con 1, 3 e 4 giocatori i comandi vanno in colonna a sinistra
+    // e le carte si prendono tutto il resto. Con 2 la croce va già bene.
+    const sg = document.getElementById("schermataGioco");
+    sg.dataset.giocatori = stato.giocatori.length;
+    if (stato.giocatori.length === 2) sg.removeAttribute("data-colonna");
+    else sg.dataset.colonna = "si";
     const centro = document.createElement("div");
     centro.className = "posto centro";
     centro.innerHTML = '<div class="etichetta">Carta in mezzo</div><div class="porta" id="portaCentro"></div>';
