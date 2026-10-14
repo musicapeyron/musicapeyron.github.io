@@ -185,12 +185,13 @@ Passi:
 
 ## 7. Come lavorare con Cristiano
 
-- Si lavora su un **branch di prova** (es. `migliora-design`), mai direttamente su `main` per modifiche
-  grosse; si porta su `main` solo dopo il suo ok esplicito.
+- Si lavora sull'unico **branch di prova `prova`** (mai branch nuovi), allineato a `main` prima di cominciare,
+  mai direttamente su `main` per modifiche grosse; si porta su `main` solo dopo il suo ok esplicito,
+  scrivendo l'aggiornamento in `updates.html`.
 - **Due giochi alla volta**: si sistemano, si provano, si pubblicano sul branch, si mandano le schermate
   (misura `tuo`, 1920×915, meglio un mosaico) con un riassunto breve, e si **aspetta l'ok** prima di
   passare ai successivi (a meno che dica di procedere da soli).
-- Anteprima da mandargli: `https://raw.githack.com/musicapeyron/musicapeyron.github.io/<branch>/<pagina>.html`
+- Anteprima da mandargli: `https://raw.githack.com/musicapeyron/musicapeyron.github.io/prova/<pagina>.html`
 - Se interrompe, ci si ferma e si aspetta. Se nota un problema in un gioco già fatto, si sistema subito.
 - Cose fuori dalla richiesta: segnalarle e chiedere, non cambiarle di propria iniziativa.
 - Commit con descrizione in italiano che dice cosa cambia per chi usa il sito.

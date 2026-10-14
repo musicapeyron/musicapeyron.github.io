@@ -1,5 +1,5 @@
 /* =========================================================
-   info-sito.js — la riga «musicascuole.it — Il progetto, crediti e licenza · Privacy» in cima a ogni pagina.
+   info-sito.js — la riga «musicascuole.it — Il progetto, crediti e licenza · Privacy · Updates» in cima a ogni pagina.
    Si carica subito dopo <body>:  <script src="info-sito.js"></script>
    La riga sta sopra a tutto (in alto, al centro) e la pagina scende di quanto serve,
    così non copre titoli o pulsanti. Nella modalità schermo intero (body.lim) sparisce.
@@ -25,7 +25,7 @@
   riga.className = "info-sito";
   riga.setAttribute("aria-label", "Informazioni sul sito");
   var cartella = /\/programma\//.test(location.pathname) ? "../" : "";
-  riga.innerHTML = '<span><b class="info-nome">musicascuole.it — </b><a href="' + cartella + 'crediti.html">Il progetto, crediti e licenza</a> · <a href="' + cartella + 'privacy.html">Privacy</a></span>';
+  riga.innerHTML = '<span><b class="info-nome">musicascuole.it — </b><a href="' + cartella + 'crediti.html">Il progetto, crediti e licenza</a> · <a href="' + cartella + 'privacy.html">Privacy</a> · <a href="' + cartella + 'updates.html">Updates</a></span>';
 
   function aggiungi() {
     var b = document.body;

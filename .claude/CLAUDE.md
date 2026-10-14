@@ -11,6 +11,14 @@ Pubblicato con GitHub Pages sul dominio **musicascuole.it**. Si parla in italian
   **Modifiche grosse** (pagine nuove, tante pagine insieme, cambi di struttura o di grafica): mostra le schermate
   e chiedi conferma prima di pubblicare.
   Ogni commit ha una descrizione in italiano che dice cosa cambia per chi usa il sito.
+- **Un solo branch di prova: `prova`.** Non creare mai branch nuovi: le modifiche grosse si fanno su `prova`,
+  che prima di cominciare si allinea a `main` (`git merge origin/main`); dopo l'ok di Cristiano `prova` si porta su `main`.
+  Anteprima: `https://raw.githack.com/musicapeyron/musicapeyron.github.io/prova/<pagina>.html`.
+  I vecchi branch restano dove sono (non si cancellano senza chiedere), ma non si usano più.
+- **Ogni pubblicazione su `main` va scritta in `updates.html`** (link «Updates» nella riga in alto), nello stesso commit:
+  una `<section>` per giorno (la più recente in cima), un `<article>` per aggiornamento con il tipo
+  (`aggiunto`, `modificato`, `corretto`), un titoletto con il link alla pagina e una o due frasi per chi usa il sito.
+  Le modifiche ai soli appunti in `_sviluppo/` non vanno negli Updates.
 - Quando Cristiano interrompe, fermati e aspetta.
 - Per tutto ciò che è esterno (GitHub, Register.it, impostazioni) guidalo **passo passo**, con i nomi esatti dei menu.
 
