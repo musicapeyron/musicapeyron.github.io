@@ -61,7 +61,14 @@ function vfDisegna(g, spec) {
     voce.draw(ctx, st);
     travi.forEach(b => b.setContext(ctx).draw());
     eventi.forEach((e, i) => { if (e.lega && note[i + 1]) new VF.StaveTie({ first_note: note[i], last_note: note[i + 1], first_indices: [0], last_indices: [0] }).setContext(ctx).draw(); });
-    (spec.curve || []).forEach(([a, b]) => new VF.Curve(note[a], note[b], { position: VF.Curve.Position.NEAR_HEAD, position_end: VF.Curve.Position.NEAR_HEAD, cps: [{ x: 0, y: 14 }, { x: 0, y: 14 }] }).setContext(ctx).draw());
+    // legature di portamento: mezzaluna sotto le teste (la Curve di VexFlow fra note vicine viene storta)
+    (spec.curve || []).forEach(([a, b]) => {
+      const xa = centroNota(note[a]) + 2, xb = centroNota(note[b]) - 2, ya = note[a].getYs()[0] + 8, yb = note[b].getYs()[0] + 8;
+      const giu = Math.max(ya, yb) + 5 + (xb - xa) * 0.12, xm = (xa + xb) / 2;
+      ctx.openGroup("curve", null);
+      ctx.beginPath(); ctx.moveTo(xa, ya); ctx.quadraticCurveTo(xm, giu, xb, yb); ctx.quadraticCurveTo(xm, giu + 3.2, xa, ya); ctx.closePath(); ctx.fill();
+      ctx.closeGroup();
+    });
     note.forEach((n, i) => out.note.push({ x: centroNota(n), id: n.getAttribute("id") }));
   }
   // si sposta il disegno nel palco
@@ -87,12 +94,15 @@ function vfDisegna(g, spec) {
     if (!e.pausa && spec.tipo !== "fig") { const nm = nota(chiave || "violino", e.p === undefined ? 2 : e.p).nome; el.classList.add("nota", "c-" + nm); el.dataset.p = e.p === undefined ? 2 : e.p; }
     else el.classList.add("pausa");
     if (e.cls) e.cls.split(" ").forEach(c => c && el.classList.add(c));
+    if (e.data) Object.entries(e.data).forEach(([kk, v]) => el.dataset[kk] = v);
     // i punti di valore: i tracciati piccoli e tondi dopo la testa
     const testa = el.querySelector(".vf-notehead") || el;
     [...testa.querySelectorAll("path")].filter(pa => { const b = pa.getBBox(); return b.width < 6 && b.height < 6; })
       .forEach((pa, j) => { pa.classList.add("punto"); pa.dataset.i = j; if (e.puntoCls) e.puntoCls.split(" ").forEach(c => pa.classList.add(c)); });
     o.x = tx + k * o.x;
   });
+  dentro.querySelectorAll(".vf-stavetie").forEach(x => x.classList.add("legatura-vf"));
+  dentro.querySelectorAll(".vf-curve").forEach(x => x.classList.add("legatura-vf", "portamento-vf"));
   spec.out = out;
   g.dispatchEvent(new CustomEvent("vf-pronto", { detail: out }));
 }

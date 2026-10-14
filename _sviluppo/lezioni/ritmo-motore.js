@@ -7,7 +7,7 @@ const valore = (fig, punti = 0) => BASE_VAL[fig] * [1, 1.5, 1.75][punti];
 function num(v) {
   const i = Math.floor(v + 1e-9), r = Math.round((v - i) * 16);
   const F = { 0: "", 2: "⅛", 4: "¼", 6: "⅜", 8: "½", 10: "⅝", 12: "¾", 14: "⅞" };
-  const f = F[r] !== undefined ? F[r] : `<span class="fraz">${r}/16</span>`;
+  const f = F[r] !== undefined ? F[r] : ` ${r}/16`;      // solo testo: il numero va anche dentro i disegni (SVG)
   return (i ? i : (f ? "" : "0")) + f;
 }
 /* «2 + 1 + ½ = 3½» */
@@ -169,7 +169,7 @@ function ascoltaFigura(g, fig, punti, pausa, bpm = 72) {
   if (!pausa) suonaTenuto(MI, att, d * sec);
   dopo(att * 1000, () => { salta(g.querySelector(".fig-riga")); ri.style.transition = `transform ${d * sec}s linear`; ri.style.transform = "scaleX(1)"; });
   dopo((att + d * sec + 0.6) * 1000, () => { ri.style.transition = "transform .4s"; ri.style.transform = "scaleX(0)"; });
-  cart(`<b>${nomeFig(fig, punti, pausa)}</b> <span class="piccolo">· ${punti ? somma(fig, punti) : num(d)} ${d === 1 ? "movimento" : "movimenti"}</span>`);
+  cart(`<b>${nomeFig(fig, punti, pausa)}</b> <span class="piccolo">· ${punti ? somma(fig, punti) : num(d)} ${d <= 1 ? "movimento" : "movimenti"}</span>`);
 }
 /* pulsante «▶ Ascolta» dentro il testo: il suono parte solo quando lo si preme */
 function ascoltaNelTesto(passo) {

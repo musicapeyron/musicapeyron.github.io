@@ -483,6 +483,14 @@ da copiare). Stesso motore e stile delle altre lezioni; i sorgenti sono in `_svi
 ### Come usarlo in classe
 - Passi 1–5 alla LIM; il passo 6 con la classe che propone figure e punti; il 7 battuta per battuta, poi da copiare sul quaderno.
 
+### Scelte fatte (e perché)
+- La musica (chiave, tempo, note, pause, punti, travature, legature) la disegna **VexFlow**, come negli spartiti veri:
+  i punti cadono nello spazio giusto anche sulle note sulla riga, le pause e le travature spezzate sono quelle corrette.
+  Le righe del pentagramma restano disegnate dalla pagina, così si possono ancora illuminare e toccare.
+- Il suono è un **violino vero** (MI4, VSCO 2, CC0) che tiene la nota uguale per tutta la durata della figura, senza calare
+  e senza cambi d'arco (il campione è stato reso continuo e un po' addolcito): con il pianoforte la nota si spegneva da sola
+  e la durata non si sentiva. Le note sono scritte sul MI, la stessa nota che si sente. Metronomo: il legnetto della Lettura ritmica.
+
 ---
 
 ## La legatura di valore (lezione interattiva)

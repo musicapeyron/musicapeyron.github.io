@@ -187,8 +187,8 @@ PASSI.push({
   disegna() {
     const tot = valore(this.fig, 2), U = Math.min(200, 470 / tot);
     svg(VB, palcoPunto(this.fig, this.np, U)); mostraPunti(this.np); mostra(q1(".uguale"), true);
-    if (!this.np) q1(".uguale").textContent = num(valore(this.fig, 0)) + (valore(this.fig, 0) === 1 ? " movimento" : " movimenti");
-    cart(`<b>${nomeFig(this.fig, this.np)}</b> <span class="piccolo">· ${num(valore(this.fig, this.np))} ${valore(this.fig, this.np) === 1 ? "movimento" : "movimenti"}</span>`, false);
+    if (!this.np) q1(".uguale").textContent = num(valore(this.fig, 0)) + (valore(this.fig, 0) <= 1 ? " movimento" : " movimenti");
+    cart(`<b>${nomeFig(this.fig, this.np)}</b> <span class="piccolo">· ${num(valore(this.fig, this.np))} ${valore(this.fig, this.np) <= 1 ? "movimento" : "movimenti"}</span>`, false);
   },
   ascolta() {
     fermaTutto(); const sec = 60 / 72, a = 0.3, d = valore(this.fig, this.np);

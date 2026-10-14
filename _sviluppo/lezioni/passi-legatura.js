@@ -12,11 +12,13 @@ const RIGO = () => R(60, 940, 200, "violino");
 function scena(passo, ev, numMov, o = {}) {
   const r = RIGO();
   passo.B = Battute(r, ev, { x0: o.x0 || 250, x1: o.x1 || 930, num: numMov, barre: o.barre === false ? 0 : 270, conta: o.conta === false ? 0 : 350, senzaFine: o.senzaFine });
-  q1(".scena").innerHTML = svgRigo(r) + svgChiave(r, 74) + (o.senzaTempo ? "" : svgTempo(r, 178, numMov, 4)) + svgBattute(passo.B);
+  q1(".scena").innerHTML = svgRigo(r, { spazi: true }) + svgBattute(passo.B, { tempo: o.senzaTempo ? null : numMov + "/4" });
+  vfRiempi();
   return passo.B;
 }
+/* le legature compaiono piano (dissolvenza), dopo le note */
 function disegnaLegature(anim) {
-  qa(".legatura").forEach(l => { if (!anim) { l.style.strokeDasharray = ""; return; } const L = l.getTotalLength(); l.style.transition = "none"; l.style.strokeDasharray = L; l.style.strokeDashoffset = L; void l.getBoundingClientRect(); l.style.transition = "stroke-dashoffset .8s ease-out"; l.style.strokeDashoffset = 0; });
+  qa(".legatura-vf").forEach(l => { l.classList.remove("appare"); if (anim) { void l.getBoundingClientRect(); l.classList.add("appare"); } });
 }
 
 /* ---------- 1. La legatura di valore ---------- */
@@ -40,10 +42,10 @@ PASSI.push({
     fermaTutto(); this.legata = true; this.disegna();
     if (f === 0 && anim) disegnaLegature(true);
     spegniRighe();
-    if (f >= 1) { luce(q1('.riga[data-riga="2"]'), true, coloreTesto("sol")); }
+    if (f >= 1) { luce(q1('.riga[data-riga="1"]'), true, coloreTesto("mi")); }
     if (f === 1) { qa(".ev").forEach((e, i) => dopo(200 + i * 600, () => salta(e))); }
     qa(".barra").forEach(b => b.style.opacity = f === 2 ? 1 : 0);
-    cart(["Una linea curva che unisce due note", "Stesso nome, stessa altezza: SOL e SOL", "Un solo suono: 1 + 1 = 2"][f], anim);
+    cart(["Una linea curva che unisce due note", "Stesso nome, stessa altezza: MI e MI", "Un solo suono: 1 + 1 = 2"][f], anim);
     ascoltaNelTesto(this);
   }
 });
@@ -120,18 +122,18 @@ PASSI.push({
     // due battute da 3/4 una accanto all'altra: a sinistra con la legatura, a destra col punto
     const r = RIGO();
     this.B1 = Battute(r, [{ fig: "h", lega: true }, { fig: "q" }], { x0: 250, x1: 560, num: 3, barre: 270, conta: 350, senzaFine: true });
-    const s1 = svgBattute(this.B1).replace(/data-i="/g, 'data-a="1" data-i="');
     this.B2 = Battute(r, [{ fig: "h", punti: 1 }], { x0: 620, x1: 930, num: 3, barre: 270, conta: 350 });
-    let s2 = svgBattute(this.B2);
-    q1(".scena").innerHTML = svgRigo(r) + svgChiave(r, 74) + svgTempo(r, 178, 3, 4) + `<g class="lato1">${s1}</g><g class="lato2">${s2}</g>` +
+    // ogni lato ha le sue note, barre e numeri dentro un gruppo, così si può far suonare da solo
+    q1(".scena").innerHTML = svgRigo(r, { spazi: true }) + `<g class="lato1">${svgBattute(this.B1, { tempo: "3/4" })}</g><g class="lato2">${svgBattute(this.B2, { chiave: false })}</g>` +
       `<text class="uguale" x="590" y="${r.y(4) + 12}" text-anchor="middle">=</text>` +
       `<text class="etic" x="405" y="${r.y(8) - 50}" text-anchor="middle">CON LA LEGATURA</text><text class="etic" x="775" y="${r.y(8) - 50}" text-anchor="middle">COL PUNTO</text>`;
+    vfRiempi();
   },
   // ascolta una sola delle due metà: le altre righe non si toccano
   suonaLato(B, g) {
     fermaTutto(); const sec = 60 / 72, a = 0.3;
     for (let b = 0; b < 3; b++) colpoMetro(b === 0, a + b * sec);
-    suonaTenuto(67, a, 3 * sec);
+    suonaTenuto(MI, a, 3 * sec);
     dopo(a * 1000, () => { salta(g.querySelector(".ev")); });
     g.querySelectorAll(".barra .riempi").forEach(x => { x.style.transition = "none"; x.style.transform = "scaleX(0)"; });
     void g.getBoundingClientRect();
@@ -160,18 +162,20 @@ PASSI.push({
   crea() { svg(VB, `<g class="scena"></g><g class="segni"></g>`); strumenti([{ suggerimento: "Tocca le curve" }]); },
   // disegna note e curve; ogni curva ha un'area da toccare
   disegna(gruppi) {
-    const r = RIGO(); let s = svgRigo(r) + svgChiave(r, 74), x = 200;
+    const r = RIGO(); let s = svgRigo(r, { spazi: true }), x = 230;
     this.gruppi = gruppi;
+    const ev = [], xsTutte = [], curve = [];
     gruppi.forEach((g, gi) => {
-      const xs = g.p.map((p, i) => x + i * 70);
-      g.p.forEach((p, i) => { const nm = nota("violino", p).nome; s += `<g class="ev nota c-${nm}" data-g="${gi}" data-i="${i}">` + svgTagli(r, xs[i], p) + svgFig(xs[i], r.y(p), "q", 0) + `</g>`; });
+      const xs = g.p.map((p, i) => x + i * (gruppi.length > 2 ? 78 : 100)), i0 = ev.length;
+      g.p.forEach((p, i) => { ev.push({ fig: "q", p, gambo: 1, lega: g.valore && i < g.p.length - 1, data: { g: gi } }); xsTutte.push(xs[i]); });
+      if (!g.valore) curve.push([i0, ev.length - 1]);
       const ylow = Math.max(...g.p.map(p => r.y(p))) + 24;
-      s += `<path class="legatura curva-q" data-g="${gi}" d="M${xs[0] + 12} ${ylow} Q${(xs[0] + xs[xs.length - 1]) / 2} ${ylow + 40} ${xs[xs.length - 1] - 12} ${ylow}"/>`;
-      s += `<rect class="colpo curva-colpo" data-g="${gi}" x="${xs[0] - 20}" y="${ylow - 30}" width="${xs[xs.length - 1] - xs[0] + 40}" height="80"/>`;
+      s += `<rect class="colpo curva-colpo" data-g="${gi}" x="${xs[0] - 24}" y="${ylow - 40}" width="${xs[xs.length - 1] - xs[0] + 48}" height="90"/>`;
       if (g.etichetta) s += `<text class="etic" x="${(xs[0] + xs[xs.length - 1]) / 2}" y="${r.yb + 110}" text-anchor="middle" fill="${g.valore ? "#34D399" : "#F472B6"}">${g.etichetta}</text>`;
-      g.xs = xs; x = xs[xs.length - 1] + (gruppi.length > 2 ? 110 : 230);
+      g.xs = xs; x = xs[xs.length - 1] + (gruppi.length > 2 ? 92 : 200);
     });
-    q1(".scena").innerHTML = s; q1(".segni").innerHTML = "";
+    s = s.replace(svgRigo(r, { spazi: true }), svgRigo(r, { spazi: true }) + vfRigo({ x0: r.x0, x1: r.x1, yb: r.yb, ev, xs: xsTutte, curve }));
+    q1(".scena").innerHTML = s; q1(".segni").innerHTML = ""; vfRiempi();
     qa(".curva-colpo").forEach(c => c.addEventListener("click", () => this.tocca(+c.dataset.g)));
   },
   tocca(gi) {

@@ -10,6 +10,8 @@
 <meta name="description" content="Lezione interattiva per la LIM: la legatura di valore, i valori che si sommano, la legatura oltre la stanghetta, legatura o punto, legatura di valore o di portamento.">
 <link rel="stylesheet" href="fonts/caratteri.css">
 <link rel="stylesheet" href="comune.css">
+<!-- VexFlow (nel sito, nessun servizio esterno): disegna la musica nel palco -->
+<script src="vexflow.js"></script>
 <style>
 /* =========================================================
    La legatura di valore — lezione interattiva a passi (stesso motore di note-sul-pentagramma.html;
@@ -244,6 +246,23 @@ body.colori .chip.c-fa rect { stroke: var(--fa); } body.colori .chip.c-sol rect 
 @media (max-width: 620px) and (orientation: portrait) { .ripasso-grande { grid-template-columns: 1fr; } .ripasso-grande .def { font-size: 12px; padding: 6px 9px; } }
 
 
+/* ---------- musica disegnata da VexFlow (le righe del pentagramma restano nostre) ---------- */
+.vfr path { fill: #EAF2FF; stroke: none; }
+.vfr .vf-stem path, .vfr path[fill="none"] { fill: none !important; stroke: #EAF2FF; stroke-width: 1.3; }
+.vfr .vf-stavetie path, .vfr .vf-beam path, .vfr .vf-curve path { fill: #EAF2FF; }
+body.colori .vfr .nota.c-do .vf-notehead path:not(.punto) { fill: var(--do); }
+body.colori .vfr .nota.c-re .vf-notehead path:not(.punto) { fill: var(--re); }
+body.colori .vfr .nota.c-mi .vf-notehead path:not(.punto) { fill: var(--mi); }
+body.colori .vfr .nota.c-fa .vf-notehead path:not(.punto) { fill: var(--fa); }
+body.colori .vfr .nota.c-sol .vf-notehead path:not(.punto) { fill: var(--sol); }
+body.colori .vfr .nota.c-la .vf-notehead path:not(.punto) { fill: var(--la); }
+body.colori .vfr .nota.c-si .vf-notehead path:not(.punto) { fill: var(--si); }
+.vfr .ev { cursor: pointer; }
+.vfr .ev.pop, .vfr.pop { transform-box: fill-box; transform-origin: 50% 70%; animation: pop .22s ease-out; }
+.vfr .punto { transition: opacity .3s; }
+.legatura-vf.appare { animation: appare .9s ease-out both; }
+@keyframes appare { from { opacity: 0; } to { opacity: 1; } }
+
 @media (prefers-reduced-motion: reduce) {
   .cresce { transition: none; }
   .rigo.disegna .riga, .taglio.nuovo, .nota.compare, .cartellino.lampo { animation: none !important; }
@@ -470,7 +489,7 @@ function svgNome(x, y, nome, cls = "", attr = "") {
 function svgNum(x, y, n, cls = "", luce = "") {
   return `<g class="num-cerchio ${cls}" style="${luce ? "--luce:" + luce : ""}"><circle cx="${x}" cy="${y}" r="15"/><text x="${x}" y="${y + 1}">${n}</text></g>`;
 }
-function svg(vb, contenuto) { PALCO.innerHTML = `<svg viewBox="${vb}" preserveAspectRatio="xMidYMid meet" aria-hidden="true">${contenuto}</svg>`; }
+function svg(vb, contenuto) { PALCO.innerHTML = `<svg viewBox="${vb}" preserveAspectRatio="xMidYMid meet" aria-hidden="true">${contenuto}</svg>`; if (typeof vfRiempi === "function") vfRiempi(); }
 function mini(forma, gambo) {                     // piccola figura per i testi (minima, semiminima, croma)
   const t = forma === "tonda" ? 0 : 1;
   let s = `<svg class="mini" viewBox="-9 -42 26 50" width="15" height="29"><path d="${GLIFI[forma === "croma" ? "nera" : forma]}"/>`;
@@ -566,7 +585,7 @@ const valore = (fig, punti = 0) => BASE_VAL[fig] * [1, 1.5, 1.75][punti];
 function num(v) {
   const i = Math.floor(v + 1e-9), r = Math.round((v - i) * 16);
   const F = { 0: "", 2: "⅛", 4: "¼", 6: "⅜", 8: "½", 10: "⅝", 12: "¾", 14: "⅞" };
-  const f = F[r] !== undefined ? F[r] : `<span class="fraz">${r}/16</span>`;
+  const f = F[r] !== undefined ? F[r] : ` ${r}/16`;      // solo testo: il numero va anche dentro i disegni (SVG)
   return (i ? i : (f ? "" : "0")) + f;
 }
 /* «2 + 1 + ½ = 3½» */
@@ -578,43 +597,52 @@ function nomeFig(fig, punti = 0, pausa = false) {
   return (pausa ? NOME_PAUSA[fig] : NOME_FIG[fig]) + (punti === 1 ? " col punto" : punti === 2 ? " col doppio punto" : "");
 }
 
-/* una figura disegnata (nota o pausa); k = scala dei glifi; y = centro della testa (o riga centrale per le pause) */
+/* una figura da sola (nota o pausa), disegnata da VexFlow; x, y = centro della testa (o riga centrale per le pause) */
 function svgFig(x, y, fig, punti = 0, o = {}) {
-  const k = o.k || K, sp = 10 * k, pausa = o.pausa, gl = fig === "w" ? "tonda" : fig === "h" ? "bianca" : "nera";
-  let s = `<g class="fig ${o.cls || ""}"${o.attr || ""}>`;
-  if (pausa) {
-    const dy = fig === "w" ? -sp : 0;          // la pausa di semibreve pende dalla 4ª riga
-    s += `<path class="glifo" d="${GLIFI.r[fig]}" transform="translate(${x} ${y + dy}) scale(${k})"/>`;
-  } else {
-    s += `<path class="testa" d="${GLIFI[gl]}" transform="translate(${x} ${y}) scale(${k})"/>`;
-    if (fig !== "w" && !o.senzaGambo) {
-      const gx = x + 5.25 * k, top = y - (o.gambo || 3.5) * sp;
-      s += `<line class="gambo" x1="${gx}" x2="${gx}" y1="${y - 2}" y2="${top}"/>`;
-      if ((fig === "8" || fig === "16") && !o.trave) s += `<path class="glifo" d="${GLIFI[fig === "8" ? "coda8" : "coda16"]}" transform="translate(${gx} ${top}) scale(${k})"/>`;
-    }
-  }
-  const largo = fig === "w" ? 8.5 : 6;
-  for (let i = 0; i < punti; i++) s += `<circle class="punto${o.puntoCls ? " " + o.puntoCls : ""}" data-i="${i}" cx="${x + largo * k + 10 + i * 0.9 * sp}" cy="${y - (o.puntoSu ? sp / 2 : 0)}" r="${0.36 * sp}"/>`;
-  return s + "</g>";
+  return vfFigura({ x, y, fig, punti, pausa: o.pausa, k: o.k || K, cls: o.cls, p: 4, gambo: 1, puntoCls: o.puntoCls });
 }
 
-/* ---------- suono tenuto (dura quanto la figura) e colpi del metronomo, che si fermano cambiando passo ---------- */
+/* ---------- suono: un violino vero (VSCO 2, licenza CC0) che tiene il MI per tutta la durata della figura, senza calare;
+   il metronomo è il legnetto della «Lettura ritmica» (VCSL, CC0). I file sono nel sito, si caricano all'apertura.
+   Finché non sono pronti (o se mancano) suona un violino sintetico, anche lui senza decadimento. ---------- */
 let VOCI = [];
+const MI = 64;                                    // il MI della 1ª riga (ottava del do centrale): la nota delle lezioni sul ritmo
+const CAMPIONI = { violino: { url: "media/suoni/violino/E4.mp3", midi: 64 }, legno: { url: "media/suoni/ritmo/legnetto.mp3" } };
+Object.values(CAMPIONI).forEach(c => { try { c.dati = fetch(c.url).then(r => r.ok ? r.arrayBuffer() : null).catch(() => null); } catch (e) { c.dati = Promise.resolve(null); } });
+function campione(nome) {                         // l'AudioBuffer, se già pronto
+  const c = CAMPIONI[nome]; if (c.buf || c.decodifica || !AC) return c.buf;
+  c.decodifica = c.dati.then(ab => ab ? new Promise(ok => AC.decodeAudioData(ab.slice(0), ok, () => ok(null))) : null).then(b => { c.buf = b; });
+  return null;
+}
+function prepara() { if (audio()) { campione("violino"); campione("legno"); } }
+document.addEventListener("pointerdown", prepara, { once: true });
 function suonaTenuto(midi, quando, dur) {
   const ac = audio(); if (!ac) return;
-  const t = ac.currentTime + 0.03 + quando, f = 440 * Math.pow(2, (midi - 69) / 12), fine = t + Math.max(0.12, dur - 0.06);
-  const g = ac.createGain(), fl = ac.createBiquadFilter(); fl.type = "lowpass"; fl.frequency.value = 2600;
-  g.gain.setValueAtTime(0.0001, t); g.gain.exponentialRampToValueAtTime(0.34, t + 0.02);
-  g.gain.exponentialRampToValueAtTime(0.22, t + 0.18); g.gain.setValueAtTime(0.22, fine); g.gain.exponentialRampToValueAtTime(0.0001, fine + 0.08);
-  const os = [[1, "triangle", 1], [2, "sine", 0.18]].map(([m, tipo, v]) => { const o = ac.createOscillator(), gg = ac.createGain(); o.type = tipo; o.frequency.value = f * m; gg.gain.value = v; o.connect(gg); gg.connect(g); o.start(t); o.stop(fine + 0.12); return o; });
-  g.connect(fl); fl.connect(master); VOCI.push({ g, os }); riposo(quando + dur + 0.2);
+  const t = ac.currentTime + 0.03 + quando, fine = t + Math.max(0.15, dur - 0.04);
+  const chiudi = ac.createGain(); chiudi.gain.setValueAtTime(0.0001, t); chiudi.gain.exponentialRampToValueAtTime(1, t + 0.03);
+  chiudi.gain.setValueAtTime(1, fine); chiudi.gain.setTargetAtTime(0.0001, fine, 0.035); chiudi.connect(master);
+  const buf = campione("violino"); let os;
+  if (buf) {
+    const s = ac.createBufferSource(); s.buffer = buf; s.playbackRate.value = Math.pow(2, (midi - CAMPIONI.violino.midi) / 12);
+    const g = ac.createGain(); g.gain.value = 1.6; s.connect(g); g.connect(chiudi); s.start(t); s.stop(fine + 0.3); os = [s];
+  } else {
+    // violino sintetico (dente di sega filtrato, con un leggero vibrato): suona uguale dall'inizio alla fine
+    const f = 440 * Math.pow(2, (midi - 69) / 12), o = ac.createOscillator(), fl = ac.createBiquadFilter(), g = ac.createGain(), lfo = ac.createOscillator(), lg = ac.createGain();
+    o.type = "sawtooth"; o.frequency.value = f; fl.type = "lowpass"; fl.frequency.value = f * 5; fl.Q.value = 0.7; g.gain.value = 0.14;
+    lfo.frequency.value = 5.5; lg.gain.value = f * 0.004; lfo.connect(lg); lg.connect(o.frequency);
+    o.connect(fl); fl.connect(g); g.connect(chiudi); o.start(t); lfo.start(t); o.stop(fine + 0.3); lfo.stop(fine + 0.3); os = [o, lfo];
+  }
+  VOCI.push({ g: chiudi, os }); riposo(quando + dur + 0.4);
 }
+/* il metronomo: il legnetto, più forte sul primo movimento */
 function colpoMetro(forte, quando) {
   const ac = audio(); if (!ac) return;
-  const t = ac.currentTime + 0.03 + quando, o = ac.createOscillator(), g = ac.createGain();
-  o.type = "square"; o.frequency.value = forte ? 1760 : 1320;
-  g.gain.setValueAtTime(forte ? 0.12 : 0.07, t); g.gain.exponentialRampToValueAtTime(0.0005, t + 0.05);
-  o.connect(g); g.connect(master); o.start(t); o.stop(t + 0.06); VOCI.push({ g, os: [o] }); riposo(quando + 0.2);
+  const t = ac.currentTime + 0.03 + quando, g = ac.createGain(); g.gain.value = forte ? 0.9 : 0.5; g.connect(master);
+  const buf = campione("legno"); let o;
+  if (buf) { o = ac.createBufferSource(); o.buffer = buf; o.playbackRate.value = forte ? 1.12 : 1; o.connect(g); o.start(t); }
+  else { o = ac.createOscillator(); const e = ac.createGain(); o.type = "sine"; o.frequency.setValueAtTime(forte ? 1500 : 1150, t); o.frequency.exponentialRampToValueAtTime(700, t + 0.04);
+    e.gain.setValueAtTime(0.0001, t); e.gain.exponentialRampToValueAtTime(0.3, t + 0.003); e.gain.exponentialRampToValueAtTime(0.0001, t + 0.06); o.connect(e); e.connect(g); o.start(t); o.stop(t + 0.08); }
+  VOCI.push({ g, os: [o] }); riposo(quando + 0.3);
 }
 function zittisci() {
   if (AC) VOCI.forEach(v => { try { v.g.gain.cancelScheduledValues(AC.currentTime); v.g.gain.setTargetAtTime(0.0001, AC.currentTime, 0.02); v.os.forEach(o => o.stop(AC.currentTime + 0.08)); } catch (e) { } });
@@ -629,7 +657,7 @@ function salta(el) { if (!el) return; el.classList.remove("pop"); void el.getBou
    o: { x0, x1, num (movimenti per battuta), barre (y), conta (y) } */
 function Battute(r, eventi, o) {
   const B = { r, ev: [], o };
-  let t = 0; eventi.forEach(e => { const d = valore(e.fig, e.punti || 0); B.ev.push({ ...e, p: e.p === undefined ? 2 : e.p, t, d }); t += d; });
+  let t = 0; eventi.forEach(e => { const d = valore(e.fig, e.punti || 0); B.ev.push({ ...e, p: e.p === undefined ? 0 : e.p, t, d }); t += d; });   // di base il MI (1ª riga)
   B.tot = t; B.nb = Math.ceil(t / o.num - 1e-9);
   B.mw = (o.x1 - o.x0) / B.nb; B.padL = Math.min(46, B.mw * 0.16); B.padR = Math.min(26, B.mw * 0.08);
   B.x = tt => { const m = Math.min(B.nb - 1, Math.floor(tt / o.num + 1e-9)), dt = tt - m * o.num; return o.x0 + m * B.mw + B.padL + dt * (B.mw - B.padL - B.padR) / o.num; };
@@ -644,29 +672,16 @@ function svgBattute(B, opz = {}) {
     else if (!o.senzaFine) s += `<line class="stanghetta" x1="${x - 12}" x2="${x - 12}" y1="${r.y(8)}" y2="${r.yb}"/><line class="stanghetta grossa" x1="${x - 1}" x2="${x - 1}" y1="${r.y(8) + 1}" y2="${r.yb - 1}"/>`;
     else s += `<line class="stanghetta" x1="${x}" x2="${x}" y1="${r.y(8)}" y2="${r.yb}"/>`;
   }
-  ev.forEach((e, i) => {
-    const x = B.x(e.t) + 18, y = r.y(e.p);
-    e.xn = x;
-    const nm = e.pausa ? "" : nota("violino", e.p).nome;
-    s += `<g class="ev${e.pausa ? "" : " nota c-" + nm}" data-i="${i}">` + svgTagli(r, x, e.p) +
-      svgFig(x, e.pausa ? r.y(4) : y, e.fig, e.punti || 0, { pausa: e.pausa, trave: e.trave || (i > 0 && ev[i - 1].trave), puntoSu: !e.pausa && e.p % 2 === 0, puntoCls: "punto-ev" }) + `</g>`;
-  });
-  // travature (coppie unite)
-  ev.forEach((e, i) => {
-    if (!e.trave || !ev[i + 1]) return;
-    const a = e, b = ev[i + 1], xa = a.xn + 5.25 * K, xb = b.xn + 5.25 * K, top = r.y(2) - 3.5 * S;
-    s += `<polygon class="trave" points="${xa - 1.2},${top} ${xb + 1.2},${top} ${xb + 1.2},${top + 12} ${xa - 1.2},${top + 12}"/>`;
-    if (b.fig === "16") s += `<polygon class="trave" points="${xb - 22},${top + 20} ${xb + 1.2},${top + 20} ${xb + 1.2},${top + 31} ${xb - 22},${top + 31}"/>`;
-    if (a.fig === "16") s += `<polygon class="trave" points="${xa - 1.2},${top + 20} ${xa + 22},${top + 20} ${xa + 22},${top + 31} ${xa - 1.2},${top + 31}"/>`;
-  });
-  // legature (sotto le teste, perché i gambi vanno in su)
-  ev.forEach((e, i) => { if (e.lega && ev[i + 1]) s += svgLegatura(e.xn + 14, ev[i + 1].xn - 14, r.y(e.p) + 22, "leg-" + i); });
+  ev.forEach(e => e.xn = B.x(e.t) + 18);
+  // chiave e indicazione di tempo (se richieste) + note: tutto VexFlow, sopra le nostre righe
+  s += vfRigo({ x0: opz.rx0 !== undefined ? opz.rx0 : r.x0, x1: r.x1, yb: r.yb, chiave: opz.chiave === false ? null : "violino", tempo: opz.tempo || null,
+    ev: ev.map(e => ({ fig: e.fig, punti: e.punti, pausa: e.pausa, p: e.p, lega: e.lega, trave: e.trave, acc: e.acc, puntoCls: "punto-ev" })), xs: ev.map(e => e.xn), i0: opz.i0 || 0, cls: opz.cls });
   // barre della durata e numeri del conteggio
   if (o.barre) ev.forEach((e, i) => {
     const xa = B.x(e.t), xb = B.x(e.t + e.d) - 5, base = valore(e.fig, 0);
     let parti = [base]; for (let k = 1; k <= (e.punti || 0); k++) parti.push(parti[k - 1] / 2);
     let tt = e.t;
-    s += `<g class="barra${e.pausa ? " silenzio" : ""}" data-i="${i}">`;
+    s += `<g class="barra${e.pausa ? " silenzio" : ""}" data-i="${(opz.i0 || 0) + i}">`;
     parti.forEach((v, k) => { const a = B.x(tt), b = Math.min(B.x(tt + v) - (k === parti.length - 1 ? 5 : 1), xb);
       s += `<rect class="pezzo pz${k}" x="${a}" y="${o.barre}" width="${Math.max(4, b - a)}" height="26" rx="6"/>`; tt += v; });
     s += `<rect class="riempi" x="${xa}" y="${o.barre}" width="${Math.max(4, xb - xa)}" height="26" rx="6"/>`;
@@ -710,9 +725,9 @@ function ascoltaBattute(B, bpm = 72, fine) {
 
 /* righe della «scala dei valori»: figura, nome, barra lunga quanto dura */
 function svgRigaValore(y, fig, punti, o = {}) {
-  const U = o.U || 100, X = o.xb || 420, k = 2.3;
+  const U = o.U || 100, X = o.xb || 420, k = o.k || 1.9;
   let s = `<g class="riga-val ${o.cls || ""}" data-fig="${fig}" data-punti="${punti}"${o.pausa ? ' data-pausa="1"' : ""}>`;
-  s += `<rect class="colpo" x="20" y="${y - 40}" width="960" height="70"/>`;
+  s += `<rect class="colpo" x="20" y="${y - 36}" width="960" height="72"/>`;
   s += svgFig(o.xf || 95, o.pausa ? y - 6 : y + 8, fig, punti, { k, gambo: 2.6, pausa: o.pausa, cls: "fig-riga" });
   s += `<text class="nome-fig" x="${o.xn || 160}" y="${y + 16}">${nomeFig(fig, punti, o.pausa)}</text>`;
   let parti = [BASE_VAL[fig]]; for (let i = 1; i <= punti; i++) parti.push(parti[i - 1] / 2);
@@ -729,16 +744,125 @@ function ascoltaFigura(g, fig, punti, pausa, bpm = 72) {
   const sec = 60 / bpm, d = valore(fig, punti), att = 0.3;
   const ri = g.querySelector(".riempi"); ri.style.transition = "none"; ri.style.transform = "scaleX(0)"; void ri.getBoundingClientRect();
   for (let b = 0; b < Math.max(1, Math.ceil(d - 1e-9)); b++) colpoMetro(b === 0, att + b * sec);
-  if (!pausa) suonaTenuto(67, att, d * sec);
+  if (!pausa) suonaTenuto(MI, att, d * sec);
   dopo(att * 1000, () => { salta(g.querySelector(".fig-riga")); ri.style.transition = `transform ${d * sec}s linear`; ri.style.transform = "scaleX(1)"; });
   dopo((att + d * sec + 0.6) * 1000, () => { ri.style.transition = "transform .4s"; ri.style.transform = "scaleX(0)"; });
-  cart(`<b>${nomeFig(fig, punti, pausa)}</b> <span class="piccolo">· ${punti ? somma(fig, punti) : num(d)} ${d === 1 ? "movimento" : "movimenti"}</span>`);
+  cart(`<b>${nomeFig(fig, punti, pausa)}</b> <span class="piccolo">· ${punti ? somma(fig, punti) : num(d)} ${d <= 1 ? "movimento" : "movimenti"}</span>`);
 }
 /* pulsante «▶ Ascolta» dentro il testo: il suono parte solo quando lo si preme */
 function ascoltaNelTesto(passo) {
   document.querySelectorAll("#punti .ascolta-in").forEach(b => b.onclick = e => { e.stopPropagation(); passo[b.dataset.az](b.dataset.arg); });
 }
 const ASCOLTA = (az, testo = "▶ Ascolta", arg = "") => `<button class="ascolta-in" data-az="${az}" data-arg="${arg}">${testo}</button>`;
+
+/* ================= VexFlow nel palco =================
+   La musica scritta (chiavi, tempo, note, pause, punti, travature, legature, alterazioni, tagli) la disegna VexFlow.
+   Le righe del pentagramma restano nostre (svgRigo), così si possono illuminare e toccare come prima:
+   VexFlow disegna un pentagramma con le righe invisibili, esattamente sopra le nostre.
+   Uso: nel markup del palco si mette vfRigo({...}) o vfFigura({...}); dopo svg() (o dopo un innerHTML)
+   vfRiempi() li disegna davvero. Ogni nota diventa un gruppo <g class="ev nota c-sol" data-i="0">,
+   i punti di valore hanno la classe .punto (con data-i = 0, 1). */
+const VF = Vex.Flow;
+const VFSPEC = {};
+let VFN = 0;
+const LETTERA = { do: "c", re: "d", mi: "e", fa: "f", sol: "g", la: "a", si: "b" };
+/* chiave VexFlow di una posizione (0 = 1ª riga) in chiave di violino o di basso */
+function vfKey(p, chiave = "violino") { const n = nota(chiave, p); return LETTERA[n.nome] + "/" + Math.floor(n.d / 7); }
+
+function vfRigo(spec) { const id = "vf" + (++VFN); VFSPEC[id] = Object.assign({ tipo: "rigo" }, spec); return `<g class="vf-slot" id="${id}"></g>`; }
+function vfFigura(spec) { const id = "vf" + (++VFN); VFSPEC[id] = Object.assign({ tipo: "fig" }, spec); return `<g class="vf-slot" id="${id}"></g>`; }
+function vfRiempi(radice = PALCO) {
+  radice.querySelectorAll(".vf-slot:not([data-fatto])").forEach(g => { g.dataset.fatto = 1; vfDisegna(g, VFSPEC[g.id]); });
+}
+
+/* una nota VexFlow da un evento { fig, punti, pausa, p, acc } */
+function vfNota(e, chiave) {
+  const pausa = !!e.pausa;
+  const key = pausa ? (e.fig === "w" ? "d/5" : "b/4") : vfKey(e.p === undefined ? 2 : e.p, chiave);
+  const opz = { keys: [key], duration: e.fig + (pausa ? "r" : ""), clef: chiave === "basso" ? "bass" : "treble" };
+  if (!pausa) { opz.auto_stem = false; opz.stem_direction = (e.p === undefined ? 2 : e.p) >= 4 ? -1 : 1; }
+  if (e.gambo) opz.stem_direction = e.gambo;
+  const n = new VF.StaveNote(opz);
+  if (e.acc) n.addModifier(new VF.Accidental(e.acc), 0);
+  for (let i = 0; i < (e.punti || 0); i++) VF.Dot.buildAndAttach([n], { all: true });
+  return n;
+}
+function centroNota(n) { return (n.getNoteHeadBeginX() + n.getNoteHeadEndX()) / 2; }
+
+function vfDisegna(g, spec) {
+  const k = spec.k || K;
+  const div = document.createElement("div"); div.style.cssText = "position:absolute;left:-9999px;top:0;visibility:hidden";
+  document.body.appendChild(div);
+  const ren = new VF.Renderer(div, VF.Renderer.Backends.SVG); ren.resize(2000, 400);
+  const ctx = ren.getContext();
+  const larg = spec.tipo === "fig" ? 120 : (spec.x1 - spec.x0) / k;
+  const st = new VF.Stave(0, 0, larg, { space_above_staff_ln: 4 });
+  st.setConfigForLines([0, 1, 2, 3, 4].map(() => ({ visible: false })));
+  st.setBegBarType(VF.Barline.type.NONE); st.setEndBarType(VF.Barline.type.NONE);
+  const chiave = spec.chiave === undefined ? (spec.tipo === "fig" ? null : "violino") : spec.chiave;
+  if (chiave) st.addClef(chiave === "basso" ? "bass" : "treble");
+  if (spec.tempo) st.addTimeSignature(spec.tempo);
+  st.setContext(ctx).draw();
+  const eventi = spec.tipo === "fig" ? [Object.assign({ p: spec.pausa ? undefined : 2 }, spec, { cls: "" })] : (spec.ev || []);
+  const note = eventi.map(e => vfNota(e, chiave || "violino"));
+  const out = { note: [] };
+  if (note.length) {
+    const travi = [];
+    eventi.forEach((e, i) => { if (e.trave && note[i + 1] && (i === 0 || !eventi[i - 1].trave)) { let j = i; while (eventi[j].trave && note[j + 1]) j++; travi.push(new VF.Beam(note.slice(i, j + 1))); } });
+    const voce = new VF.Voice({ num_beats: 4, beat_value: 4 }).setMode(VF.Voice.Mode.SOFT); voce.addTickables(note);
+    new VF.Formatter().joinVoices([voce]).format([voce], Math.max(40, larg - st.getNoteStartX() - 20));
+    note.forEach(n => n.setStave(st));
+    // posizioni volute (in coordinate del palco): ogni nota si sposta perché il centro della testa cada lì
+    const tx = spec.tipo === "fig" ? 0 : spec.x0;
+    if (spec.xs) note.forEach((n, i) => { if (spec.xs[i] === undefined) return; const voluto = (spec.xs[i] - tx) / k, tc = n.getTickContext(); tc.setX(tc.getX() + voluto - centroNota(n)); });
+    voce.draw(ctx, st);
+    travi.forEach(b => b.setContext(ctx).draw());
+    eventi.forEach((e, i) => { if (e.lega && note[i + 1]) new VF.StaveTie({ first_note: note[i], last_note: note[i + 1], first_indices: [0], last_indices: [0] }).setContext(ctx).draw(); });
+    // legature di portamento: mezzaluna sotto le teste (la Curve di VexFlow fra note vicine viene storta)
+    (spec.curve || []).forEach(([a, b]) => {
+      const xa = centroNota(note[a]) + 2, xb = centroNota(note[b]) - 2, ya = note[a].getYs()[0] + 8, yb = note[b].getYs()[0] + 8;
+      const giu = Math.max(ya, yb) + 5 + (xb - xa) * 0.12, xm = (xa + xb) / 2;
+      ctx.openGroup("curve", null);
+      ctx.beginPath(); ctx.moveTo(xa, ya); ctx.quadraticCurveTo(xm, giu, xb, yb); ctx.quadraticCurveTo(xm, giu + 3.2, xa, ya); ctx.closePath(); ctx.fill();
+      ctx.closeGroup();
+    });
+    note.forEach((n, i) => out.note.push({ x: centroNota(n), id: n.getAttribute("id") }));
+  }
+  // si sposta il disegno nel palco
+  const svgVF = div.querySelector("svg");
+  let tx, ty;
+  if (spec.tipo === "fig") {
+    const yRif = spec.pausa ? 60 : 60;          // riga centrale del pentagramma invisibile
+    tx = spec.x - k * out.note[0].x; ty = spec.y - k * yRif;
+  } else { tx = spec.x0; ty = spec.yb - 80 * k; }
+  // il gruppo esterno porta posizione e grandezza; quello interno (.vfr) si può far «saltare» senza spostare niente
+  const fuori = document.createElementNS("http://www.w3.org/2000/svg", "g");
+  fuori.setAttribute("transform", `translate(${tx.toFixed(2)} ${ty.toFixed(2)}) scale(${k})`);
+  const dentro = document.createElementNS("http://www.w3.org/2000/svg", "g");
+  dentro.setAttribute("class", "vfr" + (spec.cls ? " " + spec.cls : ""));
+  while (svgVF.firstChild) dentro.appendChild(svgVF.firstChild);
+  fuori.appendChild(dentro); g.appendChild(fuori); div.remove();
+  // classi nostre: chiave, tempo, note (con il colore del nome), punti
+  const ch = dentro.querySelector(".vf-clef"); if (ch) ch.classList.add("chiave-vf");
+  const tm = dentro.querySelector(".vf-timesignature"); if (tm) { tm.classList.add("tempo-vf"); const p = tm.querySelectorAll("path"); if (p[0]) p[0].classList.add("cifra-su"); if (p[1]) p[1].classList.add("cifra-giu"); }
+  out.note.forEach((o, i) => {
+    const e = eventi[i], el = dentro.querySelector("#vf-" + o.id); if (!el) return;
+    el.classList.add("ev"); el.dataset.i = (spec.i0 || 0) + i;
+    if (!e.pausa && spec.tipo !== "fig") { const nm = nota(chiave || "violino", e.p === undefined ? 2 : e.p).nome; el.classList.add("nota", "c-" + nm); el.dataset.p = e.p === undefined ? 2 : e.p; }
+    else el.classList.add("pausa");
+    if (e.cls) e.cls.split(" ").forEach(c => c && el.classList.add(c));
+    if (e.data) Object.entries(e.data).forEach(([kk, v]) => el.dataset[kk] = v);
+    // i punti di valore: i tracciati piccoli e tondi dopo la testa
+    const testa = el.querySelector(".vf-notehead") || el;
+    [...testa.querySelectorAll("path")].filter(pa => { const b = pa.getBBox(); return b.width < 6 && b.height < 6; })
+      .forEach((pa, j) => { pa.classList.add("punto"); pa.dataset.i = j; if (e.puntoCls) e.puntoCls.split(" ").forEach(c => pa.classList.add(c)); });
+    o.x = tx + k * o.x;
+  });
+  dentro.querySelectorAll(".vf-stavetie").forEach(x => x.classList.add("legatura-vf"));
+  dentro.querySelectorAll(".vf-curve").forEach(x => x.classList.add("legatura-vf", "portamento-vf"));
+  spec.out = out;
+  g.dispatchEvent(new CustomEvent("vf-pronto", { detail: out }));
+}
 
 /* ================= i passi ================= */
 const CAPITOLI = [
@@ -754,11 +878,13 @@ const RIGO = () => R(60, 940, 200, "violino");
 function scena(passo, ev, numMov, o = {}) {
   const r = RIGO();
   passo.B = Battute(r, ev, { x0: o.x0 || 250, x1: o.x1 || 930, num: numMov, barre: o.barre === false ? 0 : 270, conta: o.conta === false ? 0 : 350, senzaFine: o.senzaFine });
-  q1(".scena").innerHTML = svgRigo(r) + svgChiave(r, 74) + (o.senzaTempo ? "" : svgTempo(r, 178, numMov, 4)) + svgBattute(passo.B);
+  q1(".scena").innerHTML = svgRigo(r, { spazi: true }) + svgBattute(passo.B, { tempo: o.senzaTempo ? null : numMov + "/4" });
+  vfRiempi();
   return passo.B;
 }
+/* le legature compaiono piano (dissolvenza), dopo le note */
 function disegnaLegature(anim) {
-  qa(".legatura").forEach(l => { if (!anim) { l.style.strokeDasharray = ""; return; } const L = l.getTotalLength(); l.style.transition = "none"; l.style.strokeDasharray = L; l.style.strokeDashoffset = L; void l.getBoundingClientRect(); l.style.transition = "stroke-dashoffset .8s ease-out"; l.style.strokeDashoffset = 0; });
+  qa(".legatura-vf").forEach(l => { l.classList.remove("appare"); if (anim) { void l.getBoundingClientRect(); l.classList.add("appare"); } });
 }
 
 /* ---------- 1. La legatura di valore ---------- */
@@ -782,10 +908,10 @@ PASSI.push({
     fermaTutto(); this.legata = true; this.disegna();
     if (f === 0 && anim) disegnaLegature(true);
     spegniRighe();
-    if (f >= 1) { luce(q1('.riga[data-riga="2"]'), true, coloreTesto("sol")); }
+    if (f >= 1) { luce(q1('.riga[data-riga="1"]'), true, coloreTesto("mi")); }
     if (f === 1) { qa(".ev").forEach((e, i) => dopo(200 + i * 600, () => salta(e))); }
     qa(".barra").forEach(b => b.style.opacity = f === 2 ? 1 : 0);
-    cart(["Una linea curva che unisce due note", "Stesso nome, stessa altezza: SOL e SOL", "Un solo suono: 1 + 1 = 2"][f], anim);
+    cart(["Una linea curva che unisce due note", "Stesso nome, stessa altezza: MI e MI", "Un solo suono: 1 + 1 = 2"][f], anim);
     ascoltaNelTesto(this);
   }
 });
@@ -862,18 +988,18 @@ PASSI.push({
     // due battute da 3/4 una accanto all'altra: a sinistra con la legatura, a destra col punto
     const r = RIGO();
     this.B1 = Battute(r, [{ fig: "h", lega: true }, { fig: "q" }], { x0: 250, x1: 560, num: 3, barre: 270, conta: 350, senzaFine: true });
-    const s1 = svgBattute(this.B1).replace(/data-i="/g, 'data-a="1" data-i="');
     this.B2 = Battute(r, [{ fig: "h", punti: 1 }], { x0: 620, x1: 930, num: 3, barre: 270, conta: 350 });
-    let s2 = svgBattute(this.B2);
-    q1(".scena").innerHTML = svgRigo(r) + svgChiave(r, 74) + svgTempo(r, 178, 3, 4) + `<g class="lato1">${s1}</g><g class="lato2">${s2}</g>` +
+    // ogni lato ha le sue note, barre e numeri dentro un gruppo, così si può far suonare da solo
+    q1(".scena").innerHTML = svgRigo(r, { spazi: true }) + `<g class="lato1">${svgBattute(this.B1, { tempo: "3/4" })}</g><g class="lato2">${svgBattute(this.B2, { chiave: false })}</g>` +
       `<text class="uguale" x="590" y="${r.y(4) + 12}" text-anchor="middle">=</text>` +
       `<text class="etic" x="405" y="${r.y(8) - 50}" text-anchor="middle">CON LA LEGATURA</text><text class="etic" x="775" y="${r.y(8) - 50}" text-anchor="middle">COL PUNTO</text>`;
+    vfRiempi();
   },
   // ascolta una sola delle due metà: le altre righe non si toccano
   suonaLato(B, g) {
     fermaTutto(); const sec = 60 / 72, a = 0.3;
     for (let b = 0; b < 3; b++) colpoMetro(b === 0, a + b * sec);
-    suonaTenuto(67, a, 3 * sec);
+    suonaTenuto(MI, a, 3 * sec);
     dopo(a * 1000, () => { salta(g.querySelector(".ev")); });
     g.querySelectorAll(".barra .riempi").forEach(x => { x.style.transition = "none"; x.style.transform = "scaleX(0)"; });
     void g.getBoundingClientRect();
@@ -902,18 +1028,20 @@ PASSI.push({
   crea() { svg(VB, `<g class="scena"></g><g class="segni"></g>`); strumenti([{ suggerimento: "Tocca le curve" }]); },
   // disegna note e curve; ogni curva ha un'area da toccare
   disegna(gruppi) {
-    const r = RIGO(); let s = svgRigo(r) + svgChiave(r, 74), x = 200;
+    const r = RIGO(); let s = svgRigo(r, { spazi: true }), x = 230;
     this.gruppi = gruppi;
+    const ev = [], xsTutte = [], curve = [];
     gruppi.forEach((g, gi) => {
-      const xs = g.p.map((p, i) => x + i * 70);
-      g.p.forEach((p, i) => { const nm = nota("violino", p).nome; s += `<g class="ev nota c-${nm}" data-g="${gi}" data-i="${i}">` + svgTagli(r, xs[i], p) + svgFig(xs[i], r.y(p), "q", 0) + `</g>`; });
+      const xs = g.p.map((p, i) => x + i * (gruppi.length > 2 ? 78 : 100)), i0 = ev.length;
+      g.p.forEach((p, i) => { ev.push({ fig: "q", p, gambo: 1, lega: g.valore && i < g.p.length - 1, data: { g: gi } }); xsTutte.push(xs[i]); });
+      if (!g.valore) curve.push([i0, ev.length - 1]);
       const ylow = Math.max(...g.p.map(p => r.y(p))) + 24;
-      s += `<path class="legatura curva-q" data-g="${gi}" d="M${xs[0] + 12} ${ylow} Q${(xs[0] + xs[xs.length - 1]) / 2} ${ylow + 40} ${xs[xs.length - 1] - 12} ${ylow}"/>`;
-      s += `<rect class="colpo curva-colpo" data-g="${gi}" x="${xs[0] - 20}" y="${ylow - 30}" width="${xs[xs.length - 1] - xs[0] + 40}" height="80"/>`;
+      s += `<rect class="colpo curva-colpo" data-g="${gi}" x="${xs[0] - 24}" y="${ylow - 40}" width="${xs[xs.length - 1] - xs[0] + 48}" height="90"/>`;
       if (g.etichetta) s += `<text class="etic" x="${(xs[0] + xs[xs.length - 1]) / 2}" y="${r.yb + 110}" text-anchor="middle" fill="${g.valore ? "#34D399" : "#F472B6"}">${g.etichetta}</text>`;
-      g.xs = xs; x = xs[xs.length - 1] + (gruppi.length > 2 ? 110 : 230);
+      g.xs = xs; x = xs[xs.length - 1] + (gruppi.length > 2 ? 92 : 200);
     });
-    q1(".scena").innerHTML = s; q1(".segni").innerHTML = "";
+    s = s.replace(svgRigo(r, { spazi: true }), svgRigo(r, { spazi: true }) + vfRigo({ x0: r.x0, x1: r.x1, yb: r.yb, ev, xs: xsTutte, curve }));
+    q1(".scena").innerHTML = s; q1(".segni").innerHTML = ""; vfRiempi();
     qa(".curva-colpo").forEach(c => c.addEventListener("click", () => this.tocca(+c.dataset.g)));
   },
   tocca(gi) {

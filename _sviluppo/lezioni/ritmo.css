@@ -46,3 +46,5 @@ body.colori .vfr .nota.c-si .vf-notehead path:not(.punto) { fill: var(--si); }
 .vfr .ev { cursor: pointer; }
 .vfr .ev.pop, .vfr.pop { transform-box: fill-box; transform-origin: 50% 70%; animation: pop .22s ease-out; }
 .vfr .punto { transition: opacity .3s; }
+.legatura-vf.appare { animation: appare .9s ease-out both; }
+@keyframes appare { from { opacity: 0; } to { opacity: 1; } }
