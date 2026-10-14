@@ -1,0 +1,33 @@
+
+/* ---------- ritmo: figure, barre della durata, legature ---------- */
+.fig .glifo { fill: #EAF2FF; }
+.fig .testa { fill: #EAF2FF; } .fig .gambo { stroke: #EAF2FF; stroke-width: 2.4; }
+.punto { fill: #EAF2FF; }
+.trave { fill: #EAF2FF; }
+.legatura { fill: none; stroke: #EAF2FF; stroke-width: 4.5; stroke-linecap: round; }
+.barra .pezzo { stroke: rgba(15,23,42,0.5); stroke-width: 1.5; }
+.barra .pz0 { fill: #7DD3FC; } .barra .pz1 { fill: #FBBF24; } .barra .pz2 { fill: #F472B6; }
+.barra.silenzio .pezzo { fill: rgba(148,163,184,0.18); stroke: #94A3B8; stroke-dasharray: 6 5; }
+.barra.silenzio .pz1 { fill: rgba(251,191,36,0.22); stroke: #FBBF24; }
+.barra .riempi { fill: rgba(255,255,255,0.45); transform-box: fill-box; transform-origin: left center; transform: scaleX(0); pointer-events: none; }
+.cresce { transform-box: fill-box; transform-origin: left center; transition: transform .6s ease-out; }
+.cresce.zero { transform: scaleX(0); }
+.val-barra { font-family: 'Manrope', sans-serif; font-weight: 800; font-size: 16px; fill: #0f172a; text-anchor: middle; pointer-events: none; }
+.barra.silenzio .val-barra { fill: #CBD5E1; }
+.val-pezzo { font-family: 'Manrope', sans-serif; font-weight: 800; font-size: 28px; fill: #0f172a; text-anchor: middle; transition: opacity .3s; }
+.uguale { font-family: 'Fredoka', 'Manrope', sans-serif; font-weight: 600; font-size: 46px; fill: #FDE7C7; }
+.nome-fig { font-family: 'Manrope', sans-serif; font-weight: 800; font-size: 24px; fill: #EAF2FF; }
+.val-riga { font-family: 'Fredoka', 'Manrope', sans-serif; font-weight: 600; font-size: 28px; fill: #FDE7C7; }
+.riga-val { cursor: pointer; }
+.riga-val.scelta .nome-fig { fill: #FDE047; }
+.conta-n { font-family: 'Manrope', sans-serif; font-weight: 800; font-size: 24px; fill: #9FB3CE; text-anchor: middle; }
+.esito { font-family: 'Manrope', sans-serif; font-weight: 800; font-size: 22px; paint-order: stroke; stroke: #172036; stroke-width: 6px; }
+.fraz { font-size: .7em; }
+.btn.segno { background: transparent; border: 0; font-size: 22px; cursor: default; }
+.ascolta-in { font-family: 'Manrope', sans-serif; font-weight: 800; font-size: .85em; color: #0f172a; background: var(--cap); border: 0;
+  border-radius: 999px; padding: 3px 12px; margin: 2px 0 0 4px; cursor: pointer; vertical-align: 1px; }
+.ascolta-in:hover { filter: brightness(1.15); }
+.ripasso-grande { grid-template-columns: 1fr 1fr; }
+.ripasso-grande .def { font-size: 17px; padding: 10px 16px; }
+@media (max-width: 620px) and (orientation: portrait) { .ripasso-grande { grid-template-columns: 1fr; } .ripasso-grande .def { font-size: 12px; padding: 6px 9px; } }
+

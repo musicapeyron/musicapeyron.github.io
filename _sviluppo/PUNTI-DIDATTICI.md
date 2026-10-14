@@ -456,3 +456,52 @@ agli strumenti virtuali esterni (pianoforte, chitarra, violino, violoncello): or
 - Le alterazioni in chiave e le scale sono lasciate ad altri giochi (Ascolta la scala, Identifica la tonalità).
 - Agli archi si lavora sulla seconda corda (LA del violino, RE del violoncello); la guida dei semitoni compare solo
   nell'ultimo punto, per non suggerire che sul violino ci siano tasti.
+
+---
+
+## Il punto di valore (lezione interattiva)
+
+**Dove:** home → Suono, note e ritmo, dopo «Le note sul pianoforte» (`punto-di-valore.html`). Ottobre 2026.
+Con «La legatura di valore» copre il punto 13 del programma (punto e doppio punto, legatura, definizioni e battute di esempio
+da copiare). Stesso motore e stile delle altre lezioni; i sorgenti sono in `_sviluppo/lezioni/` (si rigenera con `costruisci.py`).
+
+### Concetti
+- Valori delle figure (semibreve 4, minima 2, semiminima 1, croma ½, semicroma ¼): ognuna è la metà di quella sopra.
+- Il punto di valore aumenta la nota della metà del suo valore; vale anche per le pause.
+- Il doppio punto: il secondo punto vale la metà del primo (minima col doppio punto 2 + 1 + ½ = 3½).
+- Battute di esempio in 3/4, 4/4, 2/4 con figure col punto (anche croma col punto + semicroma).
+
+### Punti di forza
+- **La durata si vede**: ogni figura ha una barra lunga quanto dura; il punto aggiunge un pezzo di un altro colore, lungo
+  la metà; il secondo punto un pezzo ancora più corto. «2 + 1 = 3» si legge e si vede.
+- **E si sente**: «Ascolta» fa suonare la nota per tutta la sua durata col metronomo, mentre la barra si riempie; il confronto
+  «minima, poi minima col punto» fa sentire il movimento in più.
+- **Calcola tu**: si sceglie figura e numero di punti, la pagina mostra la somma e la fa ascoltare.
+- **Battute da contare**: sotto ogni battuta i numeri dei movimenti saltano a tempo e le barre si riempiono; la classe batte il tempo.
+- Il suono parte solo quando lo si chiede («▶ Ascolta» alla fine delle frasi). Niente luci che lampeggiano: le note «saltano».
+
+### Come usarlo in classe
+- Passi 1–5 alla LIM; il passo 6 con la classe che propone figure e punti; il 7 battuta per battuta, poi da copiare sul quaderno.
+
+---
+
+## La legatura di valore (lezione interattiva)
+
+**Dove:** home → Suono, note e ritmo, dopo «Il punto di valore» (`legatura-di-valore.html`). Ottobre 2026.
+
+### Concetti
+- La legatura di valore: linea curva fra due note con lo stesso nome e alla stessa altezza; si suona una volta e i valori si sommano.
+- La legatura oltre la stanghetta (la nota continua nella battuta dopo, non si ribatte).
+- Legatura e punto: minima legata a semiminima = minima col punto; dentro la battuta si può usare il punto, oltre la stanghetta serve la legatura.
+- Legatura di valore (note uguali) e legatura di portamento (note diverse, si suonano tutte).
+
+### Punti di forza
+- **Con e senza**: un pulsante toglie e rimette la legatura; «Senza legatura» e «Con legatura» fanno sentire due suoni o uno solo.
+- **Prova tu**: si scelgono le due figure da legare e si vede/sente la somma (le battute si completano da sole con le pause).
+- **Legatura o punto** affiancati, stesso suono, due scritture.
+- **Valore o portamento?**: si toccano le curve e la pagina dice quale legatura è, facendola sentire.
+- Battute di esempio da ascoltare e contare, poi da copiare. Il suono parte solo con «▶ Ascolta».
+
+### Scelte fatte (e perché)
+- La legatura di portamento non era nel programma: è citata solo per distinguerla, perché i ragazzi la incontrano negli spartiti
+  (per esempio nei brani propedeutici) e la confondono con quella di valore.
