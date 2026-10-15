@@ -48,7 +48,7 @@
     },
     basso: {
       e2: [4, 0], f2: [4, 1], g2: [4, 3], a2: [3, 0], bb2: [3, 1], b2: [3, 2], c3: [3, 3], d3: [2, 0], e3: [2, 2], f3: [2, 3],
-      g3: [1, 0], a3: [1, 2], b3: [1, 4]
+      g3: [1, 0], a3: [1, 2], b3: [1, 4], c4: [1, 5], d4: [1, 7]
     }
   };
   /* posizioni alternative (solo per gli schemi completi): sull'ukulele sol e la si possono suonare anche sulla corda 4 */

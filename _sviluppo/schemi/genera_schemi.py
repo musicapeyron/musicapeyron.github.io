@@ -3,6 +3,7 @@
 
   schema-accordi-chitarra.png, schema-accordi-ukulele.png, schema-accordi-tastiera.png
   schema-note-tastiera.png (note dal Do centrale al Mi del quarto spazio)
+  schema-note-basso.png (dal Mi della quarta corda al Re della prima corda)
 
 Le diteggiature degli accordi di chitarra e ukulele stanno in motore-schemi.js (ACCORDI):
 per aggiungere un accordo si aggiunge lì e in ORDINE_ACCORDI / NOTE_ACCORDI qui sotto.
@@ -32,6 +33,10 @@ NOTE_TASTIERA = [
     ("c5", "Do"), ("c#5", "Do♯/Re♭"), ("d5", "Re"), ("d#5", "Re♯/Mi♭"), ("e5", "Mi"),
 ]
 
+# note dello schema del basso: posizioni da motore-schemi.js (POSIZIONI.basso)
+NOTE_BASSO = [("e2", "Mi"), ("f2", "Fa"), ("g2", "Sol"), ("a2", "La"), ("b2", "Si"), ("c3", "Do"), ("d3", "Re"),
+              ("e3", "Mi"), ("f3", "Fa"), ("g3", "Sol"), ("a3", "La"), ("b3", "Si"), ("c4", "Do"), ("d4", "Re")]
+
 LEGENDE = {
     "chitarra": ["○ corda a vuoto &nbsp;&nbsp;&nbsp; ✕ corda da non suonare",
                  "il numero nel pallino è il dito: 1 indice, 2 medio, 3 anulare, 4 mignolo",
@@ -41,6 +46,9 @@ LEGENDE = {
                 "accordatura Sol-Do-Mi-La &nbsp;·&nbsp; corde in numeri, da 1 (La, in alto) a 4 (Sol) &nbsp;·&nbsp; tasti in numeri romani &nbsp;·&nbsp; capotasto a sinistra"],
     "tastiera": ["premi insieme i tasti colorati &nbsp;&nbsp;·&nbsp;&nbsp; la tastiera parte dal Do centrale"],
     "note-tastiera": ["i tasti neri sono i diesis e i bemolli: ogni tasto nero ha due nomi"],
+    "note-basso": ["● tasto premuto &nbsp;&nbsp;&nbsp; ○ corda a vuoto",
+                   "♯ = un tasto più a destra sulla stessa corda &nbsp;·&nbsp; ♭ = un tasto più a sinistra",
+                   "corde in numeri, da 1 (Sol, in alto) a 4 (Mi) &nbsp;·&nbsp; tasti in numeri romani &nbsp;·&nbsp; capotasto a sinistra"],
 }
 
 PAGINA = """<!doctype html><html><head><meta charset="utf-8">
@@ -98,13 +106,33 @@ function cartaNota(chiave, nome) {
   MS.rigoNota(d.querySelector(".rigo"), n);
   return d;
 }
+/* basso: pentagramma in chiave di basso, nome, schema del manico (stessa scala per tutte le carte) */
+function cartaBasso(chiave, nome) {
+  const n = MS.analizza(chiave), col = MS.COLORI[n.lettera];
+  const d = document.createElement("div"); d.className = "carta"; d.style.padding = "6px 10px 14px";
+  d.style.setProperty("--col", col); d.style.setProperty("--bordo", scur(col, 0.45));
+  const schema = MS.schemaNota("basso", n), vb = schema.match(/viewBox="0 0 ([\\d.]+) ([\\d.]+)"/);
+  d.innerHTML = `<div class="rigo-basso"></div><div class="nome" style="margin:4px 0 8px">${nome}</div>` +
+    `<div style="height:${(+vb[2] * 1.42).toFixed(0)}px;display:flex;justify-content:center;align-items:flex-start">` +
+    `<div style="width:${(+vb[1] * 1.42).toFixed(0)}px">${schema}</div></div>`;
+  MS.rigoNota(d.querySelector(".rigo-basso"), n, "bass");
+  return d;
+}
+function stessaFinestra(sel) {
+  const svgs = [...document.querySelectorAll(sel + " svg")];
+  let alto = 0, basso = 110;
+  svgs.forEach(s => { const v = s.getAttribute("viewBox").split(" ").map(Number); alto = Math.min(alto, v[1]); basso = Math.max(basso, v[1] + v[3]); });
+  svgs.forEach(s => s.setAttribute("viewBox", `0 ${alto} 150 ${basso - alto}`));
+}
 window.disegna = function (cosa, dati) {
   const foglio = document.getElementById("foglio"); foglio.innerHTML = "";
   const g = document.createElement("div"); g.className = "griglia";
   g.style.gridTemplateColumns = `repeat(${dati.colonne}, ${dati.larghCarta}px)`;
   if (cosa === "note-tastiera") dati.note.forEach(([k, nome]) => g.appendChild(cartaNota(k, nome)));
+  else if (cosa === "note-basso") dati.noteBasso.forEach(([k, nome]) => g.appendChild(cartaBasso(k, nome)));
   else dati.ordine.forEach(nome => g.appendChild(cartaAccordo(cosa, nome, dati.noteAccordi[nome])));
   foglio.appendChild(g);
+  if (cosa === "note-basso") stessaFinestra(".rigo-basso");
   const leg = document.createElement("div"); leg.className = "legenda"; leg.innerHTML = dati.legenda.join("<br>");
   foglio.appendChild(leg);
 };
@@ -126,11 +154,12 @@ def main():
                 ("ukulele", {"colonne": 5, "larghCarta": 240}),
                 ("tastiera", {"colonne": 5, "larghCarta": 240}),
                 ("note-tastiera", {"colonne": 6, "larghCarta": 200}),
+                ("note-basso", {"colonne": 5, "larghCarta": 270}),
             ]
             for cosa, dati in lavori:
-                dati.update(ordine=ORDINE_ACCORDI, noteAccordi=NOTE_ACCORDI, note=NOTE_TASTIERA, legenda=LEGENDE[cosa])
+                dati.update(ordine=ORDINE_ACCORDI, noteAccordi=NOTE_ACCORDI, note=NOTE_TASTIERA, noteBasso=NOTE_BASSO, legenda=LEGENDE[cosa])
                 pg.evaluate("([c, d]) => disegna(c, d)", [cosa, dati])
-                nome = "schema-note-tastiera.png" if cosa == "note-tastiera" else f"schema-accordi-{cosa}.png"
+                nome = f"schema-{cosa}.png" if cosa.startswith("note-") else f"schema-accordi-{cosa}.png"
                 pg.locator("#foglio").screenshot(path=str(USCITA / nome))
                 print("scritto", nome)
             b.close()
