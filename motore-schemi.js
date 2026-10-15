@@ -158,7 +158,11 @@
       Sol:  [[3, 3], 0, 0, 0, [2, 1], [3, 2]],        La:   [0, [2, 3], [2, 2], [2, 1], 0, "x"],
       Rem:  [[1, 1], [3, 3], [2, 2], 0, "x", "x"],    Mim:  [0, 0, 0, [2, 3], [2, 2], 0],
       Lam:  [0, [1, 1], [2, 3], [2, 2], 0, "x"],      Re7:  [[2, 3], [1, 1], [2, 2], 0, "x", "x"],
-      Sol7: [[1, 1], 0, 0, 0, [2, 2], [3, 3]],        La7:  [0, [2, 2], 0, [2, 1], 0, "x"]
+      Sol7: [[1, 1], 0, 0, 0, [2, 2], [3, 3]],        La7:  [0, [2, 2], 0, [2, 1], 0, "x"],
+      // forme semplificate a 4 corde (come il Fa): niente barré completo
+      Fam:  [[1, 1], [1, 1], [1, 1], [3, 3], "x", "x"],
+      Si:   [[2, 1], [4, 4], [4, 3], [4, 2], "x", "x"],
+      Sim:  [[2, 1], [3, 2], [4, 4], [4, 3], "x", "x"]
     },
     ukulele: {
       Do:   [[3, 3], 0, 0, 0],             Re:   [0, [2, 3], [2, 2], [2, 1]],
@@ -166,11 +170,14 @@
       Sol:  [[2, 2], [3, 3], [2, 1], 0],   La:   [0, 0, [1, 1], [2, 2]],
       Rem:  [0, [1, 1], [2, 2], [2, 3]],   Mim:  [[2, 1], [3, 2], [4, 3], 0],
       Lam:  [0, 0, 0, [2, 2]],             Re7:  [0, [2, 1], 0, [2, 2]],
-      Sol7: [[2, 3], [1, 1], [2, 2], 0],   La7:  [0, 0, [1, 1], 0]
+      Sol7: [[2, 3], [1, 1], [2, 2], 0],   La7:  [0, 0, [1, 1], 0],
+      Fam:  [[3, 4], [1, 2], 0, [1, 1]],   Si:   [[2, 1], [2, 1], [3, 2], [4, 3]],
+      Sim:  [[2, 1], [2, 1], [2, 1], [4, 3]]
     }
   };
-  const SIGLE = { Do: "C", Re: "D", Mi: "E", Fa: "F", Sol: "G", La: "A", Rem: "Dm", Mim: "Em", Lam: "Am", Re7: "D7", Sol7: "G7", La7: "A7" };
-  const LETTERA_ACCORDO = { Do: "c", Re: "d", Mi: "e", Fa: "f", Sol: "g", La: "a" };
+  const SIGLE = { Do: "C", Re: "D", Mi: "E", Fa: "F", Sol: "G", La: "A", Si: "B", Rem: "Dm", Mim: "Em", Fam: "Fm", Lam: "Am", Sim: "Bm",
+    Re7: "D7", Sol7: "G7", La7: "A7" };
+  const LETTERA_ACCORDO = { Do: "c", Re: "d", Mi: "e", Fa: "f", Sol: "g", La: "a", Si: "b" };
   function svgAccordo(strumento, nome) {
     const forma = ACCORDI[strumento][nome], nCorde = forma.length;
     const tasti = strumento === "ukulele" ? 5 : 4, passo = 15, largTasto = 19;

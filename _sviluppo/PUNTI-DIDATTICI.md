@@ -560,3 +560,27 @@ I due giochi hanno lo stesso motore. Regola dell'errore sulle domande con più g
 - Errore sulla domanda = coppia annullata e turno all'avversario (chiesto da Cristiano, ottobre 2026): prima con più
   giocatori la coppia valeva comunque e si poteva riprovare all'infinito, quindi la domanda non contava nella gara.
 - Dopo l'errore la spiegazione resta visibile circa 3 secondi, il tempo di leggerla, poi le carte si rigirano da sole.
+
+---
+
+## Schemi degli strumenti (accordi e note)
+
+Pagina `schemi-strumenti.html`: schemi pronti da proiettare alla LIM o scaricare, per flauto dolce, chitarra, ukulele,
+tastiera e basso. Le immagini di accordi (chitarra, ukulele, tastiera) e note della tastiera si rigenerano con
+`python3 _sviluppo/schemi/genera_schemi.py` (diteggiature degli accordi in `motore-schemi.js`, tabella `ACCORDI`).
+
+### Concetti
+- Accordi maggiori, minori e di settima: Do, Re, Mi, Fa, Sol, La, Si; Rem, Mim, Fam, Lam, Sim; Re7, Sol7, La7.
+- Sigla internazionale sotto il nome italiano (C, Dm, G7...): i ragazzi la ritrovano negli spartiti con gli accordi.
+- Tastiera: dal Do centrale al Mi del quarto spazio, ogni nota con il suo posto sul pentagramma; i tasti neri hanno due nomi (diesis/bemolle).
+
+### Punti di forza
+- Stessi colori delle note in tutto il sito: l'accordo prende il colore della sua fondamentale (Fam verde come il Fa, Si e Sim rosa).
+- Su chitarra e ukulele il numero nel pallino è il dito da usare; ○ corda a vuoto, ✕ corda da non suonare.
+- Tutti gli accordi in una sola schermata alla LIM (5 colonne × 3 righe): il docente indica l'accordo mentre la classe suona.
+- Confrontare lo stesso accordo su tre strumenti mostra che le note sono le stesse, cambia solo come si prendono.
+
+### Scelte fatte (e perché)
+- Chitarra: Fa, Fam, Si e Sim in forma semplificata su 4 corde, senza barré completo, alla portata della scuola media.
+- Ukulele: forme standard (Fam 1-0-1-3, Si 4-3-2-2, Sim 4-2-2-2, dalla corda Sol alla La).
+
