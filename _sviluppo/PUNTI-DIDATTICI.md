@@ -584,3 +584,32 @@ tastiera e basso. Le immagini di accordi (chitarra, ukulele, tastiera) e note de
 - Chitarra: Fa, Fam, Si e Sim in forma semplificata su 4 corde, senza barré completo, alla portata della scuola media.
 - Ukulele: forme standard (Fam 1-0-1-3, Si 4-3-2-2, Sim 4-2-2-2, dalla corda Sol alla La).
 
+---
+
+## Seleziona note (schemi su misura in PDF)
+
+Pagina `seleziona-note.html` (in Schemi). Il docente sceglie lo strumento e tocca le note che servono; il sito
+prepara un PDF A4 con una carta per nota (pentagramma, nome colorato, diteggiatura), su più fogli se servono.
+
+### Concetti
+- Corrispondenza fra nota scritta, nome e posizione sullo strumento.
+- Chitarra, ukulele, basso: la stessa nota in posizioni diverse del manico (corda e tasto); la corda a vuoto.
+- Pianoforte: chiave di violino, di basso, doppio pentagramma; il Do centrale come riferimento fra le due chiavi.
+- Flauto dolce: diteggiatura di ogni nota, anche diesis e bemolli; i tasti neri hanno due nomi (♯ o ♭ a scelta).
+
+### Punti di forza
+- Schede su misura: solo le note del brano o della lezione, non tutto lo schema.
+- Si sceglie direttamente sullo strumento disegnato: il gesto di scegliere è già un piccolo esercizio di lettura.
+- Ordine «come le scelgo» (per seguire un brano) o «dal grave all'acuto» (per una scala o un riepilogo).
+- 6, 12 o 20 carte per foglio, titolo facoltativo; PDF da scaricare o stampa diretta. Tutto nel browser, nessun dato inviato.
+
+### Come usarlo in classe
+- Prima di un brano nuovo: si toccano le note del brano e si stampa la scheda da incollare sul quaderno.
+- Alla LIM: si mostra il manico o la tastiera e si chiede ai ragazzi dove sta una nota prima di toccarla.
+- Verifiche: si stampano le carte e si coprono nome o diteggiatura.
+
+### Scelte fatte (e perché)
+- Lo schema del manico mostra quattro tasti attorno alla nota (dal capotasto se la nota è in basso), con i numeri romani veri.
+- Sullo stesso foglio tutti i pentagrammi hanno la stessa grandezza, anche con i tagli addizionali.
+- Il PDF è fatto di immagini ad alta risoluzione (300 dpi): così i simboli ♯ e ♭ e i colori escono uguali su ogni computer.
+
