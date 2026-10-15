@@ -1,0 +1,20 @@
+/* ===== I tempi semplici: accenti, movimenti, gesto del direttore, quiz ===== */
+.acc circle { stroke: #1E293B; stroke-width: 1.6; }
+.acc-F circle { fill: #F59E0B; }
+.acc-mf circle { fill: #FCD34D; }
+.acc-d circle { fill: #BAE6FD; }
+.acc text { font-family: 'Fredoka', 'Manrope', sans-serif; font-weight: 600; font-size: 24px; fill: #1E293B; text-anchor: middle; }
+.acc-d text { font-size: 19px; }
+.acc-l { font-family: 'Manrope', sans-serif; font-style: italic; font-weight: 800; font-size: 23px; fill: #475569; text-anchor: middle; }
+.mov rect { fill: #E0F2FE; stroke: #38BDF8; stroke-width: 2; }
+.mov line { stroke: #0284C7; stroke-width: 2.5; stroke-dasharray: 5 4; }
+.mov text { font-family: 'Fredoka', 'Manrope', sans-serif; font-weight: 600; font-size: 24px; fill: #0F172A; text-anchor: middle; }
+.mov text.pic { font-size: 34px; fill: #0369A1; }
+.traccia { fill: none; stroke: #94A3B8; stroke-width: 4; stroke-dasharray: 10 8; stroke-linecap: round; }
+.punta { fill: #64748B; stroke: none; }
+.bacchetta { fill: #7C3AED; stroke: #FFFFFF; stroke-width: 3; }
+.buco rect { fill: #FEF3C7; stroke: #D97706; stroke-width: 2.5; stroke-dasharray: 7 5; }
+.buco text { font-family: 'Fredoka', 'Manrope', sans-serif; font-weight: 600; font-size: 50px; fill: #B45309; text-anchor: middle; }
+.somma { font-family: 'Fredoka', 'Manrope', sans-serif; font-weight: 600; font-size: 28px; fill: #1E293B; }
+.btn.giusto { background: #34D399; color: #052E16; border-color: #34D399; }
+.btn.sbagliato { background: #FDA4AF; color: #4C0519; border-color: #FDA4AF; }

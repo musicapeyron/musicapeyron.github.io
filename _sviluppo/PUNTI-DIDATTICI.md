@@ -520,6 +520,42 @@ da copiare). Stesso motore e stile delle altre lezioni; i sorgenti sono in `_svi
 
 ---
 
+## I tempi semplici (lezione interattiva)
+
+**Dove:** home → Suono, note e ritmo, dopo «Costruttore di battute» e prima del «Dettato ritmico» (`tempi-semplici.html`).
+Punto 19 del programma. Ottobre 2026. Sorgenti in `_sviluppo/lezioni/` (`passi-tempi.js`, `tempi.css`), si rigenera con `costruisci.py tempi`.
+
+### Concetti
+- Tempo semplice: ogni movimento si divide in **due** parti uguali (2/4, 3/4, 4/4: il movimento vale una semiminima, si divide in due crome).
+- 2/4 binario (forte, debole), 3/4 ternario (forte, debole, debole), 4/4 quaternario (forte, debole, mezzoforte, debole); il 4/4 si scrive anche C.
+- Battere il tempo: il gesto del direttore per 2, 3 e 4 (il 1° movimento in basso, l'ultimo in alto).
+- Trovare il tempo sommando i valori delle figure di una battuta.
+- Solo un assaggio dei tempi composti: il movimento si divide in **tre** (6/8 = 2 movimenti da semiminima col punto).
+
+### Punti di forza
+- **Si vede la divisione del movimento**: sotto le battute una fila di caselle, una per movimento; «Dividi in due» le taglia a metà
+  mentre le semiminime diventano coppie di crome. Nei tempi composti la stessa casella si taglia in tre.
+- **Forte e debole si vedono e si sentono**: cerchi grandi (forte), medi (mezzoforte) e piccoli (debole) che saltano a tempo;
+  il legnetto e il violino suonano più forte sui movimenti forti. «Solo i colpi» e poi «Ascolta la melodia».
+- **Il gesto del direttore**: lo schema per 2, 3 e 4 con un pallino che si muove a tempo (accelera verso ogni movimento,
+  come la mano vera) per 4 battute. La classe batte il tempo insieme.
+- **Quale tempo?**: battute senza indicazione di tempo; si contano i movimenti e si sceglie. Se si sbaglia compare il conto
+  sotto ogni battuta (es. 1½ + ½ + 1 = 3); quando si indovina compare il tempo e la battuta suona. Punteggio «al primo colpo».
+- 2/4 e 6/8 a confronto, alla stessa velocità dei movimenti: si sente che cambia solo come si divide il movimento.
+
+### Come usarlo in classe
+- Passi 1–4 alla LIM, battendo le mani con il legnetto (forte sul primo movimento); il passo 5 in piedi, tutti dirigono.
+- «Quale tempo?» a squadre o a turno alla lavagna, chiedendo di dire il conto a voce prima di toccare.
+- Il passo sui tempi composti è solo un'anticipazione: la lezione vera arriverà più avanti.
+
+### Scelte fatte (e perché)
+- Nel programma (punto 19) le definizioni di semplice e composto sono **scambiate** («diviso in due → composto»);
+  la lezione usa quella corretta (due → semplice, tre → composto), come al punto 7 del programma di seconda.
+- Gli accenti sono scritti F, d, mf sotto i cerchi (le parole intere non ci stanno sotto ogni movimento); nel testo sono per esteso.
+- Le melodie di esempio sono inventate e brevissime, tutte sulle note fra MI e DO del rigo.
+
+---
+
 ## Memory – note e Memory – strumenti
 
 **Dove:** Giochi → Memory – note (`memory-note.html`) e Memory – strumenti (`memory-strumenti.html`).

@@ -1,0 +1,1284 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>I tempi semplici — musicascuole.it</title>
+<link rel="icon" href="favicon.svg" type="image/svg+xml">
+<link rel="icon" href="favicon-32.png" type="image/png" sizes="32x32">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
+<meta name="description" content="Lezione interattiva per la LIM: i tempi semplici 2/4, 3/4 e 4/4, movimenti forti e deboli, il gesto del direttore, quale tempo? e un primo sguardo ai tempi composti.">
+<link rel="stylesheet" href="fonts/caratteri.css">
+<link rel="stylesheet" href="comune.css">
+<!-- VexFlow (nel sito, nessun servizio esterno) disegna la musica del palco -->
+<script src="vexflow.js"></script>
+<script src="lezioni-vexflow.js?v=1"></script>
+<style>
+/* =========================================================
+   I tempi semplici — lezione interattiva a passi (stesso motore di note-sul-pentagramma.html;
+   si rigenera con _sviluppo/lezioni/costruisci.py a partire dai file in _sviluppo/lezioni/).
+   Ogni passo ha delle "fasi": Avanti mostra la fase successiva, poi il passo successivo.
+   I simboli (chiavi, teste, numeri del tempo) sono tracciati di VexFlow salvati qui sotto
+   nella costante GLIFI: la pagina non carica la libreria.
+   ========================================================= */
+* { box-sizing: border-box; }
+html, body { margin: 0; }
+body { min-height: 100vh; font-family: 'Inter', 'Segoe UI', Arial, sans-serif; color: #EAF2FF;
+  -webkit-font-smoothing: antialiased; padding: 36px 14px 12px; position: relative; }
+button { font-family: inherit; }
+
+/* colori dei capitoli */
+:root { --c0: #38BDF8; --c1: #A78BFA; --c2: #FBBF24; --c3: #34D399; --cap: var(--c0);
+  --carta: rgba(30, 41, 59, 0.62); --bordo: rgba(255,255,255,0.12); --tenue: #9FB3CE; }
+
+.casetta { position: fixed; top: 12px; left: 12px; z-index: 40; width: 44px; height: 44px; border-radius: 50%;
+  display: grid; place-items: center; text-decoration: none; font-size: 20px;
+  background: linear-gradient(180deg, rgba(255,255,255,0.14), rgba(255,255,255,0.05)); border: 1px solid rgba(255,255,255,0.18); }
+.casetta:hover { filter: brightness(1.2); }
+
+.lezione { position: relative; z-index: 1; max-width: 1400px; margin: 0 auto; display: flex; flex-direction: column; gap: 10px; }
+
+/* ---------- testata: titolo e indice ---------- */
+.riga-titolo { display: flex; align-items: center; gap: 14px; padding-left: 50px; }
+.riga-titolo h1 { margin: 0; font-family: 'Fredoka', 'Manrope', sans-serif; font-weight: 600; font-size: 28px; line-height: 1.1; }
+.riga-titolo .sopra { font-family: 'Manrope', sans-serif; font-weight: 800; font-size: 11px; letter-spacing: .16em; text-transform: uppercase; color: #FDE7C7; }
+.riga-titolo .spazio-vuoto { flex: 1; }
+.contatore { font-family: 'Manrope', sans-serif; font-weight: 700; color: var(--tenue); font-size: 14px; }
+.interruttore { font-family: 'Manrope', sans-serif; font-weight: 800; font-size: 14px; color: #EAF2FF; cursor: pointer;
+  background: rgba(15,23,42,0.6); border: 1px solid var(--bordo); border-radius: 999px; padding: 7px 14px; }
+.interruttore.attivo { background: #EAF2FF; color: #0f172a; }
+
+.indice { display: flex; gap: 8px; }
+.gruppo { display: flex; flex-direction: column; gap: 4px; min-width: 0; }
+.gruppo .cap { font-family: 'Manrope', sans-serif; font-weight: 800; font-size: 10.5px; letter-spacing: .14em; text-transform: uppercase;
+  color: var(--colore); padding-left: 4px; white-space: nowrap; }
+.gruppo .pillole { display: flex; gap: 3px; }
+.pillola { flex: 1 1 0; min-width: 0; display: flex; align-items: center; gap: 5px; cursor: pointer; text-align: left;
+  padding: 5px 4px 5px 4px; border-radius: 12px; height: 44px; color: #CBD5E1;
+  background: var(--carta); border: 1px solid var(--bordo); border-bottom: 3px solid color-mix(in srgb, var(--colore) 45%, transparent);
+  font-family: 'Manrope', sans-serif; font-weight: 700; font-size: 12px; line-height: 1.12; hyphens: manual; }
+.pillola .n { flex: 0 0 24px; height: 24px; border-radius: 50%; display: grid; place-items: center; font-weight: 800; font-size: 13px;
+  border: 2px solid color-mix(in srgb, var(--colore) 70%, transparent); color: var(--colore); }
+.pillola .t { overflow: hidden; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; }
+.pillola:hover { filter: brightness(1.2); }
+.pillola.vista .n { background: color-mix(in srgb, var(--colore) 22%, transparent); }
+.pillola.attiva { background: var(--colore); color: #0f172a; border-color: var(--colore); }
+.pillola.attiva .n { background: #0f172a; color: var(--colore); border-color: #0f172a; }
+
+/* ---------- corpo: palco (disegno) e spiegazione ---------- */
+.corpo { display: grid; grid-template-columns: 880px 1fr; gap: 14px; }
+.scheda { background: var(--carta); border: 1px solid var(--bordo); border-top: 4px solid var(--cap); border-radius: 18px; }
+.palco-card { display: grid; grid-template-rows: 54px 1fr auto; overflow: hidden; }
+.cartellino { display: flex; align-items: center; justify-content: center; gap: 10px; padding: 0 14px; text-align: center;
+  font-family: 'Manrope', sans-serif; font-weight: 800; font-size: 22px; color: #F8FAFC; border-bottom: 1px solid rgba(255,255,255,0.06); }
+.cartellino .piccolo { font-weight: 600; font-size: 17px; color: var(--tenue); }
+.cartellino .c-in { line-height: 1.2; }
+.cartellino .mini { margin: 0 2px; }
+.cartellino.lampo { animation: lampo .5s ease-out; }
+@keyframes lampo { from { background: rgba(255,255,255,0.07); } to { background: transparent; } }
+.palco { position: relative; min-height: 0; }
+.palco > svg { position: absolute; inset: 0; width: 100%; height: 100%; display: block; }
+.strumenti { display: flex; flex-wrap: wrap; align-items: center; justify-content: center; gap: 8px; padding: 10px 12px 12px; min-height: 66px; }
+.strumenti .suggerimento { color: var(--tenue); font-size: 15px; font-style: italic; }
+.btn { font-family: 'Manrope', sans-serif; font-weight: 800; font-size: 16px; color: #EAF2FF; cursor: pointer;
+  background: rgba(15,23,42,0.7); border: 1px solid rgba(255,255,255,0.2); border-radius: 12px; padding: 10px 16px; line-height: 1.1; }
+.btn:hover { filter: brightness(1.25); }
+.btn:active { filter: brightness(0.9); }
+.btn.forte { background: var(--cap); color: #0f172a; border-color: var(--cap); }
+.btn.on { background: #EAF2FF; color: #0f172a; }
+.btn:disabled { opacity: .35; cursor: default; filter: none; }
+.segmenti { display: inline-flex; border: 1px solid rgba(255,255,255,0.2); border-radius: 12px; overflow: hidden; }
+.segmenti .btn { border: 0; border-radius: 0; border-left: 1px solid rgba(255,255,255,0.15); }
+.segmenti .btn:first-child { border-left: 0; }
+
+.spiega { padding: 16px 22px 18px; display: flex; flex-direction: column; overflow: hidden; }
+.spiega .capitolo { font-family: 'Manrope', sans-serif; font-weight: 800; font-size: 12px; letter-spacing: .14em; text-transform: uppercase; color: var(--cap); }
+.spiega h2 { font-family: 'Fredoka', 'Manrope', sans-serif; font-weight: 600; font-size: 31px; line-height: 1.1; margin: 4px 0 12px; }
+.punti { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 10px; }
+.punti li { font-size: var(--fs, 20px); line-height: 1.38; padding-left: 26px; position: relative; color: #CBD5E1; cursor: pointer; transition: color .3s; }
+.punti li::before { content: ""; position: absolute; left: 4px; top: .58em; width: 10px; height: 10px; border-radius: 50%; background: var(--cap); opacity: .55; }
+.punti li.dopo { display: none; }
+.punti li.ora { color: #fff; }
+.punti li.ora::before { opacity: 1; box-shadow: 0 0 0 4px color-mix(in srgb, var(--cap) 30%, transparent); }
+.punti li b { color: #fff; }
+.quaderno { margin-top: auto; padding: 10px 14px 11px; border-radius: 12px; background: rgba(253, 231, 199, 0.08);
+  border: 1px dashed rgba(253, 231, 199, 0.45); font-size: var(--fq, 15.5px); line-height: 1.4; color: #FDE7C7; }
+.quaderno .tit { font-family: 'Manrope', sans-serif; font-weight: 800; font-size: 11.5px; letter-spacing: .14em; text-transform: uppercase; margin-bottom: 3px; }
+.quaderno p { margin: 3px 0 0; }
+.quaderno[hidden] { display: none; }
+
+/* ---------- piede: frecce e fasi ---------- */
+.piede-lezione { display: grid; grid-template-columns: 200px 1fr 260px; align-items: center; gap: 12px; height: 62px; }
+.nav-btn { justify-self: start; height: 56px; padding: 0 22px; border-radius: 999px; cursor: pointer; font-family: 'Manrope', sans-serif;
+  font-weight: 800; font-size: 18px; color: #EAF2FF; background: rgba(15,23,42,0.7); border: 1px solid rgba(255,255,255,0.18); }
+.avanti { justify-self: end; height: 58px; width: 100%; border-radius: 999px; cursor: pointer; border: 0; font-family: 'Manrope', sans-serif;
+  font-weight: 800; font-size: 22px; color: #0f172a; background: var(--cap); }
+.nav-btn:hover, .avanti:hover { filter: brightness(1.15); }
+.nav-btn:active, .avanti:active { filter: brightness(0.92); }
+.nav-btn:disabled, .avanti:disabled { opacity: .3; cursor: default; filter: none; }
+.fasi { display: flex; justify-content: center; gap: 10px; }
+.fasi button { width: 40px; height: 40px; border-radius: 50%; cursor: pointer; font-family: 'Manrope', sans-serif; font-weight: 800; font-size: 16px;
+  color: #CBD5E1; background: transparent; border: 2px solid rgba(255,255,255,0.25); }
+.fasi button.fatta { border-color: var(--cap); color: var(--cap); }
+.fasi button.ora { background: var(--cap); border-color: var(--cap); color: #0f172a; }
+
+/* ---------- ripasso finale (senza palco) ---------- */
+.lezione.solo-testo .corpo { grid-template-columns: 1fr; }
+.lezione.solo-testo .spiega { display: none; }
+.lezione.solo-testo .palco-card { grid-template-rows: 54px 1fr auto; }
+.ripasso { position: absolute; inset: 0; padding: 12px 16px 6px; display: grid; grid-template-columns: repeat(3, 1fr); grid-auto-rows: 1fr; gap: 9px; }
+.def { background: rgba(15,23,42,0.55); border: 1px solid var(--bordo); border-left: 4px solid var(--colore); border-radius: 12px;
+  padding: 6px 11px; font-size: 14px; line-height: 1.3; color: #CBD5E1; cursor: pointer; text-align: left; font-family: inherit; overflow: hidden; }
+.def:hover { filter: brightness(1.2); }
+.def b { color: #fff; font-family: 'Manrope', sans-serif; font-weight: 800; }
+.def .vai { float: right; color: var(--colore); font-weight: 800; font-family: 'Manrope', sans-serif; font-size: 12.5px; }
+.allenati { display: flex; flex-wrap: wrap; gap: 8px; justify-content: center; align-items: center; }
+.allenati span { color: var(--tenue); font-weight: 700; font-family: 'Manrope', sans-serif; }
+.allenati a { text-decoration: none; }
+
+/* ---------- il disegno ---------- */
+svg { -webkit-tap-highlight-color: transparent; user-select: none; -webkit-user-select: none; }
+.riga { stroke: rgba(234,242,255,0.85); stroke-width: 2.4; stroke-linecap: round; transition: stroke .35s, stroke-width .35s; }
+.riga.accesa { stroke: var(--luce, #FDE047); stroke-width: 6; filter: drop-shadow(0 0 7px var(--luce, #FDE047)); }
+.spazio { fill: var(--luce, #38BDF8); opacity: 0; transition: opacity .35s; }
+.spazio.acceso { opacity: .32; }
+.rigo.disegna .riga { stroke-dasharray: 1000; animation: traccia .8s ease-out both; animation-delay: calc(var(--i) * .16s); }
+@keyframes traccia { from { stroke-dashoffset: 1000; } to { stroke-dashoffset: 0; } }
+.taglio { stroke: rgba(234,242,255,0.9); stroke-width: 2.6; stroke-linecap: round; }
+.taglio.nuovo { stroke-dasharray: 70; animation: traccia2 .6s ease-out both; }
+@keyframes traccia2 { from { stroke-dashoffset: 70; } to { stroke-dashoffset: 0; } }
+.stanghetta { stroke: rgba(234,242,255,0.9); stroke-width: 2.6; transition: stroke .3s; }
+.stanghetta.grossa { stroke-width: 9; }
+.glifo { fill: #EAF2FF; transition: fill .35s, filter .35s; }
+.evid, .evid .glifo, .evid.glifo { fill: var(--luce, #FDE047) !important; filter: drop-shadow(0 0 8px var(--luce, #FDE047)); }
+.stanghetta.evid { stroke: var(--luce, #FDE047); filter: drop-shadow(0 0 8px var(--luce, #FDE047)); }
+.anello { fill: none; stroke: var(--luce, #FDE047); stroke-width: 4; opacity: 0; transform-box: fill-box; transform-origin: center; }
+.anello.via { animation: anello 1.1s ease-out 3; }
+@keyframes anello { 0% { opacity: .95; transform: scale(.6); } 100% { opacity: 0; transform: scale(1.8); } }
+
+.nota .testa { fill: #EAF2FF; transition: fill .3s, opacity .3s; }
+.nota .gambo { stroke: #EAF2FF; stroke-width: 2.4; }
+.nota { transition: opacity .35s; cursor: pointer; }
+.nota.nascosta, .nome.nascosto, .vela.nascosto { opacity: 0; pointer-events: none; }
+.nota.compare { animation: compare .45s ease-out; }
+@keyframes compare { from { opacity: 0; } to { opacity: 1; } }
+.nota.luce .testa { filter: drop-shadow(0 0 9px #fff) drop-shadow(0 0 4px #fff); }
+/* «salto» a tempo: la nota si ingrandisce un poco e torna com'era (al posto della luce, più sicuro per gli occhi) */
+.pop { transform-box: fill-box; transform-origin: 50% 70%; animation: pop .22s ease-out; }
+@keyframes pop { 0% { transform: scale(1); } 40% { transform: scale(1.22); } 100% { transform: scale(1); } }
+.nota.tenue { opacity: .45; }
+.nome { font-family: 'Manrope', sans-serif; font-weight: 800; font-size: 25px; fill: #EAF2FF; text-anchor: middle; transition: opacity .3s, fill .3s;
+  paint-order: stroke; stroke: #172036; stroke-width: 6px; stroke-linejoin: round; }
+.nome.coperto { fill: rgba(234,242,255,0.5); }
+.nome { transform-box: fill-box; transform-origin: center; transition: opacity .3s, fill .3s, transform .15s; }
+.nome.luce { transform: scale(1.22); filter: drop-shadow(0 0 7px #fff); }
+.gambo-evid .gambo { stroke: #FDE047; stroke-width: 4; filter: drop-shadow(0 0 6px #FDE047); }
+.mano .tratto { fill: none; stroke: #EAF2FF; stroke-width: 6; stroke-linecap: round; stroke-linejoin: round; }
+.mano .punta { fill: #FBBF24; stroke: #0f172a; stroke-width: 3; }
+.mano .pallino, .mano .puntino { fill: #EAF2FF; }
+.passino circle { fill: #FBBF24; } .passino text { font-family: 'Manrope', sans-serif; font-weight: 800; font-size: 17px; fill: #0f172a; text-anchor: middle; dominant-baseline: central; }
+.chiave { transition: opacity .5s; }
+.etic { font-family: 'Manrope', sans-serif; font-weight: 800; font-size: 19px; fill: #CBD5E1; letter-spacing: .04em;
+  paint-order: stroke; stroke: #172036; stroke-width: 7px; stroke-linejoin: round; }
+.etic.grande { font-size: 24px; }
+.num-cerchio circle { fill: rgba(15,23,42,0.85); stroke: var(--luce, #EAF2FF); stroke-width: 2.5; }
+.num-cerchio text { font-family: 'Manrope', sans-serif; font-weight: 800; font-size: 18px; fill: #EAF2FF; text-anchor: middle; dominant-baseline: central; }
+.num-cerchio { transition: opacity .3s; }
+.vela { transition: opacity .35s; }
+.colpo { fill: transparent; cursor: pointer; }
+.colpo:hover + .ombra, .colpo:hover { fill: rgba(255,255,255,0.06); }
+.freccia { stroke: var(--luce, #FBBF24); stroke-width: 3; fill: none; stroke-linecap: round; stroke-linejoin: round; }
+.cursore { fill: none; stroke: #fff; stroke-width: 3.5; transition: transform .25s ease, opacity .25s; }
+.palla { fill: rgba(234,242,255,0.18); stroke: rgba(234,242,255,0.55); stroke-width: 2.5; transition: fill .08s, stroke .08s; }
+.palla.forte { stroke-width: 4; }
+.palla.batte { fill: var(--luce, #FBBF24); stroke: #fff; }
+.conta { font-family: 'Manrope', sans-serif; font-weight: 800; font-size: 24px; fill: #9FB3CE; text-anchor: middle; transition: fill .08s; }
+.conta.batte { fill: #fff; }
+
+/* colori delle note (attivi di default; si spengono con il pulsante 🎨) */
+body.colori .nota.c-do .testa { fill: var(--do); } body.colori .nome.c-do { fill: var(--do); }
+body.colori .nota.c-re .testa { fill: var(--re); } body.colori .nome.c-re { fill: var(--re); }
+body.colori .nota.c-mi .testa { fill: var(--mi); } body.colori .nome.c-mi { fill: var(--mi); }
+body.colori .nota.c-fa .testa { fill: var(--fa); } body.colori .nome.c-fa { fill: var(--fa); }
+body.colori .nota.c-sol .testa { fill: var(--sol); } body.colori .nome.c-sol { fill: #2DD4BF; }
+body.colori .nota.c-la .testa { fill: var(--la); } body.colori .nome.c-la { fill: #A79BE8; }
+body.colori .nota.c-si .testa { fill: var(--si); } body.colori .nome.c-si { fill: #E879B9; }
+/* le note scure (sol, la) hanno un bordo chiaro per staccarsi dallo sfondo */
+body.colori .nota.c-la .testa, body.colori .nota.c-sol .testa { stroke: rgba(234,242,255,0.55); stroke-width: .5; }
+.chip rect { fill: rgba(15,23,42,0.6); stroke: rgba(255,255,255,0.25); stroke-width: 2; transition: fill .2s; }
+.chip text { font-family: 'Manrope', sans-serif; font-weight: 800; font-size: 24px; text-anchor: middle; dominant-baseline: central; fill: #EAF2FF; }
+.chip.batte rect { fill: rgba(255,255,255,0.22); stroke: #fff; }
+body.colori .chip.c-do rect { stroke: var(--do); } body.colori .chip.c-re rect { stroke: var(--re); } body.colori .chip.c-mi rect { stroke: var(--mi); }
+body.colori .chip.c-fa rect { stroke: var(--fa); } body.colori .chip.c-sol rect { stroke: #2DD4BF; } body.colori .chip.c-la rect { stroke: #A79BE8; } body.colori .chip.c-si rect { stroke: #E879B9; }
+.mini { display: inline-block; vertical-align: middle; }
+.mini path { fill: #EAF2FF; }
+
+
+/* ---------- la musica la disegna VexFlow (lezioni-vexflow.js): qui i colori e le luci ---------- */
+.vfr path { fill: #EAF2FF; stroke: none; }
+.vfr .vf-stem path { fill: none !important; stroke: #EAF2FF; stroke-width: 1.3; }
+.nota .vf-notehead path { transition: fill .3s; }
+body.colori .nota.c-do .vf-notehead path:not(.glifo-alt) { fill: var(--do); }
+body.colori .nota.c-re .vf-notehead path:not(.glifo-alt) { fill: var(--re); }
+body.colori .nota.c-mi .vf-notehead path:not(.glifo-alt) { fill: var(--mi); }
+body.colori .nota.c-fa .vf-notehead path:not(.glifo-alt) { fill: var(--fa); }
+body.colori .nota.c-sol .vf-notehead path:not(.glifo-alt) { fill: var(--sol); }
+body.colori .nota.c-la .vf-notehead path:not(.glifo-alt) { fill: var(--la); }
+body.colori .nota.c-si .vf-notehead path:not(.glifo-alt) { fill: var(--si); }
+body.colori .nota.c-la .vf-notehead path:not(.glifo-alt), body.colori .nota.c-sol .vf-notehead path:not(.glifo-alt) { stroke: rgba(234,242,255,0.55); stroke-width: .5; }
+.nota.luce .vf-notehead { filter: drop-shadow(0 0 9px #fff) drop-shadow(0 0 4px #fff); }
+.gambo-evid .vf-stem path { stroke: #FDE047; stroke-width: 2; filter: drop-shadow(0 0 6px #FDE047); }
+.vfr .glifo-alt.evid { fill: var(--luce, #FDE047) !important; }
+
+/* ---------- IL FOGLIO: il palco è bianco con l'inchiostro nero, come uno spartito vero ----------
+   (il cartellino sopra e i pulsanti sotto restano scuri come il resto del sito) */
+.palco { background: #FFFFFF; margin: 0 12px; border-radius: 12px; box-shadow: inset 0 0 0 1px rgba(15,23,42,0.08); }
+.lezione.solo-testo .palco { background: transparent; margin: 0; box-shadow: none; }
+.palco .riga, .palco .taglio, .palco .stanghetta { stroke: #1F2937; }
+.palco .riga.accesa { stroke: var(--luce, #F59E0B); stroke-width: 9; filter: saturate(1.5) brightness(.88); }
+.palco .spazio.acceso { opacity: .42; }
+.palco .glifo, .palco .vfr path, .palco .glifo-alt { fill: #111827; }
+.palco .vfr .vf-stem path { stroke: #111827; }
+.palco .evid, .palco .evid .glifo, .palco .evid.glifo, .palco .vfr .evid { fill: var(--luce, #F59E0B) !important; filter: saturate(1.5) brightness(.85) drop-shadow(0 0 3px rgba(0,0,0,.25)); }
+/* teste colorate: un sottile bordo nero, così anche il MI giallo si vede sul bianco */
+body.colori .palco .nota[class*="c-"] .vf-notehead path:not(.glifo-alt) { stroke: #111827; stroke-width: .9; }
+.palco .nota.luce .vf-notehead { filter: drop-shadow(0 0 5px #F59E0B) drop-shadow(0 0 2px #F59E0B); }
+.palco .gambo-evid .vf-stem path { stroke: #E11D48; stroke-width: 2.2; filter: none; }
+/* nomi delle note: colori un po' più scuri, con un alone bianco */
+.palco .nome { fill: #111827; stroke: #FFFFFF; }
+.palco .nome.coperto { fill: #94A3B8; }
+body.colori .palco .nome.c-do { fill: #D0103A; } body.colori .palco .nome.c-re { fill: #D97706; } body.colori .palco .nome.c-mi { fill: #A88A00; }
+body.colori .palco .nome.c-fa { fill: #4D7C0F; } body.colori .palco .nome.c-sol { fill: #00807A; } body.colori .palco .nome.c-la { fill: #5E50A1; } body.colori .palco .nome.c-si { fill: #B8327F; }
+/* scritte, frecce e numeri del disegno */
+.palco .etic { fill: #334155; stroke: #FFFFFF; }
+.palco .etic[fill], .palco text[fill], .palco .freccia, .palco .esito { filter: saturate(1.4) brightness(.78); }
+.palco [fill="#EAF2FF"] { fill: #111827; }
+.palco [stroke="rgba(255,255,255,0.25)"] { stroke: rgba(15,23,42,0.3); }
+.palco .cursore { stroke: #111827; }
+.palco .colpo:hover { fill: rgba(15,23,42,0.04); }
+.palco .mano .tratto { stroke: #111827; }
+.palco .mano .pallino, .palco .mano .puntino { fill: #111827; }
+.palco .palla { fill: #E2E8F0; stroke: #64748B; }
+.palco .palla.batte { stroke: #111827; }
+.palco .conta { fill: #64748B; } .palco .conta.batte { fill: #111827; }
+.palco .chip rect { fill: #1E293B; }
+
+
+/* ---------- ritmo: figure, barre della durata, legature ---------- */
+.fig .glifo { fill: #EAF2FF; }
+.fig .testa { fill: #EAF2FF; } .fig .gambo { stroke: #EAF2FF; stroke-width: 2.4; }
+.punto { fill: #EAF2FF; }
+.trave { fill: #EAF2FF; }
+.legatura { fill: none; stroke: #EAF2FF; stroke-width: 4.5; stroke-linecap: round; }
+.barra .pezzo { stroke: rgba(15,23,42,0.5); stroke-width: 1.5; }
+.barra .pz0 { fill: #7DD3FC; } .barra .pz1 { fill: #FBBF24; } .barra .pz2 { fill: #F472B6; }
+.barra.silenzio .pezzo { fill: rgba(148,163,184,0.18); stroke: #94A3B8; stroke-dasharray: 6 5; }
+.barra.silenzio .pz1 { fill: rgba(251,191,36,0.22); stroke: #FBBF24; }
+.barra .riempi { fill: rgba(255,255,255,0.45); transform-box: fill-box; transform-origin: left center; transform: scaleX(0); pointer-events: none; }
+.cresce { transform-box: fill-box; transform-origin: left center; transition: transform .6s ease-out; }
+.cresce.zero { transform: scaleX(0); }
+.val-barra { font-family: 'Manrope', sans-serif; font-weight: 800; font-size: 16px; fill: #0f172a; text-anchor: middle; pointer-events: none; }
+.barra.silenzio .val-barra { fill: #CBD5E1; }
+.val-pezzo { font-family: 'Manrope', sans-serif; font-weight: 800; font-size: 28px; fill: #0f172a; text-anchor: middle; transition: opacity .3s; }
+.uguale { font-family: 'Fredoka', 'Manrope', sans-serif; font-weight: 600; font-size: 46px; fill: #FDE7C7; }
+.nome-fig { font-family: 'Manrope', sans-serif; font-weight: 800; font-size: 24px; fill: #EAF2FF; }
+.val-riga { font-family: 'Fredoka', 'Manrope', sans-serif; font-weight: 600; font-size: 28px; fill: #FDE7C7; }
+.riga-val { cursor: pointer; }
+.riga-val.scelta .nome-fig { fill: #FDE047; }
+.conta-n { font-family: 'Manrope', sans-serif; font-weight: 800; font-size: 24px; fill: #9FB3CE; text-anchor: middle; }
+.esito { font-family: 'Manrope', sans-serif; font-weight: 800; font-size: 22px; paint-order: stroke; stroke: #172036; stroke-width: 6px; }
+.fraz { font-size: .7em; }
+.btn.segno { background: transparent; border: 0; font-size: 22px; cursor: default; }
+.ascolta-in { font-family: 'Manrope', sans-serif; font-weight: 800; font-size: .85em; color: #0f172a; background: var(--cap); border: 0;
+  border-radius: 999px; padding: 3px 12px; margin: 2px 0 0 4px; cursor: pointer; vertical-align: 1px; }
+.ascolta-in:hover { filter: brightness(1.15); }
+.ripasso-grande { grid-template-columns: 1fr 1fr; }
+.ripasso-grande .def { font-size: 17px; padding: 10px 16px; }
+@media (max-width: 620px) and (orientation: portrait) { .ripasso-grande { grid-template-columns: 1fr; } .ripasso-grande .def { font-size: 12px; padding: 6px 9px; } }
+
+
+/* ---------- musica disegnata da VexFlow (le righe del pentagramma restano nostre) ---------- */
+.vfr path { fill: #EAF2FF; stroke: none; }
+.vfr .vf-stem path, .vfr path[fill="none"] { fill: none !important; stroke: #EAF2FF; stroke-width: 1.3; }
+.vfr .vf-stavetie path, .vfr .vf-beam path, .vfr .vf-curve path { fill: #EAF2FF; }
+body.colori .vfr .nota.c-do .vf-notehead path:not(.punto) { fill: var(--do); }
+body.colori .vfr .nota.c-re .vf-notehead path:not(.punto) { fill: var(--re); }
+body.colori .vfr .nota.c-mi .vf-notehead path:not(.punto) { fill: var(--mi); }
+body.colori .vfr .nota.c-fa .vf-notehead path:not(.punto) { fill: var(--fa); }
+body.colori .vfr .nota.c-sol .vf-notehead path:not(.punto) { fill: var(--sol); }
+body.colori .vfr .nota.c-la .vf-notehead path:not(.punto) { fill: var(--la); }
+body.colori .vfr .nota.c-si .vf-notehead path:not(.punto) { fill: var(--si); }
+.vfr .ev { cursor: pointer; }
+.vfr .ev.pop, .vfr.pop { transform-box: fill-box; transform-origin: 50% 70%; animation: pop .22s ease-out; }
+.vfr .punto { transition: opacity .3s; }
+.legatura-vf.appare { animation: appare .9s ease-out both; }
+@keyframes appare { from { opacity: 0; } to { opacity: 1; } }
+
+/* foglio bianco: figure, barre e numeri */
+.palco .punto { fill: #111827; }
+.palco .nome-fig { fill: #111827; }
+.palco .val-riga, .palco .uguale { fill: #1E293B; }
+.palco .conta-n { fill: #475569; }
+.palco .barra .riempi { fill: rgba(15,23,42,0.28); }
+.palco .barra.silenzio .pezzo { fill: rgba(148,163,184,0.18); stroke: #64748B; }
+.palco .barra.silenzio .pz1 { fill: rgba(251,191,36,0.3); stroke: #B45309; }
+.palco .barra.silenzio .val-barra { fill: #334155; }
+.palco .riga-val.scelta .nome-fig { fill: #B45309; }
+.palco .legatura-vf path, .palco .vfr .vf-beam path { fill: #111827; }
+.rigo-mini line { stroke: rgba(234,242,255,0.85); stroke-width: 1.8; }
+.palco .rigo-mini line { stroke: #1F2937; }
+
+/* ===== I tempi semplici: accenti, movimenti, gesto del direttore, quiz ===== */
+.acc circle { stroke: #1E293B; stroke-width: 1.6; }
+.acc-F circle { fill: #F59E0B; }
+.acc-mf circle { fill: #FCD34D; }
+.acc-d circle { fill: #BAE6FD; }
+.acc text { font-family: 'Fredoka', 'Manrope', sans-serif; font-weight: 600; font-size: 24px; fill: #1E293B; text-anchor: middle; }
+.acc-d text { font-size: 19px; }
+.acc-l { font-family: 'Manrope', sans-serif; font-style: italic; font-weight: 800; font-size: 23px; fill: #475569; text-anchor: middle; }
+.mov rect { fill: #E0F2FE; stroke: #38BDF8; stroke-width: 2; }
+.mov line { stroke: #0284C7; stroke-width: 2.5; stroke-dasharray: 5 4; }
+.mov text { font-family: 'Fredoka', 'Manrope', sans-serif; font-weight: 600; font-size: 24px; fill: #0F172A; text-anchor: middle; }
+.mov text.pic { font-size: 34px; fill: #0369A1; }
+.traccia { fill: none; stroke: #94A3B8; stroke-width: 4; stroke-dasharray: 10 8; stroke-linecap: round; }
+.punta { fill: #64748B; stroke: none; }
+.bacchetta { fill: #7C3AED; stroke: #FFFFFF; stroke-width: 3; }
+.buco rect { fill: #FEF3C7; stroke: #D97706; stroke-width: 2.5; stroke-dasharray: 7 5; }
+.buco text { font-family: 'Fredoka', 'Manrope', sans-serif; font-weight: 600; font-size: 50px; fill: #B45309; text-anchor: middle; }
+.somma { font-family: 'Fredoka', 'Manrope', sans-serif; font-weight: 600; font-size: 28px; fill: #1E293B; }
+.btn.giusto { background: #34D399; color: #052E16; border-color: #34D399; }
+.btn.sbagliato { background: #FDA4AF; color: #4C0519; border-color: #FDA4AF; }
+
+@media (prefers-reduced-motion: reduce) {
+  .cresce { transition: none; }
+  .rigo.disegna .riga, .taglio.nuovo, .nota.compare, .cartellino.lampo { animation: none !important; }
+  .pop { animation-duration: .3s; }
+  .anello.via { animation: none; }
+}
+
+/* ---------- PC e LIM: misure fisse, poi adatta-schermo.js ingrandisce tutto ---------- */
+@media (min-width: 900px) and (min-height: 560px) {
+  body { padding: 36px 16px 10px; min-height: 0; }
+  .lezione { width: 1400px; max-width: none; }
+  .corpo { height: 462px; grid-template-columns: 880px 1fr; }
+}
+
+/* ---------- schermi stretti (non LIM): una colonna, si può scorrere ---------- */
+@media (max-width: 899px), (max-height: 559px) {
+  .corpo { grid-template-columns: 1fr; }
+  .palco { height: 300px; }
+  .indice { flex-wrap: wrap; }
+  .gruppo { flex: 0 0 auto !important; }
+  .pillola { flex: 0 0 auto; }
+  .pillola .t { display: none; }
+}
+</style>
+<style id="telefono-gioco">
+/* TELEFONO IN VERTICALE: tutto in una schermata */
+@media (max-width: 620px) and (orientation: portrait) {
+  body { padding: 30px 8px 6px; }
+  .casetta { top: 6px; left: 6px; width: 36px; height: 36px; font-size: 16px; }
+  .lezione { gap: 6px; }
+  .riga-titolo { padding-left: 34px; gap: 8px; }
+  .riga-titolo h1 { font-size: 17px; }
+  .riga-titolo .sopra, .contatore { display: none; }
+  .interruttore { font-size: 12px; padding: 5px 9px; }
+  .indice { flex-wrap: nowrap; gap: 3px; }
+  .gruppo { flex: initial; }
+  .gruppo .cap { display: none; }
+  .gruppo .pillole { gap: 2px; }
+  .pillola { flex: 0 0 auto; height: auto; padding: 1px; border-radius: 50%; border-bottom-width: 1px; background: transparent; border: 0; }
+  .pillola .t { display: none; }
+  .pillola .n { flex-basis: 24px; width: 24px; height: 24px; font-size: 11px; letter-spacing: -.03em; }
+  .pillola.attiva { background: transparent; }
+  .pillola.attiva .n { background: var(--colore); color: #0f172a; border-color: var(--colore); }
+  .corpo { gap: 6px; display: flex; flex-direction: column; }
+  .palco-card { grid-template-rows: 40px auto auto; border-radius: 14px; }
+  .cartellino { font-size: 15px; padding: 0 8px; }
+  .cartellino .piccolo { font-size: 12.5px; }
+  .palco { height: clamp(150px, calc(100vh - 470px), 250px); height: clamp(150px, calc(100dvh - 470px), 250px); }
+  .strumenti { gap: 5px; padding: 6px 6px 8px; min-height: 0; }
+  .strumenti .suggerimento { font-size: 12px; }
+  .btn { font-size: 12.5px; padding: 7px 9px; border-radius: 10px; }
+  .spiega { padding: 8px 12px 10px; border-radius: 14px; }
+  .spiega .capitolo { display: none; }
+  .spiega h2 { font-size: 19px; margin: 0 0 5px; }
+  .punti { gap: 4px; }
+  .punti li { font-size: 14px; line-height: 1.32; padding-left: 16px; }
+  .punti li:not(.ora) { display: none; }      /* sul telefono si vede solo il punto di adesso */
+  .punti li::before { left: 1px; width: 7px; height: 7px; }
+  .quaderno { margin-top: 6px; font-size: 12px; padding: 6px 9px; }
+  .quaderno .tit { font-size: 9.5px; }
+  .piede-lezione { grid-template-columns: 52px 1fr 120px; height: 46px; gap: 6px; }
+  .nav-btn { height: 42px; padding: 0 14px; font-size: 15px; }
+  .nav-btn .lungo { display: none; }
+  .avanti { height: 44px; font-size: 16px; }
+  .fasi { gap: 5px; }
+  .fasi button { width: 26px; height: 26px; font-size: 12px; }
+  .lezione.solo-testo .palco { height: auto; }
+  .ripasso { position: static; grid-template-columns: 1fr 1fr; gap: 5px; padding: 8px; grid-auto-rows: auto; }
+  .def { font-size: 11px; padding: 5px 7px; }
+}
+</style>
+</head>
+<body class="colori">
+<script src="info-sito.js"></script>
+<a class="casetta" href="index.html" title="Torna al sito" aria-label="Torna al sito">🏠</a>
+
+<div class="lezione" id="lezione">
+  <header class="testa">
+    <div class="riga-titolo">
+      <div>
+        <div class="sopra">Lezione interattiva</div>
+        <h1>I tempi semplici</h1>
+      </div>
+      <div class="spazio-vuoto"></div>
+      <span class="contatore" id="contatore"></span>
+      <button class="interruttore attivo" id="btnColori" title="Note colorate sì / no">🎨 Colori</button>
+    </div>
+    <nav class="indice" id="indice" aria-label="Passi della lezione"></nav>
+  </header>
+
+  <div class="corpo">
+    <section class="scheda palco-card">
+      <div class="cartellino" id="cartellino" aria-live="polite"></div>
+      <div class="palco" id="palco"></div>
+      <div class="strumenti" id="strumenti"></div>
+    </section>
+    <section class="scheda spiega">
+      <div class="capitolo" id="capitolo"></div>
+      <h2 id="titoloPasso"></h2>
+      <ul class="punti" id="punti"></ul>
+      <div class="quaderno" id="quaderno" hidden></div>
+    </section>
+  </div>
+
+  <footer class="piede-lezione">
+    <button class="nav-btn" id="indietro" aria-label="Indietro">◀<span class="lungo"> Indietro</span></button>
+    <div class="fasi" id="fasi"></div>
+    <button class="avanti" id="avanti">Avanti ▶</button>
+  </footer>
+</div>
+
+<script>
+"use strict";
+/* tracciati dei simboli (da VexFlow 4.2.2, licenza MIT): unità = 1/10 di spazio, riga centrale a y = 0 */
+const GLIFI = {"treble":"M15.19 -6.79C15.14 -7.27,15.19 -7.3,15.44 -7.55C19.82 -11.62,23.14 -16.76,23.14 -22.97C23.14 -26.48,22.16 -29.96,20.5 -32.37C19.88 -33.27,18.84 -34.39,18.39 -34.39C17.83 -34.39,16.57 -33.36,15.78 -32.46C12.78 -29.14,11.79 -24.09,11.79 -19.88C11.79 -17.55,12.1 -14.91,12.38 -13.25C12.47 -12.77,12.5 -12.69,12.02 -12.27C6.18 -7.47,0 -1.68,0 6.49C0 13.51,4.8 20.19,14.71 20.19C15.64 20.19,16.71 20.11,17.52 19.94C17.94 19.86,18.03 19.83,18.11 20.31C18.59 23.03,19.21 26.54,19.21 28.45C19.21 34.43,15.16 35.16,12.78 35.16C10.59 35.16,9.55 34.51,9.55 33.98C9.55 33.7,9.91 33.59,10.84 33.28C12.1 32.91,13.54 31.85,13.54 29.49C13.54 27.27,12.13 25.36,9.66 25.36C6.96 25.36,5.34 27.52,5.34 30.02C5.34 32.63,6.91 36.62,13.03 36.62C15.73 36.62,20.98 35.38,20.98 28.53C20.98 26.2,20.25 22.38,19.82 19.86C19.74 19.38,19.77 19.44,20.33 19.18C24.43 17.55,27.12 14.13,27.12 9.55C27.12 4.38,23.33 -0.19,17.38 -0.19C16.34 -0.19,16.34 -0.19,16.2 -0.92M19.01 -28.13C20.33 -28.13,21.43 -27.04,21.43 -24.82C21.43 -20.33,17.58 -16.68,14.41 -13.9C14.12 -13.64,13.96 -13.7,13.87 -14.23C13.7 -15.27,13.62 -16.65,13.62 -17.94C13.62 -24.26,16.54 -28.13,19.01 -28.13M14.6 -0.59C14.71 0.17,14.71 0.14,13.98 0.37C10.45 1.58,8.12 4.78,8.12 8.23C8.12 11.85,10.03 14.44,12.78 15.39C13.11 15.5,13.59 15.62,13.87 15.62C14.18 15.62,14.35 15.42,14.35 15.17C14.35 14.89,14.04 14.77,13.76 14.66C12.05 13.93,10.84 12.19,10.84 10.34C10.84 8.01,12.41 6.29,14.88 5.59C15.53 5.42,15.61 5.48,15.7 5.93L17.72 17.97C17.8 18.42,17.75 18.42,17.16 18.54C16.51 18.65,15.7 18.73,14.88 18.73C7.81 18.73,3.23 14.8,3.23 9.19C3.23 6.8,3.65 3.6,6.99 -0.19C9.44 -2.89,11.29 -4.41,13.17 -5.92C13.59 -6.26,13.68 -6.2,13.76 -5.78M17.38 5.84C17.3 5.34,17.35 5.23,17.83 5.28C21.12 5.56,23.81 8.31,23.81 11.85C23.81 14.41,22.27 16.46,20.02 17.61C19.54 17.83,19.46 17.83,19.38 17.36","bass":"M10.39 -20.59C3.34 -20.59,0.2 -15.45,0.2 -11.57C0.2 -8.34,1.88 -5.56,5.17 -5.56C7.72 -5.56,9.46 -7.33,9.46 -9.83C9.46 -12.41,7.55 -14.04,5.59 -14.04C4.49 -14.04,4.07 -13.76,3.57 -13.76C3.03 -13.76,2.89 -14.07,2.89 -14.49C2.89 -16.09,5.34 -19.07,9.46 -19.07C13.73 -19.07,15.61 -14.86,15.61 -8.51C15.61 2.78,10.02 9.09,0.59 14.46C0.22 14.65,0 14.88,0 15.19C0 15.44,0.17 15.67,0.53 15.67C0.73 15.67,0.96 15.61,1.21 15.47C11.15 10.61,21.68 3.42,21.68 -8.88C21.68 -15.9,17.38 -20.59,10.39 -20.59M25.64 -17.27C24.37 -17.27,23.42 -16.32,23.42 -15.05C23.42 -13.79,24.37 -12.84,25.64 -12.84C26.87 -12.84,27.86 -13.79,27.86 -15.05C27.86 -16.32,26.87 -17.27,25.64 -17.27M25.67 -7.14C24.43 -7.14,23.47 -6.21,23.47 -4.95C23.47 -3.68,24.43 -2.76,25.67 -2.76C26.93 -2.76,27.86 -3.68,27.86 -4.95C27.86 -6.21,26.93 -7.14,25.67 -7.14","t2":"M16.2 3.68C16.2 3.2,16.01 3.12,15.73 3.12C15.39 3.12,15.28 3.28,15.19 3.57L15.16 3.59C14.74 4.6,14.43 5.39,13.59 5.39C13.37 5.39,13.17 5.34,12.89 5.25C12.36 5.05,12.07 5.03,11.68 4.8C10.87 4.49,8.96 3.85,7.3 3.85C6.8 3.85,6.26 3.93,5.81 4.07C6.71 2.64,10.14 1.4,11.04 1.18C13.87 0.39,16.4 -0.76,16.4 -4.13C16.4 -8.42,12.21 -10.28,8.45 -10.28C5.62 -10.28,3.12 -10.02,1.12 -7.72C0.45 -6.88,0 -5.87,0 -4.77C0 -4.21,0.11 -3.65,0.37 -3.03C0.96 -1.77,2.22 -0.81,3.68 -0.81C6.15 -0.81,6.52 -3.37,6.52 -4.38C6.52 -6.8,3.71 -6.91,3.71 -7.72C3.79 -8.28,4.52 -9.27,6.91 -9.27C10.5 -9.27,10.56 -6.54,10.56 -5.39C10.56 -1.69,7.53 1.09,4.61 2.86C2.39 4.3,0.81 6.26,0.11 8.9L0.08 9.01C0.08 9.55,0.53 10.39,1.12 10.39C2.02 10.39,2.5 7.92,4.89 7.92C6.52 7.92,7.11 10.11,10.7 10.11C12.44 10.11,15.56 9.94,16.2 3.68","t3":"M7.81 -10.02C7.75 -10.02,7.72 -10.02,7.64 -10.02L7.36 -10.08C7.3 -10.08,7.24 -10.08,7.19 -10.08C3.71 -10.08,0.22 -7.75,0.22 -5.62C0.22 -4.3,1.01 -2.5,3.51 -2.36L3.71 -2.36C5.5 -2.36,6.37 -3.65,6.37 -4.97L6.37 -5.31C6.26 -6.8,5.25 -6.88,5.05 -6.96C4.86 -7.05,4.24 -6.96,4.24 -7.52L4.24 -7.69C4.32 -8.37,5.59 -8.7,5.93 -8.7C9.38 -8.7,9.69 -6.54,9.69 -5.59L9.69 -5.31C9.69 -2.3,7.3 -1.12,4.77 -1.01C4.35 -0.98,3.79 -0.76,3.79 -0.34C3.79 0.17,4.49 0.17,4.8 0.17C9.46 0.17,9.83 3.31,9.83 3.85C9.83 8.12,7.64 8.62,6.74 8.62C6.6 8.62,6.43 8.56,6.37 8.56C6.07 8.54,5.28 8.54,5.25 7.92L5.25 7.72C5.25 6.82,6.15 6.23,6.18 5.05C6.18 3.37,5 2.13,3.26 2.13C3.12 2.13,2.98 2.13,2.84 2.19C2.13 2.3,1.38 2.7,0.87 3.23C0.2 3.85,0 4.8,0 5.7C0.08 8.84,2.95 10.08,6.91 10.14L7.27 10.14C11.29 10.14,15.39 8.09,15.39 4.52L15.39 4.24C15.33 3.06,15.02 2.3,14.27 1.4C14.01 1.09,13.7 0.81,13.31 0.56L12.44 0.08L11.12 -0.28C10.92 -0.34,10.78 -0.34,10.7 -0.48C10.67 -0.56,10.67 -0.62,10.67 -0.67C10.67 -0.84,10.7 -1.01,10.84 -1.04C11.29 -1.18,11.71 -1.21,12.07 -1.4C13.7 -2.19,14.55 -3.23,14.55 -5.08C14.55 -8.82,9.49 -9.91,7.81 -10.02","t4":"M13.82 3.01L13.82 -5.67C13.82 -5.98,13.79 -6.35,13.34 -6.35C12.97 -6.35,12.78 -6.26,12.52 -5.98L8.68 -1.35C8.54 -1.12,8.31 -0.9,8.31 -0.39L8.31 3.01L2.86 3.01C6.09 0.25,12.58 -8.93,12.69 -9.44L12.72 -9.55C12.72 -9.91,12.44 -10.14,12.13 -10.14C11.77 -10.14,10.11 -10.08,9.38 -10.08C8.65 -10.08,6.82 -10.14,6.52 -10.14C6.15 -10.14,5.59 -10.02,5.59 -9.38C5.59 -4.38,1.6 1.26,0.39 2.95L0.17 3.28C0.17 3.28,0.17 3.31,0.17 3.31L0.11 3.37C0.03 3.57,0 3.71,0 3.85C0 4.24,0.31 4.52,0.81 4.52L8.31 4.52L8.31 7.08C8.31 8.17,7.44 8.48,6.71 8.48C6.07 8.48,5.79 8.84,5.79 9.27C5.79 9.66,5.93 10.11,6.54 10.11L15.16 10.11C15.56 10.11,15.98 9.83,15.98 9.27C15.98 8.7,15.47 8.45,15.08 8.45C14.69 8.45,13.82 8.2,13.82 6.91L13.82 4.52L16.76 4.52C17.18 4.52,17.38 4.24,17.38 3.76C17.38 3.28,17.21 3.01,16.76 3.01","nera":"M-2.04 5.05C1.56 5.05,5.97 1.74,5.97 -1.69C5.97 -3.76,4.34 -5.05,2.04 -5.05C-2.4 -5.05,-5.97 -1.77,-5.97 1.69C-5.97 3.79,-4.23 5.05,-2.04 5.05","bianca":"M-2.04 5.05C4.62 5.05,5.97 -0.37,5.97 -1.69C5.97 -3.76,4.31 -5.05,1.95 -5.05C-4.06 -5.05,-5.97 -0.39,-5.97 1.69C-5.97 3.85,-4.28 5.05,-2.04 5.05M-2.93 3.51C-3.78 3.51,-4.28 3.06,-4.56 2.58C-4.67 2.36,-4.79 2.05,-4.79 1.77C-4.79 -0.2,1.08 -3.4,2.96 -3.4C3.75 -3.4,4.17 -3.03,4.48 -2.55C4.59 -2.3,4.7 -2.05,4.7 -1.77C4.7 -0.03,-1 3.51,-2.93 3.51","tonda":"M0.2 -5.05C-5.17 -5.05,-8.54 -2.84,-8.54 -0.08C-8.54 2.64,-6.23 5.05,-0.2 5.05C6.43 5.05,8.54 2.75,8.54 -0.08C8.54 -2.95,3.96 -5.05,0.2 -5.05M-4.04 -2.55C-3.59 -3.96,-2.11 -4.16,-0.84 -4.16C1.94 -4.16,4.16 -1.18,4.16 1.26C4.16 2.5,3.62 3.65,2.3 3.96C1.91 4.07,1.46 4.13,1.04 4.13C-0.42 4.13,-1.91 3.15,-2.75 2.02C-3.57 1.09,-4.16 -0.28,-4.16 -1.57C-4.16 -1.91,-4.13 -2.22,-4.04 -2.55","r":{"w":"M5.7 4.41L5.7 0.67C5.7 0.08,5.22 -0.37,4.66 -0.37L-4.66 -0.37C-5.25 -0.37,-5.7 0.08,-5.7 0.67L-5.7 4.41C-5.7 4.97,-5.25 5.45,-4.66 5.45L4.66 5.45C5.22 5.45,5.7 4.97,5.7 4.41","h":"M5.7 -0.98L5.7 -4.69C5.7 -5.31,5.22 -5.73,4.66 -5.73L-4.66 -5.73C-5.25 -5.73,-5.7 -5.31,-5.7 -4.69L-5.7 -0.98C-5.7 -0.39,-5.25 0.08,-4.66 0.08L4.66 0.08C5.22 0.08,5.7 -0.39,5.7 -0.98","q":"M-2.33 1.54C-1.68 2.36,-1.1 3.12,-0.59 3.96C-0.51 4.13,-0.34 4.44,-0.34 4.52C-0.34 4.58,-0.34 4.66,-0.39 4.69C-0.45 4.86,-0.62 4.89,-0.81 4.89C-0.98 4.89,-1.32 4.8,-1.46 4.77C-1.52 4.77,-1.6 4.77,-1.63 4.77L-1.97 4.66C-4.07 4.66,-5.45 6.54,-5.45 8.54C-5.45 10.56,-3.71 12.52,-0.76 14.8C-0.42 15.05,-0.03 15.16,0.31 15.16C0.59 15.16,0.87 15.08,0.93 14.91C0.95 14.8,0.98 14.71,0.98 14.63C0.98 14.27,0.67 13.96,0.34 13.67C-0.17 13.67,-0.62 12.58,-0.7 12.22C-0.81 11.88,-0.87 11.51,-0.87 11.15C-0.87 9.49,-0.03 8.2,1.68 8.2C2.86 8.2,4.18 8.65,4.89 8.9L4.91 8.93C5.08 8.99,5.17 8.99,5.25 8.99C5.36 8.99,5.45 8.93,5.45 8.82C5.45 8.34,4.38 6.99,3.96 6.52C2.41 4.66,1.15 3.15,1.15 0.9C1.15 0.84,1.15 0.81,1.15 0.76L1.21 0.48C1.21 0.45,1.21 0.39,1.21 0.37C1.35 -1.99,2.81 -3.93,3.88 -5.59C3.99 -5.78,4.02 -5.98,4.02 -6.18C4.02 -6.6,3.88 -6.96,3.88 -6.96C3.88 -6.96,-2.11 -14.07,-2.81 -14.77C-3 -14.97,-3.29 -15.08,-3.54 -15.08C-3.93 -15.08,-4.35 -14.8,-4.35 -14.24C-4.35 -14.04,-4.3 -13.81,-4.18 -13.59C-4.02 -13.14,-1.71 -11.09,-1.71 -8.17C-1.71 -6.68,-2.33 -4.94,-4.13 -3.03C-4.55 -2.64,-4.72 -2.19,-4.72 -1.85C-4.72 -1.29,-4.3 -0.9,-4.3 -0.9","8":"M0.42 -4.32C0.42 -5.81,-0.79 -7.05,-2.3 -7.05C-3.79 -7.05,-5 -5.81,-5 -4.32C-5 -3.48,-4.52 -2.75,-3.9 -2.27C-3.26 -1.83,-2.5 -1.57,-1.71 -1.57C-1.15 -1.57,-0.59 -1.69,-0.14 -1.85C0.42 -2.02,0.79 -2.19,1.32 -2.47C1.4 -2.5,1.46 -2.5,1.52 -2.5C1.69 -2.5,1.71 -2.36,1.71 -2.13C1.71 -2.02,1.71 -1.85,1.69 -1.69C1.55 -1.09,-1.35 6.96,-2.08 9.63C-2.08 10.11,-1.15 10.14,-0.93 10.14C-0.48 10.14,0.08 10.08,0.51 9.74C0.62 9.66,4.58 -4.52,4.58 -4.52C4.75 -5.25,4.94 -5.9,5 -6.09C5 -6.52,4.58 -6.71,4.49 -6.74C4.44 -6.74,4.3 -6.74,4.07 -6.6C3.76 -6.35,1.74 -3.93,0.42 -3.93","16":"M1.95 -4.49C1.95 -6.04,0.72 -7.24,-0.8 -7.24C-2.32 -7.24,-3.55 -6.04,-3.55 -4.49C-3.55 -2.84,-1.87 -1.74,-0.32 -1.74C0.77 -1.74,1.9 -2.11,2.82 -2.64C2.96 -2.67,3.02 -2.7,3.1 -2.7C3.24 -2.7,3.3 -2.64,3.3 -2.41C3.3 -1.77,1.25 4.24,0.97 4.86C0.63 5.62,-0.44 6.09,-1.02 6.09C-0.97 5.95,-0.97 5.81,-0.97 5.7C-0.97 4.16,-2.23 2.95,-3.72 2.95C-5.27 2.95,-6.47 4.16,-6.47 5.7C-6.47 7.36,-4.79 8.45,-3.24 8.45C-2.18 8.45,-1.14 8.09,-0.21 7.61C-0.13 7.61,-0.04 7.69,-0.04 7.83L-0.07 7.89C-0.07 7.92,-0.07 7.92,-0.07 7.92L-3.92 19.38C-3.92 19.38,-3.92 19.4,-3.92 19.4L-3.97 19.46C-3.97 19.82,-3.61 20.22,-2.71 20.22C-1.53 20.22,-1.33 19.74,-1.17 19.29L3.52 3.88C4.56 0.45,5.32 -2.27,5.32 -2.27C5.32 -2.27,6.33 -5.81,6.42 -6.35C6.42 -6.43,6.47 -6.46,6.47 -6.52C6.47 -6.74,6.14 -6.91,6.05 -6.96C5.85 -6.96,5.74 -6.88,5.63 -6.8C5.32 -6.54,3.3 -4.13,1.95 -4.07"},"coda8":"M8.88 26.95C8.88 26.95,9.92 23.11,9.92 19.94C9.92 14.88,7.81 10.13,5.29 6.09C3.21 2.89,1.52 -0.59,0.88 -4.47C0.74 -5.11,0.43 -5.37,0.01 -5.37C-0.41 -5.37,-0.75 -5.25,-0.75 -4.75L-0.75 4.91C1.92 5.39,5.76 10.89,7.22 14.32C7.81 15.7,8.18 18,8.18 20.38C8.18 22.21,7.9 24.12,7.22 25.94C7.14 26.17,7.08 26.36,7.08 26.53C7.08 27.18,7.51 27.55,7.73 27.71C7.98 27.88,8.68 27.63,8.88 26.95","coda16":"M10.26 27.18C10.4 26.98,10.54 24.68,10.54 22.74L10.54 21.84C10.54 20.16,10.09 18.5,9.36 16.99C9.36 16.87,9.33 16.79,9.33 16.62C9.33 16.56,9.33 16.48,9.36 16.34C9.47 16.12,10.37 13.67,10.37 11.2C10.37 10.7,10.34 10.25,10.26 9.77C9.84 7.02,8.8 5.87,5.88 2.72C3.69 0.39,1.44 -0.28,0.74 -4.55C0.65 -5,0.18 -5.08,-0.08 -5.08C-0.3 -5.08,-0.75 -4.97,-0.75 -4.66L-0.75 11.01L-0.55 11.01C1.95 11.09,4.84 11.17,7.62 16.85C8.54 18.78,8.91 20.75,8.91 22.85C8.91 24.03,8.8 25.24,8.6 26.45C8.54 26.62,8.54 26.7,8.54 26.81C8.54 27.35,8.88 27.88,9.44 27.88C9.72 27.88,10 27.71,10.26 27.18M7.7 13.56C7.06 12.55,6.35 11.74,5.51 10.78C3.63 8.59,1.75 7.61,0.91 4.29C0.88 4.27,0.88 4.21,0.88 4.18C0.88 4.01,1.1 3.76,1.44 3.76L1.75 3.76C4.22 3.76,6.41 6.03,7.73 8.03C8.46 9.07,8.82 10.33,8.82 11.62C8.82 11.9,8.82 12.16,8.8 12.44C8.71 12.75,8.71 13.17,8.52 13.48C8.46 13.59,8.18 13.73,7.98 13.73C7.87 13.73,7.79 13.67,7.7 13.56"};
+
+/* ================= costanti e note ================= */
+const S = 32, H = S / 2, K = S / 10;           // spazio fra due righe, mezzo spazio, scala dei glifi
+const NOMI = ["do", "re", "mi", "fa", "sol", "la", "si"];
+const SEMI = [0, 2, 4, 5, 7, 9, 11];
+const BASE = { violino: 30, basso: 18 };        // nota della 1ª riga: mi (violino), sol (basso), in gradi dal do
+function nota(chiave, p) {                       // p = posizione: 0 = 1ª riga, 1 = 1° spazio, 2 = 2ª riga...
+  const d = BASE[chiave] + p, n = ((d % 7) + 7) % 7, ott = Math.floor(d / 7);
+  return { d, nome: NOMI[n], midi: SEMI[n] + 12 * (ott + 1) };
+}
+const MAIU = s => s.toUpperCase();
+const ord = (n, f) => n + (f ? "ª" : "°");
+function dovE(p) {                               // descrizione della posizione
+  if (p >= 0 && p <= 8) return p % 2 === 0 ? "sulla " + ord(p / 2 + 1, true) + " riga" : "nel " + ord((p + 1) / 2) + " spazio";
+  if (p === -1) return "sotto la 1ª riga";
+  if (p === 9) return "sopra la 5ª riga";
+  if (p < -1) { const t = Math.floor((-p) / 2); return p % 2 === 0 ? "sul " + ord(t) + " taglio sotto" : "sotto il " + ord(t) + " taglio"; }
+  const t = Math.floor((p - 8) / 2); return p % 2 === 0 ? "sul " + ord(t) + " taglio sopra" : "sopra il " + ord(t) + " taglio";
+}
+
+/* ================= suono (solo quando si tocca qualcosa; nessun microfono) ================= */
+let AC = null, master = null, spegniTimer = 0;
+function audio() {
+  if (!AC) {
+    try { AC = new (window.AudioContext || window.webkitAudioContext)(); } catch (e) { return null; }
+    master = AC.createGain(); master.gain.value = 0.55; master.connect(AC.destination);
+  }
+  if (AC.state === "suspended") AC.resume();
+  return AC;
+}
+function riposo(dopoSec) {                       // il contesto audio va in pausa quando tace
+  clearTimeout(spegniTimer);
+  spegniTimer = setTimeout(() => { if (AC && AC.state === "running" && !metro.attivo) AC.suspend(); }, (dopoSec + 0.6) * 1000);
+}
+function suona(midi, quando = 0, dur = 1.1) {
+  const ac = audio(); if (!ac) return;
+  const t = ac.currentTime + 0.03 + quando, f = 440 * Math.pow(2, (midi - 69) / 12);
+  const g = ac.createGain(); g.gain.setValueAtTime(0.0001, t);
+  g.gain.exponentialRampToValueAtTime(0.5, t + 0.012); g.gain.exponentialRampToValueAtTime(0.0008, t + dur);
+  const filtro = ac.createBiquadFilter(); filtro.type = "lowpass"; filtro.frequency.value = Math.min(6000, f * 6);
+  [[1, "triangle", 1], [2, "sine", 0.35], [3, "sine", 0.12]].forEach(([m, tipo, v]) => {
+    const o = ac.createOscillator(), gg = ac.createGain(); o.type = tipo; o.frequency.value = f * m; gg.gain.value = v;
+    o.connect(gg); gg.connect(g); o.start(t); o.stop(t + dur + 0.05);
+  });
+  g.connect(filtro); filtro.connect(master);
+  riposo(quando + dur);
+}
+function clic(forza, quando = 0) {               // colpo del metronomo: 2 = accento, 1 = normale, 0 = suddivisione
+  const ac = audio(); if (!ac) return;
+  const t = ac.currentTime + 0.02 + quando;
+  const o = ac.createOscillator(), g = ac.createGain();
+  o.type = "square"; o.frequency.value = [990, 1320, 1760][forza];
+  const v = [0.07, 0.13, 0.22][forza];
+  g.gain.setValueAtTime(v, t); g.gain.exponentialRampToValueAtTime(0.0005, t + 0.05);
+  o.connect(g); g.connect(master); o.start(t); o.stop(t + 0.06);
+  riposo(quando + 0.1);
+}
+
+/* ================= tempi e animazioni del passo (si fermano cambiando passo) ================= */
+let TIMER = [];
+const dopo = (ms, fn) => { TIMER.push(setTimeout(fn, ms)); };
+let ANIMA = 0;
+function fermaTutto() { TIMER.forEach(clearTimeout); TIMER = []; metro.ferma(); cancelAnimationFrame(ANIMA); if (typeof zittisci === "function") zittisci(); }
+
+/* ================= disegno SVG ================= */
+const $ = s => document.querySelector(s);
+const PALCO = $("#palco");
+const qa = s => [...PALCO.querySelectorAll(s)];
+const q1 = s => PALCO.querySelector(s);
+function R(x0, x1, yb, chiave) { return { x0, x1, yb, chiave, y: p => yb - p * H }; }
+
+function svgRigo(r, o = {}) {
+  let s = `<g class="rigo${o.disegna ? " disegna" : ""}">`;
+  if (o.spazi) for (let i = 1; i <= 4; i++) s += `<rect class="spazio" data-spazio="${i}" x="${r.x0}" y="${r.y(2 * i)}" width="${r.x1 - r.x0}" height="${S}"/>`;
+  for (let i = 1; i <= 5; i++) s += `<line class="riga" data-riga="${i}" style="--i:${i - 1}" x1="${r.x0}" x2="${r.x1}" y1="${r.y(2 * (i - 1))}" y2="${r.y(2 * (i - 1))}"/>`;
+  return s + "</g>";
+}
+function svgChiave(r, x, cls = "") {
+  return `<g class="chiave ${cls}">` + vfSlot({ tipo: "chiave", x, yb: r.yb, chiave: r.chiave }) + `</g>`;
+}
+function svgTempo(r, x, su, giu, cls = "") {
+  return `<g class="tempo ${cls}">` + vfSlot({ tipo: "tempo", x, yb: r.yb, su, giu }) + `</g>`;
+}
+function svgTagli(r, x, p, cls = "") {
+  let s = "";
+  for (let q = -2; q >= p; q -= 2) s += `<line class="taglio ${cls}" x1="${x - 29}" x2="${x + 29}" y1="${r.y(q)}" y2="${r.y(q)}"/>`;
+  for (let q = 10; q <= p; q += 2) s += `<line class="taglio ${cls}" x1="${x - 29}" x2="${x + 29}" y1="${r.y(q)}" y2="${r.y(q)}"/>`;
+  return s;
+}
+/* una nota: testa (con tagli se serve), eventuale gambo; o.colore = mostra il colore del nome */
+function svgNota(r, x, p, o = {}) {
+  const y = r.y(p), info = r.chiave ? nota(r.chiave, p) : null;
+  const forma = o.forma || "nera";
+  let s = `<g class="nota ${o.cls || ""} ${info && o.colore !== false ? "c-" + info.nome : ""}" data-p="${p}" data-x="${x}"${o.attr || ""}>`;
+  s += `<rect class="colpo" x="${x - 30}" y="${y - 22}" width="60" height="44"/>`;
+  if (!o.senzaTagli) s += svgTagli(r, x, p, o.tagliCls || "");
+  // testa, gambo (e alterazione) li disegna VexFlow; il gambo c'è sempre:
+  // sotto la 3ª riga va su, a destra; dalla 3ª riga in su va giù, a sinistra
+  s += vfSlot({ tipo: "nota", x, p, yb: r.yb, chiave: r.chiave, forma, gambo: o.gambo, acc: o.acc });
+  return s + "</g>";
+}
+function svgNome(x, y, nome, cls = "", attr = "") {
+  return `<text class="nome c-${nome} ${cls}" x="${x}" y="${y}"${attr}>${MAIU(nome)}</text>`;
+}
+function svgNum(x, y, n, cls = "", luce = "") {
+  return `<g class="num-cerchio ${cls}" style="${luce ? "--luce:" + luce : ""}"><circle cx="${x}" cy="${y}" r="15"/><text x="${x}" y="${y + 1}">${n}</text></g>`;
+}
+function svg(vb, contenuto) { PALCO.innerHTML = `<svg viewBox="${vb}" preserveAspectRatio="xMidYMid meet" aria-hidden="true">${contenuto}</svg>`; vfRiempi(); }
+// tutto ciò che entra nel palco (anche note aggiunte dopo) viene disegnato da VexFlow
+new MutationObserver(() => vfRiempi()).observe(PALCO, { childList: true, subtree: true });
+function mini(forma, gambo) {                     // piccola figura per i testi (minima, semiminima, croma)
+  const t = forma === "tonda" ? 0 : 1;
+  let s = `<svg class="mini" viewBox="-9 -42 26 50" width="15" height="29"><path d="${GLIFI[forma === "croma" ? "nera" : forma]}"/>`;
+  if (gambo) s += `<line x1="5.25" x2="5.25" y1="-1" y2="-35" stroke="#EAF2FF" stroke-width="1.6"/>`;
+  if (forma === "croma") s += `<path d="${GLIFI.coda}" transform="translate(5.25 -35)"/>`;
+  return s + "</svg>";
+}
+
+/* luce su un elemento; colore facoltativo */
+function luce(el, on, colore) {
+  if (!el) return;
+  if (colore) el.style.setProperty("--luce", colore);
+  el.classList.toggle(el.classList.contains("spazio") ? "acceso" : "accesa", on);
+}
+const COL = n => getComputedStyle(document.documentElement).getPropertyValue("--" + n).trim();
+function spegniRighe() { qa(".riga.accesa").forEach(e => luce(e, false)); qa(".spazio.acceso").forEach(e => luce(e, false)); }
+function accendiPerNota(p, colore) {             // illumina la riga o lo spazio dove sta la nota
+  spegniRighe();
+  if (p >= 0 && p <= 8) luce(q1(p % 2 === 0 ? `.riga[data-riga="${p / 2 + 1}"]` : `.spazio[data-spazio="${(p + 1) / 2}"]`), true, colore);
+}
+function mostra(el, si = true, anim = false) {
+  if (!el) return;
+  el.classList.toggle(el.classList.contains("nome") ? "nascosto" : el.classList.contains("vela") ? "nascosto" : "nascosta", !si);
+  if (si && anim && el.classList.contains("nota")) { el.classList.remove("compare"); void el.getBBox; el.classList.add("compare"); }
+}
+function lampeggia(el) {
+  if (!el) return;
+  const nomi = el.dataset && el.dataset.x !== undefined ? [...PALCO.querySelectorAll(`.nome[data-x="${el.dataset.x}"]`)] : [];
+  [el, ...nomi].forEach(e => e.classList.add("luce"));
+  dopo(420, () => [el, ...nomi].forEach(e => e.classList.remove("luce")));
+}
+function anello(el) { if (!el) return; el.classList.remove("via"); void el.getBoundingClientRect(); el.classList.add("via"); }
+
+/* cartellino in alto nel palco */
+const CART = $("#cartellino");
+function cart(html, lampo = true) {
+  CART.innerHTML = `<div class="c-in">${html}</div>`;
+  // sicurezza (fotosensibilità): al massimo un lampo leggero ogni 1,5 secondi
+  if (lampo && Date.now() - (cart.ultimo || 0) > 1500) { cart.ultimo = Date.now(); CART.classList.remove("lampo"); void CART.offsetWidth; CART.classList.add("lampo"); }
+}
+function cartNota(chiave, p, extra = "") {
+  const n = nota(chiave, p);
+  cart(`<span class="nome-c" style="color:${coloreTesto(n.nome)}">${MAIU(n.nome)}</span> <span class="piccolo">· ${dovE(p)}${extra}</span>`);
+}
+function coloreTesto(nome) {
+  if (!document.body.classList.contains("colori")) return "#F8FAFC";
+  return { do: COL("do"), re: COL("re"), mi: COL("mi"), fa: COL("fa"), sol: "#2DD4BF", la: "#A79BE8", si: "#E879B9" }[nome];
+}
+
+/* pulsanti sotto il palco */
+const STRUM = $("#strumenti");
+function strumenti(lista) {
+  STRUM.innerHTML = "";
+  lista.forEach(b => {
+    if (b.suggerimento) { const s = document.createElement("span"); s.className = "suggerimento"; s.textContent = b.suggerimento; STRUM.appendChild(s); return; }
+    if (b.gruppo) {
+      const g = document.createElement("div"); g.className = "segmenti"; if (b.id) g.id = b.id;
+      b.gruppo.forEach(x => g.appendChild(bottone(x))); STRUM.appendChild(g); return;
+    }
+    STRUM.appendChild(bottone(b));
+  });
+}
+function bottone(b) {
+  const el = document.createElement("button");
+  el.className = "btn" + (b.cls ? " " + b.cls : ""); el.innerHTML = b.t; if (b.id) el.id = b.id;
+  if (b.title) el.title = b.title;
+  el.addEventListener("click", () => b.fn(el)); return el;
+}
+function segna(gruppoId, el) { document.querySelectorAll("#" + gruppoId + " .btn").forEach(b => b.classList.toggle("on", b === el)); }
+
+/* suona e illumina una fila di note una dopo l'altra */
+function suonaFila(note, chiave, ms = 520, fine) {
+  ms = Math.max(ms, 550);                         // sicurezza: mai più di due accensioni al secondo
+  note.forEach((el, i) => dopo(i * ms, () => {
+    mostra(el, true, el.classList.contains("nascosta"));
+    const p = +el.dataset.p; lampeggia(el);
+    const nm = PALCO.querySelector(`.nome[data-x="${el.dataset.x}"]`); if (nm) mostra(nm, true);
+    suona(nota(chiave, p).midi, 0, 0.9);
+    accendiPerNota(p, coloreTesto(nota(chiave, p).nome));
+    cartNota(chiave, p);
+  }));
+  dopo(note.length * ms + 200, () => { spegniRighe(); if (fine) fine(); });
+}
+
+const metro = { attivo: false, ferma() {} };
+
+/* ================= ritmo: figure, valori, battute, ascolto ================= */
+const BASE_VAL = { w: 4, h: 2, q: 1, "8": 0.5, "16": 0.25 };
+const NOME_FIG = { w: "semibreve", h: "minima", q: "semiminima", "8": "croma", "16": "semicroma" };
+const NOME_PAUSA = { w: "pausa di semibreve", h: "pausa di minima", q: "pausa di semiminima", "8": "pausa di croma", "16": "pausa di semicroma" };
+const valore = (fig, punti = 0) => BASE_VAL[fig] * [1, 1.5, 1.75][punti];
+/* numeri con le frazioni: 1.5 → «1½», 0.75 → «¾» */
+function num(v) {
+  const i = Math.floor(v + 1e-9), r = Math.round((v - i) * 16);
+  const F = { 0: "", 2: "⅛", 4: "¼", 6: "⅜", 8: "½", 10: "⅝", 12: "¾", 14: "⅞" };
+  const f = F[r] !== undefined ? F[r] : ` ${r}/16`;      // solo testo: il numero va anche dentro i disegni (SVG)
+  return (i ? i : (f ? "" : "0")) + f;
+}
+/* «2 + 1 + ½ = 3½» */
+function somma(fig, punti) {
+  const parti = [BASE_VAL[fig]]; for (let k = 1; k <= punti; k++) parti.push(parti[k - 1] / 2);
+  return parti.map(num).join(" + ") + (punti ? " = " + num(valore(fig, punti)) : "");
+}
+function nomeFig(fig, punti = 0, pausa = false) {
+  return (pausa ? NOME_PAUSA[fig] : NOME_FIG[fig]) + (punti === 1 ? " col punto" : punti === 2 ? " col doppio punto" : "");
+}
+
+/* una figura da sola (nota o pausa), disegnata da VexFlow; x, y = centro della testa (o riga centrale per le pause) */
+function svgFig(x, y, fig, punti = 0, o = {}) {
+  return vfFigura({ x, y, fig, punti, pausa: o.pausa, k: o.k || K, cls: o.cls, p: 4, gambo: 1, puntoCls: o.puntoCls });
+}
+
+/* ---------- suono: un violino vero (VSCO 2, licenza CC0) che tiene il MI per tutta la durata della figura, senza calare;
+   il metronomo è il legnetto della «Lettura ritmica» (VCSL, CC0). I file sono nel sito, si caricano all'apertura.
+   Finché non sono pronti (o se mancano) suona un violino sintetico, anche lui senza decadimento. ---------- */
+let VOCI = [];
+const MI = 64;                                    // il MI della 1ª riga (ottava del do centrale): la nota delle lezioni sul ritmo
+const CAMPIONI = { violino: { url: "media/suoni/violino/E4.mp3", midi: 64 }, legno: { url: "media/suoni/ritmo/legnetto.mp3" } };
+Object.values(CAMPIONI).forEach(c => { try { c.dati = fetch(c.url).then(r => r.ok ? r.arrayBuffer() : null).catch(() => null); } catch (e) { c.dati = Promise.resolve(null); } });
+function campione(nome) {                         // l'AudioBuffer, se già pronto
+  const c = CAMPIONI[nome]; if (c.buf || c.decodifica || !AC) return c.buf;
+  c.decodifica = c.dati.then(ab => ab ? new Promise(ok => AC.decodeAudioData(ab.slice(0), ok, () => ok(null))) : null).then(b => { c.buf = b; });
+  return null;
+}
+function prepara() { if (audio()) { campione("violino"); campione("legno"); } }
+document.addEventListener("pointerdown", prepara, { once: true });
+function suonaTenuto(midi, quando, dur, vol = 1) {
+  const ac = audio(); if (!ac) return;
+  const t = ac.currentTime + 0.03 + quando, fine = t + Math.max(0.15, dur - 0.04);
+  const chiudi = ac.createGain(); chiudi.gain.setValueAtTime(0.0001, t); chiudi.gain.exponentialRampToValueAtTime(1, t + 0.03);
+  chiudi.gain.setValueAtTime(1, fine); chiudi.gain.setTargetAtTime(0.0001, fine, 0.035); chiudi.connect(master);
+  const buf = campione("violino"); let os;
+  if (buf) {
+    const s = ac.createBufferSource(); s.buffer = buf; s.playbackRate.value = Math.pow(2, (midi - CAMPIONI.violino.midi) / 12);
+    const g = ac.createGain(); g.gain.value = 1.6 * vol; s.connect(g); g.connect(chiudi); s.start(t); s.stop(fine + 0.3); os = [s];
+  } else {
+    // violino sintetico (dente di sega filtrato, con un leggero vibrato): suona uguale dall'inizio alla fine
+    const f = 440 * Math.pow(2, (midi - 69) / 12), o = ac.createOscillator(), fl = ac.createBiquadFilter(), g = ac.createGain(), lfo = ac.createOscillator(), lg = ac.createGain();
+    o.type = "sawtooth"; o.frequency.value = f; fl.type = "lowpass"; fl.frequency.value = f * 5; fl.Q.value = 0.7; g.gain.value = 0.14 * vol;
+    lfo.frequency.value = 5.5; lg.gain.value = f * 0.004; lfo.connect(lg); lg.connect(o.frequency);
+    o.connect(fl); fl.connect(g); g.connect(chiudi); o.start(t); lfo.start(t); o.stop(fine + 0.3); lfo.stop(fine + 0.3); os = [o, lfo];
+  }
+  VOCI.push({ g: chiudi, os }); riposo(quando + dur + 0.4);
+}
+/* il metronomo: il legnetto, più forte sul primo movimento */
+function colpoMetro(forte, quando) {
+  const ac = audio(); if (!ac) return;
+  const t = ac.currentTime + 0.03 + quando, g = ac.createGain(); g.gain.value = forte ? 0.9 : 0.5; g.connect(master);
+  const buf = campione("legno"); let o;
+  if (buf) { o = ac.createBufferSource(); o.buffer = buf; o.playbackRate.value = forte ? 1.12 : 1; o.connect(g); o.start(t); }
+  else { o = ac.createOscillator(); const e = ac.createGain(); o.type = "sine"; o.frequency.setValueAtTime(forte ? 1500 : 1150, t); o.frequency.exponentialRampToValueAtTime(700, t + 0.04);
+    e.gain.setValueAtTime(0.0001, t); e.gain.exponentialRampToValueAtTime(0.3, t + 0.003); e.gain.exponentialRampToValueAtTime(0.0001, t + 0.06); o.connect(e); e.connect(g); o.start(t); o.stop(t + 0.08); }
+  VOCI.push({ g, os: [o] }); riposo(quando + 0.3);
+}
+function zittisci() {
+  if (AC) VOCI.forEach(v => { try { v.g.gain.cancelScheduledValues(AC.currentTime); v.g.gain.setTargetAtTime(0.0001, AC.currentTime, 0.02); v.os.forEach(o => o.stop(AC.currentTime + 0.08)); } catch (e) { } });
+  VOCI = [];
+}
+
+/* ---------- «salto» a tempo (al posto delle luci: più sicuro per gli occhi) ---------- */
+function salta(el) { if (!el) return; el.classList.remove("pop"); void el.getBoundingClientRect(); el.classList.add("pop"); }
+
+/* ---------- battute: note su una riga del pentagramma, a distanza proporzionale alla durata ----------
+   eventi: [{ fig, punti, pausa, lega (legata alla successiva), p (posizione, di base 2 = sol), trave (unita con la successiva) }]
+   o: { x0, x1, num (movimenti per battuta), barre (y), conta (y) } */
+function Battute(r, eventi, o) {
+  const B = { r, ev: [], o };
+  let t = 0; eventi.forEach(e => { const d = valore(e.fig, e.punti || 0); B.ev.push({ ...e, p: e.p === undefined ? 0 : e.p, t, d }); t += d; });   // di base il MI (1ª riga)
+  B.tot = t; B.nb = Math.ceil(t / o.num - 1e-9);
+  B.mw = (o.x1 - o.x0) / B.nb; B.padL = Math.min(46, B.mw * 0.16); B.padR = Math.min(26, B.mw * 0.08);
+  B.x = tt => { const m = Math.min(B.nb - 1, Math.floor(tt / o.num + 1e-9)), dt = tt - m * o.num; return o.x0 + m * B.mw + B.padL + dt * (B.mw - B.padL - B.padR) / o.num; };
+  B.u = (B.mw - B.padL - B.padR) / o.num;         // larghezza di un movimento
+  return B;
+}
+function svgBattute(B, opz = {}) {
+  const { r, ev, o } = B; let s = `<g class="battute">`;
+  for (let m = 1; m <= B.nb; m++) {
+    const x = o.x0 + m * B.mw;
+    if (m < B.nb) s += `<line class="stanghetta" x1="${x}" x2="${x}" y1="${r.y(8)}" y2="${r.yb}"/>`;
+    else if (!o.senzaFine) s += `<line class="stanghetta" x1="${x - 12}" x2="${x - 12}" y1="${r.y(8)}" y2="${r.yb}"/><line class="stanghetta grossa" x1="${x - 1}" x2="${x - 1}" y1="${r.y(8) + 1}" y2="${r.yb - 1}"/>`;
+    else s += `<line class="stanghetta" x1="${x}" x2="${x}" y1="${r.y(8)}" y2="${r.yb}"/>`;
+  }
+  ev.forEach(e => e.xn = B.x(e.t) + 18);
+  // chiave e indicazione di tempo (se richieste) + note: tutto VexFlow, sopra le nostre righe
+  s += vfRigo({ x0: opz.rx0 !== undefined ? opz.rx0 : r.x0, x1: r.x1, yb: r.yb, chiave: opz.chiave === false ? null : "violino", tempo: opz.tempo || null,
+    ev: ev.map(e => ({ fig: e.fig, punti: e.punti, pausa: e.pausa, p: e.p, lega: e.lega, trave: e.trave, acc: e.acc, puntoCls: "punto-ev" })), xs: ev.map(e => e.xn), i0: opz.i0 || 0, cls: opz.cls });
+  // barre della durata e numeri del conteggio
+  if (o.barre) ev.forEach((e, i) => {
+    const xa = B.x(e.t), xb = B.x(e.t + e.d) - 5, base = valore(e.fig, 0);
+    let parti = [base]; for (let k = 1; k <= (e.punti || 0); k++) parti.push(parti[k - 1] / 2);
+    let tt = e.t;
+    s += `<g class="barra${e.pausa ? " silenzio" : ""}" data-i="${(opz.i0 || 0) + i}">`;
+    parti.forEach((v, k) => { const a = B.x(tt), b = Math.min(B.x(tt + v) - (k === parti.length - 1 ? 5 : 1), xb);
+      s += `<rect class="pezzo pz${k}" x="${a}" y="${o.barre}" width="${Math.max(4, b - a)}" height="26" rx="6"/>`; tt += v; });
+    s += `<rect class="riempi" x="${xa}" y="${o.barre}" width="${Math.max(4, xb - xa)}" height="26" rx="6"/>`;
+    if (opz.valori !== false) s += `<text class="val-barra" x="${(xa + xb) / 2}" y="${o.barre + 19}">${num(e.d)}</text>`;
+    s += `</g>`;
+  });
+  if (o.conta) for (let b = 0; b < B.nb * o.num; b++) s += `<text class="conta-n" data-b="${b}" x="${B.x(b) + 18}" y="${o.conta}">${(b % o.num) + 1}</text>`;
+  return s + `</g>`;
+}
+function svgLegatura(xa, xb, y, cls = "") {
+  const h = Math.min(30, 10 + (xb - xa) * 0.12);
+  return `<path class="legatura ${cls}" d="M${xa} ${y} Q${(xa + xb) / 2} ${y + h * 2} ${xb} ${y}"/>`;
+}
+/* ascolta una fila di battute: metronomo, suoni tenuti (le legature non si ribattono), note che saltano, barre che si riempiono */
+function ascoltaBattute(B, bpm = 72, fine) {
+  fermaTutto();
+  const sec = 60 / bpm, att = 0.35;
+  qa(".barra .riempi").forEach(x => { x.style.transition = "none"; x.style.transform = "scaleX(0)"; });
+  void PALCO.getBoundingClientRect();
+  for (let b = 0; b < B.nb * B.o.num; b++) {
+    colpoMetro(b % B.o.num === 0, att + b * sec);
+    dopo((att + b * sec) * 1000, () => salta(q1(`.conta-n[data-b="${b}"]`)));
+  }
+  let i = 0;
+  while (i < B.ev.length) {
+    const e = B.ev[i]; let d = e.d, j = i;
+    while (B.ev[j].lega && B.ev[j + 1]) { j++; d += B.ev[j].d; }
+    if (!e.pausa) suonaTenuto(nota("violino", e.p).midi, att + e.t * sec, d * sec);
+    for (let k = i; k <= j; k++) {
+      const ek = B.ev[k], kk = k;
+      dopo((att + ek.t * sec) * 1000, () => {
+        if (kk === i) salta(q1(`.ev[data-i="${kk}"]`));
+        const ri = q1(`.barra[data-i="${kk}"] .riempi`);
+        if (ri) { ri.style.transition = `transform ${ek.d * sec}s linear`; ri.style.transform = "scaleX(1)"; }
+      });
+    }
+    i = j + 1;
+  }
+  dopo((att + B.tot * sec + 0.4) * 1000, () => { qa(".barra .riempi").forEach(x => { x.style.transition = "transform .4s"; x.style.transform = "scaleX(0)"; }); if (fine) fine(); });
+}
+
+/* righe della «scala dei valori»: figura, nome, barra lunga quanto dura */
+function svgRigaValore(y, fig, punti, o = {}) {
+  const U = o.U || 100, X = o.xb || 420, k = o.k || 1.9;
+  let s = `<g class="riga-val ${o.cls || ""}" data-fig="${fig}" data-punti="${punti}"${o.pausa ? ' data-pausa="1"' : ""}>`;
+  s += `<rect class="colpo" x="20" y="${y - 36}" width="960" height="72"/>`;
+  s += svgFig(o.xf || 95, o.pausa ? y - 6 : y + 8, fig, punti, { k, gambo: 2.6, pausa: o.pausa, cls: "fig-riga" });
+  s += `<text class="nome-fig" x="${o.xn || 160}" y="${y + 16}">${nomeFig(fig, punti, o.pausa)}</text>`;
+  let parti = [BASE_VAL[fig]]; for (let i = 1; i <= punti; i++) parti.push(parti[i - 1] / 2);
+  let x = X;
+  s += `<g class="barra${o.pausa ? " silenzio" : ""}">`;
+  parti.forEach((v, i) => { s += `<rect class="pezzo pz${i} cresce" x="${x}" y="${y - 8}" width="${Math.max(4, v * U - 4)}" height="30" rx="7"/>`; x += v * U; });
+  s += `<rect class="riempi" x="${X}" y="${y - 8}" width="${Math.max(4, x - X - 4)}" height="30" rx="7"/></g>`;
+  s += `<text class="val-riga" x="${x + 10}" y="${y + 16}">${num(valore(fig, punti))}</text>`;
+  return s + `</g>`;
+}
+/* fa sentire una figura: suono lungo quanto vale, colpi a ogni movimento, barra che si riempie */
+function ascoltaFigura(g, fig, punti, pausa, bpm = 72) {
+  fermaTutto();
+  const sec = 60 / bpm, d = valore(fig, punti), att = 0.3;
+  const ri = g.querySelector(".riempi"); ri.style.transition = "none"; ri.style.transform = "scaleX(0)"; void ri.getBoundingClientRect();
+  for (let b = 0; b < Math.max(1, Math.ceil(d - 1e-9)); b++) colpoMetro(b === 0, att + b * sec);
+  if (!pausa) suonaTenuto(MI, att, d * sec);
+  dopo(att * 1000, () => { salta(g.querySelector(".fig-riga")); ri.style.transition = `transform ${d * sec}s linear`; ri.style.transform = "scaleX(1)"; });
+  dopo((att + d * sec + 0.6) * 1000, () => { ri.style.transition = "transform .4s"; ri.style.transform = "scaleX(0)"; });
+  cart(`<b>${nomeFig(fig, punti, pausa)}</b> <span class="piccolo">· ${punti ? somma(fig, punti) : num(d)} ${d <= 1 ? "movimento" : "movimenti"}</span>`);
+}
+/* pulsante «▶ Ascolta» dentro il testo: il suono parte solo quando lo si preme */
+function ascoltaNelTesto(passo) {
+  document.querySelectorAll("#punti .ascolta-in").forEach(b => b.onclick = e => { e.stopPropagation(); passo[b.dataset.az](b.dataset.arg); });
+}
+const ASCOLTA = (az, testo = "▶ Ascolta", arg = "") => `<button class="ascolta-in" data-az="${az}" data-arg="${arg}">${testo}</button>`;
+
+/* ================= i passi ================= */
+const CAPITOLI = [
+  { nome: "Il tempo semplice", colore: "var(--c0)" },
+  { nome: "2/4, 3/4 e 4/4", colore: "var(--c1)" },
+  { nome: "In pratica", colore: "var(--c2)" },
+  { nome: "Tempi composti", colore: "#F472B6" },
+  { nome: "Ripasso", colore: "var(--c3)" }
+];
+const VB = "0 0 1000 420";
+const PASSI = [];
+const RIGO = () => R(60, 940, 190, "violino");
+
+/* accenti: F = forte, mf = mezzoforte, d = debole */
+const ACCENTI = { 2: ["F", "d"], 3: ["F", "d", "d"], 4: ["F", "d", "mf", "d"] };
+const NOME_ACC = { F: "forte", mf: "mezzoforte", d: "debole" };
+const RAGGIO = { F: 25, mf: 19, d: 14 };
+const VOL = { F: 1, mf: 0.72, d: 0.5 };
+const NOME_TEMPO = { 2: "binario", 3: "ternario", 4: "quaternario" };
+
+/* il legnetto più o meno forte secondo l'accento */
+function colpoLivello(l, quando) {
+  const ac = audio(); if (!ac) return;
+  const t = ac.currentTime + 0.03 + quando, g = ac.createGain(); g.gain.value = { F: 0.95, mf: 0.62, d: 0.36 }[l]; g.connect(master);
+  const buf = campione("legno"); let o;
+  if (buf) { o = ac.createBufferSource(); o.buffer = buf; o.playbackRate.value = l === "F" ? 1.12 : 1; o.connect(g); o.start(t); }
+  else { o = ac.createOscillator(); const e = ac.createGain(); o.type = "sine"; o.frequency.setValueAtTime(l === "F" ? 1500 : 1150, t); o.frequency.exponentialRampToValueAtTime(700, t + 0.04);
+    e.gain.setValueAtTime(0.0001, t); e.gain.exponentialRampToValueAtTime(0.3, t + 0.003); e.gain.exponentialRampToValueAtTime(0.0001, t + 0.06); o.connect(e); e.connect(g); o.start(t); o.stop(t + 0.08); }
+  VOCI.push({ g, os: [o] }); riposo(quando + 0.3);
+}
+
+/* una scena: pentagramma + battute (disegnate da VexFlow) + la fila dei movimenti sotto.
+   o: { tempo ("3/4", "C", "6/8", null), m (movimenti per battuta), ub (valore di un movimento: 1 = semiminima, 1.5 = semiminima col punto),
+        parti (in quante parti si vede diviso il movimento: 1, 2, 3), accenti (true: cerchi forte/debole), x0, x1 } */
+function scena(passo, ev, o) {
+  const r = RIGO(), ub = o.ub || 1, m = o.m;
+  const B = passo.B = Battute(r, ev, { x0: o.x0 || 250, x1: o.x1 || 930, num: m * ub });
+  B.m = m; B.ub = ub; B.acc = ACCENTI[m];
+  let s = svgRigo(r, { spazi: true }) + svgBattute(B, { tempo: o.tempo || null });
+  const nMov = B.nb * m, y = 268;
+  for (let b = 0; b < nMov; b++) {
+    const t = b * ub, xa = B.x(t) + 2, xb = B.x(t) + ub * B.u - 8, l = B.acc[b % m];   // tutti i movimenti larghi uguali
+    if (o.accenti) {
+      const xc = B.x(t) + 18;
+      s += `<g class="acc acc-${l}" data-b="${b}"><circle cx="${xc}" cy="${y + 26}" r="${RAGGIO[l]}"/><text x="${xc}" y="${y + 34}">${(b % m) + 1}</text></g>`;
+      s += `<text class="acc-l" x="${xc}" y="${y + 90}">${l}</text>`;
+    } else {
+      const parti = o.parti || 1;
+      s += `<g class="mov" data-b="${b}"><rect x="${xa}" y="${y}" width="${xb - xa}" height="44" rx="9"/>`;
+      for (let k = 1; k < parti; k++) s += `<line x1="${xa + (xb - xa) * k / parti}" x2="${xa + (xb - xa) * k / parti}" y1="${y + 6}" y2="${y + 38}"/>`;
+      s += `<text x="${xa + (xb - xa) / (2 * parti)}" y="${y + 31}">${(b % m) + 1}</text>`;
+      for (let k = 1; k < parti; k++) s += `<text class="pic" x="${xa + (xb - xa) * (2 * k + 1) / (2 * parti)}" y="${y + 29}">·</text>`;
+      s += `</g>`;
+    }
+  }
+  s += o.extra || "";
+  q1(".scena").innerHTML = s; vfRiempi();
+  return B;
+}
+/* ascolta: legnetto con gli accenti, melodia del violino (più forte sui movimenti forti), cerchi e note che saltano */
+function ascoltaTempo(B, o = {}) {
+  fermaTutto();
+  const sec = o.sec || 60 / 76, att = 0.35, nMov = B.nb * B.m;
+  for (let b = 0; b < nMov; b++) {
+    const l = B.acc[b % B.m], q = att + b * B.ub * sec;
+    colpoLivello(l, q);
+    dopo(q * 1000, () => { salta(q1(`.acc[data-b="${b}"]`)); salta(q1(`.mov[data-b="${b}"]`)); });
+  }
+  if (!o.soloColpi) B.ev.forEach((e, i) => {
+    const q = att + e.t * sec, sulMov = Math.abs(e.t / B.ub - Math.round(e.t / B.ub)) < 1e-6;
+    const l = sulMov ? B.acc[Math.round(e.t / B.ub) % B.m] : "d";
+    if (!e.pausa) suonaTenuto(nota("violino", e.p).midi, q, e.d * sec, VOL[l]);
+    dopo(q * 1000, () => salta(q1(`.ev[data-i="${i}"]`)));
+  });
+  dopo((att + B.tot * sec + 0.3) * 1000, () => { if (o.fine) o.fine(); });
+}
+/* note: [figura, posizione, opzioni] → eventi; "8t" = croma unita alla seguente da una trave */
+const EV = lista => lista.map(([f, p, x]) => Object.assign({ fig: f.replace("t", ""), p, trave: f.endsWith("t") }, x || {}));
+
+/* ---------- 1. Che cos'è un tempo semplice ---------- */
+PASSI.push({
+  cap: 0, breve: "Il tempo semplice", titolo: "Che cos'è un tempo semplice",
+  punti: [
+    "Nei tempi <b>2/4</b>, <b>3/4</b> e <b>4/4</b> il numero sotto è <b>4</b>: ogni movimento vale una <b>semiminima</b>.",
+    `Ogni movimento si divide in <b>due</b> parti uguali, due <b>crome</b>: per questo sono tempi <b>semplici</b>. ${ASCOLTA("ascolta", "▶ Ascolta e conta")}`,
+    "Prova tu: scegli il tempo, dividi i movimenti e ascolta."
+  ],
+  quaderno: "<p><b>Tempo semplice</b>: ogni movimento si divide in <b>due</b> parti uguali. Esempi: 2/4, 3/4, 4/4.</p>",
+  crea() {
+    this.m = this.m || 2; this.div = !!this.div;
+    svg(VB, `<g class="scena"></g>`);
+    strumenti([
+      { gruppo: [2, 3, 4].map(m => ({ t: m + "/4", cls: m === this.m ? "on" : "", fn: el => { segna("gTempo1", el); this.m = m; this.disegna(); } })), id: "gTempo1" },
+      { t: "✂️ Dividi in due", id: "btnDiv", cls: this.div ? "on" : "", fn: el => { this.div = !this.div; el.classList.toggle("on", this.div); this.disegna(); } },
+      { t: "▶ Ascolta e conta", cls: "forte", fn: () => this.ascolta() }
+    ]);
+  },
+  disegna() {
+    fermaTutto();
+    const ev = [];
+    for (let b = 0; b < 2 * this.m; b++) ev.push(...(this.div ? EV([["8t", 0], ["8", 2]]) : EV([["q", 2]])));
+    scena(this, ev, { tempo: this.m + "/4", m: this.m, parti: this.div ? 2 : 1, x0: 240 });
+    cart(this.div ? `${this.m}/4 · ogni movimento = <b>due crome</b>` : `${this.m}/4 · <b>${this.m}</b> movimenti da una semiminima`, false);
+  },
+  ascolta() { ascoltaTempo(this.B, { sec: 60 / 66 }); },
+  fase(f, anim) {
+    this.div = f >= 1 ? (f === 1 ? true : this.div) : false;
+    if (f < 2) { this.m = 2; segna("gTempo1", document.querySelector("#gTempo1 .btn")); }
+    const bd = document.querySelector("#btnDiv"); if (bd) bd.classList.toggle("on", this.div);
+    this.disegna();
+    if (anim && f === 1) qa(".mov").forEach((m, i) => dopo(150 + i * 550, () => salta(m)));
+    ascoltaNelTesto(this);
+  }
+});
+
+/* ---------- 2–4. I tre tempi ---------- */
+function passoTempo(m, melodia, testi, quaderno) {
+  return {
+    cap: 1, breve: `Il ${m}/4`, titolo: `Il tempo ${m}/4`,
+    punti: testi,
+    quaderno,
+    crea() { svg(VB, `<g class="scena"></g>`); strumenti([{ t: "🥁 Solo i colpi", fn: () => this.colpi() }, { t: "▶ Ascolta la melodia", cls: "forte", fn: () => this.melodia() }, { suggerimento: "Battete il primo movimento più forte" }]); },
+    disegna(tempo) { scena(this, EV(melodia), { tempo: tempo || m + "/4", m, accenti: true }); },
+    colpi() { ascoltaTempo(this.B, { soloColpi: true }); cart(ACCENTI[m].map(l => `<b>${NOME_ACC[l]}</b>`).join(" · "), false); },
+    melodia() { ascoltaTempo(this.B); cart(`${m}/4 · tempo <b>${NOME_TEMPO[m]}</b>`, false); },
+    fase(f, anim) {
+      fermaTutto();
+      this.disegna(m === 4 && f === 2 ? "C" : null);
+      if (anim && f === 0) qa(".acc").forEach((a, i) => { if (i < m) dopo(200 + i * 600, () => salta(a)); });
+      if (anim && m === 4 && f === 2) dopo(200, () => salta(q1(".tempo-vf")));
+      cart(f === 0 ? ACCENTI[m].map(l => NOME_ACC[l]).join(" · ") : f === 1 ? `Tempo <b>${NOME_TEMPO[m]}</b>` : "4/4 = <b>C</b>", anim);
+      ascoltaNelTesto(this);
+    }
+  };
+}
+PASSI.push(passoTempo(2,
+  [["q", 2], ["q", 0], ["8t", 2], ["8", 3], ["q", 4], ["q", 5], ["q", 4], ["h", 2]],
+  [`<b>2</b> movimenti in ogni battuta: il primo è <b>forte</b> (F), il secondo <b>debole</b> (d). ${ASCOLTA("colpi", "🥁 Ascolta i colpi")}`,
+   `È un tempo <b>binario</b>: si conta «<b>1</b> 2, <b>1</b> 2». È il tempo delle <b>marce</b>. ${ASCOLTA("melodia", "▶ Ascolta la melodia")}`],
+  "<p><b>2/4</b>: 2 movimenti da una semiminima. <b>Forte</b> – <b>debole</b>. Tempo binario.</p>"));
+PASSI.push(passoTempo(3,
+  [["h", 0], ["q", 2], ["h", 4], ["q", 3], ["h", 2, { punti: 1 }]],
+  [`<b>3</b> movimenti in ogni battuta: <b>forte</b>, <b>debole</b>, <b>debole</b>. ${ASCOLTA("colpi", "🥁 Ascolta i colpi")}`,
+   `È un tempo <b>ternario</b>: «<b>1</b> 2 3, <b>1</b> 2 3». È il tempo del <b>valzer</b>. ${ASCOLTA("melodia", "▶ Ascolta la melodia")}`],
+  "<p><b>3/4</b>: 3 movimenti da una semiminima. <b>Forte</b> – <b>debole</b> – <b>debole</b>. Tempo ternario.</p>"));
+PASSI.push(passoTempo(4,
+  [["q", 0], ["q", 2], ["q", 4], ["q", 2], ["h", 3], ["h", 0]],
+  [`<b>4</b> movimenti in ogni battuta: <b>forte</b>, <b>debole</b>, <b>mezzoforte</b> (mf), <b>debole</b>. ${ASCOLTA("colpi", "🥁 Ascolta i colpi")}`,
+   `È un tempo <b>quaternario</b>: «<b>1</b> 2 <b>3</b> 4». È il tempo più usato, anche nelle canzoni. ${ASCOLTA("melodia", "▶ Ascolta la melodia")}`,
+   "Il 4/4 si può scrivere anche con una <b>C</b>."],
+  "<p><b>4/4</b>: 4 movimenti da una semiminima. <b>Forte</b> – <b>debole</b> – <b>mezzoforte</b> – <b>debole</b>. Tempo quaternario; si scrive anche <b>C</b>.</p>"));
+
+/* ---------- 5. Il gesto del direttore ---------- */
+// punti dei movimenti e punti di controllo delle curve (visti da chi dirige), nel palco 1000 × 420
+const GESTO = {
+  2: { p: [[540, 360], [610, 70]], c: [[525, 180], [720, 330]] },
+  3: { p: [[520, 360], [760, 290], [610, 70]], c: [[505, 180], [640, 250], [800, 140]] },
+  4: { p: [[560, 360], [360, 270], [790, 270], [640, 70]], c: [[545, 180], [440, 250], [575, 325], [820, 140]] }
+};
+PASSI.push({
+  cap: 1, breve: "Il gesto del direttore", titolo: "Battere il tempo",
+  punti: [
+    "Il <b>direttore</b> batte il tempo con la mano: il <b>primo</b> movimento va sempre <b>in basso</b>, l'<b>ultimo</b> in <b>alto</b>.",
+    "Prova tu: scegli il tempo, premi ▶ e muovi la mano destra seguendo il pallino."
+  ],
+  quaderno: "<p>Battere il tempo: il 1° movimento va in <b>basso</b>, l'ultimo in <b>alto</b>.</p>",
+  crea() {
+    this.m = this.m || 3;
+    strumenti([
+      { gruppo: [2, 3, 4].map(m => ({ t: m + "/4", cls: m === this.m ? "on" : "", fn: el => { segna("gGesto", el); this.m = m; fermaTutto(); this.disegna(); } })), id: "gGesto" },
+      { t: "▶ Batti il tempo", id: "btnBatti", cls: "forte", fn: () => this.batti() }
+    ]);
+    this.disegna();
+  },
+  pos(i, s) {                                     // dal movimento i-1 al movimento i, s da 0 a 1
+    const G = GESTO[this.m], n = this.m, a = G.p[(i - 1 + n) % n], b = G.p[i % n], c = G.c[i % n];
+    return [(1 - s) * (1 - s) * a[0] + 2 * s * (1 - s) * c[0] + s * s * b[0], (1 - s) * (1 - s) * a[1] + 2 * s * (1 - s) * c[1] + s * s * b[1]];
+  },
+  disegna() {
+    const G = GESTO[this.m], n = this.m, L = ACCENTI[n];
+    let s = "";
+    for (let i = 0; i < n; i++) {
+      const a = G.p[(i - 1 + n) % n], b = G.p[i], c = G.c[i];
+      s += `<path class="traccia" d="M${a[0]} ${a[1]} Q${c[0]} ${c[1]} ${b[0]} ${b[1]}"/>`;
+      // una freccia a metà strada, nella direzione del gesto
+      const [x, y] = this.pos(i, 0.55), [x2, y2] = this.pos(i, 0.58), ang = Math.atan2(y2 - y, x2 - x) * 180 / Math.PI;
+      s += `<path class="punta" d="M-11 -10 L11 0 L-11 10 Z" transform="translate(${x.toFixed(1)} ${y.toFixed(1)}) rotate(${ang.toFixed(1)})"/>`;
+    }
+    G.p.forEach(([x, y], i) => s += `<g class="acc acc-${L[i]}" data-b="${i}"><circle cx="${x}" cy="${y}" r="${RAGGIO[L[i]] + 4}"/><text x="${x}" y="${y + 9}">${i + 1}</text></g>`);
+    s += `<text class="uguale" x="170" y="200" text-anchor="middle">${n}/4</text><text class="acc-l" x="170" y="250">${L.join(" · ")}</text>`;
+    s += `<circle class="bacchetta vela nascosto" cx="0" cy="0" r="15"/>`;
+    svg(VB, s);
+    cart(`${n}/4 · ${n === 2 ? "giù, su" : n === 3 ? "giù, destra, su" : "giù, sinistra, destra, su"}`, false);
+  },
+  batti() {
+    fermaTutto();
+    const n = this.m, sec = 60 / 66, giri = 4, tot = n * giri, palla = q1(".bacchetta");
+    mostra(palla); const metti = ([x, y]) => { palla.setAttribute("cx", x.toFixed(1)); palla.setAttribute("cy", y.toFixed(1)); };
+    metti(GESTO[n].p[n - 1]);
+    // un movimento di preparazione (in silenzio), poi 4 battute
+    for (let k = 0; k < tot; k++) {
+      const l = ACCENTI[n][k % n];
+      colpoLivello(l, (k + 1) * sec);
+      dopo((k + 1) * sec * 1000 + 30, () => { salta(q1(`.acc[data-b="${k % n}"]`)); cart(`<span style="font-size:30px">${(k % n) + 1}</span> <span class="piccolo">${NOME_ACC[l]}</span>`, false); });
+    }
+    const t0 = performance.now() + 30;
+    const passo = ora => {
+      const tt = (ora - t0) / 1000 / sec;               // in movimenti, da 0
+      if (tt >= tot + 0.6) { mostra(palla, false); cart(`${n}/4 · ancora? Premi ▶`, false); return; }
+      if (tt >= 0) { const k = Math.min(tot, Math.floor(tt)), s = Math.min(1, tt - k); metti(k >= tot ? GESTO[n].p[(tot - 1) % n] : this.pos(k % n, s * s)); }
+      ANIMA = requestAnimationFrame(passo);
+    };
+    ANIMA = requestAnimationFrame(passo);
+  },
+  fase(f, anim) {
+    fermaTutto(); this.disegna();
+    if (anim && f === 0) qa(".acc").forEach((a, i) => dopo(200 + i * 600, () => salta(a)));
+  }
+});
+
+/* ---------- 6. Quale tempo? ---------- */
+// battute da 2, 3 e 4 movimenti (le crome a coppie, unite dalla trave)
+const BATTUTE_Q = {
+  2: [["q", "q"], ["h"], ["8t", "8", "q"], ["q", "8t", "8"], ["q.", "8"], ["8t", "8", "8t", "8"], ["q", "qr"]],
+  3: [["h", "q"], ["q", "q", "q"], ["h."], ["q", "h"], ["q", "8t", "8", "q"], ["8t", "8", "q", "q"], ["q.", "8", "q"], ["qr", "q", "q"]],
+  4: [["w"], ["h", "h"], ["q", "q", "h"], ["h", "q", "q"], ["h.", "q"], ["q", "q", "q", "q"], ["8t", "8", "q", "h"], ["q", "h", "q"], ["hr", "h"]]
+};
+const MELO = [0, 2, 4, 3, 2, 1, 0, 2, 3, 4, 5, 4];
+function battutaEv(lista, i0) {
+  return lista.map((f, i) => { const pausa = f.endsWith("r"), punti = f.includes(".") ? 1 : 0, fig = f.replace(/[.rt]/g, "");
+    return { fig, punti, pausa, trave: f.endsWith("t"), p: MELO[(i0 + i) % MELO.length] }; });
+}
+PASSI.push({
+  cap: 2, breve: "Quale tempo?", titolo: "Quale tempo?",
+  punti: [
+    "Manca l'indicazione di tempo! <b>Conta</b> quanti movimenti ci sono in ogni battuta e scegli: 2/4, 3/4 o 4/4.",
+    "Se sbagli, sotto ogni battuta compare il conto. Poi premi «Un'altra»."
+  ],
+  quaderno: "<p>Per trovare il tempo: si <b>sommano</b> i valori delle figure di una battuta.</p>",
+  crea() {
+    this.giuste = this.giuste || 0; this.fatte = this.fatte || 0;
+    svg(VB, `<g class="scena"></g>`);
+    strumenti([
+      { gruppo: [2, 3, 4].map(m => ({ t: m + "/4", fn: el => this.rispondi(m, el) })), id: "gRisp" },
+      { t: "↻ Un'altra", fn: () => this.nuova() },
+      { t: "▶ Ascolta", id: "btnAscQ", fn: () => this.ascolta() }
+    ]);
+    this.nuova(true);
+  },
+  nuova(prima) {
+    fermaTutto();
+    let m; do { m = 2 + Math.floor(Math.random() * 3); } while (!prima && m === this.m && Math.random() < 0.6);
+    const P = BATTUTE_Q[m], a = Math.floor(Math.random() * P.length); let b; do { b = Math.floor(Math.random() * P.length); } while (b === a);
+    this.m = m; this.batt = [P[a], P[b]]; this.risolta = false; this.primo = true;
+    document.querySelectorAll("#gRisp .btn").forEach(x => x.classList.remove("on", "giusto", "sbagliato"));
+    this.disegna(false);
+    cart(`Quanti movimenti? <span class="piccolo">· giuste al primo colpo: ${this.giuste} su ${this.fatte}</span>`, false);
+  },
+  disegna(conTempo) {
+    const ev = battutaEv(this.batt[0], 0).concat(battutaEv(this.batt[1], 4));
+    const r = RIGO();
+    let extra = conTempo ? "" : `<g class="buco"><rect x="180" y="${r.y(8) - 4}" width="52" height="${4 * S + 8}" rx="8"/><text x="206" y="${r.y(4) + 14}">?</text></g>`;
+    scena(this, ev, { tempo: conTempo ? this.m + "/4" : null, m: this.m, accenti: false, parti: 1, extra, x0: 240, x1: 940 });
+    // il conto di ogni battuta (nascosto finché serve)
+    const B = this.B; let s = "";
+    [0, 1].forEach(k => {
+      const vals = B.ev.filter(e => e.t >= k * this.m - 1e-9 && e.t < (k + 1) * this.m - 1e-9).map(e => num(e.d));
+      s += `<text class="somma vela nascosto" x="${B.x(k * this.m) + (B.mw - B.padL) / 2}" y="370" text-anchor="middle">${vals.join(" + ")}${vals.length > 1 ? " = " + this.m : ""}</text>`;
+    });
+    q1(".scena").insertAdjacentHTML("beforeend", s);
+    qa(".mov").forEach(x => { x.classList.add("vela"); mostra(x, conTempo); });
+  },
+  rispondi(m, el) {
+    if (this.risolta) return;
+    if (this.primo) this.fatte++;
+    if (m === this.m) {
+      if (this.primo) this.giuste++;
+      this.risolta = true; el.classList.add("giusto");
+      this.disegna(true); qa(".somma").forEach(x => mostra(x));
+      dopo(80, () => salta(q1(".tempo-vf")));
+      cart(`<b>Giusto: ${m}/4!</b> <span class="piccolo">· giuste al primo colpo: ${this.giuste} su ${this.fatte}</span>`, false);
+      dopo(500, () => this.ascolta());
+    } else {
+      el.classList.add("sbagliato"); this.primo = false;
+      qa(".somma").forEach(x => mostra(x));
+      cart(`Non ancora: guarda il conto sotto le battute`, false);
+    }
+  },
+  ascolta() { if (this.B) ascoltaTempo(this.B); },
+  fase(f, anim) { cart(`Quanti movimenti? <span class="piccolo">· giuste al primo colpo: ${this.giuste} su ${this.fatte}</span>`, false); }
+});
+
+/* ---------- 7. Verso i tempi composti ---------- */
+PASSI.push({
+  cap: 3, breve: "E i tempi composti?", titolo: "E i tempi composti?",
+  punti: [
+    `Nei tempi <b>semplici</b> ogni movimento si divide in <b>due</b>. ${ASCOLTA("semplice", "▶ Ascolta il 2/4")}`,
+    `Nei tempi <b>composti</b> ogni movimento si divide in <b>tre</b>: vale una <b>semiminima col punto</b>, cioè tre crome. Esempio: <b>6/8</b>. ${ASCOLTA("composto", "▶ Ascolta il 6/8")}`,
+    "Il 6/8 ha <b>2</b> movimenti, come il 2/4: cambia solo come si dividono. I tempi composti li studieremo più avanti!"
+  ],
+  quaderno: "<p><b>Tempo composto</b>: ogni movimento si divide in <b>tre</b> parti uguali. Esempio: 6/8 (2 movimenti da semiminima col punto).</p>",
+  crea() {
+    svg(VB, `<g class="scena"></g>`);
+    strumenti([{ gruppo: [["2/4 semplice", "s"], ["6/8 composto", "c"]].map(([t, k]) => ({ t, fn: el => { segna("gComp", el); this.mostra(k); } })), id: "gComp" },
+      { t: "▶ Ascolta e conta", cls: "forte", fn: () => this.ascolta() }]);
+  },
+  mostra(k) {
+    fermaTutto(); this.k = k;
+    document.querySelectorAll("#gComp .btn").forEach((b, i) => b.classList.toggle("on", (i === 0) === (k === "s")));
+    if (k === "s") scena(this, EV([["8t", 2], ["8", 2], ["8t", 4], ["8", 2], ["8t", 3], ["8", 3], ["8t", 1], ["8", 1]]), { tempo: "2/4", m: 2, parti: 2 });
+    else scena(this, EV([["8t", 2], ["8t", 2], ["8", 2], ["8t", 4], ["8t", 3], ["8", 2], ["8t", 3], ["8t", 2], ["8", 1], ["8t", 0], ["8t", 1], ["8", 0]]), { tempo: "6/8", m: 2, ub: 1.5, parti: 3 });
+    cart(k === "s" ? "2/4 · ogni movimento: <b>2</b> crome" : "6/8 · ogni movimento: <b>3</b> crome", false);
+  },
+  semplice() { this.mostra("s"); this.ascolta(); },
+  composto() { this.mostra("c"); this.ascolta(); },
+  // stessa velocità dei movimenti (60 al minuto): nel 6/8 le crome sono tre per movimento
+  ascolta() { ascoltaTempo(this.B, { sec: this.k === "s" ? 1 : 1 / 1.5 }); },
+  fase(f, anim) {
+    this.mostra(f === 0 ? "s" : "c");
+    if (anim && f < 2) qa(".mov").forEach((m, i) => { if (i < 2) dopo(200 + i * 600, () => salta(m)); });
+    ascoltaNelTesto(this);
+  }
+});
+
+/* ---------- 8. Ripasso ---------- */
+const DEF_TEMPI = [
+  [0, "Tempo semplice", "ogni movimento si divide in due parti uguali (2/4, 3/4, 4/4)."],
+  [1, "2/4", "2 movimenti: forte, debole. Tempo binario."],
+  [2, "3/4", "3 movimenti: forte, debole, debole. Tempo ternario."],
+  [3, "4/4", "4 movimenti: forte, debole, mezzoforte, debole. Tempo quaternario; si scrive anche C."],
+  [4, "Battere il tempo", "il 1° movimento va in basso, l'ultimo in alto."],
+  [6, "Tempo composto", "ogni movimento si divide in tre parti uguali (per esempio 6/8)."]
+];
+PASSI.push({
+  cap: 4, breve: "Sul quaderno", titolo: "Ricapitoliamo", soloTesto: true,
+  punti: ["Le definizioni da copiare sul quaderno. Tocca una scheda per tornare al passo."],
+  crea() {
+    const box = document.createElement("div"); box.className = "ripasso ripasso-grande";
+    DEF_TEMPI.forEach(([p, t, d]) => {
+      const b = document.createElement("button"); b.className = "def"; b.style.setProperty("--colore", CAPITOLI[PASSI[p].cap].colore);
+      b.innerHTML = `<span class="vai">${p + 1} →</span><b>${t}</b>: ${d}`; b.addEventListener("click", () => vai(p, PASSI[p].punti.length - 1)); box.appendChild(b);
+    });
+    PALCO.innerHTML = ""; PALCO.appendChild(box);
+    STRUM.innerHTML = `<div class="allenati"><span>Ora allenati:</span>
+      <a class="btn" href="lettura-ritmica.html">👏 Lettura ritmica</a><a class="btn" href="costruttore-di-battute.html">🧱 Costruttore di battute</a>
+      <a class="btn" href="dettato-ritmico.html">✍️ Dettato ritmico</a></div>`;
+  },
+  fase() { cart("📒 Da copiare sul quaderno", false); }
+});
+
+/* ================= navigazione ================= */
+let passo = 0, fase = 0;
+const visti = new Set();
+const LEZ = $("#lezione");
+
+(function indice() {
+  const nav = $("#indice");
+  CAPITOLI.forEach((c, ci) => {
+    const g = document.createElement("div"); g.className = "gruppo"; g.style.setProperty("--colore", c.colore);
+    const quanti = PASSI.filter(p => p.cap === ci).length; g.style.flex = quanti + " 1 0";
+    g.innerHTML = `<div class="cap">${c.nome}</div><div class="pillole"></div>`;
+    PASSI.forEach((p, i) => {
+      if (p.cap !== ci) return;
+      const b = document.createElement("button"); b.className = "pillola"; b.dataset.i = i; b.title = (i + 1) + ". " + p.titolo;
+      b.innerHTML = `<span class="n">${i + 1}</span><span class="t">${p.breve}</span>`;
+      b.addEventListener("click", () => vai(i, 0));
+      g.querySelector(".pillole").appendChild(b);
+    });
+    nav.appendChild(g);
+  });
+})();
+
+function vai(i, f = 0, anim = true) {
+  fermaTutto();
+  if (AC && AC.state === "running") riposo(0);
+  const cambia = i !== passo || !PALCO.firstChild;
+  passo = i; fase = f; visti.add(i);
+  const P = PASSI[i];
+  document.documentElement.style.setProperty("--cap", CAPITOLI[P.cap].colore);
+  LEZ.classList.toggle("solo-testo", !!P.soloTesto);
+  if (cambia) {
+    $("#capitolo").textContent = CAPITOLI[P.cap].nome;
+    $("#titoloPasso").textContent = P.titolo;
+    const ul = $("#punti"); ul.innerHTML = "";
+    P.punti.forEach((t, k) => { const li = document.createElement("li"); li.innerHTML = t; li.addEventListener("click", () => vai(passo, k)); ul.appendChild(li); });
+    const qd = $("#quaderno"); qd.innerHTML = P.quaderno ? `<div class="tit">📒 Sul quaderno</div>${P.quaderno}` : "";
+    P.crea();
+  }
+  // punti: già visti, quello di adesso, quelli dopo nascosti
+  [...$("#punti").children].forEach((li, k) => { li.classList.toggle("ora", k === f); li.classList.toggle("dopo", k > f); });
+  $("#quaderno").hidden = !P.quaderno || f < P.punti.length - 1;
+  P.fase(f, anim);
+  // fasi in basso
+  const fs = $("#fasi"); fs.innerHTML = "";
+  if (P.punti.length > 1) P.punti.forEach((_, k) => {
+    const b = document.createElement("button"); b.textContent = k + 1; b.className = k < f ? "fatta" : k === f ? "ora" : "";
+    b.setAttribute("aria-label", "Punto " + (k + 1)); b.addEventListener("click", () => vai(passo, k)); fs.appendChild(b);
+  });
+  document.querySelectorAll(".pillola").forEach(b => { const n = +b.dataset.i; b.classList.toggle("attiva", n === i); b.classList.toggle("vista", visti.has(n) && n !== i); });
+  $("#contatore").textContent = `Passo ${i + 1} di ${PASSI.length}`;
+  $("#indietro").disabled = i === 0 && f === 0;
+  const ultimo = i === PASSI.length - 1 && f === P.punti.length - 1;
+  $("#avanti").disabled = ultimo;
+  $("#avanti").innerHTML = f < P.punti.length - 1 ? "Avanti ▶" : (i < PASSI.length - 1 ? "Passo " + (i + 2) + " ▶" : "Fine");
+  try { history.replaceState(null, "", "#passo-" + (i + 1)); } catch (e) { }
+  adattaTesto();
+}
+// se il testo del passo non sta nella sua scheda, si rimpicciolisce un poco (mai sotto 15 px)
+function adattaTesto() {
+  const sp = $(".spiega"); let fs = 20;
+  sp.style.removeProperty("--fs"); sp.style.removeProperty("--fq");
+  if (getComputedStyle(sp).overflow !== "hidden" || sp.offsetParent === null) return;
+  while (sp.scrollHeight > sp.clientHeight + 1 && fs > 15) { fs -= 0.5; sp.style.setProperty("--fs", fs + "px"); sp.style.setProperty("--fq", (fs * 0.78) + "px"); }
+}
+function avanti() {
+  const P = PASSI[passo];
+  if (fase < P.punti.length - 1) vai(passo, fase + 1);
+  else if (passo < PASSI.length - 1) vai(passo + 1, 0);
+}
+function indietro() {
+  if (fase > 0) vai(passo, fase - 1, false);
+  else if (passo > 0) vai(passo - 1, PASSI[passo - 1].punti.length - 1, false);
+}
+$("#avanti").addEventListener("click", avanti);
+$("#indietro").addEventListener("click", indietro);
+document.addEventListener("keydown", e => {
+  if (e.target.closest("input, textarea")) return;
+  if (["ArrowRight", "PageDown"].includes(e.key)) { e.preventDefault(); avanti(); }
+  if (["ArrowLeft", "PageUp"].includes(e.key)) { e.preventDefault(); indietro(); }
+});
+$("#btnColori").addEventListener("click", e => {
+  const on = document.body.classList.toggle("colori");
+  e.currentTarget.classList.toggle("attivo", on);
+});
+document.addEventListener("visibilitychange", () => { if (document.hidden) { fermaTutto(); if (AC && AC.state === "running") AC.suspend(); } });
+
+if (document.fonts && document.fonts.ready) document.fonts.ready.then(adattaTesto);
+window.addEventListener("resize", () => { cancelAnimationFrame(adattaTesto.t); adattaTesto.t = requestAnimationFrame(adattaTesto); });
+const daIndirizzo = parseInt((location.hash.match(/passo-(\d+)/) || [])[1], 10);
+vai(daIndirizzo >= 1 && daIndirizzo <= PASSI.length ? daIndirizzo - 1 : 0, 0, true);
+</script>
+<script src="adatta-schermo.js" data-schermate="#lezione"></script>
+</body>
+</html>
