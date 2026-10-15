@@ -601,11 +601,14 @@ prepara un PDF A4 con una carta per nota (pentagramma, nome colorato, diteggiatu
 - Schede su misura: solo le note del brano o della lezione, non tutto lo schema.
 - Si sceglie direttamente sullo strumento disegnato: il gesto di scegliere è già un piccolo esercizio di lettura.
 - Ordine «come le scelgo» (per seguire un brano) o «dal grave all'acuto» (per una scala o un riepilogo).
-- 6, 12 o 20 carte per foglio, titolo facoltativo; PDF da scaricare o stampa diretta. Tutto nel browser, nessun dato inviato.
+- 6, 12 o 20 carte per pagina, titolo facoltativo; PDF da scaricare o stampa diretta. Tutto nel browser, nessun dato inviato.
+- Proiezione alla LIM in un tocco (sull'anteprima o «Proietta»): schermo intero, carte disposte in orizzontale
+  e più grandi (pentagramma e nome a sinistra, schema a destra), frecce per cambiare pagina, Esc per uscire.
 
 ### Come usarlo in classe
 - Prima di un brano nuovo: si toccano le note del brano e si stampa la scheda da incollare sul quaderno.
-- Alla LIM: si mostra il manico o la tastiera e si chiede ai ragazzi dove sta una nota prima di toccarla.
+- Alla LIM: si mostra il manico o la tastiera e si chiede ai ragazzi dove sta una nota prima di toccarla;
+  poi si proietta la pagina delle carte e la si usa come riferimento mentre la classe suona.
 - Verifiche: si stampano le carte e si coprono nome o diteggiatura.
 
 ### Scelte fatte (e perché)

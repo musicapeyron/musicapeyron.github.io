@@ -80,11 +80,39 @@
   .anteprima { display: flex; flex-direction: column; align-items: center; gap: 8px; }
   #foglio { width: 306px; height: 433px; background: #fff; border-radius: 4px; box-shadow: 0 6px 24px rgba(0,0,0,0.45); overflow: hidden; }
   #foglio > svg { width: 100%; height: 100%; display: block; }
+  /* l'anteprima è un pulsante: si tocca e si proietta */
+  .anteprima-tocca { position: relative; padding: 0; border: 0; background: none; cursor: zoom-in; border-radius: 6px; font-family: inherit; }
+  .anteprima-tocca:hover #foglio { box-shadow: 0 0 0 3px #5EC8D8, 0 6px 24px rgba(0,0,0,0.45); }
+  .anteprima-tocca:disabled { cursor: default; }
+  .anteprima-tocca:disabled .badge-lim { display: none; }
+  .badge-lim { position: absolute; left: 50%; bottom: 12px; transform: translateX(-50%); white-space: nowrap;
+    background: rgba(15,23,42,0.88); color: #EAF2FF; border: 1px solid rgba(94,200,216,0.7); border-radius: 999px;
+    padding: 6px 13px; font-size: 13px; font-weight: 700; pointer-events: none; }
+  #proietta { background: rgba(94,200,216,0.16); color: #EAF2FF; border: 1px solid rgba(94,200,216,0.6); }
+
+  /* proiezione: tutta la finestra (e lo schermo intero, se il browser lo permette) */
+  #proiezione { position: fixed; inset: 0; z-index: 1000; background: #0b1120; }
+  #proiezione[hidden] { display: none; }
+  .pr-foglio { position: absolute; inset: 12px 76px 52px; display: flex; align-items: center; justify-content: center; }
+  .pr-foglio > svg { width: 100%; height: 100%; display: block; }
+  .pr-freccia { position: absolute; top: 50%; width: 58px; height: 120px; margin-top: -60px; border-radius: 16px; border: 1px solid rgba(255,255,255,0.22);
+    background: rgba(255,255,255,0.08); color: #EAF2FF; font-size: 26px; cursor: pointer; }
+  .pr-freccia.sx { left: 9px; } .pr-freccia.dx { right: 9px; }
+  .pr-freccia:hover { filter: brightness(1.3); }
+  .pr-freccia:disabled { opacity: 0.2; cursor: default; filter: none; }
+  .pr-chiudi { position: absolute; right: 12px; bottom: 9px; border: 1px solid rgba(255,255,255,0.25); background: rgba(255,255,255,0.1); color: #EAF2FF;
+    border-radius: 10px; padding: 7px 14px; font-size: 15px; font-weight: 700; cursor: pointer; }
+  .pr-chiudi:hover { filter: brightness(1.3); }
+  .pr-barra { position: absolute; left: 0; right: 0; bottom: 16px; text-align: center; color: #A9B8D0; font-size: 15px; pointer-events: none; }
+  .pr-barra b { color: #EAF2FF; }
+  body.proietto { overflow: hidden; }
+  body.proietto > *:not(#proiezione) { visibility: hidden; }
+
   .pagine { display: flex; align-items: center; gap: 10px; font-weight: 700; font-size: 14px; }
   .campo { display: flex; flex-direction: column; gap: 4px; font-size: 13px; font-weight: 700; color: #A9B8D0; }
   .campo input { font-size: 15px; padding: 8px 10px; border-radius: 10px; border: 1px solid rgba(255,255,255,0.2); background: rgba(255,255,255,0.08); color: #EAF2FF; }
   .azioni { display: flex; gap: 8px; }
-  .azioni button { flex: 1 1 0; border: 0; border-radius: 12px; padding: 12px 10px; font-size: 16px; font-weight: 800; cursor: pointer; }
+  .azioni button { flex: 1 1 0; border: 0; border-radius: 12px; padding: 12px 6px; font-size: 15px; white-space: nowrap; font-weight: 800; cursor: pointer; }
   .azioni button:hover { filter: brightness(1.1); }
   .azioni button:active { filter: brightness(0.92); }
   .azioni button:disabled { opacity: 0.45; cursor: default; filter: none; }
@@ -121,6 +149,12 @@
     .selettore.largo svg { min-width: 680px; }
     #chips { height: auto; max-height: 120px; }
     #foglio { width: min(306px, 86vw); height: auto; aspect-ratio: 210 / 297; }
+    .pr-foglio { inset: 8px 8px 96px; }
+    .pr-freccia { top: auto; bottom: 44px; margin-top: 0; height: 46px; width: 64px; }
+    .pr-freccia.sx { left: 10px; } .pr-freccia.dx { right: 10px; }
+    .pr-chiudi { right: 50%; transform: translateX(50%); bottom: 50px; }
+    .pr-barra { bottom: 14px; font-size: 13px; }
+    .pr-barra .solo-tastiera { display: none; }
   }
 
   /* PC e LIM: misure fisse, poi adatta-schermo.js ingrandisce tutto */
@@ -137,7 +171,7 @@
 <div id="app">
   <header class="testa">
     <h1>Seleziona note</h1>
-    <p>Scegli lo strumento, tocca le note e scarica gli schemi in PDF.</p>
+    <p>Scegli lo strumento, tocca le note, poi proietta alla LIM o scarica il PDF.</p>
   </header>
   <div class="colonne">
     <section class="sinistra pannello">
@@ -157,14 +191,17 @@
     </section>
     <section class="destra pannello">
       <div class="anteprima">
-        <div id="foglio" aria-label="Anteprima del foglio"></div>
+        <button type="button" id="apriLim" class="anteprima-tocca" aria-label="Proietta alla LIM a schermo intero" title="Proietta alla LIM a schermo intero">
+          <div id="foglio"></div>
+          <span class="badge-lim">⛶ Tocca per proiettare alla LIM</span>
+        </button>
         <div class="pagine">
           <button class="piccolo" id="prec" aria-label="Pagina precedente">◀</button>
           <span id="numPag">pagina 1 di 1</span>
           <button class="piccolo" id="succ" aria-label="Pagina successiva">▶</button>
         </div>
       </div>
-      <div class="riga"><span class="etichetta">Per foglio</span><div class="scelte" id="grandezze"></div></div>
+      <div class="riga"><span class="etichetta">Per pagina</span><div class="scelte" id="grandezze"></div></div>
       <div class="riga"><span class="etichetta">Ordine</span><div class="scelte" id="ordini"></div></div>
       <label class="campo">Titolo del foglio (facoltativo)
         <input id="titolo" maxlength="60" placeholder="es. Le note della chitarra – 2ª media" autocomplete="off">
@@ -172,11 +209,21 @@
       <div class="azioni">
         <button id="scarica">⬇ Scarica PDF</button>
         <button id="stampa">🖨 Stampa</button>
+        <button id="proietta">⛶ Proietta</button>
       </div>
     </section>
   </div>
 </div>
 <div id="areaStampa"></div>
+
+<!-- proiezione alla LIM: le carte grandi, a schermo intero -->
+<div id="proiezione" role="dialog" aria-label="Proiezione a schermo intero" hidden>
+  <div class="pr-foglio" id="prFoglio"></div>
+  <button type="button" class="pr-freccia sx" id="prPrec" aria-label="Pagina precedente">◀</button>
+  <button type="button" class="pr-freccia dx" id="prSucc" aria-label="Pagina successiva">▶</button>
+  <button type="button" class="pr-chiudi" id="prChiudi" aria-label="Esci dalla proiezione">✕ Esci</button>
+  <div class="pr-barra" id="prBarra"></div>
+</div>
 
 <script>
 (function () {
@@ -452,7 +499,8 @@
     const l = elenco(), box = document.getElementById("chips");
     document.getElementById("conta").textContent = l.length === 0 ? "Nessuna nota scelta" : l.length === 1 ? "1 nota scelta" : `${l.length} note scelte`;
     document.getElementById("togliUltima").disabled = document.getElementById("svuota").disabled = l.length === 0;
-    document.getElementById("scarica").disabled = document.getElementById("stampa").disabled = l.length === 0;
+    document.getElementById("scarica").disabled = document.getElementById("stampa").disabled =
+      document.getElementById("proietta").disabled = document.getElementById("apriLim").disabled = l.length === 0;
     box.innerHTML = l.length ? "" : `<span class="vuoto">Le note che scegli compaiono qui.</span>`;
     l.forEach((it, i) => {
       const k = chiaveDi(it), n = MS.analizza(k), d = descrizione(it);
@@ -588,6 +636,18 @@
       s += annida(MS.schemaNota("flauto", n), x + wr + 2, y + 3, w - wr - 4, h - 6);
       return s;
     }
+    if (w > h * 1.2) {
+      // carta larga (proiezione alla LIM): pentagramma e nome a sinistra, schema a destra, tutto più grande
+      const fl = Math.min(h * 0.17, w * 0.1) * (nome.length > 3 ? 0.88 : 1);
+      const wr = w * 0.5, hr = h * 0.62, yr = y + (h - hr - fl * 1.3) / 2;
+      s += annida(rigo(k, chiaveRigo(it)), x + 1.5, yr, wr, hr, null, vistaDi(chiaveRigo(it)));
+      s += testoNome(x + 1.5 + wr / 2, yr + hr + fl * 1.05).replace(/font-size="[^"]+"/, `font-size="${fl.toFixed(2)}"`)
+        .replace(/stroke-width="[^"]+" paint/, `stroke-width="${(fl * 0.035).toFixed(2)}" paint`);
+      const xs = x + wr + 3, ws = w - wr - 6;
+      if (str === "piano") s += annida(schemaTastiera(midiElemento(it), k), xs, y + 3, ws, h - 6);
+      else s += annida(schemaManico(str, it.c, it.t, k), xs, y + 3, ws, h - 6);
+      return s;
+    }
     const hr = h * (chiaveRigo(it) === "doppio" ? 0.5 : 0.4);
     s += annida(rigo(k, chiaveRigo(it)), x + 2, y + 1.5, w - 4, hr, null, vistaDi(chiaveRigo(it)));
     const yNome = y + 1.5 + hr + fs * 0.95;
@@ -600,14 +660,18 @@
 
   const GRIGLIA = { 6: [2, 3], 12: [3, 4], 20: [4, 5] };
   function numeroPagine() { return Math.max(1, Math.ceil(elenco().length / stato.grandezza)); }
-  function paginaSVG(ip) {
-    const [col, rig] = GRIGLIA[stato.grandezza], titolo = document.getElementById("titolo").value.trim();
+  /* foglio A4 verticale (anteprima, PDF, stampa) oppure, per la LIM, una pagina orizzontale
+     con le proporzioni dello schermo: stesse carte, disposte in orizzontale */
+  const GRIGLIA_LIM = { 6: [3, 2], 12: [4, 3], 20: [5, 4] };
+  function paginaSVG(ip, lim) {
+    const [col, rig] = (lim && !lim.verticale ? GRIGLIA_LIM : GRIGLIA)[stato.grandezza], titolo = document.getElementById("titolo").value.trim();
     const tot = numeroPagine(), note = ordinate().slice(ip * stato.grandezza, (ip + 1) * stato.grandezza);
-    const M = 10, gap = 4, alto = titolo ? 22 : 11, fondo = 286;
-    const cw = (210 - 2 * M - (col - 1) * gap) / col, ch = (fondo - alto - (rig - 1) * gap) / rig;
+    const W = lim ? lim.W : 210, H = lim ? lim.H : 297;
+    const M = lim ? 6 : 10, gap = lim ? 3 : 4, alto = titolo ? (lim ? 15 : 22) : (lim ? 6 : 11), fondo = H - (lim ? 8 : 11);
+    const cw = (W - 2 * M - (col - 1) * gap) / col, ch = (fondo - alto - (rig - 1) * gap) / rig;
     calcolaFinestre(note);
-    let s = `<svg xmlns="${NS}" viewBox="0 0 210 297" width="210mm" height="297mm"><rect width="210" height="297" fill="#fff"/>`;
-    if (titolo) s += `<text x="105" y="15" font-size="7.5" font-weight="700" text-anchor="middle" fill="#1e293b" ${FONT}>${esc(titolo)}</text>`;
+    let s = `<svg xmlns="${NS}" viewBox="0 0 ${W} ${H}"${lim ? "" : ' width="210mm" height="297mm"'}><rect width="${W}" height="${H}" fill="#fff"/>`;
+    if (titolo) s += `<text x="${W / 2}" y="${lim ? 10.5 : 15}" font-size="7.5" font-weight="700" text-anchor="middle" fill="#1e293b" ${FONT}>${esc(titolo)}</text>`;
     note.forEach((it, i) => {
       const c = i % col, r = Math.floor(i / col);
       s += carta(it, M + c * (cw + gap), alto + r * (ch + gap), cw, ch);
@@ -616,8 +680,8 @@
     if (stato.strumento === "piano") piede += ` (${stato.chiave === "doppio" ? "doppio pentagramma" : "chiave di " + stato.chiave})`;
     if (stato.strumento === "piano") piede += "  ·  il pallino segna il Do centrale";
     if (tot > 1) piede += `  ·  pagina ${ip + 1} di ${tot}`;
-    s += `<text x="105" y="292" font-size="3" text-anchor="middle" fill="#94a3b8" ${FONT}>${esc(piede)}</text>`;
-    if (!note.length) s += `<text x="105" y="150" font-size="6" text-anchor="middle" fill="#94a3b8" ${FONT}>Tocca le note sullo strumento</text>`;
+    s += `<text x="${W / 2}" y="${H - (lim ? 3 : 5)}" font-size="3" text-anchor="middle" fill="#94a3b8" ${FONT}>${esc(piede)}</text>`;
+    if (!note.length) s += `<text x="${W / 2}" y="${H / 2}" font-size="6" text-anchor="middle" fill="#94a3b8" ${FONT}>Tocca le note sullo strumento</text>`;
     return s + "</svg>";
   }
 
@@ -629,6 +693,70 @@
     document.getElementById("prec").disabled = stato.pagina === 0;
     document.getElementById("succ").disabled = stato.pagina >= tot - 1;
   }
+
+  /* ================= proiezione alla LIM ================= */
+  const pr = document.getElementById("proiezione");
+  let prPagina = 0, prSchermo = false;
+  function disegnaProiezione() {
+    const box = document.getElementById("prFoglio"), r = box.getBoundingClientRect(), tot = numeroPagine();
+    if (prPagina >= tot) prPagina = tot - 1;
+    // pagina con le proporzioni dello spazio disponibile: orizzontale sulla LIM, verticale sul telefono
+    const rap = r.width > 0 ? r.height / r.width : 0.7071;
+    box.innerHTML = paginaSVG(prPagina, rap > 1
+      ? { W: 210, H: Math.round(Math.max(260, Math.min(420, 210 * rap))), verticale: true }
+      : { W: 297, H: Math.round(Math.max(150, Math.min(297, 297 * rap))) });
+    document.getElementById("prPrec").disabled = prPagina === 0;
+    document.getElementById("prSucc").disabled = prPagina >= tot - 1;
+    document.getElementById("prBarra").innerHTML = (tot > 1 ? `<b>pagina ${prPagina + 1} di ${tot}</b><span class="solo-tastiera"> &nbsp;·&nbsp; </span>` : "") +
+      `<span class="solo-tastiera">${tot > 1 ? "frecce ◀ ▶ per cambiare pagina · " : ""}Esc per uscire</span>`;
+  }
+  function apriProiezione() {
+    if (!elenco().length) return;
+    prPagina = stato.pagina;
+    pr.hidden = false; document.body.classList.add("proietto");
+    disegnaProiezione();
+    // schermo intero vero, se il browser lo permette (sulla LIM sparisce anche la barra del browser)
+    const fs = pr.requestFullscreen || pr.webkitRequestFullscreen;
+    if (fs) {
+      try {
+        const r = fs.call(pr);
+        prSchermo = true;
+        if (r && r.catch) r.catch(() => { prSchermo = false; });
+      } catch (e) { prSchermo = false; }
+    }
+    document.getElementById("prChiudi").focus({ preventScroll: true });
+  }
+  function chiudiProiezione() {
+    if (pr.hidden) return;
+    pr.hidden = true; document.body.classList.remove("proietto");
+    document.getElementById("prFoglio").innerHTML = "";
+    const inFs = document.fullscreenElement || document.webkitFullscreenElement;
+    if (inFs) (document.exitFullscreen || document.webkitExitFullscreen).call(document);
+    prSchermo = false;
+    stato.pagina = Math.min(prPagina, numeroPagine() - 1); disegnaAnteprima();
+    document.getElementById("apriLim").focus({ preventScroll: true });
+  }
+  function giraPagina(d) {
+    const nuova = Math.max(0, Math.min(numeroPagine() - 1, prPagina + d));
+    if (nuova !== prPagina) { prPagina = nuova; disegnaProiezione(); }
+  }
+  ["fullscreenchange", "webkitfullscreenchange"].forEach(ev => document.addEventListener(ev, () => {
+    const inFs = document.fullscreenElement || document.webkitFullscreenElement;
+    if (!inFs && prSchermo) { prSchermo = false; chiudiProiezione(); }     // uscito dallo schermo intero (Esc): si chiude anche la proiezione
+    else if (!pr.hidden) disegnaProiezione();
+  }));
+  window.addEventListener("resize", () => { if (!pr.hidden) disegnaProiezione(); });
+  document.addEventListener("keydown", e => {
+    if (pr.hidden) return;
+    if (e.key === "Escape") { e.preventDefault(); chiudiProiezione(); }
+    else if (e.key === "ArrowRight" || e.key === "PageDown" || e.key === " ") { e.preventDefault(); giraPagina(1); }
+    else if (e.key === "ArrowLeft" || e.key === "PageUp") { e.preventDefault(); giraPagina(-1); }
+  });
+  document.getElementById("apriLim").addEventListener("click", apriProiezione);
+  document.getElementById("proietta").addEventListener("click", apriProiezione);
+  document.getElementById("prChiudi").addEventListener("click", chiudiProiezione);
+  document.getElementById("prPrec").addEventListener("click", () => giraPagina(-1));
+  document.getElementById("prSucc").addEventListener("click", () => giraPagina(1));
 
   /* ================= PDF e stampa ================= */
   function immagine(testo) {
