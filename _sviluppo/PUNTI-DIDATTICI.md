@@ -517,3 +517,102 @@ da copiare). Stesso motore e stile delle altre lezioni; i sorgenti sono in `_svi
 ### Scelte fatte (e perché)
 - La legatura di portamento non era nel programma: è citata solo per distinguerla, perché i ragazzi la incontrano negli spartiti
   (per esempio nei brani propedeutici) e la confondono con quella di valore.
+
+---
+
+## Memory – note e Memory – strumenti
+
+**Dove:** Giochi → Memory – note (`memory-note.html`) e Memory – strumenti (`memory-strumenti.html`).
+I due giochi hanno lo stesso motore. Regola dell'errore sulle domande con più giocatori: ottobre 2026.
+
+### Concetti
+- **Note:** nome delle note sul pentagramma in chiave di violino, di basso o entrambe, entro un taglio addizionale;
+  la stessa nota in ottave diverse; il confronto tra le due chiavi («conta il nome, non l'ottava»).
+- **Strumenti:** riconoscere 21 strumenti dell'orchestra dall'aspetto, dal nome e dal **timbro**;
+  sezioni dell'orchestra (archi, legni, ottoni, percussioni) e classificazione Sachs-Hornbostel
+  (idiofoni, membranofoni, cordofoni, aerofoni), con i casi particolari (pianoforte, arpa, sassofono).
+- Memoria visiva e uditiva, attenzione, rispetto del turno.
+
+### Punti di forza
+- **Tre modi di formare le coppie per gioco**, dal più facile al più impegnativo:
+  note → nota + nome, nota + nota, due chiavi; strumenti → foto + foto, foto + nome, foto + suono (foto mute:
+  si riconosce lo strumento solo dall'orecchio).
+- **Ogni carta suona:** la nota al pianoforte o un passaggio dello strumento. Si collega sempre il segno al suono.
+- **Domande dopo ogni coppia (a scelta):** il nome della nota, la sezione dell'orchestra, la classe Sachs-Hornbostel.
+  Quando si sbaglia, il gioco spiega che cosa sono davvero gli strumenti della categoria scelta («No, gli idiofoni sono
+  strumenti in cui vibra il corpo stesso…»): l'errore diventa una piccola lezione.
+- **Con più giocatori (2–4) la coppia vale solo con la risposta giusta.** Se si sbaglia la domanda il punto non conta,
+  le carte si rigirano come se non fossero state trovate e il turno passa all'avversario, che ora sa dove sono:
+  - non basta avere buona memoria, bisogna **sapere** la nota o la classificazione;
+  - tutta la classe ha un motivo per seguire la risposta degli altri (chi ascolta può «rubare» la coppia);
+  - la risposta giusta non viene mostrata, così l'avversario deve saperla davvero.
+  Da soli invece si riprova finché si indovina (si gioca per imparare, non per perdere il turno).
+- **Mosse, tempo e stelle** da soli; **classifica a punti** in più giocatori; a fine partita gli errori per tipo di domanda.
+- Colori delle note del sito sulle carte e sui pulsanti dei nomi. Tutto in una schermata su LIM, PC e telefono.
+  Nessun microfono, nessun dato raccolto.
+
+### Come usarlo in classe
+- Alla LIM a squadre (2–4): una squadra per colore, un portavoce tocca le carte e risponde.
+- Prima partita con le coppie più facili e senza domande; poi si accendono le domande, che rendono la gara più seria.
+- Memory – strumenti con «Foto + suono» come verifica dell'ascolto timbrico dopo aver presentato l'orchestra.
+
+### Scelte fatte (e perché)
+- Errore sulla domanda = coppia annullata e turno all'avversario (chiesto da Cristiano, ottobre 2026): prima con più
+  giocatori la coppia valeva comunque e si poteva riprovare all'infinito, quindi la domanda non contava nella gara.
+- Dopo l'errore la spiegazione resta visibile circa 3 secondi, il tempo di leggerla, poi le carte si rigirano da sole.
+
+---
+
+## Schemi degli strumenti (accordi e note)
+
+Pagina `schemi-strumenti.html`: schemi pronti da proiettare alla LIM o scaricare, per flauto dolce, chitarra, ukulele,
+tastiera e basso. Le immagini di accordi (chitarra, ukulele, tastiera) e note della tastiera si rigenerano con
+`python3 _sviluppo/schemi/genera_schemi.py` (diteggiature degli accordi in `motore-schemi.js`, tabella `ACCORDI`).
+
+### Concetti
+- Accordi maggiori, minori e di settima: Do, Re, Mi, Fa, Sol, La, Si; Rem, Mim, Fam, Lam, Sim; Re7, Sol7, La7.
+- Sigla internazionale sotto il nome italiano (C, Dm, G7...): i ragazzi la ritrovano negli spartiti con gli accordi.
+- Tastiera: dal Do centrale al Mi del quarto spazio, ogni nota con il suo posto sul pentagramma; i tasti neri hanno due nomi (diesis/bemolle).
+
+### Punti di forza
+- Stessi colori delle note in tutto il sito: l'accordo prende il colore della sua fondamentale (Fam verde come il Fa, Si e Sim rosa).
+- Su chitarra e ukulele il numero nel pallino è il dito da usare; ○ corda a vuoto, ✕ corda da non suonare.
+- Tutti gli accordi in una sola schermata alla LIM (5 colonne × 3 righe): il docente indica l'accordo mentre la classe suona.
+- Confrontare lo stesso accordo su tre strumenti mostra che le note sono le stesse, cambia solo come si prendono.
+
+### Scelte fatte (e perché)
+- Chitarra: Fa, Fam, Si e Sim in forma semplificata su 4 corde, senza barré completo, alla portata della scuola media.
+- Ukulele: forme standard (Fam 1-0-1-3, Si 4-3-2-2, Sim 4-2-2-2, dalla corda Sol alla La).
+
+---
+
+## Seleziona note (schemi su misura in PDF)
+
+Pagina `seleziona-note.html` (in Schemi). Il docente sceglie lo strumento e tocca le note che servono; il sito
+prepara un PDF A4 con una carta per nota (pentagramma, nome colorato, diteggiatura), su più fogli se servono.
+
+### Concetti
+- Corrispondenza fra nota scritta, nome e posizione sullo strumento.
+- Chitarra, ukulele, basso: la stessa nota in posizioni diverse del manico (corda e tasto); la corda a vuoto.
+- Pianoforte: chiave di violino, di basso, doppio pentagramma; il Do centrale come riferimento fra le due chiavi.
+- Flauto dolce: diteggiatura di ogni nota, anche diesis e bemolli; i tasti neri hanno due nomi (♯ o ♭ a scelta).
+
+### Punti di forza
+- Schede su misura: solo le note del brano o della lezione, non tutto lo schema.
+- Si sceglie direttamente sullo strumento disegnato: il gesto di scegliere è già un piccolo esercizio di lettura.
+- Ordine «come le scelgo» (per seguire un brano) o «dal grave all'acuto» (per una scala o un riepilogo).
+- 6, 12 o 20 carte per pagina, titolo facoltativo; PDF da scaricare o stampa diretta. Tutto nel browser, nessun dato inviato.
+- Proiezione alla LIM in un tocco (sull'anteprima o «Proietta»): schermo intero, carte disposte in orizzontale
+  e più grandi (pentagramma e nome a sinistra, schema a destra), frecce per cambiare pagina, Esc per uscire.
+
+### Come usarlo in classe
+- Prima di un brano nuovo: si toccano le note del brano e si stampa la scheda da incollare sul quaderno.
+- Alla LIM: si mostra il manico o la tastiera e si chiede ai ragazzi dove sta una nota prima di toccarla;
+  poi si proietta la pagina delle carte e la si usa come riferimento mentre la classe suona.
+- Verifiche: si stampano le carte e si coprono nome o diteggiatura.
+
+### Scelte fatte (e perché)
+- Lo schema del manico mostra quattro tasti attorno alla nota (dal capotasto se la nota è in basso), con i numeri romani veri.
+- Sullo stesso foglio tutti i pentagrammi hanno la stessa grandezza, anche con i tagli addizionali.
+- Il PDF è fatto di immagini ad alta risoluzione (300 dpi): così i simboli ♯ e ♭ e i colori escono uguali su ogni computer.
+

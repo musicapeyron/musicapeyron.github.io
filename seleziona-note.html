@@ -1,0 +1,822 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<!--
+  ============================================================
+  SELEZIONA NOTE
+  Si sceglie lo strumento e si toccano le note: sul manico
+  (chitarra, ukulele, basso), sulla tastiera (pianoforte, in chiave
+  di violino, di basso o sul doppio pentagramma) o sul pentagramma
+  (flauto dolce). Si genera un PDF A4 con lo schema di ogni nota
+  (pentagramma, nome colorato, diteggiatura), su più pagine se serve,
+  da scaricare o stampare. Tutto avviene nel browser: niente dati inviati.
+  ============================================================
+-->
+<title>Seleziona note — musicascuole.it</title>
+<meta name="description" content="Scegli le note sullo strumento (flauto dolce, chitarra, ukulele, basso, pianoforte) e scarica o stampa il PDF con i loro schemi.">
+<link rel="icon" href="favicon.svg" type="image/svg+xml">
+<link rel="icon" href="favicon-32.png" type="image/png" sizes="32x32">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
+<link rel="canonical" href="https://musicascuole.it/seleziona-note.html">
+<link rel="stylesheet" href="fonts/caratteri.css">
+<link rel="stylesheet" href="comune.css">
+<script src="vexflow.js"></script>
+<script src="motore-schemi.js?v=2026-10-15b"></script>
+<script src="jspdf.js"></script>
+<style>
+  * { box-sizing: border-box; }
+  html, body { margin: 0; }
+  body { font-family: 'Inter', 'Manrope', Arial, sans-serif; color: #EAF2FF; -webkit-tap-highlight-color: transparent; }
+  button, input { font-family: inherit; }
+  .casetta { position: fixed; top: 12px; left: 12px; z-index: 50; width: 44px; height: 44px; border-radius: 50%; display: grid; place-items: center;
+    background: rgba(15,23,42,0.75); border: 1px solid rgba(255,255,255,0.18); text-decoration: none; font-size: 20px; }
+
+  #app { position: relative; z-index: 1; max-width: 1240px; margin: 0 auto; padding: 14px 14px 18px; }
+  .testa { padding: 0 0 10px 58px; display: flex; align-items: baseline; gap: 16px; flex-wrap: wrap; }
+  .testa h1 { font-family: 'Manrope', sans-serif; font-size: 26px; margin: 0; }
+  .testa p { margin: 0; color: #A9B8D0; font-size: 15px; }
+
+  .colonne { display: flex; gap: 16px; align-items: stretch; }
+  .pannello { background: rgba(15,23,42,0.62); border: 1px solid rgba(255,255,255,0.12); border-radius: 18px; padding: 14px 16px; }
+  .sinistra { flex: 1 1 760px; min-width: 0; display: flex; flex-direction: column; gap: 10px; }
+  .destra { flex: 0 0 430px; display: flex; flex-direction: column; gap: 10px; }
+
+  .riga { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
+  .etichetta { flex: 0 0 96px; font-size: 13px; font-weight: 700; color: #A9B8D0; text-transform: uppercase; letter-spacing: 0.04em; }
+  .scelte { display: flex; gap: 6px; flex-wrap: wrap; }
+  .scelta { border: 1px solid rgba(255,255,255,0.18); background: rgba(255,255,255,0.06); color: #EAF2FF; border-radius: 999px;
+    padding: 7px 14px; font-size: 15px; font-weight: 600; cursor: pointer; }
+  .scelta:hover { filter: brightness(1.15); }
+  .scelta.attiva { background: var(--acc, #5EC8D8); border-color: var(--acc, #5EC8D8); color: #0f172a; }
+  .scelta .ico { width: 20px; height: 20px; vertical-align: -5px; margin-right: 4px; }
+
+  /* il selettore: manico, tastiera o pentagramma, sempre nello stesso riquadro */
+  .selettore { background: #fff; border-radius: 14px; height: 300px; display: flex; align-items: center; justify-content: center; padding: 8px 10px; overflow: hidden; }
+  .selettore svg { width: 100%; height: 100%; display: block; user-select: none; -webkit-user-select: none; }
+  .selettore .zona { fill: transparent; cursor: pointer; }
+  .selettore .zona:hover { fill: rgba(94,200,216,0.16); }
+  .aiuto { font-size: 14px; color: #A9B8D0; min-height: 20px; }
+  .aiuto b { color: #EAF2FF; }
+  .avviso { color: #FCA5A5; }
+
+  .note-scelte { display: flex; flex-direction: column; gap: 8px; flex: 1 1 auto; min-height: 0; }
+  .testa-note { display: flex; align-items: center; gap: 8px; }
+  .testa-note #conta { font-weight: 700; margin-right: auto; }
+  .piccolo { border: 1px solid rgba(255,255,255,0.18); background: rgba(255,255,255,0.06); color: #EAF2FF; border-radius: 10px;
+    padding: 5px 11px; font-size: 13px; font-weight: 600; cursor: pointer; }
+  .piccolo:hover { filter: brightness(1.15); }
+  .piccolo:disabled { opacity: 0.4; cursor: default; }
+  #chips { display: flex; flex-wrap: wrap; gap: 6px; align-content: flex-start; flex: 1 1 0; min-height: 76px; overflow-y: auto; }
+  .chip { display: inline-flex; align-items: center; gap: 6px; background: rgba(255,255,255,0.08); border: 1px solid rgba(255,255,255,0.14);
+    border-radius: 999px; padding: 3px 4px 3px 10px; font-size: 14px; font-weight: 600; white-space: nowrap; }
+  .chip i { width: 11px; height: 11px; border-radius: 50%; border: 1px solid rgba(0,0,0,0.4); flex: 0 0 auto; }
+  .chip small { color: #A9B8D0; font-weight: 500; }
+  .chip button { border: 0; background: rgba(255,255,255,0.1); color: #EAF2FF; width: 22px; height: 22px; border-radius: 50%; cursor: pointer; font-size: 13px; line-height: 1; }
+  .chip button:hover { background: rgba(255,255,255,0.22); }
+  .vuoto { color: #7f8ea8; font-size: 14px; }
+
+  .anteprima { display: flex; flex-direction: column; align-items: center; gap: 8px; }
+  #foglio { width: 306px; height: 433px; background: #fff; border-radius: 4px; box-shadow: 0 6px 24px rgba(0,0,0,0.45); overflow: hidden; }
+  #foglio > svg { width: 100%; height: 100%; display: block; }
+  /* l'anteprima è un pulsante: si tocca e si proietta */
+  .anteprima-tocca { position: relative; padding: 0; border: 0; background: none; cursor: zoom-in; border-radius: 6px; font-family: inherit; }
+  .anteprima-tocca:hover #foglio { box-shadow: 0 0 0 3px #5EC8D8, 0 6px 24px rgba(0,0,0,0.45); }
+  .anteprima-tocca:disabled { cursor: default; }
+  .anteprima-tocca:disabled .badge-lim { display: none; }
+  .badge-lim { position: absolute; left: 50%; bottom: 12px; transform: translateX(-50%); white-space: nowrap;
+    background: rgba(15,23,42,0.88); color: #EAF2FF; border: 1px solid rgba(94,200,216,0.7); border-radius: 999px;
+    padding: 6px 13px; font-size: 13px; font-weight: 700; pointer-events: none; }
+  #proietta { background: rgba(94,200,216,0.16); color: #EAF2FF; border: 1px solid rgba(94,200,216,0.6); }
+
+  /* proiezione: tutta la finestra (e lo schermo intero, se il browser lo permette) */
+  #proiezione { position: fixed; inset: 0; z-index: 1000; background: #0b1120; }
+  #proiezione[hidden] { display: none; }
+  .pr-foglio { position: absolute; inset: 12px 76px 52px; display: flex; align-items: center; justify-content: center; }
+  .pr-foglio > svg { width: 100%; height: 100%; display: block; }
+  .pr-freccia { position: absolute; top: 50%; width: 58px; height: 120px; margin-top: -60px; border-radius: 16px; border: 1px solid rgba(255,255,255,0.22);
+    background: rgba(255,255,255,0.08); color: #EAF2FF; font-size: 26px; cursor: pointer; }
+  .pr-freccia.sx { left: 9px; } .pr-freccia.dx { right: 9px; }
+  .pr-freccia:hover { filter: brightness(1.3); }
+  .pr-freccia:disabled { opacity: 0.2; cursor: default; filter: none; }
+  .pr-chiudi { position: absolute; right: 12px; bottom: 9px; border: 1px solid rgba(255,255,255,0.25); background: rgba(255,255,255,0.1); color: #EAF2FF;
+    border-radius: 10px; padding: 7px 14px; font-size: 15px; font-weight: 700; cursor: pointer; }
+  .pr-chiudi:hover { filter: brightness(1.3); }
+  .pr-barra { position: absolute; left: 0; right: 0; bottom: 16px; text-align: center; color: #A9B8D0; font-size: 15px; pointer-events: none; }
+  .pr-barra b { color: #EAF2FF; }
+  body.proietto { overflow: hidden; }
+  body.proietto > *:not(#proiezione) { visibility: hidden; }
+
+  .pagine { display: flex; align-items: center; gap: 10px; font-weight: 700; font-size: 14px; }
+  .campo { display: flex; flex-direction: column; gap: 4px; font-size: 13px; font-weight: 700; color: #A9B8D0; }
+  .campo input { font-size: 15px; padding: 8px 10px; border-radius: 10px; border: 1px solid rgba(255,255,255,0.2); background: rgba(255,255,255,0.08); color: #EAF2FF; }
+  .azioni { display: flex; gap: 8px; }
+  .azioni button { flex: 1 1 0; border: 0; border-radius: 12px; padding: 12px 6px; font-size: 15px; white-space: nowrap; font-weight: 800; cursor: pointer; }
+  .azioni button:hover { filter: brightness(1.1); }
+  .azioni button:active { filter: brightness(0.92); }
+  .azioni button:disabled { opacity: 0.45; cursor: default; filter: none; }
+  #scarica { background: #5EC8D8; color: #0f172a; }
+  #stampa { background: rgba(255,255,255,0.12); color: #EAF2FF; border: 1px solid rgba(255,255,255,0.2); }
+  .destra .riga .etichetta { flex-basis: 84px; }
+  .destra .scelta { padding: 6px 11px; font-size: 14px; }
+
+  #areaStampa { display: none; }
+  @media print {
+    @page { size: A4 portrait; margin: 0; }
+    body.in-stampa > *:not(#areaStampa) { display: none !important; }
+    body.in-stampa::before, body.in-stampa::after { display: none !important; }
+    body.in-stampa { background: #fff !important; margin: 0 !important; padding: 0 !important; zoom: 1 !important; }
+    body.in-stampa #areaStampa { display: block; }
+    #areaStampa > svg { width: 210mm; height: 296.5mm; display: block; break-after: page; page-break-after: always; }
+    #areaStampa > svg:last-child { break-after: auto; page-break-after: auto; }
+  }
+
+  /* TELEFONO IN VERTICALE: colonne una sotto l'altra, la pagina scorre */
+  @media (max-width: 620px) and (orientation: portrait) {
+    .casetta { top: 8px; left: 8px; width: 38px; height: 38px; font-size: 17px; }
+    #app { padding: 8px 8px 16px; }
+    .testa { padding-left: 44px; min-height: 38px; align-items: center; }
+    .testa h1 { font-size: 20px; }
+    .testa p { display: none; }
+    .colonne { flex-direction: column; gap: 10px; }
+    .sinistra, .destra { flex: 0 0 auto; }
+    .pannello { padding: 10px; }
+    .etichetta { flex-basis: 100%; }
+    .selettore { height: auto; min-height: 150px; padding: 6px; }
+    .selettore svg { height: auto; }
+    .selettore.largo { overflow-x: auto; justify-content: flex-start; }
+    .selettore.largo svg { min-width: 680px; }
+    #chips { height: auto; max-height: 120px; }
+    #foglio { width: min(306px, 86vw); height: auto; aspect-ratio: 210 / 297; }
+    .pr-foglio { inset: 8px 8px 96px; }
+    .pr-freccia { top: auto; bottom: 44px; margin-top: 0; height: 46px; width: 64px; }
+    .pr-freccia.sx { left: 10px; } .pr-freccia.dx { right: 10px; }
+    .pr-chiudi { right: 50%; transform: translateX(50%); bottom: 50px; }
+    .pr-barra { bottom: 14px; font-size: 13px; }
+    .pr-barra .solo-tastiera { display: none; }
+  }
+
+  /* PC e LIM: misure fisse, poi adatta-schermo.js ingrandisce tutto */
+  @media (min-width: 900px) and (min-height: 560px) {
+    #app { width: 1240px; max-width: none; }
+    .sinistra { flex: 0 0 774px; }
+  }
+</style>
+</head>
+<body>
+<script src="info-sito.js"></script>
+<a class="casetta" href="schemi.html" aria-label="Torna agli schemi" title="Torna agli schemi">🏠</a>
+
+<div id="app">
+  <header class="testa">
+    <h1>Seleziona note</h1>
+    <p>Scegli lo strumento, tocca le note, poi proietta alla LIM o scarica il PDF.</p>
+  </header>
+  <div class="colonne">
+    <section class="sinistra pannello">
+      <div class="riga"><span class="etichetta">Strumento</span><div class="scelte" id="strumenti"></div></div>
+      <div class="riga" id="rigaOpzione"><span class="etichetta" id="etOpzione">Chiave</span><div class="scelte" id="opzione"></div></div>
+      <div class="riga" id="rigaAlt"><span class="etichetta" id="etAlt">Tasti neri</span><div class="scelte" id="alterazioni"></div></div>
+      <div class="selettore" id="selettore"></div>
+      <div class="aiuto" id="aiuto"></div>
+      <div class="note-scelte">
+        <div class="testa-note">
+          <span id="conta">Nessuna nota</span>
+          <button class="piccolo" id="togliUltima">↶ Togli l'ultima</button>
+          <button class="piccolo" id="svuota">Svuota</button>
+        </div>
+        <div id="chips"></div>
+      </div>
+    </section>
+    <section class="destra pannello">
+      <div class="anteprima">
+        <button type="button" id="apriLim" class="anteprima-tocca" aria-label="Proietta alla LIM a schermo intero" title="Proietta alla LIM a schermo intero">
+          <div id="foglio"></div>
+          <span class="badge-lim">⛶ Tocca per proiettare alla LIM</span>
+        </button>
+        <div class="pagine">
+          <button class="piccolo" id="prec" aria-label="Pagina precedente">◀</button>
+          <span id="numPag">pagina 1 di 1</span>
+          <button class="piccolo" id="succ" aria-label="Pagina successiva">▶</button>
+        </div>
+      </div>
+      <div class="riga"><span class="etichetta">Per pagina</span><div class="scelte" id="grandezze"></div></div>
+      <div class="riga"><span class="etichetta">Ordine</span><div class="scelte" id="ordini"></div></div>
+      <label class="campo">Titolo del foglio (facoltativo)
+        <input id="titolo" maxlength="60" placeholder="es. Le note della chitarra – 2ª media" autocomplete="off">
+      </label>
+      <div class="azioni">
+        <button id="scarica">⬇ Scarica PDF</button>
+        <button id="stampa">🖨 Stampa</button>
+        <button id="proietta">⛶ Proietta</button>
+      </div>
+    </section>
+  </div>
+</div>
+<div id="areaStampa"></div>
+
+<!-- proiezione alla LIM: le carte grandi, a schermo intero -->
+<div id="proiezione" role="dialog" aria-label="Proiezione a schermo intero" hidden>
+  <div class="pr-foglio" id="prFoglio"></div>
+  <button type="button" class="pr-freccia sx" id="prPrec" aria-label="Pagina precedente">◀</button>
+  <button type="button" class="pr-freccia dx" id="prSucc" aria-label="Pagina successiva">▶</button>
+  <button type="button" class="pr-chiudi" id="prChiudi" aria-label="Esci dalla proiezione">✕ Esci</button>
+  <div class="pr-barra" id="prBarra"></div>
+</div>
+
+<script>
+(function () {
+  "use strict";
+  const MS = window.MotoreSchemi;
+  const COLORI = MS.COLORI, NOMI = MS.NOMI;
+  const FONT = `font-family="'DejaVu Sans', Verdana, Arial, sans-serif"`;
+  const NS = "http://www.w3.org/2000/svg";
+
+  /* ================= strumenti ================= */
+  const STRUMENTI = {
+    flauto:   { nome: "Flauto dolce", ico: "ic-flauto", col: "#5EC8D8" },
+    chitarra: { nome: "Chitarra", ico: "ic-chitarra", col: "#F99D1C", corde: 6, accordatura: [76, 71, 67, 62, 57, 52], chiave: "treble",
+                corda: ["Mi", "Si", "Sol", "Re", "La", "Mi"] },
+    ukulele:  { nome: "Ukulele", ico: "ic-ukulele", col: "#BED958", corde: 4, accordatura: [69, 64, 60, 67], chiave: "treble",
+                corda: ["La", "Mi", "Do", "Sol"] },
+    basso:    { nome: "Basso elettrico", ico: "ic-basso", col: "#E21C48", corde: 4, accordatura: [55, 50, 45, 40], chiave: "bass",
+                corda: ["Sol", "Re", "La", "Mi"] },
+    piano:    { nome: "Pianoforte", ico: "ic-tastiera", col: "#a78bfa" }
+  };
+  const TASTI_MANICO = 12;
+  const CHIAVI_PIANO = {
+    violino: { nome: "𝄞 Violino", da: 60, a: 84 },    // Do centrale – Do6
+    basso:   { nome: "𝄢 Basso", da: 36, a: 60 },      // Do2 – Do centrale
+    doppio:  { nome: "Doppio pentagramma", da: 36, a: 84 }
+  };
+  // flauto: le note dello schema (diteggiatura tedesca), dal Do centrale al Fa del quinto rigo
+  const FLAUTO = Object.keys(MS.POSIZIONI.flauto);
+
+  /* ================= stato ================= */
+  const stato = {
+    strumento: "chitarra", chiave: "violino", alt: "#", altFlauto: "",
+    grandezza: 12, ordine: "scelta", pagina: 0,
+    note: { flauto: [], chitarra: [], ukulele: [], basso: [], piano: [] }
+  };
+  const elenco = () => stato.note[stato.strumento];
+
+  /* ================= note: nomi, midi, scrittura ================= */
+  const DIESIS = ["c", "c#", "d", "d#", "e", "f", "f#", "g", "g#", "a", "a#", "b"];
+  const BEMOLLE = ["c", "db", "d", "eb", "e", "f", "gb", "g", "ab", "a", "bb", "b"];
+  const SEMI = { c: 0, d: 2, e: 4, f: 5, g: 7, a: 9, b: 11 };
+  function daMidi(m, alt) { return (alt === "b" ? BEMOLLE : DIESIS)[m % 12] + (Math.floor(m / 12) - 1); }
+  function midiDi(k) { const n = MS.analizza(k); return 12 * (n.ottava + 1) + SEMI[n.lettera] + (n.alt === "#" ? 1 : n.alt === "b" ? -1 : 0); }
+  function nomeNota(k) {
+    const n = MS.analizza(k);
+    return NOMI[n.lettera].replace(/^./, c => c.toUpperCase()) + (n.alt === "#" ? "♯" : n.alt === "b" ? "♭" : "");
+  }
+  const ROMANI = ["0", "I", "II", "III", "IV", "V", "VI", "VII", "VIII", "IX", "X", "XI", "XII", "XIII"];
+  // la nota scritta di un elemento scelto (le alterazioni dei tasti neri seguono la scelta ♯/♭)
+  function chiaveDi(it) { return it.k || daMidi(it.m, stato.alt); }
+  function midiElemento(it) { return it.m != null ? it.m : midiDi(it.k); }
+  function chiaveRigo(it) {
+    if (stato.strumento === "piano") {
+      if (stato.chiave === "violino") return "treble";
+      if (stato.chiave === "basso") return "bass";
+      return "doppio";
+    }
+    return stato.strumento === "basso" ? "bass" : "treble";
+  }
+  function esc(t) { return String(t).replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;"); }
+  function scur(hex, f) { const n = parseInt(hex.slice(1), 16);
+    return "#" + [16, 8, 0].map(s => Math.round(((n >> s) & 255) * f).toString(16).padStart(2, "0")).join(""); }
+
+  /* ================= interfaccia: pulsanti di scelta ================= */
+  function pulsanti(contenitore, voci, attiva, quando, colore) {
+    contenitore.innerHTML = "";
+    voci.forEach(([val, html]) => {
+      const b = document.createElement("button");
+      b.className = "scelta" + (val === attiva ? " attiva" : "");
+      if (colore) b.style.setProperty("--acc", typeof colore === "function" ? colore(val) : colore);
+      b.innerHTML = html; b.type = "button";
+      b.addEventListener("click", () => quando(val));
+      contenitore.appendChild(b);
+    });
+  }
+  function disegnaComandi() {
+    pulsanti(document.getElementById("strumenti"),
+      Object.entries(STRUMENTI).map(([k, s]) => [k, `<svg class="ico" viewBox="0 0 48 48" aria-hidden="true"><use href="icone.svg#${s.ico}"/></svg>${s.nome}`]),
+      stato.strumento, v => { stato.strumento = v; stato.pagina = 0; tutto(); }, v => STRUMENTI[v].col);
+
+    const rigaOpz = document.getElementById("rigaOpzione");
+    rigaOpz.style.display = stato.strumento === "piano" ? "" : "none";
+    if (stato.strumento === "piano")
+      pulsanti(document.getElementById("opzione"), Object.entries(CHIAVI_PIANO).map(([k, c]) => [k, c.nome]), stato.chiave,
+        v => { stato.chiave = v; tutto(); }, "#a78bfa");
+
+    const et = document.getElementById("etAlt");
+    if (stato.strumento === "flauto") {
+      et.textContent = "Alterazione";
+      pulsanti(document.getElementById("alterazioni"), [["", "♮ naturale"], ["#", "♯ diesis"], ["b", "♭ bemolle"]], stato.altFlauto,
+        v => { stato.altFlauto = v; disegnaComandi(); disegnaSelettore(); }, "#5EC8D8");
+    } else {
+      et.textContent = "Note alterate";
+      pulsanti(document.getElementById("alterazioni"), [["#", "♯ con i diesis"], ["b", "♭ con i bemolli"]], stato.alt,
+        v => { stato.alt = v; tutto(); }, STRUMENTI[stato.strumento].col);
+    }
+    pulsanti(document.getElementById("grandezze"), [[6, "6 grandi"], [12, "12"], [20, "20 piccole"]], stato.grandezza,
+      v => { stato.grandezza = v; stato.pagina = 0; disegnaComandi(); disegnaAnteprima(); }, "#5EC8D8");
+    pulsanti(document.getElementById("ordini"), [["scelta", "come le scelgo"], ["grave", "dal grave all'acuto"]], stato.ordine,
+      v => { stato.ordine = v; disegnaComandi(); disegnaAnteprima(); }, "#5EC8D8");
+  }
+
+  function messaggio(html, avviso) {
+    const a = document.getElementById("aiuto");
+    a.innerHTML = avviso ? `<span class="avviso">${html}</span>` : html;
+  }
+  function aiuto() {
+    const s = stato.strumento;
+    if (s === "flauto") messaggio("Tocca il pentagramma all'altezza della nota. Per un diesis o un bemolle scegli prima <b>♯</b> o <b>♭</b>. Tocca di nuovo una nota per toglierla.");
+    else if (s === "piano") messaggio("Tocca i tasti della tastiera. Il pallino grigio segna il <b>Do centrale</b>. Tocca di nuovo un tasto per toglierlo.");
+    else messaggio("Tocca il manico: ogni punto è una <b>corda</b> (numeri a sinistra) e un <b>tasto</b> (numeri romani). A sinistra del capotasto c'è la corda a vuoto.");
+  }
+
+  /* aggiunge o toglie un elemento (stessa posizione = si toglie) */
+  function scegli(it, uguale) {
+    const l = elenco(), i = l.findIndex(uguale);
+    if (i >= 0) l.splice(i, 1); else l.push(it);
+    disegnaSelettore(); disegnaNote(); disegnaAnteprima();
+  }
+
+  /* ================= selettore: manico ================= */
+  function selettoreManico() {
+    const S = STRUMENTI[stato.strumento], nC = S.corde;
+    const W = 880, x0 = 92, fw = (W - x0 - 14) / TASTI_MANICO, sp = nC === 6 ? 38 : 48, y0 = 30, H = y0 + (nC - 1) * sp + 52;
+    let s = `<svg viewBox="0 0 ${W} ${H}" xmlns="${NS}" ${FONT}>`;
+    // tastiera di legno chiaro
+    s += `<rect x="${x0}" y="${y0 - 16}" width="${fw * TASTI_MANICO}" height="${(nC - 1) * sp + 32}" fill="#f6efe3" rx="3"/>`;
+    const segni = [3, 5, 7, 9];
+    segni.forEach(t => s += `<circle cx="${x0 + (t - 0.5) * fw}" cy="${y0 + (nC - 1) * sp / 2}" r="6" fill="#d9cdb8"/>`);
+    s += `<circle cx="${x0 + 11.5 * fw}" cy="${y0 + (nC - 1) * sp / 2 - sp}" r="6" fill="#d9cdb8"/><circle cx="${x0 + 11.5 * fw}" cy="${y0 + (nC - 1) * sp / 2 + sp}" r="6" fill="#d9cdb8"/>`;
+    for (let t = 1; t <= TASTI_MANICO; t++) {
+      s += `<line x1="${x0 + t * fw}" y1="${y0 - 16}" x2="${x0 + t * fw}" y2="${y0 + (nC - 1) * sp + 16}" stroke="#b8c2cf" stroke-width="2"/>`;
+      s += `<text x="${x0 + (t - 0.5) * fw}" y="${H - 8}" font-size="15" text-anchor="middle" fill="#64748b">${ROMANI[t]}</text>`;
+    }
+    s += `<text x="${x0 - 26}" y="${H - 8}" font-size="13" text-anchor="middle" fill="#64748b">vuota</text>`;
+    s += `<line x1="${x0}" y1="${y0 - 17}" x2="${x0}" y2="${y0 + (nC - 1) * sp + 17}" stroke="#111" stroke-width="6"/>`;
+    for (let c = 1; c <= nC; c++) {
+      const y = y0 + (c - 1) * sp;
+      s += `<line x1="${x0 - 50}" y1="${y}" x2="${x0 + fw * TASTI_MANICO}" y2="${y}" stroke="#7b8796" stroke-width="${1.2 + c * 0.45}"/>`;
+      s += `<text x="10" y="${y + 5}" font-size="15" font-weight="700" fill="#475569">${c}</text>`;
+      s += `<text x="24" y="${y + 5}" font-size="12" fill="#64748b">${S.corda[c - 1]}</text>`;
+    }
+    // nomi delle note (chiari) e note scelte
+    const scelte = elenco();
+    for (let c = 1; c <= nC; c++) for (let t = 0; t <= TASTI_MANICO; t++) {
+      const cx = t === 0 ? x0 - 26 : x0 + (t - 0.5) * fw, y = y0 + (c - 1) * sp;
+      const k = daMidi(S.accordatura[c - 1] + t, stato.alt), n = MS.analizza(k);
+      const scelto = scelte.some(e => e.c === c && e.t === t);
+      if (scelto) {
+        const col = COLORI[n.lettera];
+        s += `<circle cx="${cx}" cy="${y}" r="16" fill="${col}" stroke="${scur(col, 0.55)}" stroke-width="1.5"/>`;
+        s += `<text x="${cx}" y="${y + 4.5}" font-size="${n.alt ? 11 : 13}" font-weight="700" text-anchor="middle" fill="#fff" stroke="${scur(col, 0.45)}" stroke-width="2.6" paint-order="stroke">${nomeNota(k)}</text>`;
+      } else {
+        s += `<text x="${cx}" y="${y - 6}" font-size="10.5" text-anchor="middle" fill="#9aa6b6">${nomeNota(k)}</text>`;
+      }
+      const zx = t === 0 ? x0 - 50 : x0 + (t - 1) * fw, zw = t === 0 ? 50 : fw;
+      s += `<rect class="zona" data-c="${c}" data-t="${t}" x="${zx}" y="${y - sp / 2}" width="${zw}" height="${sp}"/>`;
+    }
+    return s + "</svg>";
+  }
+
+  /* ================= selettore: tastiera ================= */
+  function bianchiTra(da, a) { const out = []; for (let m = da; m <= a; m++) if (SEMI_BIANCHI.has(m % 12)) out.push(m); return out; }
+  const SEMI_BIANCHI = new Set([0, 2, 4, 5, 7, 9, 11]);
+  function selettoreTastiera() {
+    const C = CHIAVI_PIANO[stato.chiave], bianchi = bianchiTra(C.da, C.a);
+    const W = 880, lb = (W - 4) / bianchi.length, hb = 220, ln = lb * 0.6, hn = 136, y0 = 4;
+    const scelte = new Set(elenco().map(e => e.m));
+    let s = `<svg viewBox="0 0 ${W} ${hb + 34}" xmlns="${NS}" ${FONT}>`, neri = "";
+    bianchi.forEach((m, i) => {
+      const x = 2 + i * lb, k = daMidi(m, stato.alt), n = MS.analizza(k), on = scelte.has(m), col = COLORI[n.lettera];
+      s += `<rect class="${on ? "" : "zona"}" data-m="${m}" x="${x}" y="${y0}" width="${lb}" height="${hb}" fill="${on ? col : "#fff"}" stroke="${on ? scur(col, 0.6) : "#8592a3"}" stroke-width="1.4" style="cursor:pointer"/>`;
+      if (on) s += `<text x="${x + lb / 2}" y="${y0 + hb - 12}" font-size="${Math.min(13, lb * 0.45)}" font-weight="700" text-anchor="middle" fill="#fff" stroke="${scur(col, 0.45)}" stroke-width="2.4" paint-order="stroke" pointer-events="none">${nomeNota(k)}</text>`;
+      if (m === 60) s += `<circle cx="${x + lb / 2}" cy="${y0 + hb + 12}" r="5" fill="#94a3b8"/>`;
+      if (m % 12 === 0) s += `<text x="${x + lb / 2}" y="${y0 + hb - (on ? 30 : 12)}" font-size="${Math.min(11, lb * 0.4)}" text-anchor="middle" fill="${on ? "#fff" : "#94a3b8"}" pointer-events="none">Do${m / 12 - 1}</text>`;
+      // tasto nero a destra di questo
+      if (i < bianchi.length - 1 && bianchi[i + 1] - m === 2) {
+        const mn = m + 1, kn = daMidi(mn, stato.alt), nn = MS.analizza(kn), onn = scelte.has(mn), coln = COLORI[nn.lettera];
+        neri += `<rect class="${onn ? "" : "nero"}" data-m="${mn}" x="${x + lb - ln / 2}" y="${y0}" width="${ln}" height="${hn}" rx="2" fill="${onn ? coln : "#1d232b"}" stroke="${onn ? scur(coln, 0.6) : "#1d232b"}" stroke-width="1.2" style="cursor:pointer"/>`;
+      }
+    });
+    s += neri;
+    s += `<text x="${W / 2}" y="${hb + 30}" font-size="13" text-anchor="middle" fill="#64748b">● Do centrale</text>`;
+    return s + "</svg>";
+  }
+
+  /* ================= selettore: pentagramma del flauto ================= */
+  // posizioni sul rigo: 0 = Do centrale (taglio sotto), 10 = Fa del quinto rigo
+  const LETTERE = ["c", "d", "e", "f", "g", "a", "b"];
+  const RIGO = { sp: 22, yMi: 0, xNote: 150 };
+  function ySu(p) { return RIGO.yMi - (p - 2) * RIGO.sp / 2; }
+  function selettoreRigo() {
+    const W = 880, sp = RIGO.sp; RIGO.yMi = 60 + 4 * sp;
+    const H = RIGO.yMi + 3 * sp;
+    let s = `<svg viewBox="0 0 ${W} ${H}" xmlns="${NS}" ${FONT}>`;
+    for (let i = 0; i < 5; i++) s += `<line x1="16" y1="${60 + i * sp}" x2="${W - 16}" y2="${60 + i * sp}" stroke="#111" stroke-width="1.6"/>`;
+    // chiave di violino (stesso disegno della pagina Schemi), riga del Sol sulla seconda riga
+    const sc = sp / 6.5 * 0.65;
+    s += `<path transform="translate(${30 - sc * 15} ${RIGO.yMi - sp - sc * 90.2}) scale(${sc})" fill="#111" d="${CHIAVE_SOL}"/>`;
+    const l = elenco(), passo = Math.min(56, (W - RIGO.xNote - 80) / Math.max(1, l.length));
+    l.forEach((it, i) => s += testaNota(it.k, RIGO.xNote + i * passo, false));
+    // nota fantasma dove andrà la prossima
+    s += `<g id="fantasma" style="display:none"></g>`;
+    for (let p = 0; p <= 10; p++) {
+      const y = ySu(p);
+      s += `<rect class="zona-rigo" data-p="${p}" x="${RIGO.xNote - 40}" y="${y - sp / 4}" width="${W - RIGO.xNote + 24}" height="${sp / 2}" fill="transparent" style="cursor:pointer"/>`;
+    }
+    return s + "</svg>";
+  }
+  function testaNota(k, x, fantasma) {
+    const n = MS.analizza(k), p = LETTERE.indexOf(n.lettera) + (n.ottava - 4) * 7, y = ySu(p), col = COLORI[n.lettera];
+    let s = `<g${fantasma ? ' opacity="0.4" pointer-events="none"' : ""}>`;
+    if (p <= 0) for (let q = 0; q >= p; q -= 2) s += `<line x1="${x - 18}" y1="${ySu(q)}" x2="${x + 18}" y2="${ySu(q)}" stroke="#111" stroke-width="1.6"/>`;
+    if (n.alt) s += `<text x="${x - 24}" y="${y + 9}" font-size="26" text-anchor="middle" fill="#111">${n.alt === "#" ? "♯" : "♭"}</text>`;
+    s += `<ellipse cx="${x}" cy="${y}" rx="12.5" ry="9" transform="rotate(-20 ${x} ${y})" fill="${col}" stroke="#111" stroke-width="1.6"/>`;
+    if (!fantasma) s += `<text x="${x}" y="${RIGO.yMi + 2.6 * RIGO.sp}" font-size="13" font-weight="700" text-anchor="middle" fill="${scur(col, 0.8)}">${nomeNota(k)}</text>`;
+    return s + "</g>";
+  }
+  function notaFlauto(p) {
+    const lettera = LETTERE[((p % 7) + 7) % 7], ott = 4 + Math.floor(p / 7);
+    return lettera + stato.altFlauto + ott;
+  }
+
+  function disegnaSelettore() {
+    const box = document.getElementById("selettore");
+    const s = stato.strumento;
+    box.classList.toggle("largo", s !== "flauto");
+    box.innerHTML = s === "flauto" ? selettoreRigo() : s === "piano" ? selettoreTastiera() : selettoreManico();
+    const svg = box.querySelector("svg");
+    if (s === "flauto") {
+      const f = svg.querySelector("#fantasma");
+      const passo = Math.min(56, (880 - RIGO.xNote - 80) / Math.max(1, elenco().length + 1));
+      svg.querySelectorAll(".zona-rigo").forEach(z => {
+        const p = +z.dataset.p;
+        z.addEventListener("mouseenter", () => {
+          const k = notaFlauto(p);
+          if (!FLAUTO.includes(k) || elenco().some(e => e.k === k)) { f.style.display = "none"; return; }
+          f.innerHTML = testaNota(k, RIGO.xNote + elenco().length * passo, true); f.style.display = "";
+        });
+        z.addEventListener("mouseleave", () => f.style.display = "none");
+        z.addEventListener("click", () => {
+          const k = notaFlauto(p);
+          if (!FLAUTO.includes(k)) {
+            messaggio(`${nomeNota(k)}: questa nota non c'è nello schema del flauto dolce (dal Do centrale al Fa del quinto rigo).`, true);
+            return;
+          }
+          aiuto(); scegli({ k }, e => e.k === k);
+        });
+      });
+    } else if (s === "piano") {
+      svg.querySelectorAll("[data-m]").forEach(z => z.addEventListener("click", () => { const m = +z.dataset.m; scegli({ m }, e => e.m === m); }));
+    } else {
+      const S = STRUMENTI[s];
+      svg.querySelectorAll(".zona").forEach(z => z.addEventListener("click", () => {
+        const c = +z.dataset.c, t = +z.dataset.t;
+        scegli({ c, t, m: S.accordatura[c - 1] + t }, e => e.c === c && e.t === t);
+      }));
+    }
+  }
+
+  /* ================= elenco delle note scelte ================= */
+  function ordinate() {
+    const l = elenco().slice();
+    if (stato.ordine === "grave") l.sort((a, b) => midiElemento(a) - midiElemento(b) || (b.c || 0) - (a.c || 0));
+    return l;
+  }
+  function descrizione(it) {
+    if (it.c) return `corda ${it.c} · ${it.t === 0 ? "vuota" : "tasto " + ROMANI[it.t]}`;
+    if (it.m === 60) return "Do centrale";
+    return "";
+  }
+  function disegnaNote() {
+    const l = elenco(), box = document.getElementById("chips");
+    document.getElementById("conta").textContent = l.length === 0 ? "Nessuna nota scelta" : l.length === 1 ? "1 nota scelta" : `${l.length} note scelte`;
+    document.getElementById("togliUltima").disabled = document.getElementById("svuota").disabled = l.length === 0;
+    document.getElementById("scarica").disabled = document.getElementById("stampa").disabled =
+      document.getElementById("proietta").disabled = document.getElementById("apriLim").disabled = l.length === 0;
+    box.innerHTML = l.length ? "" : `<span class="vuoto">Le note che scegli compaiono qui.</span>`;
+    l.forEach((it, i) => {
+      const k = chiaveDi(it), n = MS.analizza(k), d = descrizione(it);
+      const c = document.createElement("span"); c.className = "chip";
+      c.innerHTML = `<i style="background:${COLORI[n.lettera]}"></i>${nomeNota(k)}${d ? ` <small>${d}</small>` : ""}<button type="button" aria-label="Togli">✕</button>`;
+      c.querySelector("button").addEventListener("click", () => { l.splice(i, 1); disegnaSelettore(); disegnaNote(); disegnaAnteprima(); });
+      box.appendChild(c);
+    });
+  }
+
+  /* ================= il foglio A4 (SVG in millimetri) ================= */
+  const nascosto = document.createElement("div");
+  nascosto.style.cssText = "position:absolute;left:-9999px;top:0;width:400px;visibility:hidden";
+  document.body.appendChild(nascosto);
+  const cacheRighi = new Map();
+
+  // pentagramma con una nota: chiave "treble", "bass" o "doppio" (pianoforte)
+  function rigo(k, chiave) {
+    const id = k + "|" + chiave;
+    if (cacheRighi.has(id)) return cacheRighi.get(id);
+    const div = document.createElement("div"); nascosto.appendChild(div);
+    const n = MS.analizza(k);
+    if (chiave === "doppio") rigoDoppio(div, n); else MS.rigoNota(div, n, chiave);
+    const svg = div.querySelector("svg");
+    svg.removeAttribute("style");
+    const testo = new XMLSerializer().serializeToString(svg);
+    div.remove();
+    cacheRighi.set(id, testo);
+    return testo;
+  }
+  function rigoDoppio(div, n) {
+    const VF = (window.Vex && window.Vex.Flow) ? window.Vex.Flow : window.VexFlow;
+    const R = new VF.Renderer(div, VF.Renderer.Backends.SVG); R.resize(170, 240);
+    const ctx = R.getContext();
+    const su = new VF.Stave(22, 10, 144), giu = new VF.Stave(22, 110, 144);
+    [su, giu].forEach((st, i) => {
+      st.setBegBarType(VF.Barline.type.NONE); st.setEndBarType(VF.Barline.type.NONE);
+      st.setStyle({ strokeStyle: "#111", fillStyle: "#111" }); st.addClef(i ? "bass" : "treble").setContext(ctx).draw();
+    });
+    new VF.StaveConnector(su, giu).setType("brace").setContext(ctx).draw();
+    new VF.StaveConnector(su, giu).setType("singleLeft").setContext(ctx).draw();
+    const m = 12 * (n.ottava + 1) + SEMI[n.lettera] + (n.alt === "#" ? 1 : n.alt === "b" ? -1 : 0);
+    const st = m >= 60 ? su : giu, ch = m >= 60 ? "treble" : "bass";
+    const sn = new VF.StaveNote({ keys: [n.lettera + n.alt + "/" + n.ottava], duration: "w", clef: ch });
+    if (n.alt) sn.addModifier(new VF.Accidental(n.alt), 0);
+    sn.setStave(st); const tc = new VF.TickContext(); tc.addTickable(sn).preFormat(); tc.setX(118 - st.getNoteStartX()); sn.setContext(ctx).draw();
+    const svg = div.querySelector("svg");
+    svg.querySelectorAll("path, rect").forEach(el => { if (el.getAttribute("stroke") === "#999999") el.setAttribute("stroke", "#111"); });
+    let alto = 0, basso = 240;
+    try { const bb = svg.getBBox(); alto = Math.min(0, bb.y - 4); basso = Math.max(232, bb.y + bb.height + 4); } catch (e) {}
+    svg.setAttribute("viewBox", `0 ${alto} 170 ${basso - alto}`); svg.removeAttribute("width"); svg.removeAttribute("height");
+  }
+
+  // mette un SVG (testo) dentro un riquadro del foglio
+  function annida(testo, x, y, w, h, allinea, vista) {
+    const doc = new DOMParser().parseFromString(testo, "image/svg+xml"), svg = doc.documentElement;
+    svg.removeAttribute("style");
+    if (vista) svg.setAttribute("viewBox", vista);
+    svg.setAttribute("x", x); svg.setAttribute("y", y); svg.setAttribute("width", w); svg.setAttribute("height", h);
+    svg.setAttribute("preserveAspectRatio", allinea || "xMidYMid meet");
+    return new XMLSerializer().serializeToString(svg);
+  }
+
+  // schema di una posizione sul manico: quattro tasti attorno alla nota (dal capotasto se la nota è in basso)
+  function schemaManico(strumento, corda, tasto, k) {
+    const nC = STRUMENTI[strumento].corde, passo = 15, lt = 19, nT = 4;
+    const inizio = tasto <= 4 ? 1 : Math.min(tasto - 2, TASTI_MANICO - nT + 1);
+    const x0 = 34, y0 = 8, larg = nT * lt, alto = (nC - 1) * passo;
+    const n = MS.analizza(k), col = COLORI[n.lettera], bordo = scur(col, 0.62);
+    let s = "";
+    for (let t = 1; t <= nT; t++) s += `<line x1="${x0 + t * lt}" y1="${y0}" x2="${x0 + t * lt}" y2="${y0 + alto}" stroke="#b8c2cf" stroke-width="1"/>`;
+    [3, 5, 7, 9].forEach(f => { if (f >= inizio && f < inizio + nT) s += `<circle cx="${x0 + (f - inizio + 0.5) * lt}" cy="${y0 + alto / 2}" r="2.6" fill="#cbd5e1"/>`; });
+    if (TASTI_MANICO >= inizio && TASTI_MANICO < inizio + nT) {
+      const cx = x0 + (TASTI_MANICO - inizio + 0.5) * lt;
+      s += `<circle cx="${cx}" cy="${y0 + alto / 2 - passo}" r="2.6" fill="#cbd5e1"/><circle cx="${cx}" cy="${y0 + alto / 2 + passo}" r="2.6" fill="#cbd5e1"/>`;
+    }
+    for (let c = 1; c <= nC; c++) {
+      const y = y0 + (c - 1) * passo, attiva = c === corda;
+      s += `<line x1="${x0}" y1="${y}" x2="${x0 + larg}" y2="${y}" stroke="${attiva ? col : "#b8c2cf"}" stroke-width="${attiva ? 2.2 : 1}"/>`;
+      s += `<text x="${x0 - 24}" y="${y + 3.5}" font-size="10.5" text-anchor="middle" fill="#97a2b3">${c}</text>`;
+    }
+    s += inizio === 1
+      ? `<line x1="${x0}" y1="${y0 - 1}" x2="${x0}" y2="${y0 + alto + 1}" stroke="#111" stroke-width="3.2"/>`
+      : `<line x1="${x0}" y1="${y0}" x2="${x0}" y2="${y0 + alto}" stroke="#b8c2cf" stroke-width="1"/>`;
+    for (let t = 1; t <= nT; t++) s += `<text x="${x0 + (t - 0.5) * lt}" y="${y0 + alto + 14}" font-size="9.5" text-anchor="middle" fill="#97a2b3">${ROMANI[inizio + t - 1]}</text>`;
+    const y = y0 + (corda - 1) * passo;
+    if (tasto === 0) s += `<circle cx="${x0 - 9}" cy="${y}" r="5.2" fill="#fff" stroke="${bordo}" stroke-width="2"/>`;
+    else s += `<circle cx="${x0 + (tasto - inizio + 0.5) * lt}" cy="${y}" r="6.6" fill="${col}" stroke="${bordo}" stroke-width="1"/>`;
+    return `<svg xmlns="${NS}" viewBox="0 0 ${x0 + larg + 8} ${y0 + alto + 18}" ${FONT}>${s}</svg>`;
+  }
+
+  // tastiera: dal Do dell'ottava della nota al Mi dell'ottava sopra; il pallino segna il Do centrale
+  function schemaTastiera(m, k) {
+    const o = Math.floor(m / 12), bianchi = bianchiTra(o * 12, o * 12 + 16);
+    const lb = 12.5, hb = 54, ln = 7.6, hn = 33;
+    const col = COLORI[MS.analizza(k).lettera], bordo = scur(col, 0.62);
+    let s = "";
+    bianchi.forEach((b, i) => {
+      s += `<rect x="${i * lb}" y="0" width="${lb}" height="${hb}" fill="${b === m ? col : "#fff"}" stroke="${b === m ? bordo : "#8592a3"}" stroke-width="1"/>`;
+      if (b === 60) s += `<circle cx="${i * lb + lb / 2}" cy="${hb + 5}" r="1.9" fill="#94a3b8"/>`;
+    });
+    bianchi.forEach((b, i) => {
+      if (i === bianchi.length - 1 || bianchi[i + 1] - b !== 2) return;
+      const on = b + 1 === m;
+      s += `<rect x="${(i + 1) * lb - ln / 2}" y="0" width="${ln}" height="${hn}" fill="${on ? col : "#1d232b"}" stroke="${on ? bordo : "#1d232b"}" stroke-width="1"/>`;
+    });
+    s += `<rect x="0" y="0" width="${bianchi.length * lb}" height="${hb}" fill="none" stroke="#8592a3" stroke-width="1.2"/>`;
+    return `<svg xmlns="${NS}" viewBox="-1 -1 ${bianchi.length * lb + 2} ${hb + 9}">${s}</svg>`;
+  }
+
+  /* tutti i pentagrammi di un foglio con la stessa finestra: stessa grandezza e stessa altezza in ogni carta */
+  let finestre = {};
+  function calcolaFinestre(note) {
+    finestre = {};
+    note.forEach(it => {
+      const ch = stato.strumento === "flauto" ? "treble" : chiaveRigo(it);
+      const v = rigo(chiaveDi(it), ch).match(/viewBox="([^"]+)"/)[1].split(/\s+/).map(Number);
+      const f = finestre[ch] || (finestre[ch] = { x: v[0], y: v[1], w: v[2], b: v[1] + v[3] });
+      f.y = Math.min(f.y, v[1]); f.b = Math.max(f.b, v[1] + v[3]);
+    });
+  }
+  const vistaDi = ch => { const f = finestre[ch]; return f ? `${f.x} ${f.y} ${f.w} ${f.b - f.y}` : null; };
+
+  function carta(it, x, y, w, h) {
+    const k = chiaveDi(it), n = MS.analizza(k), col = COLORI[n.lettera], nome = nomeNota(k), str = stato.strumento;
+    let s = `<rect x="${x}" y="${y}" width="${w}" height="${h}" rx="3" fill="#fff" stroke="#d5dce7" stroke-width="0.4"/>`;
+    const fs = Math.min(h * 0.12, w * 0.15) * (nome.length > 3 ? 0.88 : 1);
+    const testoNome = (cx, by) => `<text x="${cx}" y="${by}" font-size="${fs.toFixed(2)}" font-weight="700" text-anchor="middle" fill="${col}" stroke="${scur(col, 0.45)}" stroke-width="${(fs * 0.035).toFixed(2)}" paint-order="stroke" ${FONT}>${nome}</text>`;
+    if (str === "flauto") {
+      const wr = w * 0.62, hr = h * 0.56, yr = y + (h - hr - fs * 1.4) / 2;
+      s += annida(rigo(k, "treble"), x + 1.5, yr, wr, hr, null, vistaDi("treble"));
+      s += testoNome(x + 1.5 + wr / 2, yr + hr + fs * 1.1);
+      s += annida(MS.schemaNota("flauto", n), x + wr + 2, y + 3, w - wr - 4, h - 6);
+      return s;
+    }
+    if (w > h * 1.2) {
+      // carta larga (proiezione alla LIM): pentagramma e nome a sinistra, schema a destra, tutto più grande
+      const fl = Math.min(h * 0.17, w * 0.1) * (nome.length > 3 ? 0.88 : 1);
+      const wr = w * 0.5, hr = h * 0.62, yr = y + (h - hr - fl * 1.3) / 2;
+      s += annida(rigo(k, chiaveRigo(it)), x + 1.5, yr, wr, hr, null, vistaDi(chiaveRigo(it)));
+      s += testoNome(x + 1.5 + wr / 2, yr + hr + fl * 1.05).replace(/font-size="[^"]+"/, `font-size="${fl.toFixed(2)}"`)
+        .replace(/stroke-width="[^"]+" paint/, `stroke-width="${(fl * 0.035).toFixed(2)}" paint`);
+      const xs = x + wr + 3, ws = w - wr - 6;
+      if (str === "piano") s += annida(schemaTastiera(midiElemento(it), k), xs, y + 3, ws, h - 6);
+      else s += annida(schemaManico(str, it.c, it.t, k), xs, y + 3, ws, h - 6);
+      return s;
+    }
+    const hr = h * (chiaveRigo(it) === "doppio" ? 0.5 : 0.4);
+    s += annida(rigo(k, chiaveRigo(it)), x + 2, y + 1.5, w - 4, hr, null, vistaDi(chiaveRigo(it)));
+    const yNome = y + 1.5 + hr + fs * 0.95;
+    s += testoNome(x + w / 2, yNome);
+    const ys = yNome + fs * 0.45, hs = y + h - 3 - ys;
+    if (str === "piano") s += annida(schemaTastiera(midiElemento(it), k), x + w * 0.1, ys, w * 0.8, hs);
+    else s += annida(schemaManico(str, it.c, it.t, k), x + w * 0.1, ys, w * 0.8, hs);
+    return s;
+  }
+
+  const GRIGLIA = { 6: [2, 3], 12: [3, 4], 20: [4, 5] };
+  function numeroPagine() { return Math.max(1, Math.ceil(elenco().length / stato.grandezza)); }
+  /* foglio A4 verticale (anteprima, PDF, stampa) oppure, per la LIM, una pagina orizzontale
+     con le proporzioni dello schermo: stesse carte, disposte in orizzontale */
+  const GRIGLIA_LIM = { 6: [3, 2], 12: [4, 3], 20: [5, 4] };
+  function paginaSVG(ip, lim) {
+    const [col, rig] = (lim && !lim.verticale ? GRIGLIA_LIM : GRIGLIA)[stato.grandezza], titolo = document.getElementById("titolo").value.trim();
+    const tot = numeroPagine(), note = ordinate().slice(ip * stato.grandezza, (ip + 1) * stato.grandezza);
+    const W = lim ? lim.W : 210, H = lim ? lim.H : 297;
+    const M = lim ? 6 : 10, gap = lim ? 3 : 4, alto = titolo ? (lim ? 15 : 22) : (lim ? 6 : 11), fondo = H - (lim ? 8 : 11);
+    const cw = (W - 2 * M - (col - 1) * gap) / col, ch = (fondo - alto - (rig - 1) * gap) / rig;
+    calcolaFinestre(note);
+    let s = `<svg xmlns="${NS}" viewBox="0 0 ${W} ${H}"${lim ? "" : ' width="210mm" height="297mm"'}><rect width="${W}" height="${H}" fill="#fff"/>`;
+    if (titolo) s += `<text x="${W / 2}" y="${lim ? 10.5 : 15}" font-size="7.5" font-weight="700" text-anchor="middle" fill="#1e293b" ${FONT}>${esc(titolo)}</text>`;
+    note.forEach((it, i) => {
+      const c = i % col, r = Math.floor(i / col);
+      s += carta(it, M + c * (cw + gap), alto + r * (ch + gap), cw, ch);
+    });
+    let piede = `musicascuole.it  ·  ${STRUMENTI[stato.strumento].nome}`;
+    if (stato.strumento === "piano") piede += ` (${stato.chiave === "doppio" ? "doppio pentagramma" : "chiave di " + stato.chiave})`;
+    if (stato.strumento === "piano") piede += "  ·  il pallino segna il Do centrale";
+    if (tot > 1) piede += `  ·  pagina ${ip + 1} di ${tot}`;
+    s += `<text x="${W / 2}" y="${H - (lim ? 3 : 5)}" font-size="3" text-anchor="middle" fill="#94a3b8" ${FONT}>${esc(piede)}</text>`;
+    if (!note.length) s += `<text x="${W / 2}" y="${H / 2}" font-size="6" text-anchor="middle" fill="#94a3b8" ${FONT}>Tocca le note sullo strumento</text>`;
+    return s + "</svg>";
+  }
+
+  function disegnaAnteprima() {
+    const tot = numeroPagine();
+    if (stato.pagina >= tot) stato.pagina = tot - 1;
+    document.getElementById("foglio").innerHTML = paginaSVG(stato.pagina);
+    document.getElementById("numPag").textContent = `pagina ${stato.pagina + 1} di ${tot}`;
+    document.getElementById("prec").disabled = stato.pagina === 0;
+    document.getElementById("succ").disabled = stato.pagina >= tot - 1;
+  }
+
+  /* ================= proiezione alla LIM ================= */
+  const pr = document.getElementById("proiezione");
+  let prPagina = 0, prSchermo = false;
+  function disegnaProiezione() {
+    const box = document.getElementById("prFoglio"), r = box.getBoundingClientRect(), tot = numeroPagine();
+    if (prPagina >= tot) prPagina = tot - 1;
+    // pagina con le proporzioni dello spazio disponibile: orizzontale sulla LIM, verticale sul telefono
+    const rap = r.width > 0 ? r.height / r.width : 0.7071;
+    box.innerHTML = paginaSVG(prPagina, rap > 1
+      ? { W: 210, H: Math.round(Math.max(260, Math.min(420, 210 * rap))), verticale: true }
+      : { W: 297, H: Math.round(Math.max(150, Math.min(297, 297 * rap))) });
+    document.getElementById("prPrec").disabled = prPagina === 0;
+    document.getElementById("prSucc").disabled = prPagina >= tot - 1;
+    document.getElementById("prBarra").innerHTML = (tot > 1 ? `<b>pagina ${prPagina + 1} di ${tot}</b><span class="solo-tastiera"> &nbsp;·&nbsp; </span>` : "") +
+      `<span class="solo-tastiera">${tot > 1 ? "frecce ◀ ▶ per cambiare pagina · " : ""}Esc per uscire</span>`;
+  }
+  function apriProiezione() {
+    if (!elenco().length) return;
+    prPagina = stato.pagina;
+    pr.hidden = false; document.body.classList.add("proietto");
+    disegnaProiezione();
+    // schermo intero vero, se il browser lo permette (sulla LIM sparisce anche la barra del browser)
+    const fs = pr.requestFullscreen || pr.webkitRequestFullscreen;
+    if (fs) {
+      try {
+        const r = fs.call(pr);
+        prSchermo = true;
+        if (r && r.catch) r.catch(() => { prSchermo = false; });
+      } catch (e) { prSchermo = false; }
+    }
+    document.getElementById("prChiudi").focus({ preventScroll: true });
+  }
+  function chiudiProiezione() {
+    if (pr.hidden) return;
+    pr.hidden = true; document.body.classList.remove("proietto");
+    document.getElementById("prFoglio").innerHTML = "";
+    const inFs = document.fullscreenElement || document.webkitFullscreenElement;
+    if (inFs) (document.exitFullscreen || document.webkitExitFullscreen).call(document);
+    prSchermo = false;
+    stato.pagina = Math.min(prPagina, numeroPagine() - 1); disegnaAnteprima();
+    document.getElementById("apriLim").focus({ preventScroll: true });
+  }
+  function giraPagina(d) {
+    const nuova = Math.max(0, Math.min(numeroPagine() - 1, prPagina + d));
+    if (nuova !== prPagina) { prPagina = nuova; disegnaProiezione(); }
+  }
+  ["fullscreenchange", "webkitfullscreenchange"].forEach(ev => document.addEventListener(ev, () => {
+    const inFs = document.fullscreenElement || document.webkitFullscreenElement;
+    if (!inFs && prSchermo) { prSchermo = false; chiudiProiezione(); }     // uscito dallo schermo intero (Esc): si chiude anche la proiezione
+    else if (!pr.hidden) disegnaProiezione();
+  }));
+  window.addEventListener("resize", () => { if (!pr.hidden) disegnaProiezione(); });
+  document.addEventListener("keydown", e => {
+    if (pr.hidden) return;
+    if (e.key === "Escape") { e.preventDefault(); chiudiProiezione(); }
+    else if (e.key === "ArrowRight" || e.key === "PageDown" || e.key === " ") { e.preventDefault(); giraPagina(1); }
+    else if (e.key === "ArrowLeft" || e.key === "PageUp") { e.preventDefault(); giraPagina(-1); }
+  });
+  document.getElementById("apriLim").addEventListener("click", apriProiezione);
+  document.getElementById("proietta").addEventListener("click", apriProiezione);
+  document.getElementById("prChiudi").addEventListener("click", chiudiProiezione);
+  document.getElementById("prPrec").addEventListener("click", () => giraPagina(-1));
+  document.getElementById("prSucc").addEventListener("click", () => giraPagina(1));
+
+  /* ================= PDF e stampa ================= */
+  function immagine(testo) {
+    return new Promise((ok, ko) => {
+      const url = URL.createObjectURL(new Blob([testo], { type: "image/svg+xml" }));
+      const img = new Image();
+      img.onload = () => { URL.revokeObjectURL(url); ok(img); };
+      img.onerror = e => { URL.revokeObjectURL(url); ko(e); };
+      img.src = url;
+    });
+  }
+  function nomeFile() {
+    const base = { flauto: "flauto-dolce", chitarra: "chitarra", ukulele: "ukulele", basso: "basso", piano: "pianoforte" }[stato.strumento];
+    return `schema-note-${base}.pdf`;
+  }
+  async function scaricaPDF() {
+    const b = document.getElementById("scarica"), testo = b.textContent;
+    b.disabled = true;
+    try {
+      const { jsPDF } = window.jspdf;
+      const pdf = new jsPDF({ orientation: "portrait", unit: "mm", format: "a4", compress: true });
+      const tot = numeroPagine(), W = 2480, H = 3508;   // 300 punti per pollice
+      for (let i = 0; i < tot; i++) {
+        b.textContent = tot > 1 ? `Preparo… ${i + 1}/${tot}` : "Preparo…";
+        await new Promise(r => setTimeout(r, 0));
+        const img = await immagine(paginaSVG(i));
+        const cv = document.createElement("canvas"); cv.width = W; cv.height = H;
+        const c = cv.getContext("2d"); c.fillStyle = "#fff"; c.fillRect(0, 0, W, H); c.drawImage(img, 0, 0, W, H);
+        if (i > 0) pdf.addPage();
+        pdf.addImage(cv.toDataURL("image/jpeg", 0.9), "JPEG", 0, 0, 210, 297, undefined, "FAST");
+      }
+      pdf.save(nomeFile());
+    } catch (e) {
+      messaggio("Non sono riuscito a preparare il PDF: prova con Stampa e scegli «Salva come PDF».", true);
+    } finally { b.textContent = testo; b.disabled = elenco().length === 0; }
+  }
+  function stampa() {
+    const area = document.getElementById("areaStampa");
+    area.innerHTML = Array.from({ length: numeroPagine() }, (_, i) => paginaSVG(i)).join("");
+    document.body.classList.add("in-stampa");
+    window.print();
+  }
+  window.addEventListener("afterprint", () => { document.body.classList.remove("in-stampa"); document.getElementById("areaStampa").innerHTML = ""; });
+
+  /* ================= avvio ================= */
+  function tutto() { disegnaComandi(); aiuto(); disegnaSelettore(); disegnaNote(); disegnaAnteprima(); if (window.adattaSchermo) window.adattaSchermo(); }
+  document.getElementById("togliUltima").addEventListener("click", () => { elenco().pop(); disegnaSelettore(); disegnaNote(); disegnaAnteprima(); });
+  document.getElementById("svuota").addEventListener("click", () => { elenco().length = 0; disegnaSelettore(); disegnaNote(); disegnaAnteprima(); });
+  document.getElementById("prec").addEventListener("click", () => { stato.pagina--; disegnaAnteprima(); });
+  document.getElementById("succ").addEventListener("click", () => { stato.pagina++; disegnaAnteprima(); });
+  let attesa = null;
+  document.getElementById("titolo").addEventListener("input", () => { clearTimeout(attesa); attesa = setTimeout(disegnaAnteprima, 200); });
+  document.getElementById("scarica").addEventListener("click", scaricaPDF);
+  document.getElementById("stampa").addEventListener("click", stampa);
+
+  const CHIAVE_SOL = "M30.191 73.208C30.135 72.731,30.191 72.703,30.444 72.45C34.824 68.378,38.138 63.24,38.138 57.034C38.138 53.524,37.155 50.042,35.498 47.627C34.881 46.729,33.842 45.606,33.392 45.606C32.831 45.606,31.567 46.644,30.781 47.543C27.776 50.856,26.794 55.911,26.794 60.123C26.794 62.454,27.102 65.093,27.383 66.75C27.468 67.227,27.496 67.311,27.018 67.733C21.178 72.534,15 78.319,15 86.49C15 93.51,19.802 100.193,29.714 100.193C30.641 100.193,31.708 100.109,32.522 99.94C32.943 99.856,33.027 99.828,33.112 100.305C33.589 103.029,34.207 106.539,34.207 108.449C34.207 114.43,30.163 115.16,27.776 115.16C25.586 115.16,24.547 114.514,24.547 113.98C24.547 113.7,24.912 113.587,25.839 113.278C27.102 112.913,28.535 111.846,28.535 109.488C28.535 107.269,27.131 105.36,24.66 105.36C21.964 105.36,20.335 107.522,20.335 110.021C20.335 112.632,21.908 116.62,28.029 116.62C30.725 116.62,35.976 115.384,35.976 108.533C35.976 106.202,35.246 102.383,34.824 99.856C34.74 99.379,34.768 99.435,35.33 99.182C39.43 97.554,42.125 94.128,42.125 89.551C42.125 84.384,38.334 79.807,32.382 79.807C31.343 79.807,31.343 79.807,31.202 79.077M34.01 51.867C35.33 51.867,36.425 52.962,36.425 55.181C36.425 59.674,32.578 63.324,29.405 66.104C29.124 66.357,28.956 66.3,28.872 65.767C28.703 64.728,28.619 63.352,28.619 62.06C28.619 55.742,31.539 51.867,34.01 51.867M29.602 79.414C29.714 80.172,29.714 80.144,28.984 80.369C25.446 81.576,23.115 84.777,23.115 88.231C23.115 91.853,25.025 94.437,27.776 95.391C28.113 95.504,28.591 95.616,28.872 95.616C29.18 95.616,29.349 95.419,29.349 95.167C29.349 94.886,29.04 94.774,28.759 94.661C27.046 93.931,25.839 92.19,25.839 90.337C25.839 88.006,27.411 86.293,29.882 85.591C30.528 85.423,30.612 85.479,30.697 85.928L32.718 97.975C32.803 98.424,32.747 98.424,32.157 98.536C31.511 98.649,30.697 98.733,29.882 98.733C22.806 98.733,18.229 94.802,18.229 89.186C18.229 86.799,18.65 83.598,21.992 79.807C24.435 77.111,26.288 75.595,28.17 74.079C28.591 73.742,28.675 73.798,28.759 74.219M32.382 85.844C32.297 85.339,32.353 85.226,32.831 85.283C36.116 85.563,38.812 88.315,38.812 91.853C38.812 94.409,37.267 96.458,35.021 97.61C34.544 97.834,34.459 97.834,34.375 97.357";
+
+  tutto();
+})();
+</script>
+<script src="adatta-schermo.js" data-schermate="#app"></script>
+</body>
+</html>
