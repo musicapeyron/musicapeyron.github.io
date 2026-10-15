@@ -54,7 +54,7 @@ function vfDisegna(g, spec) {
   const out = { note: [] };
   if (note.length) {
     const travi = [];
-    eventi.forEach((e, i) => { if (e.trave && note[i + 1] && (i === 0 || !eventi[i - 1].trave)) { let j = i; while (eventi[j].trave && note[j + 1]) j++; travi.push(new VF.Beam(note.slice(i, j + 1))); } });
+    eventi.forEach((e, i) => { if (e.trave && note[i + 1] && (i === 0 || !eventi[i - 1].trave)) { let j = i; while (eventi[j].trave && note[j + 1]) j++; travi.push(new VF.Beam(note.slice(i, j + 1), true)); } });   // true: tutto il gruppo con i gambi dalla stessa parte
     const voce = new VF.Voice({ num_beats: 4, beat_value: 4 }).setMode(VF.Voice.Mode.SOFT); voce.addTickables(note);
     new VF.Formatter().joinVoices([voce]).format([voce], Math.max(40, larg - st.getNoteStartX() - 20));
     note.forEach(n => n.setStave(st));

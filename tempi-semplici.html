@@ -12,7 +12,7 @@
 <link rel="stylesheet" href="comune.css">
 <!-- VexFlow (nel sito, nessun servizio esterno) disegna la musica del palco -->
 <script src="vexflow.js"></script>
-<script src="lezioni-vexflow.js?v=1"></script>
+<script src="lezioni-vexflow.js?v=2"></script>
 <style>
 /* =========================================================
    I tempi semplici — lezione interattiva a passi (stesso motore di note-sul-pentagramma.html;
@@ -938,7 +938,8 @@ PASSI.push({
   disegna() {
     fermaTutto();
     const ev = [];
-    for (let b = 0; b < 2 * this.m; b++) ev.push(...(this.div ? EV([["8t", 0], ["8", 2]]) : EV([["q", 2]])));
+    const nb = this.m === 2 ? 2 : 1;               // crome sempre ben distanziate
+    for (let b = 0; b < nb * this.m; b++) ev.push(...(this.div ? EV([["8t", 0], ["8", 2]]) : EV([["q", 2]])));
     scena(this, ev, { tempo: this.m + "/4", m: this.m, parti: this.div ? 2 : 1, x0: 240 });
     cart(this.div ? `${this.m}/4 · ogni movimento = <b>due crome</b>` : `${this.m}/4 · <b>${this.m}</b> movimenti da una semiminima`, false);
   },
@@ -974,7 +975,7 @@ function passoTempo(m, melodia, testi, quaderno) {
   };
 }
 PASSI.push(passoTempo(2,
-  [["q", 2], ["q", 0], ["8t", 2], ["8", 3], ["q", 4], ["q", 5], ["q", 4], ["h", 2]],
+  [["q", 0], ["8t", 2], ["8", 4], ["h", 2]],
   [`<b>2</b> movimenti in ogni battuta: il primo è <b>forte</b> (F), il secondo <b>debole</b> (d). ${ASCOLTA("colpi", "🥁 Ascolta i colpi")}`,
    `È un tempo <b>binario</b>: si conta «<b>1</b> 2, <b>1</b> 2». È il tempo delle <b>marce</b>. ${ASCOLTA("melodia", "▶ Ascolta la melodia")}`],
   "<p><b>2/4</b>: 2 movimenti da una semiminima. <b>Forte</b> – <b>debole</b>. Tempo binario.</p>"));
@@ -1073,8 +1074,8 @@ function battutaEv(lista, i0) {
 PASSI.push({
   cap: 2, breve: "Quale tempo?", titolo: "Quale tempo?",
   punti: [
-    "Manca l'indicazione di tempo! <b>Conta</b> quanti movimenti ci sono in ogni battuta e scegli: 2/4, 3/4 o 4/4.",
-    "Se sbagli, sotto ogni battuta compare il conto. Poi premi «Un'altra»."
+    "Manca l'indicazione di tempo! <b>Conta</b> quanti movimenti ci sono nella battuta e scegli: 2/4, 3/4 o 4/4.",
+    "Se sbagli, sotto la battuta compare il conto. Poi premi «Un'altra»."
   ],
   quaderno: "<p>Per trovare il tempo: si <b>sommano</b> i valori delle figure di una battuta.</p>",
   crea() {
@@ -1090,20 +1091,21 @@ PASSI.push({
   nuova(prima) {
     fermaTutto();
     let m; do { m = 2 + Math.floor(Math.random() * 3); } while (!prima && m === this.m && Math.random() < 0.6);
-    const P = BATTUTE_Q[m], a = Math.floor(Math.random() * P.length); let b; do { b = Math.floor(Math.random() * P.length); } while (b === a);
-    this.m = m; this.batt = [P[a], P[b]]; this.risolta = false; this.primo = true;
+    const P = BATTUTE_Q[m]; let a; do { a = Math.floor(Math.random() * P.length); } while (P.length > 1 && P[a] === this.ultima);
+    // la melodia cambia un po' ogni volta (i0)
+    this.m = m; this.batt = [P[a]]; this.ultima = P[a]; this.i0 = Math.floor(Math.random() * 6); this.risolta = false; this.primo = true;
     document.querySelectorAll("#gRisp .btn").forEach(x => x.classList.remove("on", "giusto", "sbagliato"));
     this.disegna(false);
     cart(`Quanti movimenti? <span class="piccolo">· giuste al primo colpo: ${this.giuste} su ${this.fatte}</span>`, false);
   },
   disegna(conTempo) {
-    const ev = battutaEv(this.batt[0], 0).concat(battutaEv(this.batt[1], 4));
+    const ev = battutaEv(this.batt[0], this.i0 || 0);
     const r = RIGO();
     let extra = conTempo ? "" : `<g class="buco"><rect x="180" y="${r.y(8) - 4}" width="52" height="${4 * S + 8}" rx="8"/><text x="206" y="${r.y(4) + 14}">?</text></g>`;
     scena(this, ev, { tempo: conTempo ? this.m + "/4" : null, m: this.m, accenti: false, parti: 1, extra, x0: 240, x1: 940 });
     // il conto di ogni battuta (nascosto finché serve)
     const B = this.B; let s = "";
-    [0, 1].forEach(k => {
+    [0].forEach(k => {
       const vals = B.ev.filter(e => e.t >= k * this.m - 1e-9 && e.t < (k + 1) * this.m - 1e-9).map(e => num(e.d));
       s += `<text class="somma vela nascosto" x="${B.x(k * this.m) + (B.mw - B.padL) / 2}" y="370" text-anchor="middle">${vals.join(" + ")}${vals.length > 1 ? " = " + this.m : ""}</text>`;
     });
@@ -1123,7 +1125,7 @@ PASSI.push({
     } else {
       el.classList.add("sbagliato"); this.primo = false;
       qa(".somma").forEach(x => mostra(x));
-      cart(`Non ancora: guarda il conto sotto le battute`, false);
+      cart(`Non ancora: guarda il conto sotto la battuta`, false);
     }
   },
   ascolta() { if (this.B) ascoltaTempo(this.B); },
@@ -1147,8 +1149,8 @@ PASSI.push({
   mostra(k) {
     fermaTutto(); this.k = k;
     document.querySelectorAll("#gComp .btn").forEach((b, i) => b.classList.toggle("on", (i === 0) === (k === "s")));
-    if (k === "s") scena(this, EV([["8t", 2], ["8", 2], ["8t", 4], ["8", 2], ["8t", 3], ["8", 3], ["8t", 1], ["8", 1]]), { tempo: "2/4", m: 2, parti: 2 });
-    else scena(this, EV([["8t", 2], ["8t", 2], ["8", 2], ["8t", 4], ["8t", 3], ["8", 2], ["8t", 3], ["8t", 2], ["8", 1], ["8t", 0], ["8t", 1], ["8", 0]]), { tempo: "6/8", m: 2, ub: 1.5, parti: 3 });
+    if (k === "s") scena(this, EV([["8t", 2], ["8", 2], ["8t", 4], ["8", 3]]), { tempo: "2/4", m: 2, parti: 2 });
+    else scena(this, EV([["8t", 2], ["8t", 3], ["8", 4], ["8t", 3], ["8t", 2], ["8", 0]]), { tempo: "6/8", m: 2, ub: 1.5, parti: 3 });
     cart(k === "s" ? "2/4 · ogni movimento: <b>2</b> crome" : "6/8 · ogni movimento: <b>3</b> crome", false);
   },
   semplice() { this.mostra("s"); this.ascolta(); },

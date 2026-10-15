@@ -1,6 +1,6 @@
-/* lezioni-vexflow.js — la musica delle lezioni interattive (note-sul-pentagramma, alterazioni, punto-di-valore, legatura-di-valore)
+/* lezioni-vexflow.js — la musica delle lezioni interattive (note-sul-pentagramma, alterazioni, punto-di-valore, legatura-di-valore, tempi-semplici)
    disegnata con VexFlow (vexflow.js va caricato prima). Sorgente: _sviluppo/lezioni/vexflow-palco.js: dopo una modifica
-   si ricopia qui e si cambia il ?v= nelle quattro pagine. */
+   si ricopia qui e si cambia il ?v= in tutte le pagine (punto, legatura e tempi si rigenerano con costruisci.py). */
 /* ================= VexFlow nel palco =================
    La musica scritta (chiavi, tempo, note, pause, punti, travature, legature, alterazioni, tagli) la disegna VexFlow.
    Le righe del pentagramma restano nostre (svgRigo), così si possono illuminare e toccare come prima:
@@ -57,7 +57,7 @@ function vfDisegna(g, spec) {
   const out = { note: [] };
   if (note.length) {
     const travi = [];
-    eventi.forEach((e, i) => { if (e.trave && note[i + 1] && (i === 0 || !eventi[i - 1].trave)) { let j = i; while (eventi[j].trave && note[j + 1]) j++; travi.push(new VF.Beam(note.slice(i, j + 1))); } });
+    eventi.forEach((e, i) => { if (e.trave && note[i + 1] && (i === 0 || !eventi[i - 1].trave)) { let j = i; while (eventi[j].trave && note[j + 1]) j++; travi.push(new VF.Beam(note.slice(i, j + 1), true)); } });   // true: tutto il gruppo con i gambi dalla stessa parte
     const voce = new VF.Voice({ num_beats: 4, beat_value: 4 }).setMode(VF.Voice.Mode.SOFT); voce.addTickables(note);
     new VF.Formatter().joinVoices([voce]).format([voce], Math.max(40, larg - st.getNoteStartX() - 20));
     note.forEach(n => n.setStave(st));

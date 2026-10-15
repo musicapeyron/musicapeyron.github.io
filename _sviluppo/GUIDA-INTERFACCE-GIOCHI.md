@@ -163,6 +163,10 @@ e si cambia il `?v=` nelle quattro pagine). Regole:
   Sul bianco: teste colorate con un sottile bordo nero (il MI giallo si vede), nomi delle note con colori un po' più
   scuri, righe accese più spesse, luce delle note arancione; niente segni neri sul pentagramma che sembrino musica
   (es. un «=» fra due battute sembra una pausa: va sopra il pentagramma).
+- **Note mai appiccicate**: due crome vicine devono stare ad almeno ~65 unità del palco (una testa e mezza abbondante).
+  Se una battuta ha crome, meglio **una battuta larga** che due strette (nel «Quale tempo?» e nel 6/8 ne basta una).
+- **Gambi dei gruppi con la trave tutti dalla stessa parte**: la direzione la decide VexFlow per tutto il gruppo
+  (`new VF.Beam(note, true)`); la regola del SI (gambo giù dal SI in su) vale per le note sole.
 - Prove: oltre a `stati.py`, script che toccano ogni pulsante e controllano il risultato (suoni, valori, legature):
   le sole schermate non bastano.
 
