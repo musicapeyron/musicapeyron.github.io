@@ -517,3 +517,46 @@ da copiare). Stesso motore e stile delle altre lezioni; i sorgenti sono in `_svi
 ### Scelte fatte (e perché)
 - La legatura di portamento non era nel programma: è citata solo per distinguerla, perché i ragazzi la incontrano negli spartiti
   (per esempio nei brani propedeutici) e la confondono con quella di valore.
+
+---
+
+## Memory – note e Memory – strumenti
+
+**Dove:** Giochi → Memory – note (`memory-note.html`) e Memory – strumenti (`memory-strumenti.html`).
+I due giochi hanno lo stesso motore. Regola dell'errore sulle domande con più giocatori: ottobre 2026.
+
+### Concetti
+- **Note:** nome delle note sul pentagramma in chiave di violino, di basso o entrambe, entro un taglio addizionale;
+  la stessa nota in ottave diverse; il confronto tra le due chiavi («conta il nome, non l'ottava»).
+- **Strumenti:** riconoscere 21 strumenti dell'orchestra dall'aspetto, dal nome e dal **timbro**;
+  sezioni dell'orchestra (archi, legni, ottoni, percussioni) e classificazione Sachs-Hornbostel
+  (idiofoni, membranofoni, cordofoni, aerofoni), con i casi particolari (pianoforte, arpa, sassofono).
+- Memoria visiva e uditiva, attenzione, rispetto del turno.
+
+### Punti di forza
+- **Tre modi di formare le coppie per gioco**, dal più facile al più impegnativo:
+  note → nota + nome, nota + nota, due chiavi; strumenti → foto + foto, foto + nome, foto + suono (foto mute:
+  si riconosce lo strumento solo dall'orecchio).
+- **Ogni carta suona:** la nota al pianoforte o un passaggio dello strumento. Si collega sempre il segno al suono.
+- **Domande dopo ogni coppia (a scelta):** il nome della nota, la sezione dell'orchestra, la classe Sachs-Hornbostel.
+  Quando si sbaglia, il gioco spiega che cosa sono davvero gli strumenti della categoria scelta («No, gli idiofoni sono
+  strumenti in cui vibra il corpo stesso…»): l'errore diventa una piccola lezione.
+- **Con più giocatori (2–4) la coppia vale solo con la risposta giusta.** Se si sbaglia la domanda il punto non conta,
+  le carte si rigirano come se non fossero state trovate e il turno passa all'avversario, che ora sa dove sono:
+  - non basta avere buona memoria, bisogna **sapere** la nota o la classificazione;
+  - tutta la classe ha un motivo per seguire la risposta degli altri (chi ascolta può «rubare» la coppia);
+  - la risposta giusta non viene mostrata, così l'avversario deve saperla davvero.
+  Da soli invece si riprova finché si indovina (si gioca per imparare, non per perdere il turno).
+- **Mosse, tempo e stelle** da soli; **classifica a punti** in più giocatori; a fine partita gli errori per tipo di domanda.
+- Colori delle note del sito sulle carte e sui pulsanti dei nomi. Tutto in una schermata su LIM, PC e telefono.
+  Nessun microfono, nessun dato raccolto.
+
+### Come usarlo in classe
+- Alla LIM a squadre (2–4): una squadra per colore, un portavoce tocca le carte e risponde.
+- Prima partita con le coppie più facili e senza domande; poi si accendono le domande, che rendono la gara più seria.
+- Memory – strumenti con «Foto + suono» come verifica dell'ascolto timbrico dopo aver presentato l'orchestra.
+
+### Scelte fatte (e perché)
+- Errore sulla domanda = coppia annullata e turno all'avversario (chiesto da Cristiano, ottobre 2026): prima con più
+  giocatori la coppia valeva comunque e si poteva riprovare all'infinito, quindi la domanda non contava nella gara.
+- Dopo l'errore la spiegazione resta visibile circa 3 secondi, il tempo di leggerla, poi le carte si rigirano da sole.

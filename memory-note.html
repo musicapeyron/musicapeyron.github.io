@@ -365,7 +365,7 @@ h1 { margin: 0; font-family: "Sora", "Inter", Arial, sans-serif; font-size: 2rem
             <button data-v="3" style="--c1:#4ade80;--c2:#15803d">👥 3</button>
             <button data-v="4" style="--c1:#fbbf24;--c2:#b45309">👥 4</button>
         </div>
-        <p class="panel-note">Da 2 a 4 giocatori si gioca a turno: chi trova una coppia guadagna un punto e gioca ancora, chi sbaglia passa il turno al successivo.</p>
+        <p class="panel-note">Da 2 a 4 giocatori si gioca a turno: chi trova una coppia guadagna un punto e gioca ancora, chi sbaglia passa il turno al successivo. Con le domande attive, se la risposta è sbagliata il punto non vale: le carte si rigirano e tocca al successivo.</p>
     </div>
     <div class="row-buttons">
         <button class="ghost" id="setupBack">← Indietro</button>
@@ -973,15 +973,35 @@ function onMiss(a, b) {
 
 function onMatch(a, b) {
     sfx.match();
-    [a, b].forEach(c => { c.matched = true; c.el.classList.add("matched", "pop"); c.el.setAttribute("aria-label", cardLabel(c) + " indovinata"); });
-    G.found++;
-    G.scores[G.players > 1 ? G.turn : 0]++;
-    renderHud();
+    [a, b].forEach(c => { c.el.classList.remove("pop"); void c.el.offsetWidth; c.el.classList.add("pop"); });
+    // con piu' giocatori e le domande attive, la coppia vale solo con la risposta giusta
+    const quiz = G.type === "instr" ? (G.askSection && !a.inst.noSection) || G.askSachs : G.askName;
+    const versus = G.players > 1 && quiz;
+    const confirm = () => {
+        [a, b].forEach(c => { c.matched = true; c.el.classList.add("matched"); c.el.setAttribute("aria-label", cardLabel(c) + " indovinata"); });
+        G.found++;
+        G.scores[G.players > 1 ? G.turn : 0]++;
+        renderHud();
+    };
+    if (!versus) confirm();
+    const right = versus ? confirm : null;
+    const wrong = versus ? () => quizMiss(a, b) : null;
     const done = () => { G.open = []; G.busy = false; afterMatch(); };
-    if (G.type === "instr") setTimeout(() => openInstrSheet(a.inst, a.clip || b.clip, done), 380);
-    else if (G.askName) setTimeout(() => openNoteQuiz(a, b, done), 380);
+    if (G.type === "instr") setTimeout(() => openInstrSheet(a.inst, a.clip || b.clip, done, right, wrong), 380);
+    else if (G.askName) setTimeout(() => openNoteQuiz(a, b, done, right, wrong), 380);
     else { const l = a.key[0]; showToast(NOTE_NAMES[l], NOTE_COLORS[l], NOTE_TEXT[l]); setTimeout(done, 900); }
 }
+
+/* risposta sbagliata con piu' giocatori: niente punto, le carte si rigirano
+   come se la coppia non fosse stata trovata e il turno passa al giocatore successivo */
+function quizMiss(a, b) {
+    [a, b].forEach(c => { c.open = false; c.el.classList.remove("flipped", "pop"); c.el.setAttribute("aria-label", cardLabel(c) + " coperta"); });
+    G.open = []; G.busy = false;
+    G.turn = (G.turn + 1) % G.players;
+    renderHud(true);
+}
+const nextPlayerText = () => `Niente punto: le carte si rigirano e tocca al Giocatore ${(G.turn + 1) % G.players + 1}.`;
+const QUIZ_MISS_MS = 3200;   // tempo per leggere la spiegazione prima che le carte si rigirino
 
 function afterMatch() {
     if (G.cards.every(c => c.matched)) {
@@ -1041,11 +1061,11 @@ function imageScale() {
 }
 $("instImg").addEventListener("load", () => { const i = $("instImg"); i.style.width = Math.round(i.naturalWidth * imageScale()) + "px"; });
 
-function openInstrSheet(inst, clip, onClose) {
+function openInstrSheet(inst, clip, onClose, onRight, onWrong) {
     const steps = [];
     if (G.askSection && !inst.noSection) steps.push("section");
     if (G.askSachs) steps.push("sachs");
-    sheet = { inst, clip, steps, idx: 0, onClose };
+    sheet = { inst, clip, steps, idx: 0, onClose, onRight, onWrong };
     $("instImg").src = "media/strumenti/immagini/" + inst.id + ".webp"; $("instImg").alt = inst.name;
     $("instName").textContent = inst.name;
     $("instName").style.color = steps.length ? "#3f3520" : FAMILY_TEXT_COLORS[inst.family];
@@ -1078,10 +1098,20 @@ function answerSheet(v, btn) {
         G.errors[key]++; sfx.wrong();
         btn.classList.remove("wrong"); void btn.offsetWidth; btn.classList.add("wrong");
         const e = STEP_EXPLANATIONS[v];
-        showStepError("instError", `No, ${e.art} <strong>${st.labels[v].toUpperCase()}</strong> ${e.text}.`);
+        const msg = `No, ${e.art} <strong>${st.labels[v].toUpperCase()}</strong> ${e.text}.`;
+        if (s.onWrong) {
+            // piu' giocatori: la risposta sbagliata annulla la coppia e passa il turno
+            $("instAnswers").querySelectorAll("button").forEach(x => x.disabled = true);
+            showStepError("instError", msg + "<br>" + nextPlayerText());
+            setTimeout(() => { $("instOverlay").classList.remove("show"); stopAudio(); const f = s.onWrong; sheet = null; f(); }, QUIZ_MISS_MS);
+            return;
+        }
+        showStepError("instError", msg);
         return;
     }
-    sfx.match(); s.idx++; showSheetStep();
+    sfx.match(); s.idx++;
+    if (s.idx === s.steps.length && s.onRight) s.onRight();   // tutte giuste: ora la coppia vale
+    showSheetStep();
 }
 $("instReplay").onclick = () => { if (sheet) playUrl(sheet.clip); };
 $("instContinue").onclick = () => { $("instOverlay").classList.remove("show"); stopAudio(); const f = sheet.onClose; sheet = null; f(); };
@@ -1094,7 +1124,7 @@ function hideStepError(id) { const e = $(id); clearTimeout(e._h); e.classList.re
 /* =========================================================
    QUIZ: CHE NOTA E'?
 ========================================================= */
-function openNoteQuiz(a, b, onClose) {
+function openNoteQuiz(a, b, onClose, onRight, onWrong) {
     const cards = a.clef !== b.clef ? [a, b] : [a];          // due chiavi: si vedono entrambe
     $("quizStaves").innerHTML = cards.map(c => `<div class="quiz-staff"><div class="clef-tag" style="font-size:0.7rem">${CLEF_LABEL[c.clef]}</div>${staffSVG(c.clef, c.key)}</div>`).join("");
     hideStepError("noteError"); $("noteOk").textContent = "";
@@ -1106,10 +1136,18 @@ function openNoteQuiz(a, b, onClose) {
             if (l !== letter) {
                 G.errors.name++; sfx.wrong();
                 btn.classList.remove("wrong"); void btn.offsetWidth; btn.classList.add("wrong");
+                if (onWrong) {
+                    // piu' giocatori: la risposta sbagliata annulla la coppia e passa il turno
+                    box.querySelectorAll("button").forEach(x => x.disabled = true);
+                    showStepError("noteError", `No, non è un <strong>${NOTE_NAMES[l].toUpperCase()}</strong>.<br>` + nextPlayerText());
+                    setTimeout(() => { $("noteOverlay").classList.remove("show"); stopAudio(); onWrong(); }, QUIZ_MISS_MS);
+                    return;
+                }
                 showStepError("noteError", `No, non è un <strong>${NOTE_NAMES[l].toUpperCase()}</strong>. Riprova!`);
                 return;
             }
             sfx.match(); hideStepError("noteError");
+            if (onRight) onRight();
             $("noteOk").textContent = `Sì, è un ${NOTE_NAMES[letter]}!`;
             box.querySelectorAll("button").forEach(x => x.disabled = true);
             playUrl(noteUrl(a.key));
