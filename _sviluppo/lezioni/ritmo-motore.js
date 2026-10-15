@@ -38,7 +38,7 @@ function campione(nome) {                         // l'AudioBuffer, se già pron
 }
 function prepara() { if (audio()) { campione("violino"); campione("legno"); } }
 document.addEventListener("pointerdown", prepara, { once: true });
-function suonaTenuto(midi, quando, dur) {
+function suonaTenuto(midi, quando, dur, vol = 1) {
   const ac = audio(); if (!ac) return;
   const t = ac.currentTime + 0.03 + quando, fine = t + Math.max(0.15, dur - 0.04);
   const chiudi = ac.createGain(); chiudi.gain.setValueAtTime(0.0001, t); chiudi.gain.exponentialRampToValueAtTime(1, t + 0.03);
@@ -46,11 +46,11 @@ function suonaTenuto(midi, quando, dur) {
   const buf = campione("violino"); let os;
   if (buf) {
     const s = ac.createBufferSource(); s.buffer = buf; s.playbackRate.value = Math.pow(2, (midi - CAMPIONI.violino.midi) / 12);
-    const g = ac.createGain(); g.gain.value = 1.6; s.connect(g); g.connect(chiudi); s.start(t); s.stop(fine + 0.3); os = [s];
+    const g = ac.createGain(); g.gain.value = 1.6 * vol; s.connect(g); g.connect(chiudi); s.start(t); s.stop(fine + 0.3); os = [s];
   } else {
     // violino sintetico (dente di sega filtrato, con un leggero vibrato): suona uguale dall'inizio alla fine
     const f = 440 * Math.pow(2, (midi - 69) / 12), o = ac.createOscillator(), fl = ac.createBiquadFilter(), g = ac.createGain(), lfo = ac.createOscillator(), lg = ac.createGain();
-    o.type = "sawtooth"; o.frequency.value = f; fl.type = "lowpass"; fl.frequency.value = f * 5; fl.Q.value = 0.7; g.gain.value = 0.14;
+    o.type = "sawtooth"; o.frequency.value = f; fl.type = "lowpass"; fl.frequency.value = f * 5; fl.Q.value = 0.7; g.gain.value = 0.14 * vol;
     lfo.frequency.value = 5.5; lg.gain.value = f * 0.004; lfo.connect(lg); lg.connect(o.frequency);
     o.connect(fl); fl.connect(g); g.connect(chiudi); o.start(t); lfo.start(t); o.stop(fine + 0.3); lfo.stop(fine + 0.3); os = [o, lfo];
   }

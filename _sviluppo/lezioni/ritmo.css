@@ -59,6 +59,6 @@ body.colori .vfr .nota.c-si .vf-notehead path:not(.punto) { fill: var(--si); }
 .palco .barra.silenzio .pz1 { fill: rgba(251,191,36,0.3); stroke: #B45309; }
 .palco .barra.silenzio .val-barra { fill: #334155; }
 .palco .riga-val.scelta .nome-fig { fill: #B45309; }
-.palco .legatura-vf path { fill: #111827; }
+.palco .legatura-vf path, .palco .vfr .vf-beam path { fill: #111827; }
 .rigo-mini line { stroke: rgba(234,242,255,0.85); stroke-width: 1.8; }
 .palco .rigo-mini line { stroke: #1F2937; }
