@@ -4,6 +4,7 @@
   schema-accordi-chitarra.png, schema-accordi-ukulele.png, schema-accordi-tastiera.png
   schema-note-tastiera.png (note dal Do centrale al Mi del quarto spazio)
   schema-note-basso.png (dal Mi della quarta corda al Re della prima corda)
+  schema-note-violino.png (prima posizione, dal Sol della corda di Sol al Si della corda di Mi)
 
 Le diteggiature degli accordi di chitarra e ukulele stanno in motore-schemi.js (ACCORDI):
 per aggiungere un accordo si aggiunge lì e in ORDINE_ACCORDI / NOTE_ACCORDI qui sotto.
@@ -37,6 +38,11 @@ NOTE_TASTIERA = [
 NOTE_BASSO = [("e2", "Mi"), ("f2", "Fa"), ("g2", "Sol"), ("a2", "La"), ("b2", "Si"), ("c3", "Do"), ("d3", "Re"),
               ("e3", "Mi"), ("f3", "Fa"), ("g3", "Sol"), ("a3", "La"), ("b3", "Si"), ("c4", "Do"), ("d4", "Re")]
 
+# note dello schema del violino (prima posizione): posizioni da motore-schemi.js (POSIZIONI.violino)
+NOTE_VIOLINO = [("g3", "Sol"), ("a3", "La"), ("b3", "Si"), ("c4", "Do"), ("d4", "Re"), ("e4", "Mi"), ("f4", "Fa"),
+                ("g4", "Sol"), ("a4", "La"), ("b4", "Si"), ("c5", "Do"), ("d5", "Re"), ("e5", "Mi"), ("f5", "Fa"),
+                ("g5", "Sol"), ("a5", "La"), ("b5", "Si")]
+
 LEGENDE = {
     "chitarra": ["○ corda a vuoto &nbsp;&nbsp;&nbsp; ✕ corda da non suonare",
                  "il numero nel pallino è il dito: 1 indice, 2 medio, 3 anulare, 4 mignolo",
@@ -49,6 +55,9 @@ LEGENDE = {
     "note-basso": ["● tasto premuto &nbsp;&nbsp;&nbsp; ○ corda a vuoto",
                    "♯ = un tasto più a destra sulla stessa corda &nbsp;·&nbsp; ♭ = un tasto più a sinistra",
                    "corde in numeri, da 1 (Sol, in alto) a 4 (Mi) &nbsp;·&nbsp; tasti in numeri romani &nbsp;·&nbsp; capotasto a sinistra"],
+    "note-violino": ["○ corda a vuoto &nbsp;&nbsp;&nbsp; il numero nel pallino è il dito: 1 indice, 2 medio, 3 anulare, 4 mignolo",
+                     "prima posizione &nbsp;·&nbsp; le righe grigie sono i nastrini 1, 2, 3, 4 &nbsp;·&nbsp; il 2 sta attaccato all'1 (2 basso) o al 3 (2 alto) &nbsp;·&nbsp; l'1 basso va indietro, vicino al capotasto",
+                     "♯ = il dito va un poco più avanti, verso il ponticello &nbsp;·&nbsp; ♭ = un poco più indietro &nbsp;·&nbsp; in alto la corda di Mi, in basso quella di Sol"],
 }
 
 PAGINA = """<!doctype html><html><head><meta charset="utf-8">
@@ -106,16 +115,19 @@ function cartaNota(chiave, nome) {
   MS.rigoNota(d.querySelector(".rigo"), n);
   return d;
 }
-/* basso: pentagramma in chiave di basso, nome, schema del manico (stessa scala per tutte le carte) */
-function cartaBasso(chiave, nome) {
+/* basso e violino: pentagramma (chiave di basso o di violino), nome, schema del manico (stessa scala per tutte le carte) */
+function cartaBasso(chiave, nome, strumento, genitore) {
+  strumento = strumento || "basso";
   const n = MS.analizza(chiave), col = MS.COLORI[n.lettera];
   const d = document.createElement("div"); d.className = "carta"; d.style.padding = "6px 10px 14px";
   d.style.setProperty("--col", col); d.style.setProperty("--bordo", scur(col, 0.45));
-  const schema = MS.schemaNota("basso", n), vb = schema.match(/viewBox="0 0 ([\\d.]+) ([\\d.]+)"/);
+  const schema = MS.schemaNota(strumento, n), vb = schema.match(/viewBox="0 0 ([\\d.]+) ([\\d.]+)"/);
   d.innerHTML = `<div class="rigo-basso"></div><div class="nome" style="margin:4px 0 8px">${nome}</div>` +
     `<div style="height:${(+vb[2] * 1.42).toFixed(0)}px;display:flex;justify-content:center;align-items:flex-start">` +
     `<div style="width:${(+vb[1] * 1.42).toFixed(0)}px">${schema}</div></div>`;
-  MS.rigoNota(d.querySelector(".rigo-basso"), n, "bass");
+  // la carta va nella pagina prima di disegnare il pentagramma: così si misurano anche i tagli addizionali
+  if (genitore) genitore.appendChild(d);
+  MS.rigoNota(d.querySelector(".rigo-basso"), n, strumento === "basso" ? "bass" : "treble");
   return d;
 }
 function stessaFinestra(sel) {
@@ -126,13 +138,13 @@ function stessaFinestra(sel) {
 }
 window.disegna = function (cosa, dati) {
   const foglio = document.getElementById("foglio"); foglio.innerHTML = "";
-  const g = document.createElement("div"); g.className = "griglia";
+  const g = document.createElement("div"); g.className = "griglia"; foglio.appendChild(g);
   g.style.gridTemplateColumns = `repeat(${dati.colonne}, ${dati.larghCarta}px)`;
   if (cosa === "note-tastiera") dati.note.forEach(([k, nome]) => g.appendChild(cartaNota(k, nome)));
   else if (cosa === "note-basso") dati.noteBasso.forEach(([k, nome]) => g.appendChild(cartaBasso(k, nome)));
+  else if (cosa === "note-violino") dati.noteViolino.forEach(([k, nome]) => cartaBasso(k, nome, "violino", g));
   else dati.ordine.forEach(nome => g.appendChild(cartaAccordo(cosa, nome, dati.noteAccordi[nome])));
-  foglio.appendChild(g);
-  if (cosa === "note-basso") stessaFinestra(".rigo-basso");
+  if (cosa === "note-basso" || cosa === "note-violino") stessaFinestra(".rigo-basso");
   const leg = document.createElement("div"); leg.className = "legenda"; leg.innerHTML = dati.legenda.join("<br>");
   foglio.appendChild(leg);
 };
@@ -155,9 +167,10 @@ def main():
                 ("tastiera", {"colonne": 5, "larghCarta": 240}),
                 ("note-tastiera", {"colonne": 6, "larghCarta": 200}),
                 ("note-basso", {"colonne": 5, "larghCarta": 270}),
+                ("note-violino", {"colonne": 6, "larghCarta": 270}),
             ]
             for cosa, dati in lavori:
-                dati.update(ordine=ORDINE_ACCORDI, noteAccordi=NOTE_ACCORDI, note=NOTE_TASTIERA, noteBasso=NOTE_BASSO, legenda=LEGENDE[cosa])
+                dati.update(ordine=ORDINE_ACCORDI, noteAccordi=NOTE_ACCORDI, note=NOTE_TASTIERA, noteBasso=NOTE_BASSO, noteViolino=NOTE_VIOLINO, legenda=LEGENDE[cosa])
                 pg.evaluate("([c, d]) => disegna(c, d)", [cosa, dati])
                 nome = f"schema-{cosa}.png" if cosa.startswith("note-") else f"schema-accordi-{cosa}.png"
                 pg.locator("#foglio").screenshot(path=str(USCITA / nome))

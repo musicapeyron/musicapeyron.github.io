@@ -8,7 +8,7 @@
 <link rel="icon" href="favicon.svg" type="image/svg+xml">
 <link rel="icon" href="favicon-32.png" type="image/png" sizes="32x32">
 <link rel="apple-touch-icon" href="apple-touch-icon.png">
-<meta name="description" content="Schemi delle note e degli accordi per flauto dolce, chitarra, ukulele, tastiera e basso elettrico.">
+<meta name="description" content="Schemi delle note e degli accordi per flauto dolce, chitarra, ukulele, tastiera, basso elettrico e violino.">
 
 <!--
   ============================================================
@@ -396,7 +396,7 @@
   .strumento .group-title span { font-size: 15px; }
   /* ---------- tessere degli strumenti ---------- */
   #strumenti { max-width: 1120px !important; }
-  .tessere { display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 14px; }
+  .tessere { display: grid; grid-template-columns: repeat(6, minmax(0, 1fr)); gap: 14px; }
   .tessera { border-radius: 16px; padding: 22px 14px 16px; text-align: center; display: flex; flex-direction: column; align-items: center;
     background: linear-gradient(180deg, color-mix(in srgb, var(--col) 16%, transparent), rgba(255,255,255,0.03) 70%);
     border: 1px solid rgba(255,255,255,0.09); border-top: 3px solid var(--col); }
@@ -422,7 +422,7 @@
 <meta property="og:locale" content="it_IT">
 <meta property="og:url" content="https://musicascuole.it/schemi-strumenti.html">
 <meta property="og:title" content="Strumenti — Schemi — musicascuole.it">
-<meta property="og:description" content="Schemi delle note e degli accordi per flauto dolce, chitarra, ukulele, tastiera e basso elettrico.">
+<meta property="og:description" content="Schemi delle note e degli accordi per flauto dolce, chitarra, ukulele, tastiera, basso elettrico e violino.">
 <meta property="og:image" content="https://musicascuole.it/media/condivisione.jpg">
 <meta property="og:image:width" content="1200">
 <meta property="og:image:height" content="630">
@@ -521,11 +521,18 @@
       schemi: [
         { title: "Schema note", icon: "📄", label: "Note", desc: "Ogni nota sul pentagramma, con il suo nome e la posizione sullo strumento.", url: "media/schemi/schema-note-basso.png?v=2026-10-15" }
       ]
+    },
+    {
+      nome: "Violino",
+      icona: '<svg class="ico" viewBox="0 0 48 48" aria-hidden="true"><use href="icone.svg#ic-violino"/></svg>',
+      schemi: [
+        { title: "Schema note", icon: "📄", label: "Note", desc: "Le note della prima posizione, con la corda e il dito da usare.", url: "media/schemi/schema-note-violino.png?v=2026-10-28" }
+      ]
     }
   ];
 
   /* una tessera per strumento, tutte affiancate: si vede tutto senza scorrere */
-  const COLORI_STRUMENTO = { "Flauto dolce": "#5EC8D8", "Chitarra": "#F99D1C", "Ukulele": "#BED958", "Tastiera": "#a78bfa", "Basso elettrico": "#E21C48" };
+  const COLORI_STRUMENTO = { "Flauto dolce": "#5EC8D8", "Chitarra": "#F99D1C", "Ukulele": "#BED958", "Tastiera": "#a78bfa", "Basso elettrico": "#E21C48", "Violino": "#2EC4B6" };
   const main = document.getElementById('strumenti');
   const griglia = document.createElement('div'); griglia.className = 'tessere';
   strumenti.forEach(st => {
