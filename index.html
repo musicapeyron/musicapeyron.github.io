@@ -20,6 +20,10 @@
      qui sotto, nel tag <script>: titolo, descrizione breve,
      etichetta (es. "Teoria", "Ritmo"), un'emoji e "url" col
      nome del file appena caricato.
+  3) Se la pagina è ancora in costruzione aggiungi
+     inCostruzione: true → sulla card compare l'etichetta
+     «🚧 In costruzione» (si toglie cancellando la riga).
+     Lo stesso vale per le tessere di schemi-strumenti.html.
   ============================================================
 -->
 
@@ -370,6 +374,16 @@
     flex-shrink: 0;
   }
 
+  /* card di una pagina ancora in costruzione (inCostruzione: true nell'elenco): etichetta a strisce sul bordo in alto */
+  .card .cantiere {
+    position: absolute; top: calc(-8 * var(--u)); right: calc(10 * var(--u));
+    font-size: calc(8.5 * var(--u)); font-weight: 800; letter-spacing: 0.04em; text-transform: uppercase; white-space: nowrap;
+    color: #1f1a05; padding: calc(2.5 * var(--u)) calc(8 * var(--u)); border-radius: calc(6 * var(--u));
+    background: repeating-linear-gradient(135deg, #FACC15 0 calc(7 * var(--u)), #FDE68A calc(7 * var(--u)) calc(14 * var(--u)));
+    box-shadow: 0 2px 6px rgba(0,0,0,0.35); pointer-events: none;
+  }
+  .card.in-costruzione { border-style: dashed; border-color: rgba(250, 204, 21, 0.45); }
+
   .card .label {
     font-size: calc(9 * var(--u));
     font-weight: 700;
@@ -670,6 +684,7 @@
       label: "Lezione",
       desc: "2/4, 3/4 e 4/4: movimenti forti e deboli, il gesto del direttore e un primo sguardo ai tempi composti.",
       livelli: ["P", "M"],
+      inCostruzione: true,
       url: "tempi-semplici.html"
     },
     {
@@ -850,7 +865,7 @@
 
   function creaCard(t, classe) {
     const card = document.createElement('a');
-    card.className = 'card' + (classe ? ' ' + classe : '');
+    card.className = 'card' + (classe ? ' ' + classe : '') + (t.inCostruzione ? ' in-costruzione' : '');
     card.href = t.url;
     card.dataset.livelli = t.livelli.join('');
     card.innerHTML = `
@@ -861,6 +876,7 @@
       <h2>${t.title}</h2>
       <p>${t.desc}</p>
       ${segniLivello(t.livelli)}
+      ${t.inCostruzione ? '<span class="cantiere" title="Ci stiamo ancora lavorando: si può già usare, ma cambierà">🚧 In costruzione</span>' : ''}
     `;
     return card;
   }
