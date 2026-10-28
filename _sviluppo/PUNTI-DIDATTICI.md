@@ -609,8 +609,9 @@ tastiera, basso e violino. Le immagini di accordi (chitarra, ukulele, tastiera) 
 - Accordi maggiori, minori e di settima: Do, Re, Mi, Fa, Sol, La, Si; Rem, Mim, Fam, Lam, Sim; Re7, Sol7, La7.
 - Sigla internazionale sotto il nome italiano (C, Dm, G7...): i ragazzi la ritrovano negli spartiti con gli accordi.
 - Tastiera: dal Do centrale al Mi del quarto spazio, ogni nota con il suo posto sul pentagramma; i tasti neri hanno due nomi (diesis/bemolle).
-- Violino (prima posizione, dal Sol della corda di Sol al Si della corda di Mi): corda e dito di ogni nota; il dito 2 «basso»
-  (attaccato all'1) o «alto» (attaccato al 3) a seconda della nota, cioè la distanza di tono e semitono sotto le dita.
+- Violino (dal Sol della quarta corda a vuoto al Mi della prima corda): corda e posizione di ogni nota, disegnate come se il
+  violino avesse i tasti della chitarra in temperamento equabile: si vede quanti semitoni ci sono fra una nota e l'altra
+  (tono = due tasti, semitono = un tasto), cioè dove le dita stanno attaccate e dove sono distanti.
 
 ### Punti di forza
 - Stessi colori delle note in tutto il sito: l'accordo prende il colore della sua fondamentale (Fam verde come il Fa, Si e Sim rosa).
@@ -621,9 +622,9 @@ tastiera, basso e violino. Le immagini di accordi (chitarra, ukulele, tastiera) 
 ### Scelte fatte (e perché)
 - Chitarra: Fa, Fam, Si e Sim in forma semplificata su 4 corde, senza barré completo, alla portata della scuola media.
 - Ukulele: forme standard (Fam 1-0-1-3, Si 4-3-2-2, Sim 4-2-2-2, dalla corda Sol alla La).
-- Violino: manico liscio, senza tasti, con i nastrini dei principianti (1, 2 alto, 3, 4); il numero nel pallino è il dito,
-  come negli schemi degli accordi. Corda di Mi in alto e di Sol in basso, come la chitarra (la corda più acuta in alto).
-  Re, La e Mi si prendono a vuoto (il 4° dito serve solo per il Si della corda di Mi).
+- Violino: un tasto immaginario per ogni semitono (scelta di Cristiano, ottobre 2026: la prima versione con i nastrini e le
+  dita non andava bene). Stesse convenzioni di chitarra e basso: corde in numeri (1 = Mi in alto, 4 = Sol), tasti in numeri
+  romani, capotasto a sinistra. Re, La e Mi a vuoto; in legenda: dito 1 sul I o II, 2 sul III o IV, 3 sul V, 4 sul VII.
 
 ---
 
@@ -636,7 +637,7 @@ prepara un PDF A4 con una carta per nota (pentagramma, nome colorato, diteggiatu
 - Corrispondenza fra nota scritta, nome e posizione sullo strumento.
 - Chitarra, ukulele, basso: la stessa nota in posizioni diverse del manico (corda e tasto); la corda a vuoto.
 - Pianoforte: chiave di violino, di basso, doppio pentagramma; il Do centrale come riferimento fra le due chiavi.
-- Violino: prima posizione sul manico con i nastrini; per ogni nota corda e dito (anche 1 basso, 2 basso/alto, 3 alto).
+- Violino: prima posizione (tasti immaginari fino al VII), corda e tasto di ogni nota, anche diesis e bemolli.
 - Flauto dolce: diteggiatura di ogni nota, anche diesis e bemolli; i tasti neri hanno due nomi (♯ o ♭ a scelta).
 
 ### Punti di forza

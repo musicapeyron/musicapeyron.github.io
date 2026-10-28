@@ -7,7 +7,7 @@
   ============================================================
   SELEZIONA NOTE
   Si sceglie lo strumento e si toccano le note: sul manico
-  (chitarra, ukulele, basso, violino in prima posizione), sulla tastiera (pianoforte, in chiave
+  (chitarra, ukulele, basso, violino in prima posizione disegnato con i tasti), sulla tastiera (pianoforte, in chiave
   di violino, di basso o sul doppio pentagramma) o sul pentagramma
   (flauto dolce). Si genera un PDF A4 con lo schema di ogni nota
   (pentagramma, nome colorato, diteggiatura), su più pagine se serve,
@@ -23,7 +23,7 @@
 <link rel="stylesheet" href="fonts/caratteri.css">
 <link rel="stylesheet" href="comune.css">
 <script src="vexflow.js"></script>
-<script src="motore-schemi.js?v=2026-10-28a"></script>
+<script src="motore-schemi.js?v=2026-10-28b"></script>
 <script src="jspdf.js"></script>
 <style>
   * { box-sizing: border-box; }
@@ -244,10 +244,10 @@
     basso:    { nome: "Basso elettrico", ico: "ic-basso", col: "#E21C48", corde: 4, accordatura: [55, 50, 45, 40], chiave: "bass",
                 corda: ["Sol", "Re", "La", "Mi"] },
     piano:    { nome: "Pianoforte", ico: "ic-tastiera", col: "#a78bfa" },
+    // violino: disegnato come se avesse i tasti della chitarra (un tasto = un semitono), prima posizione fino al VII (4° dito)
     violino:  { nome: "Violino", ico: "ic-violino", col: "#2EC4B6", corde: 4, accordatura: [76, 69, 62, 55], chiave: "treble",
-                corda: ["Mi", "La", "Re", "Sol"] }
+                corda: ["Mi", "La", "Re", "Sol"], tasti: 7, senzaSegni: true }
   };
-  const SEMITONI_VIOLINO = 7;   // prima posizione: dalla corda a vuoto al 4° dito
   const TASTI_MANICO = 12;
   const CHIAVI_PIANO = {
     violino: { nome: "𝄞 Violino", da: 60, a: 84 },    // Do centrale – Do6
@@ -338,7 +338,7 @@
     const s = stato.strumento;
     if (s === "flauto") messaggio("Tocca il pentagramma all'altezza della nota. Per un diesis o un bemolle scegli prima <b>♯</b> o <b>♭</b>. Tocca di nuovo una nota per toglierla.");
     else if (s === "piano") messaggio("Tocca i tasti della tastiera. Il pallino grigio segna il <b>Do centrale</b>. Tocca di nuovo un tasto per toglierlo.");
-    else if (s === "violino") messaggio("Tocca il manico del violino (prima posizione): ogni riga è una <b>corda</b>, Mi in alto e Sol in basso; il numero sotto è il <b>dito</b>. Le righe grigie sono i nastrini: il 2 basso sta attaccato all'1, il 2 alto al 3.");
+    else if (s === "violino") messaggio("Il violino non ha i tasti: qui ogni <b>tasto</b> è un semitono, come sulla chitarra (prima posizione, fino al VII). Le <b>corde</b> sono numerate da 1 (Mi, in alto) a 4 (Sol). Tocca il punto della nota.");
     else messaggio("Tocca il manico: ogni punto è una <b>corda</b> (numeri a sinistra) e un <b>tasto</b> (numeri romani). A sinistra del capotasto c'è la corda a vuoto.");
   }
 
@@ -349,51 +349,18 @@
     disegnaSelettore(); disegnaNote(); disegnaAnteprima();
   }
 
-  /* ================= selettore: manico del violino (niente tasti: nastrini e dita) ================= */
-  function selettoreViolino() {
-    const S = STRUMENTI.violino, nC = 4;
-    const W = 880, x0 = 150, sp = (W - x0 - 34) / (SEMITONI_VIOLINO + 0.5), cs = 48, y0 = 34, H = y0 + (nC - 1) * cs + 62;
-    const lung = sp * (SEMITONI_VIOLINO + 0.5), nastrini = new Set(MS.NASTRINI_VIOLINO.map(n => n[0]));
-    let s = `<svg viewBox="0 0 ${W} ${H}" xmlns="${NS}" ${FONT}>`;
-    s += `<rect x="${x0}" y="${y0 - 18}" width="${lung}" height="${(nC - 1) * cs + 36}" fill="#e9edf2" rx="4"/>`;
-    for (let t = 1; t <= SEMITONI_VIOLINO; t++) {
-      const x = x0 + t * sp, nastro = nastrini.has(t);
-      if (nastro) s += `<line x1="${x}" y1="${y0 - 18}" x2="${x}" y2="${y0 + (nC - 1) * cs + 18}" stroke="#c3ccd8" stroke-width="7"/>`;
-      s += `<text x="${x}" y="${H - 14}" font-size="${nastro ? 16 : 12.5}" font-weight="${nastro ? 700 : 400}" text-anchor="middle" fill="${nastro ? "#334155" : "#7b8796"}">${MS.ditoViolino(t)[1]}</text>`;
-    }
-    s += `<text x="${x0 - 30}" y="${H - 14}" font-size="13" text-anchor="middle" fill="#64748b">vuota</text>`;
-    s += `<line x1="${x0}" y1="${y0 - 19}" x2="${x0}" y2="${y0 + (nC - 1) * cs + 19}" stroke="#111" stroke-width="6"/>`;
-    for (let c = 1; c <= nC; c++) {
-      const y = y0 + (c - 1) * cs;
-      s += `<line x1="${x0 - 60}" y1="${y}" x2="${x0 + lung}" y2="${y}" stroke="#7b8796" stroke-width="${1.2 + c * 0.5}"/>`;
-      s += `<text x="${x0 - 70}" y="${y + 5}" font-size="15" font-weight="700" text-anchor="end" fill="#475569">${S.corda[c - 1]}</text>`;
-    }
-    const scelte = elenco();
-    for (let c = 1; c <= nC; c++) for (let t = 0; t <= SEMITONI_VIOLINO; t++) {
-      const cx = t === 0 ? x0 - 30 : x0 + t * sp, y = y0 + (c - 1) * cs;
-      const k = daMidi(S.accordatura[c - 1] + t, stato.alt), n = MS.analizza(k);
-      if (scelte.some(e => e.c === c && e.t === t)) {
-        const col = COLORI[n.lettera];
-        s += `<circle cx="${cx}" cy="${y}" r="17" fill="${col}" stroke="${scur(col, 0.55)}" stroke-width="1.5"/>`;
-        s += `<text x="${cx}" y="${y + 4.5}" font-size="${n.alt ? 11 : 13}" font-weight="700" text-anchor="middle" fill="#fff" stroke="${scur(col, 0.45)}" stroke-width="2.6" paint-order="stroke">${nomeNota(k)}</text>`;
-      } else s += `<text x="${cx}" y="${y - 7}" font-size="11" text-anchor="middle" fill="#8f9bab">${nomeNota(k)}</text>`;
-      const zx = t === 0 ? x0 - 60 : x0 + (t - 0.5) * sp, zw = t === 0 ? 60 : sp;
-      s += `<rect class="zona" data-c="${c}" data-t="${t}" x="${zx}" y="${y - cs / 2}" width="${zw}" height="${cs}"/>`;
-    }
-    return s + "</svg>";
-  }
-
   /* ================= selettore: manico ================= */
   function selettoreManico() {
-    const S = STRUMENTI[stato.strumento], nC = S.corde;
-    const W = 880, x0 = 92, fw = (W - x0 - 14) / TASTI_MANICO, sp = nC === 6 ? 38 : 48, y0 = 30, H = y0 + (nC - 1) * sp + 52;
+    const S = STRUMENTI[stato.strumento], nC = S.corde, nT = S.tasti || TASTI_MANICO;
+    const W = 880, x0 = 92, fw = (W - x0 - 14) / nT, sp = nC === 6 ? 38 : 48, y0 = 30, H = y0 + (nC - 1) * sp + 52;
     let s = `<svg viewBox="0 0 ${W} ${H}" xmlns="${NS}" ${FONT}>`;
     // tastiera di legno chiaro
-    s += `<rect x="${x0}" y="${y0 - 16}" width="${fw * TASTI_MANICO}" height="${(nC - 1) * sp + 32}" fill="#f6efe3" rx="3"/>`;
-    const segni = [3, 5, 7, 9];
-    segni.forEach(t => s += `<circle cx="${x0 + (t - 0.5) * fw}" cy="${y0 + (nC - 1) * sp / 2}" r="6" fill="#d9cdb8"/>`);
-    s += `<circle cx="${x0 + 11.5 * fw}" cy="${y0 + (nC - 1) * sp / 2 - sp}" r="6" fill="#d9cdb8"/><circle cx="${x0 + 11.5 * fw}" cy="${y0 + (nC - 1) * sp / 2 + sp}" r="6" fill="#d9cdb8"/>`;
-    for (let t = 1; t <= TASTI_MANICO; t++) {
+    s += `<rect x="${x0}" y="${y0 - 16}" width="${fw * nT}" height="${(nC - 1) * sp + 32}" fill="#f6efe3" rx="3"/>`;
+    if (!S.senzaSegni) {
+      [3, 5, 7, 9].forEach(t => s += `<circle cx="${x0 + (t - 0.5) * fw}" cy="${y0 + (nC - 1) * sp / 2}" r="6" fill="#d9cdb8"/>`);
+      s += `<circle cx="${x0 + 11.5 * fw}" cy="${y0 + (nC - 1) * sp / 2 - sp}" r="6" fill="#d9cdb8"/><circle cx="${x0 + 11.5 * fw}" cy="${y0 + (nC - 1) * sp / 2 + sp}" r="6" fill="#d9cdb8"/>`;
+    }
+    for (let t = 1; t <= nT; t++) {
       s += `<line x1="${x0 + t * fw}" y1="${y0 - 16}" x2="${x0 + t * fw}" y2="${y0 + (nC - 1) * sp + 16}" stroke="#b8c2cf" stroke-width="2"/>`;
       s += `<text x="${x0 + (t - 0.5) * fw}" y="${H - 8}" font-size="15" text-anchor="middle" fill="#64748b">${ROMANI[t]}</text>`;
     }
@@ -401,13 +368,13 @@
     s += `<line x1="${x0}" y1="${y0 - 17}" x2="${x0}" y2="${y0 + (nC - 1) * sp + 17}" stroke="#111" stroke-width="6"/>`;
     for (let c = 1; c <= nC; c++) {
       const y = y0 + (c - 1) * sp;
-      s += `<line x1="${x0 - 50}" y1="${y}" x2="${x0 + fw * TASTI_MANICO}" y2="${y}" stroke="#7b8796" stroke-width="${1.2 + c * 0.45}"/>`;
+      s += `<line x1="${x0 - 50}" y1="${y}" x2="${x0 + fw * nT}" y2="${y}" stroke="#7b8796" stroke-width="${1.2 + c * 0.45}"/>`;
       s += `<text x="10" y="${y + 5}" font-size="15" font-weight="700" fill="#475569">${c}</text>`;
       s += `<text x="24" y="${y + 5}" font-size="12" fill="#64748b">${S.corda[c - 1]}</text>`;
     }
     // nomi delle note (chiari) e note scelte
     const scelte = elenco();
-    for (let c = 1; c <= nC; c++) for (let t = 0; t <= TASTI_MANICO; t++) {
+    for (let c = 1; c <= nC; c++) for (let t = 0; t <= nT; t++) {
       const cx = t === 0 ? x0 - 26 : x0 + (t - 0.5) * fw, y = y0 + (c - 1) * sp;
       const k = daMidi(S.accordatura[c - 1] + t, stato.alt), n = MS.analizza(k);
       const scelto = scelte.some(e => e.c === c && e.t === t);
@@ -490,7 +457,7 @@
     const box = document.getElementById("selettore");
     const s = stato.strumento;
     box.classList.toggle("largo", s !== "flauto");
-    box.innerHTML = s === "flauto" ? selettoreRigo() : s === "piano" ? selettoreTastiera() : s === "violino" ? selettoreViolino() : selettoreManico();
+    box.innerHTML = s === "flauto" ? selettoreRigo() : s === "piano" ? selettoreTastiera() : selettoreManico();
     const svg = box.querySelector("svg");
     if (s === "flauto") {
       const f = svg.querySelector("#fantasma");
@@ -530,7 +497,6 @@
     return l;
   }
   function descrizione(it) {
-    if (it.c && stato.strumento === "violino") return `corda ${STRUMENTI.violino.corda[it.c - 1]} · ${it.t === 0 ? "vuota" : "dito " + MS.ditoViolino(it.t)[1]}`;
     if (it.c) return `corda ${it.c} · ${it.t === 0 ? "vuota" : "tasto " + ROMANI[it.t]}`;
     if (it.m === 60) return "Do centrale";
     return "";
@@ -664,9 +630,10 @@
   }
   const vistaDi = ch => { const f = finestre[ch]; return f ? `${f.x} ${f.y} ${f.w} ${f.b - f.y}` : null; };
 
-  // schema di una posizione: il violino ha il suo disegno (nastrini e dita), gli altri il manico con i tasti
+  // schema di una posizione: per il violino lo stesso disegno dello schema delle note (dal capotasto al VII, un tasto = un semitono),
+  // per gli altri strumenti a corde quattro tasti attorno alla nota
   function schemaCorde(str, it, k) {
-    return str === "violino" ? MS.schemaNota("violino", MS.analizza(k), [it.c, it.t]) : schemaManico(str, it.c, it.t, k);
+    return str === "violino" ? MS.schemaNota("violino", MS.analizza(k), [it.c, it.t], STRUMENTI.violino.tasti) : schemaManico(str, it.c, it.t, k);
   }
   function carta(it, x, y, w, h) {
     const k = chiaveDi(it), n = MS.analizza(k), col = COLORI[n.lettera], nome = nomeNota(k), str = stato.strumento;
@@ -680,7 +647,7 @@
       s += annida(MS.schemaNota("flauto", n), x + wr + 2, y + 3, w - wr - 4, h - 6);
       return s;
     }
-    if (w > h * 1.2 && str !== "violino") {
+    if (w > h * 1.2 && str !== "violino") {   // il violino (schema lungo, 7 tasti) resta sotto il nome anche alla LIM
       // carta larga (proiezione alla LIM): pentagramma e nome a sinistra, schema a destra, tutto più grande
       const fl = Math.min(h * 0.17, w * 0.1) * (nome.length > 3 ? 0.88 : 1);
       const wr = w * 0.5, hr = h * 0.62, yr = y + (h - hr - fl * 1.3) / 2;

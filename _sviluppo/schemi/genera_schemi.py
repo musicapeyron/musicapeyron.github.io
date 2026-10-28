@@ -4,7 +4,7 @@
   schema-accordi-chitarra.png, schema-accordi-ukulele.png, schema-accordi-tastiera.png
   schema-note-tastiera.png (note dal Do centrale al Mi del quarto spazio)
   schema-note-basso.png (dal Mi della quarta corda al Re della prima corda)
-  schema-note-violino.png (prima posizione, dal Sol della corda di Sol al Si della corda di Mi)
+  schema-note-violino.png (dal Sol della quarta corda a vuoto al Mi della prima corda; disegnato con i tasti, come la chitarra)
 
 Le diteggiature degli accordi di chitarra e ukulele stanno in motore-schemi.js (ACCORDI):
 per aggiungere un accordo si aggiunge lì e in ORDINE_ACCORDI / NOTE_ACCORDI qui sotto.
@@ -40,8 +40,7 @@ NOTE_BASSO = [("e2", "Mi"), ("f2", "Fa"), ("g2", "Sol"), ("a2", "La"), ("b2", "S
 
 # note dello schema del violino (prima posizione): posizioni da motore-schemi.js (POSIZIONI.violino)
 NOTE_VIOLINO = [("g3", "Sol"), ("a3", "La"), ("b3", "Si"), ("c4", "Do"), ("d4", "Re"), ("e4", "Mi"), ("f4", "Fa"),
-                ("g4", "Sol"), ("a4", "La"), ("b4", "Si"), ("c5", "Do"), ("d5", "Re"), ("e5", "Mi"), ("f5", "Fa"),
-                ("g5", "Sol"), ("a5", "La"), ("b5", "Si")]
+                ("g4", "Sol"), ("a4", "La"), ("b4", "Si"), ("c5", "Do"), ("d5", "Re"), ("e5", "Mi")]
 
 LEGENDE = {
     "chitarra": ["○ corda a vuoto &nbsp;&nbsp;&nbsp; ✕ corda da non suonare",
@@ -55,9 +54,10 @@ LEGENDE = {
     "note-basso": ["● tasto premuto &nbsp;&nbsp;&nbsp; ○ corda a vuoto",
                    "♯ = un tasto più a destra sulla stessa corda &nbsp;·&nbsp; ♭ = un tasto più a sinistra",
                    "corde in numeri, da 1 (Sol, in alto) a 4 (Mi) &nbsp;·&nbsp; tasti in numeri romani &nbsp;·&nbsp; capotasto a sinistra"],
-    "note-violino": ["○ corda a vuoto &nbsp;&nbsp;&nbsp; il numero nel pallino è il dito: 1 indice, 2 medio, 3 anulare, 4 mignolo",
-                     "prima posizione &nbsp;·&nbsp; le righe grigie sono i nastrini 1, 2, 3, 4 &nbsp;·&nbsp; il 2 sta attaccato all'1 (2 basso) o al 3 (2 alto) &nbsp;·&nbsp; l'1 basso va indietro, vicino al capotasto",
-                     "♯ = il dito va un poco più avanti, verso il ponticello &nbsp;·&nbsp; ♭ = un poco più indietro &nbsp;·&nbsp; in alto la corda di Mi, in basso quella di Sol"],
+    "note-violino": ["● dito sulla corda &nbsp;&nbsp;&nbsp; ○ corda a vuoto",
+                     "il violino non ha i tasti: qui ogni tasto è un semitono, come sulla chitarra &nbsp;·&nbsp; prima posizione: dito 1 sul I o II, dito 2 sul III o IV, dito 3 sul V, dito 4 sul VII",
+                     "♯ = un tasto più a destra sulla stessa corda &nbsp;·&nbsp; ♭ = un tasto più a sinistra",
+                     "corde in numeri, da 1 (Mi, in alto) a 4 (Sol) &nbsp;·&nbsp; tasti in numeri romani &nbsp;·&nbsp; capotasto a sinistra"],
 }
 
 PAGINA = """<!doctype html><html><head><meta charset="utf-8">
@@ -167,7 +167,7 @@ def main():
                 ("tastiera", {"colonne": 5, "larghCarta": 240}),
                 ("note-tastiera", {"colonne": 6, "larghCarta": 200}),
                 ("note-basso", {"colonne": 5, "larghCarta": 270}),
-                ("note-violino", {"colonne": 6, "larghCarta": 270}),
+                ("note-violino", {"colonne": 5, "larghCarta": 270}),
             ]
             for cosa, dati in lavori:
                 dati.update(ordine=ORDINE_ACCORDI, noteAccordi=NOTE_ACCORDI, note=NOTE_TASTIERA, noteBasso=NOTE_BASSO, noteViolino=NOTE_VIOLINO, legenda=LEGENDE[cosa])

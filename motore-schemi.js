@@ -50,7 +50,8 @@
       e2: [4, 0], f2: [4, 1], g2: [4, 3], a2: [3, 0], bb2: [3, 1], b2: [3, 2], c3: [3, 3], d3: [2, 0], e3: [2, 2], f3: [2, 3],
       g3: [1, 0], a3: [1, 2], b3: [1, 4], c4: [1, 5], d4: [1, 7]
     },
-    /* violino, prima posizione: [corda (1 = Mi, 4 = Sol), semitoni sopra la corda a vuoto] (vedi DITA_VIOLINO) */
+    /* violino, prima posizione, disegnato come se avesse i tasti della chitarra (un tasto = un semitono):
+       [corda (1 = Mi, 4 = Sol), tasto]. Dito 1 sul I o II, dito 2 sul III o IV, dito 3 sul V, dito 4 sul VII */
     violino: {
       g3: [4, 0], a3: [4, 2], b3: [4, 4], c4: [4, 5], d4: [3, 0], e4: [3, 2], f4: [3, 3], "f#4": [3, 4], g4: [3, 5],
       a4: [2, 0], b4: [2, 2], c5: [2, 3], "c#5": [2, 4], d5: [2, 5], e5: [1, 0], f5: [1, 1], "f#5": [1, 2], g5: [1, 3],
@@ -77,13 +78,6 @@
   const romano = n => ROMANI[n] || String(n);
   const SEGNI_TASTO = { chitarra: [], ukulele: [3, 5, 7], basso: [3, 5, 7], violino: [] };
 
-  /* violino: niente tasti. In prima posizione ogni semitono sopra la corda a vuoto è un dito:
-     0 vuota, 1 «1 basso», 2 «1», 3 «2 basso» (attaccato all'1), 4 «2 alto» (attaccato al 3), 5 «3», 6 «3 alto», 7 «4» */
-  const DITA_VIOLINO = [[0, "vuota"], [1, "1 basso"], [1, "1"], [2, "2 basso"], [2, "2 alto"], [3, "3"], [3, "3 alto"], [4, "4"]];
-  const NOMI_CORDE_VIOLINO = ["Mi", "La", "Re", "Sol"];
-  const NASTRINI_VIOLINO = [[2, 1], [4, 2], [5, 3], [7, 4]];   // [semitono, dito]: dove si mettono i nastrini per i principianti
-  function ditoViolino(semitoni) { return DITA_VIOLINO[semitoni] || [null, ""]; }
-
   /* ---------- note: "bb4" -> { lettera, alterazione, ottava } ---------- */
   function analizza(k) {
     const m = /^([a-g])(b|#)?(\d)$/.exec(k);
@@ -109,43 +103,13 @@
   }
 
   /* ===================== disegno degli schemi (SVG) ===================== */
-  /* violino: manico liscio con i nastrini (1, 2, 3, 4); il pallino è il dito, il cerchio vuoto la corda a vuoto */
-  const LARG_VIOLINO = 160;
-  function svgViolino(nota, cx, top, posizione) {
-    const pos = posizione || posCorde("violino", nota);
-    if (!pos || pos[1] > 7) return `<text x="${cx}" y="${top + 30}" font-size="10" text-anchor="middle" fill="${GRIGIO}">?</text>`;
-    const [corda, semi] = pos;
-    const passo = 17, sp = 15, alto = 3 * passo, lung = 7.6 * sp;
-    const x0 = cx - LARG_VIOLINO / 2 + 40, y0 = top;
-    const col = COLORI[nota.lettera], bordo = scurisci(col, 0.62);
-    const F = 'font-family="DejaVu Sans, Verdana, sans-serif"';
-    let s = `<rect x="${x0}" y="${y0 - 6}" width="${lung}" height="${alto + 12}" rx="2" fill="#eef1f5"/>`;
-    for (const [t, d] of NASTRINI_VIOLINO) {
-      s += `<line x1="${x0 + t * sp}" y1="${y0 - 6}" x2="${x0 + t * sp}" y2="${y0 + alto + 6}" stroke="#c6cfdb" stroke-width="2.4"/>`;
-      s += `<text x="${x0 + t * sp}" y="${y0 + alto + 17}" font-size="9.5" text-anchor="middle" fill="${GRIGIO}" ${F}>${d}</text>`;
-    }
-    for (let c = 1; c <= 4; c++) {
-      const y = y0 + (c - 1) * passo, attiva = c === corda;
-      s += `<line x1="${x0}" y1="${y}" x2="${x0 + lung}" y2="${y}" stroke="${attiva ? col : LINEA}" stroke-width="${attiva ? 2.2 : 1 + c * 0.2}"/>`;
-      s += `<text x="${x0 - 19}" y="${y + 3.5}" font-size="10" text-anchor="end" fill="${GRIGIO}" ${F}>${NOMI_CORDE_VIOLINO[c - 1]}</text>`;
-    }
-    s += `<line x1="${x0}" y1="${y0 - 7}" x2="${x0}" y2="${y0 + alto + 7}" stroke="#111" stroke-width="3.2"/>`;
-    const y = y0 + (corda - 1) * passo;
-    if (semi === 0) s += `<circle cx="${x0 - 10}" cy="${y}" r="5.2" fill="#fff" stroke="${bordo}" stroke-width="2"/>`;
-    else {
-      const x = x0 + semi * sp;
-      s += `<circle cx="${x}" cy="${y}" r="7" fill="${col}" stroke="${bordo}" stroke-width="1"/>`;
-      s += `<text x="${x}" y="${y + 3.6}" font-size="10" font-weight="700" text-anchor="middle" fill="#fff" stroke="${bordo}" stroke-width="2" paint-order="stroke" ${F}>${ditoViolino(semi)[0]}</text>`;
-    }
-    return s;
-  }
-  function svgCorde(strumento, nota, cx, top, posizione) {
-    if (strumento === "violino") return svgViolino(nota, cx, top, posizione);
+  /* minTasti (facoltativo): quanti tasti disegnare almeno, così più schemi escono della stessa misura */
+  function svgCorde(strumento, nota, cx, top, posizione, minTasti) {
     const nCorde = CORDE[strumento];
     const pos = posizione || posCorde(strumento, nota);
     if (!pos) return `<text x="${cx}" y="${top + 30}" font-size="10" text-anchor="middle" fill="${GRIGIO}">?</text>`;
     const [corda, tasto] = pos;
-    const tasti = Math.max(3, tasto);
+    const tasti = Math.max(minTasti || 3, tasto);
     const passo = 15, largTasto = 18, larg = tasti * largTasto, alto = (nCorde - 1) * passo;
     const x0 = cx - larg / 2 + 6, y0 = top;
     const col = COLORI[nota.lettera], bordo = scurisci(col, 0.62);
@@ -170,10 +134,9 @@
     else s += `<circle cx="${x0 + (tasto - 0.5) * largTasto}" cy="${y}" r="6.2" fill="${col}" stroke="${bordo}" stroke-width="1"/>`;
     return s;
   }
-  function larghezzaCorde(strumento, nota, posizione) {
-    if (strumento === "violino") return LARG_VIOLINO;
+  function larghezzaCorde(strumento, nota, posizione, minTasti) {
     const pos = posizione || posCorde(strumento, nota) || [1, 3];
-    return Math.max(3, pos[1]) * 18 + 44;
+    return Math.max(minTasti || 3, pos[1]) * 18 + 44;
   }
 
   function svgFlauto(nota, cx, top) {
@@ -274,7 +237,7 @@
     return s;
   }
 
-  const CELLA = { flauto: 72, chitarra: 106, basso: 100, tastiera: 150, violino: 178 };
+  const CELLA = { flauto: 72, chitarra: 106, basso: 100, tastiera: 150, violino: 176 };
 
   /* ===================== gruppo completo =====================
      disegnaGruppo(elemento, "chitarra", ["sol","la","si","do","re"])
@@ -285,7 +248,7 @@
     const note = typeof nomiOppureNote[0] === "string" ? daNomi(nomiOppureNote, strumento === "basso" ? 2 : 4) : nomiOppureNote;
     const celle = note.map(n => strumento === "ukulele" ? larghezzaCorde("ukulele", n) + 10 : CELLA[strumento]);
     const margineSx = 70, largTot = margineSx + celle.reduce((a, b) => a + b, 0) + 10;
-    const altoSchema = { flauto: 172, chitarra: 105, ukulele: 78, basso: 78, tastiera: 62, violino: 82 }[strumento];
+    const altoSchema = { flauto: 172, chitarra: 105, ukulele: 78, basso: 78, tastiera: 62, violino: 78 }[strumento];
     const yRigo = 6, ySchemi = 128, altoTot = ySchemi + altoSchema + 8;
 
     contenitore.innerHTML = "";
@@ -905,12 +868,11 @@
   }
 
   /* schema di una sola nota (solo la diteggiatura, senza pentagramma), come SVG a sé */
-  function schemaNota(strumento, n, posizione) {
+  function schemaNota(strumento, n, posizione, minTasti) {
     let w, h, corpo;
     if (strumento === "flauto") { w = 66; h = 188; corpo = svgFlauto(n, 40, 6); }
     else if (strumento === "tastiera") { w = 150; h = 64; corpo = svgTastiera(n, 75, 5); }
-    else if (strumento === "violino") { w = LARG_VIOLINO - 2; h = 3 * 17 + 34; corpo = svgViolino(n, w / 2, 10, posizione); }
-    else { w = larghezzaCorde(strumento, n, posizione) + 12; h = (CORDE[strumento] - 1) * 15 + 34; corpo = svgCorde(strumento, n, w / 2 + 4, 8, posizione); }
+    else { w = larghezzaCorde(strumento, n, posizione, minTasti) + 12; h = (CORDE[strumento] - 1) * 15 + 34; corpo = svgCorde(strumento, n, w / 2 + 4, 8, posizione, minTasti); }
     return `<svg xmlns="${NS}" viewBox="0 0 ${w} ${h}" style="display:block;width:100%;height:auto"><g stroke="none">${corpo}</g></svg>`;
   }
   /* pentagramma con una sola nota (per le carte), come SVG */
@@ -934,7 +896,7 @@
     svg.style.width = "100%"; svg.style.height = "auto"; svg.style.display = "block";
   }
   /* carte delle note, come negli schemi: pentagramma con la nota, nome colorato, diteggiatura */
-  const LARGH_SCHEMA_CARTA = { flauto: 0.42, tastiera: 0.96, chitarra: 0.8, ukulele: 0.86, basso: 0.8, violino: 0.92 };
+  const LARGH_SCHEMA_CARTA = { flauto: 0.42, tastiera: 0.96, chitarra: 0.8, ukulele: 0.86, basso: 0.8, violino: 0.8 };
   function disegnaCarte(contenitore, strumento, note) {
     contenitore.innerHTML = "";
     note.forEach(n => {
@@ -949,5 +911,5 @@
 
   global.MotoreSchemi = { posCorde, disegnaGruppo, disegnaBrano, leggiMusicXML, noteUsate, POSIZIONI, ALTERNATIVE, COLORI, NOMI, daNomi, analizza,
     paginaA4, stampaPagina, salvaPaginaPDF, disegnaCarte, adattaBrano, schemaNota, rigoNota, svgAccordo, ACCORDI, SIGLE, LETTERA_ACCORDO, romano,
-    ACCORDATURA, ditoViolino, NOMI_CORDE_VIOLINO, NASTRINI_VIOLINO };
+    ACCORDATURA };
 })(window);
