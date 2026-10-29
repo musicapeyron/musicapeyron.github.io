@@ -1255,8 +1255,8 @@ const TAGLI_MIN_DOMANDE = 8;
    in violino da Sol4 (seconda riga) a Re5, in basso da Sol2 (prima riga) a Re3.
    Nelle sequenze le note sono numerate da 0 (Sol) a 4 (Re). */
 const CINQUE_LIVELLI = [
-    { nome: "sali e scendi per grado congiunto", seq: () => ripeti([0, 1, 2, 3, 4, 3, 2, 1], 2).concat([0]) },
-    { nome: "scendi e sali per grado congiunto", seq: () => ripeti([4, 3, 2, 1, 0, 1, 2, 3], 2).concat([4]) },
+    { nome: "sali e scendi per grado congiunto", seq: () => [0, 1, 2, 3, 4, 3, 2, 1, 0] },
+    { nome: "scendi e sali per grado congiunto", seq: () => [4, 3, 2, 1, 0, 1, 2, 3, 4] },
     { nome: "per grado congiunto, avanti e indietro a sorpresa", seq: () => passeggiata(20, [1]) },
     { nome: "salti di terza, in ordine", seq: () => ripeti([0, 2, 1, 3, 2, 4, 2, 3, 1, 2], 2).concat([0]) },
     { nome: "gradi e salti di terza", seq: () => passeggiata(20, [1, 2]) },
