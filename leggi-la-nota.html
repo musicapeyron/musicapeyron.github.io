@@ -915,7 +915,7 @@ body.mode-tutorial #trophyButton {
         </button>
         <button class="mode-button training-3" id="cinqueTrainingButton">
             <span class="mode-button-title">📙 Allenamento su 5 note</span>
-            <span class="mode-button-desc">Sol, La, Si, Do, Re: una nota nuova alla volta</span>
+            <span class="mode-button-desc">Sol, La, Si, Do, Re: prima per gradi, poi a salti, poi a caso</span>
         </button>
         <hr class="mode-divider">
         <button class="mode-button verifica" id="verificaButton">
@@ -1249,12 +1249,39 @@ const LEVELS_TAGLI = [
 // domande minime per livello nell'allenamento sui tagli (i primi livelli hanno poche note)
 const TAGLI_MIN_DOMANDE = 8;
 
-/* Allenamento su 5 note: Sol, La, Si, Do, Re, aggiunte un po' alla volta
-   (prima Sol e La, poi Si, Do e Re). Le posizioni dipendono dalla chiave:
-   in violino da Sol4 (seconda riga) a Re5, in basso da Sol2 (prima riga) a Re3. */
-function livelliCinqueNote(clefName) {
-    const sol = clefName === "bass" ? 6 : 8;
-    return [[sol, sol + 1], [sol + 2], [sol + 3], [sol + 4]];
+/* Allenamento su 5 note: Sol, La, Si, Do, Re, tutte fin dall'inizio, ma con
+   un percorso graduale: prima per grado congiunto (avanti e indietro), poi
+   piccoli salti, infine in ordine casuale. Le posizioni dipendono dalla chiave:
+   in violino da Sol4 (seconda riga) a Re5, in basso da Sol2 (prima riga) a Re3.
+   Nelle sequenze le note sono numerate da 0 (Sol) a 4 (Re). */
+const CINQUE_LIVELLI = [
+    { nome: "sali e scendi per grado congiunto", seq: () => ripeti([0, 1, 2, 3, 4, 3, 2, 1], 2).concat([0]) },
+    { nome: "scendi e sali per grado congiunto", seq: () => ripeti([4, 3, 2, 1, 0, 1, 2, 3], 2).concat([4]) },
+    { nome: "per grado congiunto, avanti e indietro a sorpresa", seq: () => passeggiata(20, [1]) },
+    { nome: "salti di terza, in ordine", seq: () => ripeti([0, 2, 1, 3, 2, 4, 2, 3, 1, 2], 2).concat([0]) },
+    { nome: "gradi e salti di terza", seq: () => passeggiata(20, [1, 2]) },
+    { nome: "salti un po' più grandi", seq: () => passeggiata(20, [2, 3, 1]) },
+    { nome: "tutte le note, in ordine casuale", seq: () => passeggiata(24, [1, 2, 3, 4]) },
+    { nome: "tutte le note, in ordine casuale (ultimo giro)", seq: () => passeggiata(24, [1, 2, 3, 4]) }
+];
+function ripeti(lista, volte) { let r = []; for (let i = 0; i < volte; i++) r = r.concat(lista); return r; }
+/* sequenza di n note che si muove solo con i passi indicati (in su o in giù),
+   restando tra Sol e Re e senza mai ripetere la stessa nota di fila */
+function passeggiata(n, passi) {
+    let cur = Math.floor(Math.random() * 5);
+    const r = [cur];
+    while (r.length < n) {
+        const possibili = [];
+        passi.forEach(p => { if (cur + p <= 4) possibili.push(cur + p); if (cur - p >= 0) possibili.push(cur - p); });
+        cur = possibili[Math.floor(Math.random() * possibili.length)];
+        r.push(cur);
+    }
+    return r;
+}
+function solCinque() { return clef === "bass" ? 6 : 8; }
+function livelliCinqueNote() {
+    const sol = solCinque();
+    return CINQUE_LIVELLI.map((l, i) => i === 0 ? [sol, sol + 1, sol + 2, sol + 3, sol + 4] : []);
 }
 
 let levelIntroductions = LEVELS_RIGO;
@@ -1275,7 +1302,7 @@ let opzioneTagli = false;      // rotellina: "Note con i tagli addizionali" (all
 function scegliLivelli() {
     if (appMode === "verifica") levelIntroductions = verificaTagli ? LEVELS_VERIFICA_TAGLI : LEVELS_RIGO;
     else if (trainingKind === "tagli") levelIntroductions = LEVELS_TAGLI;
-    else if (trainingKind === "cinque") levelIntroductions = livelliCinqueNote(clef);
+    else if (trainingKind === "cinque") levelIntroductions = livelliCinqueNote();
     else levelIntroductions = opzioneTagli ? LEVELS_COMPLETI : LEVELS_RIGO;
     totalLevels = levelIntroductions.length;
 }
@@ -1872,7 +1899,11 @@ function generateLevelSequence() {
     let ordine = shuffle(pool);
     // allenamento sui tagli: almeno TAGLI_MIN_DOMANDE domande, ripetendo
     // le note (mai la stessa due volte di fila)
-    if (appMode === "training" && (trainingKind === "tagli" || trainingKind === "cinque") && pool.length > 1) {
+    if (appMode === "training" && trainingKind === "cinque") {
+        const liv = CINQUE_LIVELLI[Math.min(level, CINQUE_LIVELLI.length) - 1];
+        ordine = liv.seq().map(i => solCinque() + i);
+        gameSubtitle.textContent = "Sol, La, Si, Do, Re · Livello " + level + ": " + liv.nome + ".";
+    } else if (appMode === "training" && trainingKind === "tagli" && pool.length > 1) {
         while (ordine.length < TAGLI_MIN_DOMANDE) {
             const giro = shuffle(pool);
             if (giro[0] === ordine[ordine.length - 1]) [giro[0], giro[1]] = [giro[1], giro[0]];
@@ -2517,7 +2548,7 @@ function startTraining(kind) {
     gameSubtitle.textContent = trainingKind === "tagli"
         ? "Leggi le note con i tagli addizionali, sotto e sopra il pentagramma."
         : trainingKind === "cinque"
-        ? "Leggi le note Sol, La, Si, Do e Re: una nota nuova a ogni livello."
+        ? "Leggi le note Sol, La, Si, Do e Re."
         : SOTTOTITOLO_GIOCO;
 
     document.body.classList.remove("mode-verifica", "mode-tutorial");
