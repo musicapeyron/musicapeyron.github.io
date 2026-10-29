@@ -665,6 +665,7 @@ body.colori-note .vf-notehead[data-nota="si"] path { fill: #CF3E96; }
 .mode-button.tutorial { background: linear-gradient(135deg, #22c55e, #15803d); }
 .mode-button.training-1 { background: linear-gradient(135deg, #0ea5e9, #0369a1); }
 .mode-button.training-2 { background: linear-gradient(135deg, #14b8a6, #0f766e); }
+.mode-button.training-3 { background: linear-gradient(135deg, #f59e0b, #b45309); }
 /* titoletti dei gruppi nei menu (tutorial e verifica) */
 .menu-section-title {
     font-size: 0.72rem; font-weight: 700; letter-spacing: 0.5px; text-transform: uppercase;
@@ -911,6 +912,10 @@ body.mode-tutorial #trophyButton {
         <button class="mode-button training-2" id="tagliTrainingButton">
             <span class="mode-button-title">📗 Allenamento sui tagli addizionali</span>
             <span class="mode-button-desc">Solo le note sotto e sopra il pentagramma</span>
+        </button>
+        <button class="mode-button training-3" id="cinqueTrainingButton">
+            <span class="mode-button-title">📙 Allenamento su 5 note</span>
+            <span class="mode-button-desc">Sol, La, Si, Do, Re: una nota nuova alla volta</span>
         </button>
         <hr class="mode-divider">
         <button class="mode-button verifica" id="verificaButton">
@@ -1244,6 +1249,14 @@ const LEVELS_TAGLI = [
 // domande minime per livello nell'allenamento sui tagli (i primi livelli hanno poche note)
 const TAGLI_MIN_DOMANDE = 8;
 
+/* Allenamento su 5 note: Sol, La, Si, Do, Re, aggiunte un po' alla volta
+   (prima Sol e La, poi Si, Do e Re). Le posizioni dipendono dalla chiave:
+   in violino da Sol4 (seconda riga) a Re5, in basso da Sol2 (prima riga) a Re3. */
+function livelliCinqueNote(clefName) {
+    const sol = clefName === "bass" ? 6 : 8;
+    return [[sol, sol + 1], [sol + 2], [sol + 3], [sol + 4]];
+}
+
 let levelIntroductions = LEVELS_RIGO;
 let totalLevels = levelIntroductions.length;
 
@@ -1254,7 +1267,7 @@ let clef = "treble"; // "treble" (violino) oppure "bass" (basso)
 // nota (modalità mista, solo in verifica)
 let appMode = "training";
 let verificaClefChoice = null; // "treble" | "bass" | "mixed" (solo in verifica)
-let trainingKind = "normale";  // "normale" | "tagli" (allenamento sui tagli addizionali)
+let trainingKind = "normale";  // "normale" | "tagli" (allenamento sui tagli addizionali) | "cinque" (solo Sol La Si Do Re)
 let verificaTagli = false;     // verifica anche sulle note con i tagli
 let opzioneTagli = false;      // rotellina: "Note con i tagli addizionali" (allenamento normale)
 
@@ -1262,6 +1275,7 @@ let opzioneTagli = false;      // rotellina: "Note con i tagli addizionali" (all
 function scegliLivelli() {
     if (appMode === "verifica") levelIntroductions = verificaTagli ? LEVELS_VERIFICA_TAGLI : LEVELS_RIGO;
     else if (trainingKind === "tagli") levelIntroductions = LEVELS_TAGLI;
+    else if (trainingKind === "cinque") levelIntroductions = livelliCinqueNote(clef);
     else levelIntroductions = opzioneTagli ? LEVELS_COMPLETI : LEVELS_RIGO;
     totalLevels = levelIntroductions.length;
 }
@@ -1445,6 +1459,7 @@ const clefOptionsGroup = document.getElementById("clefOptionsGroup");
 const tagliOptionsGroup = document.getElementById("tagliOptionsGroup");
 const tagliToggle = document.getElementById("tagliToggle");
 const tagliTrainingButton = document.getElementById("tagliTrainingButton");
+const cinqueTrainingButton = document.getElementById("cinqueTrainingButton");
 const tutorialTagliTrebleButton = document.getElementById("tutorialTagliTrebleButton");
 const tutorialTagliBassButton = document.getElementById("tutorialTagliBassButton");
 const verificaRigoButton = document.getElementById("verificaRigoButton");
@@ -1857,7 +1872,7 @@ function generateLevelSequence() {
     let ordine = shuffle(pool);
     // allenamento sui tagli: almeno TAGLI_MIN_DOMANDE domande, ripetendo
     // le note (mai la stessa due volte di fila)
-    if (appMode === "training" && trainingKind === "tagli" && pool.length > 1) {
+    if (appMode === "training" && (trainingKind === "tagli" || trainingKind === "cinque") && pool.length > 1) {
         while (ordine.length < TAGLI_MIN_DOMANDE) {
             const giro = shuffle(pool);
             if (giro[0] === ordine[ordine.length - 1]) [giro[0], giro[1]] = [giro[1], giro[0]];
@@ -2200,6 +2215,8 @@ function showFinalScreen() {
         resultSubtitle.textContent = nomeChiave + " · " + (verificaTagli ? "anche note con i tagli addizionali" : "solo note nel pentagramma");
     } else if (appMode === "training" && trainingKind === "tagli") {
         resultSubtitle.textContent = "Allenamento sui tagli addizionali: ecco il tuo riepilogo.";
+    } else if (appMode === "training" && trainingKind === "cinque") {
+        resultSubtitle.textContent = "Allenamento su 5 note (Sol, La, Si, Do, Re): ecco il tuo riepilogo.";
     }
     finalLevel.textContent = level + " / " + totalLevels;
     finalAccuracy.textContent = accuracy + "%";
@@ -2491,14 +2508,16 @@ function goHome() {
 */
 function startTraining(kind) {
     appMode = "training";
-    trainingKind = kind === "tagli" ? "tagli" : "normale";
+    trainingKind = kind === "tagli" || kind === "cinque" ? kind : "normale";
     verificaClefChoice = null;
     clef = "treble";
 
     // l'opzione dei tagli serve solo all'allenamento normale
-    tagliOptionsGroup.style.display = trainingKind === "tagli" ? "none" : "";
+    tagliOptionsGroup.style.display = trainingKind === "normale" ? "" : "none";
     gameSubtitle.textContent = trainingKind === "tagli"
         ? "Leggi le note con i tagli addizionali, sotto e sopra il pentagramma."
+        : trainingKind === "cinque"
+        ? "Leggi le note Sol, La, Si, Do e Re: una nota nuova a ogni livello."
         : SOTTOTITOLO_GIOCO;
 
     document.body.classList.remove("mode-verifica", "mode-tutorial");
@@ -2958,6 +2977,7 @@ function startTutorial(clefChoice, kind) {
 
 trainingButton.addEventListener("click", () => startTraining("normale"));
 tagliTrainingButton.addEventListener("click", () => startTraining("tagli"));
+cinqueTrainingButton.addEventListener("click", () => startTraining("cinque"));
 
 /* opzione "Note con i tagli addizionali" (allenamento normale): spenta di base,
    la scelta si ricorda su questo dispositivo; cambiandola si ricomincia */
